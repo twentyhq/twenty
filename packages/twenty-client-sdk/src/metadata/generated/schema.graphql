@@ -3958,23 +3958,6 @@ type Query {
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
   getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
-  commandMenuItems: [CommandMenuItem!]!
-  commandMenuItem(id: UUID!): CommandMenuItem
-  frontComponents: [FrontComponent!]!
-  frontComponent(id: UUID!): FrontComponent
-  objects(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: ObjectFilter! = {}
-  ): ObjectConnection!
-  object(
-    """The id of the record to find."""
-    id: UUID!
-  ): Object!
-  objectRecordCounts: [ObjectRecordCount!]!
-  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
@@ -4000,6 +3983,23 @@ type Query {
   ): Field!
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
+  objects(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: ObjectFilter! = {}
+  ): ObjectConnection!
+  object(
+    """The id of the record to find."""
+    id: UUID!
+  ): Object!
+  objectRecordCounts: [ObjectRecordCount!]!
+  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
+  commandMenuItems: [CommandMenuItem!]!
+  commandMenuItem(id: UUID!): CommandMenuItem
+  frontComponents: [FrontComponent!]!
+  frontComponent(id: UUID!): FrontComponent
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   getPermissionFlags: [PermissionFlag!]!
@@ -4097,20 +4097,6 @@ input LogicFunctionIdInput {
   id: ID!
 }
 
-input ObjectFilter {
-  and: [ObjectFilter!]
-  or: [ObjectFilter!]
-  id: UUIDFilterComparison
-  universalIdentifier: UUIDFilterComparison
-  isActive: BooleanFieldComparison
-  isRemote: BooleanFieldComparison
-  isSearchable: BooleanFieldComparison
-  isSystem: BooleanFieldComparison
-  isUICreatable: BooleanFieldComparison
-  isUIEditable: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
-}
-
 input PreviewMessageCampaignAudienceInput {
   listId: String!
   unsubscribeTopicId: String
@@ -4126,6 +4112,20 @@ input FindMessageSuppressionsInput {
 
 input ListAppMessageChannelsInput {
   connectedAccountId: UUID
+}
+
+input ObjectFilter {
+  and: [ObjectFilter!]
+  or: [ObjectFilter!]
+  id: UUIDFilterComparison
+  universalIdentifier: UUIDFilterComparison
+  isActive: BooleanFieldComparison
+  isRemote: BooleanFieldComparison
+  isSearchable: BooleanFieldComparison
+  isSystem: BooleanFieldComparison
+  isUICreatable: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
 }
 
 input ListAppConnectionsInput {
@@ -4296,20 +4296,6 @@ type Mutation {
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
-  createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
-  updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
-  resetCommandMenuItem(id: UUID!): CommandMenuItem!
-  deleteCommandMenuItem(id: UUID!): CommandMenuItem!
-  generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
-  createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
-  updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
-  deleteFrontComponent(id: UUID!): FrontComponent!
-  createOneObject(input: CreateOneObjectInput!): Object!
-  deleteOneObject(input: DeleteOneObjectInput!): Object!
-  updateOneObject(input: UpdateOneObjectInput!): Object!
-  updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
-  createOneIndex(input: CreateOneIndexInput!): Index!
-  deleteOneIndex(input: DeleteOneIndexInput!): Index!
   runAgent(input: RunAgentInput!): RunAgentResult!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
@@ -4353,6 +4339,20 @@ type Mutation {
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
+  createOneObject(input: CreateOneObjectInput!): Object!
+  deleteOneObject(input: DeleteOneObjectInput!): Object!
+  updateOneObject(input: UpdateOneObjectInput!): Object!
+  updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
+  createOneIndex(input: CreateOneIndexInput!): Index!
+  deleteOneIndex(input: DeleteOneIndexInput!): Index!
+  createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
+  updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
+  resetCommandMenuItem(id: UUID!): CommandMenuItem!
+  deleteCommandMenuItem(id: UUID!): CommandMenuItem!
+  generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
+  createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
+  updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
+  deleteFrontComponent(id: UUID!): FrontComponent!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -5040,143 +5040,6 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   workflowActionTriggerSettings: JSON
 }
 
-input CreateCommandMenuItemInput {
-  workflowVersionId: UUID
-  coreWorkflowVersionId: UUID
-  frontComponentId: UUID
-  engineComponentKey: EngineComponentKey!
-  label: String!
-  icon: String
-  shortLabel: String
-  position: Float
-  isPinned: Boolean
-  availabilityType: CommandMenuItemAvailabilityType
-  hotKeys: [String!]
-  conditionalAvailabilityExpression: String
-  conditionalPinnedExpression: String
-  availabilityObjectMetadataId: UUID
-  payload: JSON
-  navigationTargetObjectMetadataId: UUID
-  pageLayoutId: UUID
-}
-
-input UpdateCommandMenuItemInput {
-  id: UUID!
-  label: String
-  icon: String
-  shortLabel: String
-  position: Float
-  isPinned: Boolean
-  availabilityType: CommandMenuItemAvailabilityType
-  availabilityObjectMetadataId: UUID
-  engineComponentKey: EngineComponentKey
-  hotKeys: [String!]
-  pageLayoutId: UUID
-}
-
-input CreateFrontComponentInput {
-  id: UUID
-  name: String!
-  description: String
-  sourceComponentPath: String!
-  builtComponentPath: String!
-  componentName: String!
-  builtComponentChecksum: String!
-}
-
-input UpdateFrontComponentInput {
-  """The id of the front component to update"""
-  id: UUID!
-
-  """The front component fields to update"""
-  update: UpdateFrontComponentInputUpdates!
-}
-
-input UpdateFrontComponentInputUpdates {
-  name: String
-  description: String
-}
-
-input CreateOneObjectInput {
-  """The object to create"""
-  object: CreateObjectInput!
-}
-
-input CreateObjectInput {
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  skipNameField: Boolean
-  isRemote: Boolean
-  primaryKeyColumnType: String
-  primaryKeyFieldMetadataSettings: JSON
-  isLabelSyncedWithName: Boolean
-}
-
-input DeleteOneObjectInput {
-  """The id of the record to delete."""
-  id: UUID!
-}
-
-input UpdateOneObjectInput {
-  update: UpdateObjectPayload!
-
-  """The id of the object to update"""
-  id: UUID!
-}
-
-input UpdateObjectPayload {
-  labelSingular: String
-  labelPlural: String
-  nameSingular: String
-  namePlural: String
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  isActive: Boolean
-  labelIdentifierFieldMetadataId: UUID
-  imageIdentifierFieldMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-  isSearchable: Boolean
-  openRecordIn: ObjectOpenRecordIn
-  readability: MetadataReadability
-  sharingReach: ObjectSharingReach
-  translations: [MetadataTranslationOverrideInput!]
-}
-
-input MetadataTranslationOverrideInput {
-  locale: String!
-  property: String!
-  value: String
-}
-
-input CreateOneIndexInput {
-  """The custom index to create"""
-  index: CreateIndexInput!
-}
-
-input CreateIndexInput {
-  objectMetadataId: UUID!
-  fields: [CreateIndexFieldInput!]!
-  indexType: IndexType! = BTREE
-}
-
-input CreateIndexFieldInput {
-  fieldMetadataId: UUID!
-  subFieldName: String
-}
-
-input DeleteOneIndexInput {
-  """The id of the custom index to delete."""
-  id: UUID!
-}
-
 input RunAgentInput {
   agentUniversalIdentifier: String!
   prompt: String @deprecated(reason: "Use input instead.")
@@ -5494,6 +5357,12 @@ input UpdateFieldInput {
   translations: [MetadataTranslationOverrideInput!]
 }
 
+input MetadataTranslationOverrideInput {
+  locale: String!
+  property: String!
+  value: String
+}
+
 input DeleteOneFieldInput {
   """The id of the field to delete."""
   id: UUID!
@@ -5530,6 +5399,137 @@ input DeleteViewGroupInput {
 input DestroyViewGroupInput {
   """The id of the view group to destroy."""
   id: UUID!
+}
+
+input CreateOneObjectInput {
+  """The object to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  skipNameField: Boolean
+  isRemote: Boolean
+  primaryKeyColumnType: String
+  primaryKeyFieldMetadataSettings: JSON
+  isLabelSyncedWithName: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: UUID!
+}
+
+input UpdateOneObjectInput {
+  update: UpdateObjectPayload!
+
+  """The id of the object to update"""
+  id: UUID!
+}
+
+input UpdateObjectPayload {
+  labelSingular: String
+  labelPlural: String
+  nameSingular: String
+  namePlural: String
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  isActive: Boolean
+  labelIdentifierFieldMetadataId: UUID
+  imageIdentifierFieldMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+  isSearchable: Boolean
+  openRecordIn: ObjectOpenRecordIn
+  readability: MetadataReadability
+  sharingReach: ObjectSharingReach
+  translations: [MetadataTranslationOverrideInput!]
+}
+
+input CreateOneIndexInput {
+  """The custom index to create"""
+  index: CreateIndexInput!
+}
+
+input CreateIndexInput {
+  objectMetadataId: UUID!
+  fields: [CreateIndexFieldInput!]!
+  indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
+}
+
+input DeleteOneIndexInput {
+  """The id of the custom index to delete."""
+  id: UUID!
+}
+
+input CreateCommandMenuItemInput {
+  workflowVersionId: UUID
+  coreWorkflowVersionId: UUID
+  frontComponentId: UUID
+  engineComponentKey: EngineComponentKey!
+  label: String!
+  icon: String
+  shortLabel: String
+  position: Float
+  isPinned: Boolean
+  availabilityType: CommandMenuItemAvailabilityType
+  hotKeys: [String!]
+  conditionalAvailabilityExpression: String
+  conditionalPinnedExpression: String
+  availabilityObjectMetadataId: UUID
+  payload: JSON
+  navigationTargetObjectMetadataId: UUID
+  pageLayoutId: UUID
+}
+
+input UpdateCommandMenuItemInput {
+  id: UUID!
+  label: String
+  icon: String
+  shortLabel: String
+  position: Float
+  isPinned: Boolean
+  availabilityType: CommandMenuItemAvailabilityType
+  availabilityObjectMetadataId: UUID
+  engineComponentKey: EngineComponentKey
+  hotKeys: [String!]
+  pageLayoutId: UUID
+}
+
+input CreateFrontComponentInput {
+  id: UUID
+  name: String!
+  description: String
+  sourceComponentPath: String!
+  builtComponentPath: String!
+  componentName: String!
+  builtComponentChecksum: String!
+}
+
+input UpdateFrontComponentInput {
+  """The id of the front component to update"""
+  id: UUID!
+
+  """The front component fields to update"""
+  update: UpdateFrontComponentInputUpdates!
+}
+
+input UpdateFrontComponentInputUpdates {
+  name: String
+  description: String
 }
 
 input UpdateMessageFolderInput {

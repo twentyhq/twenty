@@ -159,19 +159,15 @@ export const RouteContextStoreProvider = () => {
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 
-  const coreObjectEffect = (
-    <RouteContextStoreCoreObjectEffect
-      coreObjectNameSingular={coreObjectNameSingular}
-    />
-  );
-
   if (!shouldComputeContextStore) {
-    return coreObjectEffect;
+    return null;
   }
 
   return (
     <>
-      {coreObjectEffect}
+      <RouteContextStoreCoreObjectEffect
+        coreObjectNameSingular={coreObjectNameSingular}
+      />
       <RouteContextStoreProviderEffect
         viewId={
           isDefined(coreObjectNameSingular) || isAiChatPage ? undefined : viewId
