@@ -2,6 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
+import { GcsDriver } from 'src/engine/core-modules/file-storage/drivers/gcs.driver';
+import { type ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -195,6 +197,9 @@ describe('FileStorageDriverFactory', () => {
 
       expect(driver).toBeDefined();
       expect(driver.constructor.name).toBe('ValidatedStorageDriver');
+      expect((driver as ValidatedStorageDriver)['delegate']).toBeInstanceOf(
+        GcsDriver,
+      );
     });
 
     it('should refuse to create a GcsDriver without a bucket name', () => {

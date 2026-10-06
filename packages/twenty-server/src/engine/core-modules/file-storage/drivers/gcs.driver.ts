@@ -345,7 +345,12 @@ export class GcsDriver implements StorageDriver {
     contentLength: number;
     expiresInSeconds?: number;
   }): Promise<string | null> {
-    if (!this.presignEnabled) {
+    // Callers report the requested lifetime to the client, so a URL GCS would sign for less is not handed out.
+    if (
+      !this.presignEnabled ||
+      (params.expiresInSeconds ?? DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS) >
+        MAX_SIGNED_URL_EXPIRES_IN_SECONDS
+    ) {
       return null;
     }
 

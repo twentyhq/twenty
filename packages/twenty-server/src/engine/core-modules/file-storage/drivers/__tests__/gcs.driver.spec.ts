@@ -503,6 +503,21 @@ describe('GcsDriver', () => {
     });
   });
 
+  describe('getPresignedUploadUrl beyond the GCS signing limit', () => {
+    it('should fall back to the server endpoint rather than sign a shorter-lived URL', async () => {
+      await expect(
+        createDriver({ presignEnabled: true }).getPresignedUploadUrl({
+          filePath: 'some/file.pdf',
+          contentType: 'application/pdf',
+          contentLength: 1024,
+          expiresInSeconds: 8 * 24 * 60 * 60,
+        }),
+      ).resolves.toBeNull();
+
+      expect(mockFiles).toHaveLength(0);
+    });
+  });
+
   describe('copy', () => {
     it('should copy a single object to the destination key', async () => {
       await createDriver().copy({
