@@ -11,13 +11,21 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     title: 'Workspace setup',
     conversationSize: 0,
     activeStreamId: null,
-    lastStreamError: null,
   } as unknown as AgentChatThreadWorkspaceEntity;
 
   const buildService = ({ claimAffected = 1, hasMessages = false } = {}) => {
+    const releaseQuery = jest.fn(
+      async (_sql: string, _parameters: unknown[]) => [{ id: 'thread-id' }],
+    );
     const threadRepository = {
       findOne: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
+      query: jest.fn().mockImplementation(async (_workspaceId, work) =>
+        work({
+          table: (name: string) => name,
+          manager: { query: releaseQuery },
+        }),
+      ),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
@@ -59,10 +67,12 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       ),
       {} as never,
       {} as never,
+      {} as never,
     );
 
     return {
       service,
+      releaseQuery,
       threadRepository,
       messageQueueService,
       agentChatService,
@@ -98,7 +108,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
   });
 
   it('releases the claim and flushes the queue when the conversation already started', async () => {
-    const { service, threadRepository, agentChatService, messageQueueService } =
+    const { service, releaseQuery, agentChatService, messageQueueService } =
       buildService({ hasMessages: true });
 
     const result = await service.startOpeningTurn(openingTurnArguments);
@@ -106,10 +116,9 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     expect(result).toBeNull();
     expect(agentChatService.replaceOpeningTurn).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: expect.any(String) },
-      { activeStreamId: null },
+    expect(releaseQuery).toHaveBeenCalledWith(
+      expect.stringContaining('"activeStreamId" = NULL'),
+      ['thread-id', expect.any(String), null, null],
     );
     expect(agentChatService.getQueuedMessages).toHaveBeenCalledWith({
       threadId: 'thread-id',
@@ -161,14 +170,14 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
       expect.objectContaining({ id: 'thread-id' }),
-      { activeStreamId: result?.streamId, lastStreamError: null },
+      { activeStreamId: result?.streamId },
     );
   });
 
   it('releases the claim and reports an enqueue failure when adding the job fails', async () => {
     const {
       service,
-      threadRepository,
+      releaseQuery,
       messageQueueService,
       streamHeartbeatService,
       metricsService,
@@ -180,10 +189,14 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       service.startOpeningTurn(openingTurnArguments),
     ).rejects.toThrow('redis down');
 
-    expect(threadRepository.update).toHaveBeenLastCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: expect.any(String) },
-      { activeStreamId: null },
+    expect(releaseQuery).toHaveBeenLastCalledWith(
+      expect.stringContaining('"activeStreamId" = NULL'),
+      [
+        'thread-id',
+        expect.any(String),
+        'failed',
+        expect.stringContaining('redis down'),
+      ],
     );
     expect(streamHeartbeatService.clear).toHaveBeenCalled();
     expect(metricsService.incrementCounterBy).toHaveBeenCalledWith(
