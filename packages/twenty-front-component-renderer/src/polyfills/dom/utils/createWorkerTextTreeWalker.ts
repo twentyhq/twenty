@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { NODE_TYPE_BY_NAME } from '@/polyfills/dom/constants/NodeTypeByName';
-import { TEXT_TREE_WALKER_NODE_FILTER } from '@/polyfills/dom/constants/TextTreeWalkerNodeFilter';
+import { NODE_FILTER } from '@/polyfills/dom/constants/NodeFilter';
 
 const getNextDescendant = ({
   node,
@@ -37,7 +37,7 @@ export const createWorkerTextTreeWalker = (
 
   return {
     root,
-    whatToShow: TEXT_TREE_WALKER_NODE_FILTER.SHOW_TEXT,
+    whatToShow: NODE_FILTER.SHOW_TEXT,
     filter: null,
     get currentNode() {
       return currentNode;

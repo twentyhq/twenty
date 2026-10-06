@@ -10,7 +10,7 @@ const createPolyfillDocument = () => {
 
   return {
     document: polyfillWindow.document as unknown as Document,
-    nodeFilter: globalScope.NodeFilter as Pick<typeof NodeFilter, 'SHOW_TEXT'>,
+    nodeFilter: globalScope.NodeFilter as typeof NodeFilter,
   };
 };
 
@@ -93,6 +93,32 @@ describe('installTextTreeWalkerPolyfill', () => {
     expect(walker.nextNode()).toBeNull();
     expect(walker.currentNode).toBe(root);
   });
+
+  it.each([
+    'FILTER_ACCEPT',
+    'FILTER_REJECT',
+    'FILTER_SKIP',
+    'SHOW_ALL',
+    'SHOW_ELEMENT',
+    'SHOW_ATTRIBUTE',
+    'SHOW_TEXT',
+    'SHOW_CDATA_SECTION',
+    'SHOW_ENTITY_REFERENCE',
+    'SHOW_ENTITY',
+    'SHOW_PROCESSING_INSTRUCTION',
+    'SHOW_COMMENT',
+    'SHOW_DOCUMENT',
+    'SHOW_DOCUMENT_TYPE',
+    'SHOW_DOCUMENT_FRAGMENT',
+    'SHOW_NOTATION',
+  ] as const)(
+    'should expose the standard NodeFilter.%s constant',
+    (constantName) => {
+      const { nodeFilter } = createPolyfillDocument();
+
+      expect(nodeFilter[constantName]).toBe(NodeFilter[constantName]);
+    },
+  );
 
   it('should reject unsupported node masks and callback filters', () => {
     const { document, nodeFilter } = createPolyfillDocument();
