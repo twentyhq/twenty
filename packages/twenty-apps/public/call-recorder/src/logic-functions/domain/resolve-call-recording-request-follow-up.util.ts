@@ -1,4 +1,4 @@
-import { isString, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
@@ -6,6 +6,7 @@ import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseco
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { getMeetingEndTime } from 'src/logic-functions/domain/get-meeting-end-time.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 
 const BOT_NEVER_SCHEDULED_FAILURE_REASON = 'bot_never_scheduled';
@@ -160,16 +161,6 @@ const resolveCanceledRequestFollowUp = ({
   }
 
   return { action: 'find-and-cancel-bot' };
-};
-
-// Mirrors hasMeetingEnded: an unparseable end time falls back to the start time.
-const getMeetingEndTime = (
-  calendarEvent: CalendarEventRecord,
-): number | undefined => {
-  return [calendarEvent.endsAt, calendarEvent.startsAt]
-    .filter(isString)
-    .map((candidate) => new Date(candidate).getTime())
-    .find((candidateTime) => !Number.isNaN(candidateTime));
 };
 
 const getFirstTryGraceEnd = ({
