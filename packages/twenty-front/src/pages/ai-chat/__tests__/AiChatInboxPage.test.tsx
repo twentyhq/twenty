@@ -458,8 +458,8 @@ describe('AiChatInboxPage', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Third chat' }));
 
       expect(screen.getByText('2 selected')).toBeInTheDocument();
-      expect(isRowChecked('First chat')).toBe(true);
-      expect(isRowChecked('Third chat')).toBe(true);
+      expect(getRowCheckbox('First chat')).toBeChecked();
+      expect(getRowCheckbox('Third chat')).toBeChecked();
       expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
     });
   });
