@@ -399,7 +399,7 @@ describe('twenty app exec', () => {
     };
     const result = await run('--name', 'helloWorld');
     expect(result.exitCode).toBe(1);
-    expect(result.stderr).toContain('Status: ERROR');
+    expect(result.stderr).toContain('Status     ERROR');
     expect(result.stderr).toContain('Oops');
     expect(result.stderr).toContain('Hello from the function');
   });

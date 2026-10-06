@@ -1,6 +1,11 @@
 import { type AppInitNextStep } from '@/app/types/app-init-next-step.type';
 import { formatList } from '@/output/format-list';
-import { dimText, formatSuccessLine } from '@/output/style';
+import {
+  boldText,
+  colorText,
+  dimText,
+  formatSuccessLine,
+} from '@/output/style';
 
 export const formatAppInitSummary = ({
   appName,
@@ -25,10 +30,10 @@ export const formatAppInitSummary = ({
       `  ${formatList(packageNames)} pinned to ${packageVersion}. Nothing was installed.`,
     ),
     '',
-    'Next steps',
+    boldText('Next steps'),
     ...nextSteps.map(
       ({ command, description }) =>
-        `  ${command.padEnd(commandWidth)}  ${dimText(`# ${description}`)}`,
+        `  ${colorText('cyan', command.padEnd(commandWidth))}  ${dimText(`# ${description}`)}`,
     ),
   ].join('\n');
 };

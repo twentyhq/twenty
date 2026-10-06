@@ -6,7 +6,7 @@ import { readConfig } from '@/config/read-config';
 import { updateConfig } from '@/config/update-config';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { dimText, formatSuccessLine } from '@/output/style';
+import { colorText, dimText, formatSuccessLine } from '@/output/style';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 import { findRemote } from '@/target/find-remote';
 import { selectTarget } from '@/target/select-target';
@@ -64,9 +64,7 @@ export const runAuthLogoutCommand: CommandRun = async ({
     human: hadCredentials
       ? [
           formatSuccessLine(`Signed out of ${remoteName}.`),
-          dimText(
-            `  The remote stays; sign in with twenty auth login --remote ${remoteName} --with-token`,
-          ),
+          `${dimText('  The remote stays; sign in with ')}${colorText('cyan', `twenty auth login --remote ${remoteName} --with-token`)}`,
         ].join('\n')
       : `${remoteName} was already signed out.`,
   };
