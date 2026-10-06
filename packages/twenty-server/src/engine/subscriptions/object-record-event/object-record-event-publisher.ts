@@ -237,8 +237,10 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(
+    let admittedRecordIds: Set<string>;
+
+    try {
+      admittedRecordIds = await eventRecordAccessGate.resolveAdmittedRecordIds(
         this.buildSubscriberRowAccessPolicySubject({
           subscriberAuthContext,
           roleIds,
@@ -247,6 +249,13 @@ export class ObjectRecordEventPublisher {
           flatWorkspaceMemberMaps,
         }),
       );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to resolve admitted record IDs for stream "${streamChannelId}": ${error instanceof Error ? error.message : error}`,
+      );
+
+      admittedRecordIds = new Set();
+    }
 
     const restrictedFields = objectPermissions.restrictedFields;
 

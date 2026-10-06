@@ -932,6 +932,35 @@ describe('ObjectRecordEventPublisher', () => {
       ).toContain('query-stream-2');
     });
 
+    it('should handle resolveAdmittedRecordIds failure gracefully without dropping the stream', async () => {
+      const recordAccessPolicyService = service['recordAccessPolicyService'];
+
+      jest
+        .spyOn(recordAccessPolicyService, 'buildEventRecordAccessGate')
+        .mockReturnValue({
+          resolveAdmittedRecordIds: jest
+            .fn()
+            .mockRejectedValue(
+              new Error('Record access gate evaluation failed'),
+            ),
+        });
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      };
+
+      await expect(
+        service.publish(eventBatch as WorkspaceEventBatch<never>),
+      ).resolves.not.toThrow();
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
     it('should publish update events when only the BEFORE state matches the filter (record leaving the view)', async () => {
       (
         isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
