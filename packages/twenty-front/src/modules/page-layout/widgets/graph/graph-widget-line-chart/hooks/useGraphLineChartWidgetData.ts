@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useChartConfigurationWithDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useChartConfigurationWithDashboardFilters';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
@@ -45,7 +46,12 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const dataConfiguration = extractLineChartDataConfiguration(configuration);
+  const configurationWithDashboardFilters =
+    useChartConfigurationWithDashboardFilters(configuration);
+
+  const dataConfiguration = extractLineChartDataConfiguration(
+    configurationWithDashboardFilters,
+  );
 
   const {
     data: queryData,

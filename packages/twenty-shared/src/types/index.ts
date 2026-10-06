@@ -206,6 +206,12 @@ export type {
   ChartFilter,
   UniversalChartFilter,
 } from './page-layout/ChartFilter';
+export type {
+  DashboardFilterSlotFilterType,
+  DashboardFilterValue,
+  DashboardFilterSlot,
+  DashboardFilterBinding,
+} from './page-layout/DashboardFilter';
 export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
 export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
 export type { GridPosition } from './page-layout/GridPosition';

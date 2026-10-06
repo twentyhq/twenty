@@ -1,6 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { useDashboardFilterRecordFilters } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterRecordFilters';
 import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -57,10 +58,15 @@ export const useGraphWidgetQueryCommon = ({
       validFieldMetadataIds: objectFieldMetadataIds,
     });
 
+  const { dashboardFilterRecordFilters } = useDashboardFilterRecordFilters();
+
   const gqlOperationFilter = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
-    recordFilters: sanitizedRecordFilters ?? [],
+    recordFilters: [
+      ...(sanitizedRecordFilters ?? []),
+      ...dashboardFilterRecordFilters,
+    ],
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
 
