@@ -10,7 +10,7 @@ import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import {
   mapErrorToStreamError,
   type StreamErrorPayload,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';

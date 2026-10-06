@@ -17,7 +17,7 @@ import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-bi
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-history/types/agent-turn-usage.type';
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 
 export type BillingUsageInput = {
   usage: BillingTokenUsage;
