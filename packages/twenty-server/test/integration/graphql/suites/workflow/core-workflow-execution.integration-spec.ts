@@ -31,6 +31,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -1775,7 +1776,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       expect(deleteResponse.body.errors).toBeUndefined();
-      expect(runCleanupSpy).toHaveBeenCalledTimes(1);
+
+      await expectEventually(() => {
+        expect(runCleanupSpy).toHaveBeenCalledTimes(1);
+      });
       expect(runCleanupSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           payload: { coreWorkflowId: originalCoreWorkflowId },
