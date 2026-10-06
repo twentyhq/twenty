@@ -116,6 +116,10 @@ jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
 }));
 
 describe('RecordIndexPage workspace surface composition', () => {
+  beforeAll(async () => {
+    await import('~/pages/object-core/WorkflowCoreIndexPage');
+  });
+
   beforeEach(() => {
     mockIsCoreWorkflowsIndexEnabled.mockReturnValue(false);
     mockObjectNamePlural = 'people';

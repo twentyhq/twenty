@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar, Tag } from 'twenty-ui/data-display';
 import { Button } from 'twenty-ui/input';
@@ -17,14 +18,10 @@ import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/sla
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
-import { useArmedRemoval } from 'src/front-components/hooks/use-armed-removal';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
-import {
-  DISCONNECTED_SLACK_WORKSPACE_LABEL,
-  isFromDisconnectedSlackWorkspace,
-} from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 
 const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 320px 156px';
+const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
   align-items: center;
@@ -97,6 +94,19 @@ const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
   [SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET]: 'gray',
 };
 
+const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
+
+const isFromDisconnectedSlackWorkspace = ({
+  slackUserLink,
+  installedSlackTeamId,
+}: {
+  slackUserLink: SlackUserLinkRecord;
+  installedSlackTeamId: string | undefined;
+}): boolean =>
+  isNonEmptyString(installedSlackTeamId) &&
+  isNonEmptyString(slackUserLink.slackTeamId) &&
+  slackUserLink.slackTeamId !== installedSlackTeamId;
+
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
   canManage: boolean;
@@ -118,11 +128,22 @@ export const SlackUserLinksList = ({
   removingLinkId,
   resendingLinkId,
 }: SlackUserLinksListProps) => {
-  const {
-    armedId: removalArmedLinkId,
-    arm: armLinkRemoval,
-    disarm: disarmLinkRemoval,
-  } = useArmedRemoval();
+  const [removalArmedLinkId, setRemovalArmedLinkId] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (removalArmedLinkId === null) {
+      return undefined;
+    }
+
+    const disarmTimer = setTimeout(
+      () => setRemovalArmedLinkId(null),
+      REMOVAL_CONFIRM_TIMEOUT_MS,
+    );
+
+    return () => clearTimeout(disarmTimer);
+  }, [removalArmedLinkId]);
 
   const isActionInFlight =
     isDefined(removingLinkId) || isDefined(resendingLinkId);
@@ -142,7 +163,7 @@ export const SlackUserLinksList = ({
       <SlackTableBody>
         {slackUserLinks.map((slackUserLink) => {
           const isDisconnected = isFromDisconnectedSlackWorkspace({
-            slackTeamId: slackUserLink.slackTeamId,
+            slackUserLink,
             installedSlackTeamId,
           });
           const consentState = toDisplayedConsentState(
@@ -187,7 +208,7 @@ export const SlackUserLinksList = ({
               </SlackTableCell>
               <SlackTableCell>
                 {isDisconnected ? (
-                  <Tag color="gray" text={DISCONNECTED_SLACK_WORKSPACE_LABEL} />
+                  <Tag color="gray" text={DISCONNECTED_WORKSPACE_LABEL} />
                 ) : (
                   isDefined(consentState) && (
                     <Tag
@@ -231,7 +252,7 @@ export const SlackUserLinksList = ({
                         accent="danger"
                         disabled={isActionInFlight}
                         onClick={() => {
-                          disarmLinkRemoval();
+                          setRemovalArmedLinkId(null);
                           onRemove(slackUserLink);
                         }}
                       />
@@ -242,7 +263,7 @@ export const SlackUserLinksList = ({
                         size="small"
                         variant="secondary"
                         disabled={isActionInFlight}
-                        onClick={() => armLinkRemoval(slackUserLink.id)}
+                        onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
                       />
                     )}
                   </>
