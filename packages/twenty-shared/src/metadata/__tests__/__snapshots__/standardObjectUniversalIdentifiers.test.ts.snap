@@ -360,17 +360,53 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "agentId": {
         "universalIdentifier": "4ac55a9a-95e8-4fd9-8c03-47ee3b618ae7",
       },
+      "cacheCreationTokens": {
+        "universalIdentifier": "4d9feae2-2a80-43b2-965d-8ad40f129503",
+      },
+      "cacheReadTokens": {
+        "universalIdentifier": "c2bcbbf5-81ce-4679-8f08-f6a3cc00569c",
+      },
       "createdAt": {
         "universalIdentifier": "46926fcc-4c5b-5826-a6ca-1eb419bdf42e",
+      },
+      "createdBy": {
+        "universalIdentifier": "c3d5e8a2-fde8-452d-a74d-04436aaf17bc",
       },
       "deletedAt": {
         "universalIdentifier": "daf50675-315c-51af-95a1-e05dd59989ce",
       },
+      "endedAt": {
+        "universalIdentifier": "2b13f528-738b-402c-a033-7bbb0cce73a4",
+      },
+      "error": {
+        "universalIdentifier": "b0ed90f6-5953-4c85-aff8-407a28ec8cc7",
+      },
       "id": {
         "universalIdentifier": "6dd07216-fc15-54d1-ba30-2748dcf55720",
       },
+      "inputCredits": {
+        "universalIdentifier": "740456a7-c0be-4bc9-8429-52dc3e3a3707",
+      },
+      "inputTokens": {
+        "universalIdentifier": "0e419986-4255-4858-b252-e6a161d55f58",
+      },
       "messages": {
         "universalIdentifier": "737c3559-ea1a-4269-aea4-e672b17afbb1",
+      },
+      "modelId": {
+        "universalIdentifier": "b1e1c27b-03dc-40b1-8052-4474c15b8233",
+      },
+      "outputCredits": {
+        "universalIdentifier": "1ca5da82-b797-43a8-a2ee-d1a062a24ca5",
+      },
+      "outputTokens": {
+        "universalIdentifier": "3e7f5fb8-f9cf-45b2-b1a7-b36c1e8ff2fd",
+      },
+      "startedAt": {
+        "universalIdentifier": "578977d7-b0d9-48d1-83f7-29ad6215a6f0",
+      },
+      "status": {
+        "universalIdentifier": "c17a4d49-f4f5-40e2-b084-11c5c4bae431",
       },
       "thread": {
         "universalIdentifier": "4e9b4f1f-c1bb-42d0-bb38-eb2b2f830e64",
