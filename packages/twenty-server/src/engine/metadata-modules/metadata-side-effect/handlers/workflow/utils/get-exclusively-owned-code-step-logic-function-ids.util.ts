@@ -7,26 +7,26 @@ import { isWorkflowLogicFunctionAction } from 'src/modules/workflow/workflow-exe
 
 type WorkflowVersionSteps = Pick<FlatWorkflowVersion, 'steps'>;
 
-const collectLogicFunctionIds = ({
-  workflowVersions,
-  includeLogicFunctionSteps,
-}: {
-  workflowVersions: WorkflowVersionSteps[];
-  includeLogicFunctionSteps: boolean;
-}): string[] =>
-  workflowVersions.flatMap(({ steps }) =>
-    (steps ?? []).flatMap((step) => {
-      const logicFunctionId =
-        isWorkflowCodeAction(step) ||
-        (includeLogicFunctionSteps && isWorkflowLogicFunctionAction(step))
-          ? step.settings.input.logicFunctionId
-          : undefined;
+const isLogicFunctionId = (
+  logicFunctionId: string | undefined,
+): logicFunctionId is string =>
+  isNonEmptyString(logicFunctionId) && isValidUuid(logicFunctionId);
 
-      return isNonEmptyString(logicFunctionId) && isValidUuid(logicFunctionId)
-        ? [logicFunctionId]
-        : [];
-    }),
-  );
+const getCodeStepLogicFunctionIds = (
+  workflowVersions: WorkflowVersionSteps[],
+): string[] =>
+  workflowVersions
+    .flatMap(({ steps }) => (steps ?? []).filter(isWorkflowCodeAction))
+    .map((step) => step.settings.input.logicFunctionId)
+    .filter(isLogicFunctionId);
+
+const getLogicFunctionStepLogicFunctionIds = (
+  workflowVersions: WorkflowVersionSteps[],
+): string[] =>
+  workflowVersions
+    .flatMap(({ steps }) => (steps ?? []).filter(isWorkflowLogicFunctionAction))
+    .map((step) => step.settings.input.logicFunctionId)
+    .filter(isLogicFunctionId);
 
 export const getExclusivelyOwnedCodeStepLogicFunctionIds = ({
   deletedWorkflowVersions,
@@ -35,19 +35,14 @@ export const getExclusivelyOwnedCodeStepLogicFunctionIds = ({
   deletedWorkflowVersions: WorkflowVersionSteps[];
   remainingWorkflowVersions: WorkflowVersionSteps[];
 }): string[] => {
-  const referencedElsewhere = new Set(
-    collectLogicFunctionIds({
-      workflowVersions: remainingWorkflowVersions,
-      includeLogicFunctionSteps: true,
-    }),
-  );
+  const stillReferencedLogicFunctionIds = new Set([
+    ...getCodeStepLogicFunctionIds(remainingWorkflowVersions),
+    ...getLogicFunctionStepLogicFunctionIds(remainingWorkflowVersions),
+  ]);
 
   return [
-    ...new Set(
-      collectLogicFunctionIds({
-        workflowVersions: deletedWorkflowVersions,
-        includeLogicFunctionSteps: false,
-      }),
-    ),
-  ].filter((logicFunctionId) => !referencedElsewhere.has(logicFunctionId));
+    ...new Set(getCodeStepLogicFunctionIds(deletedWorkflowVersions)),
+  ].filter(
+    (logicFunctionId) => !stillReferencedLogicFunctionIds.has(logicFunctionId),
+  );
 };
