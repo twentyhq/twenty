@@ -46,6 +46,7 @@ const buildService = () => {
     agentActorContextService as never,
     agentRunnerService as never,
     {} as never,
+    { validateApiKey: jest.fn() } as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
   );
@@ -62,15 +63,17 @@ const run = (
   {
     isCalledByApplication = true,
     requestUserWorkspaceId = null,
+    requestWorkspaceMemberId = null,
   }: {
     isCalledByApplication?: boolean;
     requestUserWorkspaceId?: string | null;
+    requestWorkspaceMemberId?: string | null;
   } = {},
 ) =>
   service.run({
     workspace: WORKSPACE,
     requestUserWorkspaceId,
-    requestWorkspaceMemberId: null,
+    requestWorkspaceMemberId,
     callerApplication: isCalledByApplication
       ? (APPLICATION as never)
       : undefined,
@@ -222,6 +225,7 @@ describe('AgentRunService', () => {
       {
         isCalledByApplication: false,
         requestUserWorkspaceId: 'caller-user-workspace-id',
+        requestWorkspaceMemberId: 'caller-workspace-member-id',
       },
     );
 
