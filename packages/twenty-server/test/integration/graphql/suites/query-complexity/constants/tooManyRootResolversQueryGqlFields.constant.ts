@@ -114,21 +114,21 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
         }
       }
     }
-    workflowVersions {
+    calendarEventTargets {
       edges {
         node {
           id
         }
       }
     }
-    workflowAutomatedTriggers {
+    messageThreadTargets {
       edges {
         node {
           id
         }
       }
     }
-    workflows {
+    agentChatThreads {
       edges {
         node {
           id

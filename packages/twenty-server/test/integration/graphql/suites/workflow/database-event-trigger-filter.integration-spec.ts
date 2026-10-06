@@ -1,206 +1,192 @@
-import request from 'supertest';
-
-const client = request(`http://localhost:${APP_PORT}`);
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
+import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import {
+  destroyWorkflowRun,
+  type WorkflowRunResponse,
+} from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 const STEP_FILTER_GROUP_ID = 'a1b2c3d4-1111-4a2b-8c3d-000000000001';
 const STEP_FILTER_ID = 'a1b2c3d4-2222-4a2b-8c3d-000000000002';
 const FILTER_VALUE = 'trigger-me-co';
 
-type AutomatedTriggerNode = {
-  type: string;
-  workflowId: string;
-  settings: {
-    eventName?: string;
-    filter?: {
-      stepFilters: Array<Record<string, unknown>>;
-      stepFilterGroups: Array<Record<string, unknown>>;
-    };
-  };
+const WORKFLOW_RUNS_BY_CORE_WORKFLOW_ID_QUERY = `
+  query WorkflowRunsByCoreWorkflowId($coreWorkflowId: UUID!) {
+    workflowRuns(filter: { coreWorkflowId: { eq: $coreWorkflowId } }) {
+      edges {
+        node {
+          id
+          state
+        }
+      }
+    }
+  }
+`;
+
+type TriggeredWorkflowRun = {
+  id: string;
+  triggeringRecordId: unknown;
 };
 
-const graphql = (query: string, variables?: object) =>
-  client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({ query, variables });
-
-describe('Database event trigger filter (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
-
-  beforeAll(async () => {
-    const createWorkflowResponse = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "DB Event Trigger Filter Test" }) {
+const createCompany = async (name: string): Promise<string> => {
+  const response = await workflowGraphqlRequest(
+    `
+      mutation CreateCompany($name: String!) {
+        createCompany(data: { name: $name }) {
           id
         }
       }
-    `);
+    `,
+    { name },
+  );
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+  expect(response.body.errors).toBeUndefined();
 
-    const getWorkflowResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            id
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
+  return response.body.data.createCompany.id;
+};
+
+const destroyCompany = async (companyId: string): Promise<void> => {
+  await workflowGraphqlRequest(
+    `
+      mutation DestroyCompany($id: UUID!) {
+        destroyCompany(id: $id) {
+          id
         }
-      `,
-      { id: createdWorkflowId },
-    );
+      }
+    `,
+    { id: companyId },
+  );
+};
 
-    expect(getWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
+const findTriggeredWorkflowRuns = async (
+  coreWorkflowId: string,
+): Promise<TriggeredWorkflowRun[]> => {
+  const response = await workflowGraphqlRequest(
+    WORKFLOW_RUNS_BY_CORE_WORKFLOW_ID_QUERY,
+    { coreWorkflowId },
+  );
 
-    const databaseEventTrigger = {
-      name: 'Company is created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-        filter: {
-          stepFilterGroups: [
-            { id: STEP_FILTER_GROUP_ID, logicalOperator: 'AND' },
-          ],
-          stepFilters: [
-            {
-              id: STEP_FILTER_ID,
-              type: 'TEXT',
-              operand: 'CONTAINS',
-              value: FILTER_VALUE,
-              stepOutputKey: '{{trigger.properties.after.name}}',
-              stepFilterGroupId: STEP_FILTER_GROUP_ID,
-            },
-          ],
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.workflowRuns.edges.map(
+    ({ node }: { node: Pick<WorkflowRunResponse, 'id' | 'state'> }) => ({
+      id: node.id,
+      triggeringRecordId: node.state?.stepInfos?.trigger?.result?.recordId,
+    }),
+  );
+};
+
+const waitForTriggeredWorkflowRuns = async (
+  coreWorkflowId: string,
+  maxAttempts = 50,
+  intervalMs = 200,
+): Promise<TriggeredWorkflowRun[]> => {
+  let triggeredWorkflowRuns = await findTriggeredWorkflowRuns(coreWorkflowId);
+  let attempts = 0;
+
+  while (triggeredWorkflowRuns.length === 0 && attempts < maxAttempts) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    triggeredWorkflowRuns = await findTriggeredWorkflowRuns(coreWorkflowId);
+    attempts++;
+  }
+
+  return triggeredWorkflowRuns;
+};
+
+describe('Database event trigger filter (e2e)', () => {
+  let coreWorkflowId: string;
+  const createdCompanyIds: string[] = [];
+
+  beforeAll(async () => {
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'DB Event Trigger Filter Test',
+    });
+
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId: createdCoreWorkflow.coreWorkflowVersionId,
+      trigger: {
+        name: 'Company is created',
+        type: 'DATABASE_EVENT',
+        settings: {
+          eventName: 'company.created',
+          outputSchema: {},
+          filter: {
+            stepFilterGroups: [
+              { id: STEP_FILTER_GROUP_ID, logicalOperator: 'AND' },
+            ],
+            stepFilters: [
+              {
+                id: STEP_FILTER_ID,
+                type: 'TEXT',
+                operand: 'CONTAINS',
+                value: FILTER_VALUE,
+                stepOutputKey: '{{trigger.properties.after.name}}',
+                stepFilterGroupId: STEP_FILTER_GROUP_ID,
+              },
+            ],
+          },
         },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
       },
-      nextStepIds: [],
-      position: { x: 0, y: 0 },
-    };
+    });
 
-    const updateTriggerResponse = await graphql(
-      `
-        mutation UpdateWorkflowVersionTrigger(
-          $input: UpdateWorkflowVersionTriggerInput!
-        ) {
-          updateWorkflowVersionTrigger(input: $input) {
-            trigger
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          trigger: databaseEventTrigger,
-        },
-      },
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId: createdCoreWorkflow.coreWorkflowVersionId,
+      stepType: 'EMPTY',
+    });
+
+    await activateCoreWorkflowVersion(
+      createdCoreWorkflow.coreWorkflowVersionId,
     );
-
-    expect(updateTriggerResponse.body.errors).toBeUndefined();
-
-    const createStepResponse = await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          stepType: 'CODE',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
-
-    expect(createStepResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: createdWorkflowVersionId },
-    );
-
-    expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
   });
 
   afterAll(async () => {
-    if (createdWorkflowId) {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: createdWorkflowId },
-      );
+    const triggeredWorkflowRuns =
+      await findTriggeredWorkflowRuns(coreWorkflowId);
+
+    for (const { id } of triggeredWorkflowRuns) {
+      await destroyWorkflowRun(id);
     }
+
+    for (const companyId of createdCompanyIds) {
+      await destroyCompany(companyId);
+    }
+
+    await deleteCoreWorkflows([coreWorkflowId]);
   });
 
-  it('syncs the trigger filter onto the workflowAutomatedTrigger row read by the listener', async () => {
-    const response = await graphql(
-      `
-        query WorkflowAutomatedTriggers($workflowId: UUID!) {
-          workflowAutomatedTriggers(
-            filter: { workflowId: { eq: $workflowId } }
-          ) {
-            edges {
-              node {
-                type
-                settings
-                workflowId
-              }
-            }
-          }
-        }
-      `,
-      { workflowId: createdWorkflowId },
+  it('starts the workflow only for created records matching the trigger filter', async () => {
+    const nonMatchingCompanyId = await createCompany('Unrelated company');
+
+    createdCompanyIds.push(nonMatchingCompanyId);
+
+    const matchingCompanyId = await createCompany(`Acme ${FILTER_VALUE}`);
+
+    createdCompanyIds.push(matchingCompanyId);
+
+    const firstTriggeredWorkflowRuns =
+      await waitForTriggeredWorkflowRuns(coreWorkflowId);
+
+    expect(firstTriggeredWorkflowRuns).not.toHaveLength(0);
+
+    await waitForAllJobsToFinish();
+
+    const triggeredWorkflowRuns =
+      await findTriggeredWorkflowRuns(coreWorkflowId);
+
+    const triggeringRecordIds = triggeredWorkflowRuns.map(
+      ({ triggeringRecordId }) => triggeringRecordId,
     );
 
-    expect(response.body.errors).toBeUndefined();
-
-    const automatedTriggers: AutomatedTriggerNode[] =
-      response.body.data.workflowAutomatedTriggers.edges.map(
-        (edge: { node: AutomatedTriggerNode }) => edge.node,
-      );
-
-    expect(automatedTriggers).toHaveLength(1);
-
-    const automatedTrigger = automatedTriggers[0];
-
-    expect(automatedTrigger.type).toBe('DATABASE_EVENT');
-    expect(automatedTrigger.settings.eventName).toBe('company.created');
-
-    const filter = automatedTrigger.settings.filter;
-
-    expect(filter).toBeDefined();
-    expect(filter?.stepFilterGroups).toHaveLength(1);
-    expect(filter?.stepFilters).toHaveLength(1);
-    expect(filter?.stepFilters[0]).toMatchObject({
-      operand: 'CONTAINS',
-      value: FILTER_VALUE,
-      stepOutputKey: '{{trigger.properties.after.name}}',
-    });
+    expect(triggeringRecordIds).toEqual([matchingCompanyId]);
   });
 });

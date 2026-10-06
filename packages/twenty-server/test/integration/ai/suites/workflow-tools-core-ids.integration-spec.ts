@@ -2,8 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
 
-const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
-
 type McpToolCallResult = {
   content?: Array<{ type: string; text: string }>;
   isError?: boolean;
@@ -88,41 +86,17 @@ const buildCodeFreeStep = (id: string, name: string) => ({
   nextStepIds: [],
 });
 
-const readCoreWorkflowRow = async (coreWorkflowId: string) => {
-  const rows = await global.testDataSource.query(
-    `SELECT id, "workspaceWorkflowId" FROM core."workflow" WHERE id = $1`,
-    [coreWorkflowId],
-  );
-
-  return rows[0] as { id: string; workspaceWorkflowId: string | null };
-};
-
 const readCoreVersionRow = async (coreWorkflowVersionId: string) => {
   const rows = await global.testDataSource.query(
-    `SELECT id, "workspaceWorkflowVersionId", steps, triggers, status
-     FROM core."workflowVersion" WHERE id = $1`,
+    `SELECT id, steps, triggers, status FROM core."workflowVersion" WHERE id = $1`,
     [coreWorkflowVersionId],
   );
 
   return rows[0] as {
     id: string;
-    workspaceWorkflowVersionId: string | null;
     steps: unknown[] | null;
     triggers: unknown[] | null;
     status: string;
-  };
-};
-
-const readWorkspaceVersionRow = async (workspaceWorkflowVersionId: string) => {
-  const rows = await global.testDataSource.query(
-    `SELECT id, steps, trigger FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE id = $1`,
-    [workspaceWorkflowVersionId],
-  );
-
-  return rows[0] as {
-    id: string;
-    steps: { id: string; name: string }[] | null;
-    trigger: { type: string } | null;
   };
 };
 
@@ -180,18 +154,6 @@ describe('workflow MCP tools on core identities (integration)', () => {
 
       expect(coreWorkflowId).toBeDefined();
       expect(coreWorkflowVersionId).toBeDefined();
-    });
-
-    it('should key the returned identifiers on core rows whose ids differ from the workspace mirrors', async () => {
-      const coreWorkflow = await readCoreWorkflowRow(coreWorkflowId);
-      const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
-
-      expect(coreWorkflow.workspaceWorkflowId).toBeDefined();
-      expect(coreWorkflow.workspaceWorkflowId).not.toBe(coreWorkflowId);
-      expect(coreVersion.workspaceWorkflowVersionId).toBeDefined();
-      expect(coreVersion.workspaceWorkflowVersionId).not.toBe(
-        coreWorkflowVersionId,
-      );
     });
 
     it('should preserve the iterator loop connection and the step after the loop', async () => {
@@ -271,7 +233,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
       expect(listed.workflows.length).toBeGreaterThan(0);
     });
 
-    it('should write an edit through the shared writer so the rollback mirror follows', async () => {
+    it('should write an edit to the core version', async () => {
       const renamedStepName = `Renamed ${randomUUID()}`;
       const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
       const stepToUpdate = (
@@ -286,36 +248,12 @@ describe('workflow MCP tools on core identities (integration)', () => {
       const updatedCoreVersion = await readCoreVersionRow(
         coreWorkflowVersionId,
       );
-      const mirrorVersion = await readWorkspaceVersionRow(
-        updatedCoreVersion.workspaceWorkflowVersionId as string,
-      );
 
       expect(
         (updatedCoreVersion.steps as { id: string; name: string }[]).find(
           (step) => step.id === loopBodyStepId,
         )?.name,
       ).toBe(renamedStepName);
-      expect(
-        mirrorVersion.steps?.find((step) => step.id === loopBodyStepId)?.name,
-      ).toBe(renamedStepName);
-    });
-
-    it('should read core content even after the workspace mirror content diverges', async () => {
-      const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
-
-      await global.testDataSource.query(
-        `UPDATE "${TEST_WORKSPACE_SCHEMA}"."workflowVersion"
-         SET steps = '[]'::jsonb WHERE id = $1`,
-        [coreVersion.workspaceWorkflowVersionId],
-      );
-
-      const current = await callWorkflowTool<{
-        success: boolean;
-        workflowVersion: { steps: { id: string }[] };
-      }>('get_workflow_current_version', { coreWorkflowId });
-
-      expect(current.success).toBe(true);
-      expect(current.workflowVersion.steps).toHaveLength(3);
     });
 
     it('should validate and activate using the core version id', async () => {
@@ -346,62 +284,6 @@ describe('workflow MCP tools on core identities (integration)', () => {
       expect(runs.success).toBe(true);
       expect(
         runs.workflowRuns.every((run) => run.coreWorkflowId === coreWorkflowId),
-      ).toBe(true);
-    });
-  });
-
-  describe('reads without a workspace definition mirror', () => {
-    let coreWorkflowId: string;
-    let coreWorkflowVersionId: string;
-
-    beforeAll(async () => {
-      const created = await callWorkflowTool<{
-        result: { coreWorkflowId: string; coreWorkflowVersionId: string };
-      }>('create_complete_workflow', {
-        name: `Mirrorless core workflow ${randomUUID()}`,
-        trigger: buildManualTrigger(),
-        steps: [buildCodeFreeStep(randomUUID(), 'Only step')],
-        edges: [],
-      });
-
-      coreWorkflowId = created.result.coreWorkflowId;
-      coreWorkflowVersionId = created.result.coreWorkflowVersionId;
-      coreWorkflowIdsToDelete.push(coreWorkflowId);
-
-      const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
-      const coreWorkflow = await readCoreWorkflowRow(coreWorkflowId);
-
-      await global.testDataSource.query(
-        `DELETE FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE id = $1`,
-        [coreVersion.workspaceWorkflowVersionId],
-      );
-      await global.testDataSource.query(
-        `DELETE FROM "${TEST_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
-        [coreWorkflow.workspaceWorkflowId],
-      );
-    });
-
-    it('should still return the definition from core', async () => {
-      const current = await callWorkflowTool<{
-        success: boolean;
-        workflowVersion: { coreWorkflowVersionId: string };
-      }>('get_workflow_current_version', { coreWorkflowId });
-
-      expect(current.success).toBe(true);
-      expect(current.workflowVersion.coreWorkflowVersionId).toBe(
-        coreWorkflowVersionId,
-      );
-    });
-
-    it('should still list the workflow', async () => {
-      const listed = await callWorkflowTool<{
-        workflows: { coreWorkflowId: string }[];
-      }>('list_workflows', { limit: 100 });
-
-      expect(
-        listed.workflows.some(
-          (workflow) => workflow.coreWorkflowId === coreWorkflowId,
-        ),
       ).toBe(true);
     });
   });

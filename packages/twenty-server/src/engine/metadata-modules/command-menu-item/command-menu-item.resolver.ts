@@ -212,21 +212,28 @@ export class CommandMenuItemResolver {
     workspaceId: string;
     userWorkspaceId: string | undefined;
   }): Promise<CommandMenuItemDTO[]> {
-    const inaccessibleWorkspaceWorkflowVersionIds =
-      await this.coreWorkflowAccessService.findInaccessibleWorkspaceWorkflowVersionIds(
-        {
-          workspaceId,
-          userWorkspaceId,
-          workspaceWorkflowVersionIds: commandMenuItems
-            .map(({ workflowVersionId }) => workflowVersionId)
-            .filter(isDefined),
-        },
-      );
+    const inaccessibleWorkflowVersionIds =
+      await this.coreWorkflowAccessService.findInaccessibleWorkflowVersionIds({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: commandMenuItems
+          .map(({ coreWorkflowVersionId }) => coreWorkflowVersionId)
+          .filter(isDefined),
+        workspaceWorkflowVersionIds: commandMenuItems
+          .map(({ workflowVersionId }) => workflowVersionId)
+          .filter(isDefined),
+      });
 
     return commandMenuItems.filter(
-      ({ workflowVersionId }) =>
-        !isDefined(workflowVersionId) ||
-        !inaccessibleWorkspaceWorkflowVersionIds.has(workflowVersionId),
+      ({ coreWorkflowVersionId, workflowVersionId }) =>
+        !(
+          isDefined(coreWorkflowVersionId) &&
+          inaccessibleWorkflowVersionIds.has(coreWorkflowVersionId)
+        ) &&
+        !(
+          isDefined(workflowVersionId) &&
+          inaccessibleWorkflowVersionIds.has(workflowVersionId)
+        ),
     );
   }
 }

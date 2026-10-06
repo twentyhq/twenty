@@ -1,9 +1,20 @@
-import request from 'supertest';
+import {
+  activateCoreWorkflowVersion,
+  CORE_WORKFLOW_MANUAL_TRIGGER,
+  CORE_WORKFLOW_VERSION_BY_ID_QUERY,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
+import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
@@ -14,175 +25,71 @@ import {
   type WorkflowDelayAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const DELAY_DURATION_SECONDS = 20;
 
 describe('Parallel branch leaf resume workflow (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let createdCoreWorkflowId: string | null = null;
+  let createdCoreWorkflowVersionId: string | null = null;
   let formStepId: string | null = null;
   let delayStepId: string | null = null;
   let sendEmailStepId: string | null = null;
   let createdWorkflowRunId: string | null = null;
 
-  const getSteps = async (): Promise<WorkflowAction[]> => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflowVersion($id: UUID!) {
-            workflowVersion(filter: { id: { eq: $id } }) {
-              id
-              steps
-            }
-          }
-        `,
-        variables: { id: createdWorkflowVersionId },
-      });
+  const getVersionContent = async (): Promise<{
+    trigger: WorkflowTrigger;
+    steps: WorkflowAction[];
+  }> => {
+    const response = await workflowGraphqlRequest(
+      CORE_WORKFLOW_VERSION_BY_ID_QUERY,
+      { coreWorkflowVersionId: createdCoreWorkflowVersionId },
+    );
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.workflowVersion.steps;
-  };
-
-  const createStep = async ({
-    stepType,
-    parentStepId,
-  }: {
-    stepType: string;
-    parentStepId: string;
-  }) => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType,
-            parentStepId,
-            position: { x: 200, y: 0 },
-          },
-        },
-      });
-
-    expect(response.body.errors).toBeUndefined();
-  };
-
-  const updateStep = async (step: WorkflowAction) => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step,
-          },
-        },
-      });
-
-    expect(response.body.errors).toBeUndefined();
+    return response.body.data.coreWorkflowVersionById;
   };
 
   beforeAll(async () => {
-    const createWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: { name: "Parallel Branch Leaf Resume Workflow" }) {
-              id
-            }
-          }
-        `,
-      });
-
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
-
-    const getWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflow($id: UUID!) {
-            workflow(filter: { id: { eq: $id } }) {
-              id
-              versions {
-                edges {
-                  node {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: { id: createdWorkflowId },
-      });
-
-    expect(getWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
-
-    const updateTriggerResponse = await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
-      trigger: {
-        name: 'Manual Trigger',
-        type: 'MANUAL',
-        settings: { outputSchema: {} },
-        nextStepIds: [],
-        position: { x: 0, y: 0 },
-      },
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+      name: 'Parallel Branch Leaf Resume Workflow',
     });
 
-    expect(updateTriggerResponse.body.errors).toBeUndefined();
+    createdCoreWorkflowId = coreWorkflowId;
+    createdCoreWorkflowVersionId = coreWorkflowVersionId;
 
-    await createStep({ stepType: 'FORM', parentStepId: 'trigger' });
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
+      trigger: CORE_WORKFLOW_MANUAL_TRIGGER,
+    });
 
-    formStepId =
-      (await getSteps()).find((step) => step.type === 'FORM')?.id ?? null;
+    const createdFormStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'FORM',
+    });
 
-    expect(formStepId).not.toBeNull();
+    formStepId = createdFormStep.id;
 
-    await createStep({ stepType: 'DELAY', parentStepId: 'trigger' });
+    const createdDelayStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'DELAY',
+    });
 
-    delayStepId =
-      (await getSteps()).find((step) => step.type === 'DELAY')?.id ?? null;
+    delayStepId = createdDelayStep.id;
 
-    expect(delayStepId).not.toBeNull();
+    const createdSendEmailStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'SEND_EMAIL',
+      parentStepId: createdDelayStep.id,
+    });
 
-    await createStep({ stepType: 'SEND_EMAIL', parentStepId: delayStepId! });
+    sendEmailStepId = createdSendEmailStep.id;
 
-    sendEmailStepId =
-      (await getSteps()).find((step) => step.type === 'SEND_EMAIL')?.id ?? null;
-
-    expect(sendEmailStepId).not.toBeNull();
-
-    const steps = await getSteps();
+    const { steps } = await getVersionContent();
 
     const formStep = steps.find(
       (step): step is WorkflowFormAction => step.id === formStepId,
@@ -190,18 +97,21 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
     expect(formStep).toBeDefined();
 
-    await updateStep({
-      ...formStep!,
-      settings: {
-        ...formStep!.settings,
-        input: [
-          {
-            id: v4(),
-            name: 'answer',
-            label: 'Answer',
-            type: FieldMetadataType.TEXT,
-          },
-        ],
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...formStep!,
+        settings: {
+          ...formStep!.settings,
+          input: [
+            {
+              id: v4(),
+              name: 'answer',
+              label: 'Answer',
+              type: FieldMetadataType.TEXT,
+            },
+          ],
+        },
       },
     });
 
@@ -211,66 +121,35 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
     expect(delayStep).toBeDefined();
 
-    await updateStep({
-      ...delayStep!,
-      settings: {
-        ...delayStep!.settings,
-        input: {
-          delayType: 'DURATION',
-          duration: { seconds: DELAY_DURATION_SECONDS },
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...delayStep!,
+        settings: {
+          ...delayStep!.settings,
+          input: {
+            delayType: 'DURATION',
+            duration: { seconds: DELAY_DURATION_SECONDS },
+          },
         },
       },
     });
 
-    const activateResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-            activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-          }
-        `,
-        variables: { workflowVersionId: createdWorkflowVersionId },
-      });
-
-    expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+    await activateCoreWorkflowVersion(coreWorkflowVersionId);
   });
 
   afterAll(async () => {
-    if (createdWorkflowRunId) {
+    if (isDefined(createdWorkflowRunId)) {
       await destroyWorkflowRun(createdWorkflowRunId);
     }
 
-    if (createdWorkflowId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflow($id: ID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: createdWorkflowId },
-        });
+    if (isDefined(createdCoreWorkflowId)) {
+      await deleteCoreWorkflows([createdCoreWorkflowId]);
     }
   });
 
   it('keeps the run alive and the delay branch pending when the parallel form leaf is submitted', async () => {
-    const steps = await getSteps();
-    const [{ trigger, coreWorkflowVersionId }] =
-      await global.testDataSource.query(
-        `SELECT trigger, "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
-        [createdWorkflowVersionId],
-      );
-    const [{ coreWorkflowId }] = await global.testDataSource.query(
-      `SELECT "coreWorkflowId" FROM "${schema}".workflow WHERE id = $1`,
-      [createdWorkflowId],
-    );
+    const { trigger, steps } = await getVersionContent();
 
     createdWorkflowRunId = v4();
 
@@ -286,14 +165,12 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
     // Inserted directly so no start job is enqueued and the manual handle is the only driver.
     await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
-       VALUES ($1, 'Parallel branch leaf resume run', $2, $3, $4, $5, 'ENQUEUED', $6, 0, now())`,
+      `INSERT INTO "${schema}"."workflowRun" (id, name, "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
+       VALUES ($1, 'Parallel branch leaf resume run', $2, $3, 'ENQUEUED', $4, 0, now())`,
       [
         createdWorkflowRunId,
-        createdWorkflowId,
-        createdWorkflowVersionId,
-        coreWorkflowId,
-        coreWorkflowVersionId,
+        createdCoreWorkflowId,
+        createdCoreWorkflowVersionId,
         JSON.stringify(state),
       ],
     );

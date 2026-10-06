@@ -1,3 +1,4 @@
+import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
 const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
@@ -6,8 +7,6 @@ const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
       id
       label
       status
-      workspaceWorkflowId
-      workspaceWorkflowVersionId
     }
   }
 `;
@@ -24,29 +23,16 @@ const CORE_WORKFLOW_VERSION_BY_ID = `
   }
 `;
 
-const CORE_WORKFLOW_VERSIONS_LEGACY = `
-  query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-    coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-      id
-      label
-      status
-      workspaceWorkflowVersionId
-    }
-  }
-`;
-
 const ABSENT_ID = '00000000-0000-4000-8000-000000000000';
 
 describe('core workflow id native queries (e2e)', () => {
   let coreWorkflowId: string;
-  let workspaceWorkflowId: string;
 
   beforeAll(async () => {
     const createResponse = await workflowGraphqlRequest(`
       mutation {
         createCoreWorkflow(input: { name: "Core Id Native Queries" }) {
           id
-          workspaceWorkflowId
         }
       }
     `);
@@ -54,24 +40,13 @@ describe('core workflow id native queries (e2e)', () => {
     expect(createResponse.body.errors).toBeUndefined();
 
     coreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-    workspaceWorkflowId =
-      createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
   });
 
   afterAll(async () => {
-    await workflowGraphqlRequest(
-      `
-        mutation DestroyWorkflow($id: ID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows([coreWorkflowId]);
   });
 
-  it('lists the versions by core workflow id, mirror ids included', async () => {
+  it('lists the versions by core workflow id', async () => {
     const response = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID,
       { coreWorkflowId },
@@ -84,8 +59,6 @@ describe('core workflow id native queries (e2e)', () => {
     expect(versions).toHaveLength(1);
     expect(versions[0].status).toBe('DRAFT');
     expect(versions[0].label).toBe('v1');
-    expect(versions[0].workspaceWorkflowId).toBe(workspaceWorkflowId);
-    expect(versions[0].workspaceWorkflowVersionId).not.toBeNull();
   });
 
   it('resolves a version by its core id, with its content', async () => {
@@ -106,39 +79,6 @@ describe('core workflow id native queries (e2e)', () => {
       coreWorkflowVersionId,
     );
     expect(response.body.data.coreWorkflowVersionById.label).toBe('v1');
-  });
-
-  it('agrees with the workspace-keyed query on the version list, labels included', async () => {
-    const [byCoreId, byWorkspaceId] = await Promise.all([
-      workflowGraphqlRequest(CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID, {
-        coreWorkflowId,
-      }),
-      workflowGraphqlRequest(CORE_WORKFLOW_VERSIONS_LEGACY, {
-        workspaceWorkflowId,
-      }),
-    ]);
-
-    expect(byCoreId.body.errors).toBeUndefined();
-    expect(byWorkspaceId.body.errors).toBeUndefined();
-
-    const normalise = (
-      versions: {
-        id: string;
-        label: string;
-        status: string;
-        workspaceWorkflowVersionId: string | null;
-      }[],
-    ) =>
-      versions.map(({ id, label, status, workspaceWorkflowVersionId }) => ({
-        id,
-        label,
-        status,
-        workspaceWorkflowVersionId,
-      }));
-
-    expect(
-      normalise(byCoreId.body.data.coreWorkflowVersionsByCoreWorkflowId),
-    ).toEqual(normalise(byWorkspaceId.body.data.coreWorkflowVersions));
   });
 
   it('returns nothing for ids that exist in neither table', async () => {

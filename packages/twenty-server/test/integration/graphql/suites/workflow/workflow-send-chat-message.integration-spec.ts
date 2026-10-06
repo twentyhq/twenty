@@ -1,5 +1,10 @@
 import gql from 'graphql-tag';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import {
+  CREATE_CORE_WORKFLOW_VERSION_STEP_MUTATION,
+  createCoreWorkflow,
+  deleteCoreWorkflows,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
@@ -586,69 +591,28 @@ describe('Send chat message workflow step', () => {
   it('cannot be added to a workflow while the feature flag is off', async () => {
     await setSendChatMessageEnabled(false);
 
-    const workflowResponse = await makeGraphqlApiRequest({
-      query: gql`
-        mutation CreateWorkflow($name: String!) {
-          createWorkflow(data: { name: $name }) {
-            id
-          }
-        }
-      `,
-      variables: { name: 'Send chat message disabled' },
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+      name: 'Send chat message disabled',
     });
-    const workflow = workflowResponse.body.data.createWorkflow;
 
     try {
-      const versionResponse = await makeGraphqlApiRequest({
-        query: gql`
-          query FindDraftWorkflowVersion($workflowId: UUID!) {
-            workflowVersions(filter: { workflowId: { eq: $workflowId } }) {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        `,
-        variables: { workflowId: workflow.id },
-      });
-
-      const stepResponse = await makeGraphqlApiRequest({
-        query: gql`
-          mutation CreateWorkflowVersionStep(
-            $input: CreateWorkflowVersionStepInput!
-          ) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
+      const stepResponse = await workflowGraphqlRequest(
+        CREATE_CORE_WORKFLOW_VERSION_STEP_MUTATION,
+        {
           input: {
-            workflowVersionId:
-              versionResponse.body.data.workflowVersions.edges[0].node.id,
+            coreWorkflowVersionId,
             stepType: 'SEND_CHAT_MESSAGE',
             parentStepId: 'trigger',
             position: { x: 200, y: 0 },
           },
         },
-      });
+      );
 
       expect(JSON.stringify(stepResponse.body.errors)).toContain(
         'is not enabled',
       );
     } finally {
-      await makeGraphqlApiRequest({
-        query: gql`
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        variables: { id: workflow.id },
-      });
+      await deleteCoreWorkflows([coreWorkflowId]);
     }
   }, 120000);
 });

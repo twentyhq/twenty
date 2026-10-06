@@ -26,8 +26,6 @@ describe('timelineActivitiesResolver (e2e)', () => {
                 targetOpportunityId
                 targetNoteId
                 targetTaskId
-                targetWorkflowId
-                targetWorkflowVersionId
                 targetWorkflowRunId
                 targetPetId
                 targetSurveyResultId
@@ -74,8 +72,6 @@ describe('timelineActivitiesResolver (e2e)', () => {
           expect(timelineActivities).toHaveProperty('targetOpportunityId');
           expect(timelineActivities).toHaveProperty('targetNoteId');
           expect(timelineActivities).toHaveProperty('targetTaskId');
-          expect(timelineActivities).toHaveProperty('targetWorkflowId');
-          expect(timelineActivities).toHaveProperty('targetWorkflowVersionId');
           expect(timelineActivities).toHaveProperty('targetWorkflowRunId');
           expect(timelineActivities).toHaveProperty('targetPetId');
           expect(timelineActivities).toHaveProperty('targetSurveyResultId');

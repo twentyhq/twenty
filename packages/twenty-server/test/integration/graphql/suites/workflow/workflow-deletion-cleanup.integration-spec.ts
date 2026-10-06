@@ -1,19 +1,22 @@
 import { randomUUID } from 'node:crypto';
 
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  activateCoreWorkflowVersion,
+  CORE_WORKFLOW_MANUAL_TRIGGER,
+  type CreatedCoreWorkflow,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  createDraftFromCoreWorkflowVersion,
+  DELETE_CORE_WORKFLOWS_MUTATION,
+  deleteCoreWorkflows,
+  findCoreWorkflowVersionById,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { isDefined } from 'twenty-shared/utils';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const PREFIX = `Workflow deletion cleanup ${randomUUID()}`;
-
-type WorkflowVersionStep = {
-  id: string;
-  type: string;
-  settings: { input: Record<string, unknown> };
-};
 
 const graphql = async (query: string, variables?: object) => {
   const response = await workflowGraphqlRequest(query, variables);
@@ -41,188 +44,64 @@ describe('workflow deletion cleanup', () => {
     jest.useFakeTimers();
   });
 
-  describe('deleting a workspace workflow', () => {
-    type WorkspaceWorkflow = {
-      workflowId: string;
-      workflowVersionId: string;
-      coreWorkflowId: string;
-      coreWorkflowVersionId: string;
-    };
-
-    let deletedWorkflow: WorkspaceWorkflow;
-    let keptWorkflow: WorkspaceWorkflow;
+  describe('deleting a core workflow', () => {
+    let deletedWorkflow: CreatedCoreWorkflow;
+    let keptWorkflow: CreatedCoreWorkflow;
     let codeLogicFunctionId: string;
     let keptCodeLogicFunctionId: string;
 
-    const waitForCoreLink = async ({
-      workflowId,
-      workflowVersionId,
-    }: {
-      workflowId: string;
-      workflowVersionId: string;
-    }): Promise<
-      Pick<WorkspaceWorkflow, 'coreWorkflowId' | 'coreWorkflowVersionId'>
-    > => {
-      for (let attempt = 0; attempt < 40; attempt++) {
-        const [mirror] = await globalThis.testDataSource.query(
-          `SELECT w."coreWorkflowId", v."coreWorkflowVersionId"
-           FROM "${SCHEMA}".workflow w
-           JOIN "${SCHEMA}"."workflowVersion" v ON v."workflowId" = w.id
-           WHERE w.id = $1 AND v.id = $2`,
-          [workflowId, workflowVersionId],
-        );
-
-        if (mirror?.coreWorkflowId && mirror?.coreWorkflowVersionId) {
-          return {
-            coreWorkflowId: mirror.coreWorkflowId,
-            coreWorkflowVersionId: mirror.coreWorkflowVersionId,
-          };
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 250));
-      }
-
-      throw new Error(
-        `${workflowVersionId} was never linked to its core version`,
-      );
-    };
-
-    const createWorkspaceWorkflow = async (
+    const createManualTriggerWorkflow = async (
       name: string,
-    ): Promise<WorkspaceWorkflow> => {
-      const { createWorkflow } = await graphql(
-        'mutation CreateWorkflow($name: String!) { createWorkflow(data: { name: $name }) { id } }',
-        { name },
-      );
-      const { workflowVersions } = await graphql(
-        `
-          query FindDraftVersion($workflowId: UUID!) {
-            workflowVersions(filter: { workflowId: { eq: $workflowId } }) {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        `,
-        { workflowId: createWorkflow.id },
-      );
-      const workflowVersionId = workflowVersions.edges[0].node.id;
+    ): Promise<CreatedCoreWorkflow> => {
+      const createdCoreWorkflow = await createCoreWorkflow({ name });
 
-      await updateWorkflowVersionTrigger({
-        workflowVersionId,
-        trigger: {
-          name: 'Manual Trigger',
-          type: 'MANUAL',
-          settings: { outputSchema: {} },
-          nextStepIds: [],
-          position: { x: 0, y: 0 },
-        },
+      await updateCoreWorkflowVersionTrigger({
+        coreWorkflowVersionId: createdCoreWorkflow.coreWorkflowVersionId,
+        trigger: CORE_WORKFLOW_MANUAL_TRIGGER,
       });
 
-      return {
-        workflowId: createWorkflow.id,
-        workflowVersionId,
-        ...(await waitForCoreLink({
-          workflowId: createWorkflow.id,
-          workflowVersionId,
-        })),
-      };
-    };
-
-    const createStep = async ({
-      workflowVersionId,
-      stepType,
-      parentStepId,
-    }: {
-      workflowVersionId: string;
-      stepType: 'CODE' | 'FORM';
-      parentStepId: string;
-    }): Promise<WorkflowVersionStep> => {
-      await graphql(
-        `
-          mutation CreateStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        {
-          input: {
-            workflowVersionId,
-            stepType,
-            parentStepId,
-            position: { x: 200, y: 0 },
-          },
-        },
-      );
-
-      const { workflowVersion } = await graphql(
-        'query FindSteps($id: UUID!) { workflowVersion(filter: { id: { eq: $id } }) { steps } }',
-        { id: workflowVersionId },
-      );
-
-      return workflowVersion.steps.find(
-        (step: WorkflowVersionStep) => step.type === stepType,
-      );
+      return createdCoreWorkflow;
     };
 
     beforeAll(async () => {
-      deletedWorkflow = await createWorkspaceWorkflow(`${PREFIX} deleted`);
-      keptWorkflow = await createWorkspaceWorkflow(`${PREFIX} kept`);
+      deletedWorkflow = await createManualTriggerWorkflow(`${PREFIX} deleted`);
+      keptWorkflow = await createManualTriggerWorkflow(`${PREFIX} kept`);
 
-      const codeStep = await createStep({
-        workflowVersionId: deletedWorkflow.workflowVersionId,
+      const codeStep = await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,
         stepType: 'CODE',
-        parentStepId: 'trigger',
       });
-      const formStep = await createStep({
-        workflowVersionId: deletedWorkflow.workflowVersionId,
+      const formStep = await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,
         stepType: 'FORM',
         parentStepId: codeStep.id,
       });
 
       codeLogicFunctionId = codeStep.settings.input.logicFunctionId as string;
 
-      await graphql(
-        `
-          mutation UpdateStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-            }
-          }
-        `,
-        {
-          input: {
-            workflowVersionId: deletedWorkflow.workflowVersionId,
-            step: {
-              ...formStep,
-              settings: {
-                ...formStep.settings,
-                input: [
-                  {
-                    id: randomUUID(),
-                    name: 'note',
-                    label: 'Note',
-                    type: 'TEXT',
-                  },
-                ],
+      await updateCoreWorkflowVersionStep({
+        coreWorkflowVersionId: deletedWorkflow.coreWorkflowVersionId,
+        step: {
+          ...formStep,
+          settings: {
+            ...formStep.settings,
+            input: [
+              {
+                id: randomUUID(),
+                name: 'note',
+                label: 'Note',
+                type: 'TEXT',
               },
-            },
+            ],
           },
         },
-      );
+      });
 
-      await graphql(
-        'mutation Activate($workflowVersionId: UUID!) { activateWorkflowVersion(workflowVersionId: $workflowVersionId) }',
-        { workflowVersionId: deletedWorkflow.workflowVersionId },
-      );
+      await activateCoreWorkflowVersion(deletedWorkflow.coreWorkflowVersionId);
 
-      const keptCodeStep = await createStep({
-        workflowVersionId: keptWorkflow.workflowVersionId,
+      const keptCodeStep = await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId: keptWorkflow.coreWorkflowVersionId,
         stepType: 'CODE',
-        parentStepId: 'trigger',
       });
 
       keptCodeLogicFunctionId = keptCodeStep.settings.input
@@ -230,41 +109,29 @@ describe('workflow deletion cleanup', () => {
     }, 180000);
 
     afterAll(async () => {
-      for (const { workflowId } of [deletedWorkflow, keptWorkflow]) {
-        await workflowGraphqlRequest(
-          'mutation Destroy($id: ID!) { destroyWorkflow(id: $id) { id } }',
-          { id: workflowId },
-        );
-      }
+      await deleteCoreWorkflows(
+        [deletedWorkflow, keptWorkflow]
+          .filter(isDefined)
+          .map(({ coreWorkflowId }) => coreWorkflowId),
+      );
     });
 
     it('discarding a draft deletes its core version and the CODE functions only it uses', async () => {
-      const { createDraftFromWorkflowVersion } = await graphql(
-        `
-          mutation CreateDraft($input: CreateDraftFromWorkflowVersionInput!) {
-            createDraftFromWorkflowVersion(input: $input) {
-              id
-              steps
-            }
-          }
-        `,
-        {
-          input: {
-            workflowId: deletedWorkflow.workflowId,
-            workflowVersionIdToCopy: deletedWorkflow.workflowVersionId,
-          },
-        },
+      const draftCoreWorkflowVersionId =
+        await createDraftFromCoreWorkflowVersion({
+          coreWorkflowId: deletedWorkflow.coreWorkflowId,
+          coreWorkflowVersionIdToCopy: deletedWorkflow.coreWorkflowVersionId,
+        });
+      const draftVersion = await findCoreWorkflowVersionById(
+        draftCoreWorkflowVersionId,
+      );
+      const draftCodeStep = draftVersion?.steps?.find(
+        (step) => step.type === 'CODE',
       );
       const draftCodeLogicFunctionId =
-        createDraftFromWorkflowVersion.steps.find(
-          (step: WorkflowVersionStep) => step.type === 'CODE',
-        ).settings.input.logicFunctionId;
-      const { coreWorkflowVersionId: draftCoreWorkflowVersionId } =
-        await waitForCoreLink({
-          workflowId: deletedWorkflow.workflowId,
-          workflowVersionId: createDraftFromWorkflowVersion.id,
-        });
+        draftCodeStep?.settings.input.logicFunctionId;
 
+      expect(draftCodeLogicFunctionId).toEqual(expect.any(String));
       expect(draftCodeLogicFunctionId).not.toBe(codeLogicFunctionId);
 
       await graphql(
@@ -298,26 +165,17 @@ describe('workflow deletion cleanup', () => {
     it('deletes the versions, command menu item and CODE functions of the deleted workflow only', async () => {
       expect(
         await countRows(
-          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
-          [
-            deletedWorkflow.coreWorkflowVersionId,
-            deletedWorkflow.workflowVersionId,
-          ],
+          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+          [deletedWorkflow.coreWorkflowVersionId],
         ),
       ).toBe(1);
 
-      const { deleteCoreWorkflows } = await graphql(
-        `
-          mutation Delete($input: DeleteCoreWorkflowsInput!) {
-            deleteCoreWorkflows(input: $input) {
-              id
-            }
-          }
-        `,
+      const { deleteCoreWorkflows: deletedCoreWorkflows } = await graphql(
+        DELETE_CORE_WORKFLOWS_MUTATION,
         { input: { coreWorkflowIds: [deletedWorkflow.coreWorkflowId] } },
       );
 
-      expect(deleteCoreWorkflows).toEqual([
+      expect(deletedCoreWorkflows).toEqual([
         { id: deletedWorkflow.coreWorkflowId },
       ]);
       expect(
@@ -332,11 +190,8 @@ describe('workflow deletion cleanup', () => {
       ).toBe(0);
       expect(
         await countRows(
-          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
-          [
-            deletedWorkflow.coreWorkflowVersionId,
-            deletedWorkflow.workflowVersionId,
-          ],
+          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+          [deletedWorkflow.coreWorkflowVersionId],
         ),
       ).toBe(0);
       expect(

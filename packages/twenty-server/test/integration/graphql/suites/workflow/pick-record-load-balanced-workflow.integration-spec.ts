@@ -1,10 +1,21 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  ACTIVATE_CORE_WORKFLOW_VERSION_MUTATION,
+  activateCoreWorkflowVersion,
+  CORE_WORKFLOW_MANUAL_TRIGGER,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStepInput,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
+import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -20,89 +31,30 @@ const graphql = async (query: string, variables?: Record<string, unknown>) => {
 };
 
 describe('Pick Record Workflow - load balanced (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
   let pickRecordStepId: string | null = null;
   let leastLoadedCompanyId: string | null = null;
   let mostLoadedCompanyId: string | null = null;
   let createdOpportunityId: string | null = null;
 
   beforeAll(async () => {
-    const createWorkflowData = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "Pick Record Load Balanced Test" }) {
-          id
-        }
-      }
-    `);
-
-    createdWorkflowId = createWorkflowData.createWorkflow.id;
-
-    const getWorkflowData = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: createdWorkflowId },
-    );
-
-    createdWorkflowVersionId =
-      getWorkflowData.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
-      trigger: {
-        name: 'Manual Trigger',
-        type: 'MANUAL',
-        settings: { outputSchema: {} },
-        nextStepIds: [],
-        position: { x: 0, y: 0 },
-      },
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Pick Record Load Balanced Test',
     });
 
-    await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          stepType: 'PICK_RECORD',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
-    const getStepsData = await graphql(
-      `
-        query GetWorkflowVersion($id: UUID!) {
-          workflowVersion(filter: { id: { eq: $id } }) {
-            steps
-          }
-        }
-      `,
-      { id: createdWorkflowVersionId },
-    );
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
+      trigger: CORE_WORKFLOW_MANUAL_TRIGGER,
+    });
 
-    const pickRecordStep = getStepsData.workflowVersion.steps.find(
-      (step: { type: string }) => step.type === 'PICK_RECORD',
-    );
+    const pickRecordStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'PICK_RECORD',
+    });
 
     pickRecordStepId = pickRecordStep.id;
 
@@ -151,48 +103,21 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
 
     createdOpportunityId = opportunityData.createOpportunity.id;
 
-    await graphql(
-      `
-        mutation UpdateWorkflowVersionStep(
-          $input: UpdateWorkflowVersionStepInput!
-        ) {
-          updateWorkflowVersionStep(input: $input) {
-            id
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          step: {
-            ...pickRecordStep,
-            settings: {
-              ...pickRecordStep.settings,
-              input: {
-                objectName: 'company',
-                strategy: 'LOAD_BALANCED',
-                recordIds: [leastLoadedCompanyId, mostLoadedCompanyId],
-                loadBalance: {
-                  objectNameSingular: 'opportunity',
-                  fieldName: 'company',
-                },
-              },
-            },
-          },
+    await updateCoreWorkflowVersionStepInput({
+      coreWorkflowVersionId,
+      step: pickRecordStep,
+      input: {
+        objectName: 'company',
+        strategy: 'LOAD_BALANCED',
+        recordIds: [leastLoadedCompanyId, mostLoadedCompanyId],
+        loadBalance: {
+          objectNameSingular: 'opportunity',
+          fieldName: 'company',
         },
       },
-    );
+    });
 
-    const activateData = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: createdWorkflowVersionId },
-    );
-
-    expect(activateData.activateWorkflowVersion).toBe(true);
+    await activateCoreWorkflowVersion(coreWorkflowVersionId);
   });
 
   afterAll(async () => {
@@ -224,23 +149,14 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
       }
     }
 
-    if (createdWorkflowId) {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: createdWorkflowId },
-      );
+    if (isDefined(coreWorkflowId)) {
+      await deleteCoreWorkflows([coreWorkflowId]);
     }
   });
 
   it('picks the candidate with the fewest related records', async () => {
-    const workflowRunId = await runWorkflowVersion({
-      workflowVersionId: createdWorkflowVersionId!,
+    const workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
       payload: {},
     });
 
@@ -257,147 +173,53 @@ describe('Pick Record Workflow - load balanced (e2e)', () => {
   });
 
   it('rejects activation when the count-by relation points to another object', async () => {
-    const createData = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "Pick Record LB misrouted relation" }) {
-          id
-        }
-      }
-    `);
-
-    const misroutedWorkflowId = createData.createWorkflow.id;
+    const misroutedCoreWorkflow = await createCoreWorkflow({
+      name: 'Pick Record LB misrouted relation',
+    });
 
     try {
-      const workflowData = await graphql(
-        `
-          query GetWorkflow($id: UUID!) {
-            workflow(filter: { id: { eq: $id } }) {
-              versions {
-                edges {
-                  node {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-        { id: misroutedWorkflowId },
-      );
-
-      const misroutedWorkflowVersionId =
-        workflowData.workflow.versions.edges[0].node.id;
-
-      await updateWorkflowVersionTrigger({
-        workflowVersionId: misroutedWorkflowVersionId,
-        trigger: {
-          name: 'Manual Trigger',
-          type: 'MANUAL',
-          settings: { outputSchema: {} },
-          nextStepIds: [],
-          position: { x: 0, y: 0 },
-        },
+      await updateCoreWorkflowVersionTrigger({
+        coreWorkflowVersionId: misroutedCoreWorkflow.coreWorkflowVersionId,
+        trigger: CORE_WORKFLOW_MANUAL_TRIGGER,
       });
 
-      await graphql(
-        `
-          mutation CreateWorkflowVersionStep(
-            $input: CreateWorkflowVersionStepInput!
-          ) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        {
-          input: {
-            workflowVersionId: misroutedWorkflowVersionId,
-            stepType: 'PICK_RECORD',
-            parentStepId: 'trigger',
-            position: { x: 200, y: 0 },
-          },
-        },
-      );
-
-      const stepsData = await graphql(
-        `
-          query GetWorkflowVersion($id: UUID!) {
-            workflowVersion(filter: { id: { eq: $id } }) {
-              steps
-            }
-          }
-        `,
-        { id: misroutedWorkflowVersionId },
-      );
-
-      const pickRecordStep = stepsData.workflowVersion.steps.find(
-        (step: { type: string }) => step.type === 'PICK_RECORD',
-      );
+      const pickRecordStep = await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId: misroutedCoreWorkflow.coreWorkflowVersionId,
+        stepType: 'PICK_RECORD',
+      });
 
       // pointOfContact is a many-to-one relation on opportunity, but it points
       // to person, not the company pool — the silent misrouting the guard blocks.
-      await graphql(
-        `
-          mutation UpdateWorkflowVersionStep(
-            $input: UpdateWorkflowVersionStepInput!
-          ) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-            }
-          }
-        `,
-        {
-          input: {
-            workflowVersionId: misroutedWorkflowVersionId,
-            step: {
-              ...pickRecordStep,
-              settings: {
-                ...pickRecordStep.settings,
-                input: {
-                  objectName: 'company',
-                  strategy: 'LOAD_BALANCED',
-                  recordIds: [],
-                  loadBalance: {
-                    objectNameSingular: 'opportunity',
-                    fieldName: 'pointOfContact',
-                  },
-                },
-              },
-            },
+      await updateCoreWorkflowVersionStepInput({
+        coreWorkflowVersionId: misroutedCoreWorkflow.coreWorkflowVersionId,
+        step: pickRecordStep,
+        input: {
+          objectName: 'company',
+          strategy: 'LOAD_BALANCED',
+          recordIds: [],
+          loadBalance: {
+            objectNameSingular: 'opportunity',
+            fieldName: 'pointOfContact',
           },
         },
-      );
+      });
 
-      const activateResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-              activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-            }
-          `,
-          variables: { workflowVersionId: misroutedWorkflowVersionId },
-        });
+      const activateResponse = await workflowGraphqlRequest(
+        ACTIVATE_CORE_WORKFLOW_VERSION_MUTATION,
+        {
+          coreWorkflowVersionId: misroutedCoreWorkflow.coreWorkflowVersionId,
+        },
+      );
 
       expect(activateResponse.body.errors).toBeDefined();
       expect(activateResponse.body.errors[0].message).toContain(
         'many-to-one relation',
       );
-      expect(activateResponse.body.data?.activateWorkflowVersion).not.toBe(
+      expect(activateResponse.body.data?.activateCoreWorkflowVersion).not.toBe(
         true,
       );
     } finally {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: misroutedWorkflowId },
-      );
+      await deleteCoreWorkflows([misroutedCoreWorkflow.coreWorkflowId]);
     }
   });
 });

@@ -14,8 +14,6 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const APPLE_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
-
 const baseUrl = `http://localhost:${APP_PORT}`;
 
 type InstalledTestApplication = {
@@ -117,7 +115,6 @@ const CREATE_CORE_WORKFLOW = `
   mutation CreateCoreWorkflow($input: CreateCoreWorkflowInput!) {
     createCoreWorkflow(input: $input) {
       id
-      workspaceWorkflowId
     }
   }
 `;
@@ -279,19 +276,16 @@ describe('core workflow API with application credentials (integration)', () => {
 
     expect(createResponse.body.errors).toBeUndefined();
 
-    const { id: coreWorkflowId, workspaceWorkflowId } =
-      createResponse.body.data.createCoreWorkflow;
+    const { id: coreWorkflowId } = createResponse.body.data.createCoreWorkflow;
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
-    const [mirror] = await global.testDataSource.query(
-      `SELECT "createdBySource", "createdByWorkspaceMemberId"
-       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
-      [workspaceWorkflowId],
+    const [coreWorkflow] = await global.testDataSource.query(
+      `SELECT "createdByUserWorkspaceId" FROM core."workflow" WHERE id = $1`,
+      [coreWorkflowId],
     );
 
-    expect(mirror.createdBySource).toBe('APPLICATION');
-    expect(mirror.createdByWorkspaceMemberId).toBeNull();
+    expect(coreWorkflow.createdByUserWorkspaceId).toBeNull();
   });
 
   it('should attribute the workflow to the workspace member when a user creates it', async () => {
@@ -303,19 +297,16 @@ describe('core workflow API with application credentials (integration)', () => {
 
     expect(createResponse.body.errors).toBeUndefined();
 
-    const { id: coreWorkflowId, workspaceWorkflowId } =
-      createResponse.body.data.createCoreWorkflow;
+    const { id: coreWorkflowId } = createResponse.body.data.createCoreWorkflow;
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
-    const [mirror] = await global.testDataSource.query(
-      `SELECT "createdBySource", "createdByWorkspaceMemberId", "createdByName"
-       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
-      [workspaceWorkflowId],
+    const [coreWorkflow] = await global.testDataSource.query(
+      `SELECT "createdByUserWorkspaceId" FROM core."workflow" WHERE id = $1`,
+      [coreWorkflowId],
     );
 
-    expect(mirror.createdBySource).toBe('MANUAL');
-    expect(mirror.createdByWorkspaceMemberId).not.toBeNull();
+    expect(coreWorkflow.createdByUserWorkspaceId).not.toBeNull();
   });
 
   it('should keep the application role when a user acts through the application', async () => {
@@ -334,19 +325,16 @@ describe('core workflow API with application credentials (integration)', () => {
 
     expect(createResponse.body.errors).toBeUndefined();
 
-    const { id: coreWorkflowId, workspaceWorkflowId } =
-      createResponse.body.data.createCoreWorkflow;
+    const { id: coreWorkflowId } = createResponse.body.data.createCoreWorkflow;
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
-    const [mirror] = await global.testDataSource.query(
-      `SELECT "createdBySource", "createdByWorkspaceMemberId"
-       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
-      [workspaceWorkflowId],
+    const [coreWorkflow] = await global.testDataSource.query(
+      `SELECT "createdByUserWorkspaceId" FROM core."workflow" WHERE id = $1`,
+      [coreWorkflowId],
     );
 
-    expect(mirror.createdBySource).toBe('MANUAL');
-    expect(mirror.createdByWorkspaceMemberId).not.toBeNull();
+    expect(coreWorkflow.createdByUserWorkspaceId).not.toBeNull();
   });
 
   it('should refuse an API key, which is neither a user nor an application', async () => {
