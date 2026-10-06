@@ -6,7 +6,6 @@ import {
 
 import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
-import { type SlackAssistantAgentThread } from 'src/logic-functions/types/slack-assistant-agent-thread.type';
 import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 
 type RunSlackAssistantAgentInput = Pick<
@@ -14,7 +13,7 @@ type RunSlackAssistantAgentInput = Pick<
   'agentUniversalIdentifier' | 'runAsWorkspaceMemberId'
 > & {
   messages: SlackAssistantAgentMessage[];
-  thread: SlackAssistantAgentThread;
+  thread: { key: string; title?: string };
   deadlineAtMs: number;
 };
 
@@ -33,8 +32,7 @@ export const runSlackAssistantAgentWithDeadline = async ({
     };
   }
 
-  // the installed SDK predates the thread option but forwards the input as is
-  const input: RunAgentInput & { thread: SlackAssistantAgentThread } = {
+  const input: RunAgentInput & Pick<RunSlackAssistantAgentInput, 'thread'> = {
     agentUniversalIdentifier,
     messages,
     runAsWorkspaceMemberId,

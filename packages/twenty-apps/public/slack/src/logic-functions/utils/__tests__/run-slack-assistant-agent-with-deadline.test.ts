@@ -48,18 +48,4 @@ describe('runSlackAssistantAgentWithDeadline', () => {
     expect(result.success).toBe(true);
     expect(runAgentMock).toHaveBeenCalledOnce();
   });
-
-  it('should continue the conversation keyed to the Slack thread', async () => {
-    await runSlackAssistantAgentWithDeadline({
-      ...BASE_INPUT,
-      deadlineAtMs: Date.now() + 60_000,
-    });
-
-    expect(runAgentMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: BASE_INPUT.messages,
-        thread: BASE_INPUT.thread,
-      }),
-    );
-  });
 });

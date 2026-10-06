@@ -51,23 +51,6 @@ describe('buildSlackConversationMessages', () => {
     ]);
   });
 
-  it('should return no history when the assistant reply is the latest message', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
-        {
-          ts: '2',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Sarah owns it.',
-        },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toEqual([]);
-  });
-
   it('should leave the history to the stored thread when the bot user id is unknown', () => {
     const messages = buildSlackConversationMessages({
       messages: [

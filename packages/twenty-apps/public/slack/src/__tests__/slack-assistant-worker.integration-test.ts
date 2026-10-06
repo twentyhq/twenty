@@ -208,9 +208,6 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true });
 
-    // Earlier turns live in the stored conversation, so only what members
-    // posted after the bot's last reply precedes the request, and the message
-    // that triggered this run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
       {
         role: 'user',
@@ -223,7 +220,6 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
-    // The run continues the conversation keyed to the Slack thread.
     expect(appRuntime.agentRuns[appRuntime.agentRuns.length - 1]).toEqual(
       expect.objectContaining({
         thread: {

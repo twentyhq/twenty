@@ -39,8 +39,6 @@ const findLastAssistantReplyIndex = ({
   return -1;
 };
 
-// The run is keyed to the Slack thread, so the server already holds every turn
-// up to the assistant's last reply; only what members posted after it is new
 export const buildSlackConversationMessages = ({
   messages,
   assistantBotUserId,
@@ -48,8 +46,6 @@ export const buildSlackConversationMessages = ({
   messages: ReadonlyArray<SlackThreadMessage>;
   assistantBotUserId: string | undefined;
 }): SlackAssistantAgentMessage[] => {
-  // without the bot's id the last reply cannot be found, and replaying the
-  // whole thread would duplicate the turns the server holds
   if (!isNonEmptyString(assistantBotUserId)) {
     return [];
   }

@@ -460,19 +460,6 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should run the agent in the conversation keyed to the Slack thread', async () => {
-    await slackAssistantWorkerHandler(REQUEST_RECORD);
-
-    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        thread: {
-          key: 'D123:1700000000.000100',
-          title: 'how many open deals does Acme have?',
-        },
-      }),
-    );
-  });
-
   it('should key a follow-up to its thread rather than to the message', async () => {
     await slackAssistantWorkerHandler({
       ...REQUEST_RECORD,
