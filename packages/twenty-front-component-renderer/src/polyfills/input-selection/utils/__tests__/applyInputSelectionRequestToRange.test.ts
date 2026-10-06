@@ -101,15 +101,15 @@ describe('applyInputSelectionRequestToRange', () => {
         range: COLLAPSED_RANGE,
         request: {
           method: 'setSelectionRange',
-          start: 4294967295,
-          end: 2,
+          start: 2,
+          end: 4294967295,
           direction: 'none',
         },
         valueLength: VALUE_LENGTH,
       }),
     ).toEqual({
       selectionStart: 2,
-      selectionEnd: 2,
+      selectionEnd: VALUE_LENGTH,
       selectionDirection: 'none',
     });
   });

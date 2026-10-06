@@ -36,9 +36,7 @@ export const installInputSelectionPolyfill = ({
         },
         set(this: SelectorElementLike, value: unknown) {
           if (!supportsInputSelectionRange(this)) {
-            throw createUnsupportedInputSelectionError(
-              this as SelectorElementLike,
-            );
+            throw createUnsupportedInputSelectionError(this);
           }
           selectionStore.request({
             element: this,
@@ -57,9 +55,7 @@ export const installInputSelectionPolyfill = ({
       },
       set(this: SelectorElementLike, value: unknown) {
         if (!supportsInputSelectionRange(this)) {
-          throw createUnsupportedInputSelectionError(
-            this as SelectorElementLike,
-          );
+          throw createUnsupportedInputSelectionError(this);
         }
         selectionStore.request({
           element: this,
@@ -72,6 +68,7 @@ export const installInputSelectionPolyfill = ({
     });
     Object.defineProperty(elementPrototype, 'select', {
       configurable: true,
+      writable: true,
       value(this: SelectorElementLike) {
         if (!supportsInputSelectMethod(this)) {
           return;
@@ -84,6 +81,7 @@ export const installInputSelectionPolyfill = ({
     });
     Object.defineProperty(elementPrototype, 'setSelectionRange', {
       configurable: true,
+      writable: true,
       value(
         this: SelectorElementLike,
         start: unknown,
@@ -91,9 +89,7 @@ export const installInputSelectionPolyfill = ({
         direction?: unknown,
       ) {
         if (!supportsInputSelectionRange(this)) {
-          throw createUnsupportedInputSelectionError(
-            this as SelectorElementLike,
-          );
+          throw createUnsupportedInputSelectionError(this);
         }
         selectionStore.request({
           element: this,
