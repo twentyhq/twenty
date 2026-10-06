@@ -21,6 +21,7 @@ import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/uti
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -284,6 +285,7 @@ export class AgentRunService
             userWorkspaceId: runAsContext.authContext.userWorkspaceId,
           }
         : { type: 'application', applicationId: agentContext.application.id },
+      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
   }
 

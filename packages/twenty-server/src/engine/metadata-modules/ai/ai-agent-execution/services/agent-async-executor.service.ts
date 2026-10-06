@@ -46,7 +46,7 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
@@ -330,6 +330,7 @@ export class AgentAsyncExecutorService {
     priorMessages = [],
     pausingTools = {},
     canProposeToolCalls = false,
+    usageOperationType,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
@@ -347,6 +348,7 @@ export class AgentAsyncExecutorService {
     additionalRoleRestrictionIds?: string[];
     additionalExcludedToolNames?: readonly string[];
     toolLoadingStrategy?: AgentToolLoadingStrategy;
+    usageOperationType: UsageOperationType;
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
@@ -359,7 +361,7 @@ export class AgentAsyncExecutorService {
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      operationType: usageOperationType,
       spenders: { userWorkspaceId, agentId: agent?.id },
     });
 
@@ -471,7 +473,7 @@ export class AgentAsyncExecutorService {
               ),
             },
             workspaceId,
-            operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            operationType: usageOperationType,
             spenders: { userWorkspaceId, agentId: agent?.id },
           });
 
@@ -588,7 +590,7 @@ export class AgentAsyncExecutorService {
               workspaceId,
               userWorkspaceId: userWorkspaceId ?? null,
               agentId: agent?.id ?? null,
-              operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+              operationType: usageOperationType,
             },
           });
         },
@@ -713,7 +715,7 @@ export class AgentAsyncExecutorService {
         creditsUsedMicro,
         totalTokens,
         modelId,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
+        usageOperationType,
         agent?.id ?? null,
         userWorkspaceId,
       );

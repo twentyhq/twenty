@@ -474,6 +474,7 @@ export class AgentRunnerService {
         executionContext.additionalRoleRestrictionIds,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,
+      usageOperationType: executionContext.usageOperationType,
     };
   }
 
