@@ -200,7 +200,7 @@ describe('applyMeetingInteractions', () => {
     });
   });
 
-  it('skips a meeting that has not started yet', async () => {
+  it('skips a meeting that has not started yet and returns its start time', async () => {
     const { client, mutationMock } = buildClient([
       buildParticipant({
         calendarEventId: CALENDAR_EVENT_ID,
@@ -208,11 +208,12 @@ describe('applyMeetingInteractions', () => {
       }),
     ]);
 
-    await applyMeetingInteractions(client, [
+    const upcomingMeetingStartsAts = await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
     ]);
 
     expect(mutationMock).not.toHaveBeenCalled();
+    expect(upcomingMeetingStartsAts).toEqual([FUTURE_EVENT_STARTS_AT]);
   });
 
   it('skips a canceled meeting', async () => {

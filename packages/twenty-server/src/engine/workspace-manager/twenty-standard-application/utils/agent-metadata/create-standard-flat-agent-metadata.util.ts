@@ -45,7 +45,6 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
         isCustom: false,
         isSystem: false,
         modelConfiguration: {},
-        evaluationInputs: [],
       },
     }),
 } satisfies {

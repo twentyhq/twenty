@@ -46,7 +46,6 @@ describe('Standard field writability', () => {
               STANDARD_OBJECTS.agentMessage.universalIdentifier,
               STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
               STANDARD_OBJECTS.agentTurn.universalIdentifier,
-              STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
               STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
               STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
               STANDARD_OBJECTS.messageSuppression.universalIdentifier,

@@ -44,7 +44,7 @@ type RouteTriggerWorkspace = Pick<
 type RouteTriggerRequestContext = {
   workspace: RouteTriggerWorkspace;
   applicationId: string | null;
-  isIsolatedOrigin: boolean;
+  isPublicDomain: boolean;
   authenticationContext: RawAuthContext | undefined;
 };
 
@@ -94,7 +94,7 @@ export class RouteTriggerService {
     const {
       workspace: workspaceFromHost,
       publicDomain,
-      isIsolatedOrigin,
+      isPublicDomain,
     } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
       host,
     );
@@ -125,7 +125,7 @@ export class RouteTriggerService {
     return {
       workspace,
       applicationId: publicDomain?.applicationId ?? null,
-      isIsolatedOrigin,
+      isPublicDomain,
       authenticationContext,
     };
   }
@@ -174,13 +174,13 @@ export class RouteTriggerService {
   private assertLegacyRouteIsServableOrThrow({
     logicFunction,
     workspace,
-    isIsolatedOrigin,
+    isPublicDomain,
   }: {
     logicFunction: LogicFunctionEntity;
     workspace: RouteTriggerWorkspace;
-    isIsolatedOrigin: boolean;
+    isPublicDomain: boolean;
   }) {
-    if (isIsolatedOrigin) {
+    if (isPublicDomain) {
       return;
     }
 
@@ -255,13 +255,9 @@ export class RouteTriggerService {
   }: {
     request: Request;
     httpMethod: HTTPMethod;
-  }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
-    const {
-      workspace,
-      applicationId,
-      isIsolatedOrigin,
-      authenticationContext,
-    } = await this.resolveRouteTriggerRequestContextOrFail(request);
+  }): Promise<{ response: RouteTriggerResponse; isPublicDomain: boolean }> {
+    const { workspace, applicationId, isPublicDomain, authenticationContext } =
+      await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find(workspace.id, {
@@ -281,7 +277,7 @@ export class RouteTriggerService {
     this.assertLegacyRouteIsServableOrThrow({
       logicFunction,
       workspace,
-      isIsolatedOrigin,
+      isPublicDomain,
     });
 
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
@@ -321,7 +317,7 @@ export class RouteTriggerService {
         pathParameters: pathParams,
         forwardedRequestHeaders:
           httpRouteSettings?.forwardedRequestHeaders ?? [],
-        forwardAllHeaders: isIsolatedOrigin,
+        forwardAllHeaders: isPublicDomain,
         userId,
         userWorkspaceId,
       });
@@ -359,6 +355,6 @@ export class RouteTriggerService {
       );
     }
 
-    return { response: outcome.response, isIsolatedOrigin };
+    return { response: outcome.response, isPublicDomain };
   }
 }

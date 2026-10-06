@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import {
+  AGENT_HISTORY_TABLES,
+  ACTIVE_AGENT_HISTORY_TABLES,
+  type ActiveAgentHistoryTable,
+} from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
@@ -10,7 +14,7 @@ import { type AgentHistoryMigrationState } from 'src/database/commands/agent-his
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type Storage = AgentHistoryMigrationState['storage'];
-type HistoryTable = (typeof AGENT_HISTORY_TABLES)[number];
+type HistoryTable = ActiveAgentHistoryTable;
 
 @Injectable()
 export class AgentHistoryMigrationDataService {
@@ -23,7 +27,10 @@ export class AgentHistoryMigrationDataService {
     workspaceId: string;
     storage: Storage;
   }): Promise<void> {
-    for (const table of [...AGENT_HISTORY_TABLES].reverse()) {
+    const tables =
+      storage === 'core' ? AGENT_HISTORY_TABLES : ACTIVE_AGENT_HISTORY_TABLES;
+
+    for (const table of [...tables].reverse()) {
       let rows: { id: string }[];
       do {
         rows = await runner.query(

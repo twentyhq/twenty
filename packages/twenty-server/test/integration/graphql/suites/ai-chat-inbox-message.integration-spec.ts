@@ -83,7 +83,7 @@ describe('Sending an inbox message as an application', () => {
     global.testDataSource.query(
       `SELECT id, role, "isHidden", "senderUserWorkspaceId", "senderApplicationId"
        FROM "${schema}"."agentMessage" WHERE "threadId" = $1
-       ORDER BY "processedAt" ASC`,
+       ORDER BY "processedAt" ASC, "createdAt" ASC`,
       [id],
     );
 
@@ -189,9 +189,9 @@ describe('Sending an inbox message as an application', () => {
     });
     expect(messages).toEqual([
       expect.objectContaining({
-        role: 'user',
-        isHidden: true,
-        senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        role: 'system',
+        isHidden: false,
+        senderUserWorkspaceId: null,
         senderApplicationId: null,
       }),
       expect.objectContaining({

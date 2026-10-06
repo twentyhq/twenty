@@ -9,11 +9,13 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
+import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 
@@ -22,6 +24,8 @@ export class AgentConversationReaderService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
@@ -34,14 +38,26 @@ export class AgentConversationReaderService {
     threadId: string;
     actor?: AgentConversationActor;
   }): Promise<ExtendedUIMessage[]> {
-    const messages = await this.messageRepository.find(workspaceId, {
-      where: { threadId },
-      order: {
-        processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
-        createdAt: 'ASC',
-      },
-      relations: ['parts', 'parts.file'],
-    });
+    const [threadMessages, failedTurns] = await Promise.all([
+      this.messageRepository.find(workspaceId, {
+        where: { threadId },
+        order: {
+          processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
+          createdAt: 'ASC',
+        },
+        relations: ['parts', 'parts.file'],
+      }),
+      this.turnRepository.find(workspaceId, {
+        where: { threadId, status: AgentTurnStatus.FAILED },
+        select: ['id'],
+      }),
+    ]);
+
+    // a failed run is kept on record but leaves the conversation as it was
+    const failedTurnIds = new Set(failedTurns.map(({ id }) => id));
+    const messages = threadMessages.filter(
+      ({ turnId }) => !isDefined(turnId) || !failedTurnIds.has(turnId),
+    );
 
     const turnIdsActedByOthers = isDefined(actor)
       ? findTurnIdsActedByOthers({ messages, actor })

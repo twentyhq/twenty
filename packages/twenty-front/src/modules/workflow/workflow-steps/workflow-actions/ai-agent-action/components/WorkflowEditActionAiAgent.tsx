@@ -21,6 +21,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { IconLock, IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
@@ -79,9 +80,15 @@ export const WorkflowEditActionAiAgent = ({
   const [humanInputInstructions, setHumanInputInstructions] = useState(
     action.settings.input.humanInputInstructions ?? '',
   );
+  const [recipientWorkspaceMemberId, setRecipientWorkspaceMemberId] = useState(
+    action.settings.input.workspaceMemberId,
+  );
+  const [conversation, setConversation] = useState(
+    action.settings.input.conversation,
+  );
 
-  // saves both texts from the latest render, so editing one does not drop a pending edit of the other
-  const saveTexts = useDebouncedCallback(() => {
+  // saves every field from the latest render, so editing one does not drop a pending edit of another
+  const saveInput = useDebouncedCallback(() => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -94,6 +101,8 @@ export const WorkflowEditActionAiAgent = ({
           ...action.settings.input,
           prompt,
           humanInputInstructions,
+          workspaceMemberId: recipientWorkspaceMemberId,
+          conversation,
         },
       },
     });
@@ -101,12 +110,22 @@ export const WorkflowEditActionAiAgent = ({
 
   const handleAgentPromptChange = (newPrompt: string) => {
     setPrompt(newPrompt);
-    saveTexts();
+    saveInput();
   };
 
   const handleHumanInputInstructionsChange = (newInstructions: string) => {
     setHumanInputInstructions(newInstructions);
-    saveTexts();
+    saveInput();
+  };
+
+  const handleRecipientChange = (workspaceMemberId: string | undefined) => {
+    setRecipientWorkspaceMemberId(workspaceMemberId);
+    saveInput();
+  };
+
+  const handleConversationChange = (nextConversation: WorkflowConversation) => {
+    setConversation(nextConversation);
+    saveInput();
   };
 
   const tabs: SingleTabProps[] = [
@@ -215,6 +234,10 @@ export const WorkflowEditActionAiAgent = ({
               onHumanInputInstructionsChange={
                 handleHumanInputInstructionsChange
               }
+              recipientWorkspaceMemberId={recipientWorkspaceMemberId}
+              onRecipientChange={handleRecipientChange}
+              conversation={conversation}
+              onConversationChange={handleConversationChange}
               onActionUpdate={
                 actionOptions.readonly === true
                   ? undefined
