@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
+import { useEffect } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconX } from 'twenty-ui/icon';
@@ -39,6 +40,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   const toolArguments = isUndefined(stagedArguments)
     ? proposal.arguments
     : stagedArguments;
+
+  // staged arguments live as long as the card, so a remounted card starts again from the proposal
+  useEffect(() => () => setStagedArguments(undefined), [setStagedArguments]);
 
   const { loading: isToolIndexLoading } = useGetToolIndex();
   const frontComponentId = useFrontComponentIdByToolName().get(

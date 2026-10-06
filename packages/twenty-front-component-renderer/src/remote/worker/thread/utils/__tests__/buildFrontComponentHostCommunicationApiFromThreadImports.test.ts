@@ -73,6 +73,9 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.copyToClipboard).toBe(
       hostThreadImports.copyToClipboard,
     );
+    expect(hostCommunicationApi.updateToolCallArguments).toBe(
+      hostThreadImports.updateToolCallArguments,
+    );
     expect(hostCommunicationApi.storageSet).toBe(hostThreadImports.storageSet);
     expect(hostCommunicationApi.storageDelete).toBe(
       hostThreadImports.storageDelete,

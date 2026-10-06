@@ -127,6 +127,23 @@ describe('AiChatToolCallApprovalCard', () => {
     });
   });
 
+  it('starts again from the proposal once the card is gone', () => {
+    const store = createStore();
+    const stagedArgumentsAtom = agentChatToolCallArgumentsFamilyState.getAtom(
+      'call-1',
+      null,
+    );
+
+    store.set(stagedArgumentsAtom, null);
+    const { unmount } = renderCard(PROPOSAL, store);
+
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
+
+    unmount();
+
+    expect(store.get(stagedArgumentsAtom)).toBeUndefined();
+  });
+
   it('shows what the call does and which tool it runs', () => {
     renderCard();
 
