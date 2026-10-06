@@ -13,8 +13,8 @@ scenarios. Shared types live in `types/` and shared constants in `constants/`;
 known-failure scenarios that assert sandbox errors declare the patterns they
 require.
 `createGalleryRenderTest` checks the exact set of expected failed components.
-`createOverlayOpenTest` checks that a trigger opens its overlay and pins the
-popup content as absent from the page. `createDropdownOpenTest` applies it to
+`createOverlayOpenTest` checks that a trigger opens its overlay and waits for
+visible popup content. `createDropdownOpenTest` applies it to
 the Dropdown-based popups.
 `expectSandboxErrors` requires each listed known error and rejects any other
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
@@ -38,6 +38,7 @@ effect within the interaction timeout.
 | `twenty-ui-dialog`               | Dialog                                                                                                                              |
 | `twenty-ui-menu`                 | Menu                                                                                                                                |
 | `twenty-ui-select`               | Select                                                                                                                              |
+| `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow and confinement                                                                     |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
 | `twenty-ui-toast`                | Toast                                                                                                                               |
 | `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
@@ -67,6 +68,14 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
+Body portals render in a separate layer within the front component, with a
+200px margin around its box. Oversized fixed content is clipped for painting
+and pointer interaction. Browser top-layer promotion through modal dialogs,
+popovers and fullscreen is blocked to preserve those bounds. Dropdown stories
+cover page navigation, selection, closing and reopening in React and Preact.
+The portal fixture also verifies nearby overflow, callbacks, removal, and a
+host control that stays usable outside the allowed area.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -81,7 +90,7 @@ expected-to-fail by the runner.
 | --- | --- |
 | NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
+| Popover, Dialog, AlertDialog, Menu, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
@@ -134,7 +143,7 @@ component never reach the worker, so dismissal on a press elsewhere on the page
 is not covered.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
-navigation, and overlay content, dismissal, and focus restoration. The fixtures
+navigation, dismissal, and focus restoration across overlay components. The fixtures
 already include the controlled state, compound parts, and callback output for
 those checks. Passing display, ListItem, and Toast stories verify rendering/CSS
 or interaction behavior directly.

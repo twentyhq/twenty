@@ -37,6 +37,9 @@ import {
   avatarControlsTest,
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
+import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
+
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
@@ -353,6 +356,20 @@ export const MenuPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-menu',
   runtime: 'preact',
   play: menuTest,
+});
+
+export const PortalBoundsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-portals',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: portalBoundsTest,
+});
+
+export const PortalBoundsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-portals',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: portalBoundsTest,
 });
 
 export const DropdownReact: Story = createGalleryStory({

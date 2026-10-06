@@ -9,6 +9,20 @@ import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
+const PORTAL_ESCAPE_PROPS = new Set([
+  'popover',
+  'popovertarget',
+  'popovertargetaction',
+  'popovertargetelement',
+  'command',
+  'commandfor',
+  'commandforelement',
+  'interestfor',
+  'interestforelement',
+  'dangerouslysetinnerhtml',
+  'innerhtml',
+  'outerhtml',
+]);
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -22,7 +36,11 @@ export const buildHostReactPropsFromRemoteProps = ({
   const hostReactProps: Record<string, unknown> = {};
 
   for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
-    if (INTERNAL_PROPS.has(remotePropName) || isUndefined(remotePropValue)) {
+    if (
+      INTERNAL_PROPS.has(remotePropName) ||
+      PORTAL_ESCAPE_PROPS.has(remotePropName.toLowerCase()) ||
+      isUndefined(remotePropValue)
+    ) {
       continue;
     }
 
