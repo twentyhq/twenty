@@ -1182,6 +1182,59 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ).toEqual(['user', 'assistant']);
     });
 
+    it('keeps the usage and the conversation in the step log when its tool calls outgrow it', async () => {
+      const largeOutput = 'x'.repeat(64_000);
+      const toolCallIds = ['find-1', 'find-2', 'find-3', 'find-4', 'find-5'];
+
+      jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(
+          agentResult({
+            result: { response: 'Quote sent' },
+            steps: [
+              {
+                content: toolCallIds.flatMap((toolCallId) => [
+                  {
+                    type: 'tool-call',
+                    toolCallId,
+                    toolName: 'find_companies',
+                    input: {},
+                  },
+                  {
+                    type: 'tool-result',
+                    toolCallId,
+                    toolName: 'find_companies',
+                    input: {},
+                    output: { success: true, result: largeOutput },
+                  },
+                ]),
+              },
+            ] as AgentExecutionResult['steps'],
+          }),
+        );
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.stepLogs[agent.id]).toMatchObject({
+        details: {
+          type: 'AI_AGENT',
+          usage: { totalTokens: 2 },
+          toolCalls: [],
+          threadId: expect.any(String),
+        },
+        truncated: { droppedEntries: toolCallIds.length },
+      });
+    });
+
     it('continues the conversation its key names across runs', async () => {
       const executeAgent = jest
         .spyOn(

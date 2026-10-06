@@ -75,12 +75,27 @@ export class WorkflowRunStepLogWorkspaceService {
     summary: AgentRunSummary;
     threadId: string;
   }): Promise<void> {
+    const stepLog = buildAiAgentStepLog({ summary, threadId });
+
     try {
       await this.setStepLog({
         workflowRunId,
         workspaceId,
         stepId,
-        stepLog: buildAiAgentStepLog({ summary, threadId }),
+        // tool calls are what outgrows the cap, and the usage and the conversation link must stay
+        stepLog:
+          computeSizeBytes(stepLog) > MAX_STEP_LOG_BYTES
+            ? {
+                ...buildAiAgentStepLog({
+                  summary: { ...summary, toolCalls: [] },
+                  threadId,
+                }),
+                truncated: {
+                  droppedEntries: summary.toolCalls.length,
+                  droppedBytes: computeSizeBytes(summary.toolCalls),
+                },
+              }
+            : stepLog,
       });
     } catch (error) {
       this.logger.warn(
