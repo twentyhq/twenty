@@ -4,14 +4,14 @@ import {
   AGENT_TRIGGER_LIMITS,
   type AgentTrigger,
 } from 'twenty-shared/application';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconClock, IconAddressBook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreAgentTriggerCard } from '@/object-core/agents/components/CoreAgentTriggerCard';
 import { buildDefaultCoreAgentTrigger } from '@/object-core/agents/utils/buildDefaultCoreAgentTrigger';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 
 const StyledTriggerList = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ export const CoreAgentTriggersTab = ({
   disabled,
 }: CoreAgentTriggersTabProps) => {
   const { t } = useLingui();
-  const objectOptions = useWorkflowObjectSelectOptions();
+  const objectOptions = useObjectMetadataItemSelectOptions();
 
   const defaultObjectNameSingular =
     objectOptions.find((option) => option.value === 'company')?.value ??

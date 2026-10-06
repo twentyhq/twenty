@@ -84,7 +84,7 @@
     "ink": "^6.8.0",
     "inquirer": "^14.0.0",
     "jsonc-parser": "^3.2.0",
-    "preact": "^10.28.3",
+    "preact": "^11.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "semver": "7.6.3",

@@ -7,11 +7,8 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Dropdown,
-  LightIconButton,
-  type ColorLabels,
-} from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown, type ColorLabels } from 'twenty-ui/components/navigation';
 import {
   IconCheck,
   IconDotsVertical,

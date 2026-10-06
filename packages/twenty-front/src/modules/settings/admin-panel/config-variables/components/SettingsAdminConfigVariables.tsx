@@ -18,7 +18,7 @@ import {
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 const StyledControlsContainer = styled.div`
   display: flex;

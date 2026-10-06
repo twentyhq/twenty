@@ -6,7 +6,7 @@ import {
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

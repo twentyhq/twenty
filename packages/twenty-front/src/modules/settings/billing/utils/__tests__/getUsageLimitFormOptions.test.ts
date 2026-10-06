@@ -25,6 +25,7 @@ const DEFINITIONS = {
         },
       ],
       allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      operatorOnlyScopes: [],
     },
     {
       resourceType: UsageResourceType.LOGIC_FUNCTION,
@@ -35,10 +36,36 @@ const DEFINITIONS = {
         },
       ],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
+      operatorOnlyScopes: [],
+    },
+    {
+      resourceType: UsageResourceType.EMAIL,
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.EMAIL_SEND,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      operatorOnlyScopes: [
+        {
+          operationType: UsageOperationType.EMAIL_SEND,
+          spenderType: 'workspace',
+          unit: UsageUnit.INVOCATION,
+          periodUnit: 'day',
+        },
+      ],
     },
   ],
   isIntraWorkspaceLimitEntitled: true,
   hasAllowancePeriod: false,
+};
+
+const EMAIL_SEND_VALUES = {
+  ...EMPTY_USAGE_LIMIT_FORM_VALUES,
+  resourceType: UsageResourceType.EMAIL,
+  operationType: UsageOperationType.EMAIL_SEND,
+  unit: UsageUnit.INVOCATION,
 };
 
 describe('getUsageLimitFormOptions', () => {
@@ -51,6 +78,7 @@ describe('getUsageLimitFormOptions', () => {
     expect(options.resourceTypes).toEqual([
       UsageResourceType.AI,
       UsageResourceType.LOGIC_FUNCTION,
+      UsageResourceType.EMAIL,
     ]);
     expect(options.operationTypes).toEqual([]);
     expect(options.units).toEqual([]);
@@ -119,5 +147,36 @@ describe('getUsageLimitFormOptions', () => {
       'month',
       'allowancePeriod',
     ]);
+  });
+
+  it('leaves out the period of a scope only an operator can set', () => {
+    const options = getUsageLimitFormOptions({
+      definitions: DEFINITIONS,
+      values: EMAIL_SEND_VALUES,
+    });
+
+    expect(options.periodUnits).toEqual(['week', 'month']);
+  });
+
+  it('offers that period again in another unit', () => {
+    const options = getUsageLimitFormOptions({
+      definitions: DEFINITIONS,
+      values: { ...EMAIL_SEND_VALUES, unit: UsageUnit.CREDIT },
+    });
+
+    expect(options.periodUnits).toEqual(['day', 'week', 'month']);
+  });
+
+  it('offers that period again for a single member', () => {
+    const options = getUsageLimitFormOptions({
+      definitions: DEFINITIONS,
+      values: {
+        ...EMAIL_SEND_VALUES,
+        spenderType: 'userWorkspace',
+        spenderId: 'a3c1b1e2-4f3d-4c5b-9a8e-1f2d3c4b5a6e',
+      },
+    });
+
+    expect(options.periodUnits).toEqual(['day', 'week', 'month']);
   });
 });

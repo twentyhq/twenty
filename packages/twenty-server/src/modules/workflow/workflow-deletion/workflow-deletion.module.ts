@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowDeletionCleanupWorkspaceService } from 'src/modules/workflow/workflow-deletion/services/workflow-deletion-cleanup.workspace-service';
 import { WorkflowThrottlingModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-throttling.module';
 
 @Module({
-  imports: [WorkspaceCacheModule, WorkflowThrottlingModule],
+  imports: [WorkflowThrottlingModule],
   providers: [WorkflowDeletionCleanupWorkspaceService],
   exports: [WorkflowDeletionCleanupWorkspaceService],
 })

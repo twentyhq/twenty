@@ -7,7 +7,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';

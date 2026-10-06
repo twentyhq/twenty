@@ -4,7 +4,7 @@ description: Present lightweight icon actions with standard or subtle emphasis.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-button.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
 
 `LightIconButton` composes [IconButton](/ui/components/input/icon-button) with a ghost surface and a small size. Supply an accessible name and decorative icon content.
 
@@ -17,7 +17,7 @@ import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-bu
 ## Usage
 
 ```tsx
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const AddAction = () => (
@@ -46,7 +46,8 @@ Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-gr
 `MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
 
 ```tsx
-import { LightIconButton, MenuItem } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 

@@ -19,7 +19,7 @@ For a standalone React application, install the library and its peer dependencie
 yarn add twenty-ui react@^19 react-dom@^19
 ```
 
-The [code editor](/ui/components/code-editor) has a separate entry point, `twenty-ui/components/code-editor`. Other components do not require Monaco. To use the code editor, install its optional peer dependencies and configure Monaco workers for your bundler before mounting it:
+The [code editor](/ui/components/code-editor/code-editor) has a separate entry point, `twenty-ui/components/code-editor`. Other components do not require Monaco. To use the code editor, install its optional peer dependencies and configure Monaco workers for your bundler before mounting it:
 
 ```bash
 yarn add @monaco-editor/react monaco-editor
@@ -62,28 +62,35 @@ from the application.
 
 Use [MainButton](/ui/components/input/main-button) for prominent actions and
 [LightButton](/ui/components/input/light-button) for lightweight actions. Both
-come from `twenty-ui/components` and share the foundational
+come from `twenty-ui/components/input` and share the foundational
 [Button](/ui/primitives/input/button) interaction contract. Routing and page
 layout remain in the application.
 
-Each primitive family has a matching public entry point, such as
-`twenty-ui/primitives/input`.
+Each primitive and shared component family has a matching public entry point, such as
+`twenty-ui/primitives/input` and `twenty-ui/components/settings`. The aggregate
+`twenty-ui/components` entry remains available.
 
-| Import                               | Contents                                                        |
-| ------------------------------------ | --------------------------------------------------------------- |
-| `twenty-ui/components`               | Shared presets, pickers, menu rows, toasts, and the JSON viewer |
-| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers            |
-| `twenty-ui/primitives/accessibility` | Hidden elements                                                 |
-| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators      |
-| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                             |
-| `twenty-ui/primitives/input`         | Buttons and form controls                                       |
-| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                  |
-| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                              |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                   |
-| `twenty-ui/primitives/typography`    | Text and headings                                               |
-| `twenty-ui/icon`                     | [Icons and dynamic lookup](/ui/icons)                           |
-| `twenty-ui/testing`                  | [Storybook decorators and layouts](/ui/testing)                 |
-| `twenty-ui/theme`                    | Theme provider, hooks, and CSS variable references              |
+| Import                               | Contents                                                              |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| `twenty-ui/components`               | All shared component families except the optional editor              |
+| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, counters, and icon tiles          |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                           |
+| `twenty-ui/components/input`         | Button presets, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                     |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                         |
+| `twenty-ui/components/settings`      | Settings rows and settings-specific compositions                      |
+| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                  |
+| `twenty-ui/primitives/accessibility` | Hidden elements                                                       |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators            |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                   |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                             |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                        |
+| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
+| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
+| `twenty-ui/primitives/typography`    | Text and headings                                                     |
+| `twenty-ui/icon`                     | [Icons and dynamic lookup](/ui/icons)                                 |
+| `twenty-ui/testing`                  | [Storybook decorators and layouts](/ui/testing)                       |
+| `twenty-ui/theme`                    | Theme provider, hooks, and CSS variable references                    |
 
 Import individual icons, such as `IconCheck`, from `twenty-ui/icon`. The dynamic icon provider includes the full icon catalog, so reserve it for interfaces that need to look up icons at runtime.
 

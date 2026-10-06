@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -84,6 +84,22 @@ export const SettingsBillingLimitForm = ({
 
   const options = getUsageLimitFormOptions({ definitions, values });
 
+  const handleValuesChange = (nextValues: UsageLimitFormValues) => {
+    const { periodUnits } = getUsageLimitFormOptions({
+      definitions,
+      values: nextValues,
+    });
+
+    onChange({
+      ...nextValues,
+      periodUnit:
+        isDefined(nextValues.periodUnit) &&
+        periodUnits.includes(nextValues.periodUnit)
+          ? nextValues.periodUnit
+          : (periodUnits[0] ?? null),
+    });
+  };
+
   const handleScopeChange = ({
     resourceType,
     operationType,
@@ -109,7 +125,7 @@ export const SettingsBillingLimitForm = ({
       values: nextValues,
     });
 
-    onChange({
+    handleValuesChange({
       ...nextValues,
       spenderType: isNewResource
         ? (nextOptions.spenderTypes[0] ?? null)
@@ -178,7 +194,9 @@ export const SettingsBillingLimitForm = ({
             spenderType={values.spenderType}
             spenderId={values.spenderId}
             isDisabled={!hasResource}
-            onChange={(spender) => onChange({ ...values, ...spender })}
+            onChange={(spender) =>
+              handleValuesChange({ ...values, ...spender })
+            }
           />
         </StyledRow>
       </Section.Root>
@@ -256,7 +274,7 @@ export const SettingsBillingLimitForm = ({
               }))}
               emptyOption={placeholderOption}
               onChange={(unit) =>
-                isDefined(unit) && onChange({ ...values, unit })
+                isDefined(unit) && handleValuesChange({ ...values, unit })
               }
             />
             <Select

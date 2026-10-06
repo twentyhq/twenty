@@ -8,7 +8,8 @@ import { CountrySelectAvailabilityExample } from './CountrySelectAvailabilityExa
 import { waitForCountryPopup } from './waitForCountryPopup';
 
 const meta: Meta<typeof CountrySelectAvailabilityExample> = {
-  title: 'UI/Input/CountrySelect/Availability',
+  id: 'ui-input-countryselect-availability',
+  title: 'UI/Components/Input/CountrySelect/Availability',
   component: CountrySelectAvailabilityExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
