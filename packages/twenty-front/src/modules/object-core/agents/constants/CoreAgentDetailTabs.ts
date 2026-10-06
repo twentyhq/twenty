@@ -4,5 +4,6 @@ export const CORE_AGENT_DETAIL_TABS = {
     ROLE: 'role',
     SETTINGS: 'settings',
     TRIGGERS: 'triggers',
+    RUNS: 'runs',
   },
 };

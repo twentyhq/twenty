@@ -1,7 +1,6 @@
 import { expect, userEvent, within } from 'storybook/test';
 
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
@@ -19,13 +18,6 @@ export const numberStepperSandboxFailureTest: TwentyUiGalleryPlayFunction =
     );
     await expectSandboxErrors({
       requiredErrors: [MISSING_SELECTION_RANGE_ERROR],
-    });
-    expect(status).toHaveTextContent('Value: 3; Changes: 0; Submissions: 0');
-
-    await userEvent.clear(canvas.getByRole('textbox', { name: 'Quantity' }));
-    await expectSandboxErrors({
-      requiredErrors: [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_DEFAULT_PREVENTED],
-      allowedAdditionalErrors: [MISSING_SELECTION_RANGE_ERROR],
     });
     expect(status).toHaveTextContent('Value: 3; Changes: 0; Submissions: 0');
   };

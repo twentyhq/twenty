@@ -1,11 +1,13 @@
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { msg } from '@lingui/core/macro';
 import {
+  FieldActorSource,
   FieldMetadataType,
   MetadataWritability,
   RelationType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   type CreateStandardFieldArgs,
@@ -58,6 +60,285 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isSystem: true,
         isUIEditable: false,
         isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  status: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'status',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Status', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Status', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconProgressCheck',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: `'${AgentTurnStatus.COMPLETED}'`,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  error: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'error',
+        type: FieldMetadataType.RAW_JSON,
+        label: i18nLabel(
+          msg({ message: 'Error', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Error', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconAlertTriangle',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  startedAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'startedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Started At', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Started At', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendarClock',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  endedAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'endedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Ended At', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Ended At', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCalendarClock',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  modelId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'modelId',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Model ID', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Model ID', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconBrain',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  inputTokens: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'inputTokens',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: 'Input Tokens', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Input Tokens',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconNumber',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  outputTokens: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'outputTokens',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: 'Output Tokens', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Output Tokens',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconNumber',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  cacheReadTokens: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'cacheReadTokens',
+        type: FieldMetadataType.NUMERIC,
+        label: i18nLabel(
+          msg({ message: 'Cache Read Tokens', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Cache Read Tokens',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconNumber',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  cacheCreationTokens: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'cacheCreationTokens',
+        type: FieldMetadataType.NUMERIC,
+        label: i18nLabel(
+          msg({
+            message: 'Cache Creation Tokens',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Cache Creation Tokens',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconNumber',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  inputCredits: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'inputCredits',
+        type: FieldMetadataType.NUMERIC,
+        label: i18nLabel(
+          msg({ message: 'Input Credits', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Input Credits',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCoin',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  outputCredits: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'outputCredits',
+        type: FieldMetadataType.NUMERIC,
+        label: i18nLabel(
+          msg({ message: 'Output Credits', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Output Credits',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCoin',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  createdBy: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'createdBy',
+        type: FieldMetadataType.ACTOR,
+        label: i18nLabel(
+          msg({ message: 'Created by', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Created by', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconCreativeCommonsSa',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: {
+          source: `'${FieldActorSource.SYSTEM}'`,
+          name: "'System'",
+          workspaceMemberId: null,
+        },
       },
     }),
     writability: MetadataWritability.SYSTEM,

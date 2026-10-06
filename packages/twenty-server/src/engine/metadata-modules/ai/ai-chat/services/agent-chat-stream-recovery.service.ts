@@ -6,10 +6,14 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
-import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import {
+  mapErrorToStreamError,
+  type StreamErrorPayload,
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -36,15 +40,15 @@ export class AgentChatStreamRecoveryService {
     threadId,
     workspaceId,
     streamId,
-    lastStreamError,
+    turnError,
   }: AgentChatStreamClaim & {
-    lastStreamError?: AgentChatThreadLastStreamError;
+    turnError?: StreamErrorPayload;
   }): Promise<boolean> {
     const isReleased = await this.clearStreamClaim({
       threadId,
       workspaceId,
       streamId,
-      lastStreamError,
+      turnError,
     }).catch((error: unknown) => {
       this.logger.error(
         `Failed to release stream claim for thread ${threadId}: ${formatErrorWithCause(error)}`,
@@ -58,24 +62,32 @@ export class AgentChatStreamRecoveryService {
     return isReleased;
   }
 
+  // The error belongs to the turn the stream was running, and is only written
+  // by the caller still holding the claim
   private async clearStreamClaim({
     threadId,
     workspaceId,
     streamId,
-    lastStreamError,
+    turnError,
   }: AgentChatStreamClaim & {
-    lastStreamError?: AgentChatThreadLastStreamError;
+    turnError?: StreamErrorPayload;
   }): Promise<boolean> {
-    const result = await this.threadRepository.update(
+    return this.threadRepository.query(
       workspaceId,
-      { id: threadId, activeStreamId: streamId },
-      {
-        activeStreamId: null,
-        ...(isDefined(lastStreamError) ? { lastStreamError } : {}),
+      async ({ manager, table }) => {
+        const releasedThreads = await manager.query<{ id: string }[]>(
+          buildReleaseStreamClaimQuery({ table }),
+          [
+            threadId,
+            streamId,
+            isDefined(turnError) ? AgentTurnStatus.FAILED : null,
+            isDefined(turnError) ? JSON.stringify(turnError) : null,
+          ],
+        );
+
+        return releasedThreads.length > 0;
       },
     );
-
-    return Boolean(result.affected);
   }
 
   async failStream({
@@ -84,20 +96,17 @@ export class AgentChatStreamRecoveryService {
     streamId,
     error,
   }: AgentChatStreamClaim & { error: unknown }): Promise<void> {
-    const lastStreamError: AgentChatThreadLastStreamError = {
-      ...mapErrorToStreamError(error),
-      failedAt: new Date().toISOString(),
-    };
+    const turnError = mapErrorToStreamError(error);
 
     const isReleased = await this.releaseStreamClaim({
       threadId,
       workspaceId,
       streamId,
-      lastStreamError,
+      turnError,
     });
 
     if (isReleased) {
-      await this.publishStreamError({ threadId, workspaceId, lastStreamError });
+      await this.publishStreamError({ threadId, workspaceId, turnError });
     }
   }
 
@@ -107,7 +116,7 @@ export class AgentChatStreamRecoveryService {
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
-  }): Promise<AgentChatThreadLastStreamError | null> {
+  }): Promise<StreamErrorPayload | null> {
     if (!isNonEmptyString(thread.activeStreamId)) {
       return null;
     }
@@ -116,17 +125,16 @@ export class AgentChatStreamRecoveryService {
       return null;
     }
 
-    const interruptedError: AgentChatThreadLastStreamError = {
+    const interruptedError: StreamErrorPayload = {
       code: AiExceptionCode.STREAM_INTERRUPTED,
       message: 'The response was interrupted before it could finish.',
-      failedAt: new Date().toISOString(),
     };
 
     const hasReaped = await this.clearStreamClaim({
       threadId: thread.id,
       workspaceId,
       streamId: thread.activeStreamId,
-      lastStreamError: interruptedError,
+      turnError: interruptedError,
     });
 
     if (!hasReaped) {
@@ -150,7 +158,7 @@ export class AgentChatStreamRecoveryService {
     await this.publishStreamError({
       threadId: thread.id,
       workspaceId,
-      lastStreamError: interruptedError,
+      turnError: interruptedError,
     });
 
     return interruptedError;
@@ -159,11 +167,11 @@ export class AgentChatStreamRecoveryService {
   private async publishStreamError({
     threadId,
     workspaceId,
-    lastStreamError,
+    turnError,
   }: {
     threadId: string;
     workspaceId: string;
-    lastStreamError: AgentChatThreadLastStreamError;
+    turnError: StreamErrorPayload;
   }): Promise<void> {
     await this.eventPublisherService
       .publish({
@@ -171,8 +179,8 @@ export class AgentChatStreamRecoveryService {
         workspaceId,
         event: {
           type: 'stream-error',
-          code: lastStreamError.code,
-          message: lastStreamError.message,
+          code: turnError.code,
+          message: turnError.message,
         },
       })
       .catch(() => {});
