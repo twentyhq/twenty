@@ -1,58 +1,31 @@
+import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { isObject } from '@sniptt/guards';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
-import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/utils/hooks/useMouseDownNavigation';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type JSX, type ReactNode, useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
-  Text,
+  Shortcut,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 const DEFAULT_INDENTATION_LEVEL = 1;
-
-export type NavigationDrawerItemIndentationLevel = 1 | 2;
-
-export type NavigationDrawerItemModifier =
-  | 'soon'
-  | 'new'
-  | { keyboard: string[] };
-
-export type NavigationDrawerItemProps = {
-  className?: string;
-  label: string;
-  secondaryLabel?: string;
-  indentationLevel?: NavigationDrawerItemIndentationLevel;
-  subItemState?: NavigationDrawerSubItemState;
-  to?: string;
-  onClick?: () => void;
-  Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
-  active?: boolean;
-  modifier?: NavigationDrawerItemModifier;
-  rightOptions?: ReactNode;
-  alwaysShowRightOptions?: boolean;
-  isDragging?: boolean;
-  isRightOptionsDropdownOpen?: boolean;
-  triggerEvent?: TriggerEventType;
-  preventCollapseOnMobile?: boolean;
-  isSelectedInEditMode?: boolean;
-  variant?: 'default' | 'tertiary' | 'placeholder';
-};
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
@@ -162,28 +135,18 @@ const StyledLabelParent = styled.div`
   white-space: nowrap;
 `;
 
-const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
+const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) =>
+    $isUnread ? themeCssVariables.font.color.primary : 'inherit'};
+  font-weight: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.font.weight.semiBold
+      : themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-weight: ${themeCssVariables.font.weight.regular};
-`;
-
-const StyledKeyBoardShortcut = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.strong};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-
-  height: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledNavigationDrawerItemContainer = styled.div`
@@ -202,6 +165,7 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
+  position: relative;
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -258,6 +222,7 @@ export const NavigationDrawerItem = ({
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
   variant = 'default',
+  isUnread = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
@@ -271,10 +236,7 @@ export const NavigationDrawerItem = ({
 
   const isSoon = modifier === 'soon';
   const isNew = modifier === 'new';
-  const keyboardKeys =
-    isDefined(modifier) && typeof modifier === 'object'
-      ? modifier.keyboard
-      : undefined;
+  const keyboardKeys = isObject(modifier) ? modifier.keyboard : undefined;
 
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = isDefined(modifier) || isDefined(rightOptions);
@@ -347,7 +309,7 @@ export const NavigationDrawerItem = ({
             handleMouseDown(event);
           }}
           active={active}
-          aria-current={isDefined(to) && active ? 'page' : undefined}
+          aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}
@@ -391,6 +353,9 @@ export const NavigationDrawerItem = ({
                         : 'currentColor'
                     }
                   />
+                  {isUnread && !isExpanded && (
+                    <StyledNavigationDrawerUnreadDot />
+                  )}
                 </StyledIcon>
               )
             )}
@@ -400,7 +365,12 @@ export const NavigationDrawerItem = ({
                 <OverflowingTextWithTooltip
                   text={
                     <>
-                      <StyledItemLabel>{label}</StyledItemLabel>
+                      <StyledItemLabel $isUnread={isUnread}>
+                        {label}
+                        {isUnread && (
+                          <VisibilityHidden>{t`, unread`}</VisibilityHidden>
+                        )}
+                      </StyledItemLabel>
                       {secondaryLabel && (
                         <StyledItemSecondaryLabel>
                           {' · '}
@@ -432,9 +402,11 @@ export const NavigationDrawerItem = ({
 
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <StyledKeyBoardShortcut className="keyboard-shortcuts">
-                  <StyledDisplayLabel>{keyboardKeys}</StyledDisplayLabel>
-                </StyledKeyBoardShortcut>
+                <Shortcut
+                  className="keyboard-shortcuts"
+                  shortcut={keyboardKeys}
+                  sequenceJoinLabel={t`then`}
+                />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
@@ -478,9 +450,3 @@ export const NavigationDrawerItem = ({
     </StyledNavigationDrawerItemContainer>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

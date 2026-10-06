@@ -1,0 +1,81 @@
+.root {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-1);
+  inline-size: 100%;
+  justify-content: space-between;
+  min-inline-size: 0;
+  position: relative;
+}
+
+.items {
+  display: flex;
+  flex: 0 1 auto;
+  gap: var(--t-spacing-1);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: hidden;
+  position: relative;
+
+  &[data-measuring] {
+    overflow: visible;
+
+    > .item {
+      flex: 0 0 auto;
+      inline-size: max-content;
+      max-inline-size: none;
+      position: static;
+    }
+  }
+}
+
+.item {
+  display: flex;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+
+  &[data-hidden] {
+    inline-size: max-content;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  &[data-last-visible] {
+    flex-shrink: 1;
+  }
+}
+
+.trigger {
+  @include focus-ring;
+
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: var(--t-border-radius-sm);
+  color: var(--t-font-color-primary);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: var(--t-font-size-sm);
+  inset-inline-end: 0;
+  min-inline-size: 24px;
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
+  position: absolute;
+
+  &[data-visible] {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
+  }
+}
+
+.popup[data-overflowing-list-popup] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  inline-size: max(220px, var(--anchor-width));
+  max-block-size: var(--available-height);
+  overflow: auto;
+}

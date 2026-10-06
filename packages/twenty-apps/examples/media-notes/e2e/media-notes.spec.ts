@@ -33,8 +33,7 @@ test.describe('Media notes capture flow', () => {
     fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
   });
 
-  // The front component runs in a sandboxed worker; surface browser output so
-  // failures inside it are diagnosable from the test log.
+  // The component runs in a sandboxed worker, so forward browser output to the test log.
   test.beforeEach(({ page }) => {
     page.on('console', (message) => {
       console.log(`[browser:${message.type()}] ${message.text()}`);
@@ -56,7 +55,6 @@ test.describe('Media notes capture flow', () => {
   ) => {
     await page.goto(`${resolveWorkspaceUrl()}/`);
 
-    // The pinned global command renders as a top bar action button.
     await page
       .getByRole('button', { name: 'Record media note' })
       .first()
@@ -70,7 +68,6 @@ test.describe('Media notes capture flow', () => {
 
     await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
 
-    // The recording UX is the app's own UI: its timer and stop control.
     const stopButton = page.getByTestId(
       MEDIA_NOTES_TEST_IDS.stopRecordingButton,
     );
@@ -86,7 +83,6 @@ test.describe('Media notes capture flow', () => {
 
     await stopButton.click();
 
-    // Uploaded: the component receives a playable file reference.
     await expect(
       page.getByTestId(MEDIA_NOTES_TEST_IDS.captureStatus),
     ).toHaveText('captured');
@@ -97,17 +93,12 @@ test.describe('Media notes capture flow', () => {
     expect(audioSrc).toBeTruthy();
     expect(audioSrc).toContain('/file');
 
-    // Actually fetch it: a signed url for a folder the file guard does not
-    // serve still looks correct in the src attribute but answers 401/403, so
-    // asserting on the string alone would not catch an unplayable recording.
+    // An unservable signed url still looks right in src but answers 401/403, so fetch it.
     const mediaResponse = await page.request.get(audioSrc as string);
     expect(mediaResponse.status()).toBe(200);
-    // The body, not content-length: the file route streams the response, so
-    // the header is absent even on a perfectly good recording.
+    // The file route streams, so content-length is absent even on a good recording.
     expect((await mediaResponse.body()).length).toBeGreaterThan(0);
 
-    // The recording is attached to a record, which is what makes the
-    // uploaded file permanent instead of a temporary orphan.
     await expect(
       page.getByTestId(MEDIA_NOTES_TEST_IDS.savedRecord),
     ).toContainText('Attached to media note');

@@ -1,10 +1,6 @@
 import { SITE_URLS } from '@/platform/site-urls';
 
-// Route handler (not a public/ file) so the RFC 9727 application/linkset+json
-// content type survives the site's global nosniff header.
-//
-// Twenty is multi-tenant, so anchors use a `{your-workspace-url}` placeholder
-// (a workspace host such as `mycompany.twenty.com` or a custom domain).
+// Route handler so the RFC 9727 application/linkset+json content type survives the global nosniff header.
 
 const WORKSPACE = 'https://{your-workspace-url}';
 

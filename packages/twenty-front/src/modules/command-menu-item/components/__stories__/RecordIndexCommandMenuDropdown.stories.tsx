@@ -9,8 +9,9 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
@@ -71,7 +72,7 @@ const COMMAND_MENU_ITEMS = [
 
 const isRecordRowSelected = (recordId: string) =>
   jotaiStore.get(
-    isRowSelectedComponentFamilyState.atomFamily({
+    isRecordSelectedComponentFamilyState.atomFamily({
       instanceId: RECORD_TABLE_ID,
       familyKey: recordId,
     }),
@@ -114,9 +115,7 @@ const rightClickRecord = async ({
 };
 
 const StoryRecordTable = () => {
-  const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
-    recordTableId: RECORD_TABLE_ID,
-  });
+  const { openRecordContextMenu } = useOpenRecordContextMenu();
 
   return (
     <table>
@@ -125,7 +124,7 @@ const StoryRecordTable = () => {
           <tr key={recordName}>
             <td
               onContextMenu={(event) =>
-                triggerCommandMenuDropdown(event, recordName)
+                openRecordContextMenu({ event, recordId: recordName })
               }
             >
               {recordName}
@@ -155,7 +154,11 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
               isInPreviewMode: false,
             }}
           >
-            <StoryRecordTable />
+            <RecordSelectionComponentInstanceContext.Provider
+              value={{ instanceId: RECORD_TABLE_ID }}
+            >
+              <StoryRecordTable />
+            </RecordSelectionComponentInstanceContext.Provider>
             <Story />
           </CommandMenuContext.Provider>
         </CommandMenuComponentInstanceContext.Provider>

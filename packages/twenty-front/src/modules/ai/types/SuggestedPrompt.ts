@@ -7,8 +7,7 @@ export type SuggestedPrompt = {
   id: string;
   label: MessageDescriptor;
   Icon: IconComponent;
-  // PREFILL drops the prompt in the composer so it can be completed; SEND asks it
-  // straight away, for prompts that need nothing from the user.
+  // PREFILL lets the user complete the prompt; SEND is for prompts needing nothing more.
   mode?: AgentChatPrepromptMode;
   prompts: MessageDescriptor[];
 };

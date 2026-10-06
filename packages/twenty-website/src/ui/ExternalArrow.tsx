@@ -8,7 +8,6 @@ const ArrowSlot = styled.span`
   display: inline-flex;
 `;
 
-// The blue outbound arrow that marks external destinations.
 export function ExternalArrow() {
   return (
     <ArrowSlot aria-hidden>

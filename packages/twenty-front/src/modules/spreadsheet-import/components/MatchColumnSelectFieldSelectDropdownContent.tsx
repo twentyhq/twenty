@@ -4,166 +4,134 @@ import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotIm
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
-import { IconForbid, IconX, useIcons } from 'twenty-ui/icon';
+import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
+import { IconForbid, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ReadonlyDeep } from 'type-fest';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledContainer = styled.div`
   max-height: 360px;
+  overflow-y: auto;
 `;
+
+type MatchColumnSelectFieldSelectDropdownContentProps = {
+  selectedValue: SelectOption | undefined;
+  onSelectFieldMetadataItem: (fieldMetadataItem: FieldMetadataItem) => void;
+  onSelectSuggestedOption: (suggestedOption: SelectOption) => void;
+  onDoNotImportSelect: () => void;
+  suggestedOptions: readonly ReadonlyDeep<
+    SelectOption & { fieldMetadataTypeLabel?: string }
+  >[];
+};
 
 export const MatchColumnSelectFieldSelectDropdownContent = ({
   selectedValue,
   onSelectFieldMetadataItem,
   onSelectSuggestedOption,
-  onCancelSelect,
   onDoNotImportSelect,
   suggestedOptions,
-}: {
-  selectedValue: SelectOption | undefined;
-  onSelectFieldMetadataItem: (
-    selectedFieldMetadataItem: FieldMetadataItem,
-  ) => void;
-  onSelectSuggestedOption: (selectedSuggestedOption: SelectOption) => void;
-  onCancelSelect: () => void;
-  onDoNotImportSelect: () => void;
-  suggestedOptions: readonly ReadonlyDeep<
-    SelectOption & { fieldMetadataTypeLabel?: string }
-  >[];
-}) => {
+}: MatchColumnSelectFieldSelectDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
-
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-
-    setSearchFilter(value);
-  };
-
   const { availableFieldMetadataItems } = useSpreadsheetImportInternal();
-
-  const filteredAvailableFieldMetadataItems = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
-    return availableFieldMetadataItems.filter((field) => {
-      return (
-        normalizeSearchText(field.label).includes(searchTerm) ||
-        normalizeSearchText(field.name).includes(searchTerm)
-      );
-    });
-  }, [availableFieldMetadataItems, searchFilter]);
-
+  const { goToPage } = useDropdownPage();
   const { getIcon } = useIcons();
-
-  const handleFieldClick = (fieldMetadataItem: FieldMetadataItem) => {
-    onSelectFieldMetadataItem(fieldMetadataItem);
-  };
-
-  const handleSuggestedOptionClick = (suggestedOption: SelectOption) => {
-    onSelectSuggestedOption(suggestedOption);
-  };
-
-  const handleCancelClick = () => {
-    onCancelSelect();
-  };
-
   const { t } = useLingui();
 
+  const searchTerm = normalizeSearchText(searchFilter);
+  const filteredAvailableFieldMetadataItems =
+    availableFieldMetadataItems.filter(
+      (field) =>
+        normalizeSearchText(field.label).includes(searchTerm) ||
+        normalizeSearchText(field.name).includes(searchTerm),
+    );
+  const filteredSuggestedOptions = suggestedOptions.filter((option) =>
+    normalizeSearchText(option.label).includes(searchTerm),
+  );
+  const shouldShowDoNotImport = normalizeSearchText(t`Do not import`).includes(
+    searchTerm,
+  );
+  const hasSuggestedOptions = isNonEmptyArray(filteredSuggestedOptions);
+  const hasAvailableFields = isNonEmptyArray(
+    filteredAvailableFieldMetadataItems,
+  );
+
+  const handleFieldSelect = (fieldMetadataItem: FieldMetadataItem) => {
+    onSelectFieldMetadataItem(fieldMetadataItem);
+
+    if (hasNestedFields(fieldMetadataItem)) {
+      goToPage('sub-field');
+    }
+  };
+
   return (
-    <LegacyDropdownContent
-      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-    >
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={handleCancelClick}
-            Icon={IconX}
-          />
-        }
-      >
-        {t`Select matching field`}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Header>
+        <Dropdown.Title>{t`Select matching field`}</Dropdown.Title>
+        <Dropdown.Close aria-label={t`Cancel field selection`} />
+      </Dropdown.Header>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={handleFilterChange}
-        autoFocus
+        onValueChange={setSearchFilter}
         placeholder={t`Search fields`}
+        aria-label={t`Search fields`}
       />
-      <DropdownMenuSeparator />
+      <Dropdown.Separator />
       <StyledContainer>
-        <ScrollWrapper componentInstanceId="match-column-select-field-select-dropdown-content">
-          {!isNonEmptyString(searchFilter) && (
-            <>
-              <DropdownMenuItemsContainer scrollable={false}>
-                <ListItem
-                  onClick={onDoNotImportSelect}
-                  role="option"
-                  aria-selected={
-                    selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY
-                  }
-                  selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
-                  indicator="check"
-                  startIcon={<SelectOptionIcon Icon={IconForbid} />}
-                >{t`Do not import`}</ListItem>
-              </DropdownMenuItemsContainer>
-              {suggestedOptions.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuSectionLabel label={t`Suggested`} />
-                  <DropdownMenuItemsContainer scrollable={false}>
-                    {suggestedOptions.map((option) => (
-                      <ListItem
-                        key={option.value}
-                        onClick={() => handleSuggestedOptionClick(option)}
-                        role="option"
-                        aria-selected={selectedValue?.value === option.value}
-                        selected={selectedValue?.value === option.value}
-                        indicator="check"
-                        description={option.fieldMetadataTypeLabel}
-                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
-                      >
-                        {option.label}
-                      </ListItem>
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuSectionLabel label={t`All fields`} />
-            </>
-          )}
-          <DropdownMenuItemsContainer scrollable={false}>
+        {shouldShowDoNotImport && (
+          <Dropdown.Section>
+            <Dropdown.OptionItem
+              onSelect={onDoNotImportSelect}
+              selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+              startIcon={<SelectOptionIcon Icon={IconForbid} />}
+            >{t`Do not import`}</Dropdown.OptionItem>
+          </Dropdown.Section>
+        )}
+        {shouldShowDoNotImport && hasSuggestedOptions && <Dropdown.Separator />}
+        {hasSuggestedOptions && (
+          <Dropdown.Section label={t`Suggested`}>
+            {filteredSuggestedOptions.map((option) => (
+              <Dropdown.OptionItem
+                key={option.value}
+                onSelect={() => onSelectSuggestedOption(option)}
+                selected={selectedValue?.value === option.value}
+                description={option.fieldMetadataTypeLabel}
+                startIcon={<SelectOptionIcon Icon={option.Icon} />}
+              >
+                {option.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        )}
+        {(shouldShowDoNotImport || hasSuggestedOptions) &&
+          hasAvailableFields && <Dropdown.Separator />}
+        {hasAvailableFields && (
+          <Dropdown.Section label={t`All fields`}>
             {filteredAvailableFieldMetadataItems.map((field) => (
-              <ListItem
+              <Dropdown.OptionItem
                 key={field.id}
-                onClick={() => handleFieldClick(field)}
-                role="option"
-                aria-selected={selectedValue?.value === field.name}
+                onSelect={() => handleFieldSelect(field)}
                 selected={selectedValue?.value === field.name}
-                indicator="check"
+                closeOnSelect={!hasNestedFields(field)}
                 hasSubmenu={hasNestedFields(field)}
                 description={getFieldMetadataTypeLabel(field.type)}
                 startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
               >
                 {field.label}
-              </ListItem>
+              </Dropdown.OptionItem>
             ))}
-          </DropdownMenuItemsContainer>
-        </ScrollWrapper>
+          </Dropdown.Section>
+        )}
+        {!shouldShowDoNotImport &&
+          !hasSuggestedOptions &&
+          !hasAvailableFields && (
+            <Dropdown.Empty>{t`No fields found`}</Dropdown.Empty>
+          )}
       </StyledContainer>
-    </LegacyDropdownContent>
+    </>
   );
 };

@@ -35,8 +35,7 @@ export const SettingsPublicDomainsListCard = ({
     return null;
   }
 
-  // The empty-state card and the footer button are plain buttons, they cannot
-  // carry a Link.
+  // The empty-state card and the footer button are plain buttons that cannot carry a Link
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToCreate = () =>
     navigate(SettingsPath.ApplicationPublicDomainNew, { applicationId });

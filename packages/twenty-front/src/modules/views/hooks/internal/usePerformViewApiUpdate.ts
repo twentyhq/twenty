@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type UpdateViewMutation,
   type UpdateViewMutationVariables,
@@ -31,8 +31,7 @@ export const usePerformViewApiUpdate = () => {
 
   const store = useStore();
 
-  // The server recreates the view groups when mainGroupByFieldMetadataId changes,
-  // so the store has to be realigned on the groups returned by the mutation
+  // The server recreates view groups when mainGroupByFieldMetadataId changes
   const syncViewGroupsFromMutationResult = useCallback(
     ({
       viewId,

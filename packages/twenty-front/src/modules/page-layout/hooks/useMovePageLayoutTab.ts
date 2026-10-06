@@ -1,11 +1,8 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -20,33 +17,14 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
-    pageLayoutPersistedComponentState,
-    pageLayoutId,
-  );
-
   const store = useStore();
 
-  const featureFlags = useWorkspaceFeatureFlagsMap();
-
-  // Deleting a tab only deactivates it in the draft and feature flags can hide
-  // one, so only a rendered tab may become the neighbour a move swaps
-  // positions with: any other would leave the rendered order untouched.
+  // Deleted tabs are only deactivated in the draft; swapping with one would leave the rendered order unchanged.
   const swapWithNeighborTab = useCallback(
     (tabId: string, offset: -1 | 1) => {
-      const persistedTabs = store.get(pageLayoutPersistedState)?.tabs;
-
       store.set(pageLayoutDraftState, (prev) => {
         const sortedActiveTabs = sortTabsByPosition(
-          prev.tabs.filter(
-            (tab) =>
-              tab.isActive &&
-              !isPageLayoutTabHiddenByFeatureFlags({
-                tabId: tab.id,
-                persistedTabs,
-                featureFlags,
-              }),
-          ),
+          prev.tabs.filter((tab) => tab.isActive),
         );
         const index = sortedActiveTabs.findIndex((tab) => tab.id === tabId);
         const neighborIndex = index + offset;
@@ -76,7 +54,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         };
       });
     },
-    [featureFlags, pageLayoutDraftState, pageLayoutPersistedState, store],
+    [pageLayoutDraftState, store],
   );
 
   const moveLeft = useCallback(

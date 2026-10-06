@@ -9,7 +9,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { AnimatedIconCrossfade } from '../AnimatedIconCrossfade';
 
 const meta = {
-  title: 'UI/Input/Button/Button',
+  title: 'UI/Components/Layout/AnimatedIconCrossfade',
   component: AnimatedIconCrossfade,
   tags: ['!autodocs'],
   args: { isActive: false, ActiveIcon: IconX, InactiveIcon: IconPencil },

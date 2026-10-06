@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type JSX, lazy, Suspense, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const DocumentViewer = lazy(() =>

@@ -4,10 +4,8 @@ import { type ToolSet } from 'ai';
 import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const GetViewFieldsInputSchema = z.object({
   viewId: z
@@ -174,35 +172,28 @@ export class ViewFieldToolsFactory {
           position?: number;
           aggregateOperation?: string;
         }) => {
-          try {
-            const viewField = await this.viewFieldService.createOne({
-              createViewFieldInput: {
-                viewId: parameters.viewId,
-                fieldMetadataId: parameters.fieldMetadataId,
-                isVisible: parameters.isVisible ?? true,
-                size: parameters.size ?? 150,
-                position: parameters.position ?? 0,
-                aggregateOperation:
-                  parameters.aggregateOperation as AggregateOperations,
-              },
-              workspaceId,
-            });
+          const viewField = await this.viewFieldService.createOne({
+            createViewFieldInput: {
+              viewId: parameters.viewId,
+              fieldMetadataId: parameters.fieldMetadataId,
+              isVisible: parameters.isVisible ?? true,
+              size: parameters.size ?? 150,
+              position: parameters.position ?? 0,
+              aggregateOperation:
+                parameters.aggregateOperation as AggregateOperations,
+            },
+            workspaceId,
+          });
 
-            return {
-              id: viewField.id,
-              fieldMetadataId: viewField.fieldMetadataId,
-              viewId: viewField.viewId,
-              isVisible: viewField.isVisible,
-              size: viewField.size,
-              position: viewField.position,
-              aggregateOperation: viewField.aggregateOperation,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: viewField.id,
+            fieldMetadataId: viewField.fieldMetadataId,
+            viewId: viewField.viewId,
+            isVisible: viewField.isVisible,
+            size: viewField.size,
+            position: viewField.position,
+            aggregateOperation: viewField.aggregateOperation,
+          };
         },
       },
       update_view_field: {
@@ -217,36 +208,29 @@ export class ViewFieldToolsFactory {
           position?: number;
           aggregateOperation?: string;
         }) => {
-          try {
-            const viewField = await this.viewFieldService.updateOne({
-              updateViewFieldInput: {
-                id: parameters.id,
-                update: {
-                  isVisible: parameters.isVisible,
-                  size: parameters.size,
-                  position: parameters.position,
-                  aggregateOperation:
-                    parameters.aggregateOperation as AggregateOperations,
-                },
+          const viewField = await this.viewFieldService.updateOne({
+            updateViewFieldInput: {
+              id: parameters.id,
+              update: {
+                isVisible: parameters.isVisible,
+                size: parameters.size,
+                position: parameters.position,
+                aggregateOperation:
+                  parameters.aggregateOperation as AggregateOperations,
               },
-              workspaceId,
-            });
+            },
+            workspaceId,
+          });
 
-            return {
-              id: viewField.id,
-              fieldMetadataId: viewField.fieldMetadataId,
-              viewId: viewField.viewId,
-              isVisible: viewField.isVisible,
-              size: viewField.size,
-              position: viewField.position,
-              aggregateOperation: viewField.aggregateOperation,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: viewField.id,
+            fieldMetadataId: viewField.fieldMetadataId,
+            viewId: viewField.viewId,
+            isVisible: viewField.isVisible,
+            size: viewField.size,
+            position: viewField.position,
+            aggregateOperation: viewField.aggregateOperation,
+          };
         },
       },
       delete_view_field: {
@@ -255,22 +239,15 @@ export class ViewFieldToolsFactory {
 
         inputSchema: DeleteViewFieldInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const viewField = await this.viewFieldService.deleteOne({
-              deleteViewFieldInput: { id: parameters.id },
-              workspaceId,
-            });
+          const viewField = await this.viewFieldService.deleteOne({
+            deleteViewFieldInput: { id: parameters.id },
+            workspaceId,
+          });
 
-            return {
-              id: viewField.id,
-              deleted: true,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: viewField.id,
+            deleted: true,
+          };
         },
       },
       create_many_view_fields: {
@@ -287,27 +264,20 @@ export class ViewFieldToolsFactory {
             aggregateOperation?: string;
           }>;
         }) => {
-          try {
-            await this.viewFieldService.createMany({
-              createViewFieldInputs: parameters.viewFields.map((viewField) => ({
-                viewId: viewField.viewId,
-                fieldMetadataId: viewField.fieldMetadataId,
-                isVisible: viewField.isVisible ?? true,
-                size: viewField.size ?? 150,
-                position: viewField.position ?? 0,
-                aggregateOperation:
-                  viewField.aggregateOperation as AggregateOperations,
-              })),
-              workspaceId,
-            });
+          await this.viewFieldService.createMany({
+            createViewFieldInputs: parameters.viewFields.map((viewField) => ({
+              viewId: viewField.viewId,
+              fieldMetadataId: viewField.fieldMetadataId,
+              isVisible: viewField.isVisible ?? true,
+              size: viewField.size ?? 150,
+              position: viewField.position ?? 0,
+              aggregateOperation:
+                viewField.aggregateOperation as AggregateOperations,
+            })),
+            workspaceId,
+          });
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
       update_many_view_fields: {
@@ -323,32 +293,25 @@ export class ViewFieldToolsFactory {
             aggregateOperation?: string;
           }>;
         }) => {
-          try {
-            await Promise.all(
-              parameters.viewFields.map(async (viewField) => {
-                await this.viewFieldService.updateOne({
-                  updateViewFieldInput: {
-                    id: viewField.id,
-                    update: {
-                      isVisible: viewField.isVisible,
-                      size: viewField.size,
-                      position: viewField.position,
-                      aggregateOperation:
-                        viewField.aggregateOperation as AggregateOperations,
-                    },
+          await Promise.all(
+            parameters.viewFields.map(async (viewField) => {
+              await this.viewFieldService.updateOne({
+                updateViewFieldInput: {
+                  id: viewField.id,
+                  update: {
+                    isVisible: viewField.isVisible,
+                    size: viewField.size,
+                    position: viewField.position,
+                    aggregateOperation:
+                      viewField.aggregateOperation as AggregateOperations,
                   },
-                  workspaceId,
-                });
-              }),
-            );
+                },
+                workspaceId,
+              });
+            }),
+          );
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
     };

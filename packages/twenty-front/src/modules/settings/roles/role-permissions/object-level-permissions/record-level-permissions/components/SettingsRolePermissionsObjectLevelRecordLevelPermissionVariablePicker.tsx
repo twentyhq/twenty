@@ -1,12 +1,19 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RecordLevelPermissionVariablePickerContext';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledRecordLevelPermissionPickerContainer = styled.div<{
   multiline?: boolean;
@@ -51,41 +58,47 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   }
 `;
 
-export const createRecordLevelPermissionVariablePicker = (
-  recordFilterId: string,
-  onMeSelect: (
-    workspaceMemberFieldMetadataId: string,
-    workspaceMemberSubFieldName?: string | null,
-  ) => void,
-): VariablePickerComponent => {
-  const RecordLevelPermissionVariablePicker: VariablePickerComponent = ({
-    instanceId,
-    disabled,
-    multiline,
-  }) => {
+export const SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker: VariablePickerComponent =
+  ({ instanceId, disabled, multiline }) => {
     const theme = useTheme();
+    const pickerContext = useContext(
+      RecordLevelPermissionVariablePickerContext,
+    );
+
+    if (!isDefined(pickerContext)) {
+      return null;
+    }
+
+    const { recordFilterId, onSelect } = pickerContext;
 
     return (
-      <Dropdown
+      <DropdownRoot
         dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
-        clickableComponent={
-          <StyledRecordLevelPermissionPickerContainer
-            multiline={multiline}
-            readonly={disabled}
-          >
-            <IconVariablePlus size={theme.icon.size.sm} />
-          </StyledRecordLevelPermissionPickerContainer>
-        }
-        dropdownComponents={
+        type="picker"
+      >
+        <Dropdown.Trigger
+          render={
+            <StyledRecordLevelPermissionPickerContainer
+              multiline={multiline}
+              readonly={disabled}
+            />
+          }
+          nativeButton={false}
+          disabled={disabled}
+          aria-label={t`Select a current user field`}
+        >
+          <IconVariablePlus size={theme.icon.size.sm} />
+        </Dropdown.Trigger>
+        <DropdownContent
+          side="bottom"
+          align="end"
+          width={GenericDropdownContentWidth.Medium}
+        >
           <SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect
-            onSelect={onMeSelect}
+            onSelect={onSelect}
             recordFilterId={recordFilterId}
           />
-        }
-        dropdownPlacement="bottom-end"
-      />
+        </DropdownContent>
+      </DropdownRoot>
     );
   };
-
-  return RecordLevelPermissionVariablePicker;
-};

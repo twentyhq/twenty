@@ -8,7 +8,7 @@ import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 
 export type CommandMenuButtonProps = {
   command: {
@@ -62,7 +62,7 @@ export const CommandMenuButton = ({
       sideOffset={5}
       disabled={!hasHotKeys && isDefined(resolvedShortLabel)}
     >
-      <div>
+      <div data-command-menu-item-id={command.key}>
         {resolvedShortLabel !== undefined ? (
           <NavigationButton
             startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}

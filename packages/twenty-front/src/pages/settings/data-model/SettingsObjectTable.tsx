@@ -29,7 +29,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -160,7 +162,7 @@ export const SettingsObjectTable = ({
           <SearchInput
             placeholder={t`Search for an object...`}
             value={searchTerm}
-            onChange={setSearchTerm}
+            onValueChange={setSearchTerm}
             filterDropdown={(filterButton) => (
               <DropdownRoot
                 dropdownId="settings-objects-filter-dropdown"

@@ -16,12 +16,10 @@ import { useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  Dropdown,
-  SearchInput,
-  SettingsRow,
-  useToast,
-} from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -167,7 +165,7 @@ export const SettingsObjectIndexesSection = ({
       <SearchInput
         placeholder={t`Search an index...`}
         value={searchTerm}
-        onChange={setSearchTerm}
+        onValueChange={setSearchTerm}
         filterDropdown={(filterButton) => (
           <DropdownRoot
             dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}

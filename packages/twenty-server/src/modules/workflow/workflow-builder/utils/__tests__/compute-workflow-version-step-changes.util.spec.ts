@@ -76,9 +76,8 @@ describe('computeWorkflowVersionStepChanges', () => {
       { path: ['trigger', 'nextStepIds', 1], type: 'CREATE', value: 'step-3' },
     ]);
     expect(result.stepsDiff).toMatchObject([]);
-    expect(result.stepsDiff.length).toBe(0); // No steps changed
+    expect(result.stepsDiff.length).toBe(0);
 
-    // Verify the trigger diff contains the nextStepIds change
     const nextStepIdsDiff = result.triggerDiff.find((diff) =>
       diff.path.includes('nextStepIds'),
     );
@@ -124,7 +123,7 @@ describe('computeWorkflowVersionStepChanges', () => {
     expect(result.stepsDiff).toBeDefined();
     expect(result.stepsDiff.length).toBeGreaterThan(0);
     expect(result.triggerDiff).toBeDefined();
-    expect(result.triggerDiff.length).toBe(0); // No trigger changed
+    expect(result.triggerDiff.length).toBe(0);
 
     const createDiff = result.stepsDiff.find((diff) => diff.type === 'CREATE');
 
@@ -178,7 +177,6 @@ describe('computeWorkflowVersionStepChanges', () => {
     const result = computeWorkflowVersionStepChanges({
       existingTrigger: mockTrigger,
       existingSteps: mockSteps,
-      // updatedTrigger and updatedSteps are undefined
     });
 
     expect(result.triggerDiff).toBeDefined();

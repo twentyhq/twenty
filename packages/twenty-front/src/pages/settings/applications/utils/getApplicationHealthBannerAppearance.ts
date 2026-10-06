@@ -1,4 +1,4 @@
-import { type CalloutVariant } from 'twenty-ui/components';
+import { type CalloutVariant } from 'twenty-ui/components/feedback';
 import {
   IconAlertCircle,
   IconAlertTriangle,

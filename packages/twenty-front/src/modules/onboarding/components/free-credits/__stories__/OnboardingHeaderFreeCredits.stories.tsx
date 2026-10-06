@@ -1,6 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import {
+  ComponentDecorator,
+  overrideMediaQueryMatches,
+} from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY } from 'twenty-ui/utilities';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -10,6 +14,7 @@ import { workspaceMemberFormatPreferencesState } from '@/localization/states/wor
 import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { onboardingUpgradeTrialLostCreditsState } from '@/onboarding/states/onboardingUpgradeTrialLostCreditsState';
 import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -53,6 +58,7 @@ const seedOnboardingFreeCredits = ({
       ...onboardingFreeCredits,
     },
   );
+  jotaiStore.set(onboardingUpgradeTrialLostCreditsState.atom, 0);
 };
 
 const findVisibleTooltip = async (canvasElement: HTMLElement, text: string) => {
@@ -131,6 +137,35 @@ export const EarnedSoFar: Story = {
   },
 };
 
+export const EarnedSoFarOnPhone: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+      onboardingFreeCredits: { importContacts: 1, seenCredits: 1 },
+    });
+
+    return overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true });
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const pill = await within(canvasElement).findByRole('button', {
+      name: /free credit/,
+    });
+    const freeCreditsLabel = within(pill).getByText('free credit');
+
+    await expect(
+      freeCreditsLabel.getBoundingClientRect().width,
+    ).toBeLessThanOrEqual(1);
+    await expect(
+      freeCreditsLabel.getBoundingClientRect().height,
+    ).toBeLessThanOrEqual(1);
+  },
+};
+
 export const NewlyEarned: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({
@@ -160,6 +195,38 @@ export const NewlyEarned: Story = {
     await waitFor(() =>
       expect(within(canvasElement).queryByText('+1')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const LostUpgradeCredits: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        upgradeTrial: 2,
+        seenCredits: 3,
+      },
+    });
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('button', {
+      name: /free credits/,
+    });
+
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      (onboardingFreeCredits) => ({
+        ...onboardingFreeCredits,
+        upgradeTrial: 0,
+        seenCredits: 1,
+      }),
+    );
+    jotaiStore.set(onboardingUpgradeTrialLostCreditsState.atom, 2);
+
+    await expect(
+      await within(canvasElement).findByText('−2'),
+    ).toBeInTheDocument();
   },
 };
 

@@ -1,10 +1,11 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { UseFilters, UseGuards } from '@nestjs/common';
+import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -15,19 +16,36 @@ import {
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 @MetadataResolver(() => ApplicationDTO)
+@UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -36,8 +54,13 @@ export class ApplicationResolver {
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async applicationSdkClientChecksums(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SdkClientChecksumsDTO | null> {
@@ -62,8 +85,12 @@ export class ApplicationResolver {
   // temporarily stopped and behaving in a degraded way. Kept as a dedicated
   // query so listing applications does not trigger one Redis read per app.
   @Query(() => Boolean)
+  @UseGuards(ApplicationTargetGuard)
   async isApplicationStopped(
-    @Args('applicationUniversalIdentifier')
+    @ApplicationTargetArg('applicationUniversalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationUniversalIdentifier: string,
   ): Promise<boolean> {
     return this.applicationStopService.isApplicationStopped(
@@ -96,8 +123,10 @@ export class ApplicationResolver {
     callingApplication: FlatApplication | undefined,
   ): ApplicationVariableEntity[] | undefined {
     if (
-      isDefined(callingApplication) &&
-      callingApplication.id !== application.id
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
     ) {
       throw new ForbiddenError(
         new ApplicationException(

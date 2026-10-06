@@ -11,8 +11,7 @@ import { type EnrichCatalogArgs } from '../types/enrich-catalog-args.type';
 
 import { matchBenchmarks } from './match-benchmarks.util';
 
-// The catalog embeds the figures only; the aliases stay in the overlay, which
-// is where a joining consumer looks for them.
+// Aliases stay in the overlay, where a joining consumer looks for them
 const toCatalogReadings = (
   readings: Partial<Record<AiModelEffort, BenchmarkOverlayReading>>,
 ): Partial<Record<AiModelEffort, AiModelBenchmark>> =>

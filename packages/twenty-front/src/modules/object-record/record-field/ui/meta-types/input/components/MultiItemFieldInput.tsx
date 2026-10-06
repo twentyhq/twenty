@@ -21,7 +21,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -58,8 +58,7 @@ type MultiItemFieldInputProps<T> = {
   maxItemCount?: number;
 };
 
-// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
-// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
+// TODO: replace renderInput/renderItem/formatInput with a hook exposing them through context.
 export const MultiItemFieldInput = <T,>({
   items,
   onChange,

@@ -124,10 +124,7 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }): Promise<OnboardingStatus | null> {
-    // We always read the workspace directly from the database here (bypassing
-    // the per-instance core entity cache) so that onboardingStatus reflects the
-    // freshest activationStatus right after activateWorkspace, even when a
-    // sibling server instance still has a stale cached workspace.
+    // Bypasses the core entity cache, which a sibling instance may hold stale right after activateWorkspace.
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -421,8 +418,7 @@ export class OnboardingService {
           queryRunner,
         );
       case OnboardingStatus.INVITE_TEAM:
-        // User-scoped on purpose: the workspace-scoped flag would pull every
-        // other member of the workspace back to the invite screen.
+        // User-scoped: the workspace-scoped flag would pull every other member back to the invite screen.
         return this.setOnboardingInviteTeamPending(
           {
             userId,
@@ -928,10 +924,7 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
-    // Reading the tiers throws on its own when the configured value is not a
-    // parseable JSON object, so it sits inside the guard with the grant: a
-    // reward nobody has configured correctly must not cost anyone their
-    // onboarding.
+    // Reading the tiers throws on malformed config, so it stays guarded: a broken reward must not break onboarding.
     try {
       const { amountMicro, malformedTierKeys } =
         getOnboardingEnrichmentCreditRewardMicro({
@@ -942,8 +935,7 @@ export class OnboardingService {
         });
 
       if (malformedTierKeys.length > 0) {
-        // Dropping a malformed tier silently would under-pay every workspace
-        // that should have matched it, with nothing to notice it by.
+        // Otherwise a dropped tier would silently under-pay every workspace that should have matched it.
         this.exceptionHandlerService.captureExceptions([
           new Error(
             `Ignored malformed ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS entries: ${malformedTierKeys.join(', ')}`,
@@ -960,10 +952,7 @@ export class OnboardingService {
         amountMicro,
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: enrichment-qualified workspace',
-        // The only gate on the reward, deliberately: it is keyed on the
-        // workspace rather than the enriching user so that a re-run of the
-        // enrichment, or a second member qualifying later, replays instead of
-        // topping up a balance the workspace already received.
+        // Keyed on the workspace, not the user, so re-runs and later members replay instead of topping up.
         idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.enrichmentQualification}:${workspaceId}`,
       });
     } catch (error) {
@@ -1131,8 +1120,7 @@ export class OnboardingService {
           throw new Error('Transaction entity manager has no query runner');
         }
 
-        // Claiming the offer is the single-winner gate: a concurrent enrichment
-        // loses the insert and must not resurrect a step the user already skipped.
+        // Single-winner gate: a concurrent enrichment must not resurrect a step the user already skipped.
         const hasClaimedBookCallOffer =
           await this.userVarsService.setIfNotExists(
             {

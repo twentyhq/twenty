@@ -60,10 +60,6 @@ const withExtraFile = (filePath, contents, body) => {
   }
 };
 
-// ---------------------------------------------------------------------------
-// Smoke tests — every assertion should pass on the current plugin state.
-// ---------------------------------------------------------------------------
-
 test('assertJsonMetadata passes on current state', () => {
   assert.deepStrictEqual(collectFailures(metadata.assertJsonMetadata), []);
 });
@@ -213,10 +209,6 @@ test('assertTestingGuidance passes on current state', () => {
 test('assertSetupHelper passes on current state', () => {
   assert.deepStrictEqual(collectFailures(setupHelper.assertSetupHelper), []);
 });
-
-// ---------------------------------------------------------------------------
-// Negative cases — each assertion catches its targeted failure.
-// ---------------------------------------------------------------------------
 
 test('assertJsonMetadata catches version mismatch between package.json and plugin.json', () => {
   withJsonMutation(PACKAGE_JSON_PATH, (pkg) => { pkg.version = '99.99.99'; }, () => {

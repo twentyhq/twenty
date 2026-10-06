@@ -1,9 +1,11 @@
+import { isArray } from '@sniptt/guards';
 import React from 'react';
 
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
+import { isFileInputType } from '@/host/elements/utils/isFileInputType';
 import { isTextLikeInputType } from '@/host/caret/utils/isTextLikeInputType';
 
 const VOID_ELEMENTS = new Set([
@@ -34,10 +36,19 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       const { reactBindableProps, hostEnforcedProps, composedElementRef } =
         useHtmlHostElementProps({ props, htmlTag });
 
+      const { value, ...reactBindablePropsWithoutValue } = reactBindableProps;
+
+      const shouldUseOptionSelectedState =
+        htmlTag === 'select' &&
+        reactBindableProps.multiple === true &&
+        !isArray(value);
+
       return createPlainHostElement({
         htmlTag,
         isVoid,
-        reactBindableProps,
+        reactBindableProps: shouldUseOptionSelectedState
+          ? reactBindablePropsWithoutValue
+          : reactBindableProps,
         hostEnforcedProps,
         composedElementRef,
         children,
@@ -55,9 +66,15 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       composedElementRef,
     } = useHtmlHostElementProps({ props, htmlTag });
 
+    const { value, ...reactBindablePropsWithoutValue } = reactBindableProps;
+
+    const isFileInput = isFileInputType(reactBindableProps.type);
+
+    const shouldClearFileInputSelection = isFileInput && value === '';
+
     const caretPreservingElementRef = useCaretPreservingElementRef(
       composedElementRef,
-      reactBindableProps.value,
+      isFileInput && !shouldClearFileInputSelection ? undefined : value,
     );
 
     if (
@@ -76,9 +93,13 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     return createPlainHostElement({
       htmlTag,
       isVoid,
-      reactBindableProps,
+      reactBindableProps: isFileInput
+        ? reactBindablePropsWithoutValue
+        : reactBindableProps,
       hostEnforcedProps,
-      composedElementRef,
+      composedElementRef: isFileInput
+        ? caretPreservingElementRef
+        : composedElementRef,
       children,
     });
   };

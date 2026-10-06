@@ -5,6 +5,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 
 type TargetApplication =
   | {
@@ -22,13 +23,16 @@ export const resolveTargetApplicationOrThrow = ({
   applicationUniversalIdentifier,
 }: {
   callingApplication:
-    | Pick<FlatApplication, 'id' | 'universalIdentifier'>
+    | Pick<FlatApplication, 'id' | 'universalIdentifier' | 'sourceType'>
     | null
     | undefined;
   applicationId?: string | null;
   applicationUniversalIdentifier?: string | null;
 }): TargetApplication => {
-  if (!isDefined(callingApplication)) {
+  const scopedCallingApplication =
+    getScopedCallingApplication(callingApplication);
+
+  if (!isDefined(scopedCallingApplication)) {
     if (isDefined(applicationId) && isDefined(applicationUniversalIdentifier)) {
       throw new ApplicationException(
         'applicationId and applicationUniversalIdentifier cannot both be given',
@@ -53,10 +57,11 @@ export const resolveTargetApplicationOrThrow = ({
   }
 
   const namesAnotherApplication =
-    (isDefined(applicationId) && applicationId !== callingApplication.id) ||
+    (isDefined(applicationId) &&
+      applicationId !== scopedCallingApplication.id) ||
     (isDefined(applicationUniversalIdentifier) &&
       applicationUniversalIdentifier !==
-        callingApplication.universalIdentifier);
+        scopedCallingApplication.universalIdentifier);
 
   if (namesAnotherApplication) {
     throw new ApplicationException(
@@ -65,5 +70,5 @@ export const resolveTargetApplicationOrThrow = ({
     );
   }
 
-  return { targetApplicationId: callingApplication.id };
+  return { targetApplicationId: scopedCallingApplication.id };
 };

@@ -35,11 +35,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class SsoService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
 
-  // openid-client resolves this hook on whichever object issues the request:
-  // the Issuer class for discovery, the issuer instance for JWKS and the
-  // client instance for token and userinfo calls, so it is set on all three.
-  // It deep-merges what the hook returns with its own per-request options
-  // (method, headers, body), so only the agent needs to be returned.
+  // openid-client resolves this hook on the Issuer class, issuer and client instances, so all three get it.
+  // It deep-merges the result with its own per-request options, so only the agent is returned.
   private readonly oidcHttpOptions = (url: URL) => ({
     agent: this.secureHttpClientService.getSsrfSafeAgent(url),
   });
@@ -73,8 +70,7 @@ export class SsoService {
     try {
       return await Issuer.discover(issuerUrl);
     } catch (error) {
-      // Surfaced so a blocked private-network issuer is diagnosable at setup;
-      // at login the failure would only show as a redirect.
+      // Surfaced so a blocked private-network issuer is diagnosable at setup; at login it only shows as a redirect.
       const reason = error instanceof Error ? error.message : String(error);
 
       throw new SsoException(

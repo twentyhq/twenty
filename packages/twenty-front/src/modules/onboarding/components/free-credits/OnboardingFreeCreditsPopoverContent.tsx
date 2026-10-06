@@ -3,7 +3,6 @@ import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCre
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { getOnboardingCreditWorth } from '@/onboarding/utils/getOnboardingCreditWorth';
-import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -23,6 +22,7 @@ import {
   IconVideo,
   IconWand,
 } from 'twenty-ui/icon';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -102,15 +102,15 @@ export const OnboardingFreeCreditsPopoverContent = ({
     <StyledContent>
       <StyledSection>
         <StyledSectionTitle>{t`Free credits`}</StyledSectionTitle>
-        <UsageProgressRow
-          Icon={IconCoins}
-          label={t`Total earned`}
-          value={null}
-          valueLabel={plural(earnedCredits, {
+        <MetricRow
+          startIcon={IconCoins}
+          value={plural(earnedCredits, {
             one: `${formattedEarnedCredits} credit`,
             other: `${formattedEarnedCredits} credits`,
           })}
-        />
+        >
+          {t`Total earned`}
+        </MetricRow>
       </StyledSection>
       {isNonEmptyArray(earnedCreditsByStep) && (
         <>
@@ -118,17 +118,17 @@ export const OnboardingFreeCreditsPopoverContent = ({
           <StyledSection>
             <StyledSectionTitle>{t`Breakdown`}</StyledSectionTitle>
             {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => (
-              <UsageProgressRow
+              <MetricRow
                 key={step}
-                Icon={creditsSteps[step].Icon}
-                label={creditsSteps[step].label}
-                value={null}
-                valueLabel={
+                startIcon={creditsSteps[step].Icon}
+                value={
                   credits < rewardCredits
                     ? `${formatOnboardingCredits(credits, numberFormat)}/${formatOnboardingCredits(rewardCredits, numberFormat)}`
                     : formatOnboardingCredits(credits, numberFormat)
                 }
-              />
+              >
+                {creditsSteps[step].label}
+              </MetricRow>
             ))}
           </StyledSection>
         </>
@@ -140,39 +140,30 @@ export const OnboardingFreeCreditsPopoverContent = ({
             ? t`Enough for one of these on average`
             : t`1 credit is enough for one of these on average`}
         </StyledSectionTitle>
-        <UsageProgressRow
-          Icon={IconSparkles}
-          label={t`AI actions`}
-          value={null}
-          valueLabel={formatNumber(aiActions)}
-        />
-        <UsageProgressRow
-          Icon={IconSettingsAutomation}
-          label={t`Workflow steps`}
-          value={null}
-          valueLabel={formatNumber(workflowSteps)}
-        />
-        <UsageProgressRow
-          Icon={IconWand}
-          label={t`Enrichments`}
-          value={null}
-          valueLabel={formatNumber(enrichments)}
-        />
-        <UsageProgressRow
-          Icon={IconVideo}
-          label={t`Call recording`}
-          value={null}
-          valueLabel={plural(callRecordingHours, {
+        <MetricRow startIcon={IconSparkles} value={formatNumber(aiActions)}>
+          {t`AI actions`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconSettingsAutomation}
+          value={formatNumber(workflowSteps)}
+        >
+          {t`Workflow steps`}
+        </MetricRow>
+        <MetricRow startIcon={IconWand} value={formatNumber(enrichments)}>
+          {t`Enrichments`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconVideo}
+          value={plural(callRecordingHours, {
             one: `${formattedCallRecordingHours} hour`,
             other: `${formattedCallRecordingHours} hours`,
           })}
-        />
-        <UsageProgressRow
-          Icon={IconMail}
-          label={t`Shared inbox emails`}
-          value={null}
-          valueLabel={formatNumber(emailsSent)}
-        />
+        >
+          {t`Call recording`}
+        </MetricRow>
+        <MetricRow startIcon={IconMail} value={formatNumber(emailsSent)}>
+          {t`Shared inbox emails`}
+        </MetricRow>
       </StyledSection>
       <HorizontalSeparator noMargin />
       <StyledFooter>

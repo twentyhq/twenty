@@ -100,8 +100,7 @@ describe('workflowShouldKeepRunning', () => {
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeTruthy();
     });
 
-    // The trigger is not a step, so nothing but the answered step's own
-    // status can keep its run alive once a parallel branch has finished.
+    // The trigger is not a step, so only the answered step's own status can keep its run alive
     it('an answered agent step right after the trigger waits for its resume while a parallel branch has finished', () => {
       const steps = [
         { id: 'agent' } as WorkflowAction,

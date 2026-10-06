@@ -20,8 +20,7 @@ const grant = (
 });
 
 const ALLOWANCE = 1_000_000;
-// A cap multiplier of 2 means total credits never exceed twice the allowance,
-// so at most one full allowance can roll over.
+// A cap multiplier of 2 lets at most one full allowance roll over
 const ROLLOVER_CAP = ALLOWANCE;
 
 describe('computeCarryForwardGrants', () => {
@@ -289,8 +288,7 @@ describe('computeCarryForwardGrants', () => {
         boundary: BOUNDARY,
       });
 
-      // The half micro-credit left of the allowance floors to nothing, so no
-      // rollover grant is emitted at all.
+      // The half micro-credit left floors to nothing, so no rollover grant is emitted
       expect(result).toEqual([
         {
           type: BillingCreditGrantType.COMPENSATION,
@@ -388,8 +386,7 @@ describe('computeCarryForwardGrants', () => {
       expect(result).toEqual([]);
     });
 
-    // It was spendable for part of the period, so the usage it absorbed must
-    // not fall back onto the grants that outlive it.
+    // Usage it absorbed while spendable must not fall onto the grants outliving it
     it('still absorbs usage before lapsing', () => {
       const result = computeCarryForwardGrants({
         allowanceMicro: 0,

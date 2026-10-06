@@ -8,7 +8,8 @@ import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SearchInput, Section } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { type Application } from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,
@@ -225,7 +226,7 @@ export const SettingsApplicationDetailContentTab = ({
         <SearchInput
           placeholder={t`Search...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </Section.Root>
 

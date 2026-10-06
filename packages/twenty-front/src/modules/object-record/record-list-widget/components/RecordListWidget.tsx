@@ -1,5 +1,4 @@
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordListContainer } from '@/object-record/record-list/components/RecordListContainer';
+import { RecordList } from '@/object-record/record-list/components/RecordList';
 import { styled } from '@linaria/react';
 
 const StyledListContainer = styled.div`
@@ -11,15 +10,9 @@ const StyledListContainer = styled.div`
 `;
 
 export const RecordListWidget = () => {
-  const { objectNameSingular, viewBarInstanceId } =
-    useRecordIndexContextOrThrow();
-
   return (
     <StyledListContainer>
-      <RecordListContainer
-        objectNameSingular={objectNameSingular}
-        viewBarInstanceId={viewBarInstanceId}
-      />
+      <RecordList />
     </StyledListContainer>
   );
 };

@@ -22,6 +22,16 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       first.getBoundingClientRect().left > last.getBoundingClientRect().left,
     ).toBe(direction === 'rtl');
     expect(getComputedStyle(first).borderStartEndRadius).toBe('0px');
+    const upcoming = content.getByRole('button', {
+      name: 'Upcoming action Soon',
+    });
+    expect(upcoming).toBeDisabled();
+    const upcomingLabel = content.getByText('Soon');
+    expect(
+      upcomingLabel.getBoundingClientRect().left <
+        upcoming.getBoundingClientRect().left +
+          upcoming.getBoundingClientRect().width / 2,
+    ).toBe(direction === 'rtl');
     const title = content.getByText('Account details');
     const description = content.getByText(
       'Review the information before continuing.',
@@ -32,17 +42,6 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
       expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
     });
-    await userEvent.click(content.getByRole('button', { name: 'Dark' }));
-    for (const variant of ['Light', 'Dark', 'System']) {
-      const badge = content.getByRole('button', {
-        name: variant,
-      }).nextElementSibling!;
-      await waitFor(() =>
-        expect(getComputedStyle(badge).visibility).toBe(
-          variant === 'Dark' ? 'visible' : 'hidden',
-        ),
-      );
-    }
     const row = content
       .getByText('A very long account name that must truncate')
       .closest('[data-indicator]')!;

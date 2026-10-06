@@ -5,7 +5,11 @@ import { DataSource, type QueryRunner } from 'typeorm';
 
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import {
+  AGENT_HISTORY_TABLES,
+  ACTIVE_AGENT_HISTORY_TABLES,
+  isActiveAgentHistoryTable,
+} from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
@@ -161,15 +165,17 @@ export class AgentHistoryMigrationService {
               throw new Error('Migration state changed unexpectedly');
             }
             const table = AGENT_HISTORY_TABLES[progress.tableIndex];
-            const ids = await this.dataService.copyBatch({
-              runner,
-              workspaceId,
-              table,
-              source: current.storage,
-              target,
-              lastId: progress.lastId,
-              batchSize,
-            });
+            const ids = isActiveAgentHistoryTable(table)
+              ? await this.dataService.copyBatch({
+                  runner,
+                  workspaceId,
+                  table,
+                  source: current.storage,
+                  target,
+                  lastId: progress.lastId,
+                  batchSize,
+                })
+              : [];
             const next: AgentHistoryMigrationState = {
               ...current,
               migration: {
@@ -314,7 +320,7 @@ export class AgentHistoryMigrationService {
         workspaceId,
         storage: state.storage,
       });
-      for (const table of AGENT_HISTORY_TABLES) {
+      for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
         const [{ count }] = await runner.query(
           `SELECT count(*) FROM ${getAgentHistoryTable({ workspaceId, storage: state.storage, name: table.name })} ${state.storage === 'core' ? 'WHERE "workspaceId" = $1' : ''}`,
           state.storage === 'core' ? [workspaceId] : [],
@@ -322,81 +328,6 @@ export class AgentHistoryMigrationService {
         this.logger.log(`${workspaceId}: ${table.name}: ${count} source rows`);
       }
     } finally {
-      await runner.release();
-    }
-  }
-
-  async cleanup({
-    workspaceId,
-    dryRun,
-    retentionDays,
-  }: {
-    workspaceId: string;
-    dryRun: boolean;
-    retentionDays: number;
-  }): Promise<void> {
-    if (!Number.isInteger(retentionDays) || retentionDays < 1) {
-      throw new Error('Retention must be at least one day');
-    }
-    const runner = this.dataSource.createQueryRunner('master');
-    const key = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${workspaceId}`;
-    let ownsLock = false;
-    try {
-      await runner.connect();
-      const [{ acquired }] = await runner.query(
-        'SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS acquired',
-        [key],
-      );
-      ownsLock = acquired;
-      if (!ownsLock) {
-        this.logger.log(
-          `${workspaceId}: migration runner active; skipping cleanup`,
-        );
-        return;
-      }
-      const state = await this.migrationStateService.readState(
-        runner,
-        workspaceId,
-      );
-      if (
-        state.storage !== 'workspace' ||
-        isDefined(state.migration) ||
-        !isDefined(state.verifiedAt)
-      ) {
-        this.logger.log(`${workspaceId}: not eligible; skipping cleanup`);
-        return;
-      }
-      if (isDefined(state.cleanedAt)) {
-        return;
-      }
-      const verifiedAt = Date.parse(state.verifiedAt);
-      if (Date.now() - verifiedAt < retentionDays * 86400000) {
-        this.logger.log(
-          `${workspaceId}: retention window has not elapsed; skipping cleanup`,
-        );
-        return;
-      }
-      if (dryRun) {
-        this.logger.log(`[DRY RUN] ${workspaceId}: eligible for cleanup`);
-        return;
-      }
-      // The session lock excludes rollback; live workspace traffic can continue.
-      await this.dataService.clearStore({
-        runner,
-        workspaceId,
-        storage: 'core',
-      });
-      await this.migrationStateService.writeState(runner, workspaceId, {
-        ...state,
-        cleanedAt: new Date().toISOString(),
-      });
-    } finally {
-      if (ownsLock) {
-        await runner.query(
-          'SELECT pg_advisory_unlock(hashtextextended($1, 0))',
-          [key],
-        );
-      }
       await runner.release();
     }
   }

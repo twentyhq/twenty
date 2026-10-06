@@ -8,8 +8,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type RecordTableWidgetLayoutMenuItemsProps = {
   layoutOptions: RecordTableWidgetLayoutPickerOption[];
-  // Undefined when the host widget is not currently showing an embedded view,
-  // so no layout reads as selected.
+  // Undefined when no embedded view is shown, so no layout reads as selected
   selectedViewType: RecordTableWidgetLayoutViewType | undefined;
   focusedItemId: string | null;
   onSelect: (viewType: RecordTableWidgetLayoutViewType) => void;

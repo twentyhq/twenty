@@ -74,12 +74,10 @@ const AUTO_GENERATED_HEADER = `/*
 
 `;
 
-// Generate DocumentationPaths.ts
 const pathEntries = sortedPaths
   .map((docPath) => {
     const constName = pathToConstantName(docPath);
     const value = `'/${docPath}'`;
-    // Check if line would be too long (80 char limit)
     if (`  ${constName}: ${value},`.length > 80) {
       return `  ${constName}:\n    ${value},`;
     }

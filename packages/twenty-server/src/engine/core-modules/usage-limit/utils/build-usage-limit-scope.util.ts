@@ -9,7 +9,7 @@ export type UsageLimitScope = Pick<
   | 'limitKind'
   | 'periodCount'
   | 'periodUnit'
-  | 'meter'
+  | 'unit'
 >;
 
 type UsageLimitScopeSource = Omit<UsageLimitScope, 'spenderId'> & {
@@ -26,5 +26,5 @@ export const buildUsageLimitScope = (
   limitKind: source.limitKind,
   periodCount: source.periodCount,
   periodUnit: source.periodUnit,
-  meter: source.meter,
+  unit: source.unit,
 });

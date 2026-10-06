@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { Button } from 'twenty-ui/primitives/input';
-import { Heading, Text } from 'twenty-ui/primitives/typography';
+import {
+  Heading,
+  Text,
+  Shortcut,
+  formatShortcut,
+} from 'twenty-ui/primitives/typography';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -31,6 +36,21 @@ const SectionExample = () => {
 };
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
+  {
+    name: 'Shortcut',
+    node: (
+      <>
+        <Shortcut shortcut={['Mod', 'K']} platform="mac" />
+        <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="next" />
+        <Text>
+          {formatShortcut({
+            shortcut: ['Mod', 'K'],
+            platform: 'other',
+          })}
+        </Text>
+      </>
+    ),
+  },
   {
     name: 'Heading',
     node: (
