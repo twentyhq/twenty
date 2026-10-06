@@ -2,6 +2,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 
+jest.mock('crypto', () => ({
+  ...jest.requireActual('crypto'),
+  randomBytes: () => Buffer.from('0000000000', 'hex'),
+}));
+
 describe('computeWhereConditionParts', () => {
   describe('isEmptyArray', () => {
     it.each([FieldMetadataType.ARRAY, FieldMetadataType.MULTI_SELECT])(
@@ -42,65 +47,50 @@ describe('computeWhereConditionParts', () => {
   });
 
   describe('neq', () => {
-    it('matches NULL rows when compared against a real, non-empty value', () => {
-      const { sql } = computeWhereConditionParts({
-        operator: 'neq',
-        objectNameSingular: 'person',
+    it.each([
+      {
+        description: 'should match NULL values when compared to a real value',
         key: 'jobTitle',
         value: 'Engineer',
         fieldMetadataType: FieldMetadataType.TEXT,
-      });
-
-      expect(sql).toContain('IS NULL');
-    });
-
-    it('keeps the OR self-contained in its own parentheses', () => {
-      const { sql } = computeWhereConditionParts({
-        operator: 'neq',
-        objectNameSingular: 'person',
-        key: 'jobTitle',
-        value: 'Engineer',
-        fieldMetadataType: FieldMetadataType.TEXT,
-      });
-
-      expect(sql).toMatch(/^\(.*\)$/);
-    });
-
-    it('still excludes NULL rows when compared against the null-equivalent (empty) value', () => {
-      const { sql } = computeWhereConditionParts({
-        operator: 'neq',
-        objectNameSingular: 'person',
+        expectedSql: `("person"."jobTitle" != :jobTitle0000000000 OR "person"."jobTitle" IS NULL)`,
+      },
+      {
+        description:
+          'should exclude NULL values when compared to an empty value',
         key: 'jobTitle',
         value: '',
         fieldMetadataType: FieldMetadataType.TEXT,
-      });
-
-      expect(sql).toContain('IS NOT NULL');
-      expect(sql).not.toContain('OR');
-    });
-
-    it('matches NULL rows for DATE_TIME fields compared against a real value', () => {
-      const { sql } = computeWhereConditionParts({
-        operator: 'neq',
-        objectNameSingular: 'task',
-        key: 'dueAt',
+        expectedSql: `("person"."jobTitle" != :jobTitle0000000000 AND "person"."jobTitle" IS NOT NULL)`,
+      },
+      {
+        description:
+          'should match NULL foreign keys when compared to a real id',
+        key: 'companyId',
+        value: '20202020-0000-4000-8000-000000000001',
+        fieldMetadataType: FieldMetadataType.UUID,
+        expectedSql: `("person"."companyId" != :companyId0000000000 OR "person"."companyId" IS NULL)`,
+      },
+      {
+        description: 'should match NULL dates when compared to a real date',
+        key: 'createdAt',
         value: '2026-01-01T00:00:00.000Z',
         fieldMetadataType: FieldMetadataType.DATE_TIME,
+        expectedSql: `("person"."createdAt" < :createdAt0000000000 OR "person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond' OR "person"."createdAt" IS NULL)`,
+      },
+    ])('$description', ({ key, value, fieldMetadataType, expectedSql }) => {
+      expect(
+        computeWhereConditionParts({
+          operator: 'neq',
+          objectNameSingular: 'person',
+          key,
+          value,
+          fieldMetadataType,
+        }),
+      ).toEqual({
+        sql: expectedSql,
+        params: { [`${key}0000000000`]: value },
       });
-
-      expect(sql).toContain('IS NULL');
-    });
-
-    it('matches NULL relation foreign keys compared against a real id', () => {
-      const { sql } = computeWhereConditionParts({
-        operator: 'neq',
-        objectNameSingular: 'person',
-        key: 'companyId',
-        value: '11111111-1111-1111-1111-111111111111',
-        fieldMetadataType: FieldMetadataType.UUID,
-      });
-
-      expect(sql).toContain('IS NULL');
     });
   });
 });
