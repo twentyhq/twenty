@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
@@ -116,11 +116,11 @@ export const Disabled: Story = {
 
 export const RightToLeft: Story = {
   render: (args) => (
-    <TextDirectionProvider direction="rtl">
+    <DirectionProvider direction="rtl">
       <Text dir="rtl">
         <PhoneCountryPickerExample key={args.initialValue} {...args} />
       </Text>
-    </TextDirectionProvider>
+    </DirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });

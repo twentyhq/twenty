@@ -340,22 +340,6 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.InstallApps): {
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.InstallApps,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.InstallApps,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: false,
-              enableGlobalHotkeysConflictingWithKeyboard: false,
-            },
-          },
-        });
-        break;
-      }
       case isMatchingLocation(location, AppPath.InviteTeam): {
         resetFocusStackToFocusItem({
           focusStackItem: {
