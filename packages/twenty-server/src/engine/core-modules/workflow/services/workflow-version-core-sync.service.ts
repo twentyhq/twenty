@@ -309,23 +309,19 @@ export class WorkflowVersionCoreSyncService {
   private async evictCronTriggerCacheEntries(
     deletedVersions: Pick<WorkflowVersionEntity, 'coreWorkflowId' | 'status'>[],
   ): Promise<void> {
-    await this.evictCronTriggerCacheEntriesOfWorkflows([
+    const fields = [
       ...new Set(
         deletedVersions
           .filter((version) => version.status === WorkflowVersionStatus.ACTIVE)
           .map((version) => version.coreWorkflowId)
           .filter(isNonEmptyString),
       ),
-    ]);
-  }
+    ];
 
-  async evictCronTriggerCacheEntriesOfWorkflows(
-    coreWorkflowIds: string[],
-  ): Promise<void> {
-    for (const coreWorkflowId of coreWorkflowIds) {
+    for (const field of fields) {
       await this.cacheStorageService.hashDelete({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        field: coreWorkflowId,
+        field,
       });
     }
   }
