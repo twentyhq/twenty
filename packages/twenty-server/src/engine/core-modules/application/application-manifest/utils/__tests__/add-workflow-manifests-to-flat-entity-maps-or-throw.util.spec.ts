@@ -139,6 +139,24 @@ describe('application workflow manifest updates', () => {
     ).toThrow('Removing application workflows is not supported');
   });
 
+  it('keeps workspace workflows out of a full sync', () => {
+    const fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
+    const workspaceWorkflowUniversalIdentifier =
+      '77777777-7777-4777-8777-777777777777';
+
+    fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
+      workspaceWorkflowUniversalIdentifier
+    ] = {
+      universalIdentifier: workspaceWorkflowUniversalIdentifier,
+      isSystem: false,
+      workspaceWorkflowId: null,
+    } as UniversalFlatWorkflow;
+
+    expect(() =>
+      compute({ workflows: [], fromAllFlatEntityMaps }),
+    ).not.toThrow();
+  });
+
   it('allows omitted workflows on additive syncs', () => {
     expect(() =>
       compute({

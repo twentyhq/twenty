@@ -50,7 +50,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     );
   }
   const definition = parsed.data;
-  if (isDefined(existingWorkflow?.workspaceWorkflowId)) {
+  if (isDefined(existingWorkflow) && !existingWorkflow.isSystem) {
     throw new ApplicationException(
       'Workspace workflows cannot be adopted by an application',
       ApplicationExceptionCode.INVALID_INPUT,

@@ -70,6 +70,19 @@ describe('application workflow definitions', () => {
     });
   });
 
+  it('rejects adopting a workspace workflow', () => {
+    const existingWorkflow: FlatWorkflow = {
+      ...convert(options).workflow,
+      workspaceId: APPLICATION_ID,
+      applicationId: APPLICATION_ID,
+      isSystem: false,
+    };
+
+    expect(() => convert({ ...options, existingWorkflow })).toThrow(
+      'Workspace workflows cannot be adopted by an application',
+    );
+  });
+
   it('updates the same version and keeps graph identity across updates', () => {
     const before = convert(options);
     const existingWorkflow: FlatWorkflow = {

@@ -3,6 +3,7 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
+  findCoreWorkflowVersionById,
   findCoreWorkflowVersionsByCoreWorkflowId,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow-test.util';
@@ -74,8 +75,12 @@ describe('duplicateCoreWorkflow (e2e)', () => {
 
     expect(duplicatedVersion.id).not.toBe(sourceCoreWorkflowVersionId);
     expect(duplicatedVersion.status).toBe('DRAFT');
-    expect(duplicatedVersion.trigger?.type).toBe('MANUAL');
-    expect(Array.isArray(duplicatedVersion.steps)).toBe(true);
-    expect(duplicatedVersion.steps).toHaveLength(1);
+
+    const duplicatedVersionContent = await findCoreWorkflowVersionById(
+      duplicatedVersion.id,
+    );
+
+    expect(duplicatedVersionContent?.trigger?.type).toBe('MANUAL');
+    expect(duplicatedVersionContent?.steps).toHaveLength(1);
   });
 });
