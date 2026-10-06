@@ -25,7 +25,6 @@ import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -58,7 +57,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentActorContextService,
     AgentCallerConversationService,
     AgentRunConversationService,
-    AiGraphqlApiExceptionInterceptor,
     AgentMessagePartResolver,
     AgentMessageResolver,
     AgentRunResolver,
