@@ -1,3 +1,5 @@
+import { type WorkspaceSignalName } from '@/application/constants/WorkspaceSignalNames';
+import { type DatabaseEventActor } from '@/database-events/database-event-actor-type';
 import { type ObjectRecordEvent } from '@/database-events/object-record-event.event';
 
 type SimplifiedFlatObjectMetadata = {
@@ -42,6 +44,17 @@ type DatabaseEventMetadata = {
   name: string;
   workspaceId: string;
   objectMetadata: SimplifiedFlatObjectMetadata;
+  // Absent on events emitted before the actor was recorded.
+  actor?: DatabaseEventActor;
+};
+
+// Set on the single catch-up delivery a trigger with onMismatch
+// 'deferUntilMatch' receives once its signal clears. The events it missed are
+// not replayed: the handler re-reads whatever changed since `since`.
+export type DeferredDatabaseEventBatch = {
+  signal: WorkspaceSignalName;
+  since: string;
+  droppedEventCount: number;
 };
 
 export type DatabaseEventPayload<T = ObjectRecordEvent> =
@@ -50,4 +63,5 @@ export type DatabaseEventPayload<T = ObjectRecordEvent> =
 export type DatabaseEventBatchPayload<T = ObjectRecordEvent> =
   DatabaseEventMetadata & {
     events: T[];
+    deferred?: DeferredDatabaseEventBatch;
   };

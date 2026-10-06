@@ -1,6 +1,9 @@
 export type {
+  DatabaseEventActor,
+  DatabaseEventActorType,
   DatabaseEventBatchPayload,
   DatabaseEventPayload,
+  DeferredDatabaseEventBatch,
   ObjectRecordCreateEvent,
   ObjectRecordUpdateEvent,
   ObjectRecordEvent,

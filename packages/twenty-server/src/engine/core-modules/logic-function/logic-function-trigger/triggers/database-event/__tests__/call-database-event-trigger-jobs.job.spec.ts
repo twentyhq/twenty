@@ -12,6 +12,7 @@ import {
 
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
+import { DeferredDatabaseEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/services/deferred-database-event-trigger.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -21,6 +22,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { WorkspaceSignalService } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -129,6 +131,8 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   let job: CallDatabaseEventTriggerJobsJob;
   let messageQueueService: { bulkAdd: jest.Mock };
   let recordShareStorageService: { findByRecordIds: jest.Mock };
+  let workspaceSignalService: { read: jest.Mock };
+  let deferredDatabaseEventTriggerService: { defer: jest.Mock };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -184,6 +188,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     recordShareStorageService = {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
+    workspaceSignalService = { read: jest.fn().mockResolvedValue({}) };
+    deferredDatabaseEventTriggerService = {
+      defer: jest.fn().mockResolvedValue(undefined),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -209,6 +217,11 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         {
           provide: RecordShareStorageService,
           useValue: recordShareStorageService,
+        },
+        { provide: WorkspaceSignalService, useValue: workspaceSignalService },
+        {
+          provide: DeferredDatabaseEventTriggerService,
+          useValue: deferredDatabaseEventTriggerService,
         },
 
         {
@@ -377,5 +390,91 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([
       'record-shared',
     ]);
+  });
+
+  describe('signal conditions', () => {
+    const withSignalConditions = (
+      onMismatch: 'drop' | 'deferUntilMatch' | undefined,
+    ) => {
+      cacheData.flatLogicFunctionMaps = buildMaps([
+        {
+          id: LOGIC_FUNCTION_ID,
+          universalIdentifier: LOGIC_FUNCTION_ID,
+          workspaceId: WORKSPACE_ID,
+          applicationId: APPLICATION_ID,
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            batchMode: true,
+            updatedFields: ['name'],
+            conditions: {
+              signals: { 'messaging.initialImport': false },
+              ...(onMismatch ? { onMismatch } : {}),
+            },
+          },
+          deletedAt: null,
+        },
+      ]);
+    };
+
+    it('reads the signals once and delivers when they match', async () => {
+      withSignalConditions('deferUntilMatch');
+
+      await job.handle(
+        buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      );
+
+      expect(workspaceSignalService.read).toHaveBeenCalledTimes(1);
+      expect(workspaceSignalService.read).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        names: ['messaging.initialImport'],
+      });
+      expect(messageQueueService.bulkAdd).toHaveBeenCalledTimes(1);
+      expect(deferredDatabaseEventTriggerService.defer).not.toHaveBeenCalled();
+    });
+
+    it('drops the batch on a mismatch by default', async () => {
+      withSignalConditions(undefined);
+      workspaceSignalService.read.mockResolvedValue({
+        'messaging.initialImport': { since: '2026-10-06T09:00:00.000Z' },
+      });
+
+      await job.handle(
+        buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      );
+
+      expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+      expect(deferredDatabaseEventTriggerService.defer).not.toHaveBeenCalled();
+    });
+
+    it('defers the function with the count of events it would have received', async () => {
+      withSignalConditions('deferUntilMatch');
+      workspaceSignalService.read.mockResolvedValue({
+        'messaging.initialImport': { since: '2026-10-06T09:00:00.000Z' },
+      });
+
+      await job.handle(
+        buildBatch([
+          buildEvent('record-1', { name: 'New', salary: 10 }),
+          buildEvent('record-2', { name: 'New', salary: 10 }),
+          buildEvent('record-3', { name: 'Old', salary: 10 }, ['salary']),
+        ]),
+      );
+
+      expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+      expect(deferredDatabaseEventTriggerService.defer).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        signal: 'messaging.initialImport',
+        logicFunctionId: LOGIC_FUNCTION_ID,
+        droppedEventCount: 2,
+      });
+    });
+
+    it('does not read signals for functions without signal conditions', async () => {
+      await job.handle(
+        buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      );
+
+      expect(workspaceSignalService.read).not.toHaveBeenCalled();
+    });
   });
 });

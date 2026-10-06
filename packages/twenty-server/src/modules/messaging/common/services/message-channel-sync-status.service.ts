@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, Repository } from 'typeorm';
+import { Any, In, IsNull, Repository } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -15,6 +15,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceSignalService } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -44,6 +45,7 @@ export class MessageChannelSyncStatusService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly metricsService: MetricsService,
+    private readonly workspaceSignalService: WorkspaceSignalService,
   ) {}
 
   public async markAsMessagesListFetchPending(
@@ -247,6 +249,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.refreshImportSignals(messageChannelIds, workspaceId);
   }
 
   public async markAsMessageSyncCompleted(
@@ -281,6 +285,8 @@ export class MessageChannelSyncStatusService {
       key: MetricsKeys.MessageChannelSyncJobActive,
       eventIds: messageChannelIds,
     });
+
+    await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
   }
 
   public async markAsMessagesImportScheduled(
@@ -331,6 +337,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.refreshImportSignals(messageChannelIds, workspaceId);
   }
 
   public async markAsFailed(
@@ -400,6 +408,68 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
+  }
+
+  // Signals let app triggers hold off while a mailbox imports. The first
+  // sync of a channel is the one that floods, so it gets its own signal.
+  private async refreshImportSignals(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    await this.workspaceSignalService.set({
+      workspaceId,
+      name: 'messaging.import',
+    });
+
+    const hasChannelInInitialImport =
+      await this.messageChannelRepository.exists({
+        where: { id: In(messageChannelIds), workspaceId, syncedAt: IsNull() },
+      });
+
+    if (hasChannelInInitialImport) {
+      await this.workspaceSignalService.set({
+        workspaceId,
+        name: 'messaging.initialImport',
+      });
+    }
+  }
+
+  private async clearImportSignalsOnceNoChannelIsOngoing(workspaceId: string) {
+    const ongoingChannelCount = await this.messageChannelRepository.count({
+      where: { workspaceId, syncStatus: MessageChannelSyncStatus.ONGOING },
+    });
+
+    if (ongoingChannelCount === 0) {
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'messaging.import',
+      });
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'messaging.initialImport',
+      });
+
+      return;
+    }
+
+    const ongoingInitialImportCount = await this.messageChannelRepository.count(
+      {
+        where: {
+          workspaceId,
+          syncStatus: MessageChannelSyncStatus.ONGOING,
+          syncedAt: IsNull(),
+        },
+      },
+    );
+
+    if (ongoingInitialImportCount === 0) {
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'messaging.initialImport',
+      });
+    }
   }
 
   private async addToAccountsToReconnect(

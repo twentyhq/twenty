@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
+  type DatabaseEventActor,
   ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
   ObjectRecordDestroyEvent,
@@ -33,6 +34,7 @@ export type DatabaseBatchEventInput<T, A extends keyof ActionEventMap<T>> = {
   events: ActionEventMap<T>[A][];
   objectMetadata: FlatObjectMetadata;
   workspaceId: string;
+  actor?: DatabaseEventActor;
 };
 
 @Injectable()
@@ -52,6 +54,7 @@ export class WorkspaceEventEmitter {
       events,
       objectMetadata,
       workspaceId,
+      actor,
     } = databaseBatchEventInput;
 
     if (!events.length) {
@@ -64,6 +67,7 @@ export class WorkspaceEventEmitter {
       name: eventName,
       workspaceId,
       objectMetadata,
+      ...(isDefined(actor) ? { actor } : {}),
       events,
     };
 

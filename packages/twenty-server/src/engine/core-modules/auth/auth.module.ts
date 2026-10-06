@@ -72,6 +72,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { WorkspaceSignalModule } from 'src/engine/core-modules/workspace-signal/workspace-signal.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -85,6 +86,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 
 @Module({
   imports: [
+    WorkspaceSignalModule,
     JwtModule,
     WorkspaceDomainsModule,
     TokenModule,

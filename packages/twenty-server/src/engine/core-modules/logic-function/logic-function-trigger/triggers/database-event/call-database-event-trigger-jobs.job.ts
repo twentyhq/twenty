@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import type { DatabaseEventTriggerSettings } from 'twenty-shared/application';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -13,6 +14,11 @@ import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/m
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { DeferredDatabaseEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/services/deferred-database-event-trigger.service';
+import {
+  collectSignalNamesFromConditions,
+  evaluateDatabaseEventTriggerSignalConditions,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/evaluate-database-event-trigger-signal-conditions.util';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -20,11 +26,17 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import {
+  WorkspaceSignalService,
+  type WorkspaceSignalStates,
+} from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { selectEventsForDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/select-events-for-database-event-trigger.util';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
@@ -36,6 +48,8 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly workspaceSignalService: WorkspaceSignalService,
+    private readonly deferredDatabaseEventTriggerService: DeferredDatabaseEventTriggerService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -85,6 +99,12 @@ export class CallDatabaseEventTriggerJobsJob {
     if (logicFunctionsByApplicationId.size === 0) {
       return;
     }
+
+    // Signals are workspace state, read once for every function of the batch
+    const signalStates = await this.readSignalStates({
+      workspaceId: workspaceEventBatch.workspaceId,
+      logicFunctions: logicFunctionsToTrigger,
+    });
 
     const eventRecordAccessGate =
       this.recordAccessPolicyService.buildEventRecordAccessGate(
@@ -144,12 +164,18 @@ export class CallDatabaseEventTriggerJobsJob {
           }),
         )
         .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
-      const logicFunctionPayloads = transformEventBatchToEventPayloads({
+      const admittedWorkspaceEventBatch = {
+        ...workspaceEventBatch,
+        events: admittedEvents,
+      };
+      const logicFunctionsToDeliver = await this.dropOrDeferOnSignalMismatch({
         logicFunctions,
-        workspaceEventBatch: {
-          ...workspaceEventBatch,
-          events: admittedEvents,
-        },
+        workspaceEventBatch: admittedWorkspaceEventBatch,
+        signalStates,
+      });
+      const logicFunctionPayloads = transformEventBatchToEventPayloads({
+        logicFunctions: logicFunctionsToDeliver,
+        workspaceEventBatch: admittedWorkspaceEventBatch,
       });
 
       if (logicFunctionPayloads.length === 0) {
@@ -185,5 +211,84 @@ export class CallDatabaseEventTriggerJobsJob {
         },
       );
     }
+  }
+
+  private async readSignalStates({
+    workspaceId,
+    logicFunctions,
+  }: {
+    workspaceId: string;
+    logicFunctions: {
+      databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
+    }[];
+  }): Promise<WorkspaceSignalStates> {
+    const signalNames = collectSignalNamesFromConditions(
+      logicFunctions.map(
+        (logicFunction) =>
+          logicFunction.databaseEventTriggerSettings?.conditions?.signals,
+      ),
+    );
+
+    if (signalNames.length === 0) {
+      return {};
+    }
+
+    return this.workspaceSignalService.read({
+      workspaceId,
+      names: signalNames,
+    });
+  }
+
+  // A function whose signal condition fails receives nothing from this batch.
+  // With deferUntilMatch it is noted, so it gets one catch-up delivery once
+  // the signal clears, told how many events it missed.
+  private async dropOrDeferOnSignalMismatch<
+    TLogicFunction extends Pick<
+      LogicFunctionEntity,
+      'id' | 'databaseEventTriggerSettings'
+    >,
+  >({
+    logicFunctions,
+    workspaceEventBatch,
+    signalStates,
+  }: {
+    logicFunctions: TLogicFunction[];
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    signalStates: WorkspaceSignalStates;
+  }): Promise<TLogicFunction[]> {
+    const logicFunctionsToDeliver: TLogicFunction[] = [];
+
+    for (const logicFunction of logicFunctions) {
+      const conditions = logicFunction.databaseEventTriggerSettings?.conditions;
+      const evaluation = evaluateDatabaseEventTriggerSignalConditions({
+        signalConditions: conditions?.signals,
+        signalStates,
+      });
+
+      if (evaluation.matches) {
+        logicFunctionsToDeliver.push(logicFunction);
+        continue;
+      }
+
+      if (conditions?.onMismatch !== 'deferUntilMatch') {
+        continue;
+      }
+
+      const droppedEventCount = selectEventsForDatabaseEventTrigger({
+        events: workspaceEventBatch.events,
+        eventName: workspaceEventBatch.name,
+        actor: workspaceEventBatch.actor,
+        triggerSettings: logicFunction.databaseEventTriggerSettings,
+      }).length;
+
+      await this.deferredDatabaseEventTriggerService.defer({
+        workspaceId: workspaceEventBatch.workspaceId,
+        signal: evaluation.mismatchedSignal,
+        logicFunctionId: logicFunction.id,
+        droppedEventCount,
+      });
+    }
+
+    return logicFunctionsToDeliver;
   }
 }

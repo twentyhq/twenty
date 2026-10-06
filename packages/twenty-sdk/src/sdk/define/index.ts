@@ -121,6 +121,16 @@ export type {
 export { ApplicationHealthStatus } from 'twenty-shared/application';
 export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
+  DatabaseEventTriggerConditions,
+  DatabaseEventTriggerOnMismatch,
+  DatabaseEventTriggerRecordCondition,
+  DatabaseEventTriggerRecordConditionOperand,
+  DatabaseEventTriggerSettings,
+  WorkspaceSignalName,
+} from 'twenty-shared/application';
+export { WORKSPACE_SIGNAL_NAMES } from 'twenty-shared/application';
+export type { DatabaseEventActorType } from 'twenty-shared/database-events';
+export type {
   LogicFunctionHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';

@@ -79,6 +79,7 @@ export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
+export { DATABASE_EVENT_TRIGGER_CONDITION_LIMITS } from './constants/DatabaseEventTriggerConditionLimits';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
@@ -93,6 +94,8 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type { WorkspaceSignalName } from './constants/WorkspaceSignalNames';
+export { WORKSPACE_SIGNAL_NAMES } from './constants/WorkspaceSignalNames';
 export type {
   CreditUnavailableReason,
   CreditAvailability,
@@ -174,6 +177,10 @@ export type { IndexManifest } from './indexManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
+  DatabaseEventTriggerRecordConditionOperand,
+  DatabaseEventTriggerRecordCondition,
+  DatabaseEventTriggerOnMismatch,
+  DatabaseEventTriggerConditions,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
@@ -265,6 +272,8 @@ export {
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { isWorkspaceSignalName } from './utils/isWorkspaceSignalName';
+export { validateDatabaseEventTriggerConditions } from './utils/validateDatabaseEventTriggerConditions';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

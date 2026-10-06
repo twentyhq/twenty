@@ -37,6 +37,7 @@ import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-i
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { WorkspaceSignalModule } from 'src/engine/core-modules/workspace-signal/workspace-signal.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
@@ -44,6 +45,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 
 @Module({
   imports: [
+    WorkspaceSignalModule,
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
       FeatureFlagEntity,

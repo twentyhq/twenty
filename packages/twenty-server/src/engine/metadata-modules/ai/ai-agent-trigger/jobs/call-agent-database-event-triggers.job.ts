@@ -23,7 +23,7 @@ import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata
 import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { selectEventsForDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/select-events-for-database-event-trigger.util';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -124,10 +124,13 @@ export class CallAgentDatabaseEventTriggersJob {
         )
         .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
 
-      const eventsToRunOn = filterEventsByUpdatedFields({
+      // Agents honour actor and record conditions; signal deferral is a
+      // logic function concern
+      const eventsToRunOn = selectEventsForDatabaseEventTrigger({
         events: admittedEvents,
         eventName,
-        watchedFields: trigger.settings.updatedFields,
+        actor: workspaceEventBatch.actor,
+        triggerSettings: trigger.settings,
       });
 
       if (eventsToRunOn.length === 0) {

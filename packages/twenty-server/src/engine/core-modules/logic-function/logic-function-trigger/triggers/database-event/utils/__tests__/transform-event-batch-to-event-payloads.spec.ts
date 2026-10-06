@@ -46,6 +46,91 @@ const createMockWorkspaceEventBatch = (
 });
 
 describe('transformEventBatchToEventPayloads', () => {
+  describe('conditions', () => {
+    it('carries the actor of the batch into the payload', () => {
+      const [jobData] = transformEventBatchToEventPayloads({
+        workspaceEventBatch: createMockWorkspaceEventBatch({
+          actor: { type: 'system' },
+        }),
+        logicFunctions: [createMockLogicFunction()],
+      });
+
+      expect(jobData.payload).toMatchObject({ actor: { type: 'system' } });
+    });
+
+    it('drops a batch written by an actor the function does not accept', () => {
+      expect(
+        transformEventBatchToEventPayloads({
+          workspaceEventBatch: createMockWorkspaceEventBatch({
+            actor: { type: 'system' },
+          }),
+          logicFunctions: [
+            createMockLogicFunction({
+              databaseEventTriggerSettings: {
+                eventName: 'company.updated',
+                conditions: { actor: ['user'] },
+              },
+            }),
+          ],
+        }),
+      ).toEqual([]);
+    });
+
+    it('keeps only the events whose record matches the condition', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: [
+          createMockEvent({
+            recordId: 'linked',
+            properties: { after: { personId: 'person-1' } },
+          }),
+          createMockEvent({
+            recordId: 'unlinked',
+            properties: { after: { personId: null } },
+          }),
+        ],
+      });
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              batchMode: true,
+              conditions: { record: { personId: { is: 'NOT_NULL' } } },
+            },
+          }),
+        ],
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].payload).toMatchObject({
+        events: [expect.objectContaining({ recordId: 'linked' })],
+      });
+    });
+
+    it('creates no job when the condition rejects every event', () => {
+      expect(
+        transformEventBatchToEventPayloads({
+          workspaceEventBatch: createMockWorkspaceEventBatch({
+            events: [
+              createMockEvent({ properties: { after: { personId: null } } }),
+            ],
+          }),
+          logicFunctions: [
+            createMockLogicFunction({
+              databaseEventTriggerSettings: {
+                eventName: 'company.updated',
+                batchMode: true,
+                conditions: { record: { personId: { is: 'NOT_NULL' } } },
+              },
+            }),
+          ],
+        }),
+      ).toEqual([]);
+    });
+  });
+
   describe('triggering person', () => {
     it('should name the person whose mutation raised the event', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({

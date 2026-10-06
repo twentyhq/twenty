@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, Repository } from 'typeorm';
+import { Any, In, IsNull, Repository } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -13,6 +13,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceSignalService } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -35,6 +36,7 @@ export class CalendarChannelSyncStatusService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly metricsService: MetricsService,
+    private readonly workspaceSignalService: WorkspaceSignalService,
   ) {}
 
   public async markAsCalendarEventListFetchPending(
@@ -91,6 +93,8 @@ export class CalendarChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.refreshImportSignals(calendarChannelIds, workspaceId);
   }
 
   public async resetAndMarkAsCalendarEventListFetchPending(
@@ -206,6 +210,8 @@ export class CalendarChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.refreshImportSignals(calendarChannelIds, workspaceId);
   }
 
   public async markAsCalendarEventSyncCompleted(
@@ -245,6 +251,8 @@ export class CalendarChannelSyncStatusService {
       key: MetricsKeys.CalendarEventSyncJobActive,
       eventIds: calendarChannelIds,
     });
+
+    await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
   }
 
   public async markAsFailedUnknownAndFlushCalendarEventsToImport(
@@ -285,6 +293,8 @@ export class CalendarChannelSyncStatusService {
       key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
       eventIds: calendarChannelIds,
     });
+
+    await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
@@ -347,6 +357,67 @@ export class CalendarChannelSyncStatusService {
       key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
       eventIds: calendarChannelIds,
     });
+
+    await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
+  }
+
+  // Signals let app triggers hold off while a calendar imports. The first
+  // sync of a channel is the one that floods, so it gets its own signal.
+  private async refreshImportSignals(
+    calendarChannelIds: string[],
+    workspaceId: string,
+  ) {
+    await this.workspaceSignalService.set({
+      workspaceId,
+      name: 'calendar.import',
+    });
+
+    const hasChannelInInitialImport =
+      await this.calendarChannelRepository.exists({
+        where: { id: In(calendarChannelIds), workspaceId, syncedAt: IsNull() },
+      });
+
+    if (hasChannelInInitialImport) {
+      await this.workspaceSignalService.set({
+        workspaceId,
+        name: 'calendar.initialImport',
+      });
+    }
+  }
+
+  private async clearImportSignalsOnceNoChannelIsOngoing(workspaceId: string) {
+    const ongoingChannelCount = await this.calendarChannelRepository.count({
+      where: { workspaceId, syncStatus: CalendarChannelSyncStatus.ONGOING },
+    });
+
+    if (ongoingChannelCount === 0) {
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'calendar.import',
+      });
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'calendar.initialImport',
+      });
+
+      return;
+    }
+
+    const ongoingInitialImportCount =
+      await this.calendarChannelRepository.count({
+        where: {
+          workspaceId,
+          syncStatus: CalendarChannelSyncStatus.ONGOING,
+          syncedAt: IsNull(),
+        },
+      });
+
+    if (ongoingInitialImportCount === 0) {
+      await this.workspaceSignalService.clear({
+        workspaceId,
+        name: 'calendar.initialImport',
+      });
+    }
   }
 
   private async addToAccountsToReconnect(

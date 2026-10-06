@@ -1,3 +1,4 @@
+import { validateDatabaseEventTriggerConditions } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
@@ -50,6 +51,15 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   if (config.databaseEventTriggerSettings) {
     if (!config.databaseEventTriggerSettings.eventName) {
       errors.push('Database event trigger must have an eventName');
+    }
+
+    if (config.databaseEventTriggerSettings.conditions !== undefined) {
+      errors.push(
+        ...validateDatabaseEventTriggerConditions({
+          eventName: config.databaseEventTriggerSettings.eventName ?? '',
+          conditions: config.databaseEventTriggerSettings.conditions,
+        }).map((error) => `Database event trigger ${error}`),
+      );
     }
   }
 

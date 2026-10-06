@@ -8,6 +8,15 @@
  */
 
 export type {
+  DatabaseEventActorType,
+  DatabaseEventActor,
+} from './database-event-actor-type';
+export {
+  DATABASE_EVENT_ACTOR_TYPES,
+  isDatabaseEventActorType,
+} from './database-event-actor-type';
+export type {
+  DeferredDatabaseEventBatch,
   DatabaseEventPayload,
   DatabaseEventBatchPayload,
 } from './database-event-payload.type';

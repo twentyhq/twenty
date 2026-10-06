@@ -9,7 +9,7 @@ import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-functi
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { selectEventsForDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/select-events-for-database-event-trigger.util';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
@@ -27,10 +27,11 @@ export const transformEventBatchToEventPayloads = ({
   for (const logicFunction of logicFunctions) {
     const triggerSettings = logicFunction.databaseEventTriggerSettings;
 
-    const filteredEvents = filterEventsByUpdatedFields({
+    const filteredEvents = selectEventsForDatabaseEventTrigger({
       events,
       eventName: workspaceEventBatch.name,
-      watchedFields: triggerSettings?.updatedFields,
+      actor: workspaceEventBatch.actor,
+      triggerSettings,
     });
 
     if (triggerSettings?.batchMode !== true) {

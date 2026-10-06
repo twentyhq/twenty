@@ -53,6 +53,54 @@ describe('defineLogicFunction', () => {
     expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
   });
 
+  it('should accept valid databaseEventTriggerSettings conditions', () => {
+    const config: LogicFunctionConfig = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Participant Linked',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: 'messageParticipant.updated',
+        updatedFields: ['personId'],
+        batchMode: true,
+        conditions: {
+          actor: ['system'],
+          record: { personId: { is: 'NOT_NULL' } },
+          signals: { 'messaging.initialImport': false },
+          onMismatch: 'deferUntilMatch',
+        },
+      },
+    };
+
+    const result = defineLogicFunction(config);
+
+    expect(result.errors).toEqual([]);
+    expect(
+      result.config.databaseEventTriggerSettings?.conditions?.onMismatch,
+    ).toBe('deferUntilMatch');
+  });
+
+  it('should reject invalid databaseEventTriggerSettings conditions', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Participant Linked',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: '*.updated',
+        conditions: {
+          signals: { 'billing.import': true },
+          onMismatch: 'deferUntilMatch',
+        },
+      },
+    };
+
+    const result = defineLogicFunction(config as any);
+
+    expect(result.errors).toEqual([
+      'Database event trigger conditions.signals has unknown signal "billing.import"',
+      'Database event trigger conditions.onMismatch "deferUntilMatch" needs an event name with a concrete object, not a wildcard',
+    ]);
+  });
+
   it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
     const config: LogicFunctionConfig = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',

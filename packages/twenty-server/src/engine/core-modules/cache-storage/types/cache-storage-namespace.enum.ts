@@ -13,6 +13,8 @@ export enum CacheStorageNamespace {
   EngineRecordExport = 'engine:record-export',
   EngineSubscriptions = 'engine:subscriptions',
   EngineUsageLimit = 'engine:usage-limit',
+  EngineWorkspaceSignal = 'engine:workspace-signal',
+  EngineDeferredDatabaseEventTrigger = 'engine:deferred-database-event-trigger',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
   IntegrationTests = 'integration-tests',
 }

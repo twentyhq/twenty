@@ -10,9 +10,12 @@ import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-fun
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
+import { DeferredDatabaseEventTriggerListener } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/listeners/deferred-database-event-trigger.listener';
+import { DeferredDatabaseEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/services/deferred-database-event-trigger.service';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceSignalModule } from 'src/engine/core-modules/workspace-signal/workspace-signal.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -26,6 +29,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceCacheModule,
     CronModule,
     RecordShareModule,
+    WorkspaceSignalModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),
@@ -35,6 +39,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CronTriggerCronJob,
     CronTriggerCronCommand,
     CallDatabaseEventTriggerJobsJob,
+    DeferredDatabaseEventTriggerService,
+    DeferredDatabaseEventTriggerListener,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],
