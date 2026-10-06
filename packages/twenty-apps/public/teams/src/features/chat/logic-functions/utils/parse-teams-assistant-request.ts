@@ -29,7 +29,7 @@ export const parseTeamsAssistantRequest = ({
 
   if (
     activity.from?.role === 'bot' ||
-    senderId?.startsWith(BOT_ACCOUNT_ID_PREFIX) === true
+    senderId?.startsWith(BOT_ACCOUNT_ID_PREFIX)
   ) {
     return { request: null, skipReason: 'Not a user message' };
   }
