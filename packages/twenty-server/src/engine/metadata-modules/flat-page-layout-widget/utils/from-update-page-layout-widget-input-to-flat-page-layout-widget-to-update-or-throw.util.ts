@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { WidgetType } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -18,6 +19,7 @@ import {
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
@@ -163,6 +165,25 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
         });
     } else {
       flatPageLayoutWidgetToUpdate.universalOverrides = null;
+    }
+
+    const { isActive } = rawUpdatePageLayoutWidgetInput.update;
+
+    if (isDefined(isActive)) {
+      if (flatPageLayoutWidgetToUpdate.type !== WidgetType.FORM_FIELD) {
+        throw new PageLayoutWidgetException(
+          t`Only form field widgets can be shown or hidden`,
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+
+      return dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'pageLayoutWidget',
+        flatEntity: flatPageLayoutWidgetToUpdate,
+        isActive,
+        authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
+      });
     }
 
     return flatPageLayoutWidgetToUpdate;
