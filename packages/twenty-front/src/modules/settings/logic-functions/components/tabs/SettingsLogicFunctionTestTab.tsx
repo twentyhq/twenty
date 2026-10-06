@@ -154,7 +154,7 @@ export const SettingsLogicFunctionTestTab = ({
         <StyledCodeEditorContainer>
           <CodeEditorHeader
             title={t`Input`}
-            rightNodes={[
+            endElement={
               <Button
                 size="sm"
                 startIcon={<IconPlayerPlay />}
@@ -162,8 +162,8 @@ export const SettingsLogicFunctionTestTab = ({
                 disabled={isTesting}
                 variant="solid"
                 color="accent"
-              >{t`Run Function`}</Button>,
-            ]}
+              >{t`Run Function`}</Button>
+            }
           />
           <CodeEditor
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}

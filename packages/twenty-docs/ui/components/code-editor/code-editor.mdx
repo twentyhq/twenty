@@ -64,11 +64,11 @@ export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
   <div>
     <CodeEditorHeader
       title="index.ts"
-      rightNodes={[
-        <Button key="run" size="sm" onClick={onRun}>
+      endElement={
+        <Button size="sm" onClick={onRun}>
           Run
-        </Button>,
-      ]}
+        </Button>
+      }
     />
     <CodeEditor language="typescript" value={script} variant="with-header" />
   </div>
@@ -76,6 +76,8 @@ export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
 ```
 
 `variant="with-header"` removes the editor's top border so it joins the header. Use `borderless` when the editor sits inside a surface that already has a border.
+
+The header accepts node content in `title`, `startElement`, and `endElement`. Use fragments for multiple tabs or actions. Native props, `className`, `style`, and `ref` target its root div. Use `render` to replace that root, for example `render={<header />}`. The `title` prop supplies visible content; to set a native title attribute, pass it on the element supplied to `render`.
 
 ## Size and appearance
 
