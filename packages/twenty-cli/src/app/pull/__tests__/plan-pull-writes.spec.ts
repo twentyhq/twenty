@@ -1,5 +1,6 @@
 import { type TargetFunction } from '@/app/source/extract-define-entity';
 import { planPullWrites } from '@/app/pull/plan-pull-writes';
+import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 import {
   type Manifest,
@@ -19,6 +20,19 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
+
+const planManifestPullWrites = (
+  options: Parameters<typeof preparePullEntities>[0] & {
+    workspaceUniversalIdentifiers: ReadonlySet<string>;
+  },
+) => {
+  const { entities, baseEntities, skipped } = preparePullEntities(options);
+
+  return {
+    ...planPullWrites({ ...options, entities, baseEntities }),
+    skipped,
+  };
+};
 
 const APP_UID = '11111111-1111-4111-8111-111111111111';
 const PET_UID = '22222222-2222-4222-8222-222222222222';
@@ -232,7 +246,7 @@ const buildManifestWithNavigationMenu = (link: string): Manifest => ({
 
 describe('planPullWrites', () => {
   it('should write every entity when the project has no source and no base', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
@@ -258,7 +272,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
@@ -290,7 +304,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: MANIFEST,
@@ -319,7 +333,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifest([
         buildObject({
@@ -351,7 +365,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: buildManifest([
@@ -389,7 +403,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
@@ -413,7 +427,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set([
         'a-logic-function-the-writer-cannot-write',
       ]),
@@ -436,7 +450,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
@@ -449,7 +463,7 @@ describe('planPullWrites', () => {
   });
 
   it('should qualify colliding file names with the name of each parent object', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         objects: [
@@ -499,7 +513,7 @@ describe('planPullWrites', () => {
   });
 
   it('should never write over a file that belongs to another entity', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
@@ -523,7 +537,7 @@ describe('planPullWrites', () => {
   });
 
   it('should not claim a path that differs only by case', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
@@ -546,7 +560,7 @@ describe('planPullWrites', () => {
   });
 
   it('should keep a file whose define file could not be read', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
@@ -567,7 +581,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new view beside existing view files', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         views: [
@@ -599,7 +613,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new standalone view field beside existing view field files', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...buildManifest([
           buildObject({
@@ -651,7 +665,7 @@ describe('planPullWrites', () => {
   });
 
   it('should qualify colliding view file names with the kebab-cased name of each object', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...buildManifest([
           buildObject({
@@ -695,7 +709,7 @@ describe('planPullWrites', () => {
   });
 
   it('should fall back to identifier-prefixed names when two views of one object share a name', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         views: [
@@ -720,7 +734,7 @@ describe('planPullWrites', () => {
   });
 
   it('should prefix only the views whose qualified names still collide', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...buildManifest([
           buildObject({
@@ -763,7 +777,7 @@ describe('planPullWrites', () => {
 
   it('should keep a qualified file name within the length cap', () => {
     const longName = 'x'.repeat(100);
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...buildManifest([
           buildObject({
@@ -835,7 +849,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithFilteredView('Max'),
       baseManifest: buildManifestWithFilteredView('Rex'),
@@ -854,7 +868,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new page layout beside existing page layout files', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         pageLayouts: [
@@ -886,7 +900,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new standalone page layout tab beside existing page layout tab files', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         pageLayoutTabs: [
@@ -921,7 +935,7 @@ describe('planPullWrites', () => {
   });
 
   it('should qualify colliding page layout file names with the kebab-cased name of each object', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...buildManifest([
           buildObject({
@@ -965,7 +979,7 @@ describe('planPullWrites', () => {
   });
 
   it('should qualify colliding standalone tab file names with the kebab-cased name of each page layout', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         pageLayoutTabs: [
@@ -995,7 +1009,7 @@ describe('planPullWrites', () => {
   });
 
   it('should fall back to identifier-prefixed names when two page layouts of one object share a name', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         pageLayouts: [
@@ -1058,7 +1072,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithDocsPageLayout('https://example.com/new'),
       baseManifest: buildManifestWithDocsPageLayout('https://example.com/old'),
@@ -1080,7 +1094,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new navigation menu item beside existing navigation menu item files', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         navigationMenuItems: [
@@ -1119,7 +1133,7 @@ describe('planPullWrites', () => {
   });
 
   it('should qualify colliding navigation menu item file names with the kebab-cased name of each folder', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         navigationMenuItems: [
@@ -1179,7 +1193,7 @@ describe('planPullWrites', () => {
   });
 
   it('should fall back to identifier-prefixed names when two navigation menu items outside any folder share a name', () => {
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       manifest: {
         ...MANIFEST,
         navigationMenuItems: [
@@ -1245,7 +1259,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    const plan = planPullWrites({
+    const plan = planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithNavigationMenu('https://example.com/new'),
       baseManifest: buildManifestWithNavigationMenu('https://example.com/old'),
@@ -1302,7 +1316,7 @@ describe('planPullWrites', () => {
       },
     ];
 
-    return planPullWrites({
+    return planManifestPullWrites({
       workspaceUniversalIdentifiers: new Set(),
       manifest: manifestWithDefaultRole,
       baseManifest: manifestWithDefaultRole,
@@ -1328,5 +1342,63 @@ describe('planPullWrites', () => {
 
     expect(plan.writes).toEqual([]);
     expect(plan.unchanged).toHaveLength(3);
+  });
+  it('repairs a duplicated inline view field without rewriting its standalone definition', () => {
+    const viewField = buildViewField({
+      universalIdentifier: PET_NAME_VIEW_FIELD_UID,
+    });
+    const view = buildView({
+      universalIdentifier: OVERVIEW_VIEW_UID,
+      fields: [],
+    });
+    const manifest = { ...MANIFEST, views: [view], viewFields: [viewField] };
+    const scannedFiles: ScannedSourceFile[] = [
+      {
+        relativePath: 'src/application.config.ts',
+        entityKey: 'application',
+        targetFunctionName: 'defineApplication',
+        universalIdentifier: APP_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/objects/pet.object.ts',
+        entityKey: 'objects',
+        targetFunctionName: 'defineObject',
+        universalIdentifier: PET_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/views/overview.ts',
+        entityKey: 'views',
+        targetFunctionName: 'defineView',
+        universalIdentifier: OVERVIEW_VIEW_UID,
+        isReadable: true,
+        config: { ...view, fields: [viewField] },
+      },
+      {
+        relativePath: 'src/view-fields/name.ts',
+        entityKey: 'viewFields',
+        targetFunctionName: 'defineViewField',
+        universalIdentifier: PET_NAME_VIEW_FIELD_UID,
+        isReadable: true,
+        config: viewField,
+      },
+    ];
+
+    const plan = planManifestPullWrites({
+      manifest,
+      baseManifest: manifest,
+      scannedFiles,
+      workspaceUniversalIdentifiers: new Set(),
+    });
+
+    expect(plan.writes.map(({ relativePath }) => relativePath)).toEqual([
+      'src/views/overview.ts',
+    ]);
+    expect(plan.writes[0].content).not.toContain(PET_NAME_VIEW_FIELD_UID);
+    expect(plan.unchanged).toContainEqual(
+      expect.objectContaining({ universalIdentifier: PET_NAME_VIEW_FIELD_UID }),
+    );
+    expect(plan.deletions).toEqual([]);
   });
 });

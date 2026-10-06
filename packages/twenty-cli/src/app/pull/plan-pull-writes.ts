@@ -1,9 +1,7 @@
 import { type ManifestEntityKey } from '@/app/source/extract-define-entity';
-import { buildPullBaseEntities } from '@/app/pull/build-pull-base-entities';
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { ENTITY_KEY_BY_KIND } from '@/app/pull/entity-key-by-kind.constant';
 import {
-  buildPullEntities,
   type PullEntity,
   type PullEntityKind,
 } from '@/app/pull/build-pull-entities';
@@ -11,7 +9,6 @@ import { resolvePullFileNameCollisions } from '@/app/pull/resolve-pull-file-name
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 import { writeDefineFile } from '@/app/pull/write-define-file';
 import { dirname, posix } from 'node:path';
-import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export type PullWriteKind = PullEntityKind | 'translation';
@@ -121,32 +118,23 @@ const findExistingSourceFile = ({
       );
 
 export const planPullWrites = ({
-  manifest,
-  baseManifest,
+  entities,
+  baseEntities,
   scannedFiles,
   workspaceUniversalIdentifiers,
   unreconciledUniversalIdentifiers,
-  standaloneFieldUniversalIdentifiers = new Set(),
 }: {
-  manifest: Manifest;
-  baseManifest: Manifest | null;
+  entities: PullEntity[];
+  baseEntities: PullEntity[];
   scannedFiles: ScannedSourceFile[];
   workspaceUniversalIdentifiers: ReadonlySet<string>;
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
-  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
-}): PullWritePlan & {
-  skipped: ReturnType<typeof buildPullEntities>['skipped'];
-} => {
-  const { entities, skipped } = buildPullEntities(
-    manifest,
-    standaloneFieldUniversalIdentifiers,
+}): PullWritePlan => {
+  const exportedUniversalIdentifiers = new Set(
+    entities.map((entity) => entity.universalIdentifier.toLowerCase()),
   );
   const baseConfigByUniversalIdentifier = new Map(
-    buildPullBaseEntities({
-      manifest: baseManifest,
-      unreconciledUniversalIdentifiers,
-      standaloneFieldUniversalIdentifiers,
-    }).map((entity) => [
+    baseEntities.map((entity) => [
       entity.universalIdentifier,
       JSON.stringify(entity.config),
     ]),
@@ -211,22 +199,28 @@ export const planPullWrites = ({
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,
     );
-    const localNestedIdentifiers = new Set<string>();
+    const localIdentifiers = new Set<string>();
+    const exportedIdentifiers = new Set<string>();
 
-    if (entity.kind === 'object') {
-      collectIdentifiers({
-        value: existingSourceFile?.config,
-        identifiers: localNestedIdentifiers,
-      });
-    }
-    const hasDuplicatedStandaloneField = [...localNestedIdentifiers].some(
-      (identifier) => standaloneFieldUniversalIdentifiers.has(identifier),
+    collectIdentifiers({
+      value: existingSourceFile?.config,
+      identifiers: localIdentifiers,
+    });
+    collectIdentifiers({
+      value: entity.config,
+      identifiers: exportedIdentifiers,
+    });
+
+    const hasDuplicatedDefinition = [...localIdentifiers].some(
+      (identifier) =>
+        !exportedIdentifiers.has(identifier) &&
+        exportedUniversalIdentifiers.has(identifier),
     );
 
     if (
       isDefined(existingSourceFile) &&
       existingSourceFile.targetFunctionName === entity.definer &&
-      !hasDuplicatedStandaloneField &&
+      !hasDuplicatedDefinition &&
       !unreconciledUniversalIdentifiers?.has(
         entity.universalIdentifier.toLowerCase(),
       ) &&
@@ -250,13 +244,12 @@ export const planPullWrites = ({
     });
   }
 
-  const exportedUniversalIdentifiers = new Set(
-    entities.map((entity) => entity.universalIdentifier),
-  );
   const deletions: PullDeletion[] = [];
 
   for (const baseUniversalIdentifier of baseConfigByUniversalIdentifier.keys()) {
-    if (exportedUniversalIdentifiers.has(baseUniversalIdentifier)) {
+    if (
+      exportedUniversalIdentifiers.has(baseUniversalIdentifier.toLowerCase())
+    ) {
       continue;
     }
 
@@ -281,7 +274,9 @@ export const planPullWrites = ({
     .filter(
       (scannedFile) =>
         isDefined(scannedFile.universalIdentifier) &&
-        !exportedUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
+        !exportedUniversalIdentifiers.has(
+          scannedFile.universalIdentifier.toLowerCase(),
+        ) &&
         !baseConfigByUniversalIdentifier.has(scannedFile.universalIdentifier) &&
         !workspaceUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !usedRelativePaths.has(toPosixPath(scannedFile.relativePath)),
@@ -293,6 +288,5 @@ export const planPullWrites = ({
     unchanged,
     deletions,
     localOnlyRelativePaths,
-    skipped,
   };
 };

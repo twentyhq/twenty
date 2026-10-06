@@ -6,6 +6,7 @@ import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { getOverwrittenLocalChanges } from '@/app/pull/get-overwritten-local-changes';
 import { prepareAppPull } from '@/app/pull/prepare-app-pull';
+import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { preserveNestedPullEntities } from '@/app/pull/preserve-nested-pull-entities';
 import { reconcilePullBaseManifest } from '@/app/pull/reconcile-pull-base-manifest';
 import { createPullBaseWrite } from '@/app/pull/create-pull-base-write';
@@ -43,15 +44,19 @@ export const pullApplication = async (
       includeConfig: true,
       signal,
     });
-    const standaloneFieldUniversalIdentifiers = new Set(
-      scannedFiles.flatMap((file) =>
-        file.entityKey === 'fields' &&
-        file.isReadable &&
-        isDefined(file.universalIdentifier)
-          ? [file.universalIdentifier.toLowerCase()]
-          : [],
-      ),
+    const unreconciledBaseIdentifiers = new Set(
+      base.unreconciledUniversalIdentifiers,
     );
+    const {
+      entities,
+      baseEntities,
+      skipped: skippedEntities,
+    } = preparePullEntities({
+      manifest,
+      baseManifest,
+      scannedFiles,
+      unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
+    });
 
     signal?.throwIfAborted();
 
@@ -59,14 +64,11 @@ export const pullApplication = async (
       applicationExport.coverage.map((entry) => entry.universalIdentifier),
     );
     const plan = planPullWrites({
-      manifest,
-      baseManifest,
+      entities,
+      baseEntities,
       scannedFiles,
       workspaceUniversalIdentifiers,
-      standaloneFieldUniversalIdentifiers,
-      unreconciledUniversalIdentifiers: new Set(
-        base.unreconciledUniversalIdentifiers,
-      ),
+      unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
     });
     const protectedIdentifiers = new Set<string>();
 
@@ -85,35 +87,27 @@ export const pullApplication = async (
       baseManifest,
       frontComponentSourcePaths,
     });
-    const coverageIdentifiers = new Set<string>();
-
-    collectIdentifiers({
-      value: applicationExport.coverage,
-      identifiers: coverageIdentifiers,
-    });
-
     const safePlan = preserveNestedPullEntities({
-      manifest,
-      baseManifest,
-      coverageIdentifiers,
+      entities,
+      baseEntities,
+      protectedIdentifiers,
       writes: plan.writes,
-      deletions: plan.deletions,
-      scannedFiles,
-      standaloneFieldUniversalIdentifiers,
-    });
-    const writes = [...safePlan.writes, ...translationPlan.writes];
-    const deletions = [
-      ...safePlan.deletions.filter(
+      deletions: plan.deletions.filter(
         (deletion) =>
           !protectedIdentifiers.has(deletion.universalIdentifier.toLowerCase()),
       ),
+      scannedFiles,
+    });
+    const writes = [...safePlan.writes, ...translationPlan.writes];
+    const deletions = [
+      ...safePlan.deletions,
       ...translationPlan.deletions.filter(
         (deletion) =>
           isDefined(baseManifest?.translations) &&
           deletion.universalIdentifier in baseManifest.translations,
       ),
     ];
-    const skipped = [...plan.skipped, ...safePlan.skipped];
+    const skipped = [...skippedEntities, ...safePlan.skipped];
     const unreconciledUniversalIdentifiers = new Set(
       skipped.map((entry) => entry.universalIdentifier.toLowerCase()),
     );
@@ -148,11 +142,8 @@ export const pullApplication = async (
       writes,
       deletions,
       frontComponentSourcePaths,
-      unreconciledUniversalIdentifiers: new Set(
-        base.unreconciledUniversalIdentifiers,
-      ),
+      baseEntities,
       sourceFingerprints: base.sourceFingerprints,
-      standaloneFieldUniversalIdentifiers,
     });
     const entityLabelByUniversalIdentifier =
       buildManifestEntityLabelByUniversalIdentifier(manifest);

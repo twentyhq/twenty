@@ -1,30 +1,22 @@
-import { type Manifest } from 'twenty-shared/application';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isString } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 
-import { buildPullEntities } from '@/app/pull/build-pull-entities';
+import { type PullEntity } from '@/app/pull/build-pull-entities';
 
 export const buildPullBaseEntities = ({
-  manifest,
+  entities,
   unreconciledUniversalIdentifiers,
-  standaloneFieldUniversalIdentifiers,
 }: {
-  manifest: Manifest | null;
+  entities: PullEntity[];
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
-  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
-}) => {
-  if (!isDefined(manifest)) {
-    return [];
-  }
-
-  return buildPullEntities(
-    manifest,
-    standaloneFieldUniversalIdentifiers,
-  ).entities.map((entity) => {
+}): PullEntity[] =>
+  entities.map((entity) => {
     if (
       entity.kind !== 'application' ||
       !isPlainObject(entity.config) ||
+      !isString(entity.config.defaultRoleUniversalIdentifier) ||
       !unreconciledUniversalIdentifiers?.has(
-        manifest.application.defaultRoleUniversalIdentifier?.toLowerCase(),
+        entity.config.defaultRoleUniversalIdentifier.toLowerCase(),
       )
     ) {
       return entity;
@@ -36,4 +28,3 @@ export const buildPullBaseEntities = ({
 
     return { ...entity, config };
   });
-};

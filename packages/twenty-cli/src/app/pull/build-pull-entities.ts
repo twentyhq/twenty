@@ -28,6 +28,7 @@ import { getObjectNameForPullFile } from '@/app/pull/get-object-name-for-pull-fi
 import { getPageLayoutNameForPullFile } from '@/app/pull/get-page-layout-name-for-pull-file';
 import { getNavigationFolderNameForPullFile } from '@/app/pull/get-navigation-folder-name-for-pull-file';
 import { isDefined } from 'twenty-shared/utils';
+import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 
 export const PULL_ENTITY_KINDS = [
   'application',
@@ -66,7 +67,10 @@ export type SkippedPullEntity = {
 
 export const buildPullEntities = (
   manifest: Manifest,
-  standaloneFieldUniversalIdentifiers: ReadonlySet<string> = new Set(),
+  sourceFileByUniversalIdentifier: ReadonlyMap<
+    string,
+    ScannedSourceFile
+  > = new Map(),
 ): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
@@ -98,9 +102,9 @@ export const buildPullEntities = (
         fieldName: field.name,
       });
       if (
-        standaloneFieldUniversalIdentifiers.has(
+        sourceFileByUniversalIdentifier.get(
           field.universalIdentifier.toLowerCase(),
-        )
+        )?.entityKey === 'fields'
       ) {
         standaloneFields.push({
           ...field,

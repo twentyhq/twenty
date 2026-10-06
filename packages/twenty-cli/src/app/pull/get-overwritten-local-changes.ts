@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildPullBaseEntities } from '@/app/pull/build-pull-base-entities';
+import { type PullEntity } from '@/app/pull/build-pull-entities';
 import { hashContent } from '@/utils/hash-content';
 import { type PullDeletion, type PullWrite } from '@/app/pull/plan-pull-writes';
 import { planTranslationWrites } from '@/app/pull/plan-translation-writes';
@@ -15,29 +15,23 @@ export const getOverwrittenLocalChanges = async ({
   writes,
   deletions,
   frontComponentSourcePaths,
-  unreconciledUniversalIdentifiers,
   sourceFingerprints,
-  standaloneFieldUniversalIdentifiers,
+  baseEntities,
 }: {
   appPath: string;
   baseManifest: Manifest | null;
   writes: PullWrite[];
   deletions: PullDeletion[];
   frontComponentSourcePaths: string[];
-  unreconciledUniversalIdentifiers?: ReadonlySet<string>;
   sourceFingerprints?: Record<string, string>;
-  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
+  baseEntities: PullEntity[];
 }): Promise<PullDeletion[]> => {
   if (!isDefined(baseManifest)) {
     return [];
   }
 
   const baseContents = new Map(
-    buildPullBaseEntities({
-      manifest: baseManifest,
-      unreconciledUniversalIdentifiers,
-      standaloneFieldUniversalIdentifiers,
-    }).map((entity) => [
+    baseEntities.map((entity) => [
       entity.universalIdentifier,
       writeDefineFile({
         definer: entity.definer,
