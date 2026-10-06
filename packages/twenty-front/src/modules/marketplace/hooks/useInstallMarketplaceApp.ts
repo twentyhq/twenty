@@ -47,9 +47,15 @@ export const useInstallMarketplaceApp = ({
   );
 
   const runningJobStatus = jobStatusData?.findInstallApplicationJobStatus;
-  const runningJobId =
-    isDefined(runningJobStatus) && !isTerminalJobState(runningJobStatus.state)
-      ? runningJobStatus.jobId
+  const runningJob =
+    isDefined(runningJobStatus) &&
+    !isTerminalJobState(runningJobStatus.state) &&
+    isDefined(universalIdentifier)
+      ? {
+          jobId: runningJobStatus.jobId,
+          context: universalIdentifier,
+          progress: runningJobStatus.progress ?? undefined,
+        }
       : undefined;
 
   const handleInstallJobSettled = useCallback(
@@ -113,11 +119,8 @@ export const useInstallMarketplaceApp = ({
     [enqueueToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
   );
 
-  const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJob:
-      isDefined(runningJobId) && isDefined(universalIdentifier)
-        ? { jobId: runningJobId, context: universalIdentifier }
-        : undefined,
+  const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
+    runningJob,
     onQueueJobSettled: handleInstallJobSettled,
   });
 
@@ -149,5 +152,6 @@ export const useInstallMarketplaceApp = ({
   return {
     install,
     isInstalling: isTriggeringInstall || isDefined(activeJobId),
+    installProgress: activeJobProgress,
   };
 };

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconSettings } from 'twenty-ui/icon';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationActionButtonProps = {
@@ -10,6 +11,7 @@ type SettingsApplicationActionButtonProps = {
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
+  installProgress?: number;
 };
 
 export const SettingsApplicationActionButton = ({
@@ -17,6 +19,7 @@ export const SettingsApplicationActionButton = ({
   canInstallMarketplaceApps,
   onInstall,
   isInstalling,
+  installProgress,
 }: SettingsApplicationActionButtonProps) => {
   if (isDefined(installedApplicationId) && !isInstalling) {
     return (
@@ -42,7 +45,19 @@ export const SettingsApplicationActionButton = ({
 
   return (
     <Button
-      startIcon={<IconDownload />}
+      startIcon={
+        isInstalling ? (
+          <ProgressRing
+            value={installProgress ?? 0}
+            size="sm"
+            barColor="currentColor"
+            aria-hidden
+            render={<span />}
+          />
+        ) : (
+          <IconDownload />
+        )
+      }
       variant="solid"
       color="accent"
       size="sm"

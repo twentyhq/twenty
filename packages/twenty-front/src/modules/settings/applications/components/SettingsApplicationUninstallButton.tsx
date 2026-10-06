@@ -4,16 +4,19 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useId } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationUninstallButtonProps = {
   onUninstall: () => void;
   isUninstalling?: boolean;
+  uninstallProgress?: number;
 };
 
 export const SettingsApplicationUninstallButton = ({
   onUninstall,
   isUninstalling,
+  uninstallProgress,
 }: SettingsApplicationUninstallButtonProps) => {
   const { openDialog } = useDialog();
   const uninstallDialogId = useId();
@@ -23,7 +26,19 @@ export const SettingsApplicationUninstallButton = ({
   return (
     <>
       <Button
-        startIcon={<IconTrash />}
+        startIcon={
+          isUninstalling ? (
+            <ProgressRing
+              value={uninstallProgress ?? 0}
+              size="sm"
+              barColor="currentColor"
+              aria-hidden
+              render={<span />}
+            />
+          ) : (
+            <IconTrash />
+          )
+        }
         variant="outline"
         color="danger"
         size="sm"

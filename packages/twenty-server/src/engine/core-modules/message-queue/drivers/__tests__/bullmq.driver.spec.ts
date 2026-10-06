@@ -1,5 +1,6 @@
 import { type Job, Worker } from 'bullmq';
 
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -196,6 +197,81 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver job change events', () => {
+  const eventEmitter = { emit: jest.fn() };
+  const driver = new BullMQDriver(
+    {} as never,
+    { recordHistogram: jest.fn() } as never,
+    {} as never,
+    eventEmitter as never,
+  );
+
+  driver.register(MessageQueue.workspaceQueue);
+
+  const getWorkerListener = (eventName: string) => {
+    driver.work(MessageQueue.workspaceQueue, async () => {});
+
+    const worker = jest.mocked(Worker).mock.results.at(-1)?.value;
+    const listener = jest
+      .mocked(worker.on)
+      .mock.calls.find(([name]) => name === eventName)?.[1];
+
+    if (typeof listener !== 'function') {
+      throw new Error(`No ${eventName} listener registered on the worker`);
+    }
+
+    return listener;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('forwards a progress update of a broadcast job as an active job change', () => {
+    const onProgress = getWorkerListener('progress');
+
+    onProgress(
+      {
+        id: 'job-id',
+        data: {},
+        opts: { broadcastTo: { workspaceId: 'workspace-id' } },
+        attemptsMade: 0,
+        progress: 40,
+        timestamp: 1,
+      } as unknown as Job,
+      40,
+    );
+
+    expect(eventEmitter.emit).toHaveBeenCalledWith(QUEUE_JOB_CHANGED_EVENT, {
+      queueName: MessageQueue.workspaceQueue,
+      job: expect.objectContaining({
+        id: 'job-id',
+        state: 'active',
+        progress: 40,
+        broadcastTo: { workspaceId: 'workspace-id' },
+      }),
+    });
+  });
+
+  it('ignores progress updates of jobs without recipients', () => {
+    const onProgress = getWorkerListener('progress');
+
+    onProgress(
+      {
+        id: 'job-id',
+        data: {},
+        opts: {},
+        attemptsMade: 0,
+        progress: 40,
+        timestamp: 1,
+      } as unknown as Job,
+      40,
+    );
+
+    expect(eventEmitter.emit).not.toHaveBeenCalled();
+  });
 });
 
 describe('BullMQDriver queue wait metric', () => {

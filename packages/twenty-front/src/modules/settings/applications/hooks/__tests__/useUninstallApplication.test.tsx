@@ -122,7 +122,7 @@ describe('useUninstallApplication', () => {
     });
   });
 
-  it('reports an uninstallation still running on the server', async () => {
+  it('reports an uninstallation still running on the server with its progress', async () => {
     const { result } = renderHook(
       () =>
         useUninstallApplication({
@@ -135,11 +135,25 @@ describe('useUninstallApplication', () => {
             jobId: JOB_ID,
             state: JobState.ACTIVE,
             failedReason: null,
+            progress: 20,
           }),
         ]),
       },
     );
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(true));
+    expect(result.current.uninstallProgress).toBe(20);
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+        jobId: JOB_ID,
+        state: JobState.ACTIVE,
+        attemptsMade: 1,
+        progress: 80,
+        enqueuedAt: 1,
+      });
+    });
+
+    expect(result.current.uninstallProgress).toBe(80);
   });
 });

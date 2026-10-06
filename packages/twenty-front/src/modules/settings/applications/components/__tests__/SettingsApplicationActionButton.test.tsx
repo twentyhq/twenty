@@ -13,6 +13,7 @@ type RenderActionButtonOptions = {
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
+  installProgress?: number;
 };
 
 const renderActionButton = ({
@@ -20,6 +21,7 @@ const renderActionButton = ({
   canInstallMarketplaceApps = true,
   onInstall,
   isInstalling,
+  installProgress,
 }: RenderActionButtonOptions = {}) =>
   render(
     <MemoryRouter>
@@ -29,6 +31,7 @@ const renderActionButton = ({
           canInstallMarketplaceApps={canInstallMarketplaceApps}
           onInstall={onInstall}
           isInstalling={isInstalling}
+          installProgress={installProgress}
         />
       </I18nProvider>
     </MemoryRouter>,
@@ -60,6 +63,32 @@ describe('SettingsApplicationActionButton', () => {
     expect(
       screen.getByRole('button', { name: /^Installing\b/ }),
     ).toBeDisabled();
+  });
+
+  it('shows the installation progress while installing', () => {
+    renderActionButton({ isInstalling: true, installProgress: 60 });
+
+    expect(screen.getByRole('progressbar', { hidden: true })).toHaveAttribute(
+      'aria-valuenow',
+      '60',
+    );
+  });
+
+  it('starts the progress ring at zero before the first progress event', () => {
+    renderActionButton({ isInstalling: true });
+
+    expect(screen.getByRole('progressbar', { hidden: true })).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+  });
+
+  it('does not show a progress ring when not installing', () => {
+    renderActionButton();
+
+    expect(
+      screen.queryByRole('progressbar', { hidden: true }),
+    ).not.toBeInTheDocument();
   });
 
   it('links to the application settings once installed', () => {

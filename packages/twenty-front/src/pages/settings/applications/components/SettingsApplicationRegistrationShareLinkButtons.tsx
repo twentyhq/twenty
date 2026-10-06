@@ -14,6 +14,7 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
@@ -43,10 +44,15 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
 
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation({
-      universalIdentifier,
-    });
+  const {
+    requestInstall,
+    install,
+    isInstalling,
+    installProgress,
+    modalInstanceId,
+  } = useInstallMarketplaceAppWithPermissionValidation({
+    universalIdentifier,
+  });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -63,7 +69,19 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
       {installable && (
         <>
           <Button
-            startIcon={<IconDownload />}
+            startIcon={
+              isInstalling ? (
+                <ProgressRing
+                  value={installProgress ?? 0}
+                  size="sm"
+                  barColor="currentColor"
+                  aria-hidden
+                  render={<span />}
+                />
+              ) : (
+                <IconDownload />
+              )
+            }
             onClick={requestInstall}
             disabled={isInstalling}
             variant="outline"
