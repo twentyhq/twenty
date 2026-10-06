@@ -9,8 +9,6 @@ import { type RunAgentMessage } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -25,7 +23,6 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 
 @Injectable()
 export class AgentRunConversationService {
@@ -65,18 +62,18 @@ export class AgentRunConversationService {
     threadId,
     title,
     agentId,
-    application,
+    senderUserWorkspaceId,
+    senderApplicationId,
     createdBy,
-    actor,
     messages,
   }: {
     workspaceId: string;
     threadId: string;
     title: string;
     agentId: string;
-    application: FlatApplication;
-    createdBy?: ActorMetadata;
-    actor: AgentConversationActor;
+    senderUserWorkspaceId: string | null;
+    senderApplicationId: string | null;
+    createdBy: ActorMetadata;
     messages: RunAgentMessage[];
   }): Promise<string> {
     const existingThread = await this.threadRepository.findOne(workspaceId, {
@@ -96,22 +93,28 @@ export class AgentRunConversationService {
           threadId,
           agentId,
           status: AgentTurnStatus.RUNNING,
-          createdBy:
-            createdBy ?? buildCreatedByFromApplication({ application }),
+          createdBy,
           scope,
         });
 
         for (const message of messages) {
+          const isAssistantMessage = message.role === 'assistant';
+
           await this.conversationWriterService.insertMessage({
             workspaceId,
             threadId,
             turnId,
-            role: AgentMessageRole.USER,
+            role: isAssistantMessage
+              ? AgentMessageRole.ASSISTANT
+              : AgentMessageRole.USER,
             agentId: null,
-            senderUserWorkspaceId:
-              actor.type === 'user' ? actor.userWorkspaceId : null,
-            senderApplicationId: application.id,
-            parts: this.buildUserMessageParts(message),
+            senderUserWorkspaceId: isAssistantMessage
+              ? null
+              : senderUserWorkspaceId,
+            senderApplicationId: isAssistantMessage
+              ? null
+              : senderApplicationId,
+            parts: this.buildMessageParts(message),
             scope,
           });
         }
@@ -176,9 +179,7 @@ export class AgentRunConversationService {
     });
   }
 
-  private buildUserMessageParts(
-    message: RunAgentMessage,
-  ): ExtendedUIMessagePart[] {
+  private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {
     const fileParts = (message.attachments ?? []).map(
       (attachment): ExtendedFileUIPart => ({
         type: 'file',
