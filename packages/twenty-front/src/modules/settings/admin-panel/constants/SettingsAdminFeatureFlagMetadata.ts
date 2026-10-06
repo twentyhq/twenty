@@ -4,11 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from '~/generated-admin/graphql';
 
 // Public flags use server-provided client config metadata to stay consistent with the lab.
-export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
-  Record<
-    FeatureFlagKey,
-    { label: MessageDescriptor; description: MessageDescriptor }
-  >
+export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
+  FeatureFlagKey,
+  { label: MessageDescriptor; description: MessageDescriptor }
 > = {
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
