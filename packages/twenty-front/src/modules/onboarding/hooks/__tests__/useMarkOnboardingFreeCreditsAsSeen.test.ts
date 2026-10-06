@@ -48,7 +48,6 @@ describe('useMarkOnboardingFreeCreditsAsSeen', () => {
     jotaiStore.set(onboardingConfigState.atom, {
       importContactsCreditsReward: 2,
       inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 1,
       createProfileCreditsReward: 0.5,
       upgradeCreditsReward: 0.5,
       inviteTeamMaxInvites: 4,
@@ -73,14 +72,14 @@ describe('useMarkOnboardingFreeCreditsAsSeen', () => {
     expect(result.current.progress.seenCredits).toBe(0);
 
     act(() => {
-      setOnboardingStatus(OnboardingStatus.APPS_INSTALLATION);
+      setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
     });
 
     expect(result.current.progress.newlyEarnedCredits).toBe(2);
   });
 
   it('should mark the counted credits as seen', () => {
-    setOnboardingStatus(OnboardingStatus.APPS_INSTALLATION);
+    setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       { ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE, importContacts: 2 },

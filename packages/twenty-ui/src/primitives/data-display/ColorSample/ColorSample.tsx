@@ -1,55 +1,39 @@
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
+import { type CSSProperties } from 'react';
 
-import { type ThemeColor, themeCssVariables } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme';
 
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { type ColorSampleProps } from './types/ColorSampleProps';
 
 import styles from './ColorSample.module.scss';
-
-export type ColorSampleVariant = 'circle' | 'default' | 'pipeline';
-
-type StyledColorSampleProps = {
-  colorName: ThemeColor;
-  color?: string;
-  variant?: ColorSampleVariant;
-};
-
-export type ColorSampleProps = StyledColorSampleProps & {
-  className?: string;
-};
-
-const getColor = (colorName: ThemeColor, color?: string) => {
-  if (isDefined(color)) {
-    return color;
-  }
-
-  return themeCssVariables.tag.background[colorName];
-};
-
-const getBorderColor = (colorName: ThemeColor) => {
-  return themeCssVariables.tag.text[colorName];
-};
 
 export const ColorSample = ({
   colorName,
   color,
   variant,
   className,
-}: ColorSampleProps) => {
-  return (
-    <div
-      className={clsx(
+  style,
+  render,
+  ref,
+  ...props
+}: ColorSampleProps) =>
+  useRender({
+    defaultTagName: 'div',
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(
         styles.root,
         variant === 'circle' && styles.circle,
-        variant === 'pipeline' && styles.pipeline,
         className,
-      )}
-      style={
-        {
-          '--color-sample-color': getColor(colorName, color),
-          '--color-sample-border-color': getBorderColor(colorName),
-        } as React.CSSProperties
-      }
-    />
-  );
-};
+      ),
+      style: {
+        '--color-sample-color':
+          color ?? themeCssVariables.tag.background[colorName],
+        '--color-sample-border-color': themeCssVariables.tag.text[colorName],
+        ...style,
+      } as CSSProperties,
+    },
+  });

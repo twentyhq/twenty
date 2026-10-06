@@ -242,11 +242,6 @@ export class ClientConfigService {
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
               ),
             ),
-            installAppsCreditsReward: toDisplayCredits(
-              this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
-              ),
-            ),
             createProfileCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
                 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',

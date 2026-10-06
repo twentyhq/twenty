@@ -58,12 +58,6 @@ const SyncEmails = lazyWithPreload(() =>
   })),
 );
 
-const InstallApps = lazyWithPreload(() =>
-  import('~/pages/onboarding/InstallApps').then((module) => ({
-    default: module.InstallApps,
-  })),
-);
-
 const InviteTeam = lazyWithPreload(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -92,7 +86,6 @@ const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();
   SyncEmails.preload();
-  InstallApps.preload();
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
@@ -217,14 +210,6 @@ const createWorkspaceAppRouter = ({
                       element: (
                         <LazyRoute fallback={<OnboardingStepPageLoader />}>
                           <SyncEmails />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.InstallApps,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InstallApps />
                         </LazyRoute>
                       ),
                     },
