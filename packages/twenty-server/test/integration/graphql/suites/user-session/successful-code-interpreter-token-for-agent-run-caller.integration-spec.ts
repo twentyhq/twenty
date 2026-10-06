@@ -1,4 +1,4 @@
-import { captureAgentRunAuthContext } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-auth-context.util';
+import { captureAgentRunExecution } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { captureCodeInterpreterSandboxToken } from 'test/integration/graphql/suites/user-session/utils/capture-code-interpreter-sandbox-token.util';
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { pingMcp } from 'test/integration/graphql/suites/user-session/utils/ping-mcp.util';
@@ -27,10 +27,12 @@ const captureSandboxTokenForAgentRun = async ({
   token: string;
 }) =>
   captureCodeInterpreterSandboxToken({
-    authContext: await captureAgentRunAuthContext({
-      agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
-      token,
-    }),
+    authContext: (
+      await captureAgentRunExecution({
+        agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
+        token,
+      })
+    ).executionContext.authContext,
     roleId: globalTestContext.applicationRoleId,
   });
 

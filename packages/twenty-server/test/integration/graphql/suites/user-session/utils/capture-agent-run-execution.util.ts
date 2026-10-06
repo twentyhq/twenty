@@ -3,16 +3,19 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 
-export const captureAgentRunAuthContext = async ({
+export type AgentRunExecution = Parameters<
+  AgentAsyncExecutorService['executeAgent']
+>[0];
+
+export const captureAgentRunExecution = async ({
   agentUniversalIdentifier,
   token,
 }: {
   agentUniversalIdentifier: string;
   token: string;
-}): Promise<WorkspaceAuthContext> => {
+}): Promise<AgentRunExecution> => {
   const executeAgentSpy = jest
     .spyOn(
       getAppProviderByClassName<AgentAsyncExecutorService>(
@@ -57,16 +60,15 @@ export const captureAgentRunAuthContext = async ({
       token,
     );
 
-    const authContext =
-      executeAgentSpy.mock.calls[0]?.[0]?.executionContext.authContext;
+    const execution = executeAgentSpy.mock.calls[0]?.[0];
 
-    if (!isDefined(authContext)) {
+    if (!isDefined(execution)) {
       throw new Error(
         `Expected the agent to run: ${JSON.stringify(response.body.errors ?? response.body.data)}`,
       );
     }
 
-    return authContext;
+    return execution;
   } finally {
     executeAgentSpy.mockRestore();
   }
