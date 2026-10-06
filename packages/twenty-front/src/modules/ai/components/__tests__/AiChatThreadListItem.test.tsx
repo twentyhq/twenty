@@ -129,6 +129,7 @@ describe('AiChatThreadListItem', () => {
       screen.getByRole('checkbox', { name: 'Select chat' }),
     );
 
+    expect(onCheckboxClick).toHaveBeenCalledTimes(1);
     expect(onCheckboxClick).toHaveBeenCalledWith(thread, expect.anything());
     expect(onClick).not.toHaveBeenCalled();
   });

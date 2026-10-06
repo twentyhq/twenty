@@ -112,10 +112,7 @@ const AiChatInboxPageContent = () => {
   ) =>
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
 
-  const isSelectionShown =
-    selectedRecordIds.length > 1 ||
-    (selectedRecordIds.length === 1 &&
-      selectedRecordIds[0] !== selectedThreadId);
+  const isSelectionShown = selectedRecordIds.length > 0;
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
   const checkedThreadIds = isSelectionShown ? selectedRecordIds : [];

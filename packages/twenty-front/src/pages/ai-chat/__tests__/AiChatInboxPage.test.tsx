@@ -219,6 +219,18 @@ describe('AiChatInboxPage', () => {
     expect(isRowChecked('Third chat')).toBe(true);
   });
 
+  it('checks the chat on screen from its checkbox', () => {
+    renderInbox();
+
+    fireEvent.click(
+      screen.getByRole('checkbox', { name: 'Select First chat' }),
+    );
+
+    expect(screen.getByText('1 chat selected')).toBeInTheDocument();
+    expect(isRowChecked('First chat')).toBe(true);
+    expect(screen.getByText('1 selected')).toBeInTheDocument();
+  });
+
   it('counts the selection in the list header instead of offering a new chat', () => {
     renderInbox();
 
