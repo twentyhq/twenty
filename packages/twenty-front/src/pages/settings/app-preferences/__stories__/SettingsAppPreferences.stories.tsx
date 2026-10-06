@@ -29,8 +29,12 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     layout: 'fullscreen',
     // The nav only lists App preferences for members allowed to manage their
-    // connected accounts.
-    permissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+    // connected accounts, and the installed apps are only queried with the
+    // applications permission.
+    permissionFlags: [
+      PermissionFlagType.CONNECTED_ACCOUNTS,
+      PermissionFlagType.APPLICATIONS,
+    ],
     msw: graphqlMocks,
   },
 };
