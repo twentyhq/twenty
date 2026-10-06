@@ -24,6 +24,14 @@ Other rules:
 - Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
+Database event trigger conditions (`databaseEventTriggerSettings.conditions`, types from `twenty-sdk/define`: `DatabaseEventTriggerConditions`, `DatabaseEventTriggerRecordCondition`, `DatabaseEventTriggerOnMismatch`, `WorkspaceSignalName`, `WORKSPACE_SIGNAL_NAMES`):
+
+- `actor`: list of `'user' | 'apiKey' | 'application' | 'system'`; a batch written by another principal is dropped. Sync writes are `system`.
+- `record`: records-API filter grammar (`eq`, `neq`, `in`, `is: 'NULL' | 'NOT_NULL'`, `gt`, `gte`, `lt`, `lte`, `like`, `ilike`, `startsWith`, `and`, `or`, `not`, nested composites) evaluated in memory on `after`, or `before` for `.deleted` and `.destroyed`. At most 3 nesting levels and 20 field conditions, concrete object name only (no `*`). Field names are not checked against the object.
+- `signals`: workspace booleans with the expected value: `messaging.import`, `messaging.initialImport`, `calendar.import`, `calendar.initialImport`.
+- `onMismatch`: `'drop'` (default) or `'deferUntilMatch'`, signal mismatches only. `deferUntilMatch` needs `signals` and a concrete object name. Dropped events are not replayed: once the signal clears the handler gets one `DatabaseEventBatchPayload` with `events: []` and `deferred: { signal, since, droppedEventCount }` (`DeferredDatabaseEventBatch` from `twenty-sdk/logic-function`), so only use it for functions that rebuild state from the data.
+- Prefer `conditions` over filtering inside the handler: a mismatch costs no job and no API call. Batches also carry `actor.type` for handlers that want it.
+
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
 
 ## Bulk Record Actions

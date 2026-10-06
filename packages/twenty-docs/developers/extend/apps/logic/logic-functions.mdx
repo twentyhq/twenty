@@ -364,8 +364,10 @@ When a database event trigger invokes your logic function, it receives one `Data
 
 ```ts
 import type {
+  DatabaseEventActor,
   DatabaseEventBatchPayload,
   DatabaseEventPayload,
+  DeferredDatabaseEventBatch,
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
   ObjectRecordUpdateEvent,
@@ -384,6 +386,7 @@ The payload includes:
 | `name` | Event name, such as `person.updated`. |
 | `workspaceId` | Workspace where the event happened. |
 | `objectMetadata` | Metadata for the object that changed. |
+| `actor` | `{ type: 'user' \| 'apiKey' \| 'application' \| 'system' }`, the kind of principal behind the write. `system` covers background work such as email and calendar sync. Absent on events emitted outside the ORM. |
 | `recordId` | Id of the changed record. |
 | `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user. |
 | `properties` | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
@@ -409,6 +412,7 @@ For permanent deletes, use `.destroyed`.
 | `eventName` | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both. |
 | `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
 | `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
+| `conditions` | Optional. Narrows the trigger by who wrote, what the record looks like, and the state of the workspace. See [Trigger conditions](#trigger-conditions). |
 
 Created event example:
 
@@ -513,6 +517,63 @@ Batch size is not something a handler can rely on. The server decides how many e
 Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
 
 Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
+
+#### Trigger conditions
+
+`updatedFields` only looks at which fields changed. `conditions` lets a trigger skip events it would otherwise receive, before any job is created, so a function that only cares about some writes does not spend executions or API budget on the others:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'messageParticipant.updated',
+    updatedFields: ['personId'],
+    batchMode: true,
+    conditions: {
+      actor: ['system'],
+      record: { personId: { is: 'NOT_NULL' } },
+      signals: { 'messaging.initialImport': false },
+      onMismatch: 'deferUntilMatch',
+    },
+  },
+});
+```
+
+All keys are optional and combine with AND:
+
+| Key | Evaluated | Description |
+|-----|-----------|-------------|
+| `actor` | Once per batch | List of `'user'`, `'apiKey'`, `'application'`, `'system'`. The batch is dropped when the principal behind the write is not listed. |
+| `record` | Per event | A filter in the same grammar as the records API, applied in memory to the record after the write (before it for `.deleted` and `.destroyed`). Operators: `eq`, `neq`, `in`, `is` (`'NULL'` or `'NOT_NULL'`), `gt`, `gte`, `lt`, `lte`, `like`, `ilike`, `startsWith`, combined with `and`, `or`, `not`. Composite fields nest, such as `emails: { primaryEmail: { ilike: '%@twenty.com' } }`. A field the record does not carry reads as null. |
+| `signals` | Once per batch | Workspace-level booleans published by the engine, keyed by name with the expected value. `messaging.import` and `calendar.import` are set while any mailbox or calendar of the workspace is syncing; `messaging.initialImport` and `calendar.initialImport` only while a newly connected one runs its first import. |
+| `onMismatch` | | What happens when a `signals` condition fails: `'drop'` (default) ignores the events, `'deferUntilMatch'` holds the function back and delivers one catch-up call once the signal clears. `actor` and `record` mismatches always drop. |
+
+The types are exported from `twenty-sdk/define` as `DatabaseEventTriggerConditions`, `DatabaseEventTriggerRecordCondition`, `DatabaseEventTriggerOnMismatch` and `WorkspaceSignalName`, with the signal names in `WORKSPACE_SIGNAL_NAMES`.
+
+Validation happens when the app is synced and in `defineLogicFunction`: `record` allows at most 3 nesting levels and 20 field conditions, needs a concrete object in `eventName` rather than a `*` wildcard, and `deferUntilMatch` needs both `signals` and a concrete object. Field names are checked for shape, not against the object's fields.
+
+With `deferUntilMatch`, the events of each dropped batch are counted but not kept. When the signal clears, the function receives, after a short grace delay, one `DatabaseEventBatchPayload` with an empty `events` array and a `deferred` marker:
+
+```ts
+type DeferredDelivery = DatabaseEventBatchPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (batch: DeferredDelivery) => {
+  if (batch.deferred) {
+    const { signal, since, droppedEventCount } = batch.deferred;
+
+    // Re-read whatever changed since `since` instead of relying on events
+    return { resyncedFrom: since, signal, droppedEventCount };
+  }
+
+  return { handled: batch.events.length };
+};
+```
+
+<Note>
+The engine never replays the events a deferred function missed. `since` is when the function first missed a batch and `droppedEventCount` how many events it would have received. Use `deferUntilMatch` only for functions that can rebuild their state from the data; a function that needs `before` and `after` of every event should use `drop` or no signal condition at all.
+</Note>
 
 #### Execution context
 
