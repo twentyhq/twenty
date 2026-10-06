@@ -202,7 +202,7 @@ export const workflowStepManifestSchema = z.discriminatedUnion(
   workflowStepManifestOptions,
   {
     error: (issue) =>
-      issue.code === 'invalid_union' && isDefined(issue.discriminator)
+      issue.code === 'invalid_union'
         ? `Unsupported step type. Application workflows support: ${WORKFLOW_STEP_MANIFEST_TYPES.join(', ')}`
         : undefined,
   },

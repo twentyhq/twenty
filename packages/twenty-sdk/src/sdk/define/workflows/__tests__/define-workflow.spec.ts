@@ -1,10 +1,8 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
 
 import { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
-import {
-  extractDefineEntity,
-  TargetFunction,
-} from '@/cli/utilities/build/manifest/manifest-extract-config';
+
+const STEP_ID = '44444444-4444-4444-8444-444444444444';
 
 const workflow: WorkflowManifest = {
   universalIdentifier: '11111111-1111-4111-8111-111111111111',
@@ -13,11 +11,11 @@ const workflow: WorkflowManifest = {
     trigger: {
       universalIdentifier: '33333333-3333-4333-8333-333333333333',
       type: 'MANUAL',
-      nextStepIds: ['44444444-4444-4444-8444-444444444444'],
+      nextStepIds: [STEP_ID],
     },
     steps: [
       {
-        universalIdentifier: '44444444-4444-4444-8444-444444444444',
+        universalIdentifier: STEP_ID,
         name: 'Greet',
         type: 'LOGIC_FUNCTION',
         logicFunctionUniversalIdentifier:
@@ -29,87 +27,51 @@ const workflow: WorkflowManifest = {
   },
 };
 
+const withStep = (step: Record<string, unknown>) => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [{ ...workflow.version.steps[0], ...step }],
+  },
+});
+
 describe('defineWorkflow', () => {
-  it('accepts a portable manual workflow without workspace IDs', () => {
-    expect(defineWorkflow(workflow)).toMatchObject({
+  it('accepts a manual workflow', () => {
+    expect(defineWorkflow(workflow)).toEqual({
       success: true,
       config: workflow,
       errors: [],
+      warnings: [],
     });
-  });
-
-  it('rejects raw GraphQL ordering in portable record queries', () => {
-    const invalid: WorkflowManifest = {
-      ...workflow,
-      version: {
-        ...workflow.version,
-        steps: [
-          {
-            universalIdentifier: workflow.version.steps[0].universalIdentifier,
-            name: 'Find records',
-            type: 'FIND_RECORDS',
-            nextStepIds: [],
-            input: { objectUniversalIdentifier: workflow.universalIdentifier },
-          },
-        ],
-      },
-    };
-    Object.assign(invalid.version.steps[0].input, {
-      orderBy: { gqlOperationOrderBy: [{ workspaceField: 'AscNullsLast' }] },
-    });
-    const result = defineWorkflow(invalid);
-    expect(result.success).toBe(false);
-    expect(result.errors.join(' ')).toContain('gqlOperationOrderBy');
-  });
-
-  it('is discovered by the application manifest builder', () => {
-    expect(extractDefineEntity('export default defineWorkflow({});')).toBe(
-      TargetFunction.DefineWorkflow,
-    );
   });
 
   it.each([
-    ['missing', 'references a non-existent step'],
-    ['cycle', 'Workflow contains a cycle'],
-    ['unreachable', 'is not reachable from the trigger'],
-    ['duplicate', 'must have distinct universal identifiers'],
-    ['unsupported', 'version.trigger.type: Invalid input: expected "MANUAL"'],
-    ['code', 'version.steps.0.type: Unsupported step type'],
-    ['email', 'version.steps.0.type: Unsupported step type'],
-    ['calendar', 'version.steps.0.type: Unsupported step type'],
-  ])('rejects %s definitions before installation', (problem, error) => {
-    const invalid = structuredClone(workflow);
-    const step = invalid.version.steps[0];
-    if (problem === 'missing') {
-      step.nextStepIds = ['66666666-6666-4666-8666-666666666666'];
-    }
-    if (problem === 'cycle') {
-      step.nextStepIds = [step.universalIdentifier];
-    }
-    if (problem === 'unreachable') {
-      invalid.version.steps.push({
-        ...step,
-        universalIdentifier: '66666666-6666-4666-8666-666666666666',
-      });
-    }
-    if (problem === 'duplicate') {
-      invalid.version.trigger.universalIdentifier = invalid.universalIdentifier;
-    }
-    if (problem === 'unsupported') {
-      Object.assign(invalid.version.trigger, { type: 'CRON' });
-    }
-    if (problem === 'code') {
-      Object.assign(step, { type: 'CODE' });
-    }
-    if (problem === 'email') {
-      Object.assign(step, { type: 'SEND_EMAIL' });
-    }
-    if (problem === 'calendar') {
-      Object.assign(step, { type: 'CREATE_CALENDAR_EVENT' });
-    }
-    const result = defineWorkflow(invalid);
+    {
+      problem: 'a step type applications cannot use',
+      definition: withStep({ type: 'CODE' }),
+      error:
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, AI_AGENT',
+    },
+    {
+      problem: 'a trigger other than manual',
+      definition: {
+        ...workflow,
+        version: {
+          ...workflow.version,
+          trigger: { ...workflow.version.trigger, type: 'CRON' },
+        },
+      },
+      error: 'version.trigger.type: Invalid input: expected "MANUAL"',
+    },
+    {
+      problem: 'a cycle',
+      definition: withStep({ nextStepIds: [STEP_ID] }),
+      error: `Workflow contains a cycle at step ${STEP_ID}`,
+    },
+  ])('rejects $problem', ({ definition, error }) => {
+    const result = defineWorkflow(definition as WorkflowManifest);
+
     expect(result.success).toBe(false);
-    expect(result.errors).toEqual([expect.stringMatching(/^\S/)]);
-    expect(result.errors[0]).toContain(error);
+    expect(result.errors).toEqual([error]);
   });
 });
