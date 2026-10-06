@@ -60,7 +60,7 @@ export const runAppAddCommand: CommandRun = async (context) => {
           ]
         : []),
       '',
-      'Review the definition, then run twenty app build.',
+      'Review with twenty app plan, then run twenty app apply.',
     ].join('\n'),
   };
 };

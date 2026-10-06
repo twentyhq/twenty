@@ -2054,7 +2054,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const capacity = jest
       .spyOn(
         global.workflowTestServices.throttling,
-        'getRemainingRunsToEnqueueCount',
+        'consumeRemainingRunsToEnqueueCount',
       )
       .mockResolvedValue(0);
     const runId = await runFixture(fixture);
