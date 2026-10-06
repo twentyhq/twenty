@@ -13,6 +13,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
   type WorkflowAction,
+  type WorkflowAiAgentAction,
   type WorkflowEmptyAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -996,21 +997,20 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       options: [{ label: 'Send it' }, { label: 'Hold it' }],
     };
 
-    const agentStep = (nextStepIds: string[]): WorkflowAction =>
-      ({
-        ...emptyStep(),
-        name: 'Draft the quote',
-        type: WorkflowActionType.AI_AGENT,
-        nextStepIds,
-        settings: {
-          ...settings,
-          input: {
-            prompt: 'Draft the quote',
-            humanInputInstructions: 'Ask before choosing a plan.',
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          },
+    const agentStep = (nextStepIds: string[]): WorkflowAiAgentAction => ({
+      ...emptyStep(),
+      name: 'Draft the quote',
+      type: WorkflowActionType.AI_AGENT,
+      nextStepIds,
+      settings: {
+        ...settings,
+        input: {
+          prompt: 'Draft the quote',
+          humanInputInstructions: 'Ask before choosing a plan.',
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
         },
-      }) as WorkflowAction;
+      },
+    });
 
     const agentResult = (
       overrides: Partial<AgentExecutionResult>,
@@ -1191,7 +1191,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         )
         .mockResolvedValueOnce(replyingResult)
         .mockResolvedValueOnce(replyingResult);
-      const agent = {
+      const agent: WorkflowAiAgentAction = {
         ...agentStep([]),
         settings: {
           ...agentStep([]).settings,
@@ -1200,7 +1200,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             conversation: { scope: 'KEY', key: 'quotes' },
           },
         },
-      } as WorkflowAction;
+      };
       const fixture = await createFixture({ steps: [agent] });
 
       const firstRun = await waitForRun(await runFixture(fixture), 'COMPLETED');
@@ -1226,7 +1226,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
          WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL AND member.id = $2`,
         [workspaceId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
       );
-      const agent = {
+      const agent: WorkflowAiAgentAction = {
         ...agentStep([]),
         settings: {
           ...agentStep([]).settings,
@@ -1235,7 +1235,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             workspaceMemberId: undefined,
           },
         },
-      } as WorkflowAction;
+      };
       const fixture = await createFixture({ steps: [agent] });
 
       await global.testDataSource.query(
@@ -1267,7 +1267,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     it('keeps the conversation of a workflow without a member creator off every inbox', async () => {
       mockAgent();
-      const agent = {
+      const agent: WorkflowAiAgentAction = {
         ...agentStep([]),
         settings: {
           ...agentStep([]).settings,
@@ -1276,7 +1276,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             workspaceMemberId: undefined,
           },
         },
-      } as WorkflowAction;
+      };
       const fixture = await createFixture({ steps: [agent] });
 
       await global.testDataSource.query(
@@ -1333,7 +1333,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         .mockResolvedValueOnce(askingResult)
         .mockRejectedValueOnce(new Error('The model is overloaded'))
         .mockResolvedValueOnce(replyingResult);
-      const agent = {
+      const agent: WorkflowAiAgentAction = {
         ...agentStep([]),
         settings: {
           ...agentStep([]).settings,
@@ -1342,7 +1342,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             continueOnFailure: { value: false },
           },
         },
-      } as WorkflowAction;
+      };
       const fixture = await createFixture({ steps: [agent] });
       const runId = await runFixture(fixture);
       const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
