@@ -13,8 +13,8 @@ export const CodeEditorHeader = ({
   render,
   ref,
   ...props
-}: CodeEditorHeaderProps) =>
-  useRender({
+}: CodeEditorHeaderProps) => {
+  return useRender({
     render,
     ref,
     props: {
@@ -31,3 +31,4 @@ export const CodeEditorHeader = ({
       ),
     },
   });
+};
