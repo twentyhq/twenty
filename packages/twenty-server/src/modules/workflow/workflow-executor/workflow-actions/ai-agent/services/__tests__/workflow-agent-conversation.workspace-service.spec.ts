@@ -57,6 +57,10 @@ const buildService = ({
     } as never,
     workflowRunWorkspaceService as never,
     workflowRunRecordShareService as never,
+    {
+      finish: jest.fn().mockResolvedValue(true),
+      finishExecutedTurn: jest.fn().mockResolvedValue(undefined),
+    } as never,
   );
 
   return {

@@ -229,6 +229,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           new AgentHistoryTransactionService(workspaceStorage, orm as never),
         ),
         chatThreadService,
+        { endWaitingTurn: jest.fn().mockResolvedValue(undefined) } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>

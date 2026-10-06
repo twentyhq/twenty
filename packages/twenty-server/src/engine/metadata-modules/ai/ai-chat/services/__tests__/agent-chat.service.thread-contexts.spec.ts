@@ -35,6 +35,7 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
+    { endWaitingTurn: jest.fn().mockResolvedValue(undefined) } as never,
   );
 
   return { service, threadRepository, messageRepository };
