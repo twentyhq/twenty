@@ -24,9 +24,6 @@ const buildService = () => {
       isCreated: true,
     }),
   };
-  const workflowRunWorkspaceService = {
-    setStepThreadId: jest.fn().mockResolvedValue(undefined),
-  };
   const workflowRunRecordShareService = {
     findCreatorWorkspaceMemberId: jest.fn().mockResolvedValue('creator-id'),
   };
@@ -36,25 +33,22 @@ const buildService = () => {
     {
       findRunSenderOrThrow: jest.fn().mockResolvedValue(SENDER),
     } as never,
-    workflowRunWorkspaceService as never,
     workflowRunRecordShareService as never,
   );
 
   return {
     service,
     agentCallerConversationService,
-    workflowRunWorkspaceService,
     workflowRunRecordShareService,
   };
 };
 
 describe('WorkflowAgentConversationWorkspaceService', () => {
   describe('openConversation', () => {
-    it('opens the conversation with the recipient the step names and points the step at it', async () => {
+    it('opens the conversation with the recipient the step names', async () => {
       const {
         service,
         agentCallerConversationService,
-        workflowRunWorkspaceService,
         workflowRunRecordShareService,
       } = buildService();
 
@@ -79,12 +73,6 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
       expect(
         workflowRunRecordShareService.findCreatorWorkspaceMemberId,
       ).not.toHaveBeenCalled();
-      expect(workflowRunWorkspaceService.setStepThreadId).toHaveBeenCalledWith({
-        stepId: 'step-id',
-        threadId: 'thread-id',
-        workflowRunId: 'run-id',
-        workspaceId: 'workspace-id',
-      });
     });
 
     it("falls back to the workflow creator's inbox when the step names no recipient", async () => {
@@ -106,11 +94,7 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
     });
 
     it('fails when the recipient deleted the conversation', async () => {
-      const {
-        service,
-        agentCallerConversationService,
-        workflowRunWorkspaceService,
-      } = buildService();
+      const { service, agentCallerConversationService } = buildService();
 
       agentCallerConversationService.openConversation.mockResolvedValue({
         status: 'DELETED',
@@ -122,9 +106,6 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
           recipientWorkspaceMemberId: 'recipient-id',
         }),
       ).rejects.toThrow('The recipient deleted this conversation');
-      expect(
-        workflowRunWorkspaceService.setStepThreadId,
-      ).not.toHaveBeenCalled();
     });
   });
 

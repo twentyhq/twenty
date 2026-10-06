@@ -12,16 +12,13 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-// A step's conversation goes to the step's recipient or else the workflow's
-// creator, and the step points at it as soon as it is open
+// A step's conversation goes to the step's recipient or else the workflow's creator
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
     private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
@@ -70,13 +67,6 @@ export class WorkflowAgentConversationWorkspaceService {
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
-
-    await this.workflowRunWorkspaceService.setStepThreadId({
-      stepId,
-      threadId: openedConversation.threadId,
-      workflowRunId,
-      workspaceId,
-    });
 
     return {
       threadId: openedConversation.threadId,
