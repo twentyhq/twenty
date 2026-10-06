@@ -15,7 +15,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
-import { StyledSignInUpSpacer } from './StyledSignInUpSpacer';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -54,7 +54,7 @@ export const SignInUpWithMicrosoft = ({
           <LastUsedPill />
         )}
       </StyledSsoButtonContainer>
-      <StyledSignInUpSpacer />
+      <SignInUpSeparator />
     </>
   );
 };

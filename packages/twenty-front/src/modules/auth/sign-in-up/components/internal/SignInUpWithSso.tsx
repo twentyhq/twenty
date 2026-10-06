@@ -17,7 +17,7 @@ import { IconLock } from 'twenty-ui/icon';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
-import { StyledSignInUpSpacer } from './StyledSignInUpSpacer';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 export const SignInUpWithSso = () => {
   const theme = useTheme();
@@ -57,7 +57,7 @@ export const SignInUpWithSso = () => {
         >{t`Single sign-on (SSO)`}</MainButton>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
-      <StyledSignInUpSpacer />
+      <SignInUpSeparator />
     </>
   );
 };

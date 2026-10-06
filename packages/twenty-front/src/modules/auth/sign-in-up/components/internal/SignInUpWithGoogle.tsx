@@ -17,7 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
-import { StyledSignInUpSpacer } from './StyledSignInUpSpacer';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();
@@ -59,7 +59,7 @@ export const SignInUpWithGoogle = ({
           <LastUsedPill />
         )}
       </StyledSsoButtonContainer>
-      <StyledSignInUpSpacer />
+      <SignInUpSeparator />
     </>
   );
 };
