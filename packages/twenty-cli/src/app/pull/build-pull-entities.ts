@@ -66,6 +66,7 @@ export type SkippedPullEntity = {
 
 export const buildPullEntities = (
   manifest: Manifest,
+  standaloneFieldUniversalIdentifiers: ReadonlySet<string> = new Set(),
 ): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
@@ -86,13 +87,28 @@ export const buildPullEntities = (
 
   const writtenObjectUniversalIdentifiers = new Set<string>();
   const fieldLocationByUniversalIdentifier = new Map<string, FieldLocation>();
+  const standaloneFields = [...(manifest.fields ?? [])];
 
   for (const objectManifest of manifest.objects ?? []) {
+    const inlineFields = [];
+
     for (const field of objectManifest.fields ?? []) {
       fieldLocationByUniversalIdentifier.set(field.universalIdentifier, {
         objectName: objectManifest.nameSingular,
         fieldName: field.name,
       });
+      if (
+        standaloneFieldUniversalIdentifiers.has(
+          field.universalIdentifier.toLowerCase(),
+        )
+      ) {
+        standaloneFields.push({
+          ...field,
+          objectUniversalIdentifier: objectManifest.universalIdentifier,
+        });
+      } else {
+        inlineFields.push(field);
+      }
     }
 
     writtenObjectUniversalIdentifiers.add(objectManifest.universalIdentifier);
@@ -101,7 +117,7 @@ export const buildPullEntities = (
       kind: 'object',
       universalIdentifier: objectManifest.universalIdentifier,
       definer: 'defineObject',
-      config: objectManifest,
+      config: { ...objectManifest, fields: inlineFields },
       enumBindings: OBJECT_ENUM_BINDINGS,
       defaultFolder: 'src/objects',
       fileSuffix: '.object.ts',
@@ -110,7 +126,7 @@ export const buildPullEntities = (
     });
   }
 
-  for (const fieldManifest of manifest.fields ?? []) {
+  for (const fieldManifest of standaloneFields) {
     const objectName = getObjectNameForPullFile({
       objectUniversalIdentifier: fieldManifest.objectUniversalIdentifier,
       manifest,

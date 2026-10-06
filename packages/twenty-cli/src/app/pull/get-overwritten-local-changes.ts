@@ -17,6 +17,7 @@ export const getOverwrittenLocalChanges = async ({
   frontComponentSourcePaths,
   unreconciledUniversalIdentifiers,
   sourceFingerprints,
+  standaloneFieldUniversalIdentifiers,
 }: {
   appPath: string;
   baseManifest: Manifest | null;
@@ -25,6 +26,7 @@ export const getOverwrittenLocalChanges = async ({
   frontComponentSourcePaths: string[];
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
   sourceFingerprints?: Record<string, string>;
+  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
 }): Promise<PullDeletion[]> => {
   if (!isDefined(baseManifest)) {
     return [];
@@ -34,6 +36,7 @@ export const getOverwrittenLocalChanges = async ({
     buildPullBaseEntities({
       manifest: baseManifest,
       unreconciledUniversalIdentifiers,
+      standaloneFieldUniversalIdentifiers,
     }).map((entity) => [
       entity.universalIdentifier,
       writeDefineFile({

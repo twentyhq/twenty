@@ -6,15 +6,20 @@ import { buildPullEntities } from '@/app/pull/build-pull-entities';
 export const buildPullBaseEntities = ({
   manifest,
   unreconciledUniversalIdentifiers,
+  standaloneFieldUniversalIdentifiers,
 }: {
   manifest: Manifest | null;
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
 }) => {
   if (!isDefined(manifest)) {
     return [];
   }
 
-  return buildPullEntities(manifest).entities.map((entity) => {
+  return buildPullEntities(
+    manifest,
+    standaloneFieldUniversalIdentifiers,
+  ).entities.map((entity) => {
     if (
       entity.kind !== 'application' ||
       !isPlainObject(entity.config) ||

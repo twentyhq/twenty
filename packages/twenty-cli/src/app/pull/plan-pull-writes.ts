@@ -1,5 +1,6 @@
 import { type ManifestEntityKey } from '@/app/source/extract-define-entity';
 import { buildPullBaseEntities } from '@/app/pull/build-pull-base-entities';
+import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { ENTITY_KEY_BY_KIND } from '@/app/pull/entity-key-by-kind.constant';
 import {
   buildPullEntities,
@@ -115,7 +116,9 @@ const findExistingSourceFile = ({
 }): ScannedSourceFile | undefined =>
   entity.kind === 'application'
     ? applicationFile
-    : scannedFileByUniversalIdentifier.get(entity.universalIdentifier);
+    : scannedFileByUniversalIdentifier.get(
+        entity.universalIdentifier.toLowerCase(),
+      );
 
 export const planPullWrites = ({
   manifest,
@@ -123,20 +126,26 @@ export const planPullWrites = ({
   scannedFiles,
   workspaceUniversalIdentifiers,
   unreconciledUniversalIdentifiers,
+  standaloneFieldUniversalIdentifiers = new Set(),
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
   workspaceUniversalIdentifiers: ReadonlySet<string>;
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
-  const { entities, skipped } = buildPullEntities(manifest);
+  const { entities, skipped } = buildPullEntities(
+    manifest,
+    standaloneFieldUniversalIdentifiers,
+  );
   const baseConfigByUniversalIdentifier = new Map(
     buildPullBaseEntities({
       manifest: baseManifest,
       unreconciledUniversalIdentifiers,
+      standaloneFieldUniversalIdentifiers,
     }).map((entity) => [
       entity.universalIdentifier,
       JSON.stringify(entity.config),
@@ -153,7 +162,7 @@ export const planPullWrites = ({
   for (const scannedFile of scannedFiles) {
     if (isDefined(scannedFile.universalIdentifier)) {
       scannedFileByUniversalIdentifier.set(
-        scannedFile.universalIdentifier,
+        scannedFile.universalIdentifier.toLowerCase(),
         scannedFile,
       );
     }
@@ -202,10 +211,22 @@ export const planPullWrites = ({
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,
     );
+    const localNestedIdentifiers = new Set<string>();
+
+    if (entity.kind === 'object') {
+      collectIdentifiers({
+        value: existingSourceFile?.config,
+        identifiers: localNestedIdentifiers,
+      });
+    }
+    const hasDuplicatedStandaloneField = [...localNestedIdentifiers].some(
+      (identifier) => standaloneFieldUniversalIdentifiers.has(identifier),
+    );
 
     if (
       isDefined(existingSourceFile) &&
       existingSourceFile.targetFunctionName === entity.definer &&
+      !hasDuplicatedStandaloneField &&
       !unreconciledUniversalIdentifiers?.has(
         entity.universalIdentifier.toLowerCase(),
       ) &&
@@ -240,7 +261,7 @@ export const planPullWrites = ({
     }
 
     const scannedFile = scannedFileByUniversalIdentifier.get(
-      baseUniversalIdentifier,
+      baseUniversalIdentifier.toLowerCase(),
     );
     const relativePath = isDefined(scannedFile)
       ? toPosixPath(scannedFile.relativePath)

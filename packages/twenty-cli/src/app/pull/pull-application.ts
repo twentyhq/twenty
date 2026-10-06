@@ -43,6 +43,15 @@ export const pullApplication = async (
       includeConfig: true,
       signal,
     });
+    const standaloneFieldUniversalIdentifiers = new Set(
+      scannedFiles.flatMap((file) =>
+        file.entityKey === 'fields' &&
+        file.isReadable &&
+        isDefined(file.universalIdentifier)
+          ? [file.universalIdentifier.toLowerCase()]
+          : [],
+      ),
+    );
 
     signal?.throwIfAborted();
 
@@ -54,6 +63,7 @@ export const pullApplication = async (
       baseManifest,
       scannedFiles,
       workspaceUniversalIdentifiers,
+      standaloneFieldUniversalIdentifiers,
       unreconciledUniversalIdentifiers: new Set(
         base.unreconciledUniversalIdentifiers,
       ),
@@ -89,6 +99,7 @@ export const pullApplication = async (
       writes: plan.writes,
       deletions: plan.deletions,
       scannedFiles,
+      standaloneFieldUniversalIdentifiers,
     });
     const writes = [...safePlan.writes, ...translationPlan.writes];
     const deletions = [
@@ -141,6 +152,7 @@ export const pullApplication = async (
         base.unreconciledUniversalIdentifiers,
       ),
       sourceFingerprints: base.sourceFingerprints,
+      standaloneFieldUniversalIdentifiers,
     });
     const entityLabelByUniversalIdentifier =
       buildManifestEntityLabelByUniversalIdentifier(manifest);

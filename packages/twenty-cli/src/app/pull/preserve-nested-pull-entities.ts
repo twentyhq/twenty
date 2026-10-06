@@ -16,6 +16,7 @@ export const preserveNestedPullEntities = ({
   writes,
   deletions,
   scannedFiles,
+  standaloneFieldUniversalIdentifiers = new Set(),
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
@@ -23,6 +24,7 @@ export const preserveNestedPullEntities = ({
   writes: PullWrite[];
   deletions: PullDeletion[];
   scannedFiles: ScannedSourceFile[];
+  standaloneFieldUniversalIdentifiers?: ReadonlySet<string>;
 }): {
   writes: PullWrite[];
   deletions: PullDeletion[];
@@ -39,7 +41,10 @@ export const preserveNestedPullEntities = ({
     ]),
   );
   const exportedConfigByIdentifier = new Map(
-    buildPullEntities(manifest).entities.map((entity) => [
+    buildPullEntities(
+      manifest,
+      standaloneFieldUniversalIdentifiers,
+    ).entities.map((entity) => [
       entity.universalIdentifier.toLowerCase(),
       entity.config,
     ]),
@@ -61,6 +66,13 @@ export const preserveNestedPullEntities = ({
       ),
       identifiers: exportedIdentifiers,
     });
+    if (write.kind === 'object') {
+      for (const identifier of standaloneFieldUniversalIdentifiers) {
+        if (exportedConfigByIdentifier.has(identifier)) {
+          exportedIdentifiers.add(identifier);
+        }
+      }
+    }
 
     const omittedIdentifier = [...localIdentifiers].find(
       (identifier) =>
@@ -89,7 +101,8 @@ export const preserveNestedPullEntities = ({
   );
   const baseEntityByIdentifier = new Map(
     (isDefined(baseManifest)
-      ? buildPullEntities(baseManifest).entities
+      ? buildPullEntities(baseManifest, standaloneFieldUniversalIdentifiers)
+          .entities
       : []
     ).map((entity) => [entity.universalIdentifier.toLowerCase(), entity]),
   );

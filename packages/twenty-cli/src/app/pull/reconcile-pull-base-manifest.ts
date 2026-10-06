@@ -19,36 +19,40 @@ export const reconcilePullBaseManifest = ({
       ? value.universalIdentifier.toLowerCase()
       : undefined;
 
-  const reconciled: ExportedManifest = { ...manifest };
+  const reconcileEntries = (
+    currentEntries: unknown[],
+    previousEntries: unknown[],
+  ): unknown[] => {
+    const previousEntryByIdentifier = new Map(
+      previousEntries.map((entry) => [getIdentifier(entry), entry]),
+    );
+    const entries = currentEntries
+      .filter((entry) => {
+        const identifier = getIdentifier(entry);
 
-  for (const key of new Set([
-    ...Object.keys(manifest),
-    ...Object.keys(baseManifest ?? {}),
-  ])) {
-    const currentEntries = manifest[key];
+        return (
+          !isDefined(identifier) ||
+          !unreconciledUniversalIdentifiers.has(identifier)
+        );
+      })
+      .map((entry) => {
+        const identifier = getIdentifier(entry);
+        const previousEntry = previousEntryByIdentifier.get(identifier);
 
-    const previousEntries = baseManifest?.[key];
+        if (
+          !isDefined(identifier) ||
+          !isPlainObject(entry) ||
+          !isPlainObject(previousEntry)
+        ) {
+          return entry;
+        }
 
-    if (!isArray(currentEntries) && !isArray(previousEntries)) {
-      continue;
-    }
-
-    const entries: unknown[] = (
-      isArray(currentEntries) ? currentEntries : []
-    ).filter((entry) => {
-      const identifier = getIdentifier(entry);
-
-      return (
-        !isDefined(identifier) ||
-        !unreconciledUniversalIdentifiers.has(identifier)
-      );
-    });
+        return reconcileCollections(entry, previousEntry);
+      });
 
     const identifiers = new Set(entries.map(getIdentifier));
 
-    const retainedEntries = (
-      isArray(previousEntries) ? previousEntries : []
-    ).filter((entry) => {
+    const retainedEntries = previousEntries.filter((entry) => {
       const identifier = getIdentifier(entry);
 
       return (
@@ -59,10 +63,41 @@ export const reconcilePullBaseManifest = ({
       );
     });
 
-    if (isArray(currentEntries) || retainedEntries.length > 0) {
-      reconciled[key] = [...entries, ...retainedEntries];
+    return [...entries, ...retainedEntries];
+  };
+  const reconcileCollections = (
+    current: Record<string, unknown>,
+    previous: Record<string, unknown> | null,
+  ): Record<string, unknown> => {
+    const reconciled = { ...current };
+
+    for (const key of new Set([
+      ...Object.keys(current),
+      ...Object.keys(previous ?? {}),
+    ])) {
+      const currentEntries = current[key];
+      const previousEntries = previous?.[key];
+
+      if (!isArray(currentEntries) && !isArray(previousEntries)) {
+        continue;
+      }
+
+      const entries = reconcileEntries(
+        isArray(currentEntries) ? currentEntries : [],
+        isArray(previousEntries) ? previousEntries : [],
+      );
+
+      if (isArray(currentEntries) || entries.length > 0) {
+        reconciled[key] = entries;
+      }
     }
-  }
+
+    return reconciled;
+  };
+  const reconciled: ExportedManifest = {
+    ...manifest,
+    ...reconcileCollections(manifest, baseManifest),
+  };
 
   if (
     isDefined(baseManifest) &&

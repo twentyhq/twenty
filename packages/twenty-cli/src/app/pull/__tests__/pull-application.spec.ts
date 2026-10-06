@@ -32,6 +32,8 @@ const FIELD_IDENTIFIER = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const WORKSPACE_IDENTIFIER = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const OTHER_IDENTIFIER = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const INDEX_IDENTIFIER = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+const STANDALONE_FIELD_IDENTIFIER = 'abababab-abab-4aba-8aba-abababababab';
+const STANDALONE_FIELD_PATH = 'src/fields/rating.ts';
 const TARGET: AppPullTarget = {
   apiUrl: 'https://example.test',
   workspaceId: WORKSPACE_IDENTIFIER,
@@ -162,6 +164,29 @@ describe('programmatic application pull', () => {
       sourceFingerprints: await collectSourceFingerprints(appPath),
       signal: new AbortController().signal,
     });
+  const addStandaloneField = async () => {
+    await mkdir(join(appPath, 'src/fields'), { recursive: true });
+    await writeFile(
+      join(appPath, STANDALONE_FIELD_PATH),
+      `import { defineField, FieldType } from 'twenty-sdk/define';
+export default defineField({
+  universalIdentifier: '${STANDALONE_FIELD_IDENTIFIER}',
+  objectUniversalIdentifier: '${OBJECT_IDENTIFIER}',
+  name: 'rating',
+  label: 'Rating',
+  type: FieldType.NUMBER,
+});
+`,
+    );
+    const exported = createExport();
+    exported.manifest.objects[0].fields.push({
+      universalIdentifier: STANDALONE_FIELD_IDENTIFIER,
+      name: 'rating',
+      label: 'Rating',
+      type: 'NUMBER',
+    });
+    return exported;
+  };
   beforeEach(async () => {
     appPath = await mkdtemp(join(tmpdir(), 'twenty-sdk-pull-'));
     await mkdir(join(appPath, 'node_modules'));
@@ -200,6 +225,125 @@ describe('programmatic application pull', () => {
     expect(await readdir(join(appPath, '.twenty/cli'))).toEqual([
       'pull-base.json',
     ]);
+  });
+  it.each([
+    { hasBase: true, uppercaseIdentifier: false },
+    { hasBase: false, uppercaseIdentifier: false },
+    { hasBase: true, uppercaseIdentifier: true },
+  ])(
+    'keeps standalone fields separate, base: $hasBase, uppercase identifier: $uppercaseIdentifier',
+    async ({ hasBase, uppercaseIdentifier }) => {
+      requireSuccess(await pull());
+      const exported = await addStandaloneField();
+      if (uppercaseIdentifier) {
+        await writeFile(
+          join(appPath, STANDALONE_FIELD_PATH),
+          (await read(STANDALONE_FIELD_PATH)).replace(
+            STANDALONE_FIELD_IDENTIFIER,
+            STANDALONE_FIELD_IDENTIFIER.toUpperCase(),
+          ),
+        );
+      }
+      const originalField = await read(STANDALONE_FIELD_PATH);
+
+      if (hasBase) {
+        await writePullBase({
+          appPath,
+          manifest: exported.manifest,
+          target: TARGET,
+          sourceFingerprints: await collectSourceFingerprints(appPath),
+          signal: new AbortController().signal,
+        });
+      } else {
+        await rm(join(appPath, BASE_PATH));
+      }
+      exported.manifest.objects[0].labelSingular = 'Changed remotely';
+
+      const result = requireSuccess(await pull(exported));
+      expect(result.skipped).toEqual([]);
+      expect(result.deletions).toEqual([]);
+      expect(await read(OBJECT_PATH)).toContain('Changed remotely');
+      expect(await read(OBJECT_PATH)).toContain(FIELD_IDENTIFIER);
+      expect(await read(OBJECT_PATH)).not.toContain(
+        STANDALONE_FIELD_IDENTIFIER,
+      );
+      if (hasBase) {
+        expect(await read(STANDALONE_FIELD_PATH)).toBe(originalField);
+      }
+      expect(JSON.parse(await read(BASE_PATH)).manifest).toEqual(
+        exported.manifest,
+      );
+      expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+
+      await writeFile(
+        join(appPath, STANDALONE_FIELD_PATH),
+        (await read(STANDALONE_FIELD_PATH)).replace('Rating', 'Local rating'),
+      );
+      exported.manifest.objects[0].fields[1].label = 'Remote rating';
+
+      const fieldUpdate = requireSuccess(await pull(exported));
+      expect(fieldUpdate.writes).toEqual([
+        expect.objectContaining({ relativePath: STANDALONE_FIELD_PATH }),
+      ]);
+      expect(fieldUpdate.overwrittenLocalChanges).toEqual([
+        {
+          universalIdentifier: STANDALONE_FIELD_IDENTIFIER,
+          relativePath: STANDALONE_FIELD_PATH,
+        },
+      ]);
+      expect(await read(STANDALONE_FIELD_PATH)).toContain('Remote rating');
+      expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+    },
+  );
+  it('repairs an already duplicated standalone field even when the export is unchanged', async () => {
+    requireSuccess(await pull());
+    const exported = await addStandaloneField();
+    await rm(join(appPath, STANDALONE_FIELD_PATH));
+    requireSuccess(await pull(exported));
+    await addStandaloneField();
+
+    const repaired = requireSuccess(await pull(exported));
+
+    expect(repaired.skipped).toEqual([]);
+    expect(repaired.writes).toEqual([
+      expect.objectContaining({ relativePath: OBJECT_PATH }),
+    ]);
+    expect(await read(OBJECT_PATH)).not.toContain(STANDALONE_FIELD_IDENTIFIER);
+    expect(await readdir(join(appPath, 'src/fields'))).toEqual(['rating.ts']);
+    expect(await read(STANDALONE_FIELD_PATH)).toContain(
+      STANDALONE_FIELD_IDENTIFIER,
+    );
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+  });
+  it('preserves covered standalone fields and removes confirmed remote deletions', async () => {
+    requireSuccess(await pull());
+    const exported = await addStandaloneField();
+    requireSuccess(await pull(exported));
+    const originalField = await read(STANDALONE_FIELD_PATH);
+    const withoutField = createExport({
+      label: 'Changed remotely',
+      coverage: [
+        {
+          metadataName: 'fieldMetadata',
+          universalIdentifier: STANDALONE_FIELD_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'unsupported field',
+        },
+      ],
+    });
+
+    expect(requireSuccess(await pull(withoutField)).deletions).toEqual([]);
+    expect(await read(STANDALONE_FIELD_PATH)).toBe(originalField);
+    const removed = requireSuccess(
+      await pull({ ...withoutField, coverage: [] }),
+    );
+    expect(removed.deletions).toEqual([
+      {
+        universalIdentifier: STANDALONE_FIELD_IDENTIFIER,
+        relativePath: STANDALONE_FIELD_PATH,
+      },
+    ]);
+    await expect(read(STANDALONE_FIELD_PATH)).rejects.toThrow();
   });
   it('reads identity while unrelated definitions cannot build', async () => {
     requireSuccess(await pull());
