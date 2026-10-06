@@ -134,7 +134,7 @@ export default defineObject({
     {
       universalIdentifier:
         TEAMS_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.RICH_TEXT,
       label: 'Request',
       description: 'Message text with the bot mention stripped',
       icon: 'IconMessage',
@@ -143,7 +143,7 @@ export default defineObject({
     {
       universalIdentifier:
         TEAMS_ASSISTANT_REQUEST_RESPONSE_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.RICH_TEXT,
       label: 'Response',
       description: 'Assistant answer posted back to Teams',
       icon: 'IconMessageReply',

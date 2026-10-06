@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
 
@@ -31,12 +32,18 @@ export const findTeamsAssistantRequestByTeamsActivity = async ({
           teamsTenantId: true,
           teamsUserId: true,
           teamsUserAadObjectId: true,
-          requestText: true,
+          requestText: { markdown: true },
           updatedAt: true,
         },
       },
     },
   });
 
-  return queryResult.teamsAssistantRequests?.edges?.[0]?.node ?? undefined;
+  const node = queryResult.teamsAssistantRequests?.edges?.[0]?.node;
+
+  if (!isDefined(node)) {
+    return undefined;
+  }
+
+  return { ...node, requestText: node.requestText?.markdown ?? undefined };
 };

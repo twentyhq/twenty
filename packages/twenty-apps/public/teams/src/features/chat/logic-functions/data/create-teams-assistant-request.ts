@@ -17,6 +17,7 @@ export const createTeamsAssistantRequest = async ({
         data: {
           ...draft,
           name: buildTeamsAssistantRequestName(draft.requestText),
+          requestText: { blocknote: null, markdown: draft.requestText },
         },
       },
       id: true,
