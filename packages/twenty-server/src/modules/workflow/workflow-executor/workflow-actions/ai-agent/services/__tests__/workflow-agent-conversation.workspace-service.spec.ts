@@ -57,6 +57,7 @@ const buildService = ({
     } as never,
     workflowRunWorkspaceService as never,
     workflowRunRecordShareService as never,
+    {} as never,
   );
 
   return {
