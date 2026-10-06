@@ -5,7 +5,7 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import { countrySelectSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/countrySelectSandboxTest';
+import { createCountrySelectTest } from '@/__stories__/twenty-ui-gallery/utils/createCountrySelectTest';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -18,14 +18,14 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 
 export default meta;
 
-export const CountrySelectReactUnsupportedPopup: Story = createGalleryStory({
+export const CountrySelectReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-country-select',
   runtime: 'react',
-  play: countrySelectSandboxTest,
+  play: createCountrySelectTest('react'),
 });
 
-export const CountrySelectPreactUnsupportedPopup: Story = createGalleryStory({
+export const CountrySelectPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-country-select',
   runtime: 'preact',
-  play: countrySelectSandboxTest,
+  play: createCountrySelectTest('preact'),
 });

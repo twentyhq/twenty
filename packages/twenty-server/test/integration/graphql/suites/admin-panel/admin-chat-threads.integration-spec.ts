@@ -131,30 +131,34 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertThread = async ({
     id,
     title,
-    lastStreamError,
+    hasFailedTurn = false,
   }: {
     id: string;
     title: string;
-    lastStreamError?: object;
+    hasFailedTurn?: boolean;
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      [
-        'id',
-        'workspaceMemberId',
-        'userWorkspaceId',
-        'title',
-        'lastStreamError',
-      ],
-      [
-        id,
-        workspaceMemberId,
-        userWorkspaceId,
-        title,
-        lastStreamError ? JSON.stringify(lastStreamError) : null,
-      ],
-      'ON CONFLICT (id) DO UPDATE SET "lastStreamError" = EXCLUDED."lastStreamError"',
+      ['id', 'workspaceMemberId', 'userWorkspaceId', 'title'],
+      [id, workspaceMemberId, userWorkspaceId, title],
+      'ON CONFLICT (id) DO NOTHING',
     );
+
+    if (hasFailedTurn) {
+      await insertHistory(
+        'agentTurn',
+        ['id', 'threadId', 'status', 'error'],
+        [
+          randomUUID(),
+          id,
+          'failed',
+          JSON.stringify({
+            code: 'STREAM_EXECUTION_FAILED',
+            message: 'stream failed',
+          }),
+        ],
+      );
+    }
 
     seededThreadIds.push(id);
 
@@ -336,7 +340,7 @@ describe('Admin panel global chat threads (integration)', () => {
     regularThreadId = await insertThread({
       id: randomUUID(),
       title: 'integration-regular-thread',
-      lastStreamError: { message: 'stream failed' },
+      hasFailedTurn: true,
     });
     const regularAssistantMessageId = await insertMessage({
       threadId: regularThreadId,
