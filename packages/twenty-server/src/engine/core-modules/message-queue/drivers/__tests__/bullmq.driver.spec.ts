@@ -213,10 +213,12 @@ describe('BullMQDriver job change events', () => {
   const getWorkerListener = (eventName: string) => {
     driver.work(MessageQueue.workspaceQueue, async () => {});
 
-    const worker = jest.mocked(Worker).mock.results.at(-1)?.value;
-    const listener = jest
-      .mocked(worker.on)
-      .mock.calls.find(([name]) => name === eventName)?.[1];
+    const workerInstances = jest.mocked(Worker).mock.results;
+    const worker = workerInstances[workerInstances.length - 1]
+      .value as unknown as { on: jest.Mock };
+    const listener = worker.on.mock.calls.find(
+      ([name]: [string, unknown]) => name === eventName,
+    )?.[1];
 
     if (typeof listener !== 'function') {
       throw new Error(`No ${eventName} listener registered on the worker`);

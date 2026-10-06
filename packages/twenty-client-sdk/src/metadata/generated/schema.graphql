@@ -1958,6 +1958,9 @@ type JobStatus {
   state: JobState!
   attemptsMade: Int!
   failedReason: String
+
+  """Completion percentage reported by the job, from 0 to 100"""
+  progress: Int
   enqueuedAt: Float!
   startedAt: Float
   finishedAt: Float
