@@ -7,6 +7,8 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const PAGE_SIZE = 50;
 
