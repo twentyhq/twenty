@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 
 const StyledFullWidthBanner = styled.div`
   & > * {

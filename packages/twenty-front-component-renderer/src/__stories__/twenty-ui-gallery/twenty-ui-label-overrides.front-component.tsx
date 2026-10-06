@@ -1,5 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, MenuItem } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';

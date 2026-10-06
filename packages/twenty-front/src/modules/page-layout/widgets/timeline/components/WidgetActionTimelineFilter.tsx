@@ -10,7 +10,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

@@ -17,8 +17,8 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const enqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast }),
 }));
 

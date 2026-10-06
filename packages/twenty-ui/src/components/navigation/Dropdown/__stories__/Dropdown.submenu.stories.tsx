@@ -51,7 +51,8 @@ const playHoverThenKeyboard =
   };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Submenu',
+  id: 'ui-components-dropdown-interactions-submenu',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Submenu',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

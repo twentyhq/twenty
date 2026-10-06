@@ -10,7 +10,8 @@ import { openPhoneCountryPicker } from './openPhoneCountryPicker';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
 
 const meta: Meta<typeof PhoneCountryPickerExample> = {
-  title: 'UI/Input/PhoneCountryPicker',
+  id: 'ui-input-phonecountrypicker',
+  title: 'UI/Components/Input/PhoneCountryPicker',
   component: PhoneCountryPickerExample,
   render: (args) => (
     <PhoneCountryPickerExample key={args.initialValue} {...args} />
