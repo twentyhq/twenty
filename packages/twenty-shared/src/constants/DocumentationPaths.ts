@@ -64,6 +64,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
+  DEVELOPERS_EXTEND_APPS_LOGIC_GOOD_PRACTICES:
+    '/developers/extend/apps/logic/good-practices',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
