@@ -10,6 +10,7 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { type AgentTrigger } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
@@ -118,6 +119,16 @@ const findWaitCallStatus = async (threadId: string) => {
   );
 
   return part?.status;
+};
+
+const findCallerRoleId = async (roleTargetId: string): Promise<string> => {
+  const [{ roleId }] = await global.testDataSource.query(
+    `SELECT "roleId" FROM core."roleTarget"
+     WHERE $1 IN ("userWorkspaceId", "apiKeyId") AND "workspaceId" = $2`,
+    [roleTargetId, workspaceId],
+  );
+
+  return roleId;
 };
 
 const findTurnStatuses = async (threadId: string) =>
@@ -359,6 +370,7 @@ describe('agent runs that wait (integration)', () => {
         type: 'user',
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
+      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
     },
     {
       title: 'the API key that made it',
@@ -367,10 +379,11 @@ describe('agent runs that wait (integration)', () => {
         type: 'apiKey',
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
+      roleTargetId: null,
     },
   ])(
     'goes on with a waiting runAgent call as $title',
-    async ({ token, authContext }) => {
+    async ({ token, authContext, roleTargetId }) => {
       const executeAgent = mockAgent(waitingResult(), replyingResult);
 
       const response = await makeMetadataApiRequest(
@@ -406,6 +419,17 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
         expect.objectContaining(authContext),
       ]);
+
+      const roleRestrictionIds = isDefined(roleTargetId)
+        ? [await findCallerRoleId(roleTargetId)]
+        : undefined;
+
+      expect(
+        executeAgent.mock.calls.map(
+          ([execution]) =>
+            execution.executionContext.additionalRoleRestrictionIds,
+        ),
+      ).toEqual([roleRestrictionIds, roleRestrictionIds]);
     },
   );
 
