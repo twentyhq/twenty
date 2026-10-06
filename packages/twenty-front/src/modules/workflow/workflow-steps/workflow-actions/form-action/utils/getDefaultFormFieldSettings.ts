@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -10,29 +9,29 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'text',
-        label: t`Text`,
-        placeholder: t`Enter your text`,
+        label: 'Text',
+        placeholder: 'Enter your text',
       };
     case FieldMetadataType.NUMBER:
       return {
         id: v4(),
         name: 'number',
-        label: t`Number`,
+        label: 'Number',
         placeholder: '1000',
       };
     case FieldMetadataType.DATE:
       return {
         id: v4(),
         name: 'date',
-        label: t`Date`,
+        label: 'Date',
         placeholder: 'mm/dd/yyyy',
       };
     case 'RECORD':
       return {
         id: v4(),
         name: 'record',
-        label: t`Record`,
-        placeholder: t`Select a Company`,
+        label: 'Record',
+        placeholder: `Select a Company`,
         settings: {
           objectName: CoreObjectNameSingular.Company,
         },
@@ -41,8 +40,8 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'select',
-        label: t`Select`,
-        placeholder: t`Choose a value`,
+        label: 'Select',
+        placeholder: 'Choose a value',
         settings: {
           selectType: 'EXISTING_FIELD',
           selectedFieldId: undefined,
@@ -52,8 +51,8 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'multiSelect',
-        label: t`Multi-Select`,
-        placeholder: t`Choose values`,
+        label: 'Multi-Select',
+        placeholder: 'Choose values',
         settings: {
           selectType: 'EXISTING_FIELD',
           selectedFieldId: undefined,

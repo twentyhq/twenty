@@ -10,6 +10,7 @@ import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTri
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { shouldRecomputeOutputSchemaFamilyState } from '@/workflow/workflow-variables/states/shouldRecomputeOutputSchemaFamilyState';
 import { stepsOutputSchemaFamilyState } from '@/workflow/workflow-variables/states/stepsOutputSchemaFamilyState';
+import { stepsOutputSchemaLocaleFamilyState } from '@/workflow/workflow-variables/states/stepsOutputSchemaLocaleFamilyState';
 import {
   type OutputSchemaV2,
   type StepOutputSchemaV2,
@@ -20,6 +21,7 @@ import {
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 import { resolvePersistedStepOutputSchema } from '@/workflow/workflow-variables/utils/resolvePersistedStepOutputSchema';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
+import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,10 +34,17 @@ export const useStepsOutputSchema = () => {
   const client = useApolloCoreClient();
   const isCore = useIsWorkflowCoreEnabled();
   const { enqueueToast } = useToast();
+  const { i18n } = useLingui();
 
   const populateStepsOutputSchema = useCallback(
     (workflowVersion: WorkflowVersion) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+      const locale = i18n.locale;
+
+      // Cached schemas hold step names and labels translated when they were computed
+      const isComputedInLocale = (stepKey: string) =>
+        store.get(stepsOutputSchemaLocaleFamilyState.atomFamily(stepKey)) ===
+        locale;
 
       workflowVersion.steps?.forEach((step) => {
         const stepKey = getStepOutputSchemaFamilyStateKey(
@@ -51,7 +60,7 @@ export const useStepsOutputSchema = () => {
           step.type,
         );
 
-        if (!shouldRecompute) {
+        if (!shouldRecompute && isComputedInLocale(stepKey)) {
           return;
         }
 
@@ -83,6 +92,10 @@ export const useStepsOutputSchema = () => {
           stepOutputSchema,
         );
         store.set(
+          stepsOutputSchemaLocaleFamilyState.atomFamily(stepKey),
+          locale,
+        );
+        store.set(
           shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
           false,
         );
@@ -105,8 +118,10 @@ export const useStepsOutputSchema = () => {
               ) {
                 store.set(schemaState, {
                   ...stepOutputSchema,
-                  outputSchema:
-                    translatePersistedOutputSchemaLabels(outputSchema),
+                  outputSchema: translatePersistedOutputSchemaLabels({
+                    stepType: step.type,
+                    outputSchema,
+                  }),
                 });
               }
             })
@@ -132,7 +147,7 @@ export const useStepsOutputSchema = () => {
           trigger.type,
         );
 
-        if (!shouldRecompute) {
+        if (!shouldRecompute && isComputedInLocale(triggerKey)) {
           return;
         }
 
@@ -166,12 +181,16 @@ export const useStepsOutputSchema = () => {
           triggerOutputSchema,
         );
         store.set(
+          stepsOutputSchemaLocaleFamilyState.atomFamily(triggerKey),
+          locale,
+        );
+        store.set(
           shouldRecomputeOutputSchemaFamilyState.atomFamily(triggerKey),
           false,
         );
       }
     },
-    [store, client, isCore, enqueueToast],
+    [store, client, isCore, enqueueToast, i18n.locale],
   );
 
   const markStepForRecomputation = useCallback(

@@ -29,10 +29,7 @@ export const resolvePersistedStepOutputSchema = ({
   const outputSchema = settings?.outputSchema;
 
   if (isBaseOutputSchemaV2(outputSchema)) {
-    // Other persisted schemas use the user's own keys as labels, so only Twenty-written ones are translated
-    return stepType === 'AI_AGENT' || stepType === 'ITERATOR'
-      ? translatePersistedOutputSchemaLabels(outputSchema)
-      : outputSchema;
+    return translatePersistedOutputSchemaLabels({ stepType, outputSchema });
   }
 
   const expectedOutputSchema = settings?.expectedOutputSchema;
@@ -45,7 +42,10 @@ export const resolvePersistedStepOutputSchema = ({
   }
 
   if (stepType === 'AI_AGENT') {
-    return translatePersistedOutputSchemaLabels(AI_AGENT_DEFAULT_OUTPUT_SCHEMA);
+    return translatePersistedOutputSchemaLabels({
+      stepType,
+      outputSchema: AI_AGENT_DEFAULT_OUTPUT_SCHEMA,
+    });
   }
 
   return {};

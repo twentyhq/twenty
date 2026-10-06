@@ -7,6 +7,7 @@ import { useToast } from 'twenty-ui/components';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParametersInput,
@@ -66,13 +67,19 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
+  const { i18n } = useLingui();
 
   const connectionSchema = useMemo(
     () =>
       isEditing
         ? getConnectionImapSmtpCalDavUpdateSchema()
         : getConnectionImapSmtpCalDavSchema(),
-    [isEditing],
+    [
+      isEditing,
+      // The schema gets its validation messages translated when it is built
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
+      i18n.locale,
+    ],
   );
 
   const formMethods = useForm<ConnectionFormData>({

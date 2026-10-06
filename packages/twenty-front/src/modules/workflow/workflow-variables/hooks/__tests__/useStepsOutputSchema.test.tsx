@@ -1,6 +1,9 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
@@ -53,7 +56,9 @@ const outputSchema = {
 const renderSchemas = () => {
   const store = createStore();
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
+    <I18nProvider i18n={i18n}>
+      <Provider store={store}>{children}</Provider>
+    </I18nProvider>
   );
   const hook = renderHook(() => useStepsOutputSchema(), { wrapper });
   const schemaState = stepsOutputSchemaFamilyState.atomFamily(
@@ -64,6 +69,10 @@ const renderSchemas = () => {
 
 describe('core iterator output schema', () => {
   beforeEach(() => jest.clearAllMocks());
+
+  afterEach(() => {
+    act(() => i18n.activate(SOURCE_LOCALE));
+  });
 
   it('computes the iterator schema with the core version context', async () => {
     mockMutate.mockResolvedValue({
@@ -105,5 +114,26 @@ describe('core iterator output schema', () => {
       resolveRequest({ data: { computeStepOutputSchema: outputSchema } });
     });
     expect(store.get(schemaState)).toBeNull();
+  });
+
+  it('recomputes a cached schema after the locale changes', async () => {
+    mockMutate.mockResolvedValue({
+      data: { computeStepOutputSchema: outputSchema },
+    });
+    const { result, store, schemaState } = renderSchemas();
+    act(() => result.current.populateStepsOutputSchema(version));
+    await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(1));
+
+    act(() => result.current.populateStepsOutputSchema(version));
+    expect(mockMutate).toHaveBeenCalledTimes(1);
+
+    i18n.load('fr-FR', {});
+    act(() => i18n.activate('fr-FR'));
+    act(() => result.current.populateStepsOutputSchema(version));
+
+    await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(store.get(schemaState)?.outputSchema).toEqual(outputSchema),
+    );
   });
 });

@@ -17,6 +17,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -341,7 +342,12 @@ export const WorkflowEditActionFormBuilder = ({
                         )}
 
                         <StyledFormFieldInputContainerWrapper>
-                          <InputLabel>{field.label || ''}</InputLabel>
+                          <InputLabel>
+                            {getFormFieldDisplayText({
+                              type: field.type,
+                              text: field.label || '',
+                            })}
+                          </InputLabel>
 
                           <FormFieldInputRowContainer>
                             <FormFieldInputInnerContainer
@@ -356,11 +362,16 @@ export const WorkflowEditActionFormBuilder = ({
                               >
                                 <StyledPlaceholderContainer>
                                   <FormFieldPlaceholder>
-                                    {isDefined(field.placeholder) &&
-                                    isNonEmptyString(field.placeholder)
-                                      ? field.placeholder
-                                      : getDefaultFormFieldSettings(field.type)
-                                          .placeholder}
+                                    {getFormFieldDisplayText({
+                                      type: field.type,
+                                      text:
+                                        isDefined(field.placeholder) &&
+                                        isNonEmptyString(field.placeholder)
+                                          ? field.placeholder
+                                          : getDefaultFormFieldSettings(
+                                              field.type,
+                                            ).placeholder,
+                                    })}
                                   </FormFieldPlaceholder>
                                 </StyledPlaceholderContainer>
                                 {(field.type === 'RECORD' ||

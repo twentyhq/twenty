@@ -7,10 +7,20 @@ const SEND_EMAIL_DEFAULT_NAME = WORKFLOW_STEP_DEFAULT_NAMES.find(
   (stepDefaultName) => stepDefaultName.type === 'SEND_EMAIL',
 );
 
+const IF_ELSE_DEFAULT_NAMES = WORKFLOW_STEP_DEFAULT_NAMES.filter(
+  (stepDefaultName) => stepDefaultName.type === 'IF_ELSE',
+);
+
 describe('getWorkflowStepDisplayName', () => {
   beforeEach(() => {
     i18n.load('fr-FR', {
       [SEND_EMAIL_DEFAULT_NAME?.label.id ?? '']: 'Envoyer un e-mail',
+      ...Object.fromEntries(
+        IF_ELSE_DEFAULT_NAMES.map((stepDefaultName) => [
+          stepDefaultName.label.id,
+          'Si/sinon',
+        ]),
+      ),
     });
     i18n.activate('fr-FR');
   });
@@ -23,6 +33,15 @@ describe('getWorkflowStepDisplayName', () => {
     expect(
       getWorkflowStepDisplayName({ name: 'Send Email', type: 'SEND_EMAIL' }),
     ).toBe('Envoyer un e-mail');
+  });
+
+  it('should translate both stored spellings of the If/else default name', () => {
+    expect(
+      getWorkflowStepDisplayName({ name: 'If/Else', type: 'IF_ELSE' }),
+    ).toBe('Si/sinon');
+    expect(
+      getWorkflowStepDisplayName({ name: 'If/else', type: 'IF_ELSE' }),
+    ).toBe('Si/sinon');
   });
 
   it('should keep a name the user chose', () => {

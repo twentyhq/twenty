@@ -9,6 +9,7 @@ import {
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import {
   isDefined,
@@ -44,6 +45,7 @@ export const useFieldsWidgetEditorGroupsData = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
+  const { i18n } = useLingui();
 
   const result = useMemo<
     Pick<
@@ -225,6 +227,9 @@ export const useFieldsWidgetEditorGroupsData = ({
     view,
     labelIdentifierFieldMetadataItem,
     workspaceCustomApplicationId,
+    // The default groups get their names translated when they are built
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    i18n.locale,
   ]);
 
   return {

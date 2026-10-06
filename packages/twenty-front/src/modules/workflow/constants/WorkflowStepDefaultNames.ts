@@ -13,6 +13,7 @@ import { FILTER_ACTION } from '@/workflow/workflow-steps/workflow-actions/consta
 import { FIND_RECORDS_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FindRecordsAction';
 import { FORM_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FormAction';
 import { HTTP_REQUEST_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/HttpRequestAction';
+import { IF_ELSE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IfElseAction';
 import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction';
 import { PICK_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/PickRecordAction';
 import { SEND_CHAT_MESSAGE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction';
@@ -122,6 +123,11 @@ export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
     type: 'IF_ELSE',
     name: 'If/Else',
     label: msg`If/Else`,
+  },
+  {
+    type: 'IF_ELSE',
+    name: 'If/else',
+    label: IF_ELSE_ACTION.defaultLabel,
   },
   {
     type: 'DELAY',

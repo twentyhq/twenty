@@ -78,11 +78,21 @@ export const SettingsObjectNewFieldSelector = ({
   const [searchQuery, setSearchQuery] = useState('');
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
     SETTINGS_FIELD_TYPE_CONFIGS,
-  ).filter(
-    ([key, config]) =>
-      !excludedFieldTypes.includes(key as SettingsFieldType) &&
-      t(config.label).toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  )
+    .map(
+      ([key, config]) =>
+        [
+          key,
+          key === FieldMetadataType.MORPH_RELATION
+            ? { ...config, label: msg`Relation` }
+            : config,
+        ] as [string, SettingsFieldTypeConfig<any>],
+    )
+    .filter(
+      ([key, config]) =>
+        !excludedFieldTypes.includes(key as SettingsFieldType) &&
+        t(config.label).toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
     useBooleanSettingsFormInitialValues({ existingFieldMetadataId: 'new' });
@@ -143,15 +153,6 @@ export const SettingsObjectNewFieldSelector = ({
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
                     .filter(([key]) => key !== FieldMetadataType.RELATION)
-                    .map(
-                      ([key, config]) =>
-                        [
-                          key,
-                          key === FieldMetadataType.MORPH_RELATION
-                            ? { ...config, label: msg`Relation` }
-                            : config,
-                        ] as [string, SettingsFieldTypeConfig<any>],
-                    )
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink

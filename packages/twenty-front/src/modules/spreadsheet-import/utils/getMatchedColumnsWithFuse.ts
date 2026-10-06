@@ -9,7 +9,7 @@ import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetC
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import Fuse from 'fuse.js';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const getMatchedColumnsWithFuse = ({
   columns,
@@ -23,7 +23,16 @@ export const getMatchedColumnsWithFuse = ({
   const matchedColumns: SpreadsheetColumn[] = [];
 
   const fieldsToSearch = new Fuse(fields, {
-    keys: ['label'],
+    keys: [
+      {
+        name: 'label',
+        // One key keeps the score of a field without alternate matches unchanged
+        getFn: (field) =>
+          isNonEmptyArray(field.alternateMatches)
+            ? [field.label, ...field.alternateMatches]
+            : field.label,
+      },
+    ],
     includeScore: true,
     ignoreLocation: true,
     threshold: 0.3,

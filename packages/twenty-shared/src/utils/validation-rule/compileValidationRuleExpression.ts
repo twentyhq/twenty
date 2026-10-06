@@ -18,13 +18,19 @@ export const compileValidationRuleExpression = ({
   fields: ValidationRuleFieldDescriptor[];
 }): ValidationRuleCompilationResult => {
   if (expression.trim().length === 0) {
-    return { isValid: false, errorMessage: 'Expression is empty' };
+    return {
+      isValid: false,
+      errorMessage: 'Expression is empty',
+      errorCode: 'EMPTY_EXPRESSION',
+    };
   }
 
   if (expression.length > VALIDATION_RULE_EXPRESSION_MAX_LENGTH) {
     return {
       isValid: false,
       errorMessage: `Expression is longer than ${VALIDATION_RULE_EXPRESSION_MAX_LENGTH} characters`,
+      errorCode: 'EXPRESSION_TOO_LONG',
+      errorParams: { maxLength: VALIDATION_RULE_EXPRESSION_MAX_LENGTH },
     };
   }
 
@@ -59,9 +65,13 @@ export const compileValidationRuleExpression = ({
   );
 
   if (spacedMemberDotIndex !== -1) {
+    const path = `${meaningfulTokens[spacedMemberDotIndex - 1]?.text}.${meaningfulTokens[spacedMemberDotIndex + 1]?.text}`;
+
     return {
       isValid: false,
-      errorMessage: `Write ${meaningfulTokens[spacedMemberDotIndex - 1]?.text}.${meaningfulTokens[spacedMemberDotIndex + 1]?.text} without spaces around the dot`,
+      errorMessage: `Write ${path} without spaces around the dot`,
+      errorCode: 'SPACED_MEMBER_DOT',
+      errorParams: { path },
     };
   }
 
@@ -73,7 +83,12 @@ export const compileValidationRuleExpression = ({
     const resolution = resolveValidationRuleIdentifierPath({ path, fields });
 
     if (!resolution.isResolved) {
-      return { isValid: false, errorMessage: resolution.errorMessage };
+      return {
+        isValid: false,
+        errorMessage: resolution.errorMessage,
+        errorCode: resolution.errorCode,
+        errorParams: resolution.errorParams,
+      };
     }
 
     bindings = { ...bindings, ...resolution.bindings };
