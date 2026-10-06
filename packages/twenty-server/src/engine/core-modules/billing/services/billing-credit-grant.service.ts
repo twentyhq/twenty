@@ -156,6 +156,17 @@ export class BillingCreditGrantService {
     };
   }
 
+  async findUnexpiredGrants(
+    workspaceId: string,
+  ): Promise<BillingCreditGrantEntity[]> {
+    return this.billingCreditGrantRepository.find(workspaceId, {
+      where: [
+        { revokedAt: IsNull(), expiresAt: IsNull() },
+        { revokedAt: IsNull(), expiresAt: MoreThan(new Date()) },
+      ],
+    });
+  }
+
   async findGrantsLiveDuringPeriod(
     {
       workspaceId,
