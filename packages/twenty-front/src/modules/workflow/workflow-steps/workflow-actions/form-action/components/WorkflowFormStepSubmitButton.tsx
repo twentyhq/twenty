@@ -3,7 +3,7 @@ import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 type WorkflowFormStepSubmitButtonProps = {
   workflowRunId: string;

@@ -20,7 +20,7 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ mutate }),
 }));
 const enqueueToast = jest.fn();
-jest.mock('twenty-ui/components', () => ({
+jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast }),
 }));
 jest.mock('@/ai/hooks/useAgentChatModelId', () => ({

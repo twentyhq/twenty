@@ -22,7 +22,8 @@ const onHostKeyDown = fn();
 const onItemClick = fn();
 
 const meta: Meta<typeof OverflowingList> = {
-  title: 'UI/Components/OverflowingList/Interactions',
+  id: 'ui-components-overflowinglist-interactions',
+  title: 'UI/Components/Layout/OverflowingList/Interactions',
   component: OverflowingList,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],

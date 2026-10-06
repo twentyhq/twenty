@@ -22,7 +22,7 @@ import {
   IconVideo,
   IconWand,
 } from 'twenty-ui/icon';
-import { MetricRow } from 'twenty-ui/components';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
