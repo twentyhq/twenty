@@ -18,6 +18,9 @@ export class AddApplicationVariableUserValueFastInstanceCommand
       `CREATE INDEX "IDX_APPLICATION_VARIABLE_USER_VALUE_USER_WORKSPACE_ID" ON "core"."applicationVariableUserValue" ("userWorkspaceId") `,
     );
     await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE" UNIQUE ("id", "scope")`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "core"."applicationVariableUserValue" ADD CONSTRAINT "FK_99a6005131fcb258f7e524f5cba" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -37,6 +40,9 @@ export class AddApplicationVariableUserValueFastInstanceCommand
     );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationVariableUserValue" DROP CONSTRAINT "FK_99a6005131fcb258f7e524f5cba"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_APPLICATION_VARIABLE_USER_VALUE_USER_WORKSPACE_ID"`,
