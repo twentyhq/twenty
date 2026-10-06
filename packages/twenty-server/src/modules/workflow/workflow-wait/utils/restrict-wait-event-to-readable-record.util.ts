@@ -1,15 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkflowWaitEvent } from 'src/modules/workflow/workflow-wait/types/workflow-wait-event.type';
+import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 
 // The record read under the run's permissions only holds the fields the run can read
 export const restrictWaitEventToReadableRecord = ({
   event,
   readableRecord,
 }: {
-  event: WorkflowWaitEvent;
+  event: PendingWakeUpEvent;
   readableRecord: Record<string, unknown>;
-}): WorkflowWaitEvent => {
+}): PendingWakeUpEvent => {
   const readableFieldNames = new Set(Object.keys(readableRecord));
   const isReadableField = (fieldName: string) =>
     readableFieldNames.has(fieldName);

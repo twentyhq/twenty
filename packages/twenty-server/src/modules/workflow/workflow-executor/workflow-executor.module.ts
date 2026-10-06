@@ -26,7 +26,7 @@ import { WaitForEventActionModule } from 'src/modules/workflow/workflow-executor
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
-import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait-store.module';
+import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait.module';
 
 @Module({
   imports: [
@@ -54,7 +54,7 @@ import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/
     CreateCalendarEventActionModule,
     MetricsModule,
     UsageLimitModule,
-    WorkflowStepWaitStoreModule,
+    WorkflowStepWaitModule,
   ],
   providers: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],
   exports: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],
