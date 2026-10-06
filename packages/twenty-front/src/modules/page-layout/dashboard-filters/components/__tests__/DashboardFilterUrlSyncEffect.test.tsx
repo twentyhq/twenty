@@ -164,4 +164,65 @@ describe('DashboardFilterUrlSyncEffect', () => {
     });
     expect(screen.getByTestId('url-search').textContent).toBe('?viewId=abc');
   });
+
+  it('never writes a value for a slot the dashboard does not have', async () => {
+    const store = createStore();
+
+    render(
+      <MemoryRouter initialEntries={['/dashboards']}>
+        <PageLayoutTestWrapper
+          store={store}
+          instanceId={PAGE_LAYOUT_A_INSTANCE_ID}
+          layoutType={PageLayoutType.STANDALONE_PAGE}
+        >
+          <DashboardFilterUrlSyncEffect
+            pageLayoutId={PAGE_LAYOUT_A_ID}
+            slots={[DATE_SLOT]}
+          />
+        </PageLayoutTestWrapper>
+        <UrlSearchProbe />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(
+        store.get(
+          dashboardFilterValuesComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_A_INSTANCE_ID,
+          }),
+        ),
+      ).toEqual({});
+    });
+
+    act(() => {
+      store.set(
+        dashboardFilterValuesComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_A_INSTANCE_ID,
+        }),
+        {
+          'built-in-date': { operand: ViewFilterOperand.IS_TODAY, value: '' },
+          'built-in-owner': {
+            operand: ViewFilterOperand.IS,
+            value: JSON.stringify({
+              isCurrentWorkspaceMemberSelected: true,
+              selectedRecordIds: [],
+            }),
+          },
+        },
+      );
+    });
+
+    await waitFor(() => {
+      expect(
+        getUrlSearchParams().get(
+          `dashboardFilter[${PAGE_LAYOUT_A_ID}][built-in-date][operand]`,
+        ),
+      ).toBe('IS_TODAY');
+    });
+    expect(
+      Array.from(getUrlSearchParams().keys()).some((key) =>
+        key.includes('built-in-owner'),
+      ),
+    ).toBe(false);
+  });
 });

@@ -24,6 +24,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
     const result = serializeDashboardFilterValuesToSearchParams({
       searchParams: new URLSearchParams(),
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values: {
         'built-in-date': {
           operand: ViewFilterOperand.IS_AFTER,
@@ -46,6 +47,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
         'viewId=abc&dashboardFilter[page-layout-a][built-in-date][operand]=IS_TODAY&dashboardFilter[page-layout-a][built-in-date][value]=&dashboardFilter[page-layout-a][owner][operand]=IS&dashboardFilter[page-layout-b][built-in-date][operand]=IS_IN_FUTURE',
       ),
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values: {
         'built-in-date': { operand: ViewFilterOperand.IS_IN_PAST, value: '' },
       },
@@ -69,6 +71,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
         'viewId=abc&dashboardFilter[page-layout-a][built-in-date][operand]=IS_TODAY&dashboardFilter[page-layout-a][built-in-date][value]=',
       ),
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values: { 'built-in-date': undefined },
     });
 
@@ -81,6 +84,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
     serializeDashboardFilterValuesToSearchParams({
       searchParams,
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values: {
         'built-in-date': { operand: ViewFilterOperand.IS_TODAY, value: '' },
       },
@@ -100,6 +104,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
     const serialized = serializeDashboardFilterValuesToSearchParams({
       searchParams: new URLSearchParams(),
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values,
     });
 
@@ -126,6 +131,7 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
     const serialized = serializeDashboardFilterValuesToSearchParams({
       searchParams: new URLSearchParams(),
       pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT, OWNER_SLOT],
       values,
     });
 
@@ -136,5 +142,28 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
         slots: [DATE_SLOT, OWNER_SLOT],
       }),
     ).toEqual(values);
+  });
+
+  it('leaves out a value whose slot no longer exists', () => {
+    const result = serializeDashboardFilterValuesToSearchParams({
+      searchParams: new URLSearchParams(),
+      pageLayoutId: PAGE_LAYOUT_ID,
+      slots: [DATE_SLOT],
+      values: {
+        'built-in-date': { operand: ViewFilterOperand.IS_TODAY, value: '' },
+        'built-in-owner': {
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify({
+            isCurrentWorkspaceMemberSelected: true,
+            selectedRecordIds: [],
+          }),
+        },
+      },
+    });
+
+    expect(Array.from(result.keys())).toEqual([
+      'dashboardFilter[page-layout-a][built-in-date][operand]',
+      'dashboardFilter[page-layout-a][built-in-date][value]',
+    ]);
   });
 });

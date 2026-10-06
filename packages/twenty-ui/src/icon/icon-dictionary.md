@@ -46,6 +46,7 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | Kanban view | `IconLayoutKanban` | `layout-kanban` | Representing the Kanban or board view type. | Representing a dashboard or a generic page layout. | kanban, board view, columns |
 | Group By | `IconLayoutList` | `layout-list` | Representing grouping records by a field. | Representing sorting or a generic list layout. | group by, grouping, grouped records |
 | Filter | `IconFilter` | `filter` | Representing filters or filter criteria. | Representing search, sorting, or workflow conditions. | filter, criteria, conditions |
+| Not filtered | `IconFilterOff` | `filter-off` | Representing an element that the active filters do not affect or that is excluded from filtering. | Representing the action of clearing or removing a filter, or the absence of filter criteria. | not affected by filters, excluded from filters, unfiltered |
 | Sort | `IconArrowsSort` | `arrows-sort` | Representing sorting without a fixed direction. | Representing filtering or a known ascending-only direction. | sort, ordering, ascending and descending |
 
 ## Layouts

@@ -169,6 +169,22 @@ export const TWENTY_ICON_DICTIONARY = [
     avoidWhen: 'Representing search, sorting, or workflow conditions.',
   },
   {
+    key: 'notFiltered',
+    label: 'Not filtered',
+    category: 'views',
+    iconName: 'IconFilterOff',
+    tablerName: 'filter-off',
+    keywords: [
+      'not affected by filters',
+      'excluded from filters',
+      'unfiltered',
+    ],
+    useWhen:
+      'Representing an element that the active filters do not affect or that is excluded from filtering.',
+    avoidWhen:
+      'Representing the action of clearing or removing a filter, or the absence of filter criteria.',
+  },
+  {
     key: 'sort',
     label: 'Sort',
     category: 'views',

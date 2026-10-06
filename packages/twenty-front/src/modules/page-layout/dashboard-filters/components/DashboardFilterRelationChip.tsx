@@ -1,40 +1,40 @@
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
-  DashboardFilterChipButton,
-  type DashboardFilterChipButtonProps,
-} from '@/page-layout/dashboard-filters/components/DashboardFilterChipButton';
+  DashboardFilterChip,
+  type DashboardFilterChipProps,
+} from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
 import { useComputeRecordRelationFilterLabelValue } from '@/views/hooks/useComputeRecordRelationFilterLabelValue';
 
-type DashboardFilterRelationChipButtonProps = Omit<
-  DashboardFilterChipButtonProps,
+type DashboardFilterRelationChipProps = Omit<
+  DashboardFilterChipProps,
   'labelValue'
 > & {
   recordFilter: RecordFilter;
 };
 
 // Relation values only hold record ids, so the names in the label are fetched like for a view filter chip.
-export const DashboardFilterRelationChipButton = ({
+export const DashboardFilterRelationChip = ({
   recordFilter,
   slot,
   Icon,
   testId,
-  boundWidgetCount,
-  totalWidgetCount,
+  boundChartCount,
+  chartCount,
   onClick,
   onRemove,
-}: DashboardFilterRelationChipButtonProps) => {
+}: DashboardFilterRelationChipProps) => {
   const { labelValue } = useComputeRecordRelationFilterLabelValue({
     recordFilter,
   });
 
   return (
-    <DashboardFilterChipButton
+    <DashboardFilterChip
       slot={slot}
       labelValue={labelValue}
       Icon={Icon}
       testId={testId}
-      boundWidgetCount={boundWidgetCount}
-      totalWidgetCount={totalWidgetCount}
+      boundChartCount={boundChartCount}
+      chartCount={chartCount}
       onClick={onClick}
       onRemove={onRemove}
     />

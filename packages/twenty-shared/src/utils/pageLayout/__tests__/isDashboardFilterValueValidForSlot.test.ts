@@ -94,6 +94,11 @@ describe('isDashboardFilterValueValidForSlot', () => {
         selectedRecordIds: ['not-a-uuid'],
       }),
     ],
+    [
+      'a relation value bound to the current record',
+      ViewFilterOperand.IS,
+      JSON.stringify({ isCurrentRecordSelected: true, selectedRecordIds: [] }),
+    ],
     ['a value that is not JSON', ViewFilterOperand.IS, '{bad'],
     ['an empty value on a value-expecting operand', ViewFilterOperand.IS, ''],
   ])('rejects %s on a RELATION slot', (_label, operand, value) => {

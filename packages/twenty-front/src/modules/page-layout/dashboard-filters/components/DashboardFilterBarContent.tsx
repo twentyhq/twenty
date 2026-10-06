@@ -1,12 +1,11 @@
-import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
+import { DashboardFilterDropdownButton } from '@/page-layout/dashboard-filters/components/DashboardFilterDropdownButton';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
-import { countDashboardFilterSlotBoundWidgets } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotBoundWidgets';
-import { getDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBinding';
+import { countDashboardFilterSlotBoundCharts } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotBoundCharts';
+import { getDashboardFilterRepresentativeBindingOrThrow } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBindingOrThrow';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBar = styled.div`
@@ -48,28 +47,21 @@ export const DashboardFilterBarContent = () => {
       )}
       <StyledBar>
         {slots.map((slot) => {
-          const representativeBinding = getDashboardFilterRepresentativeBinding(
-            { slotId: slot.id, bindingsByWidgetId },
-          );
-
-          // A slot nobody binds has no field to borrow an input from, so it stays hidden.
-          if (!isDefined(representativeBinding)) {
-            return null;
-          }
-
-          const { boundWidgetCount, totalWidgetCount } =
-            countDashboardFilterSlotBoundWidgets({
+          const { boundChartCount, chartCount } =
+            countDashboardFilterSlotBoundCharts({
               slotId: slot.id,
               bindingsByWidgetId,
             });
 
           return (
-            <DashboardFilterChip
+            <DashboardFilterDropdownButton
               key={slot.id}
               slot={slot}
-              representativeBinding={representativeBinding}
-              boundWidgetCount={boundWidgetCount}
-              totalWidgetCount={totalWidgetCount}
+              representativeBinding={getDashboardFilterRepresentativeBindingOrThrow(
+                { slotId: slot.id, bindingsByWidgetId },
+              )}
+              boundChartCount={boundChartCount}
+              chartCount={chartCount}
             />
           );
         })}

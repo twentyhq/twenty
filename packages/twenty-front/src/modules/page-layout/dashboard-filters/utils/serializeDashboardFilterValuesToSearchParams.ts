@@ -1,14 +1,17 @@
 import { DASHBOARD_FILTER_URL_QUERY_PARAM_KEY } from '@/page-layout/dashboard-filters/constants/DashboardFilterUrlQueryParamKey';
 import { type DashboardFilterValues } from '@/page-layout/dashboard-filters/types/DashboardFilterValues';
+import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const serializeDashboardFilterValuesToSearchParams = ({
   searchParams,
   pageLayoutId,
+  slots,
   values,
 }: {
   searchParams: URLSearchParams;
   pageLayoutId: string;
+  slots: DashboardFilterSlot[];
   values: DashboardFilterValues;
 }): URLSearchParams => {
   const nextSearchParams = new URLSearchParams(searchParams);
@@ -21,17 +24,20 @@ export const serializeDashboardFilterValuesToSearchParams = ({
     }
   }
 
-  for (const [slotId, value] of Object.entries(values)) {
+  // A value left behind by a slot that no longer exists stays out of the URL, like it stays out of the charts.
+  for (const slot of slots) {
+    const value = values[slot.id];
+
     if (!isDefined(value)) {
       continue;
     }
 
     nextSearchParams.set(
-      `${pageLayoutParamPrefix}${slotId}][operand]`,
+      `${pageLayoutParamPrefix}${slot.id}][operand]`,
       value.operand,
     );
     nextSearchParams.set(
-      `${pageLayoutParamPrefix}${slotId}][value]`,
+      `${pageLayoutParamPrefix}${slot.id}][value]`,
       value.value,
     );
   }

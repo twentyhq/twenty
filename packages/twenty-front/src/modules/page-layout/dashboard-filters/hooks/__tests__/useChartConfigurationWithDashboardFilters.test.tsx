@@ -13,6 +13,8 @@ import {
   GraphWidgetTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { type Store } from 'jotai/vanilla/store';
 import { type ReactNode } from 'react';
@@ -141,9 +143,11 @@ const renderUseChartConfigurationWithDashboardFilters = ({
   });
 
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <MetadataWrapper>
-      <GraphWidgetTestWrapper>{children}</GraphWidgetTestWrapper>
-    </MetadataWrapper>
+    <I18nProvider i18n={i18n}>
+      <MetadataWrapper>
+        <GraphWidgetTestWrapper>{children}</GraphWidgetTestWrapper>
+      </MetadataWrapper>
+    </I18nProvider>
   );
 
   const { result } = renderHook(

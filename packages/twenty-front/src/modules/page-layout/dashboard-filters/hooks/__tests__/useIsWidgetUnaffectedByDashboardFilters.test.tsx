@@ -11,6 +11,8 @@ import {
   GraphWidgetTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { type Store } from 'jotai/vanilla/store';
 import { type ReactNode } from 'react';
@@ -61,11 +63,13 @@ const WIDGETS = [
 
 const renderUseIsWidgetUnaffectedByDashboardFilters = ({
   widgetId,
+  widgets = WIDGETS,
   isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   dashboardFilterValues,
 }: {
   widgetId: string;
+  widgets?: PageLayoutWidget[];
   isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   dashboardFilterValues: DashboardFilterValues;
@@ -90,7 +94,7 @@ const renderUseIsWidgetUnaffectedByDashboardFilters = ({
         name: 'Dashboard',
         type: pageLayoutType,
         objectMetadataId: null,
-        tabs: [makeTab('tab-1', WIDGETS)],
+        tabs: [makeTab('tab-1', widgets)],
       } as unknown as PageLayout,
     );
 
@@ -107,11 +111,13 @@ const renderUseIsWidgetUnaffectedByDashboardFilters = ({
   });
 
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <MetadataWrapper>
-      <GraphWidgetTestWrapper instanceId={widgetId}>
-        {children}
-      </GraphWidgetTestWrapper>
-    </MetadataWrapper>
+    <I18nProvider i18n={i18n}>
+      <MetadataWrapper>
+        <GraphWidgetTestWrapper instanceId={widgetId}>
+          {children}
+        </GraphWidgetTestWrapper>
+      </MetadataWrapper>
+    </I18nProvider>
   );
 
   return renderHook(() => useIsWidgetUnaffectedByDashboardFilters(widgetId), {
@@ -146,6 +152,20 @@ describe('useIsWidgetUnaffectedByDashboardFilters', () => {
   it('does not flag a chart that binds the valued slot', () => {
     const { result } = renderUseIsWidgetUnaffectedByDashboardFilters({
       widgetId: COMPANY_CHART_WIDGET_ID,
+      dashboardFilterValues: {
+        [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER]: OWNER_SLOT_VALUE,
+      },
+    });
+
+    expect(result.current).toBe(false);
+  });
+
+  it('ignores a value left for a slot no chart of the dashboard binds', () => {
+    const { result } = renderUseIsWidgetUnaffectedByDashboardFilters({
+      widgetId: PERSON_CHART_WIDGET_ID,
+      widgets: [
+        buildWidget(PERSON_CHART_WIDGET_ID, WidgetType.GRAPH, 'person'),
+      ],
       dashboardFilterValues: {
         [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER]: OWNER_SLOT_VALUE,
       },

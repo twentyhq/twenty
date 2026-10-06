@@ -43,6 +43,7 @@ export const DashboardFilterUrlSyncEffect = ({
         const nextSearchParams = serializeDashboardFilterValuesToSearchParams({
           searchParams: previousSearchParams,
           pageLayoutId,
+          slots,
           values: dashboardFilterValues,
         });
 
