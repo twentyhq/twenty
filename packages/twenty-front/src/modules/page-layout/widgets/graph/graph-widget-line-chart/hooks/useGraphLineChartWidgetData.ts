@@ -34,6 +34,8 @@ type UseGraphLineChartWidgetDataResult = {
   xAxisLabel: string;
   yAxisLabel: string;
   loading: boolean;
+  // What the chart was computed from, so a drilldown opens the records the chart actually counts.
+  configurationWithDashboardFilters: LineChartConfiguration;
   error?: Error;
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
@@ -121,6 +123,7 @@ export const useGraphLineChartWidgetData = ({
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
+    configurationWithDashboardFilters,
     xAxisLabel: queryData?.lineChartData?.xAxisLabel ?? '',
     yAxisLabel: queryData?.lineChartData?.yAxisLabel ?? '',
     loading,

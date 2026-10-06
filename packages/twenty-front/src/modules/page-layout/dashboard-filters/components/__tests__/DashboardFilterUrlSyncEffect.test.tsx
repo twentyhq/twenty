@@ -125,6 +125,72 @@ describe('DashboardFilterUrlSyncEffect', () => {
     ).toBe('IS_IN_FUTURE');
   });
 
+  it('fills slots the URL is silent on with their default and lets the URL win otherwise', async () => {
+    const store = createStore();
+
+    const slotsWithDefaults: DashboardFilterSlot[] = [
+      {
+        ...DATE_SLOT,
+        defaultValue: { operand: ViewFilterOperand.IS_TODAY, value: '' },
+      },
+      {
+        id: 'period',
+        label: 'Period',
+        filterType: 'DATE_TIME',
+        defaultValue: {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'PAST_7_DAY',
+        },
+      },
+    ];
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/dashboards?dashboardFilter[${PAGE_LAYOUT_A_ID}][built-in-date][operand]=IS_IN_PAST&dashboardFilter[${PAGE_LAYOUT_A_ID}][built-in-date][value]=`,
+        ]}
+      >
+        <PageLayoutTestWrapper
+          store={store}
+          instanceId={PAGE_LAYOUT_A_INSTANCE_ID}
+          layoutType={PageLayoutType.STANDALONE_PAGE}
+        >
+          <DashboardFilterUrlSyncEffect
+            pageLayoutId={PAGE_LAYOUT_A_ID}
+            slots={slotsWithDefaults}
+          />
+        </PageLayoutTestWrapper>
+        <UrlSearchProbe />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(
+        store.get(
+          dashboardFilterValuesComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_A_INSTANCE_ID,
+          }),
+        ),
+      ).toEqual({
+        'built-in-date': { operand: ViewFilterOperand.IS_IN_PAST, value: '' },
+        period: { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_7_DAY' },
+      });
+    });
+
+    await waitFor(() => {
+      expect(
+        getUrlSearchParams().get(
+          `dashboardFilter[${PAGE_LAYOUT_A_ID}][period][operand]`,
+        ),
+      ).toBe('IS_RELATIVE');
+    });
+    expect(
+      getUrlSearchParams().get(
+        `dashboardFilter[${PAGE_LAYOUT_A_ID}][built-in-date][operand]`,
+      ),
+    ).toBe('IS_IN_PAST');
+  });
+
   it('replaces stale in-memory values with what the URL holds on mount', async () => {
     const store = createStore();
 

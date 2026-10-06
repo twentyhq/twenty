@@ -28,6 +28,8 @@ type UseGraphPieChartWidgetDataResult = {
   data: PieChartDataItemWithColor[];
   showLegend: boolean;
   loading: boolean;
+  // What the chart was computed from, so a drilldown opens the records the chart actually counts.
+  configurationWithDashboardFilters: PieChartConfiguration;
   error?: Error;
   hasTooManyGroups: boolean;
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -116,6 +118,7 @@ export const useGraphPieChartWidgetData = ({
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
+    configurationWithDashboardFilters,
     loading,
     error,
   };

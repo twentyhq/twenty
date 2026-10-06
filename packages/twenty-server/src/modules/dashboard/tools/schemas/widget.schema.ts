@@ -1,6 +1,8 @@
 import { isNumber } from '@sniptt/guards';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   AggregateOperations,
+  type CompositeFieldSubFieldName,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   ViewFilterOperand,
@@ -164,6 +166,39 @@ export const chartFilterSchema = z
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
   );
 
+const COMPOSITE_FIELD_SUB_FIELD_NAME_OPTIONS = Object.values(
+  COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
+).flatMap((subFieldNames) => Object.values(subFieldNames)) as [
+  CompositeFieldSubFieldName,
+  ...CompositeFieldSubFieldName[],
+];
+
+const dashboardFilterBindingSchema = z.object({
+  fieldMetadataId: z
+    .uuid()
+    .describe(
+      'UUID of the field of the widget object the dashboard filter value is applied to.',
+    ),
+  subFieldName: z
+    .enum(COMPOSITE_FIELD_SUB_FIELD_NAME_OPTIONS)
+    .optional()
+    .describe(
+      'Required for composite fields — the sub field the value is applied to, e.g. "amountMicros" for CURRENCY or "addressCity" for ADDRESS.',
+    ),
+  relationTargetFieldMetadataId: z
+    .uuid()
+    .optional()
+    .describe(
+      'For RELATION fields only: UUID of a field of the related object to filter on instead of the related record itself.',
+    ),
+});
+
+export const dashboardFilterBindingsSchema = z
+  .record(z.string().min(1), dashboardFilterBindingSchema.nullable())
+  .describe(
+    'How this chart applies the dashboard filters of its page layout, keyed by dashboard filter slot id. A null entry explicitly leaves that filter out of this chart. Slots are owned by the dashboard, so bind only slot ids that already exist on it.',
+  );
+
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();
 const chartNumberFormatSchema = z
@@ -324,6 +359,7 @@ const aggregateChartConfigSchemaBase = z.object({
   suffix: z.string().optional(),
   ratioAggregateConfig: ratioAggregateConfigSchema.optional(),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const aggregateChartConfigSchema = aggregateChartConfigSchemaBase.extend({
@@ -409,6 +445,7 @@ const barChartConfigSchemaCore = z.object({
     .enum(BAR_CHART_LAYOUT_OPTIONS)
     .describe('Layout orientation for bar charts'),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const barChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -494,6 +531,7 @@ const lineChartConfigSchemaCore = z.object({
   rangeMin: z.number().optional().describe('Y axis minimum value'),
   rangeMax: z.number().optional().describe('Y axis maximum value'),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const lineChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -551,6 +589,7 @@ const pieChartConfigSchemaCore = z.object({
   showCenterMetric: showCenterMetricSchema,
   hideEmptyCategory: hideEmptyCategorySchema,
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const pieChartConfigSchemaWithoutDefaults = withManualSortRefinement(

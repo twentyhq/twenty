@@ -1,5 +1,6 @@
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/dashboard-filters/utils/parseDashboardFilterValuesFromSearchParams';
+import { resolveInitialDashboardFilterValues } from '@/page-layout/dashboard-filters/utils/resolveInitialDashboardFilterValues';
 import { serializeDashboardFilterValuesToSearchParams } from '@/page-layout/dashboard-filters/utils/serializeDashboardFilterValuesToSearchParams';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useEffect, useState } from 'react';
@@ -11,7 +12,7 @@ type DashboardFilterUrlSyncEffectProps = {
   slots: DashboardFilterSlot[];
 };
 
-// One-way after the first render: the URL replaces the values once, then the values are mirrored into the URL.
+// One-way after the first render: the URL, completed by slot defaults, replaces the values once, then the values are mirrored into the URL.
 export const DashboardFilterUrlSyncEffect = ({
   pageLayoutId,
   slots,
@@ -26,10 +27,13 @@ export const DashboardFilterUrlSyncEffect = ({
   useEffect(() => {
     if (!hasInitializedFromUrl) {
       setDashboardFilterValues(
-        parseDashboardFilterValuesFromSearchParams({
-          searchParams,
-          pageLayoutId,
+        resolveInitialDashboardFilterValues({
           slots,
+          valuesFromUrl: parseDashboardFilterValuesFromSearchParams({
+            searchParams,
+            pageLayoutId,
+            slots,
+          }),
         }),
       );
 

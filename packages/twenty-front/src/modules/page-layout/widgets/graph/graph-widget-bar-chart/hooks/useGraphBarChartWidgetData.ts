@@ -39,6 +39,8 @@ type UseGraphBarChartWidgetDataResult = {
   layout?: BarChartLayout;
   groupMode: 'grouped' | 'stacked' | undefined;
   loading: boolean;
+  // What the chart was computed from, so a drilldown opens the records the chart actually counts.
+  configurationWithDashboardFilters: BarChartConfiguration;
   isRefetching: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
@@ -163,6 +165,7 @@ export const useGraphBarChartWidgetData = ({
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
+    configurationWithDashboardFilters,
     loading: loading && !previousData,
     isRefetching: loading && !!previousData,
     error,

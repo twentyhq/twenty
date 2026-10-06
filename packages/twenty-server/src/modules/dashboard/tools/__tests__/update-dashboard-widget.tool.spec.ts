@@ -164,6 +164,38 @@ describe('update_dashboard_widget tool', () => {
     );
   });
 
+  it('passes dashboardFilterBindings through to the stored configuration untouched', async () => {
+    const deps = buildDeps();
+    const tool = createTool(deps);
+
+    const dashboardFilterBindings = {
+      stage: { fieldMetadataId: STAGE_FIELD_ID },
+      amount: null,
+    };
+
+    const result = await tool.execute({
+      widgetId: WIDGET_ID,
+      configuration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldName: 'amount',
+        aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: false,
+        dashboardFilterBindings,
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    const updateData = deps.pageLayoutWidgetService.update.mock.calls[0][0]
+      .updateData as {
+      configuration: { dashboardFilterBindings: unknown };
+    };
+
+    expect(updateData.configuration.dashboardFilterBindings).toEqual(
+      dashboardFilterBindings,
+    );
+  });
+
   it('does not resolve identifiers when only non-field properties change', async () => {
     const deps = buildDeps();
     const tool = createTool(deps);

@@ -1,4 +1,6 @@
+import { DashboardFilterDefaultValuesEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterDefaultValuesEffect';
 import { DashboardFilterDropdownButton } from '@/page-layout/dashboard-filters/components/DashboardFilterDropdownButton';
+import { DashboardFilterResetButton } from '@/page-layout/dashboard-filters/components/DashboardFilterResetButton';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { countDashboardFilterSlotBoundCharts } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotBoundCharts';
@@ -38,10 +40,15 @@ export const DashboardFilterBarContent = () => {
 
   return (
     <>
-      {shouldSyncWithUrl && (
+      {shouldSyncWithUrl ? (
         <DashboardFilterUrlSyncEffect
           key={currentPageLayout.id}
           pageLayoutId={currentPageLayout.id}
+          slots={slots}
+        />
+      ) : (
+        <DashboardFilterDefaultValuesEffect
+          key={currentPageLayout.id}
           slots={slots}
         />
       )}
@@ -65,6 +72,7 @@ export const DashboardFilterBarContent = () => {
             />
           );
         })}
+        <DashboardFilterResetButton slots={slots} />
       </StyledBar>
     </>
   );

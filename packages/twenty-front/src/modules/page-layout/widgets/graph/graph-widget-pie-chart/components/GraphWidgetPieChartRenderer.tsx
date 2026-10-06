@@ -44,6 +44,7 @@ export const GraphWidgetPieChartRenderer = () => {
     showCenterMetric,
     formattedToRawLookup,
     colorMode,
+    configurationWithDashboardFilters,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
@@ -77,7 +78,7 @@ export const GraphWidgetPieChartRenderer = () => {
 
     const drilldownQueryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
-      configuration: widget.configuration,
+      configuration: configurationWithDashboardFilters,
       clickedData: {
         primaryBucketRawValue: rawValue,
       },

@@ -53,6 +53,7 @@ export const GraphWidgetBarChartRenderer = () => {
     formattedToRawLookup,
     colorMode,
     objectMetadataItem,
+    configurationWithDashboardFilters,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
@@ -106,7 +107,7 @@ export const GraphWidgetBarChartRenderer = () => {
 
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
-      configuration,
+      configuration: configurationWithDashboardFilters,
       clickedData: {
         primaryBucketRawValue: rawValue,
       },
