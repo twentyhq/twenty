@@ -14,6 +14,7 @@ export const withPhaseDetails = ({
   hint: string;
 }) =>
   new CliError({
+    cause: error,
     code: error.code,
     exitCode: error.exitCode,
     message: error.message,

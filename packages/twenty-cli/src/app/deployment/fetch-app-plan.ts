@@ -1,4 +1,4 @@
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
@@ -60,6 +60,7 @@ export const fetchAppPlan = async ({
         hint: 'Run twenty app apply --create to register it and install it in this workspace.',
         details: {
           ...error.details,
+          body: undefined,
           data: null,
           applicationUniversalIdentifier: build.application.universalIdentifier,
           plan: true,
@@ -67,13 +68,13 @@ export const fetchAppPlan = async ({
       });
     }
 
-    if (error instanceof CliError && isDefined(error.details?.data)) {
+    if (error instanceof CliError && isPlainObject(error.details)) {
       throw new CliError({
         code: error.code,
         exitCode: error.exitCode,
         message: error.message,
         hint: error.hint,
-        details: { ...error.details, data: null },
+        details: { ...error.details, body: undefined, data: null },
       });
     }
 

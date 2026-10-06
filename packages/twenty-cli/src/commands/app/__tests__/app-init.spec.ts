@@ -376,16 +376,21 @@ describe('app init', () => {
     },
   );
 
-  it.each(['My App', '.hidden', '_private', 'UPPER', 'apps/billing'])(
-    'rejects %s as a package name',
-    async (name) => {
-      const result = await runJson([name]);
+  it.each([
+    'My App',
+    '.hidden',
+    '_private',
+    'UPPER',
+    'apps/billing',
+    'node_modules',
+    'favicon.ico',
+  ])('rejects %s as a package name', async (name) => {
+    const result = await runJson([name]);
 
-      expect(result.exitCode).toBe(2);
-      expect(result.envelope.error.code).toBe('INVALID_APP_NAME');
-      expect(await readdir(workDirectory)).toEqual([]);
-    },
-  );
+    expect(result.exitCode).toBe(2);
+    expect(result.envelope.error.code).toBe('INVALID_APP_NAME');
+    expect(await readdir(workDirectory)).toEqual([]);
+  });
 
   it('leaves nothing behind when the template cannot be copied', async () => {
     vi.mocked(getAppTemplateDirectory).mockReturnValue(

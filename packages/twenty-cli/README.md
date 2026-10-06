@@ -56,7 +56,8 @@ also delete stored data. Pull can overwrite local edits; read its
 ## CLI and app dependencies
 
 The CLI is intended to be installed globally, separately from each app. Apps
-keep `twenty-sdk` for authoring and runtime APIs, `typescript` for checks, and
+keep `twenty-sdk` as a development dependency for authoring and build-time APIs,
+`typescript` for checks, and
 `twenty-client-sdk` when they use a generated API client. Neither apps nor SDK
 packages need `twenty` in their dependencies or devDependencies. CI can pin its
 CLI installation separately.
@@ -78,3 +79,5 @@ executable on PATH. A missing project-local CLI is normal.
 
 Run `twenty commands` for the command inventory or `twenty <command> --help` for
 its arguments and options.
+
+Generated next-step commands use PowerShell on Windows and POSIX shell syntax on macOS/Linux.

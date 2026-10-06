@@ -4,8 +4,12 @@ import { type AppInitNextStep } from '@/app/types/app-init-next-step.type';
 
 const SHELL_SAFE_PATTERN = /^[\w./-]+$/;
 
-const quoteForShell = (value: string) =>
-  SHELL_SAFE_PATTERN.test(value) ? value : `'${value.replace(/'/g, `'\\''`)}'`;
+const quoteForShell = (value: string) => {
+  if (SHELL_SAFE_PATTERN.test(value)) return value;
+  if (process.platform === 'win32') return `'${value.replace(/'/g, "''")}'`;
+
+  return `'${value.replace(/'/g, `'\\''`)}'`;
+};
 
 export const getAppInitNextSteps = ({
   displayPath,
@@ -25,7 +29,7 @@ export const getAppInitNextSteps = ({
       ? []
       : [
           {
-            command: `cd ${quoteForShell(displayPath)}`,
+            command: `cd ${quoteForShell(displayPath.startsWith('-') ? `./${displayPath}` : displayPath)}`,
             description: 'Enter the new app',
           },
         ]),
@@ -42,5 +46,11 @@ export const getAppInitNextSteps = ({
       command: `twenty app apply --create${remoteFlag}`,
       description: 'Build the app and install it in your workspace',
     },
-  ];
+  ].map((step) => ({
+    ...step,
+    description:
+      process.platform === 'win32'
+        ? `${step.description} (PowerShell)`
+        : step.description,
+  }));
 };

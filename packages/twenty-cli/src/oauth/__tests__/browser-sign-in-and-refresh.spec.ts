@@ -31,6 +31,7 @@ vi.mock('@/oauth/open-browser', () => ({ openBrowser: vi.fn() }));
 const CLIENT_ID = 'cli-client';
 
 type Scenario = {
+  refreshDelayMilliseconds?: number;
   isDeclined?: boolean;
   returnedState?: string;
   returnedIssuer?: string | null;
@@ -153,12 +154,20 @@ const server = await startTestServer((request, response) => {
     state.currentRefreshToken = `refresh-${state.refreshCalls + 2}`;
     state.validAccessTokens.add(accessToken);
 
-    return sendJson(response, 200, {
-      access_token: accessToken,
-      refresh_token: state.currentRefreshToken,
-      token_type: 'Bearer',
-      expires_in: 3600,
-    });
+    const sendTokens = () =>
+      sendJson(response, 200, {
+        access_token: accessToken,
+        refresh_token: state.currentRefreshToken,
+        token_type: 'Bearer',
+        expires_in: 3600,
+      });
+
+    if (parameters.grant_type === 'refresh_token') {
+      setTimeout(sendTokens, state.scenario.refreshDelayMilliseconds ?? 0);
+      return;
+    }
+
+    return sendTokens();
   }
 
   const bearerToken = request.headers.authorization?.replace('Bearer ', '');
@@ -460,24 +469,29 @@ describe('browser sign-in and session refresh', () => {
     );
   });
 
-  it('lets only one command refresh a session at a time', async () => {
-    await writeSession(createAccessToken(10, 'expiring'), 'refresh-1');
+  it.each([0, 5_200])(
+    'shares a refresh delayed by %s ms between concurrent commands',
+    async (delay) => {
+      state.scenario.refreshDelayMilliseconds = delay;
+      await writeSession(createAccessToken(10, 'expiring'), 'refresh-1');
 
-    const refresh = () =>
-      refreshOAuthSession({
-        configPath,
-        remoteName: 'cloud',
-        apiUrl: server.url,
-        signal: new AbortController().signal,
-      });
-    const [firstAccessToken, secondAccessToken] = await Promise.all([
-      refresh(),
-      refresh(),
-    ]);
+      const refresh = () =>
+        refreshOAuthSession({
+          configPath,
+          remoteName: 'cloud',
+          apiUrl: server.url,
+          signal: new AbortController().signal,
+        });
+      const [firstAccessToken, secondAccessToken] = await Promise.all([
+        refresh(),
+        refresh(),
+      ]);
 
-    expect(state.refreshCalls).toBe(1);
-    expect(firstAccessToken).toBe(secondAccessToken);
-  });
+      expect(state.refreshCalls).toBe(1);
+      expect(firstAccessToken).toBe(secondAccessToken);
+    },
+    15_000,
+  );
 
   describe('when the remote changes while a refresh waits for the lock', () => {
     const otherServerUrl = () => server.url.replace('127.0.0.1', 'localhost');

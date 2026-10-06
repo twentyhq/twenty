@@ -14,7 +14,9 @@ export const formatToolingDiagnostic = ({
   const location = isDefined(file)
     ? [file, line, column].filter(isDefined).join(':')
     : undefined;
-  const text = [location, dimText(code), message].filter(isDefined).join('  ');
+  const text = [location, dimText(code, process.stderr), message]
+    .filter(isDefined)
+    .join('  ');
 
   return severity === 'error'
     ? formatFailureLine(text)

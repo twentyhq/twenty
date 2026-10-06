@@ -8,6 +8,7 @@ type CliErrorOptions = {
   exitCode?: ExitCode;
   hint?: string;
   details?: Record<string, unknown>;
+  cause?: unknown;
 };
 
 export class CliError extends Error {
@@ -22,8 +23,9 @@ export class CliError extends Error {
     exitCode = EXIT_CODE.FAILURE,
     hint,
     details,
+    cause,
   }: CliErrorOptions) {
-    super(message);
+    super(message, { cause });
     this.name = 'CliError';
     this.code = code;
     this.exitCode = exitCode;

@@ -4,7 +4,7 @@ The CLI calls `replaceCoreClient` from the app's installed
 `twenty-client-sdk/generate`. See the [app tooling overview](../README.md) for
 package boundaries. The package manifest is read through `readJsonObject`;
 missing or malformed JSON and incorrect package names produce an expected-package
-diagnostic.
+`CLIENT_GENERATION_FAILED` error.
 
 Public `app apply` invokes the generator through the internal
 `generateSourceClient` worker request.

@@ -13,9 +13,10 @@ export const fetchWorkspaceId = async ({
   signal: AbortSignal;
 }) => {
   const client = createMetadataClient({ target, signal });
-  const { currentWorkspace: workspace } = await client.query({
+  const data = await client.query({
     currentWorkspace: { id: true },
   });
+  const workspace = data?.currentWorkspace;
 
   if (
     !isPlainObject(workspace) ||
