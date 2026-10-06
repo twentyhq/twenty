@@ -1,4 +1,4 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
@@ -8,15 +8,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
-import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
-import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
-import {
-  type PendingWakeUpBeforeClaimDecision,
-  type PendingWakeUpOwnerHandler,
-} from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
-import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
+import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
+import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -29,26 +24,17 @@ import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
 
-type WorkflowStepResolveContext = {
-  workflowRun: WorkflowRunWorkspaceEntity | null;
-};
-
 // A WORKFLOW_STEP wake-up is owned by a workflow run and keyed by the step that waits
 @Injectable()
 export class WorkflowStepPendingWakeUpHandlerWorkspaceService
   implements
-    PendingWakeUpOwnerHandler<WorkflowStepResolveContext>,
+    PendingWakeUpOwnerHandler<WorkflowRunWorkspaceEntity>,
     OnModuleInit
 {
-  private readonly logger = new Logger(
-    WorkflowStepPendingWakeUpHandlerWorkspaceService.name,
-  );
-
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly pendingWakeUpEventRecordService: PendingWakeUpEventRecordService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -64,66 +50,50 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
     return buildRunWorkflowJobOptions(workflowRunId);
   }
 
-  async beforeClaim({
-    wakeUp,
-    event,
-    attempt,
-    recordReadAttempt,
-  }: {
-    wakeUp: PendingWakeUpEntity;
-    event?: PendingWakeUpEvent;
-    attempt: number;
-    recordReadAttempt: number;
-  }): Promise<PendingWakeUpBeforeClaimDecision<WorkflowStepResolveContext>> {
-    const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
-
+  async getOwnerState({
+    workspaceId,
+    ownerId: workflowRunId,
+    ownerKey: stepId,
+  }: PendingWakeUpEntity): Promise<
+    PendingWakeUpOwnerState<WorkflowRunWorkspaceEntity>
+  > {
     const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
       workflowRunId,
       workspaceId,
     });
     const stepStatus = workflowRun?.state?.stepInfos?.[stepId]?.status;
-    const isRunRunning = workflowRun?.status === WorkflowRunStatus.RUNNING;
 
-    // the wait is armed before its step reads as pending, so the event is held until it does or the run ends
-    if (isRunRunning && stepStatus === StepStatus.RUNNING) {
-      return {
-        type: 'RETRY_LATER',
-        attempt: attempt + 1,
-        delayMs: computePendingWakeUpRetryDelayMs(attempt),
-      };
+    if (workflowRun?.status !== WorkflowRunStatus.RUNNING) {
+      return { status: 'GONE', owner: workflowRun };
     }
 
-    if (isRunRunning && stepStatus === StepStatus.PENDING && isDefined(event)) {
-      const { authContext, rolePermissionConfig } =
-        await this.workflowExecutionContextService.getExecutionContext({
-          workflowRunId,
-          workspaceId,
-        });
-
-      return this.pendingWakeUpEventRecordService.decideOnEventRecord({
-        event,
-        authContext,
-        rolePermissionConfig,
-        recordReadAttempt,
-        context: { workflowRun },
-        onRecordReadGivenUp: (error) =>
-          this.logger.warn(
-            `Wait ${wakeUp.id} of workflow run ${workflowRunId} kept waiting after its ${event.eventName} record could not be read: ${error}`,
-          ),
-      });
+    // the wait is armed before its step reads as pending
+    if (stepStatus === StepStatus.RUNNING) {
+      return { status: 'NOT_READY' };
     }
 
-    return { type: 'RESOLVE', context: { workflowRun } };
+    return {
+      status: stepStatus === StepStatus.PENDING ? 'WAITING' : 'GONE',
+      owner: workflowRun,
+    };
+  }
+
+  async getReadPermissions({ wakeUp }: { wakeUp: PendingWakeUpEntity }) {
+    return this.workflowExecutionContextService.getExecutionContext({
+      workflowRunId: wakeUp.ownerId,
+      workspaceId: wakeUp.workspaceId,
+    });
   }
 
   async resolve({
     claimedWakeUp,
     outcome,
-    context: { workflowRun },
+    owner: workflowRun,
   }: {
     claimedWakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
-    context: WorkflowStepResolveContext;
+    owner: WorkflowRunWorkspaceEntity | null;
+    isOwnerGone: boolean;
   }): Promise<void> {
     if (!isDefined(workflowRun)) {
       return;
