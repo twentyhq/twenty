@@ -159,7 +159,7 @@ describe('buildSlackAssistantMessages', () => {
     });
     expect(messages[2].role).toBe('user');
     expect(messages[2].content).toContain(
-      'since your last reply, for context only',
+      'never reached you as requests, for context only',
     );
     expect(messages[2].content).toContain(
       'Jane asks from Slack:\nAnd who owns it?',

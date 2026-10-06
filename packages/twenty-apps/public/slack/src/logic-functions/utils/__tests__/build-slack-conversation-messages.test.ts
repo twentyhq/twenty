@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
 
 const ASSISTANT_BOT_USER_ID = 'U_ASSISTANT';
 
 describe('buildSlackConversationMessages', () => {
-  it('should keep only what members posted after the assistant last replied', () => {
+  it('should keep only the messages after the last answered request that the server has not seen', () => {
     const messages = buildSlackConversationMessages({
       messages: [
         { ts: '1', user: 'U123', text: 'Find the ACME account' },
@@ -15,43 +16,62 @@ describe('buildSlackConversationMessages', () => {
           bot_id: 'B1',
           text: 'ACME is a company record.',
         },
-        { ts: '3', user: 'U456', text: 'Who owns it?' },
+        { ts: '3', user: 'U456', text: 'They moved to London' },
+        { ts: '4', user: 'U123', text: 'Update their address' },
+        { ts: '5', user: 'U789', text: 'Thanks!' },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map([
+        ['1', SLACK_ASSISTANT_REQUEST_STATUS.DONE],
+        ['4', SLACK_ASSISTANT_REQUEST_STATUS.PENDING],
+      ]),
     });
 
     expect(messages).toEqual([
-      { role: 'user', content: '<@U456>: Who owns it?' },
+      { role: 'user', content: '<@U456>: They moved to London' },
+      { role: 'user', content: '<@U789>: Thanks!' },
     ]);
   });
 
-  it('should carry the whole thread as user turns when the assistant has not replied yet', () => {
+  it('should keep a failed request so its question is not lost with its turn', () => {
     const messages = buildSlackConversationMessages({
       messages: [
-        { ts: '1', user: 'U123', text: 'Find the ACME account' },
-        { ts: '2', user: 'U456', text: 'They moved to London' },
+        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
+        {
+          ts: '2',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Something went wrong.',
+        },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map([
+        ['1', SLACK_ASSISTANT_REQUEST_STATUS.FAILED],
+      ]),
     });
 
     expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: Find the ACME account' },
-      { role: 'user', content: '<@U456>: They moved to London' },
+      { role: 'user', content: '<@U123>: Who owns ACME?' },
     ]);
   });
 
-  it('should keep other bots as attributed user content', () => {
+  it('should carry the whole thread when nothing in it was answered yet', () => {
     const messages = buildSlackConversationMessages({
-      messages: [{ ts: '1', bot_id: 'B_OTHER', text: 'Deploy finished.' }],
+      messages: [
+        { ts: '1', bot_id: 'B_OTHER', text: 'Deploy finished.' },
+        { ts: '2', user: 'U456', text: 'Nice, ping ACME about it' },
+      ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
       { role: 'user', content: 'bot B_OTHER: Deploy finished.' },
+      { role: 'user', content: '<@U456>: Nice, ping ACME about it' },
     ]);
   });
 
-  it('should leave the history to the stored thread when the bot user id is unknown', () => {
+  it('should drop every bot message when the assistant user id is unknown', () => {
     const messages = buildSlackConversationMessages({
       messages: [
         { ts: '1', user: 'U123', text: 'Who owns ACME?' },
@@ -64,28 +84,12 @@ describe('buildSlackConversationMessages', () => {
         { ts: '3', user: 'U456', text: 'Since when?' },
       ],
       assistantBotUserId: undefined,
-    });
-
-    expect(messages).toEqual([]);
-  });
-
-  it('should keep a file-only message in the history with a synthesised description', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        {
-          ts: '1',
-          user: 'U123',
-          text: '',
-          files: [{ id: 'F1', name: 'proposal.pdf' }],
-        },
-        { ts: '2', user: 'U123', text: 'what do you think?' },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: [shared a file: proposal.pdf]' },
-      { role: 'user', content: '<@U123>: what do you think?' },
+      { role: 'user', content: '<@U123>: Who owns ACME?' },
+      { role: 'user', content: '<@U456>: Since when?' },
     ]);
   });
 
@@ -103,6 +107,7 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
@@ -124,6 +129,7 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestStatusByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([

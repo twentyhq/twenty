@@ -11,6 +11,7 @@ import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/consta
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
+import { findSlackAssistantRequestStatusesBySlackMessages } from 'src/logic-functions/data/find-slack-assistant-request-statuses-by-slack-messages';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
@@ -18,6 +19,7 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
+import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
@@ -90,7 +92,7 @@ export const slackAssistantWorkerHandler = async (
   try {
     const [
       {
-        conversationMessages,
+        conversationThreadMessages,
         sharedFiles,
         requesterName,
         requesterIdentity,
@@ -223,6 +225,20 @@ export const slackAssistantWorkerHandler = async (
         sharedFiles,
         agentDeadlineAtMs,
       });
+
+    const requestStatusByMessageTimestamp =
+      await findSlackAssistantRequestStatusesBySlackMessages(client, {
+        slackChannelId,
+        slackMessageTimestamps: conversationThreadMessages
+          .map((message) => message.ts)
+          .filter(isNonEmptyString),
+      }).catch(() => new Map<string, string>());
+
+    const conversationMessages = buildSlackConversationMessages({
+      messages: conversationThreadMessages,
+      assistantBotUserId,
+      requestStatusByMessageTimestamp,
+    });
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,

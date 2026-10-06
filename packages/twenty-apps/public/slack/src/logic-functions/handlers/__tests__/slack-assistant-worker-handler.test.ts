@@ -70,6 +70,13 @@ vi.mock('src/logic-functions/data/claim-slack-assistant-request', () => ({
   claimSlackAssistantRequest: claimSlackAssistantRequestMock,
 }));
 
+vi.mock(
+  'src/logic-functions/data/find-slack-assistant-request-statuses-by-slack-messages',
+  () => ({
+    findSlackAssistantRequestStatusesBySlackMessages: async () => new Map(),
+  }),
+);
+
 vi.mock('src/logic-functions/data/update-slack-assistant-request', () => ({
   updateSlackAssistantRequest: updateSlackAssistantRequestMock,
 }));
@@ -140,7 +147,7 @@ const REQUESTER_IDENTITY = {
 };
 
 const SLACK_CONTEXT = {
-  conversationMessages: [],
+  conversationThreadMessages: [],
   sharedFiles: [],
   requesterName: 'Ada',
   requesterIdentity: undefined,
