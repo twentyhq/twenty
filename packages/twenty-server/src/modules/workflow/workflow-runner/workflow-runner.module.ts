@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
@@ -23,7 +22,6 @@ import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-ex
     ApplicationModule,
     WorkflowCommonModule,
     WorkflowExecutorModule,
-    BillingModule,
     WorkflowRunModule,
     MetricsModule,
     WorkflowRunQueueModule,

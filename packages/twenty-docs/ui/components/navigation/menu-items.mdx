@@ -23,7 +23,7 @@ export const CopyRowPreview = () => (
 );
 ```
 
-The root is a div. `onClick` alone does not provide keyboard activation or menu semantics. Native attributes and refs are not exposed by this preset. Use `Dropdown.ActionItem` for accessible commands. Shortcut hints and `hasSubMenu` are visual; they do not register handlers or create a submenu. `isTooltipOpen` is currently accepted but unused.
+The root is a div. `onClick` alone does not provide keyboard activation or menu semantics. Native attributes and refs are not exposed by this preset. Use `Dropdown.ActionItem` for accessible commands. Shortcut hints and `hasSubMenu` are visual; they do not register handlers or create a submenu.
 
 <MenuItemReference />
 
@@ -58,7 +58,7 @@ export const ReorderRowPreview = () => (
 );
 ```
 
-The root remains a div without keyboard drag behavior. `isTooltipOpen` and `isHoverDisabled` are currently accepted but unused. Provide an accessible reordering interface in the surrounding application.
+The root remains a div without keyboard drag behavior. `isHoverDisabled` is currently accepted but unused. Provide an accessible reordering interface in the surrounding application.
 
 <MenuItemDraggableReference />
 

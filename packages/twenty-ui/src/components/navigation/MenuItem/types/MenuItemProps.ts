@@ -11,7 +11,6 @@ export type MenuItemProps = {
   withIconContainerBackground?: boolean;
   iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
-  isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
   iconThemeColor?: ThemeColor | null;
   LeftComponent?: ReactNode;

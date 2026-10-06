@@ -11,7 +11,6 @@ export type MenuItemWithOptionDropdownProps = {
   dropdownContent: ReactNode;
   dropdownId: string;
   isIconDisplayedOnHoverOnly?: boolean;
-  isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;

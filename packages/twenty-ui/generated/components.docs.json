@@ -10209,13 +10209,6 @@
         "description": "Applies the open treatment to the submenu chevron."
       },
       {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
         "name": "LeftComponent",
         "type": "ReactNode",
         "required": false,
@@ -10370,13 +10363,6 @@
         "description": "Reveals trailing action elements only on hover."
       },
       {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
         "name": "onClick",
         "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
         "required": false,
@@ -10473,13 +10459,6 @@
         "required": false,
         "defaultValue": "true",
         "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
       },
       {
         "name": "LeftIcon",

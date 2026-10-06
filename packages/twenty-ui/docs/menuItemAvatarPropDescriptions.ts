@@ -7,7 +7,6 @@ export const MENU_ITEM_AVATAR_PROP_DESCRIPTIONS = {
   className: 'Class applied to the row.',
   iconButtons: 'Trailing action elements.',
   isIconDisplayedOnHoverOnly: 'Reveals trailing action elements only on hover.',
-  isTooltipOpen: 'Accepted for compatibility; currently has no effect.',
   avatar:
     'Avatar name, source, color seed, size, and shape. Omit to hide the avatar.',
   onClick:

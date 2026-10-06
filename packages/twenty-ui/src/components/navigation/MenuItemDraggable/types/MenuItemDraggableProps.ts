@@ -8,7 +8,6 @@ export type MenuItemDraggableProps = {
   withIconContainer?: boolean;
   accent?: MenuItemAccent;
   iconButtons?: ReactNode;
-  isTooltipOpen?: boolean;
   onClick?: () => void;
   text: ReactNode;
   contextualText?: ReactNode;

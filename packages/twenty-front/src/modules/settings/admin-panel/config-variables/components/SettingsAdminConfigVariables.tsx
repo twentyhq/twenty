@@ -15,7 +15,7 @@ import {
   ConfigSource,
   GetConfigVariablesGroupedDocument,
 } from '~/generated-admin/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Section } from 'twenty-ui/components/layout';

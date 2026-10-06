@@ -10,7 +10,6 @@ export const MENU_ITEM_PROP_DESCRIPTIONS = {
     'Adds a background to the leading icon container.',
   iconButtons: 'Trailing action elements.',
   isIconDisplayedOnHoverOnly: 'Reveals trailing action elements only on hover.',
-  isTooltipOpen: 'Accepted for compatibility; currently has no effect.',
   LeftIcon: 'Leading icon component.',
   iconThemeColor: 'Theme color for the leading icon.',
   LeftComponent: 'Custom leading content.',

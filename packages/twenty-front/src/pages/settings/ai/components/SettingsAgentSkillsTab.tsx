@@ -24,7 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
 const StyledSearchContainer = styled.div`

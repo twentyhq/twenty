@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
 import { createElement, useContext, useMemo } from 'react';
-import { Key } from 'ts-key-enum';
 
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
@@ -59,11 +58,6 @@ export const CountrySelect = ({
         noResultsLabel={t`No results`}
         open={isDropdownOpen}
         onOpenChange={handleDropdownOpenChange}
-        onKeyDown={(event) => {
-          if (event.key === Key.Enter) {
-            event.stopPropagation();
-          }
-        }}
         popupProps={{
           render: (popupProps) =>
             createElement(

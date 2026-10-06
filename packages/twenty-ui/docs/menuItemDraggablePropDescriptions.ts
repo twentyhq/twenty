@@ -7,7 +7,6 @@ export const MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS = {
   withIconContainer: 'Places leading content in an icon container.',
   accent: 'Default, danger, or placeholder row styling.',
   iconButtons: 'Trailing action elements.',
-  isTooltipOpen: 'Accepted for compatibility; currently has no effect.',
   onClick:
     'Pointer activation callback. The row itself does not add keyboard or menu semantics.',
   text: 'Main row label.',

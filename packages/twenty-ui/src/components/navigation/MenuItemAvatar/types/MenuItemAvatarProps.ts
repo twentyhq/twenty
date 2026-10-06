@@ -7,7 +7,6 @@ export type MenuItemAvatarProps = {
   className?: string;
   iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
-  isTooltipOpen?: boolean;
   avatar?: Pick<
     AvatarProps,
     'src' | 'colorSeed' | 'name' | 'size' | 'shape'
