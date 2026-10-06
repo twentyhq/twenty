@@ -29,29 +29,33 @@ export class ApplicationJobEnqueueThrottlerService {
     const timeWindow = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_TTL_IN_MS',
     );
-    const applicationKey = `enqueue:throttler:application:${applicationId}`;
     const applicationLimit = this.twentyConfigService.get(
       'APPLICATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
     );
-    const registrationKey = `enqueue:throttler:application-registration:${applicationRegistrationId}`;
     const registrationLimit = this.twentyConfigService.get(
       'APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT',
     );
 
-    const [applicationTokens, registrationTokens] = await Promise.all([
-      this.throttlerService.getAvailableTokensCount(
-        applicationKey,
-        applicationLimit,
-        timeWindow,
-      ),
-      this.throttlerService.getAvailableTokensCount(
-        registrationKey,
-        registrationLimit,
-        timeWindow,
-      ),
-    ]);
+    const [admittedCount] = await this.throttlerService.tryConsumeTokenBuckets({
+      buckets: [
+        {
+          key: `enqueue:throttler:application:${applicationId}`,
+          burst: applicationLimit,
+          refillPerWindow: applicationLimit,
+          windowMs: timeWindow,
+        },
+        {
+          key: `enqueue:throttler:application-registration:${applicationRegistrationId}`,
+          burst: registrationLimit,
+          refillPerWindow: registrationLimit,
+          windowMs: timeWindow,
+        },
+      ],
+      tokensToConsume: jobCount,
+      allowPartial: false,
+    });
 
-    if (applicationTokens < jobCount || registrationTokens < jobCount) {
+    if (admittedCount !== jobCount) {
       await this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobEnqueueApplicationRateLimited,
         shouldStoreInCache: false,
@@ -66,20 +70,5 @@ export class ApplicationJobEnqueueThrottlerService {
         ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }
-
-    await Promise.all([
-      this.throttlerService.consumeTokens(
-        applicationKey,
-        jobCount,
-        applicationLimit,
-        timeWindow,
-      ),
-      this.throttlerService.consumeTokens(
-        registrationKey,
-        jobCount,
-        registrationLimit,
-        timeWindow,
-      ),
-    ]);
   }
 }
