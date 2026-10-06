@@ -6,6 +6,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { CONSUMED_LOGIN_TOKEN_CACHE_KEY_PREFIX } from 'src/engine/core-modules/auth/constants/consumed-login-token-cache-key-prefix.constant';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import {
   AuthException,
@@ -88,16 +89,19 @@ export class LoginTokenService {
     return decoded;
   }
 
-  // Keeping the claim for the whole token lifetime rejects a replay for as
-  // long as the signature would still verify
   async consumeLoginTokenOrThrow({ jti }: LoginTokenJwtPayload): Promise<void> {
-    const isFirstUse =
-      isNonEmptyString(jti) &&
-      (await this.cacheStorage.setIfAbsent(
-        `login-token:consumed:${jti}`,
-        true,
-        ms(this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN')),
-      ));
+    if (!isNonEmptyString(jti)) {
+      throw new AuthException(
+        'Login token is missing its identifier',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const isFirstUse = await this.cacheStorage.setIfAbsent(
+      `${CONSUMED_LOGIN_TOKEN_CACHE_KEY_PREFIX}:${jti}`,
+      true,
+      ms(this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN')),
+    );
 
     if (!isFirstUse) {
       throw new AuthException(
