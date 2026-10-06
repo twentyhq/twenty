@@ -24,7 +24,6 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
-import { isReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/utils/is-reversible-onboarding-step.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -313,8 +312,11 @@ export class OnboardingService {
       key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
     });
 
+    // Stored history can hold steps that no longer exist in OnboardingStatus
     return Array.isArray(reversibleStepHistory)
-      ? reversibleStepHistory.filter(isReversibleOnboardingStep)
+      ? reversibleStepHistory.filter((step) =>
+          Object.values(OnboardingStatus).includes(step),
+        )
       : [];
   }
 
