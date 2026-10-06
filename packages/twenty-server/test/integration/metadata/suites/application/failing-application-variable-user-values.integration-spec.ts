@@ -1,16 +1,13 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { myApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-application-variables.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
-import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -19,7 +16,6 @@ const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
 describe('Application variable user values should fail', () => {
   let userVariableApplication: ApplicationWithVariable;
   let workspaceVariableApplication: ApplicationWithVariable;
-  let applicationToken: string;
   let janeApplicationToken: string;
 
   beforeAll(async () => {
@@ -33,17 +29,11 @@ describe('Application variable user values should fail', () => {
       variableKey: 'RECORD_ALL_MEETINGS',
     });
 
-    const [applicationTokenPair, janeApplicationTokenPair] = await Promise.all([
-      generateApplicationTokenPair({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
+    const janeApplicationTokenPair =
+      await generateAppleAdminApplicationTokenPair({
         applicationId: userVariableApplication.id,
-      }),
-      generateAppleAdminApplicationTokenPair({
-        applicationId: userVariableApplication.id,
-      }),
-    ]);
+      });
 
-    applicationToken = applicationTokenPair.applicationAccessToken.token;
     janeApplicationToken =
       janeApplicationTokenPair.applicationAccessToken.token;
   }, 120000);
@@ -88,37 +78,13 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse an application that is not installed', async () => {
-    const { errors } = await myApplicationVariables({
+    const { errors } = await updateMyApplicationVariable({
       input: {
         applicationUniversalIdentifier:
           NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: userVariableApplication.variableKey,
+        value: 'mine',
       },
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  });
-
-  it('should refuse to read member values with a token no person is behind', async () => {
-    const { errors } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier:
-          userVariableApplication.universalIdentifier,
-      },
-      token: applicationToken,
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  });
-
-  it('should refuse an application token reading another application', async () => {
-    const { errors } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier:
-          workspaceVariableApplication.universalIdentifier,
-      },
-      token: janeApplicationToken,
       expectToFail: true,
     });
 

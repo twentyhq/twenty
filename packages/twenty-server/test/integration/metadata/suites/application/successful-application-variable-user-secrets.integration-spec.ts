@@ -1,6 +1,5 @@
 import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { myApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-application-variables.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
@@ -49,20 +48,23 @@ describe('Secret application variable user values should succeed', () => {
   });
 
   it('should leave an unset personal secret empty', async () => {
-    const { data } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
-      },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    const { data } = await applicationVariableUserValues({
+      input: {},
+      token: applicationToken,
       expectToFail: false,
     });
 
-    expect(data.myApplicationVariables).toEqual([
+    const jonyValues = data.applicationVariableUserValues.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
       { key: application.variableKey, value: '' },
     ]);
   });
 
-  it('should encrypt a member secret at rest and mask it when read', async () => {
+  it('should encrypt a member secret at rest', async () => {
     await updateMyApplicationVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -72,18 +74,6 @@ describe('Secret application variable user values should succeed', () => {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       expectToFail: false,
     });
-
-    const { data } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
-      },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      expectToFail: false,
-    });
-
-    expect(data.myApplicationVariables).toEqual([
-      { key: application.variableKey, value: SECRET_APPLICATION_VARIABLE_MASK },
-    ]);
 
     const storedValues: { value: string }[] = await global.testDataSource.query(
       `SELECT "userValue"."value"
@@ -97,21 +87,9 @@ describe('Secret application variable user values should succeed', () => {
     expect(storedValues).toHaveLength(1);
     expect(storedValues[0].value).toMatch(/^enc:v2:/);
     expect(storedValues[0].value).not.toContain('jony-key');
-
-    const { data: philData } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
-      },
-      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
-      expectToFail: false,
-    });
-
-    expect(philData.myApplicationVariables).toEqual([
-      { key: application.variableKey, value: '' },
-    ]);
   });
 
-  it('should mask secrets read through a user-bound application token', async () => {
+  it('should mask the own secret for a token a person is behind', async () => {
     await updateMyApplicationVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -122,16 +100,23 @@ describe('Secret application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    const { data } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
-      },
+    const { data } = await applicationVariableUserValues({
+      input: {},
       token: janeApplicationToken,
       expectToFail: false,
     });
 
-    expect(data.myApplicationVariables).toEqual([
-      { key: application.variableKey, value: SECRET_APPLICATION_VARIABLE_MASK },
+    expect(data.applicationVariableUserValues).toEqual([
+      {
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        variables: [
+          {
+            key: application.variableKey,
+            value: SECRET_APPLICATION_VARIABLE_MASK,
+          },
+        ],
+      },
     ]);
   });
 
@@ -163,27 +148,6 @@ describe('Secret application variable user values should succeed', () => {
     );
   });
 
-  it('should mask the own secret for a token a person is behind', async () => {
-    const { data } = await applicationVariableUserValues({
-      input: {},
-      token: janeApplicationToken,
-      expectToFail: false,
-    });
-
-    expect(data.applicationVariableUserValues).toEqual([
-      {
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        variables: [
-          {
-            key: application.variableKey,
-            value: SECRET_APPLICATION_VARIABLE_MASK,
-          },
-        ],
-      },
-    ]);
-  });
-
   it('should leave a cleared personal secret empty', async () => {
     await updateMyApplicationVariable({
       input: {
@@ -195,15 +159,18 @@ describe('Secret application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    const { data } = await myApplicationVariables({
-      input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
-      },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    const { data } = await applicationVariableUserValues({
+      input: {},
+      token: applicationToken,
       expectToFail: false,
     });
 
-    expect(data.myApplicationVariables).toEqual([
+    const jonyValues = data.applicationVariableUserValues.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
       { key: application.variableKey, value: '' },
     ]);
   });

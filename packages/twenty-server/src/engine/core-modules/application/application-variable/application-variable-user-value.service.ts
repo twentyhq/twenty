@@ -54,44 +54,6 @@ export class ApplicationVariableUserValueService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  async findMyApplicationVariables({
-    workspaceId,
-    applicationUniversalIdentifier,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    userWorkspaceId: string;
-  }): Promise<ApplicationVariableUserValueDTO[]> {
-    const applicationId = await this.findApplicationIdOrThrow({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-
-    const userFlatApplicationVariables =
-      await this.findUserFlatApplicationVariables({
-        workspaceId,
-        applicationId,
-      });
-
-    if (!isNonEmptyArray(userFlatApplicationVariables)) {
-      return [];
-    }
-
-    const userValues = await this.findUserValues({
-      workspaceId,
-      userWorkspaceId,
-      userFlatApplicationVariables,
-    });
-
-    return this.toApplicationVariableUserValues({
-      userFlatApplicationVariables,
-      userValues,
-      workspaceId,
-      shouldMaskSecret: true,
-    });
-  }
-
   async getServerEnvVariables(
     args: GetEnvVariablesArgs,
   ): Promise<Record<string, string>> {

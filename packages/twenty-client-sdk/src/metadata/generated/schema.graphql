@@ -3966,7 +3966,6 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
-  myApplicationVariables(applicationUniversalIdentifier: String!): [ApplicationVariableUserValue!]!
   applicationVariableUserValues: [WorkspaceMemberApplicationVariables!]!
   objects(
     """Limit or page results."""

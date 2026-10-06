@@ -24,18 +24,6 @@ exports[`Application variable user values should fail should refuse an applicati
 }
 `;
 
-exports[`Application variable user values should fail should refuse an application token reading another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Application variable user values should fail should refuse an application token writing a member value of its own application 1`] = `
 {
   "extensions": {
@@ -53,16 +41,6 @@ exports[`Application variable user values should fail should refuse to list ever
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "This endpoint requires an APPLICATION_ACCESS token.",
-}
-`;
-
-exports[`Application variable user values should fail should refuse to read member values with a token no person is behind 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "This endpoint requires a token bound to a user workspace.",
 }
 `;
 

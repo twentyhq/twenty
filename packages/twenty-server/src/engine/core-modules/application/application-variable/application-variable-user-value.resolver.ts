@@ -5,13 +5,11 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
-import { ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 import { UpdateMyApplicationVariableInput } from 'src/engine/core-modules/application/application-variable/dtos/update-my-application-variable.input';
 import { WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -45,26 +43,6 @@ export class ApplicationVariableUserValueResolver {
     private readonly applicationVariableUserValueService: ApplicationVariableUserValueService,
   ) {}
 
-  @Query(() => [ApplicationVariableUserValueDTO])
-  @UseGuards(ApplicationTargetGuard)
-  async myApplicationVariables(
-    @ApplicationTargetArg('applicationUniversalIdentifier', {
-      kind: 'applicationUniversalIdentifier',
-      requireApplicationRegistrationOwnership: false,
-    })
-    applicationUniversalIdentifier: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<ApplicationVariableUserValueDTO[]> {
-    return this.applicationVariableUserValueService.findMyApplicationVariables({
-      workspaceId,
-      applicationUniversalIdentifier,
-      userWorkspaceId,
-    });
-  }
-
-  // Only the member's own session writes: no application, OAuth client or
-  // API key token, so nothing changes a member's settings behind them.
   @Mutation(() => Boolean)
   @UseGuards(
     AuthPrincipalGuard({

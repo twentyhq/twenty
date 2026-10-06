@@ -3465,7 +3465,6 @@ export interface Query {
     commandMenuItem?: CommandMenuItem
     frontComponents: FrontComponent[]
     frontComponent?: FrontComponent
-    myApplicationVariables: ApplicationVariableUserValue[]
     applicationVariableUserValues: WorkspaceMemberApplicationVariables[]
     objects: ObjectConnection
     object: Object
@@ -7461,7 +7460,6 @@ export interface QueryGenqlSelection{
     commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     frontComponents?: FrontComponentGenqlSelection
     frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
-    myApplicationVariables?: (ApplicationVariableUserValueGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String']} })
     applicationVariableUserValues?: WorkspaceMemberApplicationVariablesGenqlSelection
     objects?: (ObjectConnectionGenqlSelection & { __args: {
     /** Limit or page results. */

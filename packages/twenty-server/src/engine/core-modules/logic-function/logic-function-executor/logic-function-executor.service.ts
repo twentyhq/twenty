@@ -440,8 +440,6 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
         flatApplicationVariableMaps,
       });
-    // The same member TWENTY_APP_ACCESS_TOKEN acts as, so a run reads the
-    // values of whoever it acts for.
     const userVariables =
       await this.applicationVariableUserValueService.getServerEnvVariables({
         workspaceId,
