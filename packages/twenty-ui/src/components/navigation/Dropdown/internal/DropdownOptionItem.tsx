@@ -51,7 +51,7 @@ export const DropdownOptionItem = ({
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const itemFocus = useDropdownItemFocus({ id: itemId });
+  const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
   const isFocused = searchTargetId === itemId;

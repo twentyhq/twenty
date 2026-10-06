@@ -39,7 +39,7 @@ export const DropdownActionItem = ({
   const { type, closeTree, goToPage } = useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const itemFocus = useDropdownItemFocus({ id: itemId });
+  const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
   const resolvedHasSubmenu = hasSubmenu ?? isDefined(page);

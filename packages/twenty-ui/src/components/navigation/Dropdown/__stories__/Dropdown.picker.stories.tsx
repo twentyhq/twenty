@@ -634,6 +634,64 @@ export const OptionWithTrailingAction: Story = {
   },
 };
 
+export const DisabledOptionsLeaveTabOrder: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Tabs</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.OptionItem render={<div />} role="button" selected={false}>
+          Overview
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          render={<div />}
+          role="button"
+          selected={false}
+          disabled
+        >
+          Archive
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          render={<div />}
+          role="button"
+          selected={false}
+          disabled
+          actionsVisibility="always"
+          actions={
+            <Button size="sm" tabIndex={-1}>
+              Edit timeline
+            </Button>
+          }
+        >
+          Timeline
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem render={<div />} role="button" selected={false}>
+          Notes
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Tabs' }),
+    );
+    const overview = await body.findByRole('button', { name: 'Overview' });
+
+    await waitFor(() => expect(overview).toHaveFocus());
+    expect(body.getByRole('button', { name: 'Archive' })).toHaveAttribute(
+      'tabindex',
+      '-1',
+    );
+    expect(body.getByRole('button', { name: 'Timeline' })).toHaveAttribute(
+      'tabindex',
+      '-1',
+    );
+    await userEvent.tab();
+    expect(body.getByRole('button', { name: 'Notes' })).toHaveFocus();
+  },
+};
+
 export const CommandWithTrailingAction: Story = {
   render: () => (
     <Dropdown.Root type="picker">
