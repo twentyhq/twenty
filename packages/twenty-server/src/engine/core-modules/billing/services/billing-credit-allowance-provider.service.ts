@@ -1,13 +1,11 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { type CreditAllowance } from 'src/engine/core-modules/usage-limit/types/credit-allowance.type';
@@ -16,14 +14,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
-  private readonly logger = new Logger(BillingCreditAllowanceProvider.name);
-
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly billingCreditGrantService: BillingCreditGrantService,
-    private readonly billingUsageService: BillingUsageService,
   ) {
     super();
   }
@@ -35,6 +28,40 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
   async getCreditAllowancePeriod(
     workspaceId: string,
   ): Promise<UsagePeriod | null> {
+    const subscription = await this.findCurrentBillingSubscription(workspaceId);
+
+    if (!isDefined(subscription)) {
+      return null;
+    }
+
+    return {
+      periodStart: new Date(subscription.currentPeriodStart),
+      periodEnd: new Date(subscription.currentPeriodEnd),
+    };
+  }
+
+  async getCreditAllowance(
+    workspaceId: string,
+  ): Promise<CreditAllowance | null> {
+    const subscription = await this.findCurrentBillingSubscription(workspaceId);
+
+    if (
+      !isDefined(subscription) ||
+      !isDefined(subscription.creditAllowanceSchedule)
+    ) {
+      return null;
+    }
+
+    return {
+      periodStart: new Date(subscription.currentPeriodStart),
+      periodEnd: new Date(subscription.currentPeriodEnd),
+      schedule: subscription.creditAllowanceSchedule,
+    };
+  }
+
+  private async findCurrentBillingSubscription(
+    workspaceId: string,
+  ): Promise<FlatBillingSubscription | null> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return null;
     }
@@ -44,53 +71,8 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
         'currentBillingSubscription',
       ]);
 
-    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
-      return null;
-    }
-
-    return {
-      periodStart: new Date(currentBillingSubscription.currentPeriodStart),
-      periodEnd: new Date(currentBillingSubscription.currentPeriodEnd),
-    };
-  }
-
-  async getCreditAllowance(
-    workspaceId: string,
-  ): Promise<CreditAllowance | null> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return null;
-    }
-
-    try {
-      const subscription =
-        await this.billingSubscriptionService.getCurrentBillingSubscription({
-          workspaceId,
-        });
-
-      if (!isDefined(subscription)) {
-        return null;
-      }
-
-      const { balanceMicro, earliestExpiryBefore } =
-        await this.billingCreditGrantService.getActiveCreditBalance({
-          workspaceId,
-          boundary: subscription.currentPeriodEnd,
-        });
-
-      return {
-        periodStart: subscription.currentPeriodStart,
-        periodEnd: subscription.currentPeriodEnd,
-        allowanceMicro:
-          this.billingUsageService.getResourceUsageCap(subscription) +
-          balanceMicro,
-        validUntil: earliestExpiryBefore ?? subscription.currentPeriodEnd,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Could not compute allowance for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
-
-      return null;
-    }
+    return currentBillingSubscription === NO_BILLING_SUBSCRIPTION
+      ? null
+      : currentBillingSubscription;
   }
 }

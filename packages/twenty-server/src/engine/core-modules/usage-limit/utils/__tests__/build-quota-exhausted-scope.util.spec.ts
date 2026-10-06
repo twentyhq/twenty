@@ -49,7 +49,7 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter(),
-        allowance: null,
+        allowanceMicro: null,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -73,7 +73,7 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter({ isDefault: true }),
-        allowance: null,
+        allowanceMicro: null,
       }),
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
@@ -83,12 +83,7 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: allowanceCounter,
-        allowance: {
-          periodStart: PERIOD_START,
-          periodEnd: PERIOD_END,
-          allowanceMicro: 2_000_000,
-          validUntil: PERIOD_END,
-        },
+        allowanceMicro: 2_000_000,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -111,7 +106,7 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: allowanceCounter,
-        allowance: null,
+        allowanceMicro: null,
       }),
     ).toMatchObject({ exhaustedKind: 'allowance', limitValue: 0 });
   });
@@ -123,7 +118,7 @@ describe('buildQuotaExhaustedScope', () => {
         counter: buildLimitCounter({
           periodEnd: new Date('2026-08-10T00:00:00.000Z'),
         }),
-        allowance: null,
+        allowanceMicro: null,
       }),
     ).toMatchObject({ retryAfterMs: 0 });
   });

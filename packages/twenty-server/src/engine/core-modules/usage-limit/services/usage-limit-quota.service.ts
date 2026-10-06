@@ -43,8 +43,10 @@ import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/buil
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
+import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
+import { findCreditAllowanceValidUntil } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-valid-until.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
@@ -270,13 +272,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return null;
     }
 
-    if (allowance.periodStart.getTime() !== counter.periodStart.getTime()) {
-      return {
-        limitValue: allowance.allowanceMicro,
-        consumedValue: null,
-        periodEnd: allowance.periodEnd,
-      };
-    }
+    const allowanceMicro = computeCreditAllowanceMicro({
+      schedule: allowance.schedule,
+      nowMs: Date.now(),
+    });
 
     let consumedValue: number | null = null;
 
@@ -287,14 +286,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       });
 
       consumedValue = isDefined(remaining)
-        ? Math.max(0, allowance.allowanceMicro - remaining)
+        ? Math.max(0, allowanceMicro - remaining)
         : null;
     } catch (error) {
       this.admitOnFailure({ error, workspaceId, admitted: null });
     }
 
     return {
-      limitValue: allowance.allowanceMicro,
+      limitValue: allowanceMicro,
       consumedValue,
       periodEnd: allowance.periodEnd,
     };
@@ -574,11 +573,18 @@ export class UsageLimitQuotaService implements OnModuleInit {
       ? await this.creditAllowanceProvider.getCreditAllowance(args.workspaceId)
       : null;
 
+    const allowanceMicro = isDefined(allowance)
+      ? computeCreditAllowanceMicro({
+          schedule: allowance.schedule,
+          nowMs: Date.now(),
+        })
+      : null;
+
     return exhaustedCounters.map((counter) =>
       buildQuotaExhaustedScope({
         resourceType: args.resourceType,
         counter,
-        allowance,
+        allowanceMicro,
       }),
     );
   }
@@ -938,8 +944,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
 
     const ttl =
-      Math.min(counter.periodEnd.getTime(), allowance.validUntil.getTime()) -
-      now;
+      findCreditAllowanceValidUntil({
+        schedule: allowance.schedule,
+        nowMs: now,
+        periodEndMs: counter.periodEnd.getTime(),
+      }) - now;
 
     if (ttl <= 0) {
       return [];
@@ -954,7 +963,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
     return [
       {
         key: counter.key,
-        value: allowance.allowanceMicro - consumedMicro,
+        value:
+          computeCreditAllowanceMicro({
+            schedule: allowance.schedule,
+            nowMs: now,
+          }) - consumedMicro,
         ttl,
       },
     ];
