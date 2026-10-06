@@ -27,7 +27,7 @@ import { type FocusEvent, type KeyboardEvent, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { toSpliced } from '~/utils/array/toSpliced';
 

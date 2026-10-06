@@ -16,7 +16,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';

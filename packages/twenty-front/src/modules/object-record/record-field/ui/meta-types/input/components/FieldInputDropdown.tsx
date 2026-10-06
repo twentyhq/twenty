@@ -6,7 +6,7 @@ import { preventDropdownDismissOnInputElement } from '@/ui/layout/dropdown/utils
 import { type KeyboardEvent, type ReactNode, useContext } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type FieldInputDropdownProps<TValue> = {
   children: ReactNode;

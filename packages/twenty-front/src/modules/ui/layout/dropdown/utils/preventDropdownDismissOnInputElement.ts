@@ -1,4 +1,4 @@
-import { type DropdownDismissEvent } from 'twenty-ui/components';
+import { type DropdownDismissEvent } from 'twenty-ui/components/navigation';
 
 export const preventDropdownDismissOnInputElement = (
   event: DropdownDismissEvent,

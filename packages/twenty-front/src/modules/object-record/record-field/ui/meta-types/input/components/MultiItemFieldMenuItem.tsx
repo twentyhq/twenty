@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import React, { useState } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconBookmark,
   IconBookmarkPlus,

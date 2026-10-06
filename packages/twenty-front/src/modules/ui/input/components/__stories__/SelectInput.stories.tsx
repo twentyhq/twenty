@@ -3,7 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useRef } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

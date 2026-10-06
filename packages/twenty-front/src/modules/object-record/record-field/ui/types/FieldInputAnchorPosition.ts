@@ -1,5 +1,5 @@
 import { type ComponentProps, type RefObject } from 'react';
-import { type Dropdown } from 'twenty-ui/components';
+import { type Dropdown } from 'twenty-ui/components/navigation';
 
 export type FieldInputAnchorPosition = Pick<
   ComponentProps<typeof Dropdown.Content>,

@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { createElement, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';

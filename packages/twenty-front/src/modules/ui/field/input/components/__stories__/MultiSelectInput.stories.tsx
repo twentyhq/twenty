@@ -2,7 +2,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useRef, useState } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
