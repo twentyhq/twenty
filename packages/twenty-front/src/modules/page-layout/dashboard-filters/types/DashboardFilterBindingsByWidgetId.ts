@@ -1,4 +1,4 @@
-import { type DashboardFilterBindingsBySlotId } from '@/page-layout/dashboard-filters/types/DashboardFilterBindingsBySlotId';
+import { type DashboardFilterBindingsBySlotId } from 'twenty-shared/types';
 
 export type DashboardFilterBindingsByWidgetId = Record<
   string,

@@ -47,7 +47,7 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
 
     expect(recordFilters).toEqual([
       {
-        id: 'dashboard-filter-date-slot',
+        id: 'dashboard-filter-slot-date-slot',
         fieldMetadataId: CREATED_AT_FIELD.id,
         type: 'DATE_TIME',
         operand: ViewFilterOperand.IS_AFTER,
@@ -174,6 +174,39 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
         relationTargetFieldMetadataId: 'target-field-id',
       }),
     ]);
+  });
+
+  it('produces nothing when the operand is not allowed for the slot type', () => {
+    const recordFilters = buildRecordFiltersFromDashboardFilters({
+      slots: [DATE_SLOT],
+      values: {
+        [DATE_SLOT.id]: { operand: ViewFilterOperand.CONTAINS, value: 'x' },
+      },
+      bindings: {
+        [DATE_SLOT.id]: { fieldMetadataId: CREATED_AT_FIELD.id },
+      },
+      fieldMetadataItems: FIELD_METADATA_ITEMS,
+    });
+
+    expect(recordFilters).toEqual([]);
+  });
+
+  it('produces nothing when the value does not match the slot type', () => {
+    const recordFilters = buildRecordFiltersFromDashboardFilters({
+      slots: [DATE_SLOT],
+      values: {
+        [DATE_SLOT.id]: {
+          operand: ViewFilterOperand.IS_AFTER,
+          value: 'garbage',
+        },
+      },
+      bindings: {
+        [DATE_SLOT.id]: { fieldMetadataId: CREATED_AT_FIELD.id },
+      },
+      fieldMetadataItems: FIELD_METADATA_ITEMS,
+    });
+
+    expect(recordFilters).toEqual([]);
   });
 
   it('produces nothing when the binding points to an unknown field', () => {

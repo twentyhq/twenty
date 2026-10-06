@@ -7,11 +7,13 @@ import { useSearchParams } from 'react-router-dom';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 
 type DashboardFilterUrlSyncEffectProps = {
+  pageLayoutId: string;
   slots: DashboardFilterSlot[];
 };
 
-// One-way after the first render: the URL seeds the values once, then the values are mirrored into the URL.
+// One-way after the first render: the URL replaces the values once, then the values are mirrored into the URL.
 export const DashboardFilterUrlSyncEffect = ({
+  pageLayoutId,
   slots,
 }: DashboardFilterUrlSyncEffectProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,34 +25,36 @@ export const DashboardFilterUrlSyncEffect = ({
 
   useEffect(() => {
     if (!hasInitializedFromUrl) {
-      const dashboardFilterValuesFromUrl =
+      setDashboardFilterValues(
         parseDashboardFilterValuesFromSearchParams({
           searchParams,
-          slotIds: slots.map((slot) => slot.id),
-        });
-
-      if (Object.keys(dashboardFilterValuesFromUrl).length > 0) {
-        setDashboardFilterValues((previousDashboardFilterValues) => ({
-          ...previousDashboardFilterValues,
-          ...dashboardFilterValuesFromUrl,
-        }));
-      }
+          pageLayoutId,
+          slots,
+        }),
+      );
 
       setHasInitializedFromUrl(true);
 
       return;
     }
 
-    const nextSearchParams = serializeDashboardFilterValuesToSearchParams({
-      searchParams,
-      values: dashboardFilterValues,
-    });
+    setSearchParams(
+      (previousSearchParams) => {
+        const nextSearchParams = serializeDashboardFilterValuesToSearchParams({
+          searchParams: previousSearchParams,
+          pageLayoutId,
+          values: dashboardFilterValues,
+        });
 
-    if (nextSearchParams.toString() !== searchParams.toString()) {
-      setSearchParams(nextSearchParams, { replace: true });
-    }
+        return nextSearchParams.toString() === previousSearchParams.toString()
+          ? previousSearchParams
+          : nextSearchParams;
+      },
+      { replace: true },
+    );
   }, [
     hasInitializedFromUrl,
+    pageLayoutId,
     slots,
     searchParams,
     setSearchParams,

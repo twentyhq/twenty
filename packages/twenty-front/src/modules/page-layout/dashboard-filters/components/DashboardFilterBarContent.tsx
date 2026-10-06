@@ -2,8 +2,8 @@ import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { getDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBinding';
-import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -24,11 +24,13 @@ const StyledBar = styled.div`
 `;
 
 export const DashboardFilterBarContent = () => {
-  const pageLayoutInstanceId = useAvailableComponentInstanceIdOrThrow(
-    PageLayoutComponentInstanceContext,
-  );
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const workspaceSurface = useWorkspaceSurface();
 
   const { slots, bindingsByWidgetId } = useDashboardFilterSlots();
+
+  // Only the surface that owns the route mirrors values into the URL; a side panel dashboard keeps them in memory.
+  const shouldSyncWithUrl = workspaceSurface.type === 'main';
 
   if (slots.length === 0) {
     return null;
@@ -36,8 +38,13 @@ export const DashboardFilterBarContent = () => {
 
   return (
     <>
-      {/* Keyed so a navigation to another dashboard re-reads that dashboard's URL instead of overwriting it. */}
-      <DashboardFilterUrlSyncEffect key={pageLayoutInstanceId} slots={slots} />
+      {shouldSyncWithUrl && (
+        <DashboardFilterUrlSyncEffect
+          key={currentPageLayout.id}
+          pageLayoutId={currentPageLayout.id}
+          slots={slots}
+        />
+      )}
       <StyledBar>
         {slots.map((slot) => {
           const representativeBinding = getDashboardFilterRepresentativeBinding(

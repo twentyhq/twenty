@@ -3,7 +3,7 @@ import { BUILT_IN_DASHBOARD_FILTER_SLOT_IDS } from '@/page-layout/dashboard-filt
 import { type DashboardFilterBindingsByWidgetId } from '@/page-layout/dashboard-filters/types/DashboardFilterBindingsByWidgetId';
 import { computeBuiltInDateBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInDateBindings';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -16,7 +16,6 @@ export const useDashboardFilterSlots = (): {
   slots: DashboardFilterSlot[];
   bindingsByWidgetId: DashboardFilterBindingsByWidgetId;
 } => {
-  const { t } = useLingui();
   const { currentPageLayout } = useCurrentPageLayout();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -36,7 +35,7 @@ export const useDashboardFilterSlots = (): {
             },
           ]
         : EMPTY_SLOTS,
-    [dashboardPageLayout, t],
+    [dashboardPageLayout],
   );
 
   const bindingsByWidgetId = useMemo<DashboardFilterBindingsByWidgetId>(() => {

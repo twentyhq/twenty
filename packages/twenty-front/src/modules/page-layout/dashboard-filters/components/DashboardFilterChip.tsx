@@ -8,7 +8,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { DashboardFilterChipDropdownContent } from '@/page-layout/dashboard-filters/components/DashboardFilterChipDropdownContent';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
-import { buildRecordFilterFromDashboardFilterValue } from '@/page-layout/dashboard-filters/utils/buildRecordFilterFromDashboardFilterValue';
 import { getDashboardFilterChipComponentInstanceId } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChipComponentInstanceId';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -23,7 +22,8 @@ import {
   type DashboardFilterSlot,
 } from 'twenty-shared/types';
 import {
-  getDashboardFilterRecordFilterId,
+  buildRecordFilterFromDashboardFilterSlot,
+  getDashboardFilterSlotRecordFilterId,
   isDefined,
   removePropertiesFromRecord,
 } from 'twenty-shared/utils';
@@ -68,13 +68,22 @@ export const DashboardFilterChip = ({
 
   const { getIcon } = useIcons();
 
-  const currentRecordFilter = isDefined(dashboardFilterValue)
-    ? buildRecordFilterFromDashboardFilterValue({
-        slot,
-        binding: representativeBinding,
-        fieldMetadataItem,
-        value: dashboardFilterValue,
-      })
+  // displayValue stays empty: the chip label is derived from the value at render time.
+  const currentRecordFilter: RecordFilter | undefined = isDefined(
+    dashboardFilterValue,
+  )
+    ? {
+        ...buildRecordFilterFromDashboardFilterSlot({
+          slot,
+          binding: representativeBinding,
+          value: dashboardFilterValue,
+          fieldMetadataItem,
+        }),
+        // The shared filter allows a null group id, the front one does not.
+        recordFilterGroupId: undefined,
+        label: slot.label,
+        displayValue: '',
+      }
     : undefined;
 
   // Without a value, the inputs are seeded like a freshly added view filter; nothing is applied until the user changes it.
@@ -88,7 +97,7 @@ export const DashboardFilterChip = ({
 
     return {
       ...newRecordFilter,
-      id: getDashboardFilterRecordFilterId(slot.id),
+      id: getDashboardFilterSlotRecordFilterId(slot.id),
       label: slot.label,
       subFieldName: representativeBinding.subFieldName,
       relationTargetFieldMetadataId:
@@ -171,7 +180,10 @@ export const DashboardFilterChip = ({
               />
             }
             dropdownComponents={
-              <DashboardFilterChipDropdownContent slot={slot} />
+              <DashboardFilterChipDropdownContent
+                slot={slot}
+                dropdownId={dropdownId}
+              />
             }
             dropdownOffset={{ y: 8, x: 0 }}
             dropdownPlacement="bottom-start"

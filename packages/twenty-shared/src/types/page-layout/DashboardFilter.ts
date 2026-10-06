@@ -29,3 +29,9 @@ export type DashboardFilterBinding = {
   subFieldName?: CompositeFieldSubFieldName | null;
   relationTargetFieldMetadataId?: string | null;
 };
+
+// null means the slot is explicitly not applied to this chart.
+export type DashboardFilterBindingsBySlotId = Record<
+  string,
+  DashboardFilterBinding | null
+>;

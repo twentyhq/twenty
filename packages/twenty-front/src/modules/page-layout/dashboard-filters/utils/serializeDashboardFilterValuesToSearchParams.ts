@@ -2,18 +2,21 @@ import { DASHBOARD_FILTER_URL_QUERY_PARAM_KEY } from '@/page-layout/dashboard-fi
 import { type DashboardFilterValues } from '@/page-layout/dashboard-filters/types/DashboardFilterValues';
 import { isDefined } from 'twenty-shared/utils';
 
-// Rewrites only the dashboardFilter[...] params and leaves every other query param untouched.
 export const serializeDashboardFilterValuesToSearchParams = ({
   searchParams,
+  pageLayoutId,
   values,
 }: {
   searchParams: URLSearchParams;
+  pageLayoutId: string;
   values: DashboardFilterValues;
 }): URLSearchParams => {
   const nextSearchParams = new URLSearchParams(searchParams);
 
+  const pageLayoutParamPrefix = `${DASHBOARD_FILTER_URL_QUERY_PARAM_KEY}[${pageLayoutId}][`;
+
   for (const key of Array.from(nextSearchParams.keys())) {
-    if (key.startsWith(`${DASHBOARD_FILTER_URL_QUERY_PARAM_KEY}[`)) {
+    if (key.startsWith(pageLayoutParamPrefix)) {
       nextSearchParams.delete(key);
     }
   }
@@ -24,11 +27,11 @@ export const serializeDashboardFilterValuesToSearchParams = ({
     }
 
     nextSearchParams.set(
-      `${DASHBOARD_FILTER_URL_QUERY_PARAM_KEY}[${slotId}][operand]`,
+      `${pageLayoutParamPrefix}${slotId}][operand]`,
       value.operand,
     );
     nextSearchParams.set(
-      `${DASHBOARD_FILTER_URL_QUERY_PARAM_KEY}[${slotId}][value]`,
+      `${pageLayoutParamPrefix}${slotId}][value]`,
       value.value,
     );
   }

@@ -1,16 +1,13 @@
 import {
-  type DashboardFilterBinding,
+  type DashboardFilterBindingsBySlotId,
   type DashboardFilterSlot,
   type DashboardFilterValue,
   type FieldMetadataType,
 } from '@/types';
-import { isRecordFilterValueValid } from '@/utils/filter/isRecordFilterValueValid';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
-import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
+import { buildRecordFilterFromDashboardFilterSlot } from '@/utils/pageLayout/buildRecordFilterFromDashboardFilterSlot';
+import { isDashboardFilterValueValidForSlot } from '@/utils/pageLayout/isDashboardFilterValueValidForSlot';
 import { isDefined } from '@/utils/validation/isDefined';
-
-export const getDashboardFilterRecordFilterId = (slotId: string) =>
-  `dashboard-filter-${slotId}`;
 
 export const buildRecordFiltersFromDashboardFilters = ({
   slots,
@@ -20,7 +17,7 @@ export const buildRecordFiltersFromDashboardFilters = ({
 }: {
   slots: DashboardFilterSlot[];
   values: Record<string, DashboardFilterValue | undefined>;
-  bindings: Record<string, DashboardFilterBinding | null | undefined>;
+  bindings: Partial<DashboardFilterBindingsBySlotId>;
   fieldMetadataItems: { id: string; type: FieldMetadataType }[];
 }): RecordFilter[] => {
   const fieldMetadataItemById = new Map(
@@ -39,7 +36,7 @@ export const buildRecordFiltersFromDashboardFilters = ({
         return undefined;
       }
 
-      if (!isRecordFilterValueValid(value)) {
+      if (!isDashboardFilterValueValidForSlot({ slot, value })) {
         return undefined;
       }
 
@@ -51,16 +48,12 @@ export const buildRecordFiltersFromDashboardFilters = ({
         return undefined;
       }
 
-      return {
-        id: getDashboardFilterRecordFilterId(slot.id),
-        fieldMetadataId: binding.fieldMetadataId,
-        type: getFilterTypeFromFieldType(boundFieldMetadataItem.type),
-        operand: value.operand,
-        value: value.value,
-        subFieldName: binding.subFieldName ?? undefined,
-        relationTargetFieldMetadataId:
-          binding.relationTargetFieldMetadataId ?? undefined,
-      };
+      return buildRecordFilterFromDashboardFilterSlot({
+        slot,
+        binding,
+        value,
+        fieldMetadataItem: boundFieldMetadataItem,
+      });
     })
     .filter(isDefined);
 };

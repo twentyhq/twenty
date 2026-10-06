@@ -1,17 +1,21 @@
 import { ObjectFilterDropdownContentWrapper } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownContentWrapper';
-import { DashboardFilterValueInput } from '@/page-layout/dashboard-filters/components/DashboardFilterValueInput';
+import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
+import { getDashboardFilterSlotRecordFilterId } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
 
 type DashboardFilterChipDropdownContentProps = {
   slot: DashboardFilterSlot;
+  dropdownId: string;
 };
 
+// The regular filter input dispatches on the seeded representative field, whose type matches the slot by construction.
 export const DashboardFilterChipDropdownContent = ({
   slot,
+  dropdownId,
 }: DashboardFilterChipDropdownContentProps) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -31,7 +35,10 @@ export const DashboardFilterChipDropdownContent = ({
       >
         {slot.label}
       </DropdownMenuHeader>
-      <DashboardFilterValueInput filterType={slot.filterType} />
+      <ObjectFilterDropdownFilterInput
+        filterDropdownId={dropdownId}
+        recordFilterId={getDashboardFilterSlotRecordFilterId(slot.id)}
+      />
     </ObjectFilterDropdownContentWrapper>
   );
 };
