@@ -113,7 +113,7 @@ export const buildTestApplicationManifest = ({
       roles: [
         {
           universalIdentifier: roleUniversalIdentifier,
-          label: 'Application workflow test role',
+          label: `Application workflow test role ${applicationUniversalIdentifier}`,
           description: 'Role the application workflows run with',
           canUpdateAllSettings: false,
           canReadAllObjectRecords: false,
