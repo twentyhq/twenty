@@ -42,6 +42,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   isUpgradeDisabled: boolean;
   onUninstall: () => void;
   isUninstalling: boolean;
+  uninstallProgress?: number;
 };
 
 export const SettingsApplicationDetailGeneralTab = ({
@@ -58,6 +59,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   isUpgradeDisabled,
   onUninstall,
   isUninstalling,
+  uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -109,6 +111,7 @@ export const SettingsApplicationDetailGeneralTab = ({
             key="uninstall"
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
+            uninstallProgress={uninstallProgress}
           />,
         ]
       : []),

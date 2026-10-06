@@ -344,6 +344,43 @@ describe('data inspection commands', () => {
     });
   });
 
+  it('omits deletedAt from default columns but keeps explicit columns and machine output', async () => {
+    records = [
+      {
+        id: '1',
+        name: 'Acme',
+        deletedAt: null,
+        employees: 100,
+        city: 'Paris',
+        country: 'France',
+      },
+    ];
+
+    const human = await runCliForTest(['data', 'list', 'companies']);
+    const explicit = await runCliForTest([
+      'data',
+      'list',
+      'companies',
+      '--fields',
+      'name,deletedAt',
+    ]);
+    const json = await runJson(['list', 'companies']);
+    const stream = await runStream(['companies']);
+
+    expect(human.exitCode).toBe(0);
+    expect(human.stdout.toLowerCase()).not.toContain('deletedat');
+    expect(human.stdout).toContain('France');
+    expect(explicit.exitCode).toBe(0);
+    expect(explicit.stdout.toLowerCase()).toContain('deletedat');
+    expect(json.envelope.data.records).toEqual(records);
+    expect(stream.events).toContainEqual(
+      expect.objectContaining({
+        type: 'record',
+        data: records[0],
+      }),
+    );
+  });
+
   it('returns an empty list with page information and useful human output', async () => {
     records = [];
     expect((await runJson(['list', 'companies'])).envelope.data).toEqual({

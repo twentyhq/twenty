@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
+  type FeatureFlagKey,
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -19,7 +20,7 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
-import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export type OperationType =
@@ -40,7 +41,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   selectedColumns: string[];
   updatedColumns: string[];
   authContext?: WorkspaceAuthContext;
-  isRecordSharingEnabled?: boolean;
+  featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
 };
 
 export const validateOperationIsPermittedOrThrow = ({
@@ -53,7 +54,7 @@ export const validateOperationIsPermittedOrThrow = ({
   selectedColumns,
   updatedColumns,
   authContext,
-  isRecordSharingEnabled = false,
+  featureFlagsMap = {},
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -101,11 +102,10 @@ export const validateOperationIsPermittedOrThrow = ({
         operationType,
         objectsPermissions,
       })) &&
-    !isRecordGrantBeyondRoleAllowed({
+    !resolveObjectSharing({
       flatObjectMetadata: objectMetadata,
-      operationType,
-      isRecordSharingEnabled,
-    })
+      featureFlagsMap,
+    }).operationTypesGrantedBeyondRole.includes(operationType)
   ) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
