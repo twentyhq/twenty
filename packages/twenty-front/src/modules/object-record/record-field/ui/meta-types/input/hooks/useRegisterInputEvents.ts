@@ -1,6 +1,7 @@
 import { Key } from 'ts-key-enum';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { isKeyboardEventTargetActivatedByEnter } from '@/ui/utilities/hotkey/utils/isKeyboardEventTargetActivatedByEnter';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,6 +42,9 @@ export const useRegisterInputEvents = <T>({
     },
     focusId,
     dependencies: [onEnter, inputValue],
+    options: {
+      ignoreEventWhen: isKeyboardEventTargetActivatedByEnter,
+    },
   });
 
   useHotkeysOnFocusedElement({

@@ -8,6 +8,13 @@
  */
 
 export type { AgentManifest } from './agentManifestType';
+export type {
+  AgentTriggerType,
+  AgentDatabaseEventTrigger,
+  AgentCronTrigger,
+  AgentTrigger,
+  AgentTriggerManifest,
+} from './agentTriggerType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -66,7 +73,11 @@ export type {
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
+export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
+export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
+export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
@@ -77,6 +88,7 @@ export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettings
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
+export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
@@ -202,9 +214,13 @@ export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType'
 export type {
   RunAgentMessageRole,
   RunAgentMessage,
+  RunAgentThread,
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
+export type { SendInboxMessageInput } from './sendInboxMessageInputType';
+export type { SendInboxMessageResult } from './sendInboxMessageResultType';
+export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
@@ -248,6 +264,7 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

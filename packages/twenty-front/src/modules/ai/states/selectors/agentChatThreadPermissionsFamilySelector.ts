@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -12,7 +13,7 @@ export const agentChatThreadPermissionsFamilySelector =
       (threadId) =>
       ({ get }) => {
         const objectMetadata = get(objectMetadataItemFamilySelector, {
-          objectName: 'agentChatThread',
+          objectName: CoreObjectNameSingular.AgentChatThread,
           objectNameType: 'singular',
         });
         return isDefined(objectMetadata)

@@ -3,7 +3,7 @@ import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardM
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -17,8 +17,9 @@ export const InformationBannerEndTrialPeriod = () => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
+  const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,

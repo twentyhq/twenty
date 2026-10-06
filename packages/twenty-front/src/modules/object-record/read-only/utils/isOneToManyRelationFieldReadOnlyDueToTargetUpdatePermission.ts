@@ -1,17 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-
-type ObjectPermissionsByObjectMetadataId = Record<
-  string,
-  ObjectPermissions & { objectMetadataId: string }
->;
 
 type IsOneToManyRelationFieldReadOnlyDueToTargetUpdatePermissionParams = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
@@ -39,8 +35,10 @@ const isTargetRecordUpdateBlocked = ({
 
   return (
     isNonEmptyString(inverseFieldMetadataId) &&
-    targetObjectPermissions.restrictedFields[inverseFieldMetadataId]
-      ?.canUpdate === false
+    !getFieldPermissions({
+      objectPermissions: targetObjectPermissions,
+      fieldMetadataId: inverseFieldMetadataId,
+    }).canUpdateField
   );
 };
 

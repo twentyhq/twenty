@@ -2,6 +2,7 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemButtonHotkeyEffect } from '@/command-menu-item/display/components/CommandMenuItemButtonHotkeyEffect';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
@@ -56,6 +57,12 @@ const CommandMenuItemButtonRenderer = ({
     hotKeys: item.hotKeys,
   };
 
+  // A letter runs the button it labels; symbols such as / and @ open the
+  // command menu from anywhere, and key sequences belong to it too
+  const [hotKey] = item.hotKeys ?? [];
+  const runsOnHotKey =
+    item.hotKeys?.length === 1 && /^[a-z]$/i.test(hotKey ?? '');
+
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
@@ -69,15 +76,24 @@ const CommandMenuItemButtonRenderer = ({
   }
 
   return (
-    <CommandMenuButton
-      command={command}
-      onClick={disabled ? undefined : handleClick}
-      disabled={disabled}
-      progress={progress}
-      loading={isLoading}
-      isPrimaryAction={isPrimaryAction}
-      shouldHideLabel={shouldHideLabel}
-    />
+    <>
+      {runsOnHotKey && (
+        <CommandMenuItemButtonHotkeyEffect
+          hotKey={hotKey}
+          disabled={disabled}
+          onHotkeyTriggered={handleClick}
+        />
+      )}
+      <CommandMenuButton
+        command={command}
+        onClick={disabled ? undefined : handleClick}
+        disabled={disabled}
+        progress={progress}
+        loading={isLoading}
+        isPrimaryAction={isPrimaryAction}
+        shouldHideLabel={shouldHideLabel}
+      />
+    </>
   );
 };
 

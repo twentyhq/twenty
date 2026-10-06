@@ -94,10 +94,12 @@ describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
 
   describe('Rest filter input - success', () => {
     it.each(
-      successfulTestCases.map((testCase) => ({
-        ...testCase,
-        stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-      })),
+      successfulTestCases
+        .filter((testCase) => testCase.restFilterInput)
+        .map((testCase) => ({
+          ...testCase,
+          stringifiedFilter: JSON.stringify(testCase.restFilterInput),
+        })),
     )(
       `${FIELD_METADATA_TYPE} field type - should succeed with filter : $stringifiedFilter`,
       async ({ restFilterInput, validateFilter }) => {

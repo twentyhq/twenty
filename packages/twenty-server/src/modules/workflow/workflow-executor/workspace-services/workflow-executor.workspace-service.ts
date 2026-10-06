@@ -1,16 +1,20 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
   StepStatus,
+  WORKFLOW_ACTION_FEATURE_FLAGS,
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
   type WorkflowRunStepLog,
 } from 'twenty-shared/workflow';
 
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
@@ -24,7 +28,6 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -34,6 +37,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
+import { assertStepTypeAvailableToApplicationRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-application-run.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -53,6 +57,7 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -66,13 +71,13 @@ export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -173,6 +178,7 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
+        runApplicationId: workflowRun.createdBy.context?.applicationId,
         resumedThreadId,
         previousStepLog: isDefined(resumedThreadId)
           ? workflowRun.stepLogs?.[stepId]
@@ -188,6 +194,7 @@ export class WorkflowExecutorWorkspaceService {
         if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
+            resumedThreadId,
             error: actionOutput.error,
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
@@ -245,7 +252,7 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldSkipStepExecution &&
       !isDefined(resumedThreadId)
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
+      await this.chargeWorkflowNodeRun(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -380,6 +387,29 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
+  private async assertActionTypeEnabled({
+    type,
+    workspaceId,
+  }: {
+    type: WorkflowAction['type'];
+    workspaceId: string;
+  }): Promise<void> {
+    const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
+
+    if (
+      isDefined(featureFlag) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        featureFlag,
+        workspaceId,
+      ))
+    ) {
+      throw new WorkflowStepExecutorException(
+        `WorkflowActionType '${type}' is not enabled`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+  }
+
   private async getNodeRunRefusal({
     workspaceId,
     billingSpenders,
@@ -387,16 +417,6 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
   }): Promise<WorkflowActionOutput | undefined> {
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
-      return undefined;
-    }
-
     try {
       await this.billingUsageService.assertUsageAllowed({
         workspaceId,
@@ -419,29 +439,24 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
-  private async sendWorkflowNodeRunEvent(
+  private async chargeWorkflowNodeRun(
     workspaceId: string,
     billingSpenders: WorkflowBillingSpenders,
   ) {
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: billingSpenders,
-      cost: { creditsUsedMicro: 100, quantity: 1 },
+      events: [
+        {
+          resourceType: UsageResourceType.WORKFLOW,
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          creditsUsedMicro: 100,
+          quantity: 1,
+          unit: UsageUnit.INVOCATION,
+          resourceId: billingSpenders.workflowId,
+          spenders: billingSpenders,
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.WORKFLOW,
-        operationType: UsageOperationType.WORKFLOW_EXECUTION,
-        creditsUsedMicro: 100,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
-        resourceId: billingSpenders.workflowId,
-        spenders: billingSpenders,
-      },
-    ]);
   }
 
   private async processStepExecutionResult({
@@ -455,7 +470,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<{ shouldProcessNextSteps: boolean }> {
-    const isPendingEvent = actionOutput.pendingEvent;
+    const wait = actionOutput.wait;
     const isSuccess = isDefined(actionOutput.result);
     const isStopped = actionOutput.shouldEndWorkflowRun ?? false;
     const isNotFinished = actionOutput.shouldRemainRunning ?? false;
@@ -464,9 +479,10 @@ export class WorkflowExecutorWorkspaceService {
 
     let stepInfo: WorkflowRunStepInfo;
 
-    if (isPendingEvent) {
+    if (isDefined(wait)) {
       stepInfo = {
         status: StepStatus.PENDING,
+        wait,
       };
     } else if (isStopped) {
       stepInfo = {
@@ -499,6 +515,16 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
+    // armed before the step reads as pending, so an event in between is put off rather than lost
+    if (isDefined(wait)) {
+      await this.workflowStepWaitWorkspaceService.arm({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        wait,
+      });
+    }
+
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo,
@@ -506,10 +532,43 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
+    if (isDefined(wait)) {
+      await this.cancelWaitIfRunEnded({ stepId, workflowRunId, workspaceId });
+    }
+
     return {
       shouldProcessNextSteps:
         isSuccess || isStopped || isSkipped || isFailedSafely,
     };
+  }
+
+  // a run that ended while its step was arming cancelled its waits before this one existed
+  private async cancelWaitIfRunEnded({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { status } =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (
+      status === WorkflowRunStatus.COMPLETED ||
+      status === WorkflowRunStatus.FAILED ||
+      status === WorkflowRunStatus.STOPPED
+    ) {
+      await this.workflowStepWaitWorkspaceService.cancelStepWait({
+        workspaceId,
+        workflowRunId,
+        stepId,
+      });
+    }
   }
 
   private async executeStep({
@@ -519,6 +578,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
+    runApplicationId,
     resumedThreadId,
     previousStepLog,
   }: {
@@ -528,6 +588,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
+    runApplicationId?: string;
     resumedThreadId?: string;
     previousStepLog?: WorkflowRunStepLog;
   }) {
@@ -546,6 +607,13 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
+      await this.assertActionTypeEnabled({ type: step.type, workspaceId });
+
+      assertStepTypeAvailableToApplicationRun({
+        stepType: step.type,
+        runApplicationId,
+      });
+
       // A resumed step's quota was checked when it first ran and paused.
       const nodeRunRefusal = isDefined(resumedThreadId)
         ? undefined
@@ -690,14 +758,18 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
+  // a step that failed after resuming on an answer retries from that conversation, so the
+  // person is not asked again and an approved call does not run a second time
   private async scheduleStepRetry({
     stepId,
+    resumedThreadId,
     error,
     retryDelayMs,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId: string | undefined;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
@@ -705,6 +777,7 @@ export class WorkflowExecutorWorkspaceService {
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
+      resumedThreadId,
       error,
       workflowRunId,
       workspaceId,

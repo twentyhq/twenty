@@ -849,6 +849,20 @@ export const successfulFilterInputByFieldMetadataType: {
         return isDefined(record.multiSelectField);
       },
     },
+    {
+      gqlFilterInput: { multiSelectField: { isEmptyArray: true } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return record.multiSelectField.length === 0;
+      },
+    },
+    {
+      gqlFilterInput: { multiSelectField: { isEmptyArray: false } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return record.multiSelectField.length > 0;
+      },
+    },
   ],
   [FieldMetadataType.ADDRESS]: [
     {
@@ -963,6 +977,20 @@ export const successfulFilterInputByFieldMetadataType: {
           record.arrayField === null ||
           (Array.isArray(record.arrayField) && record.arrayField.length === 0)
         );
+      },
+    },
+    {
+      gqlFilterInput: { arrayField: { isEmptyArray: true } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return record.arrayField.length === 0;
+      },
+    },
+    {
+      gqlFilterInput: { arrayField: { isEmptyArray: false } },
+      restFilterInput: '',
+      validateFilter: (record: Record<string, any>) => {
+        return record.arrayField.length > 0;
       },
     },
   ],

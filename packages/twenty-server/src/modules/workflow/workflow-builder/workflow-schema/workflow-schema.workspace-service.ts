@@ -1,4 +1,5 @@
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
+import { WAIT_FOR_EVENT_NAME_PATTERN } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/constants/wait-for-event-name-pattern.constant';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
@@ -118,6 +119,11 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.FORM:
         return this.computeFormActionOutputSchema({
           formFieldMetadataItems: step.settings.input,
+          workspaceId,
+        });
+      case WorkflowActionType.WAIT_FOR_EVENT:
+        return this.computeWaitForEventOutputSchema({
+          eventName: step.settings.input?.eventName,
           workspaceId,
         });
       case WorkflowActionType.ITERATOR: {
@@ -382,6 +388,82 @@ export class WorkflowSchemaWorkspaceService {
       );
 
     return generateFakeObjectRecord({ objectMetadataInfo });
+  }
+
+  private async computeWaitForEventOutputSchema({
+    eventName,
+    workspaceId,
+  }: {
+    eventName: string | undefined;
+    workspaceId: string;
+  }): Promise<OutputSchema> {
+    // a step being configured has no output to describe yet, like on the front
+    if (!isDefined(eventName) || !WAIT_FOR_EVENT_NAME_PATTERN.test(eventName)) {
+      return {};
+    }
+
+    const [objectType, action] = eventName.split('.');
+
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+        objectType,
+        workspaceId,
+      );
+
+    const recordLabel =
+      objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record';
+
+    const record: Node = {
+      isLeaf: false,
+      label: recordLabel,
+      icon: 'IconAlpha',
+      type: 'object',
+      value: generateFakeObjectRecord({ objectMetadataInfo }),
+    };
+
+    const recordId: Leaf = {
+      isLeaf: true,
+      label: 'Record ID',
+      icon: 'IconId',
+      type: 'string',
+      value: generateFakeValue('string'),
+    };
+
+    const hasTimedOut: Leaf = {
+      isLeaf: true,
+      label: 'Has Timed Out',
+      icon: 'IconClockX',
+      type: 'boolean',
+      value: false,
+    };
+
+    if (action !== 'updated' && action !== 'upserted') {
+      return { record, recordId, hasTimedOut } satisfies OutputSchema;
+    }
+
+    const before: Node = {
+      isLeaf: false,
+      label: `${recordLabel} Before Update`,
+      icon: 'IconHistory',
+      type: 'object',
+      value: generateFakeObjectRecord({ objectMetadataInfo }),
+    };
+
+    const updatedFields: Leaf = {
+      isLeaf: true,
+      label: 'Updated Fields',
+      icon: 'IconListDetails',
+      type: 'array',
+      value: ['name'],
+    };
+
+    return {
+      record,
+      recordId,
+      before,
+      updatedFields,
+      hasTimedOut,
+    } satisfies OutputSchema;
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {

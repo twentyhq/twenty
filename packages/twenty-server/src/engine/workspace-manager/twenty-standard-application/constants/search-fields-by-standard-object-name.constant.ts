@@ -6,10 +6,10 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   agentChatThread: [],
   agentChatThreadTarget: [],
+  agentChatThreadParticipant: [],
   agentTurn: [],
   agentMessage: [],
   agentMessagePart: [],
-  agentTurnEvaluation: [],
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
   blocklist: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   calendarChannelEventAssociation: [

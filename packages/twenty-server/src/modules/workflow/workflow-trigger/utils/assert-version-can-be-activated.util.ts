@@ -12,6 +12,7 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertWaitForEventStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
 export function assertVersionCanBeActivated(
@@ -274,6 +275,9 @@ function assertStepIsValid(step: WorkflowAction) {
   switch (step.type) {
     case WorkflowActionType.FORM:
       assertFormStepIsValid(step.settings);
+      break;
+    case WorkflowActionType.WAIT_FOR_EVENT:
+      assertWaitForEventStepIsValid(step.settings);
       break;
     default:
       break;
