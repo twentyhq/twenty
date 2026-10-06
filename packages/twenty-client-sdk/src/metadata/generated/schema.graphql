@@ -1639,7 +1639,7 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type ApplicationVariableUserValue {
+type UserApplicationVariableValue {
   key: String!
   value: String!
   description: String!
@@ -1654,7 +1654,7 @@ type ApplicationVariableUserValue {
 type WorkspaceMemberApplicationVariables {
   userWorkspaceId: UUID!
   workspaceMemberId: UUID!
-  variables: [ApplicationVariableUserValue!]!
+  variables: [UserApplicationVariableValue!]!
 }
 
 type UserSession {
@@ -3966,7 +3966,7 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
-  applicationVariableUserValues: [WorkspaceMemberApplicationVariables!]!
+  myApplicationUserVariables: [WorkspaceMemberApplicationVariables!]!
   objects(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -4294,7 +4294,7 @@ type Mutation {
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
-  updateMyApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
+  updateMyApplicationUserVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!

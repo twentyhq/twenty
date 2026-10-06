@@ -3148,7 +3148,7 @@ export default {
             ]
         },
         "LogicFunctionExecutionStatus": {},
-        "ApplicationVariableUserValue": {
+        "UserApplicationVariableValue": {
             "key": [
                 1
             ],
@@ -7938,7 +7938,7 @@ export default {
                     ]
                 }
             ],
-            "applicationVariableUserValues": [
+            "myApplicationUserVariables": [
                 158
             ],
             "objects": [
@@ -9682,7 +9682,7 @@ export default {
                     ]
                 }
             ],
-            "updateMyApplicationVariable": [
+            "updateMyApplicationUserVariable": [
                 8,
                 {
                     "applicationUniversalIdentifier": [
@@ -9768,19 +9768,6 @@ export default {
                     "hasBookedCall": [
                         8,
                         "Boolean!"
-                    ],
-                    "isAutoSkipped": [
-                        8,
-                        "Boolean!"
-                    ]
-                }
-            ],
-            "triggerInstallAppsOnboardingStep": [
-                208,
-                {
-                    "universalIdentifiers": [
-                        1,
-                        "[String!]!"
                     ],
                     "isAutoSkipped": [
                         8,
