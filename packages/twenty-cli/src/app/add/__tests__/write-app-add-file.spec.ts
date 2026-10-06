@@ -1,5 +1,6 @@
 import {
   link,
+  lstat,
   mkdtemp,
   readFile,
   readdir,
@@ -20,6 +21,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   return {
     ...actual,
     link: vi.fn(actual.link),
+    lstat: vi.fn(actual.lstat),
     rm: vi.fn(actual.rm),
     writeFile: vi.fn(actual.writeFile),
   };
@@ -40,6 +42,22 @@ describe('app add exclusive file creation', () => {
     vi.restoreAllMocks();
     await rm(root, { recursive: true, force: true });
   });
+
+  it.each(['EACCES', 'EIO'])(
+    'preserves %s from path validation',
+    async (code) => {
+      const error = Object.assign(new Error('filesystem failure'), { code });
+      vi.mocked(lstat).mockRejectedValueOnce(error);
+      await expect(
+        writeAppAddFile({
+          appPath: root,
+          file,
+          signal: new AbortController().signal,
+        }),
+      ).rejects.toBe(error);
+      expect(link).not.toHaveBeenCalled();
+    },
+  );
 
   it('preserves a destination created while the new definition was staged', async () => {
     vi.mocked(link).mockImplementationOnce(async (source, destination) => {

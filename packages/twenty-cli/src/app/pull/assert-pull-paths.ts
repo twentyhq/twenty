@@ -1,6 +1,8 @@
 import { lstat } from 'node:fs/promises';
 import { isAbsolute, relative, resolve, sep } from 'node:path';
 
+import { AppPathError } from '@/app/pull/app-path-error';
+
 import { hasErrorCode } from '@/utils/has-error-code';
 
 export const assertPullPaths = async ({
@@ -19,8 +21,8 @@ export const assertPullPaths = async ({
       containedPath.startsWith(`..${sep}`) ||
       isAbsolute(containedPath)
     ) {
-      throw new Error(
-        `Pull path leaves the application directory: ${relativePath}`,
+      throw new AppPathError(
+        `Path leaves the application directory: ${relativePath}`,
       );
     }
 
@@ -31,8 +33,8 @@ export const assertPullPaths = async ({
 
       try {
         if ((await lstat(currentPath)).isSymbolicLink()) {
-          throw new Error(
-            `Pull does not follow symbolic links: ${relativePath}`,
+          throw new AppPathError(
+            `Cannot follow symbolic links: ${relativePath}`,
           );
         }
       } catch (error) {

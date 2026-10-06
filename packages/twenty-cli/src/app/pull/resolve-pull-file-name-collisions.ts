@@ -12,7 +12,8 @@ export const resolvePullFileNameCollisions = (
     const candidate = `${entity.defaultFolder}/${entity.fileBaseName}${entity.fileSuffix}`;
     const existing = entitiesByCandidate.get(candidate) ?? [];
 
-    entitiesByCandidate.set(candidate, [...existing, entity]);
+    existing.push(entity);
+    entitiesByCandidate.set(candidate, existing);
   }
 
   const fileBaseNameByUniversalIdentifier = new Map<string, string>();
@@ -34,11 +35,16 @@ export const resolvePullFileNameCollisions = (
         : entity.fileBaseName,
     );
 
+    const qualifiedNameCounts = new Map<string, number>();
+
+    for (const name of qualifiedNames) {
+      qualifiedNameCounts.set(name, (qualifiedNameCounts.get(name) ?? 0) + 1);
+    }
+
     collidingEntities.forEach((entity, index) => {
       const qualifiedName = qualifiedNames[index];
       const isQualifiedNameUnique =
-        qualifiedNames.indexOf(qualifiedName) ===
-        qualifiedNames.lastIndexOf(qualifiedName);
+        qualifiedNameCounts.get(qualifiedName) === 1;
 
       fileBaseNameByUniversalIdentifier.set(
         entity.universalIdentifier,

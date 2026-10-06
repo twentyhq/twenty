@@ -46,4 +46,14 @@ describe('printTypescriptValue', () => {
       printTypescriptValue({ value: { kept: null, dropped: undefined } }),
     ).toBe('{\n  kept: null,\n}');
   });
+  it('preserves lone surrogates and non-BMP text through UTF-8 source files', () => {
+    const value = {
+      label: String.fromCharCode(0xd800) + '😀' + String.fromCharCode(0xdfff),
+    };
+    const printed = printTypescriptValue({ value });
+
+    expect(
+      evaluatePrinted(Buffer.from(printed, 'utf8').toString('utf8')),
+    ).toEqual(value);
+  });
 });

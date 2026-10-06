@@ -1,6 +1,7 @@
 import { link, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
+import { AppPathError } from '@/app/pull/app-path-error';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -19,7 +20,9 @@ export const writeAppAddFile = async ({
 
   try {
     await assertPullPaths({ appPath, relativePaths: [file.path] });
-  } catch {
+  } catch (error) {
+    if (!(error instanceof AppPathError)) throw error;
+
     throw new CliError({
       code: 'APP_PATH_UNAVAILABLE',
       exitCode: EXIT_CODE.CONFLICT,

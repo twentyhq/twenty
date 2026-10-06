@@ -6,7 +6,7 @@ import {
   buildPullEntities,
   type SkippedPullEntity,
 } from '@/app/pull/build-pull-entities';
-import { type PullWrite } from '@/app/pull/plan-pull-writes';
+import { type PullWrite, type PullDeletion } from '@/app/pull/plan-pull-writes';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 
 export const preserveNestedPullEntities = ({
@@ -14,14 +14,20 @@ export const preserveNestedPullEntities = ({
   baseManifest,
   coverageIdentifiers,
   writes,
+  deletions,
   scannedFiles,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   coverageIdentifiers: ReadonlySet<string>;
   writes: PullWrite[];
+  deletions: PullDeletion[];
   scannedFiles: ScannedSourceFile[];
-}): { writes: PullWrite[]; skipped: SkippedPullEntity[] } => {
+}): {
+  writes: PullWrite[];
+  deletions: PullDeletion[];
+  skipped: SkippedPullEntity[];
+} => {
   const baseIdentifiers = new Set<string>();
 
   collectIdentifiers({ value: baseManifest, identifiers: baseIdentifiers });
@@ -39,11 +45,9 @@ export const preserveNestedPullEntities = ({
     ]),
   );
   const skipped: SkippedPullEntity[] = [];
-  const safeWrites = writes.filter((write) => {
-    if (write.kind === 'translation' || !write.isRegeneration) {
-      return true;
-    }
-
+  const isSafeChange = (
+    write: PullDeletion & { kind: SkippedPullEntity['kind'] },
+  ): boolean => {
     const localIdentifiers = new Set<string>();
     const exportedIdentifiers = new Set<string>();
 
@@ -76,7 +80,28 @@ export const preserveNestedPullEntities = ({
     });
 
     return false;
+  };
+  const safeWrites = writes.filter(
+    (write) =>
+      write.kind === 'translation' ||
+      !write.isRegeneration ||
+      isSafeChange({ ...write, kind: write.kind }),
+  );
+  const baseEntityByIdentifier = new Map(
+    (isDefined(baseManifest)
+      ? buildPullEntities(baseManifest).entities
+      : []
+    ).map((entity) => [entity.universalIdentifier.toLowerCase(), entity]),
+  );
+  const safeDeletions = deletions.filter((deletion) => {
+    const entity = baseEntityByIdentifier.get(
+      deletion.universalIdentifier.toLowerCase(),
+    );
+
+    return (
+      !isDefined(entity) || isSafeChange({ ...deletion, kind: entity.kind })
+    );
   });
 
-  return { writes: safeWrites, skipped };
+  return { writes: safeWrites, deletions: safeDeletions, skipped };
 };

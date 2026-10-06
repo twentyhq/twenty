@@ -1,5 +1,6 @@
 import { type ManifestEntityKey } from '@/app/source/extract-define-entity';
 import { buildPullBaseEntities } from '@/app/pull/build-pull-base-entities';
+import { ENTITY_KEY_BY_KIND } from '@/app/pull/entity-key-by-kind.constant';
 import {
   buildPullEntities,
   type PullEntity,
@@ -37,21 +38,6 @@ export type PullWritePlan = {
 
 const toReservationKey = (relativePath: string): string =>
   relativePath.toLowerCase();
-
-const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
-  application: 'application',
-  object: 'objects',
-  field: 'fields',
-  index: 'indexes',
-  permissionFlag: 'permissionFlags',
-  role: 'roles',
-  view: 'views',
-  viewField: 'viewFields',
-  pageLayout: 'pageLayouts',
-  pageLayoutTab: 'pageLayoutTabs',
-  navigationMenuItem: 'navigationMenuItems',
-  pageLayoutWidget: 'pageLayoutWidgets',
-};
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
 

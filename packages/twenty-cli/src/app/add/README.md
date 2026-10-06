@@ -1,8 +1,9 @@
 # App definition scaffolding
 
 The templates create object, field, logic-function and front-component
-definitions. Names and filenames use the CLI's kebab-case helper; display labels
-use the same helper as app init.
+definitions. Filenames and logic-function/front-component names use kebab-case.
+Object and field metadata names keep the entered spelling; display labels use
+the same helper as app init.
 
 ## Contract
 
@@ -31,6 +32,8 @@ use the same helper as app init.
   parent directories can remain after failure or cancellation. Exclusive atomic
   creation requires a filesystem supporting hard links; unsupported filesystems
   fail instead of falling back to a potentially partial destination write.
+- Path validation rejects existing symbolic links. It cannot prevent another
+  local process from replacing a parent directory between validation and writing.
 - JSON reports app-relative `createdPaths`. There is no overwrite mode and no
   editing or registration of existing definitions. Object view, layout and menu
   companions and other entity generators are not supported.

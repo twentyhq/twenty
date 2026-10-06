@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import {
   access,
   cp,
+  lstat,
   mkdir,
   readdir,
   readFile,
@@ -16,8 +17,12 @@ export const pathExists = async (filePath: string): Promise<boolean> => {
   try {
     await access(filePath);
     return true;
-  } catch {
-    return false;
+  } catch (error) {
+    if (hasErrorCode(error, 'ENOENT')) {
+      return false;
+    }
+
+    throw error;
   }
 };
 
@@ -32,6 +37,10 @@ export const emptyDir = async (dirPath: string): Promise<void> => {
   let entries: string[];
 
   try {
+    if ((await lstat(dirPath)).isSymbolicLink()) {
+      throw new Error(`Cannot empty a symbolic link: ${dirPath}`);
+    }
+
     entries = await readdir(dirPath);
   } catch (error: unknown) {
     if (hasErrorCode(error, 'ENOENT')) {

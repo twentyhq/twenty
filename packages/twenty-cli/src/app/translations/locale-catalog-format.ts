@@ -44,7 +44,8 @@ export const flattenLocaleCatalog = (
 export const buildLocaleCatalog = (
   entries: LocaleCatalogEntry[],
 ): Record<string, string | Record<string, string>> => {
-  const catalog: Record<string, string | Record<string, string>> = {};
+  const catalog: Record<string, string | Record<string, string>> =
+    Object.create(null);
   const sorted = [...entries].sort(
     (a, b) =>
       (a.context ?? '').localeCompare(b.context ?? '') ||
@@ -60,7 +61,12 @@ export const buildLocaleCatalog = (
     const group = catalog[context];
 
     if (typeof group === 'object' && isDefined(group)) {
-      group[message] = translation;
+      Object.defineProperty(group, message, {
+        value: translation,
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
     } else {
       catalog[context] = { [message]: translation };
     }

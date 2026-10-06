@@ -205,4 +205,29 @@ describe('splitPulledTranslations', () => {
       }),
     ).toEqual([]);
   });
+  it('keeps prototype-shaped message contexts as own catalog properties', async () => {
+    const componentPath = join(await createDirectory(), 'card.tsx');
+    await writeFile(
+      componentPath,
+      `import { t } from 'twenty-sdk/front-component';
+export const label = t({ message: 'Review fixture', context: '__proto__' });`,
+    );
+    const catalogs = await splitPulledTranslations({
+      manifest: buildManifest({
+        translations: {
+          'fr-FR': {
+            [generateMessageId('Review fixture', '__proto__')]: 'Exemple',
+          },
+        },
+      }),
+      frontComponentSourcePaths: [componentPath],
+    });
+
+    expect(Object.hasOwn(catalogs[0].authored, '__proto__')).toBe(true);
+    expect(catalogs[0].authored.__proto__).toEqual({
+      'Review fixture': 'Exemple',
+    });
+    expect(Object.hasOwn(Object.prototype, 'Review fixture')).toBe(false);
+    expect(JSON.stringify(catalogs[0].authored)).toContain('__proto__');
+  });
 });

@@ -365,4 +365,23 @@ describe('target-bound CLI pull base', () => {
     await expect(record()).resolves.toBeUndefined();
     expect(await read()).toMatchObject({ status: 'used', manifest: MANIFEST });
   });
+  it.each([
+    { objects: [null] },
+    { fields: [42] },
+    { translations: 'malformed' },
+    { translations: { fr: { invalid: 42 } } },
+    {
+      objects: [
+        { universalIdentifier: 'object', nameSingular: 'pet', fields: [null] },
+      ],
+    },
+  ])(
+    'treats malformed entity collections as an unreadable base',
+    async (collections) => {
+      await seed(
+        JSON.stringify({ ...BASE, manifest: { ...MANIFEST, ...collections } }),
+      );
+      expect(await read()).toEqual({ status: 'unreadable', manifest: null });
+    },
+  );
 });

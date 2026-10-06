@@ -11,6 +11,7 @@ import {
   SYSTEM_VIEW_KEYS,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 const getViewName = ({
   viewUniversalIdentifier,
@@ -53,6 +54,7 @@ const getNavigationMenuItemName = ({
   manifest: Manifest;
 }): string | null => {
   const {
+    type,
     name,
     targetObjectUniversalIdentifier,
     viewUniversalIdentifier,
@@ -63,18 +65,27 @@ const getNavigationMenuItemName = ({
     return name;
   }
 
-  if (isDefined(targetObjectUniversalIdentifier)) {
+  if (
+    type === NavigationMenuItemType.OBJECT &&
+    isDefined(targetObjectUniversalIdentifier)
+  ) {
     return getObjectNameForPullFile({
       objectUniversalIdentifier: targetObjectUniversalIdentifier,
       manifest,
     });
   }
 
-  if (isDefined(viewUniversalIdentifier)) {
+  if (
+    type === NavigationMenuItemType.VIEW &&
+    isDefined(viewUniversalIdentifier)
+  ) {
     return getViewName({ viewUniversalIdentifier, manifest });
   }
 
-  if (isDefined(pageLayoutUniversalIdentifier)) {
+  if (
+    type === NavigationMenuItemType.PAGE_LAYOUT &&
+    isDefined(pageLayoutUniversalIdentifier)
+  ) {
     return getPageLayoutNameForPullFile({
       pageLayoutUniversalIdentifier,
       manifest,

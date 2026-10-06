@@ -82,4 +82,21 @@ describe('buildManifestEntityLabelByUniversalIdentifier', () => {
       }),
     ).toEqual({ 'priority-identifier': 'priority' });
   });
+  it('handles deeply nested JSON payloads without overflowing the call stack', () => {
+    let payload: unknown = 'value';
+    for (let depth = 0; depth < 15000; depth += 1)
+      payload = { nested: payload };
+
+    expect(
+      buildManifestEntityLabelByUniversalIdentifier({
+        fields: [
+          {
+            universalIdentifier: 'field',
+            name: 'payload',
+            defaultValue: payload,
+          },
+        ],
+      }),
+    ).toEqual({ field: 'payload' });
+  });
 });

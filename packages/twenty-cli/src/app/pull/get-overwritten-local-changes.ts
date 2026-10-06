@@ -52,6 +52,9 @@ export const getOverwrittenLocalChanges = async ({
   const translationContents = new Map(
     translationPlan.writes.map((write) => [write.relativePath, write.content]),
   );
+  const baselineAbsentTranslationPaths = new Set(
+    translationPlan.deletions.map(({ relativePath }) => relativePath),
+  );
   const overwrittenLocalChanges: PullDeletion[] = [];
 
   for (const { universalIdentifier, relativePath } of [
@@ -76,8 +79,9 @@ export const getOverwrittenLocalChanges = async ({
       translationContents.get(relativePath);
 
     if (
-      isDefined(baseContent) &&
-      (await readFile(join(appPath, relativePath), 'utf8')) !== baseContent
+      baselineAbsentTranslationPaths.has(relativePath) ||
+      (isDefined(baseContent) &&
+        (await readFile(join(appPath, relativePath), 'utf8')) !== baseContent)
     ) {
       overwrittenLocalChanges.push({ universalIdentifier, relativePath });
     }

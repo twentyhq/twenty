@@ -87,11 +87,12 @@ export const pullApplication = async (
       baseManifest,
       coverageIdentifiers,
       writes: plan.writes,
+      deletions: plan.deletions,
       scannedFiles,
     });
     const writes = [...safePlan.writes, ...translationPlan.writes];
     const deletions = [
-      ...plan.deletions.filter(
+      ...safePlan.deletions.filter(
         (deletion) =>
           !protectedIdentifiers.has(deletion.universalIdentifier.toLowerCase()),
       ),

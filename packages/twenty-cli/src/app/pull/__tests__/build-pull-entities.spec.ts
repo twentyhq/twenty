@@ -712,6 +712,7 @@ describe('buildPullEntities', () => {
       ...viewItemManifest
     } = buildNavigationMenuItemManifest({
       type: NavigationMenuItemType.VIEW,
+      targetObjectUniversalIdentifier: PET_UID,
       viewUniversalIdentifier: VIEW_UID,
     });
     const { entities } = buildPullEntities(

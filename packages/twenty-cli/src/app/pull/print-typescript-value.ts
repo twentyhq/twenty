@@ -16,7 +16,12 @@ const printString = (value: string): string =>
     .replace(/\n/g, '\\n')
     .replace(/\r/g, '\\r')
     .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029')}'`;
+    .replace(/\u2029/g, '\\u2029')
+    .replace(
+      /[\uD800-\uDFFF]/g,
+      (character) =>
+        `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
+    )}'`;
 
 const printKey = (key: string): string => {
   if (key === PROTOTYPE_KEY) {

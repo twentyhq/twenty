@@ -1044,4 +1044,28 @@ describe('programmatic application pull', () => {
     expect(JSON.parse(await read(BASE_PATH))).toMatchObject({ version: 2 });
     expect(await read(OBJECT_PATH)).toContain('defineObject');
   });
+  it('keeps a remotely deleted object file containing a new local field', async () => {
+    requireSuccess(await pull());
+    const local = (await read(OBJECT_PATH)).replace(
+      'fields: [',
+      `fields: [{
+      universalIdentifier: '${INDEX_IDENTIFIER}', name: 'localNote', label: 'Local note', type: 'TEXT',
+    },`,
+    );
+    await writeFile(join(appPath, OBJECT_PATH), local);
+
+    const result = requireSuccess(
+      await pull(createExport({ includeObject: false })),
+    );
+
+    expect(result.deletions).toEqual([]);
+    expect(await read(OBJECT_PATH)).toBe(local);
+    expect(result.skipped).toContainEqual(
+      expect.objectContaining({
+        kind: 'object',
+        universalIdentifier: OBJECT_IDENTIFIER,
+        reason: expect.stringContaining(INDEX_IDENTIFIER),
+      }),
+    );
+  });
 });

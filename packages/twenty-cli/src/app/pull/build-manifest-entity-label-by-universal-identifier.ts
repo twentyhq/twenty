@@ -8,17 +8,29 @@ export const buildManifestEntityLabelByUniversalIdentifier = (
 ): Record<string, string> => {
   const labelByUniversalIdentifier: Record<string, string> = {};
 
-  const visit = (value: unknown, parentLabel: string | undefined): void => {
+  const pending: { value: unknown; parentLabel?: string }[] = [
+    { value: manifest },
+  ];
+
+  while (pending.length > 0) {
+    const entry = pending.pop();
+
+    if (!isDefined(entry)) {
+      break;
+    }
+
+    const { value, parentLabel } = entry;
+
     if (Array.isArray(value)) {
-      for (const item of value) {
-        visit(item, parentLabel);
+      for (const item of [...value].reverse()) {
+        pending.push({ value: item, parentLabel });
       }
 
-      return;
+      continue;
     }
 
     if (!isPlainObject(value)) {
-      return;
+      continue;
     }
 
     const ownLabel = LABEL_KEYS.map((key) => value[key]).find(isNonEmptyString);
@@ -35,12 +47,10 @@ export const buildManifestEntityLabelByUniversalIdentifier = (
       labelByUniversalIdentifier[value.universalIdentifier] = label;
     }
 
-    for (const child of Object.values(value)) {
-      visit(child, label);
+    for (const child of Object.values(value).reverse()) {
+      pending.push({ value: child, parentLabel: label });
     }
-  };
-
-  visit(manifest, undefined);
+  }
 
   return labelByUniversalIdentifier;
 };
