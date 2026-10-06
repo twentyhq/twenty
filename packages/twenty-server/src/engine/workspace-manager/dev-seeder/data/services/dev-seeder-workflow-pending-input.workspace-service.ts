@@ -267,14 +267,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          await this.workflowAgentConversationService.recordExecution({
-            workspaceId,
+          const turnId = await this.workflowAgentConversationService.openTurn({
+            runInfo: { workspaceId, workflowRunId },
             threadId,
-            workflowStep: { workflowRunId, stepId: workflow.step.id },
-            title: workflow.step.name,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
             initiatorUserWorkspaceId: null,
+          });
+
+          await this.workflowAgentConversationService.closeTurn({
+            workspaceId,
+            threadId,
+            turnId,
+            workflowStep: { workflowRunId, stepId: workflow.step.id },
+            title: workflow.step.name,
+            agentId: null,
             executionResult: {
               isPaused: true,
               steps: [{ content }],

@@ -13,6 +13,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
   type WorkflowAction,
+  type WorkflowAiAgentAction,
   type WorkflowEmptyAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -368,10 +369,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     'bills the core-owned spender mapping (mirrorless=%s)',
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
-      const consume = jest.spyOn(
-        global.workflowTestServices.quota,
-        'consumeQuota',
-      );
+      const charge = jest.spyOn(global.workflowTestServices.quota, 'charge');
 
       await waitForRun(await runFixture(fixture), 'COMPLETED');
 
@@ -380,15 +378,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [workspaceId],
       );
 
-      expect(consume).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId,
-          spenders: {
-            workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
-            applicationId: workspace.workspaceCustomApplicationId,
-          },
-        }),
-      );
+      expect(charge).toHaveBeenCalledWith({
+        workspaceId,
+        events: [
+          expect.objectContaining({
+            spenders: {
+              workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+              applicationId: workspace.workspaceCustomApplicationId,
+            },
+          }),
+        ],
+      });
     },
   );
 
@@ -997,7 +997,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       options: [{ label: 'Send it' }, { label: 'Hold it' }],
     };
 
-    const agentStep = (nextStepIds: string[]): WorkflowAction =>
+    const agentStep = (nextStepIds: string[]): WorkflowAiAgentAction =>
       ({
         ...emptyStep(),
         name: 'Draft the quote',
@@ -1011,7 +1011,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           },
         },
-      }) as WorkflowAction;
+      }) as WorkflowAiAgentAction;
 
     const agentResult = (
       overrides: Partial<AgentExecutionResult>,

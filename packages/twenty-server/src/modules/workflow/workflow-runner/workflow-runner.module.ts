@@ -11,6 +11,8 @@ import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-wo
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { WorkflowAwaitedToolCallHandlerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-awaited-tool-call-handler.workspace-service';
+import { AwaitedToolCallHandlerModule } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/awaited-tool-call-handler.module';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
@@ -30,11 +32,13 @@ import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-ex
     WorkflowCoreModule,
     WorkflowVersionCoreModule,
     WorkflowExecutionContextModule,
+    AwaitedToolCallHandlerModule,
   ],
   providers: [
     WorkflowRunnerWorkspaceService,
     CoreWorkflowRunnerService,
     RunWorkflowJob,
+    WorkflowAwaitedToolCallHandlerWorkspaceService,
   ],
   exports: [WorkflowRunnerWorkspaceService, CoreWorkflowRunnerService],
 })

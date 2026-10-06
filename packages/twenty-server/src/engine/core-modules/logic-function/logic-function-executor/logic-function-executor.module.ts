@@ -13,7 +13,6 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
-import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
@@ -34,7 +33,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationModule,
     ApplicationVariableEntityModule,
     UsageLimitModule,
-    UsageModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
       WorkspaceEntity,
