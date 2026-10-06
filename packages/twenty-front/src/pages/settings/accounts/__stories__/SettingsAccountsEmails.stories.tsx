@@ -49,6 +49,7 @@ export const TwoConnectedAccounts: Story = {
                   lastSignedInAt: null,
                   userWorkspaceId: '20202020-03f2-4d83-b0d5-2ec2bcee72d4',
                   connectionProviderId: null,
+                  applicationId: null,
                   name: 'Test User',
                   visibility: 'SHARE_EVERYTHING',
                   lastCredentialsRefreshedAt: null,

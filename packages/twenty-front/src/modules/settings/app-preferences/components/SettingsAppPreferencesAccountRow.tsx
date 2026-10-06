@@ -8,6 +8,7 @@ import { SettingsAppPreferencesApplicationAccountDropdownMenu } from '@/settings
 import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -29,7 +30,12 @@ export const SettingsAppPreferencesAccountRow = ({
   const isApplicationAccount =
     account.provider === ConnectedAccountProvider.APP;
 
-  const ProviderIcon = SettingsConnectedAccountIcon({ account });
+  // The IMAP icon is built per account, so it is kept across renders to spare
+  // React a remount of the row's icon on every update.
+  const ProviderIcon = useMemo(
+    () => SettingsConnectedAccountIcon({ account }),
+    [account],
+  );
 
   return (
     <TableRow

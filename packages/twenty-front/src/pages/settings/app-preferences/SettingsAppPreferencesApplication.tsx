@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsMenuItemScope } from '~/generated-metadata/graphql';
-import { getSettingsMenuItemsForScope } from '~/pages/settings/applications/utils/getSettingsMenuItemsForScope';
+import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 
 // What a member sets for one installed app: the accounts it uses on their
 // behalf and its USER-scoped settings menu items.

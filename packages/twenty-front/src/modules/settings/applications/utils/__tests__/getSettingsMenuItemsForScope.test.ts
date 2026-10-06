@@ -1,5 +1,5 @@
 import { SettingsMenuItemScope } from '~/generated-metadata/graphql';
-import { getSettingsMenuItemsForScope } from '~/pages/settings/applications/utils/getSettingsMenuItemsForScope';
+import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 
 const buildSettingsMenuItem = ({
   universalIdentifier,

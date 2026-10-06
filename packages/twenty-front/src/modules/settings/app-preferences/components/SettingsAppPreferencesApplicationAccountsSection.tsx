@@ -157,7 +157,7 @@ export const SettingsAppPreferencesApplicationAccountsSection = ({
             startIcon={<IconPlus />}
             size="sm"
             variant="outline"
-            disabled={provider.oauth?.isClientCredentialsConfigured !== true}
+            disabled={!provider.oauth?.isClientCredentialsConfigured}
             onClick={() =>
               triggerAppOAuth({
                 applicationId,
