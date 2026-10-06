@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { computeWhereConditionParts } from '../compute-where-condition-parts';
+import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 
 describe('computeWhereConditionParts', () => {
   describe('isEmptyArray', () => {
@@ -54,11 +54,6 @@ describe('computeWhereConditionParts', () => {
       expect(sql).toContain('IS NULL');
     });
 
-    // The whole fragment must stay self-contained parentheses: each field's
-    // condition is appended to the query via its own andWhere() call with no
-    // automatic wrapping (TypeORM only parenthesizes Brackets/arrays, not raw
-    // SQL strings), so an un-parenthesized OR here would leak past an AND-ed
-    // sibling filter at the same level instead of staying scoped to this field.
     it('keeps the OR self-contained in its own parentheses', () => {
       const { sql } = computeWhereConditionParts({
         operator: 'neq',

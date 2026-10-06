@@ -80,16 +80,9 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
-      // A NULL column never satisfies raw SQL `!=` (three-valued logic: NULL != x
-      // is unknown, not true), but this app treats "no value" as distinct from
-      // every real value, so "not equal to X" must still match NULL rows unless
-      // X is itself the field's null-equivalent (empty) value, in which case NULL
-      // should NOT match, same as "not equal to empty" means "has a real value".
       if (isDateTimeField) {
         return {
-          sql: hasNullEquivalentFieldValue
-            ? `((${fieldReference} < :${key}${paramSuffix} OR ${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond') AND ${fieldReference} IS NOT NULL)`
-            : `((${fieldReference} < :${key}${paramSuffix} OR ${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond') OR ${fieldReference} IS NULL)`,
+          sql: `(${fieldReference} < :${key}${paramSuffix} OR ${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond' OR ${fieldReference} IS NULL)`,
           params: { [`${key}${paramSuffix}`]: value },
         };
       }
