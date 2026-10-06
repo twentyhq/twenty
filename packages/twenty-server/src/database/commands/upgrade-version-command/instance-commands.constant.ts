@@ -226,6 +226,7 @@ import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/com
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791215192958-add-upgrade-migration-workspace-id-created-at-index';
 import { DropAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791216099453-drop-agent-evaluation-inputs';
 import { AddTriggersToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791219100450-add-triggers-to-agent';
+import { AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791274238040-add-scope-and-default-value-to-application-variables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -454,4 +455,5 @@ export const INSTANCE_COMMANDS = [
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand,
   DropAgentEvaluationInputsFastInstanceCommand,
   AddTriggersToAgentFastInstanceCommand,
+  AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand,
 ];
