@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -42,7 +41,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
   imports: [
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
-      FeatureFlagEntity,
       WorkspaceEntity,
       CalendarChannelEntity,
       ConnectedAccountEntity,

@@ -6,7 +6,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
@@ -45,7 +44,6 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
   imports: [
     TypeORMModule,
     TypeOrmModule.forFeature([
-      BillingSubscriptionEntity,
       WorkspaceEntity,
       UserEntity,
       UserWorkspaceEntity,

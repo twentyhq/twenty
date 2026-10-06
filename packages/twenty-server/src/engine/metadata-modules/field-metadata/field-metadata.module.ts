@@ -13,7 +13,6 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -27,7 +26,7 @@ import { FieldMetadataEntity } from './field-metadata.entity';
 @Module({
   imports: [
     ApplicationTranslationCatalogModule,
-    TypeOrmModule.forFeature([FieldMetadataEntity, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([FieldMetadataEntity]),
     ApplicationModule,
     TokenModule,
     WorkspaceCacheStorageModule,

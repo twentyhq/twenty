@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldGroupResolver } from 'src/engine/metadata-modules/view-field-group/resolvers/view-field-group.resolver';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
@@ -18,7 +17,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
   imports: [
     ViewPermissionsModule,
     ApplicationTranslationCatalogModule,
-    TypeOrmModule.forFeature([ViewFieldGroupEntity, ViewEntity]),
+    TypeOrmModule.forFeature([ViewEntity]),
     ApplicationModule,
     PermissionsModule,
     WorkspaceMigrationModule,
