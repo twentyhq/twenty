@@ -4369,10 +4369,10 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
-  runAgent(input: RunAgentInput!): RunAgentResult!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -5561,29 +5561,6 @@ input CreateEmailingDomainInput {
   domain: String!
 }
 
-input CreateWebhookInput {
-  id: UUID
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String
-}
-
-input UpdateWebhookInput {
-  """The id of the webhook to update"""
-  id: UUID!
-
-  """The webhook fields to update"""
-  update: UpdateWebhookInputUpdates!
-}
-
-input UpdateWebhookInputUpdates {
-  targetUrl: String
-  operations: [String!]
-  description: String
-  secret: String
-}
-
 input RunAgentInput {
   agentUniversalIdentifier: String!
   prompt: String @deprecated(reason: "Use input instead.")
@@ -5613,6 +5590,29 @@ input RunAgentMessageAttachmentInput {
 input RunAgentThreadInput {
   key: String!
   title: String
+}
+
+input CreateWebhookInput {
+  id: UUID
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String
+}
+
+input UpdateWebhookInput {
+  """The id of the webhook to update"""
+  id: UUID!
+
+  """The webhook fields to update"""
+  update: UpdateWebhookInputUpdates!
+}
+
+input UpdateWebhookInputUpdates {
+  targetUrl: String
+  operations: [String!]
+  description: String
+  secret: String
 }
 
 input UpdateMessageFolderInput {

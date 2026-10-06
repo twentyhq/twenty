@@ -3723,10 +3723,10 @@ export interface Mutation {
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
+    runAgent: RunAgentResult
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
-    runAgent: RunAgentResult
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateCalendarChannel: CalendarChannel
@@ -7737,10 +7737,10 @@ export interface MutationGenqlSelection{
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
+    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
-    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
@@ -8198,6 +8198,14 @@ export interface AppMessageParticipantInput {role: MessageParticipantRole,handle
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null),input?: (RunAgentMessageInput[] | null),additionalInstructions?: (Scalars['String'] | null),thread?: (RunAgentThreadInput | null)}
+
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
+
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
+
+export interface RunAgentThreadInput {key: Scalars['String'],title?: (Scalars['String'] | null)}
+
 export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
 export interface UpdateWebhookInput {
@@ -8207,14 +8215,6 @@ id: Scalars['UUID'],
 update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
-
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null),input?: (RunAgentMessageInput[] | null),additionalInstructions?: (Scalars['String'] | null),thread?: (RunAgentThreadInput | null)}
-
-export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
-
-export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
-
-export interface RunAgentThreadInput {key: Scalars['String'],title?: (Scalars['String'] | null)}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
