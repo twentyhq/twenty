@@ -60,6 +60,8 @@ import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRan
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
+import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
+import { loaderTest } from '@/__stories__/twenty-ui-gallery/utils/loaderTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -76,23 +78,23 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: colorSampleTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: colorSampleTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: loaderTest,
 });
 export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: loaderTest,
 });
 
 export const ProgressReact: Story = createGalleryStory({
