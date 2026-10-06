@@ -170,7 +170,7 @@ describe('AgentRunnerService', () => {
     );
   });
 
-  it('neither reads nor locks a conversation it just created', async () => {
+  it('locks a conversation it just created without reading it', async () => {
     const {
       service,
       agentRunConversationService,
@@ -183,7 +183,9 @@ describe('AgentRunnerService', () => {
       conversation: { threadId: 'thread-id', isCreated: true },
     });
 
-    expect(agentRunConversationService.withThreadLock).not.toHaveBeenCalled();
+    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledWith(
+      expect.objectContaining({ threadId: 'thread-id' }),
+    );
     expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({ priorMessages: [] }),
