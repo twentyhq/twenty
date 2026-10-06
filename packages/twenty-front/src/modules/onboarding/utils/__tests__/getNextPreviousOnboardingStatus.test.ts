@@ -26,7 +26,7 @@ describe('getNextPreviousOnboardingStatus', () => {
     expect(
       getNextPreviousOnboardingStatus({
         stepHistoryEffect: 'leaveUnchanged',
-        currentOnboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+        currentOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
         currentPreviousOnboardingStatus: OnboardingStatus.SYNC_EMAIL,
       }),
     ).toBe(OnboardingStatus.SYNC_EMAIL);

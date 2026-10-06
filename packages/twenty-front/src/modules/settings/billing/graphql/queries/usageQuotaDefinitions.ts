@@ -10,6 +10,12 @@ export const USAGE_QUOTA_DEFINITIONS = gql`
           allowedUnits
         }
         allowedSpenderTypes
+        operatorOnlyScopes {
+          operationType
+          spenderType
+          unit
+          periodUnit
+        }
       }
       isIntraWorkspaceLimitEntitled
       hasAllowancePeriod
