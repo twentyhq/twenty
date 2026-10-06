@@ -102,25 +102,6 @@ describe('buildWorkspaceSetupKickoffMessageText', () => {
     );
   });
 
-  it('should add the workspace data right after the workspace context only when a snapshot is given', () => {
-    const workspaceSnapshot = {
-      readAt: new Date('2026-10-01T09:00:00.000Z'),
-      mailboxes: [],
-      importedMessageCount: 0,
-      ownPersonCount: 0,
-      ownCompanyCount: 0,
-      ownOpportunityCount: 0,
-      sampleCompanyNames: [],
-      topEmailCompanies: [],
-      topEmailContacts: [],
-    };
-
-    expect(buildMessage()).not.toContain('No mailbox is connected.');
-    expect(buildMessage({ workspaceSnapshot })).toContain(
-      'signed up with admin@acme.com.\n\nWorkspace data, read on 2026-10-01.',
-    );
-  });
-
   it('should carry no instructions besides the locale line', () => {
     const result = buildMessage({ personEnrichment });
 

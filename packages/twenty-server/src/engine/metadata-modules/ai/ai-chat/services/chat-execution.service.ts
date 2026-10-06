@@ -79,12 +79,6 @@ import { createAttachConversationToRecordTool } from 'src/engine/metadata-module
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
-import {
-  GET_WORKSPACE_SNAPSHOT_TOOL_NAME,
-  createGetWorkspaceSnapshotTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/get-workspace-snapshot.tool';
-import { WorkspaceSetupSnapshotService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-snapshot.service';
-import { getWorkspaceSetupPromptVariant } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-workspace-setup-prompt-variant.util';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -160,7 +154,6 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceSetupSnapshotService: WorkspaceSetupSnapshotService,
   ) {}
 
   async streamChat({
@@ -282,10 +275,6 @@ export class ChatExecutionService {
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
-    const canReadWorkspaceSnapshot =
-      isWorkspaceSetupThread &&
-      getWorkspaceSetupPromptVariant(workspace.id) === 'alternative';
-
     tagAiChatExecutionScope({
       isWorkspaceSetupThread,
       modelId: registeredModel.modelId,
@@ -325,17 +314,6 @@ export class ChatExecutionService {
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
               createCompleteWorkspaceSetupTool(),
-          }
-        : {}),
-      ...(canReadWorkspaceSnapshot
-        ? {
-            [GET_WORKSPACE_SNAPSHOT_TOOL_NAME]: createGetWorkspaceSnapshotTool(
-              () =>
-                this.workspaceSetupSnapshotService.getSnapshot({
-                  workspaceId: workspace.id,
-                  userWorkspaceId,
-                }),
-            ),
           }
         : {}),
       ...(canAttachConversationToRecords
