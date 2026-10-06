@@ -2,15 +2,18 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
-export const attachRecallBotToPendingCallRecording = async ({
+// Writes only while the request still awaits a bot, so a cancellation or a
+// webhook that landed in the meantime wins.
+export const updatePendingCallRecording = async ({
   client,
   id,
-  externalBotId,
+  data,
 }: {
   client: CoreApiClient;
   id: string;
-  externalBotId: string;
+  data: CallRecordingUpdateFields;
 }): Promise<boolean> => {
   const result = await client.mutation({
     updateCallRecordings: {
@@ -23,7 +26,7 @@ export const attachRecallBotToPendingCallRecording = async ({
           status: { in: [CallRecordingStatus.SCHEDULED] },
           externalBotId: { is: 'NULL' },
         },
-        data: { externalBotId },
+        data,
       },
       id: true,
     },

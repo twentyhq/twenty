@@ -1,76 +1,27 @@
-import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { recoverPendingCallRecording } from 'src/logic-functions/flows/recover-pending-call-recording.util';
-import {
-  retryFailedRecallCancellations,
-  type RetryFailedRecallCancellationsResult,
-} from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
-import { enqueuePendingCallRecordingRecoveries } from 'src/logic-functions/flows/enqueue-pending-call-recording-recoveries.util';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import {
-  buildRetryableStepFailure,
-  buildStepFailure,
-  type StepFailure,
-} from 'src/logic-functions/utils/build-step-failure.util';
-import { getString } from 'src/logic-functions/utils/get-string.util';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
+import { findStuckCallRecordingRequestIds } from 'src/logic-functions/data/find-stuck-call-recording-request-ids.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
-export const processPendingCallRecordingRequestsHandler = async (
-  payload: unknown,
-): Promise<object> => {
-  const callRecordingId = getString(asRecord(payload)?.callRecordingId);
-  const now = new Date();
-  const client = new CoreApiClient();
-
-  if (!isUndefined(callRecordingId)) {
-    try {
-      return {
-        callRecordingId,
-        result: await recoverPendingCallRecording({
-          client,
-          callRecordingId,
-          now,
-        }),
-      };
-    } catch (error) {
-      throw buildRetryableStepFailure('pending call recording recovery', error);
-    }
-  }
-
-  const pendingCallRecordingRecoveryResult =
-    await enqueuePendingCallRecordingRecoveries({ client, now }).catch(
-      (error: unknown) => ({
-        error: buildRetryableStepFailure(
-          'pending call recording recovery enqueueing',
-          error,
-        ),
-      }),
-    );
-  const failedCancellationResult = await retryFailedRecallCancellationsSafely(
-    client,
-    now,
-  );
-
-  if ('error' in pendingCallRecordingRecoveryResult) {
-    throw pendingCallRecordingRecoveryResult.error;
-  }
-
-  return {
-    pendingCallRecordingRecoveryResult,
-    failedCancellationResult,
-  };
-};
-
-const retryFailedRecallCancellationsSafely = async (
-  client: CoreApiClient,
-  now: Date,
-): Promise<RetryFailedRecallCancellationsResult | StepFailure> => {
+export const processPendingCallRecordingRequestsHandler = async (): Promise<{
+  followedUpCallRecordingIds: string[];
+}> => {
   try {
-    return await retryFailedRecallCancellations({ client, now });
+    const callRecordingIds = await findStuckCallRecordingRequestIds(
+      new CoreApiClient(),
+    );
+
+    await enqueueCallRecordingRequestFollowUps({ callRecordingIds });
+
+    return { followedUpCallRecordingIds: callRecordingIds };
   } catch (error) {
-    return buildStepFailure('failed cancellation retry', error);
+    throw buildRetryableStepFailure(
+      'stuck call recording request follow-up enqueueing',
+      error,
+    );
   }
 };
 
@@ -79,7 +30,7 @@ export default defineLogicFunction({
     PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'process-pending-call-recording-requests',
   description:
-    'Processes pending CallRecording requests by attaching or scheduling missing Recall bots and retrying incomplete cancellations.',
+    'Arms a follow-up for every call recording request still waiting on Recall. Runs after each app upgrade, so requests stuck before then are not left behind.',
   timeoutSeconds: 250,
   handler: processPendingCallRecordingRequestsHandler,
 });

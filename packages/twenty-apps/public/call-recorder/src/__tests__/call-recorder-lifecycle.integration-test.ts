@@ -18,19 +18,24 @@ import {
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { followUpCallRecordingRequestHandler } from 'src/logic-functions/follow-up-call-recording-request';
 import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/process-pending-call-recording-requests';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
+import { startPostInstallBackfillsHandler } from 'src/logic-functions/start-post-install-backfills';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
+import { CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS } from 'src/logic-functions/constants/call-recording-request-follow-up-delay-ms';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 import { RECALL_RECOVERY_CALLS_PER_MINUTE } from 'src/logic-functions/constants/recall-recovery-calls-per-minute';
-import { attachRecallBotToPendingCallRecording } from 'src/logic-functions/data/attach-recall-bot-to-pending-call-recording.util';
-import { enqueuePendingCallRecordingRecoveryJobs } from 'src/logic-functions/data/enqueue-pending-call-recording-recovery-jobs.util';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
+import { updatePendingCallRecording } from 'src/logic-functions/data/update-pending-call-recording.util';
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
@@ -42,8 +47,6 @@ import { handlePreJoinCreditCheckJob } from 'src/logic-functions/flows/handle-pr
 import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constants/pre-join-credit-check-lead-minutes';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
-import { enqueuePendingCallRecordingRecoveries } from 'src/logic-functions/flows/enqueue-pending-call-recording-recoveries.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
 import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
 import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
@@ -59,7 +62,9 @@ import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-c
 //     repeated Idempotency-Key, like the real API),
 //   - the trigger transports: webhook deliveries invoke the webhook logic
 //     function handler directly, and cron / database-event triggers invoke
-//     the flows they dispatch, including queued artifact imports.
+//     the flows they dispatch, including queued artifact imports. Queued
+//     request follow-ups run with the clock moved to when the queue would
+//     have released them.
 //
 // Queue scenarios bypass those fakes and use the installed app's real worker.
 //
@@ -270,6 +275,13 @@ type FakeRecallBot = {
   recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
 
+type ArmedFollowUp = {
+  jobId: string;
+  payload: { callRecordingId: string; attempt: number };
+  delayMs: number;
+  dueAt: number;
+};
+
 type FakeRecallTranscript = {
   id: string;
   statusCode: string;
@@ -331,7 +343,9 @@ class FakeRecallApi {
   artifactImportRequests: object[] = [];
   activeArtifactJobIds = new Set<string>();
   recoveryRequests: object[] = [];
-  pendingRecoveryRequests: object[] = [];
+  stuckRequestSweepRequests: object[] = [];
+  calendarEventSweepRequests: object[] = [];
+  followUps: ArmedFollowUp[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -339,6 +353,7 @@ class FakeRecallApi {
     | { hasAvailableCredits: false; reason: string }
     | undefined = undefined;
   hasExpiredMedia = false;
+  failBotCreation = false;
   failNextDelete = false;
   failCalendarEventUpdates = false;
   failCallRecordingReads = false;
@@ -467,6 +482,7 @@ class FakeRecallApi {
         logicFunctionUniversalIdentifier: string;
         payloads: object[];
         jobs?: { jobId: string; payload: object }[];
+        delayMs?: number;
       }[];
       const payloads =
         input?.jobs?.map(({ payload }) => payload) ?? input?.payloads ?? [];
@@ -480,7 +496,26 @@ class FakeRecallApi {
         input?.logicFunctionUniversalIdentifier ===
         PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
-        this.pendingRecoveryRequests.push(...payloads);
+        this.stuckRequestSweepRequests.push(...payloads);
+      } else if (
+        input?.logicFunctionUniversalIdentifier ===
+        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.calendarEventSweepRequests.push(...payloads);
+      } else if (
+        input?.logicFunctionUniversalIdentifier ===
+        FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        const delayMs = input.delayMs ?? 0;
+
+        this.followUps.push(
+          ...(input.jobs ?? []).map(({ jobId, payload }) => ({
+            jobId,
+            payload: payload as ArmedFollowUp['payload'],
+            delayMs,
+            dueAt: Date.now() + delayMs,
+          })),
+        );
       } else if (
         input?.logicFunctionUniversalIdentifier ===
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
@@ -708,6 +743,10 @@ class FakeRecallApi {
   }
 
   private createBot(requestInit: any): Response {
+    if (this.failBotCreation) {
+      return jsonResponse(503, {});
+    }
+
     const idempotencyKey: string | undefined =
       requestInit?.headers?.['Idempotency-Key'];
     const alreadyCreatedBotId =
@@ -850,6 +889,7 @@ describe('call recorder app lifecycle (integration)', () => {
   beforeEach(() => {
     recall = new FakeRecallApi();
     nextArtifactImportRequestIndex = 0;
+    nextFollowUpIndex = 0;
 
     const realFetch = globalThis.fetch;
 
@@ -880,6 +920,7 @@ describe('call recorder app lifecycle (integration)', () => {
   afterEach(async () => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
+    vi.useRealTimers();
 
     await destroyCreatedRows();
   });
@@ -1272,23 +1313,33 @@ describe('call recorder app lifecycle (integration)', () => {
     }
   };
 
-  // Mocked cron trigger: runs the flows the recovery cron dispatches.
-  const runPendingRecoveryCron = async () => {
-    const result = await enqueuePendingCallRecordingRecoveries({
-      client,
-      now: new Date(),
-    });
+  // Mocked job queue: runs the follow-ups armed since the last call, each with
+  // the clock moved to when the queue would have released it. Follow-ups they
+  // re-arm wait for the next call.
+  let nextFollowUpIndex = 0;
 
-    while (recall.pendingRecoveryRequests.length > 0) {
-      await processPendingCallRecordingRequestsHandler(
-        recall.pendingRecoveryRequests.shift(),
-      );
+  const runArmedFollowUps = async () => {
+    const armedFollowUps = recall.followUps.slice(nextFollowUpIndex);
+    const results = [];
+
+    nextFollowUpIndex = recall.followUps.length;
+
+    for (const { payload, dueAt } of armedFollowUps) {
+      if (dueAt > Date.now()) {
+        vi.setSystemTime(dueAt);
+      }
+
+      results.push(await followUpCallRecordingRequestHandler(payload));
     }
 
-    return result;
+    return results;
   };
-  const runCancellationRetryCron = () =>
-    retryFailedRecallCancellations({ client, now: new Date() });
+
+  const followUpsArmedFor = (callRecordingId: string) =>
+    recall.followUps.filter(
+      ({ payload }) => payload.callRecordingId === callRecordingId,
+    );
+
   const runStaleStateCron = async () => {
     const result = await convergeDivergedCallRecordings({
       client,
@@ -2342,7 +2393,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.deletedBotIds).toEqual([botId]);
     });
 
-    it('retries a failed Recall cancellation on the next cron run', async () => {
+    it('cancels the bot in the follow-up when the inline Recall cancellation failed', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
 
@@ -2352,17 +2403,43 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecording: { id: callRecordingId, externalBotId: botId },
       });
 
-      // The Recall half failed, so the bot id must survive for the retry.
+      // The Recall half failed, so the bot id must survive for the follow-up.
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         botId,
       );
 
-      await runCancellationRetryCron();
+      await runArmedFollowUps();
 
       expect(
         (await fetchCallRecording(callRecordingId)).externalBotId,
       ).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('cancels a bot whose booking reached Recall without its id being saved', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: new Date().toISOString(),
+      });
+
+      recall.seedBot({
+        id: 'recall-bot-booked-during-cancellation',
+        metadata: buildBotMetadata(callRecordingId, workspaceId),
+      });
+
+      await cancelCallRecordingRequest({
+        client,
+        callRecording: { id: callRecordingId },
+      });
+      await runArmedFollowUps();
+
+      expect(recall.deletedBotIds).toEqual([
+        'recall-bot-booked-during-cancellation',
+      ]);
+      expect(
+        (await fetchCallRecording(callRecordingId)).externalBotId,
+      ).toBeFalsy();
     });
   });
 
@@ -3072,338 +3149,95 @@ describe('call recorder app lifecycle (integration)', () => {
     });
   });
 
-  describe('pending recording recovery', () => {
-    beforeEach(() => {
-      vi.unstubAllGlobals();
-      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
-    });
-
-    it('paces recovery jobs over three minutes and deduplicates each recovery day', async () => {
-      const callRecordingIds = Array.from(
-        { length: RECALL_RECOVERY_CALLS_PER_MINUTE * 2 + 1 },
-        () => randomUUID(),
-      );
-      const recoveryDate = '2026-09-30';
-      const jobIds = callRecordingIds.map(
-        (callRecordingId) =>
-          `call-recorder-${callRecordingId}-recover-pending-${recoveryDate}`,
-      );
-
-      await enqueuePendingCallRecordingRecoveryJobs({
-        callRecordingIds,
-        recoveryDate,
-      });
-
-      expect(
-        await getJobs([
-          jobIds[RECALL_RECOVERY_CALLS_PER_MINUTE],
-          jobIds[RECALL_RECOVERY_CALLS_PER_MINUTE * 2],
-        ]),
-      ).toMatchObject([{ state: 'DELAYED' }, { state: 'DELAYED' }]);
-
-      await expect
-        .poll(() => getJobs(jobIds), { timeout: 150_000, interval: 1_000 })
-        .toMatchObject(jobIds.map((jobId) => ({ jobId, state: 'COMPLETED' })));
-
-      const completedJobs = await getJobs(jobIds);
-
-      for (const [recordingIndex, job] of completedJobs.entries()) {
-        const minuteIndex = Math.floor(
-          recordingIndex / RECALL_RECOVERY_CALLS_PER_MINUTE,
-        );
-
-        expect(job.startedAt).toBeGreaterThanOrEqual(
-          job.enqueuedAt + minuteIndex * MILLISECONDS_PER_MINUTE,
-        );
-      }
-
-      await enqueuePendingCallRecordingRecoveryJobs({
-        callRecordingIds,
-        recoveryDate,
-      });
-
-      expect(await getJobs(jobIds)).toEqual(completedJobs);
-
-      const nextRecoveryDate = '2026-10-01';
-      const nextJobId = `call-recorder-${callRecordingIds[0]}-recover-pending-${nextRecoveryDate}`;
-
-      await enqueuePendingCallRecordingRecoveryJobs({
-        callRecordingIds: [callRecordingIds[0]],
-        recoveryDate: nextRecoveryDate,
-      });
-
-      await expect
-        .poll(() => getJobs([nextJobId]), { timeout: 30_000, interval: 500 })
-        .toMatchObject([{ jobId: nextJobId, state: 'COMPLETED' }]);
-    }, 180_000);
-
-    it('redelivers a recovery rejected by the Core API until its retry budget is exhausted', async () => {
-      const callRecordingId = `invalid-${randomUUID()}`;
-      const recoveryDate = '2026-09-30';
-      const jobId = `call-recorder-${callRecordingId}-recover-pending-${recoveryDate}`;
-
-      await enqueuePendingCallRecordingRecoveryJobs({
-        callRecordingIds: [callRecordingId],
-        recoveryDate,
-      });
-
-      await expect
-        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
-        .toMatchObject([
-          {
-            jobId,
-            state: 'COMPLETED',
-            attemptsMade: ENQUEUED_JOB_RETRY_LIMIT + 1,
-          },
-        ]);
-    });
-
-    it('rechecks cancellation when a delayed recovery reaches the worker', async () => {
+  describe('request follow-up', () => {
+    it('books the bot half an hour after the first try failed', async () => {
       const calendarEventId = await createCalendarEvent();
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-      });
-      const jobId = `pending-recovery-cancellation-${callRecordingId}`;
 
-      await enqueueJobs({
-        logicFunctionUniversalIdentifier:
-          PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-        jobs: [{ jobId, payload: { callRecordingId } }],
-        retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
-        delayMs: 5_000,
+      recall.failBotCreation = true;
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
       });
 
-      expect(await getJobs([jobId])).toMatchObject([{ state: 'DELAYED' }]);
-
-      await client.mutation({
-        updateCallRecording: {
-          __args: {
-            id: callRecordingId,
-            data: { recordingRequestStatus: 'CANCELED' },
-          },
-          id: true,
-        },
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
       });
 
-      await expect
-        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
-        .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade: 1 }]);
-
-      const callRecording = await fetchCallRecording(callRecordingId);
-
-      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
       expect(callRecording.externalBotId).toBeFalsy();
-      expect(callRecording.botScheduleAttemptedAt).toBeFalsy();
-    });
+      expect(followUpsArmedFor(callRecording.id)).toMatchObject([
+        { delayMs: CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS },
+      ]);
 
-    it('attaches a recovered bot only while the request still awaits one', async () => {
-      const calendarEventId = await createCalendarEvent();
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-      });
-      const externalBotId = randomUUID();
+      recall.failBotCreation = false;
+      await runArmedFollowUps();
 
-      expect(
-        await attachRecallBotToPendingCallRecording({
-          client,
-          id: callRecordingId,
-          externalBotId,
-        }),
-      ).toBe(true);
+      const externalBotId = (await fetchCallRecording(callRecording.id))
+        .externalBotId;
 
-      expect(
-        await attachRecallBotToPendingCallRecording({
-          client,
-          id: callRecordingId,
-          externalBotId: randomUUID(),
-        }),
-      ).toBe(false);
-      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+      expect(externalBotId).toBeTruthy();
+      expect(recall.botForCallRecording(callRecording.id)?.id).toBe(
         externalBotId,
       );
+      expect(recall.listRequestCount).toBe(0);
+    });
 
-      await client.mutation({
-        updateCallRecording: {
-          __args: {
-            id: callRecordingId,
-            data: {
-              recordingRequestStatus: 'CANCELED',
-              externalBotId: null,
-            },
-          },
-          id: true,
-        },
+    it('keeps the follow-up armed when the run dies before writing the recording', async () => {
+      const calendarEventId = await createCalendarEvent();
+
+      interceptCoreApiRequests(async ({ query }, sendRequest) =>
+        query.includes('createCallRecording(')
+          ? new Response('Recording creation failed', { status: 500 })
+          : sendRequest(),
+      );
+
+      const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
+        client: new CoreApiClient(),
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(reconciliation).toMatchObject({ action: 'FAILED' });
+      expect(recall.followUps).toMatchObject([
+        { delayMs: CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS },
+      ]);
+    });
+
+    it('waits instead of racing a booking attempt that is still recent', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: new Date().toISOString(),
       });
 
       expect(
-        await attachRecallBotToPendingCallRecording({
-          client,
-          id: callRecordingId,
-          externalBotId: randomUUID(),
-        }),
-      ).toBe(false);
+        await followUpCallRecordingRequestHandler({ callRecordingId }),
+      ).toMatchObject({
+        status: 'follow-up-again',
+        reason: 'a bot booking may still be running',
+      });
+      expect(recall.bots.size).toBe(0);
+      expect(recall.listRequestCount).toBe(0);
+
+      await runArmedFollowUps();
+
       expect(
         (await fetchCallRecording(callRecordingId)).externalBotId,
-      ).toBeFalsy();
+      ).toBeTruthy();
     });
 
-    it('enqueues a pending recording and skips bot creation for a meeting without a link', async () => {
-      const calendarEventId = await createCalendarEvent({
-        conferenceLink: { primaryLinkUrl: '' },
-      });
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-      });
-      const recoveryDate = new Date().toISOString().slice(0, 10);
-      const jobId = `call-recorder-${callRecordingId}-recover-pending-${recoveryDate}`;
-
-      expect(await processPendingCallRecordingRequestsHandler({})).toEqual({
-        pendingCallRecordingRecoveryResult: {
-          enqueuedCallRecordingIds: [callRecordingId],
-          markedFailedCallRecordingIds: [],
-        },
-        failedCancellationResult: { canceledExternalBotCallRecordingIds: [] },
-      });
-
-      await expect
-        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
-        .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade: 1 }]);
-
-      const callRecording = await fetchCallRecording(callRecordingId);
-
-      expect(callRecording.status).toBe('SCHEDULED');
-      expect(callRecording.externalBotId).toBeFalsy();
-      expect(callRecording.botScheduleAttemptedAt).toBeFalsy();
-    });
-
-    it('reports a failed enqueue as retryable instead of completing the sweep', async () => {
+    it('books a bot for a request that never reached Recall, with zero Recall list reads', async () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
       });
 
-      // A workspace token can read recordings, but enqueueing requires an application token.
-      vi.stubEnv(
-        'TWENTY_APP_ACCESS_TOKEN',
-        process.env[WORKSPACE_API_KEY_ENV] ?? '',
-      );
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
-      await expect(
-        processPendingCallRecordingRequestsHandler({}),
-      ).rejects.toMatchObject({
-        name: 'RetryableLogicFunctionError',
-        message: expect.stringContaining(
-          'pending call recording recovery enqueueing failed',
-        ),
-      });
-      expect((await fetchCallRecording(callRecordingId)).status).toBe(
-        'SCHEDULED',
-      );
-    });
+      const externalBotId = (await fetchCallRecording(callRecordingId))
+        .externalBotId;
 
-    it('keeps an ended recording pending while convergence can resolve its prior attempt', async () => {
-      const calendarEventId = await createCalendarEvent({
-        startsAt: hoursAgo(3),
-        endsAt: hoursAgo(2),
-      });
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(4),
-      });
-
-      expect(
-        await enqueuePendingCallRecordingRecoveries({
-          client,
-          now: new Date(),
-        }),
-      ).toEqual({
-        enqueuedCallRecordingIds: [],
-        markedFailedCallRecordingIds: [],
-      });
-      expect((await fetchCallRecording(callRecordingId)).status).toBe(
-        'SCHEDULED',
-      );
-    });
-
-    it('fails an unresolved attempt after the convergence lookback', async () => {
-      const calendarEventId = await createCalendarEvent({
-        startsAt: hoursAgo(9 * 24),
-        endsAt: hoursAgo(8 * 24),
-      });
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(9 * 24),
-      });
-
-      expect(
-        await enqueuePendingCallRecordingRecoveries({
-          client,
-          now: new Date(),
-        }),
-      ).toEqual({
-        enqueuedCallRecordingIds: [],
-        markedFailedCallRecordingIds: [callRecordingId],
-      });
-      expect(await fetchCallRecording(callRecordingId)).toMatchObject({
-        status: 'FAILED',
-        callRecorderFailureReason: 'bot_schedule_outcome_unknown',
-      });
-    });
-
-    it('leaves a pending recording without a calendar event untouched', async () => {
-      const callRecordingId = await createPendingCallRecording({});
-
-      expect(
-        await enqueuePendingCallRecordingRecoveries({
-          client,
-          now: new Date(),
-        }),
-      ).toEqual({
-        enqueuedCallRecordingIds: [],
-        markedFailedCallRecordingIds: [],
-      });
-      expect((await fetchCallRecording(callRecordingId)).status).toBe(
-        'SCHEDULED',
-      );
-    });
-
-    it('does not enqueue a recording that already has a bot', async () => {
-      const calendarEventId = await createCalendarEvent();
-      const externalBotId = randomUUID();
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-        externalBotId,
-      });
-
-      expect(
-        await enqueuePendingCallRecordingRecoveries({
-          client,
-          now: new Date(),
-        }),
-      ).toEqual({
-        enqueuedCallRecordingIds: [],
-        markedFailedCallRecordingIds: [],
-      });
-      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
-        externalBotId,
-      );
-    });
-  });
-
-  describe('crash recovery cron', () => {
-    it('schedules a bot for a recording created without one, with zero Recall list reads', async () => {
-      const calendarEventId = await createCalendarEvent();
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-      });
-
-      await runPendingRecoveryCron();
-
-      const callRecording = await fetchCallRecording(callRecordingId);
-
-      expect(callRecording.externalBotId).toBeTruthy();
+      expect(externalBotId).toBeTruthy();
       expect(recall.botForCallRecording(callRecordingId)?.id).toBe(
-        callRecording.externalBotId,
+        externalBotId,
       );
       expect(recall.listRequestCount).toBe(0);
     });
@@ -3414,13 +3248,12 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventId,
       });
 
-      // First recovery run creates the bot and records the attempt.
-      await runPendingRecoveryCron();
+      await followUpCallRecordingRequestHandler({ callRecordingId });
+
       const firstBotId = (await fetchCallRecording(callRecordingId))
         .externalBotId;
 
-      // Simulate the id write-back getting lost after the POST reached
-      // Recall.
+      // The id write-back got lost after the POST reached Recall.
       await client.mutation({
         updateCallRecording: {
           __args: { id: callRecordingId, data: { externalBotId: null } },
@@ -3428,7 +3261,8 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      await runPendingRecoveryCron();
+      vi.setSystemTime(Date.now() + CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS);
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
       // Recall dedupes the repeated idempotency key: the very same bot is
       // written back, without any list request.
@@ -3442,7 +3276,7 @@ describe('call recorder app lifecycle (integration)', () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(0.25),
+        botScheduleAttemptedAt: hoursAgo(0.5),
         botScheduleIdempotencyKey: 'key-from-before-the-meeting-moved',
       });
 
@@ -3452,7 +3286,7 @@ describe('call recorder app lifecycle (integration)', () => {
         statusCode: 'ready',
       });
 
-      await runPendingRecoveryCron();
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         'recall-bot-from-crashed-run',
@@ -3476,12 +3310,107 @@ describe('call recorder app lifecycle (integration)', () => {
         metadata: buildBotMetadata(callRecordingId, workspaceId),
       });
 
-      await runPendingRecoveryCron();
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         'recall-bot-scheduled-before-lost-write-back',
       );
       expect(recall.bots.size).toBe(1);
+    });
+
+    it('only writes to a request that still awaits its bot', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+      });
+      const externalBotId = randomUUID();
+
+      expect(
+        await updatePendingCallRecording({
+          client,
+          id: callRecordingId,
+          data: { externalBotId },
+        }),
+      ).toBe(true);
+      expect(
+        await updatePendingCallRecording({
+          client,
+          id: callRecordingId,
+          data: { externalBotId: randomUUID() },
+        }),
+      ).toBe(false);
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        externalBotId,
+      );
+
+      await client.mutation({
+        updateCallRecording: {
+          __args: {
+            id: callRecordingId,
+            data: { recordingRequestStatus: 'CANCELED', externalBotId: null },
+          },
+          id: true,
+        },
+      });
+
+      expect(
+        await updatePendingCallRecording({
+          client,
+          id: callRecordingId,
+          data: { externalBotId: randomUUID() },
+        }),
+      ).toBe(false);
+      expect(
+        (await fetchCallRecording(callRecordingId)).externalBotId,
+      ).toBeFalsy();
+    });
+
+    it('settles without a bot for a meeting without a link', async () => {
+      const calendarEventId = await createCalendarEvent({
+        conferenceLink: { primaryLinkUrl: '' },
+      });
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+      });
+
+      expect(
+        await followUpCallRecordingRequestHandler({ callRecordingId }),
+      ).toMatchObject({ status: 'settled' });
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.followUps).toEqual([]);
+    });
+
+    it('settles a request that already has its bot without calling Recall', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        externalBotId: 'recall-bot-already-attached',
+      });
+
+      expect(
+        await followUpCallRecordingRequestHandler({ callRecordingId }),
+      ).toMatchObject({ status: 'settled' });
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        'recall-bot-already-attached',
+      );
+      expect(recall.bots.size).toBe(0);
+      expect(recall.listRequestCount).toBe(0);
+    });
+
+    it('leaves a pending recording without a calendar event untouched', async () => {
+      const callRecordingId = await createPendingCallRecording({});
+
+      expect(
+        await followUpCallRecordingRequestHandler({ callRecordingId }),
+      ).toMatchObject({ status: 'settled' });
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'SCHEDULED',
+      );
+      expect(recall.followUps).toEqual([]);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {
@@ -3493,15 +3422,213 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventId,
       });
 
-      await runPendingRecoveryCron();
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
-      const callRecording = await fetchCallRecording(callRecordingId);
-
-      expect(callRecording.status).toBe('FAILED');
-      expect(callRecording.callRecorderFailureReason).toBe(
-        'bot_never_scheduled',
-      );
+      expect(await fetchCallRecording(callRecordingId)).toMatchObject({
+        status: 'FAILED',
+        callRecorderFailureReason: 'bot_never_scheduled',
+      });
       expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
+    });
+
+    it('checks an ended recording again a week after its meeting while webhooks can still settle its attempt', async () => {
+      const meetingEndsAt = hoursAgo(2);
+      const calendarEventId = await createCalendarEvent({
+        startsAt: hoursAgo(3),
+        endsAt: meetingEndsAt,
+      });
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: hoursAgo(4),
+      });
+
+      expect(
+        await followUpCallRecordingRequestHandler({ callRecordingId }),
+      ).toMatchObject({ status: 'follow-up-again' });
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'SCHEDULED',
+      );
+
+      const weekAfterMeeting =
+        new Date(meetingEndsAt).getTime() +
+        7 * 24 * 60 * MILLISECONDS_PER_MINUTE;
+      const [armedFollowUp] = followUpsArmedFor(callRecordingId);
+
+      expect(armedFollowUp.dueAt).toBeGreaterThanOrEqual(weekAfterMeeting);
+      expect(armedFollowUp.dueAt).toBeLessThan(
+        weekAfterMeeting + MILLISECONDS_PER_MINUTE,
+      );
+    });
+
+    it('fails an unresolved attempt after the convergence lookback', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: daysAgo(9),
+        endsAt: daysAgo(8),
+      });
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: daysAgo(9),
+      });
+
+      await followUpCallRecordingRequestHandler({ callRecordingId });
+
+      expect(await fetchCallRecording(callRecordingId)).toMatchObject({
+        status: 'FAILED',
+        callRecorderFailureReason: 'bot_schedule_outcome_unknown',
+      });
+    });
+
+    it('spreads a burst of follow-ups one minute apart', async () => {
+      await enqueueCallRecordingRequestFollowUps({
+        callRecordingIds: Array.from(
+          { length: RECALL_RECOVERY_CALLS_PER_MINUTE + 1 },
+          () => randomUUID(),
+        ),
+      });
+
+      expect(
+        recall.followUps.map(
+          ({ delayMs }) => delayMs - CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS,
+        ),
+      ).toEqual([
+        ...Array(RECALL_RECOVERY_CALLS_PER_MINUTE).fill(0),
+        MILLISECONDS_PER_MINUTE,
+      ]);
+    });
+
+    it('follows up on requests left stuck by an earlier version after an upgrade', async () => {
+      const pendingCallRecordingId = await createPendingCallRecording({
+        calendarEventId: await createCalendarEvent(),
+      });
+      const canceledCallRecordingId = await createPendingCallRecording({
+        calendarEventId: await createCalendarEvent(),
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-left-behind',
+      });
+
+      recall.seedBot({
+        id: 'recall-bot-left-behind',
+        metadata: buildBotMetadata(canceledCallRecordingId, workspaceId),
+      });
+
+      await startPostInstallBackfillsHandler({
+        previousVersion: '1.15.0',
+        newVersion: '1.16.0',
+      });
+
+      expect(recall.stuckRequestSweepRequests).toHaveLength(1);
+      expect(recall.calendarEventSweepRequests).toHaveLength(0);
+
+      await processPendingCallRecordingRequestsHandler();
+
+      for (const callRecordingId of [
+        pendingCallRecordingId,
+        canceledCallRecordingId,
+      ]) {
+        expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
+        await followUpCallRecordingRequestHandler({ callRecordingId });
+      }
+
+      expect(
+        (await fetchCallRecording(pendingCallRecordingId)).externalBotId,
+      ).toBeTruthy();
+      expect(recall.deletedBotIds).toEqual(['recall-bot-left-behind']);
+    });
+
+    it('starts the upcoming meetings sweep on a fresh install', async () => {
+      expect(
+        await startPostInstallBackfillsHandler({ newVersion: '1.16.0' }),
+      ).toEqual({ calendarEventSweepOutcome: 'sweep-enqueued' });
+      expect(recall.calendarEventSweepRequests).toHaveLength(1);
+      expect(recall.stuckRequestSweepRequests).toHaveLength(0);
+    });
+
+    describe('through the real worker', () => {
+      beforeEach(() => {
+        vi.unstubAllGlobals();
+        vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+      });
+
+      it('leaves a request canceled while its follow-up waited alone', async () => {
+        const calendarEventId = await createCalendarEvent();
+        const callRecordingId = await createPendingCallRecording({
+          calendarEventId,
+        });
+        const jobId = `follow-up-test-${callRecordingId}`;
+
+        await enqueueJobs({
+          logicFunctionUniversalIdentifier:
+            FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+          jobs: [{ jobId, payload: { callRecordingId, attempt: 0 } }],
+          retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+          delayMs: 5_000,
+        });
+
+        expect(await getJobs([jobId])).toMatchObject([{ state: 'DELAYED' }]);
+
+        await client.mutation({
+          updateCallRecording: {
+            __args: {
+              id: callRecordingId,
+              data: { recordingRequestStatus: 'CANCELED' },
+            },
+            id: true,
+          },
+        });
+
+        await expect
+          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade: 1 }]);
+
+        const callRecording = await fetchCallRecording(callRecordingId);
+
+        expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+        expect(callRecording.externalBotId).toBeFalsy();
+        expect(callRecording.botScheduleAttemptedAt).toBeFalsy();
+      });
+
+      it('redelivers a follow-up the Core API rejects until its retry budget is exhausted', async () => {
+        const callRecordingId = `invalid-${randomUUID()}`;
+        const jobId = `follow-up-test-${callRecordingId}`;
+
+        await enqueueJobs({
+          logicFunctionUniversalIdentifier:
+            FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+          jobs: [{ jobId, payload: { callRecordingId, attempt: 0 } }],
+          retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+        });
+
+        await expect
+          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .toMatchObject([
+            {
+              jobId,
+              state: 'COMPLETED',
+              attemptsMade: ENQUEUED_JOB_RETRY_LIMIT + 1,
+            },
+          ]);
+      });
+
+      it('reports a failed upgrade sweep enqueue as retryable', async () => {
+        await createPendingCallRecording({
+          calendarEventId: await createCalendarEvent(),
+        });
+
+        // A workspace token can read recordings, but enqueueing requires an application token.
+        vi.stubEnv(
+          'TWENTY_APP_ACCESS_TOKEN',
+          process.env[WORKSPACE_API_KEY_ENV] ?? '',
+        );
+
+        await expect(
+          processPendingCallRecordingRequestsHandler(),
+        ).rejects.toMatchObject({
+          name: 'RetryableLogicFunctionError',
+          message: expect.stringContaining(
+            'stuck call recording request follow-up enqueueing failed',
+          ),
+        });
+      });
     });
   });
 
@@ -3970,7 +4097,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.deletedBotIds).toContain(botId);
     });
 
-    it('stops the cancellation chain when Recall is down, leaving the bot to the daily retry', async () => {
+    it('stops the cancellation chain when Recall is down, leaving the bot to its follow-up', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
 
@@ -3987,6 +4114,14 @@ describe('call recorder app lifecycle (integration)', () => {
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         botId,
       );
+
+      recall.failRecallRemovals = false;
+      await runArmedFollowUps();
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).externalBotId,
+      ).toBeFalsy();
+      expect(recall.deletedBotIds).toContain(botId);
     });
 
     it('does not schedule a bot for a request the cancellation missed', async () => {
@@ -3997,7 +4132,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       turnRecordingOff();
 
-      await runPendingRecoveryCron();
+      await followUpCallRecordingRequestHandler({ callRecordingId });
 
       const callRecording = await fetchCallRecording(callRecordingId);
 

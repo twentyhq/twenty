@@ -1,10 +1,15 @@
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
+import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
+import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { findResumablePendingCallRecording } from 'src/logic-functions/flows/find-resumable-pending-call-recording.util';
+import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 
 export type ResumePendingCallRecordingResult =
@@ -12,9 +17,8 @@ export type ResumePendingCallRecordingResult =
   | { status: 'skipped'; reason: string }
   | { status: 'deferred'; reason: string };
 
-// Single-recording variant of the recovery sweep: finishes bot scheduling for
-// one row that transitioned back to pending. Deferred outcomes are retried by
-// the queue and ultimately by the recovery cron.
+// Finishes bot scheduling right away for one row that transitioned back to
+// pending; what it defers is left to the row's follow-up.
 export const resumePendingCallRecording = async ({
   client,
   callRecordingId,
@@ -24,17 +28,45 @@ export const resumePendingCallRecording = async ({
   callRecordingId: string;
   now: Date;
 }): Promise<ResumePendingCallRecordingResult> => {
-  const findResult = await findResumablePendingCallRecording({
-    client,
-    callRecordingId,
-    now,
-  });
+  const callRecording = (
+    await findCallRecordingsByIds(client, [callRecordingId])
+  )[0];
 
-  if (findResult.status === 'skipped') {
-    return findResult;
+  if (isUndefined(callRecording)) {
+    return { status: 'skipped', reason: 'call recording not found' };
   }
 
-  const { callRecording, calendarEvent } = findResult;
+  if (
+    callRecording.recordingRequestStatus !==
+      CallRecordingRequestStatus.REQUESTED ||
+    callRecording.status !== CallRecordingStatus.SCHEDULED ||
+    !isUndefined(callRecording.externalBotId)
+  ) {
+    return { status: 'skipped', reason: 'call recording is not pending' };
+  }
+
+  if (isUndefined(callRecording.calendarEventId)) {
+    return { status: 'skipped', reason: 'no calendar event attached' };
+  }
+
+  const calendarEvent = (
+    await fetchCalendarEventsByIds(client, [callRecording.calendarEventId])
+  )[0];
+
+  if (isUndefined(calendarEvent)) {
+    return { status: 'skipped', reason: 'calendar event not found' };
+  }
+
+  if (
+    hasMeetingEnded({
+      startsAt: calendarEvent.startsAt,
+      endsAt: calendarEvent.endsAt,
+      now,
+    })
+  ) {
+    // The follow-up owns failing rows whose meeting is over.
+    return { status: 'skipped', reason: 'meeting already ended' };
+  }
 
   if (
     canRescheduleCallRecordingWithoutRecallLookup({
@@ -49,7 +81,7 @@ export const resumePendingCallRecording = async ({
 
   return {
     status: 'deferred',
-    reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
+    reason: 'ambiguous prior attempt; the follow-up will look it up at Recall',
   };
 };
 

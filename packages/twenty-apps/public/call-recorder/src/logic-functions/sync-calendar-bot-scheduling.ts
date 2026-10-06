@@ -8,6 +8,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-calendar-bot-scheduling-route-path';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
@@ -32,12 +33,18 @@ export const syncCalendarBotSchedulingHandler =
     }
 
     const client = new CoreApiClient();
-    const openCallRecordings = await findOpenScheduledCallRecordings(client);
+    const openCallRecordingIds = (
+      await findOpenScheduledCallRecordings(client)
+    ).map((callRecording) => callRecording.id);
+
+    await enqueueCallRecordingRequestFollowUps({
+      callRecordingIds: openCallRecordingIds,
+    });
 
     const canceledCallRecordingCount =
       await cancelOpenScheduledCallRecordingRequests(
         client,
-        openCallRecordings.map((callRecording) => callRecording.id),
+        openCallRecordingIds,
         () => true,
       );
 

@@ -22,6 +22,7 @@ import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/sch
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
@@ -226,6 +227,17 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
       )
     ).map((callRecording) => [callRecording.id, callRecording]),
   );
+
+  // Armed before any write, so a run that dies mid-batch still leaves every
+  // new or re-enabled request its follow-up.
+  await enqueueCallRecordingRequestFollowUps({
+    callRecordingIds: activeMeetingCallRecordingIds.filter((callRecordingId) =>
+      isUndefined(
+        policyManagedCallRecordingsById.get(callRecordingId)?.externalBotId,
+      ),
+    ),
+  });
+
   const canceledMeetingReconciliations = await reconcileCanceledMeetings({
     client,
     meetingPolicyResults: meetingPolicyResults.filter(
