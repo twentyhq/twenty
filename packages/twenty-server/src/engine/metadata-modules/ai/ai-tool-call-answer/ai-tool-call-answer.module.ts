@@ -5,14 +5,13 @@ import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { AwaitedToolCallHandlerModule } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/awaited-tool-call-handler.module';
 import { ToolCallAnswerResolver } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/tool-call-answer.resolver';
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
-import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
-// sits above chat and workflow since an answer can resume either
+// an answer resumes a chat here, or the run waiting on it through the handler it registered
 @Module({
   imports: [
     AgentHistoryModule,
@@ -21,8 +20,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     AgentChatStreamStateModule,
     PermissionsModule,
     ToolProviderModule,
-    WorkflowRunModule,
-    WorkflowRunnerModule,
+    AwaitedToolCallHandlerModule,
   ],
   providers: [
     ToolCallAnswerService,
