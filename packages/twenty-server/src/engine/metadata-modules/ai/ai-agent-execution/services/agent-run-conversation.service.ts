@@ -10,7 +10,8 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { mapAgentRunCallerToToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-run-caller-to-tool-call-workflow-step.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
@@ -23,6 +24,7 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 
 @Injectable()
 export class AgentRunConversationService {
@@ -130,22 +132,30 @@ export class AgentRunConversationService {
     turnId,
     agentId,
     execution,
+    caller,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
-    agentId: string;
-    execution: AgentExecutionResult;
-  }): Promise<void> {
+    agentId: string | null;
+    execution: RecordableAgentExecution;
+    caller?: AgentRunCaller;
+  }): Promise<{
+    isAwaitingAnswer: boolean;
+    replyParts: ExtendedUIMessagePart[];
+  }> {
     const turn = { workspaceId, threadId, turnId, execution };
 
-    const { isAwaitingAnswer } = await this.conversationWriterService
+    const reply = await this.conversationWriterService
       .insertExecutionReply({
         workspaceId,
         threadId,
         turnId,
         agentId,
         execution,
+        workflowStep: isDefined(caller)
+          ? mapAgentRunCallerToToolCallWorkflowStep(caller)
+          : undefined,
       })
       .catch(async (error: unknown) => {
         await this.turnRecorderService.finishExecutedTurn({
@@ -158,8 +168,10 @@ export class AgentRunConversationService {
 
     await this.turnRecorderService.finishExecutedTurn({
       ...turn,
-      isAwaitingAnswer,
+      isAwaitingAnswer: reply.isAwaitingAnswer,
     });
+
+    return reply;
   }
 
   async failTurn({

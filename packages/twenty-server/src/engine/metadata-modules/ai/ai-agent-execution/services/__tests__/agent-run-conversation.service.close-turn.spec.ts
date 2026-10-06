@@ -70,4 +70,24 @@ describe('AgentRunConversationService.closeTurn', () => {
       error: expect.objectContaining({ code: expect.any(String) }),
     });
   });
+
+  it('names the caller on the calls it leaves pending', async () => {
+    const { service, conversationWriterService } = buildService();
+
+    await service.closeTurn({
+      ...turn,
+      agentId: null,
+      execution,
+      caller: {
+        type: 'WORKFLOW_STEP',
+        ref: { workflowRunId: 'run-id', stepId: 'step-id' },
+      },
+    });
+
+    expect(conversationWriterService.insertExecutionReply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workflowStep: { workflowRunId: 'run-id', stepId: 'step-id' },
+      }),
+    );
+  });
 });

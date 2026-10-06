@@ -22,6 +22,7 @@ import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspac
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -824,22 +825,34 @@ describe('core workflow visibility (e2e)', () => {
         threadKey: `${workflowRunId}:trigger`,
       }));
 
-      const turnId = await conversationService.openTurn({
-        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
+      const callerConversationService =
+        getAppProviderByClassName<AgentCallerConversationService>(
+          'AgentCallerConversationService',
+        );
+
+      const turnId = await callerConversationService.openTurn({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         agentId: null,
         prompt: 'Summarize the lead',
-        initiatorUserWorkspaceId: null,
+        senderUserWorkspaceId: null,
+        createdBy: await conversationService.findTurnCreatedBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workflowRunId,
+        }),
       });
 
-      await conversationService.closeTurn({
+      await callerConversationService.closeTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         turnId,
-        workflowStep: { workflowRunId, stepId: 'trigger' },
+        caller: {
+          type: 'WORKFLOW_STEP',
+          ref: { workflowRunId, stepId: 'trigger' },
+        },
         title: 'Summarize the lead',
         agentId: null,
-        executionResult: {
+        execution: {
           steps: [
             { content: [{ type: 'text', text: 'A warm lead.' }] },
           ] as AgentExecutionResult['steps'],

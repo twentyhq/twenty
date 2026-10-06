@@ -1,15 +1,15 @@
 import { type StepResult, type ToolSet } from 'ai';
 
-import { mapAiStepsToToolCallLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/map-ai-steps-to-tool-call-logs.util';
+import { mapAgentStepsToToolCallLogs } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-steps-to-tool-call-logs.util';
 
 type StepContentPart = StepResult<ToolSet>['content'][number];
 
 const buildStep = (content: StepContentPart[]): StepResult<ToolSet> =>
   ({ content }) as unknown as StepResult<ToolSet>;
 
-describe('mapAiStepsToToolCallLogs', () => {
+describe('mapAgentStepsToToolCallLogs', () => {
   it('returns an empty array when there are no steps', () => {
-    expect(mapAiStepsToToolCallLogs([])).toEqual([]);
+    expect(mapAgentStepsToToolCallLogs([])).toEqual([]);
   });
 
   it('pairs a tool-call with its tool-result into a single success entry', () => {
@@ -31,7 +31,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -61,7 +61,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
 
     expect(result).toHaveLength(1);
     expect(result[0].state).toBe('error');
@@ -92,7 +92,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    expect(mapAiStepsToToolCallLogs(steps)[0]).toMatchObject({
+    expect(mapAgentStepsToToolCallLogs(steps)[0]).toMatchObject({
       state: 'error',
       errorMessage: 'View not found',
       output,
@@ -120,7 +120,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
 
     const serializedInput = JSON.stringify(result[0].input);
     const serializedOutput = JSON.stringify(result[0].output);
@@ -146,7 +146,7 @@ describe('mapAiStepsToToolCallLogs', () => {
 
     const steps = [buildStep(buildToolCalls(0)), buildStep(buildToolCalls(1))];
 
-    expect(mapAiStepsToToolCallLogs(steps)).toHaveLength(200);
+    expect(mapAgentStepsToToolCallLogs(steps)).toHaveLength(200);
   });
 
   it('preserves all web_search sources in tool output', () => {
@@ -176,7 +176,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
     const output = result[0].output as {
       sources: unknown[];
       sourcesDroppedCount?: number;
@@ -216,7 +216,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
     const output = result[0].output as {
       result: { records: Array<Record<string, unknown>> };
     };
@@ -243,7 +243,7 @@ describe('mapAiStepsToToolCallLogs', () => {
       ]),
     ];
 
-    const result = mapAiStepsToToolCallLogs(steps);
+    const result = mapAgentStepsToToolCallLogs(steps);
 
     expect(result).toHaveLength(1);
     expect(result[0].toolName).toBe('foo');

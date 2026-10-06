@@ -10,6 +10,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import {
   AiException,
   AiExceptionCode,
@@ -29,6 +30,7 @@ import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -169,6 +171,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -267,22 +270,30 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const turnId = await this.workflowAgentConversationService.openTurn({
-            runInfo: { workspaceId, workflowRunId },
+          const turnId = await this.agentCallerConversationService.openTurn({
+            workspaceId,
             threadId,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
-            initiatorUserWorkspaceId: null,
+            senderUserWorkspaceId: null,
+            createdBy:
+              await this.workflowAgentConversationService.findTurnCreatedBy({
+                workspaceId,
+                workflowRunId,
+              }),
           });
 
-          await this.workflowAgentConversationService.closeTurn({
+          await this.agentCallerConversationService.closeTurn({
             workspaceId,
             threadId,
             turnId,
-            workflowStep: { workflowRunId, stepId: workflow.step.id },
+            caller: buildWorkflowStepCaller({
+              workflowRunId,
+              stepId: workflow.step.id,
+            }),
             title: workflow.step.name,
             agentId: null,
-            executionResult: {
+            execution: {
               isPaused: true,
               steps: [{ content }],
             },

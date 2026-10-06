@@ -2,41 +2,39 @@ import { findAgentStepWait } from 'src/modules/workflow/workflow-executor/workfl
 
 const WAIT = { type: 'EVENT', eventName: 'company.updated' };
 
-const stepWithResults = (
-  ...toolResults: { toolName: string; output: unknown }[]
-) => ({ toolResults });
-
 describe('findAgentStepWait', () => {
-  it('finds the wait an execution ended on', () => {
+  it('finds the wait a run paused on', () => {
     expect(
       findAgentStepWait([
-        stepWithResults({
+        {
           toolName: 'wait_for_event',
           output: { success: true, result: { status: 'pending', wait: WAIT } },
-        }),
+        },
       ]),
     ).toEqual(WAIT);
-  });
-
-  it('ignores a wait call made in an earlier step', () => {
-    expect(
-      findAgentStepWait([
-        stepWithResults({
-          toolName: 'wait_for_event',
-          output: { success: true, result: { status: 'pending', wait: WAIT } },
-        }),
-        stepWithResults({ toolName: 'search', output: {} }),
-      ]),
-    ).toBeUndefined();
   });
 
   it('ignores pending calls of tools that are not waits', () => {
     expect(
       findAgentStepWait([
-        stepWithResults({
+        {
           toolName: 'ask_question',
           output: { success: true, result: { status: 'pending', wait: WAIT } },
-        }),
+        },
+      ]),
+    ).toBeUndefined();
+  });
+
+  it('ignores a wait call that no longer waits', () => {
+    expect(
+      findAgentStepWait([
+        {
+          toolName: 'wait_for_event',
+          output: {
+            success: true,
+            result: { status: 'completed', wait: WAIT },
+          },
+        },
       ]),
     ).toBeUndefined();
   });
@@ -44,10 +42,10 @@ describe('findAgentStepWait', () => {
   it('ignores a wait call whose wait cannot be read', () => {
     expect(
       findAgentStepWait([
-        stepWithResults({
+        {
           toolName: 'wait_for_duration',
           output: { success: true, result: { status: 'pending' } },
-        }),
+        },
       ]),
     ).toBeUndefined();
   });

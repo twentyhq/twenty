@@ -4,16 +4,15 @@ import {
   workflowStepWaitSchema,
 } from 'twenty-shared/workflow';
 
+import { type AgentRunPausedToolResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-result.type';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
 
-// The wait an execution paused on, when it ended on a wait tool call
+// The wait a run paused on, when it paused on a wait tool call
 export const findAgentStepWait = (
-  steps: { toolResults: { toolName: string; output: unknown }[] }[],
+  pausedToolResults: AgentRunPausedToolResult[],
 ): WorkflowStepWait | undefined => {
-  const lastStepToolResults = steps[steps.length - 1]?.toolResults ?? [];
-
-  for (const { toolName, output } of lastStepToolResults) {
+  for (const { toolName, output } of pausedToolResults) {
     if (
       !WORKFLOW_AGENT_WAIT_TOOL_NAMES.includes(toolName) ||
       !isAwaitingPausingToolOutput(output) ||
