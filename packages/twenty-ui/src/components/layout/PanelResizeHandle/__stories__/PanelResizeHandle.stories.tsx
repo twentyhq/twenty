@@ -7,7 +7,8 @@ import { PanelResizeHandle } from '../PanelResizeHandle';
 import { PanelResizeHandleDemo } from './PanelResizeHandleDemo';
 
 const meta = {
-  title: 'UI/Components/PanelResizeHandle',
+  id: 'ui-components-panelresizehandle',
+  title: 'UI/Components/Layout/PanelResizeHandle',
   component: PanelResizeHandle,
   decorators: [ComponentDecorator],
   args: { edge: 'right', size: 220, minSize: 140, maxSize: 360 },

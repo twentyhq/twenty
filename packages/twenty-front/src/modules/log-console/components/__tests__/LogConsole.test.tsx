@@ -35,8 +35,8 @@ import {
 
 let capturedPanelResizeHandleProps: PanelResizeHandleProps | undefined;
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/layout', () => ({
+  ...jest.requireActual('twenty-ui/components/layout'),
   PanelResizeHandle: (props: PanelResizeHandleProps) => {
     capturedPanelResizeHandleProps = props;
     return null;

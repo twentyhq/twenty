@@ -3,7 +3,7 @@ import { type ReactNode, useRef, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
-import { PanelResizeHandle } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components/layout';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedWidth';

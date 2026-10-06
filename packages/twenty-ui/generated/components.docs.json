@@ -9060,8 +9060,8 @@
   },
   {
     "name": "PanelResizeHandle",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/panel-resize-handle",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/panel-resize-handle",
     "props": [
       {
         "name": "disabled",

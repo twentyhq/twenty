@@ -13,7 +13,7 @@ import {
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
 import { DialogContainerContext } from '@/ui/layout/dialog/contexts/DialogContainerContext';
-import { PanelResizeHandle } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components/layout';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';

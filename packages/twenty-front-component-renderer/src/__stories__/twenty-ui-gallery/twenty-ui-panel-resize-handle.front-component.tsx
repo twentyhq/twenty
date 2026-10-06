@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { PanelResizeHandle } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 

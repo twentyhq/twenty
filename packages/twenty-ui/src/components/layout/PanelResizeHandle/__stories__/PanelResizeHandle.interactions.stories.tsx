@@ -20,7 +20,8 @@ import { PanelResizeHandleDemo } from './PanelResizeHandleDemo';
 import { UnmountingPanelResizeHandle } from './UnmountingPanelResizeHandle';
 
 const meta = {
-  title: 'UI/Components/PanelResizeHandle/Interactions',
+  id: 'ui-components-panelresizehandle-interactions',
+  title: 'UI/Components/Layout/PanelResizeHandle/Interactions',
   component: PanelResizeHandle,
   decorators: [ComponentDecorator],
   render: (args) => <ControlledPanelResizeHandle {...args} />,
