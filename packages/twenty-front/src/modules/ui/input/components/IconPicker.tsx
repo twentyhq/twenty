@@ -4,12 +4,9 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactElement, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Dropdown,
-  IconButton,
-  LightIconButton,
-  getIconTileColorShades,
-} from 'twenty-ui/components';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {

@@ -1,5 +1,5 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { useTheme } from 'twenty-ui/theme';
 
 export const UsageSectionSkeleton = () => {

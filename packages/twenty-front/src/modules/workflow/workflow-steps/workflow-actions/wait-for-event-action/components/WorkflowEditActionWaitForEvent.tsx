@@ -5,7 +5,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 import { type WorkflowWaitForEventAction } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -43,7 +43,7 @@ export const WorkflowEditActionWaitForEvent = ({
   const { t } = useLingui();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const objectOptions = useWorkflowObjectSelectOptions();
+  const objectOptions = useObjectMetadataItemSelectOptions();
 
   const [timeoutDraft, setTimeoutDraft] = useState<WaitForEventTimeout>(
     () => action.settings.input.timeout ?? {},

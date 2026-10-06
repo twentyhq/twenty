@@ -9,7 +9,7 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 const StyledLineChartContainer = styled.div`
   height: 200px;

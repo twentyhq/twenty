@@ -19,15 +19,13 @@ import { ApplicationInstallModule } from 'src/engine/core-modules/application/ap
 import { TriggerInstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
 import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
-import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { UpgradeWorkspaceApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
-import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
-import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
@@ -118,11 +116,10 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     EmailingModule,
     ApplicationInstallModule,
     ApplicationManifestModule,
-    ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
-    OnboardingModule,
+    PendingWakeUpModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
@@ -148,7 +145,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     GenerateSdkClientJob,
     UpgradeApplicationsJob,
     UpgradeWorkspaceApplicationJob,
-    InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,

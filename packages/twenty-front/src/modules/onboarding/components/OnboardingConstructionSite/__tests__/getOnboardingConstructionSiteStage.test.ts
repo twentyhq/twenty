@@ -15,7 +15,6 @@ describe('getOnboardingConstructionSiteStage', () => {
   it('should move the construction forward with each step', () => {
     const stageIndexes = [
       OnboardingStatus.SYNC_EMAIL,
-      OnboardingStatus.APPS_INSTALLATION,
       OnboardingStatus.PROFILE_CREATION,
       OnboardingStatus.INVITE_TEAM,
       OnboardingStatus.BOOK_CALL,
@@ -27,7 +26,7 @@ describe('getOnboardingConstructionSiteStage', () => {
         }).stageIndex,
     );
 
-    expect(stageIndexes).toEqual([0, 1, 2, 3, 4]);
+    expect(stageIndexes).toEqual([0, 1, 2, 3]);
   });
 
   it('should keep the site on its first stage before the first step that shows it', () => {

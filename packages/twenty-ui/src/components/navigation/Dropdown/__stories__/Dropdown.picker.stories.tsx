@@ -106,7 +106,8 @@ const openFields = async (canvasElement: HTMLElement) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Picker',
+  id: 'ui-components-dropdown-interactions-picker',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Picker',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

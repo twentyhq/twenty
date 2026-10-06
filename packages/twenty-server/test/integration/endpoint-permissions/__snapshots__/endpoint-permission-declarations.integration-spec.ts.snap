@@ -408,7 +408,6 @@ exports[`endpoint permission declarations should match the AuthPrincipalGuard an
   "OnboardingResolver.getInviteSuggestions {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":false,"oauthClient":false,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "OnboardingResolver.goBackToPreviousOnboardingStep {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":false,"oauthClient":false,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "OnboardingResolver.skipSyncEmailOnboardingStep {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":false,"oauthClient":false,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
-  "OnboardingResolver.triggerInstallAppsOnboardingStep {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":false,"oauthClient":false,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "OpenApiController.generateOpenApiSchemaCore {"applicationTarget":null,"authPrincipalGuards":[]}",
   "OpenApiController.generateOpenApiSchemaMetaData {"applicationTarget":null,"authPrincipalGuards":[]}",
   "PageLayoutController.create {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
