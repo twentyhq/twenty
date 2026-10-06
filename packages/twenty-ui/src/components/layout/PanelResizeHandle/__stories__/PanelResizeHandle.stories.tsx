@@ -11,7 +11,7 @@ const meta = {
   component: PanelResizeHandle,
   decorators: [ComponentDecorator],
   args: { edge: 'right', size: 220, minSize: 140, maxSize: 360 },
-  render: (args) => <PanelResizeHandleDemo {...args} />,
+  render: (args) => <PanelResizeHandleDemo key={args.size} {...args} />,
 } satisfies Meta<typeof PanelResizeHandle>;
 
 export default meta;

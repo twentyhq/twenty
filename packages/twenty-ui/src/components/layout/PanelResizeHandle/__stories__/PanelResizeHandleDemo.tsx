@@ -13,14 +13,15 @@ export const PanelResizeHandleDemo = ({
   placement = 'edge',
   minSize,
   maxSize,
+  size: initialSize,
 }: Pick<
   PanelResizeHandleProps,
-  'edge' | 'placement' | 'minSize' | 'maxSize'
+  'edge' | 'placement' | 'minSize' | 'maxSize' | 'size'
 >) => {
   const regionId = useId();
   const separatorRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState(220);
-  const [committedSize, setCommittedSize] = useState(220);
+  const [size, setSize] = useState(initialSize);
+  const [committedSize, setCommittedSize] = useState(initialSize);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [shouldFocusOnMount, setShouldFocusOnMount] = useState(false);
 

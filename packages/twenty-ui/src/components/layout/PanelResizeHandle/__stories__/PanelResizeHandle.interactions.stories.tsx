@@ -337,7 +337,12 @@ export const DragPinnedAtBound: Story = {
 
 export const CollapseMovesFocus: Story = {
   render: () => (
-    <PanelResizeHandleDemo edge="right" minSize={140} maxSize={360} />
+    <PanelResizeHandleDemo
+      edge="right"
+      size={220}
+      minSize={140}
+      maxSize={360}
+    />
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
