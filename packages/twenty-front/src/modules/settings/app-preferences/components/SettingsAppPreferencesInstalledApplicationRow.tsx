@@ -17,9 +17,8 @@ export const SettingsAppPreferencesInstalledApplicationRow = ({
   hasConnectedAccount,
 }: SettingsAppPreferencesInstalledApplicationRowProps) => {
   const { t } = useLingui();
-  const { connectionProviders } = useFindApplicationConnectionProviders(
-    application.id,
-  );
+  const { connectionProviders, loading: connectionProvidersLoading } =
+    useFindApplicationConnectionProviders(application.id);
 
   // An app declaring an OAuth provider acts on the member's behalf, so it
   // needs one of their accounts before its preferences mean anything.
@@ -40,7 +39,7 @@ export const SettingsAppPreferencesInstalledApplicationRow = ({
         />
       }
       type={
-        isMissingAccount ? (
+        connectionProvidersLoading ? null : isMissingAccount ? (
           <Status color="red" weight="medium">{t`Missing account`}</Status>
         ) : (
           t`App`
