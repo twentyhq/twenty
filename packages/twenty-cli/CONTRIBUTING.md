@@ -100,9 +100,9 @@ For packaging changes, run the build and installation checks:
 yarn nx run twenty-cli:test:package
 ```
 
-This runs the workspace executable directly, packs the CLI, and installs the
-archive with only its production dependencies in a temporary directory outside
-the monorepo. It checks help, offline doctor, app initialization including the
+This runs the binary declared in the workspace's `package.json` directly, packs
+the CLI, and installs the archive with only its production dependencies in a
+temporary directory outside the monorepo. It checks help, offline doctor, app initialization including the
 template overlay, and a compiler diagnostic from the installed worker. npm
 registry access is required for installation; the commands do not contact a
 Twenty workspace. Temporary files are removed afterward, and nothing is

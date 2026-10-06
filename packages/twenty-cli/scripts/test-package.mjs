@@ -18,8 +18,8 @@ const ENVIRONMENT = {
   TWENTY_REMOTE: '',
 };
 
-const run = (command, arguments_, workingDirectory) =>
-  execFileSync(command, arguments_, {
+const run = ({ command, commandArguments, workingDirectory }) =>
+  execFileSync(command, commandArguments, {
     cwd: workingDirectory,
     env: ENVIRONMENT,
     encoding: 'utf8',
@@ -27,12 +27,15 @@ const run = (command, arguments_, workingDirectory) =>
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
-await test('the workspace executable runs directly after a build', () => {
-  const output = run(
-    join(WORKSPACE_DIRECTORY, 'node_modules/.bin/twenty'),
-    ['--help'],
-    WORKSPACE_DIRECTORY,
+await test('the workspace executable runs directly after a build', async () => {
+  const { bin } = JSON.parse(
+    await readFile(join(PACKAGE_DIRECTORY, 'package.json'), 'utf8'),
   );
+  const output = run({
+    command: join(PACKAGE_DIRECTORY, bin),
+    commandArguments: ['--help'],
+    workingDirectory: WORKSPACE_DIRECTORY,
+  });
 
   assert.match(output, /Usage: twenty/);
 });
@@ -48,21 +51,31 @@ await test('the packed CLI works outside the monorepo', async (context) => {
       join(installDirectory, 'package.json'),
       JSON.stringify({ private: true }),
     );
-    run(
-      'yarn',
-      ['workspace', 'twenty', 'pack', '--out', archive],
-      WORKSPACE_DIRECTORY,
-    );
-    run(
-      'npm',
-      ['install', '--omit=dev', '--no-audit', '--no-fund', archive],
-      installDirectory,
-    );
+    run({
+      command: 'yarn',
+      commandArguments: ['workspace', 'twenty', 'pack', '--out', archive],
+      workingDirectory: WORKSPACE_DIRECTORY,
+    });
+    run({
+      command: 'npm',
+      commandArguments: [
+        'install',
+        '--omit=dev',
+        '--no-audit',
+        '--no-fund',
+        archive,
+      ],
+      workingDirectory: installDirectory,
+    });
 
     const executable = join(installDirectory, 'node_modules/.bin/twenty');
     const installedPackage = join(installDirectory, 'node_modules/twenty');
-    const cli = (...arguments_) =>
-      run(executable, arguments_, installDirectory);
+    const cli = (...commandArguments) =>
+      run({
+        command: executable,
+        commandArguments,
+        workingDirectory: installDirectory,
+      });
 
     await context.test('help loads from the installed executable', () => {
       assert.match(cli('--help'), /Usage: twenty/);
