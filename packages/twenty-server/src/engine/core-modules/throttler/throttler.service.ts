@@ -107,7 +107,9 @@ export class ThrottlerService {
       limits.map(async ({ key }) => {
         const failureCount = await this.cacheStorage.incrBy(key, 1);
 
-        await this.cacheStorage.expire(key, timeWindow);
+        if (failureCount === 1) {
+          await this.cacheStorage.expire(key, timeWindow);
+        }
 
         return failureCount;
       }),
