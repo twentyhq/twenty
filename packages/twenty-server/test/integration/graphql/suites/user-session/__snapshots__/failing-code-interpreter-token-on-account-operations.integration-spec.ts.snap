@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Account operations with a code interpreter sandbox token should fail for Jane running the interpreter directly should refuse currentUser selecting availableWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for Jane running the interpreter directly should refuse to consent to an OAuth client, minting no authorization code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for Jane running the interpreter directly should refuse to list the application authorizations 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for Jane running the interpreter directly should refuse to mint a playground token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for Jane running the interpreter directly should refuse to revoke an application authorization, which stays live 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for an agent an application runs as Jane should refuse currentUser selecting availableWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for an agent an application runs as Jane should refuse to consent to an OAuth client, minting no authorization code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for an agent an application runs as Jane should refuse to list the application authorizations 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for an agent an application runs as Jane should refuse to mint a playground token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Account operations with a code interpreter sandbox token should fail for an agent an application runs as Jane should refuse to revoke an application authorization, which stays live 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
