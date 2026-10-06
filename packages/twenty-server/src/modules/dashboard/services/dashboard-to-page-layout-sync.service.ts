@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutType } from 'twenty-shared/types';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
@@ -19,15 +18,12 @@ export class DashboardToPageLayoutSyncService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
-    private readonly i18nService: I18nService,
   ) {}
 
   public async createPageLayoutForDashboard({
     workspaceId,
-    locale,
   }: {
     workspaceId: string;
-    locale: keyof typeof APP_LOCALES;
   }): Promise<string> {
     const pageLayout = await this.pageLayoutService.create({
       createPageLayoutInput: {
@@ -40,7 +36,9 @@ export class DashboardToPageLayoutSyncService {
 
     await this.pageLayoutTabService.create({
       createPageLayoutTabInput: {
-        title: this.i18nService.getI18nInstance(locale)._(msg`Tab 1`),
+        title: i18nLabel(
+          msg({ message: `Tab 1`, context: 'pageLayoutTab.title' }),
+        ),
         pageLayoutId: pageLayout.id,
       },
       workspaceId,

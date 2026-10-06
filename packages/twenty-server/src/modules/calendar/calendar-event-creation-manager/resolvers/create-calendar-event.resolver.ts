@@ -24,6 +24,7 @@ import { CreateCalendarEventOutputDTO } from 'src/modules/calendar/calendar-even
 import { CreateCalendarEventInput } from 'src/modules/calendar/calendar-event-creation-manager/dtos/create-calendar-event.input';
 import { CalendarEventComposerService } from 'src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service';
 import { CreateCalendarEventService } from 'src/modules/calendar/calendar-event-creation-manager/services/create-calendar-event.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -118,11 +119,17 @@ export class CreateCalendarEventResolver {
 
       this.logger.error(`Failed to create calendar event: ${error}`);
 
+      if (error instanceof CustomException) {
+        return {
+          success: false,
+          error: this.i18nService
+            .getI18nInstance(context.req.locale)
+            ._(error.userFriendlyMessage),
+        };
+      }
+
       // Without an error the client shows its own translated fallback
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : undefined,
-      };
+      return { success: false };
     }
   }
 }

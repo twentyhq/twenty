@@ -93,7 +93,9 @@ export class SendEmailResolver {
       if (!result.success) {
         return {
           success: false,
-          error: result.output.error ?? result.output.message,
+          error: this.i18nService
+            .getI18nInstance(context.req.locale)
+            ._(result.error),
         };
       }
 
@@ -170,10 +172,7 @@ export class SendEmailResolver {
       }
 
       // Without an error the client shows its own translated fallback
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : undefined,
-      };
+      return { success: false };
     }
   }
 }

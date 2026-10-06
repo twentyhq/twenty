@@ -104,6 +104,12 @@ describe('collectTranslatableStrings', () => {
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
       timelineActivityTypes: [{ label: 'Launched a rocket' }],
+      skills: [
+        {
+          label: 'Plan a launch',
+          description: 'Picks the next launch window',
+        },
+      ],
       pageLayouts: [
         {
           name: 'Mission Control Layout',
@@ -129,6 +135,11 @@ describe('collectTranslatableStrings', () => {
         {
           message: 'Launched a rocket',
           context: 'timelineActivityType.label',
+        },
+        { message: 'Plan a launch', context: 'skill.label' },
+        {
+          message: 'Picks the next launch window',
+          context: 'skill.description',
         },
         { message: 'Mission Control Layout', context: 'pageLayout.name' },
         { message: 'Overview', context: 'pageLayoutTab.title' },
