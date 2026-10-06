@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/types/tool-call-workflow-step.type';
+import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/types/tool-call-workflow-step.type';
 
 // a workflow step posting a call to a member's inbox records itself in the pending output,
 // which the server writes and the answer replaces, so the answer can resume that step
