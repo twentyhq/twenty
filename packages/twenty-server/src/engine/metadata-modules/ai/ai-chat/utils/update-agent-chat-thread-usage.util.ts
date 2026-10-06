@@ -5,12 +5,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 
 type ThreadUsageUpdate = {
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  totalInputCredits: number;
-  totalOutputCredits: number;
-  totalCacheReadTokens: number;
-  totalCacheCreationTokens: number;
   contextWindowTokens: number | null;
   conversationSize: number;
   pendingQuestionMessageId: string | null;
@@ -33,22 +27,15 @@ export const updateAgentChatThreadUsage = async ({
   recordedActivity: { lastMessageText: string | null } | null;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
-    // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
     const rows = await manager.query<{ id: string }[]>(
       `
     WITH updated AS (
       UPDATE ${table('agentChatThread')} SET
-        "totalInputTokens" = "totalInputTokens" + $3,
-        "totalOutputTokens" = "totalOutputTokens" + $4,
-        "totalInputCredits" = "totalInputCredits" + $5,
-        "totalOutputCredits" = "totalOutputCredits" + $6,
-        "totalCacheReadTokens" = "totalCacheReadTokens" + $7,
-        "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
-        "contextWindowTokens" = $9, "conversationSize" = $10,
-        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL,
+        "contextWindowTokens" = $3, "conversationSize" = $4,
+        "pendingQuestionMessageId" = $5,
         ${
           isDefined(recordedActivity)
-            ? `${buildAgentChatThreadActivitySetClause({ textParameter: '$12' })},`
+            ? `${buildAgentChatThreadActivitySetClause({ textParameter: '$6' })},`
             : ''
         } "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
@@ -57,12 +44,6 @@ export const updateAgentChatThreadUsage = async ({
       [
         threadId,
         streamId,
-        usage.totalInputTokens,
-        usage.totalOutputTokens,
-        usage.totalInputCredits,
-        usage.totalOutputCredits,
-        usage.totalCacheReadTokens,
-        usage.totalCacheCreationTokens,
         usage.contextWindowTokens,
         usage.conversationSize,
         usage.pendingQuestionMessageId,

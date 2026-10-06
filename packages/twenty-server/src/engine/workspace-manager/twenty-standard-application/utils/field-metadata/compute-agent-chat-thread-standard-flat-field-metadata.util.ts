@@ -363,6 +363,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Failed turns hold their error now; the 2.42 history move and the 2.46 backfill still read it
   lastStreamError: {
     ...createStandardFieldFlatMetadata({
       ...args,

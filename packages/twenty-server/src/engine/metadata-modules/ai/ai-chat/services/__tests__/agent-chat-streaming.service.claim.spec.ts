@@ -21,7 +21,6 @@ describe('AgentChatStreamingService claim & reap', () => {
     title: 'Thread',
     conversationSize: 0,
     activeStreamId: null,
-    lastStreamError: null,
   };
 
   const sendArguments = {
@@ -48,10 +47,34 @@ describe('AgentChatStreamingService claim & reap', () => {
     heartbeatAlive?: boolean;
   } = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
+    const releaseQuery = jest.fn(async (_sql: string, _parameters: unknown[]) =>
+      Array.from({ length: claimAffected }, () => ({ id: 'thread-id' })),
+    );
+    const claimReleases = () =>
+      releaseQuery.mock.calls.map(([, parameters]) => {
+        const [threadId, streamId, , turnError] = parameters as [
+          string,
+          string,
+          string | null,
+          string | null,
+        ];
+
+        return {
+          threadId,
+          streamId,
+          turnError: turnError === null ? null : JSON.parse(turnError),
+        };
+      });
     const threadRepository = {
       findOne: jest.fn().mockResolvedValue(thread),
       findOneOrFail: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
+      query: jest.fn().mockImplementation(async (_workspaceId, work) =>
+        work({
+          table: (name: string) => name,
+          manager: { query: releaseQuery },
+        }),
+      ),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
@@ -125,11 +148,16 @@ describe('AgentChatStreamingService claim & reap', () => {
         }),
       } as never,
       messagePartRepository as never,
+      {
+        findLatestTurn: jest.fn().mockResolvedValue(null),
+        markRunning: jest.fn().mockResolvedValue(true),
+      } as never,
     );
 
     return {
       service,
       streamRecoveryService,
+      claimReleases,
       send: (overrides: { userWorkspaceId?: string } = {}) =>
         service.streamAgentChat({
           ...sendArguments,
@@ -183,7 +211,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(threadRepository.update).toHaveBeenCalledWith(
         'workspace-id',
         expect.objectContaining({ id: 'thread-id' }),
-        expect.objectContaining({ lastStreamError: null }),
+        { activeStreamId: expect.any(String) },
       );
       expect(streamHeartbeatService.markClaimed).toHaveBeenCalled();
       expect(
@@ -273,7 +301,7 @@ describe('AgentChatStreamingService claim & reap', () => {
     it('releases the claim when enqueueing the job fails', async () => {
       const {
         send,
-        threadRepository,
+        claimReleases,
         messageQueueService,
         streamHeartbeatService,
       } = buildService();
@@ -282,11 +310,13 @@ describe('AgentChatStreamingService claim & reap', () => {
 
       await expect(send()).rejects.toThrow('redis down');
 
-      expect(threadRepository.update).toHaveBeenLastCalledWith(
-        'workspace-id',
-        { id: 'thread-id', activeStreamId: expect.any(String) },
-        { activeStreamId: null },
-      );
+      expect(claimReleases()).toEqual([
+        {
+          threadId: 'thread-id',
+          streamId: expect.any(String),
+          turnError: expect.objectContaining({ message: 'redis down' }),
+        },
+      ]);
       expect(streamHeartbeatService.clear).toHaveBeenCalled();
     });
   });
@@ -350,7 +380,7 @@ describe('AgentChatStreamingService claim & reap', () => {
     it('converts a heartbeat-less claim into a retryable interrupted error', async () => {
       const {
         streamRecoveryService,
-        threadRepository,
+        claimReleases,
         eventPublisherService,
         publishedEvents,
       } = buildService({ heartbeatAlive: false });
@@ -363,16 +393,15 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(reaped).toEqual(
         expect.objectContaining({ code: AiExceptionCode.STREAM_INTERRUPTED }),
       );
-      expect(threadRepository.update).toHaveBeenCalledWith(
-        'workspace-id',
-        { id: 'thread-id', activeStreamId: 'stream-id' },
-        expect.objectContaining({
-          activeStreamId: null,
-          lastStreamError: expect.objectContaining({
+      expect(claimReleases()).toEqual([
+        {
+          threadId: 'thread-id',
+          streamId: 'stream-id',
+          turnError: expect.objectContaining({
             code: AiExceptionCode.STREAM_INTERRUPTED,
           }),
-        }),
-      );
+        },
+      ]);
       expect(eventPublisherService.resetStreamState).toHaveBeenCalledWith(
         'thread-id',
       );
@@ -385,7 +414,7 @@ describe('AgentChatStreamingService claim & reap', () => {
     });
 
     it('does nothing when the claim moved to a newer stream mid-check', async () => {
-      const { streamRecoveryService, publishedEvents, threadRepository } =
+      const { streamRecoveryService, publishedEvents, claimReleases } =
         buildService({
           heartbeatAlive: false,
           claimAffected: 0,
@@ -397,7 +426,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       });
 
       expect(reaped).toBeNull();
-      expect(threadRepository.update).toHaveBeenCalledTimes(1);
+      expect(claimReleases()).toHaveLength(1);
       expect(publishedEvents).toHaveLength(0);
     });
   });
