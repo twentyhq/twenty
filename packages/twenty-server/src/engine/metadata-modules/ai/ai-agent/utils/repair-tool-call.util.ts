@@ -31,6 +31,7 @@ type RepairToolCallBillingContext = {
   modelId: string;
   workspaceId: string;
   userWorkspaceId: string | null;
+  agentId: string | null;
   operationType: UsageOperationType;
 };
 
@@ -123,7 +124,7 @@ export const repairToolCall = async ({
           { usage, cacheCreationTokens },
           billingContext.workspaceId,
           billingContext.operationType,
-          null,
+          billingContext.agentId,
           billingContext.userWorkspaceId,
         )
         .catch((error: unknown) =>

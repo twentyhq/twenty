@@ -9,6 +9,10 @@ import {
   type AwaitedToolCallWaiter,
 } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/types/awaited-tool-call-handler.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunException,
+  WorkflowRunExceptionCode,
+} from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
@@ -34,6 +38,36 @@ export class WorkflowAwaitedToolCallHandlerWorkspaceService
     workspaceId: string;
     threadId: string;
     workflowStep: ToolCallWorkflowStep;
+  }): Promise<AwaitedToolCallWaiter> {
+    try {
+      return await this.findWaiterOfExistingRun({
+        workspaceId,
+        threadId,
+        workflowRunId,
+        stepId,
+      });
+    } catch (error) {
+      if (
+        error instanceof WorkflowRunException &&
+        error.code === WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND
+      ) {
+        return { status: 'gone' };
+      }
+
+      throw error;
+    }
+  }
+
+  private async findWaiterOfExistingRun({
+    workspaceId,
+    threadId,
+    workflowRunId,
+    stepId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workflowRunId: string;
+    stepId: string;
   }): Promise<AwaitedToolCallWaiter> {
     const step = await this.workflowRunWorkspaceService.findStepAwaitingAnswer({
       threadId,

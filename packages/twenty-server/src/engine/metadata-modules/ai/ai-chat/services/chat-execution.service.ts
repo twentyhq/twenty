@@ -699,6 +699,7 @@ export class ChatExecutionService {
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
             userWorkspaceId,
+            agentId: null,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
           },
         });

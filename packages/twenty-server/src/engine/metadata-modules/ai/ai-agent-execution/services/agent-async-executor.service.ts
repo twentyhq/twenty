@@ -604,6 +604,7 @@ export class AgentAsyncExecutorService {
               modelId: registeredModel.modelId,
               workspaceId,
               userWorkspaceId: userWorkspaceId ?? null,
+              agentId: agent?.id ?? null,
               operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
             },
           });

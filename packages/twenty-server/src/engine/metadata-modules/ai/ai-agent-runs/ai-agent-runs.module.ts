@@ -6,6 +6,7 @@ import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.
 import { AgentRunsResolver } from 'src/engine/metadata-modules/ai/ai-agent-runs/resolvers/agent-runs.resolver';
 import { AgentRunsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-runs.service';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -18,6 +19,10 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [AgentRunsResolver, AgentRunsService],
+  providers: [
+    AgentRunsResolver,
+    AgentRunsService,
+    AiGraphqlApiExceptionInterceptor,
+  ],
 })
 export class AiAgentRunsModule {}
