@@ -1742,7 +1742,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('relinks runs that outlived their workflow deletion before retrying their captured snapshots', async () => {
+  it('restores and relinks runs soft-deleted by a trash from before run cleanup, before retrying their captured snapshots', async () => {
     const failedStep: WorkflowAction = {
       ...emptyStep(),
       type: WorkflowActionType.DELAY,
@@ -1792,6 +1792,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       'DELETE FROM core.workflow WHERE id = $1',
       [originalCoreWorkflowId],
     );
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun" SET "deletedAt" = NOW() WHERE id = $1`,
+      [runId],
+    );
 
     const restoreResponse = await workflowGraphqlRequest(
       'mutation Restore($id: UUID!) { restoreWorkflow(id: $id) { id } }',
@@ -1810,6 +1814,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const restoredRun = await getRun(runId);
 
     expect(restoredMapping.coreWorkflowId).not.toBe(originalCoreWorkflowId);
+    expect(restoredRun.deletedAt).toBeNull();
     expect(restoredRun.coreWorkflowId).toBe(restoredMapping.coreWorkflowId);
     expect(restoredRun.coreWorkflowVersionId).toBe(
       restoredMapping.coreWorkflowVersionId,

@@ -5,10 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import {
-  WorkflowRunStatus,
-  type WorkflowRunWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { countLiveNotStartedWorkflowRuns } from 'src/modules/workflow/workflow-deletion/utils/count-live-not-started-workflow-runs.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 
 const WORKFLOW_RUN_DELETION_BATCH_SIZE = 200;
@@ -79,10 +77,8 @@ export class WorkflowDeletionCleanupWorkspaceService {
         )
       ).raw;
 
-      const removedNotStartedRunCount = deletedRuns.filter(
-        ({ status, deletedAt }) =>
-          status === WorkflowRunStatus.NOT_STARTED && !isDefined(deletedAt),
-      ).length;
+      const removedNotStartedRunCount =
+        countLiveNotStartedWorkflowRuns(deletedRuns);
 
       if (removedNotStartedRunCount > 0) {
         await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
