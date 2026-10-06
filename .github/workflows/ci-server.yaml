@@ -92,7 +92,7 @@ jobs:
           tag: scope:backend
           tasks: lingui:compile
 
-  server-previous-version-upgrade-mutation-guard:
+  server-upgrade-mutation-guard:
     if: github.event_name != 'merge_group'
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -119,6 +119,7 @@ jobs:
         with:
           base_sha: ${{ steps.merged-base.outputs.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
+          allow_next_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-next-version-upgrade-mutation') }}
 
   server-validation:
     needs: server-build
@@ -405,7 +406,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
-        server-previous-version-upgrade-mutation-guard,
+        server-upgrade-mutation-guard,
         server-validation,
         server-test,
         server-integration-test,
@@ -415,5 +416,5 @@ jobs:
       ]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
