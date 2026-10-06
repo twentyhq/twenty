@@ -76,18 +76,13 @@ export const SettingsMcpSetup = () => {
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />
               <CodeEditorHeader
-                leftNodes={[
-                  <StyledMcpEditorHeaderTitle key="mcp-editor-header-title">
+                startElement={
+                  <StyledMcpEditorHeaderTitle>
                     <StyledMcpIcon aria-hidden />
                     <span>{t`MCP client configuration`}</span>
-                  </StyledMcpEditorHeaderTitle>,
-                ]}
-                rightNodes={[
-                  <LightCopyIconButton
-                    key="mcp-config-copy-button"
-                    copyText={mcpConfig}
-                  />,
-                ]}
+                  </StyledMcpEditorHeaderTitle>
+                }
+                endElement={<LightCopyIconButton copyText={mcpConfig} />}
               />
               <CodeEditor
                 value={mcpConfig}

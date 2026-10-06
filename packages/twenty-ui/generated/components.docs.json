@@ -6453,7 +6453,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -6530,7 +6530,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "8",
             "description": "Distance in pixels between the anchor and the popup."
@@ -8167,7 +8167,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -8237,7 +8237,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
             "description": "Distance in pixels between the anchor and the popup."
@@ -9229,25 +9229,53 @@
     "slug": "components/code-editor/code-editor-header",
     "props": [
       {
-        "name": "leftNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the start of the header, such as tabs."
-      },
-      {
-        "name": "rightNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the end of the header, such as actions."
-      },
-      {
-        "name": "title",
+        "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Text shown at the start of the header, after `leftNodes`."
+        "description": "Additional CSS class applied to the root element."
+      },
+      {
+        "name": "endElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the end of the header, such as actions. Use a fragment for multiple elements."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the rendered root element, a div by default."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replace the root div or compose it with another component. Native props and refs target the rendered root."
+      },
+      {
+        "name": "startElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the start of the header, before the title, such as tabs. Use a fragment for multiple elements."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown after `startElement`. This is visible header content, not the native HTML title attribute."
       }
     ]
   },
