@@ -1,17 +1,17 @@
 ---
-title: VisibilityHidden
+title: VisuallyHidden
 description: Keep supporting text available to assistive technology without displaying it visually.
 ---
 
-import VisibilityHiddenReference from '/snippets/ui/generated/accessibility/visibility-hidden.mdx';
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
 
-`VisibilityHidden` renders a visually hidden `span`. Its content stays in the accessibility tree and can supply an accessible name. It has no state and accepts only `children`.
+`VisuallyHidden` renders a visually hidden `span`. Its content stays in the accessibility tree and can supply an accessible name. It accepts native span props, a span ref, and Base UI `render` composition. Import `VisuallyHiddenProps` from the same entry point.
 
 ## Usage
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { IconPlus } from 'twenty-ui/icon';
 
 type AddRecordActionProps = { onAdd: () => void };
@@ -19,7 +19,7 @@ type AddRecordActionProps = { onAdd: () => void };
 export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
   <Button onClick={onAdd}>
     <IconPlus aria-hidden />
-    <VisibilityHidden>Add record</VisibilityHidden>
+    <VisuallyHidden>Add record</VisuallyHidden>
   </Button>
 );
 ```
@@ -30,8 +30,8 @@ Use a visible label when space permits. For controls that already accept `aria-l
 
 Place supporting text inside the wrapper. Avoid placing focusable controls inside it: the wrapper stays visually hidden when its children receive focus. It does not add a live region, remove content from assistive technology, or hide confidential data.
 
-The component does not forward `id`, `className`, or other native attributes. See [accessibility](/ui/accessibility) for labeling and announcement patterns.
+Use `id` to associate hidden descriptions with `aria-describedby`. Native attributes, `className`, `style`, and `ref` target the hidden span or the element supplied through `render`. See [accessibility](/ui/accessibility) for labeling and announcement patterns.
 
 ## Props
 
-<VisibilityHiddenReference />
+<VisuallyHiddenReference />

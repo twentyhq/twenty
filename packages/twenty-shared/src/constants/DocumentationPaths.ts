@@ -169,8 +169,8 @@ export const DOCUMENTATION_PATHS = {
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
   UI_ICONS: '/ui/icons',
-  UI_PRIMITIVES_ACCESSIBILITY_VISIBILITY_HIDDEN:
-    '/ui/primitives/accessibility/visibility-hidden',
+  UI_PRIMITIVES_ACCESSIBILITY_VISUALLY_HIDDEN:
+    '/ui/primitives/accessibility/visually-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:

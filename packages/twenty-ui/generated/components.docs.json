@@ -438,16 +438,23 @@
     ]
   },
   {
-    "name": "VisibilityHidden",
+    "name": "VisuallyHidden",
     "entryPoint": "twenty-ui/primitives/accessibility",
-    "slug": "accessibility/visibility-hidden",
+    "slug": "accessibility/visually-hidden",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Content hidden visually while remaining available to assistive technology."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render function composed with the hidden span props and ref."
       }
     ]
   },

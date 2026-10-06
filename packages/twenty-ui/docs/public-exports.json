@@ -700,9 +700,11 @@
     "reExports": [],
     "values": {
       "handleClickableElementKeyDown": "primitives/accessibility/utils/handleClickableElementKeyDown",
-      "VisibilityHidden": "primitives/accessibility/components/VisibilityHidden"
+      "VisuallyHidden": "primitives/accessibility/components/VisuallyHidden"
     },
-    "types": {}
+    "types": {
+      "VisuallyHiddenProps": "primitives/accessibility/types/VisuallyHiddenProps"
+    }
   },
   "primitives/data-display": {
     "reExports": [],
