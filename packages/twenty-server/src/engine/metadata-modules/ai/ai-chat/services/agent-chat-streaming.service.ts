@@ -19,7 +19,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -36,7 +36,6 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-ag
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -52,6 +51,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 type StreamAgentChatOptions = {
   thread: AgentChatThreadWorkspaceEntity;
@@ -91,6 +92,7 @@ export class AgentChatStreamingService {
     private readonly actorService: AgentChatActorService,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async tryClaimStream({
@@ -106,7 +108,7 @@ export class AgentChatStreamingService {
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, activeStreamId: IsNull(), ...where },
-      { activeStreamId: streamId, lastStreamError: null },
+      { activeStreamId: streamId },
     );
 
     if (!claim.affected) {
@@ -315,23 +317,20 @@ export class AgentChatStreamingService {
       workspaceMemberId,
       workspaceId,
     });
-    const { lastStreamError } = thread;
-
-    if (
-      !isDefined(lastStreamError) ||
-      isNonEmptyString(thread.activeStreamId)
-    ) {
+    if (isNonEmptyString(thread.activeStreamId)) {
       throw this.noFailedTurnToRetry();
     }
 
-    const turnId = await this.agentChatService.findLatestTurnId({
+    const latestTurn = await this.turnRecorderService.findLatestTurn({
       threadId,
       workspaceId,
     });
 
-    if (!isDefined(turnId)) {
+    if (latestTurn?.status !== AgentTurnStatus.FAILED) {
       throw this.noFailedTurnToRetry();
     }
+
+    const turnId = latestTurn.id;
 
     const { message } = await this.actorService.authorizeRetry({
       workspaceId,
@@ -346,7 +345,6 @@ export class AgentChatStreamingService {
       threadId,
       workspaceId,
       streamId,
-      where: { lastStreamError: Not(IsNull()) },
     });
 
     if (!claimed) {
@@ -354,15 +352,28 @@ export class AgentChatStreamingService {
     }
 
     return this.releaseClaimOnEnqueueFailure(
-      { threadId, workspaceId, streamId, modelId, lastStreamError },
+      { threadId, workspaceId, streamId, modelId },
       async () => {
         // the latest turn may have changed while claiming, and its output is not ours to delete
+        const claimedTurn = await this.turnRecorderService.findLatestTurn({
+          threadId,
+          workspaceId,
+        });
+
         if (
-          (await this.agentChatService.findLatestTurnId({
-            threadId,
-            workspaceId,
-          })) !== turnId
+          claimedTurn?.id !== turnId ||
+          claimedTurn.status !== AgentTurnStatus.FAILED
         ) {
+          throw this.noFailedTurnToRetry();
+        }
+
+        const isRunning = await this.turnRecorderService.markRunning({
+          workspaceId,
+          turnId,
+          streamClaim: { threadId, streamId },
+        });
+
+        if (!isRunning) {
           throw this.noFailedTurnToRetry();
         }
 
@@ -678,22 +689,16 @@ export class AgentChatStreamingService {
   }
 
   private async releaseClaimOnEnqueueFailure<TResult>(
-    {
-      modelId,
-      lastStreamError,
-      ...claim
-    }: AgentChatStreamClaim & {
-      modelId?: string;
-      lastStreamError?: AgentChatThreadLastStreamError;
-    },
+    { modelId, ...claim }: AgentChatStreamClaim & { modelId?: string },
     enqueue: () => Promise<TResult>,
   ): Promise<TResult> {
     try {
       return await enqueue();
     } catch (error) {
+      // a turn the claim already started fails with the enqueue error
       await this.streamRecoveryService.releaseStreamClaim({
         ...claim,
-        lastStreamError,
+        turnError: mapErrorToStreamError(error),
       });
 
       const model = modelId ?? 'unknown';

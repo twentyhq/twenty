@@ -4,6 +4,7 @@ import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import {
@@ -18,6 +19,10 @@ import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
+import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
@@ -53,6 +58,7 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   private getMessageSenderValues({
@@ -76,11 +82,30 @@ export class AgentChatService {
     };
   }
 
+  private getMessageSenderActor({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): ActorMetadata | undefined {
+    const context = workspaceAuthContextStorage.getStore();
+
+    return isDefined(context) &&
+      isUserAuthContext(context) &&
+      context.workspace.id === workspaceId &&
+      context.userWorkspaceId === userWorkspaceId
+      ? buildActorMetadataFromAuthContext(context)
+      : undefined;
+  }
+
+  // A message opening its own turn runs the agent unless the caller says nothing will
   async addMessage({
     threadId,
     uiMessage,
     agentId,
     turnId,
+    turnStatus = AgentTurnStatus.RUNNING,
     id,
     workspaceId,
     userWorkspaceId,
@@ -89,6 +114,7 @@ export class AgentChatService {
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
     agentId?: string;
     turnId?: string;
+    turnStatus?: AgentTurnStatus;
     id?: string;
     workspaceId: string;
     userWorkspaceId?: string;
@@ -99,6 +125,8 @@ export class AgentChatService {
         workspaceId,
         threadId,
         agentId: agentId ?? null,
+        status: turnStatus,
+        createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
       }));
 
     const senderValues = this.getMessageSenderValues({
@@ -167,22 +195,6 @@ export class AgentChatService {
         }
       },
     );
-  }
-
-  async findLatestTurnId({
-    threadId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    const latestTurn = await this.turnRepository.findOne(workspaceId, {
-      where: { threadId },
-      order: { createdAt: 'DESC', id: 'DESC' },
-      select: ['id'],
-    });
-
-    return latestTurn?.id ?? null;
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them
@@ -471,6 +483,7 @@ export class AgentChatService {
       workspaceId,
       threadId,
       agentId: null,
+      status: AgentTurnStatus.RUNNING,
     });
 
     const result = await this.messageRepository.update(
@@ -605,7 +618,16 @@ export class AgentChatService {
           [threadId, messageId],
         );
 
-        return clearedThreads.length > 0;
+        if (clearedThreads.length === 0) {
+          return false;
+        }
+
+        await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+          messageId,
+          AgentTurnStatus.COMPLETED,
+        ]);
+
+        return true;
       },
     );
 
@@ -639,6 +661,12 @@ export class AgentChatService {
     if (!claim.affected) {
       return;
     }
+
+    await this.turnRecorderService.endWaitingTurn({
+      workspaceId,
+      messageId,
+      status: AgentTurnStatus.COMPLETED,
+    });
 
     await closeOpenToolParts({
       messagePartRepository: this.messagePartRepository,
