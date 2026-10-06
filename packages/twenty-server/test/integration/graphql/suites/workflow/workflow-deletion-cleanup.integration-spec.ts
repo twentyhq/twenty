@@ -34,7 +34,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
 import { type WorkflowDeletionCleanupWorkspaceService } from 'src/modules/workflow/workflow-deletion/services/workflow-deletion-cleanup.workspace-service';
-import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const PREFIX = `Workflow deletion cleanup ${randomUUID()}`;
@@ -62,12 +61,12 @@ const countRows = async (query: string, parameters: unknown[]) => {
   return count;
 };
 
-const cleanUpDeletedWorkflowsAgain = (coreWorkflowIds: string[]) =>
+const deleteWorkflowRunsAgain = (coreWorkflowId: string) =>
   getAppProviderByClassName<WorkflowDeletionCleanupWorkspaceService>(
     'WorkflowDeletionCleanupWorkspaceService',
-  ).cleanUpDeletedWorkflows({
+  ).deleteWorkflowRuns({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    coreWorkflowIds,
+    coreWorkflowId,
   });
 
 const mockLogicFunctionExecution = () =>
@@ -110,6 +109,7 @@ describe('workflow deletion cleanup', () => {
     let completedRunId: string;
     let waitingRunId: string;
     let keptRunId: string;
+    let draftRunId: string;
     let formStepId: string;
 
     const waitForCoreLink = async ({
@@ -325,21 +325,12 @@ describe('workflow deletion cleanup', () => {
       } finally {
         executeSpy.mockRestore();
       }
-
-      await getAppProviderByClassName<WorkflowStepWaitWorkspaceService>(
-        'WorkflowStepWaitWorkspaceService',
-      ).arm({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workflowRunId: waitingRunId,
-        stepId: formStepId,
-        wait: { type: 'EVENT', eventName: 'company.updated' },
-      });
     }, 180000);
 
     afterAll(async () => {
       await globalThis.testDataSource.query(
         `DELETE FROM "${SCHEMA}"."workflowRun" WHERE id = ANY($1)`,
-        [[completedRunId, waitingRunId, keptRunId]],
+        [[completedRunId, waitingRunId, keptRunId, draftRunId]],
       );
 
       for (const { workflowId } of [deletedWorkflow, keptWorkflow]) {
@@ -350,7 +341,7 @@ describe('workflow deletion cleanup', () => {
       }
     });
 
-    it('discarding a draft deletes its core version and the CODE functions only it uses', async () => {
+    it('discarding a draft deletes its core version, its runs and the CODE functions only it uses', async () => {
       const { createDraftFromWorkflowVersion } = await graphql(
         `
           mutation CreateDraft($input: CreateDraftFromWorkflowVersionInput!) {
@@ -379,6 +370,20 @@ describe('workflow deletion cleanup', () => {
 
       expect(draftCodeLogicFunctionId).not.toBe(codeLogicFunctionId);
 
+      const executeSpy = mockLogicFunctionExecution();
+
+      try {
+        draftRunId = await runWorkflowVersion({
+          workflowVersionId: createDraftFromWorkflowVersion.id,
+        });
+        await waitForTestWorkflowRun(
+          draftRunId,
+          ({ state }) => state?.stepInfos?.[formStepId]?.status === 'PENDING',
+        );
+      } finally {
+        executeSpy.mockRestore();
+      }
+
       await graphql(
         `
           mutation Discard($input: DiscardCoreWorkflowDraftInput!) {
@@ -400,14 +405,18 @@ describe('workflow deletion cleanup', () => {
           draftCodeLogicFunctionId,
         ]),
       ).toBe(0);
+      expect(await countTestWorkflowRuns([draftRunId])).toBe(0);
       expect(
         await countRows(`core."logicFunction" WHERE id = $1`, [
           codeLogicFunctionId,
         ]),
       ).toBe(1);
+      expect(await countTestWorkflowRuns([completedRunId, waitingRunId])).toBe(
+        2,
+      );
     }, 120000);
 
-    it('deletes the definition, triggers, CODE functions, runs and waits of the deleted workflow only, before the deletion returns', async () => {
+    it('deletes the definition, triggers, CODE functions and runs of the deleted workflow only, before the deletion returns', async () => {
       expect(
         await countRows(
           `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
@@ -460,11 +469,6 @@ describe('workflow deletion cleanup', () => {
       expect(await countTestWorkflowRuns([completedRunId, waitingRunId])).toBe(
         0,
       );
-      expect(
-        await countRows(`core."workflowStepWait" WHERE "workflowRunId" = $1`, [
-          waitingRunId,
-        ]),
-      ).toBe(0);
 
       expect(
         await countRows(`core.workflow WHERE id = $1`, [
@@ -505,7 +509,7 @@ describe('workflow deletion cleanup', () => {
     }, 120000);
 
     it('repeats the cleanup safely', async () => {
-      await cleanUpDeletedWorkflowsAgain([deletedWorkflow.coreWorkflowId]);
+      await deleteWorkflowRunsAgain(deletedWorkflow.coreWorkflowId);
 
       expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
       expect(
@@ -515,7 +519,7 @@ describe('workflow deletion cleanup', () => {
       ).toBe(1);
     }, 120000);
 
-    it('deletes runs and waits through the persisted cleanup when deferred migration actions are enabled', async () => {
+    it('deletes runs through the persisted cleanup when deferred migration actions are enabled', async () => {
       const delayedWorkflow = await createWorkspaceWorkflow(
         `${PREFIX} deferred cleanup`,
       );
@@ -559,12 +563,6 @@ describe('workflow deletion cleanup', () => {
         ({ state }) => state?.stepInfos?.[delayStep.id]?.status === 'PENDING',
       );
 
-      expect(
-        await countRows(`core."workflowStepWait" WHERE "workflowRunId" = $1`, [
-          delayedRunId,
-        ]),
-      ).toBe(1);
-
       await updateFeatureFlag({
         featureFlag:
           FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
@@ -587,12 +585,6 @@ describe('workflow deletion cleanup', () => {
         await expectEventually(
           async () => {
             expect(await countTestWorkflowRuns([delayedRunId])).toBe(0);
-            expect(
-              await countRows(
-                `core."workflowStepWait" WHERE "workflowRunId" = $1`,
-                [delayedRunId],
-              ),
-            ).toBe(0);
             expect(
               await countRows(
                 `core."deferredWorkspaceMigrationAction" WHERE "workspaceId" = $1 AND name = $2`,
