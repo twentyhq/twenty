@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useContext } from 'react';
+import { UNSAFE_NavigationContext } from 'react-router-dom';
 import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -7,7 +7,7 @@ type NavigateAppOptions = NavigateOptions;
 
 // Stable across renders so effects can depend on it.
 export const useNavigateApp = () => {
-  const navigate = useNavigate();
+  const { navigator } = useContext(UNSAFE_NavigationContext);
 
   return useCallback(
     <T extends AppPath>(
@@ -18,8 +18,14 @@ export const useNavigateApp = () => {
     ) => {
       const path = getAppPath(to, params, queryParams);
 
-      return navigate(path, options);
+      if (options?.replace === true) {
+        navigator.replace(path, options.state, options);
+
+        return;
+      }
+
+      navigator.push(path, options?.state, options);
     },
-    [navigate],
+    [navigator],
   );
 };
