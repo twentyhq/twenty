@@ -104,6 +104,21 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
     });
   });
 
+  it('should skip a request that was already answered', async () => {
+    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue({
+      id: 'request-1',
+      status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
+      ...REQUEST_DRAFT,
+    });
+
+    const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
+
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'Teams activity is already queued',
+    });
+  });
+
   it('should hand back a request whose execution died mid-answer', async () => {
     const staleRequest = {
       id: 'request-1',
@@ -143,5 +158,16 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
     expect(findTeamsAssistantRequestByTeamsActivityMock).toHaveBeenCalledTimes(
       2,
     );
+  });
+
+  it('should surface create failures that are not duplicates', async () => {
+    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue(undefined);
+    createTeamsAssistantRequestMock.mockRejectedValue(
+      new Error('connection refused'),
+    );
+
+    await expect(
+      enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT),
+    ).rejects.toThrow('connection refused');
   });
 });

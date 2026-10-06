@@ -89,6 +89,15 @@ describe('parseTeamsAssistantRequest', () => {
     ).toEqual({ request: null, skipReason: 'Empty request text' });
   });
 
+  it('should skip activities that are not messages', () => {
+    expect(
+      parseTeamsAssistantRequest(buildPayload({ type: 'conversationUpdate' })),
+    ).toEqual({
+      request: null,
+      skipReason: 'Unhandled activity type: conversationUpdate',
+    });
+  });
+
   it('should skip messages sent by a bot, with or without a bot role', () => {
     expect(
       parseTeamsAssistantRequest(
@@ -113,5 +122,14 @@ describe('parseTeamsAssistantRequest', () => {
         }),
       ),
     ).toEqual({ request: null, skipReason: 'Bot is not mentioned' });
+  });
+
+  it('should skip activities missing the ids needed to answer', () => {
+    expect(
+      parseTeamsAssistantRequest(buildPayload({ conversation: {} })),
+    ).toEqual({
+      request: null,
+      skipReason: 'Activity is missing required fields',
+    });
   });
 });

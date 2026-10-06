@@ -71,4 +71,14 @@ describe('enqueueTeamsAssistantRequest', () => {
     });
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
   });
+
+  it('should skip while the chat feature is unavailable', async () => {
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = false;
+
+    expect(await enqueueTeamsAssistantRequest(PAYLOAD)).toEqual({
+      ok: true,
+      skipped: 'Chat is disabled',
+    });
+    expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
+  });
 });
