@@ -12,9 +12,9 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
-import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
-type WorkflowOutputSchemaBuilderProps = {
+import { AgentOutputFieldTypeSelector } from '@/ai/components/AgentOutputFieldTypeSelector';
+import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
+type AgentOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
   readonly?: boolean;
@@ -67,11 +67,11 @@ const StyledMessageDescription = styled.div`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
-export const WorkflowOutputSchemaBuilder = ({
+export const AgentOutputSchemaBuilder = ({
   fields,
   onChange,
   readonly,
-}: WorkflowOutputSchemaBuilderProps) => {
+}: AgentOutputSchemaBuilderProps) => {
   const [expandedFieldIds, setExpandedFieldIds] = useState<Set<string>>(
     () => new Set(fields.map((field) => field.id)),
   );
@@ -153,7 +153,7 @@ export const WorkflowOutputSchemaBuilder = ({
 
             return (
               <StyledOutputSchemaFieldContainer key={field.id}>
-                <WorkflowOutputSchemaFieldHeader
+                <AgentOutputSchemaFieldHeader
                   name={field.name}
                   isExpanded={isExpanded}
                   onToggle={() => toggleField(field.id)}
@@ -179,7 +179,7 @@ export const WorkflowOutputSchemaBuilder = ({
                     </FormFieldInputContainer>
 
                     <FormFieldInputContainer>
-                      <WorkflowOutputFieldTypeSelector
+                      <AgentOutputFieldTypeSelector
                         onChange={(value) =>
                           updateField(field.id, { type: value })
                         }

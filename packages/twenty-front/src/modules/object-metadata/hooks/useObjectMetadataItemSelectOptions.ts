@@ -2,13 +2,13 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
-type UseWorkflowObjectSelectOptionsProps = {
+type UseObjectMetadataItemSelectOptionsProps = {
   selectedObjectNameSingular?: string;
 };
 
-export const useWorkflowObjectSelectOptions = ({
+export const useObjectMetadataItemSelectOptions = ({
   selectedObjectNameSingular,
-}: UseWorkflowObjectSelectOptionsProps = {}): SelectOption<string>[] => {
+}: UseObjectMetadataItemSelectOptionsProps = {}): SelectOption<string>[] => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();

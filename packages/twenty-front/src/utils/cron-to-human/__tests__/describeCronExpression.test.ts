@@ -1,4 +1,4 @@
-import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
+import { describeCronExpression } from '~/utils/cron-to-human/describeCronExpression';
 
 describe('describeCronExpression', () => {
   describe('basic expressions', () => {
