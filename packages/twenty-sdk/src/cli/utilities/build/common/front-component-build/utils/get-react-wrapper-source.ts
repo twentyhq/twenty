@@ -1,34 +1,11 @@
-const REACT_WRAPPER_RUNTIME_PARTS = {
-  react: {
-    refCompatImport: '',
-    cloneNonCustomElement:
-      'return originalCloneElement.apply(null, cloneElementArguments);',
-    overriddenExports: 'createElement, cloneElement',
-  },
-  preact: {
-    refCompatImport:
-      "import { memo, normalizeClonedElementRef, useImperativeHandle } from '__preact_ref_compat__';",
-    cloneNonCustomElement: `return normalizeClonedElementRef({
-      element,
-      clonedElement: originalCloneElement.apply(null, cloneElementArguments),
-      config: getPropsArgument(cloneElementArguments),
-    });`,
-    overriddenExports: 'createElement, cloneElement, memo, useImperativeHandle',
-  },
-};
-
 export const getReactWrapperSource = ({
-  usePreact,
+  readsElementRefFromVnode,
 }: {
-  usePreact: boolean;
-}): string => {
-  const { refCompatImport, cloneNonCustomElement, overriddenExports } =
-    REACT_WRAPPER_RUNTIME_PARTS[usePreact ? 'preact' : 'react'];
-
-  return `
+  readsElementRefFromVnode: boolean;
+}): string =>
+  `
 export * from '__real_react__';
 import React from '__real_react__';
-${refCompatImport}
 
 import {
   customElementMap,
@@ -41,7 +18,7 @@ import {
 
 const originalCreateElement = React.createElement;
 const originalCloneElement = React.cloneElement;
-const readsElementRefFromVnode = ${usePreact};
+const readsElementRefFromVnode = ${readsElementRefFromVnode};
 
 function getPropsArgument(elementArguments) {
   return elementArguments.length > 1 ? elementArguments[1] : null;
@@ -95,7 +72,7 @@ function cloneElement(element) {
   const cloneElementArguments = arguments;
   const isCustomElement = !!element && isCustomElementTag(element.type);
   if (!isCustomElement) {
-    ${cloneNonCustomElement}
+    return originalCloneElement.apply(null, cloneElementArguments);
   }
 
   const propsWithCloneEventRef = withCloneEventRef(
@@ -114,7 +91,6 @@ function cloneElement(element) {
   );
 }
 
-export { ${overriddenExports} };
-export default Object.assign({}, React, { ${overriddenExports} });
+export { createElement, cloneElement };
+export default Object.assign({}, React, { createElement, cloneElement });
 `.trim();
-};

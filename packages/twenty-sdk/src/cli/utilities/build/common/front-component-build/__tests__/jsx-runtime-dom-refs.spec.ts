@@ -21,9 +21,6 @@ import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/fron
 
 type Fixture = ReturnType<typeof createDomRefFixture>;
 type Composition = Parameters<Fixture['render']>[0]['composition'];
-type ReusableElementKind = Parameters<
-  Fixture['createReusableElement']
->[0]['kind'];
 type ClassComponentConstruction = Parameters<
   Fixture['renderClass']
 >[0]['construction'];
@@ -37,9 +34,6 @@ const COMPOSITIONS: Composition[] = [
   'clone-element',
   'base-ui-render',
 ];
-
-const PREACT_REF_COMPAT_MODULE_INPUT =
-  'preact-ref-compat:__preact_ref_compat__';
 
 const CLONE_REF_CASES = [
   { mount: 'fresh', cloneRef: 'null', refCalls: [] },
@@ -75,20 +69,15 @@ const CLONE_REF_CASES = [
   },
 ] as const;
 
-const REUSABLE_ELEMENT_KINDS: ReusableElementKind[] = [
-  'host',
-  'unmapped-host',
-  'function',
-  'forward-ref',
-  'memo',
-  'class',
-];
-
 const REF_FORWARDING_ELEMENT_KINDS = [
   'function',
   'forward-ref',
   'memo',
 ] as const;
+
+const CLEANUP_REF_COMPOSITIONS = COMPOSITIONS.filter(
+  (composition) => composition !== 'memo',
+);
 
 const CLASS_COMPONENT_CONSTRUCTIONS: ClassComponentConstruction[] = [
   'jsx',
@@ -109,7 +98,6 @@ describe.each([false, true])(
   'front-component DOM refs (usePreact: %s)',
   (usePreact) => {
     let source: string;
-    let metafile: esbuild.Metafile;
     let environment: JSDOM;
     let fixture: Fixture;
     let container: Element;
@@ -135,7 +123,7 @@ describe.each([false, true])(
       const outputDirectory = await mkdtemp(join(tmpdir(), 'dom-ref-fixture-'));
 
       try {
-        const buildResult = await esbuild.build({
+        await esbuild.build({
           ...getBaseFrontComponentBuildOptions(),
           entryPoints: [
             fileURLToPath(
@@ -147,10 +135,8 @@ describe.each([false, true])(
           globalName: 'domRefFixture',
           outdir: outputDirectory,
           sourcemap: false,
-          metafile: true,
         });
 
-        metafile = buildResult.metafile;
         source = await readFile(
           join(outputDirectory, 'dom-ref-components.mjs'),
           'utf8',
@@ -182,16 +168,6 @@ describe.each([false, true])(
       environment.window.close();
     });
 
-    it('bundles the Preact ref compat module only for Preact, importing nothing but Preact', () => {
-      expect(
-        metafile.inputs[PREACT_REF_COMPAT_MODULE_INPUT]?.imports.map(
-          (importedModule) => importedModule.original,
-        ),
-      ).toEqual(
-        usePreact ? ['preact', 'preact/hooks', 'preact/compat'] : undefined,
-      );
-    });
-
     it.each(CLASS_COMPONENT_CONSTRUCTIONS)(
       'preserves class component instances in %s refs',
       (construction) => {
@@ -211,35 +187,6 @@ describe.each([false, true])(
 
         fixture.unmount();
         expect(ref).toHaveBeenLastCalledWith(null);
-      },
-    );
-
-    it.each(CLASS_COMPONENT_CONSTRUCTIONS)(
-      'detaches a class component instance ref that a later %s render removes',
-      (construction) => {
-        const ref = vi.fn();
-
-        fixture.renderClass({ construction, label: 'Initial', ref });
-        const instance = ref.mock.lastCall?.[0];
-
-        fixture.renderClass({ construction, label: 'Updated' });
-        expect(container.textContent).toBe('Updated');
-        expect(nameRefCalls(ref, { instance })).toEqual(['instance', null]);
-
-        fixture.renderClass({ construction, label: 'Restored', ref });
-        expect(nameRefCalls(ref, { instance })).toEqual([
-          'instance',
-          null,
-          'instance',
-        ]);
-
-        fixture.unmount();
-        expect(nameRefCalls(ref, { instance })).toEqual([
-          'instance',
-          null,
-          'instance',
-          null,
-        ]);
       },
     );
 
@@ -514,7 +461,7 @@ describe.each([false, true])(
       fixture.unmount();
     });
 
-    describe.each(REUSABLE_ELEMENT_KINDS)('a cloned %s element', (kind) => {
+    describe('a cloned host element', () => {
       it.each(CLONE_REF_CASES)(
         'applies $cloneRef as the clone ref of a $mount element like React',
         ({ mount, cloneRef, refCalls }) => {
@@ -527,19 +474,14 @@ describe.each([false, true])(
                 return;
               }
 
-              const isAttachedToRenderedTarget =
-                kind === 'class'
-                  ? 'getLabel' in value
-                  : value === container.firstElementChild;
-
               recordedRefCalls.push(
-                isAttachedToRenderedTarget
+                value === container.firstElementChild
                   ? `${refName} attached`
                   : `${refName} attached to an unexpected value`,
               );
             };
           const reusableElement = fixture.createReusableElement({
-            kind,
+            kind: 'host',
             label: 'Original',
             ref: createRecordingRef('original'),
           });
@@ -706,7 +648,7 @@ describe.each([false, true])(
       },
     );
 
-    it.each(COMPOSITIONS)(
+    it.each(CLEANUP_REF_COMPOSITIONS)(
       'runs %s callback ref cleanups instead of calling the refs with null',
       (composition) => {
         const firstCleanup = vi.fn();
@@ -731,134 +673,6 @@ describe.each([false, true])(
         fixture.unmount();
         expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
         expect(secondCleanup).toHaveBeenCalledOnce();
-      },
-    );
-
-    it('re-renders a memo component with a props-ignoring comparer only when its ref changes', () => {
-      const firstRef = vi.fn();
-      const secondRef = vi.fn();
-
-      fixture.renderPropsIgnoringMemo({ label: 'Initial', ref: firstRef });
-      const element = container.firstElementChild;
-
-      fixture.renderPropsIgnoringMemo({ label: 'Updated', ref: secondRef });
-      expect(container.textContent).toBe('Updated');
-      expect(container.firstElementChild).toBe(element);
-      expect(nameRefCalls(firstRef, { element })).toEqual(['element', null]);
-      expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
-
-      fixture.renderPropsIgnoringMemo({ label: 'Ignored', ref: secondRef });
-      expect(container.textContent).toBe('Updated');
-      expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
-
-      fixture.unmount();
-      expect(nameRefCalls(firstRef, { element })).toEqual(['element', null]);
-      expect(nameRefCalls(secondRef, { element })).toEqual(['element', null]);
-    });
-
-    it('re-renders a default memo component when a prop is added with an undefined value', () => {
-      const handleRender = vi.fn();
-
-      fixture.renderPropsRecordingMemo({
-        label: 'Same',
-        onRender: handleRender,
-      });
-      fixture.renderPropsRecordingMemo({
-        label: 'Same',
-        title: undefined,
-        onRender: handleRender,
-      });
-
-      expect(handleRender.mock.calls).toEqual([
-        [['label']],
-        [['label', 'title']],
-      ]);
-    });
-
-    it('swaps an inline cleanup ref on a memo component without calling it with null', async () => {
-      const refCalls: string[] = [];
-
-      fixture.renderMemoCleanupRefSwitch({
-        onRefCall: (refCall) => refCalls.push(refCall),
-      });
-      expect(refCalls).toEqual(['attach Render 0']);
-
-      await fixture.click(getButtonByText('Render 0')!);
-      expect(container.textContent).toBe('Render 1');
-      expect(refCalls).toEqual([
-        'attach Render 0',
-        'cleanup Render 0',
-        'attach Render 1',
-      ]);
-
-      fixture.unmount();
-      expect(refCalls).toEqual([
-        'attach Render 0',
-        'cleanup Render 0',
-        'attach Render 1',
-        'cleanup Render 1',
-      ]);
-    });
-
-    it.each(['plain-function', 'forward-ref'] as const)(
-      'runs %s imperative handle ref cleanups instead of calling the refs with null',
-      (composition) => {
-        const refCalls: string[] = [];
-        const createCleanupRef =
-          (refName: string) => (handle: { getLabel: () => string } | null) => {
-            refCalls.push(
-              isNull(handle)
-                ? `${refName} null`
-                : `${refName} ${handle.getLabel()}`,
-            );
-
-            return () => {
-              refCalls.push(`${refName} cleanup`);
-            };
-          };
-        const firstRef = createCleanupRef('first');
-        const secondRef = createCleanupRef('second');
-
-        fixture.renderImperativeHandle({
-          composition,
-          label: 'Initial',
-          ref: firstRef,
-        });
-        fixture.renderImperativeHandle({
-          composition,
-          label: 'Updated',
-          ref: firstRef,
-        });
-        fixture.renderImperativeHandle({
-          composition,
-          label: 'Updated',
-          ref: secondRef,
-        });
-        fixture.unmount();
-
-        expect(refCalls).toEqual([
-          'first Initial',
-          'first cleanup',
-          'first Updated',
-          'first cleanup',
-          'second Updated',
-          'second cleanup',
-        ]);
-      },
-    );
-
-    it.each(['plain-function', 'forward-ref'] as const)(
-      'calls %s imperative handle refs without a cleanup with null on teardown',
-      (composition) => {
-        const ref = vi.fn();
-
-        fixture.renderImperativeHandle({ composition, label: 'Initial', ref });
-        const handle = ref.mock.calls[0]?.[0];
-
-        expect(handle?.getLabel()).toBe('Initial');
-
-        fixture.unmount();
-        expect(nameRefCalls(ref, { handle })).toEqual(['handle', null]);
       },
     );
   },

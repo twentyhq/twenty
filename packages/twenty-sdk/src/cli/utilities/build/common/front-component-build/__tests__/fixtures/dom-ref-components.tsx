@@ -1,5 +1,4 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isNull } from '@sniptt/guards';
 import {
   Component,
   cloneElement,
@@ -9,7 +8,6 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
-  useImperativeHandle,
   useState,
 } from 'react';
 import { flushSync } from 'react-dom';
@@ -37,8 +35,6 @@ const ForwardRefButton = forwardRef<
 
 const MemoRefButton = memo(RefButton);
 
-const PropsIgnoringMemoRefButton = memo(RefButton, () => true);
-
 type InstanceButtonProps = {
   label: string;
   onClick?: () => void;
@@ -61,20 +57,6 @@ const ForwardRefInstanceButton = forwardRef<
   <InstanceButton ref={ref} label={props.label} onClick={props.onClick} />
 ));
 
-type PropsRecordingButtonProps = {
-  label: string;
-  title?: string;
-  onRender: (propNames: string[]) => void;
-};
-
-const PropsRecordingMemoButton = memo(
-  ({ onRender, ...props }: PropsRecordingButtonProps) => {
-    onRender(Object.keys(props));
-
-    return <button title={props.title}>{props.label}</button>;
-  },
-);
-
 const RenderButton = ({ ref, renderRef, ...props }: RefButtonProps) =>
   useRender({
     render: <RefButton label={props.label} ref={renderRef} />,
@@ -86,12 +68,12 @@ const RenderPropSlot = ({ element }: { element: ReactElement }) =>
   useRender({ render: element });
 
 type ElementRefReaderProps = {
-  element: ReactElement & { ref?: unknown };
+  element: ReactElement<{ ref?: unknown }>;
   onRead: (elementRef: unknown) => void;
 };
 
 const ElementRefReader = ({ element, onRead }: ElementRefReaderProps) => {
-  onRead(element.ref);
+  onRead(element.props.ref);
 
   return null;
 };
@@ -137,59 +119,6 @@ const RenderPropSwitch = ({ element, switchLabel }: RenderPropSwitchProps) => {
   );
 };
 
-type CleanupRefSwitchProps = {
-  onRefCall: (refCall: string) => void;
-};
-
-const MemoCleanupRefSwitch = ({ onRefCall }: CleanupRefSwitchProps) => {
-  const [renderCount, setRenderCount] = useState(0);
-
-  return (
-    <MemoRefButton
-      label={`Render ${renderCount}`}
-      onClick={() => setRenderCount(renderCount + 1)}
-      ref={(button) => {
-        if (isNull(button)) {
-          throw new Error('A ref returning a cleanup was called with null');
-        }
-
-        onRefCall(`attach ${button.textContent}`);
-
-        return () => onRefCall(`cleanup Render ${renderCount}`);
-      }}
-    />
-  );
-};
-
-type LabelHandle = {
-  getLabel: () => string;
-};
-
-type ImperativeHandleButtonProps = {
-  ref?: Ref<LabelHandle>;
-  label: string;
-};
-
-const ImperativeHandleButton = ({
-  ref,
-  label,
-}: ImperativeHandleButtonProps) => {
-  useImperativeHandle(ref, () => ({ getLabel: () => label }), [label]);
-
-  return <button>{label}</button>;
-};
-
-const ForwardRefImperativeHandleButton = forwardRef<
-  LabelHandle,
-  Omit<ImperativeHandleButtonProps, 'ref'>
->((props, ref) => {
-  useImperativeHandle(ref, () => ({ getLabel: () => props.label }), [
-    props.label,
-  ]);
-
-  return <button>{props.label}</button>;
-});
-
 type Composition =
   | 'native'
   | 'plain-function'
@@ -207,12 +136,6 @@ type ReusableElementProps =
       onClick?: () => void;
     }
   | {
-      kind: 'unmapped-host';
-      label: string;
-      ref?: Ref<HTMLSpanElement>;
-      onClick?: () => void;
-    }
-  | {
       kind: 'class';
       label: string;
       ref?: Ref<InstanceButton>;
@@ -226,12 +149,6 @@ const createReusableElementOfKind = (props: ReusableElementProps) => {
         <button ref={props.ref} onClick={props.onClick}>
           {props.label}
         </button>
-      );
-    case 'unmapped-host':
-      return (
-        <span ref={props.ref} onClick={props.onClick}>
-          {props.label}
-        </span>
       );
     case 'function':
       return (
@@ -330,18 +247,6 @@ export const createDomRefFixture = (container: Element) => {
           label={props.label}
         />,
       ),
-    renderPropsIgnoringMemo: (props: Omit<RefButtonProps, 'renderRef'>) =>
-      renderSynchronously(
-        <PropsIgnoringMemoRefButton
-          ref={props.ref}
-          label={props.label}
-          onClick={props.onClick}
-        />,
-      ),
-    renderPropsRecordingMemo: (props: PropsRecordingButtonProps) =>
-      renderSynchronously(createElement(PropsRecordingMemoButton, props)),
-    renderMemoCleanupRefSwitch: (props: CleanupRefSwitchProps) =>
-      renderSynchronously(<MemoCleanupRefSwitch onRefCall={props.onRefCall} />),
     renderCloneRefSlot: ({
       label,
       cloneRef,
@@ -355,22 +260,6 @@ export const createDomRefFixture = (container: Element) => {
         <CloneRefSlot cloneRef={cloneRef}>
           <button onClick={onClick}>{label}</button>
         </CloneRefSlot>,
-      ),
-    renderImperativeHandle: ({
-      composition,
-      ...props
-    }: ImperativeHandleButtonProps & {
-      composition: 'plain-function' | 'forward-ref';
-    }) =>
-      renderSynchronously(
-        composition === 'forward-ref' ? (
-          <ForwardRefImperativeHandleButton
-            ref={props.ref}
-            label={props.label}
-          />
-        ) : (
-          <ImperativeHandleButton ref={props.ref} label={props.label} />
-        ),
       ),
     renderKeyedList: (
       items: { label: string; ref: Ref<HTMLButtonElement> }[],
@@ -415,7 +304,7 @@ export const createDomRefFixture = (container: Element) => {
           renderSynchronously(
             cloneElement(
               element,
-              props.kind === 'host' || props.kind === 'unmapped-host'
+              props.kind === 'host'
                 ? { ...config, children: label }
                 : { ...config, label },
             ),

@@ -3,6 +3,9 @@
 `TwentyUiGallery.stories.tsx` contains the component catalogs and focused
 component stories. Each fixture has React and Preact stories built with
 `createGalleryStory`, with an explicit bundle name, runtime, and play function.
+Preact stories need Preact 11, which passes `ref` to function components as a
+regular prop like React 19. Preact 10 hands that ref to the component instance,
+so Dropdown-based popups never open there.
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -88,7 +91,7 @@ expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
+| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
 | Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal from inside the popup and focus restoration are not covered yet. |
 | ListItem | The first hover over an overflowing label does not open its tooltip: that hover enrolls the label for host geometry observation, and the worker measures it as zero-sized until the host snapshot arrives. The story asserts the label is not marked as overflowing after the first hover, then re-enters to mark it and again to open the tooltip. |
