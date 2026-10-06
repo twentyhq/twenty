@@ -73,7 +73,9 @@ const playEnterReadsAndClearsUncontrolledValue: NonNullable<
 
   await expectFrontComponentMounted(canvas);
 
-  const subject = await canvas.findByTestId('subject');
+  const subject = await canvas.findByRole('textbox', {
+    name: 'Uncontrolled input, Enter submits',
+  });
 
   await userEvent.type(subject, 'hi{Enter}', { delay: TYPING_DELAY });
   await expectFrontComponentValue({ canvas, expected: 'hi' });

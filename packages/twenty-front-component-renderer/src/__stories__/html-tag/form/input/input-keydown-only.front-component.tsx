@@ -8,15 +8,19 @@ import {
   SUBJECT_WRAPPER_STYLE,
 } from '@/__stories__/shared/front-components/styles';
 
+const KEYDOWN_ONLY_INPUT_ID = 'input-keydown-only-subject';
+
 const InputKeydownOnlyFrontComponent = () => {
   const [submittedValues, setSubmittedValues] = useState<string[]>([]);
 
   return (
     <FrontComponentCard title="input:text:keydown-only">
       <div style={SUBJECT_WRAPPER_STYLE}>
-        <label style={LABEL_STYLE}>Uncontrolled input, Enter submits</label>
+        <label htmlFor={KEYDOWN_ONLY_INPUT_ID} style={LABEL_STYLE}>
+          Uncontrolled input, Enter submits
+        </label>
         <input
-          data-testid="subject"
+          id={KEYDOWN_ONLY_INPUT_ID}
           type="text"
           onKeyDown={(event) => {
             if (event.key !== 'Enter') {
