@@ -4,8 +4,8 @@ import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annot
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 
 export const getMcpRegistryToolAnnotations = (
-  executionRef: ToolExecutionRef | undefined,
+  executionRef: ToolExecutionRef,
 ): McpToolAnnotations =>
-  executionRef?.kind === 'database_crud'
+  executionRef.kind === 'database_crud'
     ? MCP_DATABASE_CRUD_TOOL_ANNOTATIONS[executionRef.operation]
     : MCP_EXECUTE_TOOL_ANNOTATIONS;

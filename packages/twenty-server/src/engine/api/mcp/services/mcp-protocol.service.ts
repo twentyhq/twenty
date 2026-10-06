@@ -3,7 +3,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet, zodSchema } from 'ai';
-import { ToolCategory } from 'twenty-shared/ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -456,39 +455,35 @@ export class McpProtocolService {
           ...nativeTools
         } = toolSet;
 
-        const [registryTools, databaseCrudCatalog] = await Promise.all([
-          Sentry.startSpan(
-            {
-              name: 'mcp list registry tools',
-              op: 'mcp.tools',
-              onlyIfParent: true,
-            },
-            () =>
-              this.toolRegistry.getToolsByCategories(toolContext, {
+        const annotatedRegistryTools = await Sentry.startSpan(
+          {
+            name: 'mcp list registry tools',
+            op: 'mcp.tools',
+            onlyIfParent: true,
+          },
+          async () => {
+            const descriptors =
+              await this.toolRegistry.getDescriptorsByCategories(toolContext, {
                 excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
-              }),
-          ),
-          this.toolRegistry.getCatalog(toolContext, {
-            categories: [ToolCategory.DATABASE_CRUD],
-          }),
-        ]);
+              });
 
-        const executionRefByToolName = new Map(
-          databaseCrudCatalog.map((entry) => [entry.name, entry.executionRef]),
-        );
+            const registryTools = this.toolRegistry.hydrateToolSet(
+              descriptors,
+              toolContext,
+            );
 
-        const annotatedRegistryTools = Object.fromEntries(
-          Object.entries(registryTools).map(
-            ([toolName, registryTool]): [string, McpAnnotatedTool] => [
-              toolName,
-              {
-                ...registryTool,
-                annotations: getMcpRegistryToolAnnotations(
-                  executionRefByToolName.get(toolName),
-                ),
-              },
-            ],
-          ),
+            return Object.fromEntries(
+              descriptors.map((descriptor): [string, McpAnnotatedTool] => [
+                descriptor.name,
+                {
+                  ...registryTools[descriptor.name],
+                  annotations: getMcpRegistryToolAnnotations(
+                    descriptor.executionRef,
+                  ),
+                },
+              ]),
+            );
+          },
         );
 
         return this.mcpToolExecutorService.handleToolsListing(id, {
