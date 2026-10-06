@@ -135,7 +135,7 @@
   padding-inline: 0;
 }
 
-@include hover-capable {
+@include hover-capable-without-touch {
   .itemWithActions[data-actions-visibility='hover']:not(:hover):not(
       :has(:focus-visible)
     )
