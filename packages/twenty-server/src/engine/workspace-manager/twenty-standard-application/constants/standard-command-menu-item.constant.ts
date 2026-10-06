@@ -446,6 +446,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.CANCEL_DASHBOARD_LAYOUT,
     hotKeys: null,
   },
+  editDashboardFilters: {
+    universalIdentifier: '7fa23d98-866d-4d41-812a-ebd14ab55aad',
+    label: i18nLabel(
+      msg({ message: `Dashboard Filters`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconFilter',
+    isPinned: true,
+    position: 22,
+    shortLabel: i18nLabel(
+      msg({ message: `Filters`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and isDashboardPageLayoutInEditMode and featureFlags.IS_DASHBOARD_FILTERS_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.dashboard.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EDIT_DASHBOARD_FILTERS,
+    hotKeys: null,
+  },
   duplicateDashboard: {
     universalIdentifier: '2ee07307-60ce-41ef-bfee-7c718f67557e',
     label: i18nLabel(

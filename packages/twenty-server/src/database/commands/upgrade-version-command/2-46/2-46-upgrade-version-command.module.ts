@@ -15,6 +15,7 @@ import { UnpinNewAiChatCommandMenuItemCommand } from 'src/database/commands/upgr
 import { TurnHiddenAgentMessagesIntoSystemMessagesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791204952095-turn-hidden-agent-messages-into-system-messages.command';
 import { AddAgentTurnRunFieldsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227584393-add-agent-turn-run-fields.command';
 import { BackfillFailedAgentTurnsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227584394-backfill-failed-agent-turns.command';
+import { AddEditDashboardFiltersCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791326931395-add-edit-dashboard-filters-command-menu-item.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -41,6 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropAgentTurnEvaluationObjectCommand,
     AddAgentTurnRunFieldsCommand,
     BackfillFailedAgentTurnsCommand,
+    AddEditDashboardFiltersCommandMenuItemCommand,
   ],
 })
 export class V2_46_UpgradeVersionCommandModule {}

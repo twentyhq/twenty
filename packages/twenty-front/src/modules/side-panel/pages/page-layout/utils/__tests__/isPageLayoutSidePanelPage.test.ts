@@ -9,6 +9,7 @@ describe('isPageLayoutSidePanelPage', () => {
     SidePanelPages.DashboardChartSettings,
     SidePanelPages.DashboardIframeSettings,
     SidePanelPages.DashboardRecordTableSettings,
+    SidePanelPages.DashboardFiltersSettings,
     SidePanelPages.RecordPageFieldsSettings,
     SidePanelPages.RecordPageFieldSettings,
     SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,

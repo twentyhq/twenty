@@ -1,23 +1,9 @@
 import { type DashboardFilterSlotDefinitionsAndBindings } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotDefinitionsAndBindings';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
-import {
-  type DashboardFilterBindingsBySlotId,
-  type DashboardFilterSlot,
-} from 'twenty-shared/types';
+import { getWidgetDashboardFilterBindings } from '@/page-layout/dashboard-filters/utils/getWidgetDashboardFilterBindings';
+import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
-
-// The JSON scalar is typed any by codegen; the server validates the shape on save.
-const getWidgetDashboardFilterBindings = (
-  widget: PageLayoutWidget,
-): DashboardFilterBindingsBySlotId =>
-  isWidgetConfigurationOfTypeGraph(widget.configuration)
-    ? ((widget.configuration.dashboardFilterBindings as
-        | DashboardFilterBindingsBySlotId
-        | null
-        | undefined) ?? {})
-    : {};
 
 // Same rule as the built-ins: a slot no chart binds yet is kept on the layout for the editor but has no chip, since the chip borrows the inputs of a bound field.
 export const computePersistedDashboardFilterSlotsAndBindings = ({

@@ -1,8 +1,9 @@
 import { type DashboardFilterBindingsByWidgetId } from '@/page-layout/dashboard-filters/types/DashboardFilterBindingsByWidgetId';
+import { findDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/findDashboardFilterRepresentativeBinding';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// The chip reuses the regular filter inputs, which need a field: the first bound field stands in for the slot.
+// The bar only renders slots the selector kept, and it keeps a slot only once a chart binds it.
 export const getDashboardFilterRepresentativeBindingOrThrow = ({
   slotId,
   bindingsByWidgetId,
@@ -10,9 +11,10 @@ export const getDashboardFilterRepresentativeBindingOrThrow = ({
   slotId: string;
   bindingsByWidgetId: DashboardFilterBindingsByWidgetId;
 }): DashboardFilterBinding => {
-  const representativeBinding = Object.values(bindingsByWidgetId)
-    .map((bindingsBySlotId) => bindingsBySlotId[slotId])
-    .find(isDefined);
+  const representativeBinding = findDashboardFilterRepresentativeBinding({
+    slotId,
+    bindingsByWidgetId,
+  });
 
   if (!isDefined(representativeBinding)) {
     throw new Error(

@@ -31,6 +31,7 @@ import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/r
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand';
+import { EditDashboardFiltersSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardFiltersSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
@@ -138,6 +139,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.CANCEL_DASHBOARD_LAYOUT]: (
     <CancelDashboardSingleRecordCommand />
+  ),
+  [EngineComponentKey.EDIT_DASHBOARD_FILTERS]: (
+    <EditDashboardFiltersSingleRecordCommand />
   ),
   [EngineComponentKey.NAVIGATION]: <NavigationEngineCommand />,
   // TODO: remove these keys once `upgrade:1-21:refactor-navigation-commands` has run

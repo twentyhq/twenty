@@ -24,6 +24,7 @@ export enum SidePanelPages {
   DashboardChartSettings = 'dashboard-chart-settings',
   DashboardIframeSettings = 'dashboard-iframe-settings',
   DashboardRecordTableSettings = 'dashboard-record-table-settings',
+  DashboardFiltersSettings = 'dashboard-filters-settings',
   RecordPageFieldsSettings = 'record-page-fields-settings',
   RecordPageFieldSettings = 'record-page-field-settings',
   ViewFrontComponent = 'view-front-component',

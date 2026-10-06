@@ -13,6 +13,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
+import { type DashboardFilterSlot } from 'twenty-shared/types';
 import {
   BarChartLayout,
   PageLayoutTabLayoutMode,
@@ -27,6 +28,37 @@ import {
 jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'mock-uuid'),
+}));
+
+jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
+  useObjectMetadataItems: () => ({
+    objectMetadataItems: [
+      {
+        id: 'company-object',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            label: 'Created at',
+            type: 'DATE_TIME',
+            isActive: true,
+          },
+        ],
+      },
+      {
+        id: 'person-object',
+        fields: [
+          {
+            id: 'person-created-at',
+            name: 'createdAt',
+            label: 'Created at',
+            type: 'DATE_TIME',
+            isActive: true,
+          },
+        ],
+      },
+    ],
+  }),
 }));
 
 const TAB_LIST_INSTANCE_ID = getTabListInstanceIdFromPageLayoutId(
@@ -60,7 +92,10 @@ describe('useCreatePageLayoutGraphWidget', () => {
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
     });
 
-  const createStoreWithWidgets = (widgets: PageLayoutWidget[]) => {
+  const createStoreWithWidgets = (
+    widgets: PageLayoutWidget[],
+    dashboardFilters: DashboardFilterSlot[] | null = null,
+  ) => {
     const store = createStore();
 
     store.set(getDraftAtom(), {
@@ -68,6 +103,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         makeTab('tab-1', widgets, 0, PageLayoutTabLayoutMode.GRID),
       ]),
       type: PageLayoutType.DASHBOARD,
+      dashboardFilters,
     });
     store.set(
       activeTabIdComponentState.atomFamily({
@@ -147,6 +183,55 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(widgets[2]).toMatchObject({
       title: 'Vertical Bar Chart 2',
       objectMetadataId: null,
+    });
+    expect(widgets[2].configuration).not.toHaveProperty(
+      'dashboardFilterBindings',
+    );
+  });
+
+  it('should bind the new chart to the custom dashboard filters the other charts bind', () => {
+    const dateSlot: DashboardFilterSlot = {
+      id: 'date-slot',
+      label: 'Date',
+      filterType: 'DATE_TIME',
+    };
+    const ownerSlot: DashboardFilterSlot = {
+      id: 'owner-slot',
+      label: 'Owner',
+      filterType: 'RELATION',
+    };
+    const companyChart = {
+      ...makeBarChartWidget('company-chart', BarChartLayout.VERTICAL),
+      objectMetadataId: 'company-object',
+    };
+    companyChart.configuration = {
+      ...companyChart.configuration,
+      dashboardFilterBindings: {
+        [dateSlot.id]: { fieldMetadataId: 'company-created-at' },
+        [ownerSlot.id]: { fieldMetadataId: 'company-account-owner' },
+      },
+    } as PageLayoutWidget['configuration'];
+
+    const store = createStoreWithWidgets([companyChart], [dateSlot, ownerSlot]);
+    const { result } = renderCreateGraphHook(store);
+
+    act(() => {
+      result.current.createPageLayoutGraphWidget({
+        fieldSelection: {
+          objectMetadataId: 'person-object',
+          groupByFieldMetadataIdX: 'person-created-at',
+          aggregateFieldMetadataId: 'person-created-at',
+        },
+      });
+    });
+
+    const widgets = store.get(getDraftAtom()).tabs[0].widgets;
+
+    expect(widgets[1].configuration).toMatchObject({
+      dashboardFilterBindings: {
+        [dateSlot.id]: { fieldMetadataId: 'person-created-at' },
+        [ownerSlot.id]: null,
+      },
     });
   });
 });

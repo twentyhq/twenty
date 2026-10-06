@@ -3,6 +3,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import {
   IconAppWindow,
   IconChartPie,
+  IconFilter,
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
@@ -22,6 +23,7 @@ describe('getPageLayoutIcon', () => {
     [SidePanelPages.RecordPageFieldsSettings, IconListDetails],
     [SidePanelPages.RecordPageFieldSettings, IconListSearch],
     [SidePanelPages.DashboardRecordTableSettings, IconTable],
+    [SidePanelPages.DashboardFiltersSettings, IconFilter],
     [SidePanelPages.PageLayoutRecordPageWidgetTypeSelect, IconPlus],
   ] as const)('returns the expected icon for %s', (page, expectedIcon) => {
     expect(getPageLayoutIcon(page)).toBe(expectedIcon);

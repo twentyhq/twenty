@@ -1,5 +1,6 @@
 import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
+import { ChartDashboardFiltersSection } from '@/side-panel/pages/page-layout/components/dashboard-filters/ChartDashboardFiltersSection';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
@@ -122,6 +123,10 @@ export const ChartFiltersSettings = ({
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordFilterGroupsComponentInstanceContext.Provider>
       </div>
+      <ChartDashboardFiltersSection
+        pageLayoutId={pageLayoutId}
+        widget={widget}
+      />
     </StyledChartFiltersPageContainer>
   );
 };
