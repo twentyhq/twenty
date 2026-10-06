@@ -57,7 +57,10 @@ export const runDoctorCommand: CommandRun = async ({
   signal.throwIfAborted();
 
   const failedChecks = checks.filter((check) => check.status === 'fail');
-  const human = formatDoctorChecks(checks);
+  const human = formatDoctorChecks(
+    checks,
+    isNonEmptyArray(failedChecks) ? process.stderr : process.stdout,
+  );
 
   if (isNonEmptyArray(failedChecks)) {
     throw new CliError({

@@ -1,12 +1,29 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type DoctorCheck } from '@/doctor/types/doctor-check.type';
+import { colorText } from '@/output/style';
 
-export const formatDoctorChecks = (checks: DoctorCheck[]) =>
+const COLOR_BY_STATUS = {
+  pass: 'green',
+  warning: 'yellow',
+  fail: 'red',
+  skipped: 'yellow',
+} as const;
+
+export const formatDoctorChecks = (
+  checks: DoctorCheck[],
+  stream: NodeJS.WriteStream = process.stdout,
+) =>
   checks
     .map((check) => {
       const hint = isDefined(check.hint) ? `\n  ${check.hint}` : '';
 
-      return `[${check.status.toUpperCase()}] ${check.id}: ${check.message}${hint}`;
+      const status = colorText(
+        COLOR_BY_STATUS[check.status],
+        `[${check.status.toUpperCase()}]`,
+        stream,
+      );
+
+      return `${status} ${check.id}: ${check.message}${hint}`;
     })
     .join('\n');
