@@ -5,6 +5,10 @@ import { type DataPage, type DataRecord } from '@/data/types/data-page.type';
 import { TABLE_LAYOUT } from '@/output/constants/table-layout.constant';
 import { formatTable } from '@/output/format-table';
 
+const PRIORITIZED_TABLE_FIELDS = ['id', 'name'];
+
+const HIDDEN_DEFAULT_TABLE_FIELDS = new Set(['deletedAt']);
+
 const getDataCell = (record: DataRecord, field: string) =>
   formatDataCell(Object.hasOwn(record, field) ? record[field] : undefined);
 
@@ -19,9 +23,13 @@ export const formatDataPage = ({
   const fields =
     options.fields ??
     [
-      ...['id', 'name'].filter((field) => availableFields.includes(field)),
+      ...PRIORITIZED_TABLE_FIELDS.filter((field) =>
+        availableFields.includes(field),
+      ),
       ...availableFields.filter(
-        (field) => field !== 'id' && field !== 'name' && field !== 'deletedAt',
+        (field) =>
+          !PRIORITIZED_TABLE_FIELDS.includes(field) &&
+          !HIDDEN_DEFAULT_TABLE_FIELDS.has(field),
       ),
     ].slice(0, 5);
 
