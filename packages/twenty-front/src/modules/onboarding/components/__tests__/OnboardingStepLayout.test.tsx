@@ -42,7 +42,6 @@ i18n.activate(SOURCE_LOCALE);
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
   inviteTeamCreditsRewardPerUser: 3,
-  installAppsCreditsReward: 1,
   createProfileCreditsReward: 0.5,
   upgradeCreditsReward: 5,
   inviteTeamMaxInvites: 3,
@@ -97,7 +96,7 @@ describe('OnboardingStepLayout', () => {
 
     const freeCreditsLabel = await screen.findByText('free credits');
 
-    expect(freeCreditsLabel.parentElement).toHaveTextContent('1.5/3');
+    expect(freeCreditsLabel.parentElement).toHaveTextContent('1.5/2');
   });
 
   it('should hide the free credits pill when credits rewards are not configured', () => {

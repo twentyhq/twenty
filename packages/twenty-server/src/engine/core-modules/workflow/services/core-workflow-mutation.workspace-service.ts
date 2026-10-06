@@ -975,12 +975,5 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.workflowCoreSyncService.deleteFromCore(workspaceId, [
       coreWorkflowId,
     ]);
-
-    if (isDefined(workspaceWorkflowId)) {
-      await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
-        workspaceId,
-        [workspaceWorkflowId],
-      );
-    }
   }
 }
