@@ -1,4 +1,9 @@
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 describe('getFieldBaseFile', () => {
   it('should render proper file using defineField', () => {
@@ -198,12 +203,12 @@ describe('getFieldBaseFile', () => {
       data: {
         name: 'recipient',
         label: 'Recipient',
-        type: 'RELATION' as any,
+        type: FieldMetadataType.RELATION,
         objectUniversalIdentifier: 'obj-1',
         relationTargetObjectMetadataUniversalIdentifier: 'target-obj',
         relationTargetFieldMetadataUniversalIdentifier: 'target-field',
-        relationType: 'MANY_TO_ONE' as any,
-        onDelete: 'SET_NULL' as any,
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
       },
       name: 'recipient',
     });
@@ -218,11 +223,11 @@ describe('getFieldBaseFile', () => {
       data: {
         name: 'postCards',
         label: 'Post cards',
-        type: 'RELATION' as any,
+        type: FieldMetadataType.RELATION,
         objectUniversalIdentifier: 'obj-1',
         relationTargetObjectMetadataUniversalIdentifier: 'target-obj',
         relationTargetFieldMetadataUniversalIdentifier: 'target-field',
-        relationType: 'ONE_TO_MANY' as any,
+        relationType: RelationType.ONE_TO_MANY,
       },
       name: 'postCards',
     });

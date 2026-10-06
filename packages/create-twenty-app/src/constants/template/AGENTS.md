@@ -76,7 +76,7 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 
 - An entity is any `.ts` or `.tsx` file in the project whose top-level statement is `export default defineX(...)` as a direct call. Assigning the call to a variable first, calling it through a namespace, or adding `satisfies` makes the build skip the file silently, and a skipped entity is deleted on the next sync. Folder placement is a convention, not a rule.
 - Every entity file runs in Node at build time, front components included. No browser globals at module top level.
-- Exactly one `defineApplication()` and exactly one `defineApplicationRole()` per app. At most one pre-install hook, post-install hook, uninstall hook and health check. The scaffolded `health-check.ts` is that one health check; edit it, never add a second.
+- Exactly one `defineApplication()` per app, and exactly one default role: either a `defineApplicationRole()` (what the scaffold ships) or a `defineRole()` referenced by `defaultRoleUniversalIdentifier` in `defineApplication()`. Never add a second one to an app that already has either. At most one pre-install hook, post-install hook, uninstall hook and health check. The scaffolded `health-check.ts` is that one health check; edit it, never add a second.
 - Object and field names match `^[a-z][a-zA-Z0-9]*$`, singular and plural differ, and neither is a reserved keyword (`user`, `workspace`, `role`, `event`, `type`, `field`, `link`, `address`, `search`, `index`, `plan`, `object`, `relation`, `currency`, `job`, ...). These fail only at sync time.
 
 ### Identifiers
@@ -88,7 +88,7 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 
 ### Data model
 
-- Do not declare `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` or `deletedAt`: Twenty adds them. An object without a `name` field gets one injected.
+- Do not declare `id`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` or `deletedAt`: Twenty adds them. `name` is the one default field you may declare, and `dev:add object` does so to use it as the label identifier; keep that declaration and its identifier, since removing it injects a different `name` field and breaks the views that reference the old one.
 - A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName`. Relating to a standard object still requires declaring the reverse field on it with `defineField({ objectUniversalIdentifier })`.
 - Literal string defaults are quoted inside the string: `defaultValue: "'DRAFT'"`. Unquoted strings are reserved for `'uuid'` and `'now'`. `SELECT` option values are `UPPER_SNAKE_CASE`, and option `color` comes from the Twenty tag colors.
 - Turning an existing field into `isNullable: false` requires a non-null `defaultValue`, or the sync fails.
@@ -96,14 +96,14 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 ### Layout
 
 - A usable object is object + table view + navigation menu item (`type: OBJECT`) + record page layout. A view or an object without a navigation menu item is not reachable from the sidebar. Color is set on the navigation menu item, not on `defineObject`.
-- Set `layoutMode` on every page layout tab: `VERTICAL_LIST` for record and standalone pages, `GRID` for dashboards. `CANVAS` tabs and explicit widget positions are deprecated.
+- Set `layoutMode` on every page layout tab: `VERTICAL_LIST` for record and standalone pages, `GRID` for dashboards. `CANVAS` tabs are deprecated. In a `VERTICAL_LIST` tab, order comes from the `widgets` array and `position` is deprecated; `GRID` widgets and standalone `definePageLayoutWidget()` still need an explicit `position`, or every card lands on row 0, column 0.
 - A widget must fit its width-driven container without scrolling, unless it is the single `heightBehavior: 'TAB_VIEWPORT'` widget of its tab, placed last.
 - Widgets reference app components through `frontComponentUniversalIdentifier`, not `frontComponentId`.
 
 ### Front components
 
 - The file is `.tsx` and ends with `export default defineFrontComponent({ ... })` in exactly that shape; the build rewrites it.
-- Components run in a Web Worker on a partial DOM: no `window` or `document`, no portals, no `ResizeObserver`, no `canvas`. Base layout on width, never on height. Import UI from `twenty-ui` subpaths and never `IconsProvider` or `useIcons`.
+- Components run in a Web Worker with a sandboxed, partial `window` and `document`: DOM queries, measurements and `matchMedia` work, but `ResizeObserver`, `canvas`, `scrollIntoView` and portals into `document.body` do not, and most unsupported calls fail silently. Base layout on width, never on height. Import UI from `twenty-ui` subpaths and never `IconsProvider` or `useIcons`.
 - Read workspace data with `CoreApiClient` from `twenty-client-sdk/core`. Call third-party APIs from a logic function, not from the component. Secret application variables never reach a front component.
 - `useRecordId()` is deprecated; use `useSelectedRecordIds()` from `twenty-sdk/front-component`.
 
