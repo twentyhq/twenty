@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import {
   CoreWorkflowMetadataException,
   CoreWorkflowMetadataExceptionCode,
@@ -49,6 +50,7 @@ export class WorkflowCoreSyncService {
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -562,9 +564,9 @@ export class WorkflowCoreSyncService {
       },
     });
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
+    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+      workspaceId,
+    );
   }
 
   async findCoreWorkflowById(
