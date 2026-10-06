@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
-import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowEditActionCodeFieldLeaf } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFieldLeaf';
 import { type ToolArgumentField } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/types/ToolArgumentField';
 import { buildToolArgumentFields } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/utils/buildToolArgumentFields';
