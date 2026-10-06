@@ -73,7 +73,7 @@ Changes must preserve these contracts:
   the snapshots it owns without removing another build's files.
 - Apply reports which remote phases completed and whether the outcome is known.
   Do not retry writes or claim rollback when the server's result is unknown.
-  Each apply uses a fresh preview; approval does not carry across dev revisions.
+  Each apply uses a fresh plan; approval does not carry across dev revisions.
 - Pull stages source writes and its target-bound baseline together. Ordinary
   failures restore originals; interrupted workers and failed rollback report
   uncertainty and retain recovery information. Unsupported definitions remain
