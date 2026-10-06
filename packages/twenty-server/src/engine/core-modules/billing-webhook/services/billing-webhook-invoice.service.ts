@@ -10,6 +10,7 @@ import type Stripe from 'stripe';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
+import { getCustomerIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-customer-id-from-invoice.util';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -76,12 +77,11 @@ export class BillingWebhookInvoiceService {
   ) {
     const {
       billing_reason: billingReason,
-      customer,
       created: invoiceCreatedAtInSeconds,
     } = data.object;
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
-    const stripeCustomerId = customer as string | undefined;
+    const stripeCustomerId = getCustomerIdFromInvoice(data.object);
 
     if (
       !isDefined(stripeSubscriptionId) ||
@@ -185,13 +185,12 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processInvoicePaid(data: Stripe.InvoicePaidEvent.Data) {
-    // A top-up is a one-off charge: the past-due recovery below is about subscription invoices only
     if (isCreditTopUpInvoice(data.object)) {
       return this.processCreditTopUpInvoicePaid(data.object);
     }
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
-    const stripeCustomerId = data.object.customer as string | undefined;
+    const stripeCustomerId = getCustomerIdFromInvoice(data.object);
     const paidInvoicePeriodEnd = data.object.period_end;
 
     if (
@@ -229,7 +228,7 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processCreditTopUpInvoicePaid(invoice: Stripe.Invoice) {
-    const stripeCustomerId = invoice.customer as string | undefined;
+    const stripeCustomerId = getCustomerIdFromInvoice(invoice);
     const metadata = parseCreditTopUpInvoiceMetadata(invoice.metadata);
 
     if (!isDefined(metadata)) {
@@ -268,8 +267,6 @@ export class BillingWebhookInvoiceService {
     return { stripeInvoiceId: invoice.id };
   }
 
-  // Still a 200: a redelivery carries the same payload, so failing would only make Stripe retry for days.
-  // The customer paid without getting credits, so it goes to Sentry for a manual grant.
   private skipUngrantableCreditTopUpInvoice(
     invoice: Stripe.Invoice,
     reason: string,
@@ -277,7 +274,12 @@ export class BillingWebhookInvoiceService {
     const message = `Paid credit top-up invoice ${invoice.id} granted nothing: ${reason}`;
 
     this.logger.error(message);
-    this.exceptionHandlerService.captureExceptions([new Error(message)]);
+    this.exceptionHandlerService.captureExceptions([
+      new BillingException(
+        message,
+        BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED,
+      ),
+    ]);
 
     return { stripeInvoiceId: invoice.id };
   }

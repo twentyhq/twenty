@@ -3,7 +3,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import type Stripe from 'stripe';
 
-export type CreditTopUpInvoiceMetadata = {
+type CreditTopUpInvoiceMetadata = {
   workspaceId: string;
   creditAmountMicro: number;
 };

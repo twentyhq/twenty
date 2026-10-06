@@ -242,7 +242,6 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
-  // The panel offers the operator types, but the mutation is reachable directly and jobs write these
   it.each([
     BillingCreditGrantType.ROLLOVER,
     BillingCreditGrantType.ONBOARDING_REWARD,

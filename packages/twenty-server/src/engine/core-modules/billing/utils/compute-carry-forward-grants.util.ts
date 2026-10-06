@@ -50,7 +50,6 @@ const hasLapsedBy = ({
   isDefined(expiresAt) && expiresAt.getTime() <= boundary.getTime();
 
 // Capped credits are spent first so deliberate grants carry over in full instead of being clipped by the rollover cap.
-// Then Stripe's credit grant order: soonest expiry first, free before paid, oldest first.
 const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
   const [isACapped, isBCapped] = [isCappedType(a.type), isCappedType(b.type)];
 

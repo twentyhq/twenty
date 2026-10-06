@@ -1,6 +1,5 @@
 import { CREDIT_TOP_UP_INVOICE_KIND } from 'src/engine/core-modules/billing/constants/credit-top-up-invoice-kind.constant';
 
-// Typed to what the handler reads, not Stripe.Invoice: a full fixture would be hundreds of lines of noise.
 export type MockStripeCreditTopUpInvoicePaidData = {
   object: {
     id: string;
