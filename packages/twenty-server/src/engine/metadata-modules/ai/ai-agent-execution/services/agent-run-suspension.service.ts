@@ -271,10 +271,9 @@ export class AgentRunSuspensionService {
     workspaceId: string;
     suspension: Pick<AgentRunSuspensionEntity, 'id' | 'threadId'>;
   }): Promise<void> {
-    await this.pendingWakeUpService.cancelAllForOwner({
+    await this.pendingWakeUpService.cancel({
       workspaceId,
-      ownerType: 'AGENT_RUN',
-      ownerId: suspension.id,
+      owner: { type: 'AGENT_RUN', id: suspension.id },
     });
     await this.suspensionRepository.delete(workspaceId, { id: suspension.id });
     await this.closeAwaitedCalls({
