@@ -21,7 +21,7 @@ Other rules:
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
-- Application variables declared with `scope: 'USER'` are never injected into `process.env`: the member who triggers a run is not always the member the run is about.
+- Application variables declared with `scope: 'USER'` are never injected into `process.env`: the member who triggers a run is not always the member the run is about. Read every member's values with `applicationVariableUserValues` through `new MetadataApiClient({ runAs: 'application' })`.
 - Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 

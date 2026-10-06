@@ -228,6 +228,7 @@ import { AddTriggersToAgentFastInstanceCommand } from 'src/database/commands/upg
 import { AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791274238040-add-scope-and-default-value-to-application-variables';
 import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791299810581-create-pending-wake-up-table';
 import { CreateAgentRunSuspensionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791301683545-create-agent-run-suspension-table';
+import { AddApplicationVariableUserValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791279933150-add-application-variable-user-value';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -458,4 +459,5 @@ export const INSTANCE_COMMANDS = [
   AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand,
   CreatePendingWakeUpTableFastInstanceCommand,
   CreateAgentRunSuspensionTableFastInstanceCommand,
+  AddApplicationVariableUserValueFastInstanceCommand,
 ];
