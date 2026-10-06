@@ -722,8 +722,8 @@
       "ChipProps": "primitives/data-display/Chip/types/ChipProps",
       "ChipSize": "primitives/data-display/Chip/types/ChipSize",
       "ChipVariant": "primitives/data-display/Chip/types/ChipVariant",
-      "ColorSampleProps": "primitives/data-display/ColorSample/ColorSample",
-      "ColorSampleVariant": "primitives/data-display/ColorSample/ColorSample",
+      "ColorSampleProps": "primitives/data-display/ColorSample/types/ColorSampleProps",
+      "ColorSampleVariant": "primitives/data-display/ColorSample/types/ColorSampleVariant",
       "StatusProps": "primitives/data-display/Status/types/StatusProps",
       "TagColor": "primitives/data-display/Tag/types/TagColor",
       "TagProps": "primitives/data-display/Tag/types/TagProps"
@@ -740,6 +740,7 @@
     "types": {
       "BannerColor": "primitives/feedback/Banner/Banner",
       "BannerVariant": "primitives/feedback/Banner/Banner",
+      "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
       "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
     }
