@@ -35,12 +35,16 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  convertEmailBodyToEmailDocument,
+  EMAIL_DOCUMENT_SCHEMA_VERSION,
   getSendableEmailHandles,
   isDefined,
+  isNonEmptyArray,
+  TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { Callout, Dropdown } from 'twenty-ui/components';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconCode, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -97,6 +101,31 @@ export const WorkflowEditActionEmailBase = ({
       inReplyTo: Boolean(action.settings.input.inReplyTo),
     };
   });
+
+  const [bodyEditorVersion, setBodyEditorVersion] = useState(0);
+
+  const bodyConversionResult = convertEmailBodyToEmailDocument(formData.body);
+  const isBodyBlank =
+    bodyConversionResult.success &&
+    (bodyConversionResult.document.content ?? []).every(
+      (block) =>
+        block.type === TIPTAP_NODE_TYPES.PARAGRAPH &&
+        !isNonEmptyArray(block.content),
+    );
+
+  const handleWriteInHtml = () => {
+    handleFieldChange(
+      'body',
+      JSON.stringify({
+        type: TIPTAP_NODE_TYPES.DOCUMENT,
+        attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+        content: [
+          { type: TIPTAP_NODE_TYPES.HTML_DOCUMENT, attrs: { html: '' } },
+        ],
+      }),
+    );
+    setBodyEditorVersion((version) => version + 1);
+  };
 
   const advancedOptionsDropdownId = `${action.id}-email-advanced-options`;
 
@@ -379,6 +408,7 @@ export const WorkflowEditActionEmailBase = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <FormAdvancedTextFieldInput
+            key={bodyEditorVersion}
             label={t`Body`}
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
@@ -402,6 +432,14 @@ export const WorkflowEditActionEmailBase = ({
             ]}
             profile={WORKFLOW_EMAIL_BODY_EDITOR_PROFILE}
           />
+          {!actionOptions.readonly && isBodyBlank && (
+            <Button
+              size="sm"
+              variant="outline"
+              startIcon={<IconCode />}
+              onClick={handleWriteInHtml}
+            >{t`Write in HTML`}</Button>
+          )}
           <WorkflowSendEmailAttachments
             label={t`Attachments`}
             files={formData.files}

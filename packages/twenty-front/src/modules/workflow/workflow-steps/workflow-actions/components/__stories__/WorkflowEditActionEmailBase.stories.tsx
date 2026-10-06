@@ -286,6 +286,48 @@ export const Default: Story = {
   },
 };
 
+export const WriteInHtml: Story = {
+  args: {
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Write in HTML' }),
+    );
+
+    await waitFor(() => {
+      expect(
+        canvasElement.querySelector(
+          '[data-placeholder="Paste or write your HTML here"]',
+        ),
+      ).toBeVisible();
+    });
+    expect(
+      canvas.queryByRole('button', { name: 'Write in HTML' }),
+    ).not.toBeInTheDocument();
+
+    const { onActionUpdate } = args.actionOptions as {
+      onActionUpdate: ReturnType<typeof fn>;
+    };
+
+    await waitFor(() => {
+      expect(onActionUpdate).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          settings: expect.objectContaining({
+            input: expect.objectContaining({
+              body: expect.stringContaining('"type":"htmlDocument"'),
+            }),
+          }),
+        }),
+      );
+    });
+  },
+};
+
 export const Configured: Story = {
   args: {
     action: CONFIGURED_SEND_EMAIL_ACTION,
