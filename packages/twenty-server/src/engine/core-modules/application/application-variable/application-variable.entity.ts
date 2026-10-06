@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -48,9 +47,6 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'CHK_applicationVariable_default_value_not_secret',
   `NOT ("isSecret" AND "defaultValue" IS NOT NULL)`,
 )
-// Target of the member value foreign key on (applicationVariableId, scope),
-// so the database only accepts member values on USER variables.
-@Unique('IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE', ['id', 'scope'])
 export class ApplicationVariableEntity extends SyncableEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

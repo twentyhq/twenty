@@ -26,17 +26,11 @@ export class AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "CHK_applicationVariable_default_value_not_secret" CHECK (NOT ("isSecret" AND "defaultValue" IS NOT NULL))`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE" UNIQUE ("id", "scope")`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `DELETE FROM "core"."applicationVariable" WHERE "scope" = 'USER'`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "CHK_applicationVariable_default_value_not_secret"`,
