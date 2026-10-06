@@ -115,7 +115,6 @@ const AiChatInboxPageContent = () => {
   const isSelectionShown = selectedRecordIds.length > 0;
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
-  const checkedThreadIds = isSelectionShown ? selectedRecordIds : [];
 
   // A phone has room for the list or the chat, not both
   const isListShown = !isMobile || !isDefined(selectedThreadId);
@@ -137,9 +136,7 @@ const AiChatInboxPageContent = () => {
               showInformationBanner={isMobile}
               header={
                 <AiChatInboxListHeader
-                  selectedThreadCount={
-                    isSelectionShown ? selectedRecordIds.length : 0
-                  }
+                  selectedThreadCount={selectedRecordIds.length}
                 />
               }
             >
@@ -161,7 +158,7 @@ const AiChatInboxPageContent = () => {
                     <AiChatInboxThreadList
                       threads={threads}
                       selectedThreadIds={openThreadIds}
-                      checkedThreadIds={checkedThreadIds}
+                      checkedThreadIds={selectedRecordIds}
                       onThreadClick={handleThreadClick}
                       onThreadCheckboxClick={
                         isMobile ? undefined : handleThreadCheckboxClick
