@@ -5,13 +5,15 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Context, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -47,6 +49,7 @@ export class CreateCalendarEventResolver {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly calendarEventComposerService: CalendarEventComposerService,
     private readonly createCalendarEventService: CreateCalendarEventService,
+    private readonly i18nService: I18nService,
   ) {}
 
   @Mutation(() => CreateCalendarEventOutputDTO)
@@ -54,6 +57,7 @@ export class CreateCalendarEventResolver {
     @Args('input') input: CreateCalendarEventInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
   ): Promise<CreateCalendarEventOutputDTO> {
     try {
       await this.connectedAccountMetadataService.verifyUsableByCaller({
@@ -83,7 +87,9 @@ export class CreateCalendarEventResolver {
       if (!result.success) {
         return {
           success: false,
-          error: result.error,
+          error: this.i18nService
+            .getI18nInstance(context.req.locale)
+            ._(result.error),
         };
       }
 
@@ -112,12 +118,10 @@ export class CreateCalendarEventResolver {
 
       this.logger.error(`Failed to create calendar event: ${error}`);
 
+      // Without an error the client shows its own translated fallback
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to create calendar event',
+        error: error instanceof Error ? error.message : undefined,
       };
     }
   }

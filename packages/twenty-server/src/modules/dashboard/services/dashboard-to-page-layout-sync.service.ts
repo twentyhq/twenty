@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutType } from 'twenty-shared/types';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
@@ -16,12 +19,15 @@ export class DashboardToPageLayoutSyncService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly i18nService: I18nService,
   ) {}
 
   public async createPageLayoutForDashboard({
     workspaceId,
+    locale,
   }: {
     workspaceId: string;
+    locale: keyof typeof APP_LOCALES;
   }): Promise<string> {
     const pageLayout = await this.pageLayoutService.create({
       createPageLayoutInput: {
@@ -34,7 +40,7 @@ export class DashboardToPageLayoutSyncService {
 
     await this.pageLayoutTabService.create({
       createPageLayoutTabInput: {
-        title: 'Tab 1',
+        title: this.i18nService.getI18nInstance(locale)._(msg`Tab 1`),
         pageLayoutId: pageLayout.id,
       },
       workspaceId,

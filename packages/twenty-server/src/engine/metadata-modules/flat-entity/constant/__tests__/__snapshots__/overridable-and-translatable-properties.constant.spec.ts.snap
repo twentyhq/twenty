@@ -144,6 +144,10 @@ exports[`registry-derived override property maps derives the translatable proper
   "settingsMenuItem": [
     "title",
   ],
+  "skill": [
+    "label",
+    "description",
+  ],
   "timelineActivityType": [
     "label",
   ],

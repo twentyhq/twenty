@@ -213,6 +213,9 @@ export class CleanerWorkspaceService {
     const html = await renderEmail(emailTemplate, { pretty: true });
     const text = await renderEmail(emailTemplate, { plainText: true });
 
+    const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
+    const subject = i18n._(msg`Your workspace has been deleted`);
+
     if (!isDefined(workspaceMember.userEmail)) {
       throw new Error('Workspace member email is missing');
     }
@@ -222,7 +225,7 @@ export class CleanerWorkspaceService {
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-      subject: 'Your workspace has been deleted',
+      subject,
       html,
       text,
     });

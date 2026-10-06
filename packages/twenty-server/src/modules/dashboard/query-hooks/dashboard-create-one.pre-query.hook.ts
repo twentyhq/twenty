@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
@@ -34,6 +36,9 @@ export class DashboardCreateOnePreQueryHook implements WorkspacePreQueryHookInst
     const pageLayoutId =
       await this.dashboardToPageLayoutSyncService.createPageLayoutForDashboard({
         workspaceId: workspace.id,
+        locale: isUserAuthContext(authContext)
+          ? authContext.workspaceMember.locale
+          : SOURCE_LOCALE,
       });
 
     payload.data.pageLayoutId = pageLayoutId;

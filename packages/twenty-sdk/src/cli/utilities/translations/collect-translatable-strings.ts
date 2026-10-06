@@ -19,6 +19,7 @@ const MANIFEST_KEY_BY_METADATA_NAME = {
   navigationMenuItem: 'navigationMenuItems',
   timelineActivityType: 'timelineActivityTypes',
   settingsMenuItem: 'settingsMenuItems',
+  skill: 'skills',
 } as const satisfies Partial<Record<TranslatableMetadataName, keyof Manifest>>;
 
 export const collectTranslatableStrings = (
