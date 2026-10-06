@@ -72,6 +72,19 @@ const groupBlocksIntoCues = (blocks: string[][]): TeamsTranscriptCue[] => {
   return cues;
 };
 
+// Repeats until stable so that removing one tag cannot leave another behind.
+const stripCueTags = (cueText: string): string => {
+  let text = cueText;
+  let previousText: string | undefined;
+
+  while (text !== previousText) {
+    previousText = text;
+    text = text.replace(/<\/?[^>]+>/g, '');
+  }
+
+  return text;
+};
+
 const decodeHtmlEntities = (text: string): string =>
   text
     .replace(/&lt;/g, '<')
@@ -89,7 +102,7 @@ const toUtterance = ({
   const speakerName = decodeHtmlEntities(
     /<v(?:\.[^\s>]*)?\s+([^>]*)>/i.exec(cueText)?.[1] ?? '',
   ).trim();
-  const text = decodeHtmlEntities(cueText.replace(/<\/?[^>]+>/g, ''))
+  const text = decodeHtmlEntities(stripCueTags(cueText))
     .replace(/\s+/g, ' ')
     .trim();
 
