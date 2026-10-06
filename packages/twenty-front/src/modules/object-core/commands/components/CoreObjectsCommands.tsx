@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { IconFilter, IconTrash } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CoreWorkflowsDeleteConfirmationDialogCleanupEffect } from '@/object-core/commands/components/CoreWorkflowsDeleteConfirmationDialogCleanupEffect';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteConfirmationDialogId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
@@ -34,12 +34,7 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const { openDialog, closeDialog } = useDialog();
-
-  useEffect(
-    () => () => closeDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID),
-    [closeDialog],
-  );
+  const { openDialog } = useDialog();
 
   const openDeleteConfirmationDialog = () => {
     openDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID);
@@ -89,6 +84,7 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
             confirmButtonText={deleteConfirmationContent.confirmButtonText}
             onConfirmClick={handleConfirmDeleteSelectedCoreWorkflows}
           />
+          <CoreWorkflowsDeleteConfirmationDialogCleanupEffect />
         </>
       )}
     </>
