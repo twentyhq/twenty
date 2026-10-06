@@ -15,19 +15,19 @@ import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEm
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { PageFocusId } from '@/types/PageFocusId';
+import { PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-} from '~/generated/graphql';
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
+import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 
 export const SyncEmails = () => {
   const { t } = useLingui();

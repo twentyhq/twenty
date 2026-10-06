@@ -8,7 +8,7 @@ import { useRecordTableSelectAllHotkeys } from '@/object-record/record-table/hoo
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { RecordTableRecordLimitReloadEffect } from '@/object-record/record-table/virtualization/components/RecordTableRecordLimitReloadEffect';
-import { PageFocusId } from '@/types/PageFocusId';
+import { PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 
