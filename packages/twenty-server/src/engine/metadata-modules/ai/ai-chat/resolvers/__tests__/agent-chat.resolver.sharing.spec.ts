@@ -77,6 +77,7 @@ const buildResolver = () => {
     recordEvents as never,
     {} as never,
     threadService,
+    {} as never,
   );
   const streaming = {
     streamAgentChat: jest
@@ -96,6 +97,7 @@ const buildResolver = () => {
     redis as never,
     {} as never,
     recordEvents as never,
+    {} as never,
   );
   const resolver = new AgentChatResolver(
     chatService,
