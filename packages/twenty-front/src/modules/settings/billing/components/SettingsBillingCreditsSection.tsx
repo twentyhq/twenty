@@ -2,6 +2,7 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { CreditTopUpModal } from '@/settings/billing/components/CreditTopUpModal';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
 import {
   StyledSettingsBillingCard,
@@ -9,6 +10,7 @@ import {
 } from '@/settings/billing/components/internal/SettingsBillingCard';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useCanBuyCreditTopUp } from '@/settings/billing/hooks/useCanBuyCreditTopUp';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
@@ -26,6 +28,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconChartBar,
+  IconCirclePlus,
   IconCoins,
   IconExternalLink,
   IconInfoCircle,
@@ -158,6 +161,7 @@ export const SettingsBillingCreditsSection = ({
   const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
     PermissionFlagType.WORKSPACE,
   );
+  const canBuyCredits = useCanBuyCreditTopUp();
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
@@ -305,6 +309,14 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
+        {canBuyCredits && (
+          <Button
+            startIcon={<IconCirclePlus />}
+            size="sm"
+            variant="outline"
+            onClick={() => openDialog(BILLING_MODAL_IDS.creditTopUp)}
+          >{t`Buy credits`}</Button>
+        )}
         <NavigationButton
           to={getSettingsPath(SettingsPath.Usage)}
           startIcon={<IconChartBar />}
@@ -324,6 +336,9 @@ export const SettingsBillingCreditsSection = ({
           variant="outline"
         >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>
+      {canBuyCredits && (
+        <CreditTopUpModal dialogId={BILLING_MODAL_IDS.creditTopUp} />
+      )}
     </Section.Root>
   );
 };

@@ -6,6 +6,7 @@ export const BILLING_MODAL_IDS = {
   confirmResourceCreditPriceChange:
     'resource-credit-price-change-confirmation-modal',
   creditPackagePicker: 'resource-credit-package-picker-modal',
+  creditTopUp: 'credit-top-up-modal',
   endTrialPeriod: 'end-trial-period-modal',
   switchBillingIntervalToMonthly: 'switch-billing-interval-to-monthly-modal',
   switchBillingIntervalToYearly: 'switch-billing-interval-to-yearly-modal',
