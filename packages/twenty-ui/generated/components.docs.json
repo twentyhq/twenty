@@ -625,13 +625,6 @@
         "description": "ID of text that names the loader status."
       },
       {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Additional content inside the container, after the decorative animated dot."
-      },
-      {
         "name": "className",
         "type": "string",
         "required": false,

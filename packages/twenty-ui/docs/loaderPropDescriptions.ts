@@ -8,8 +8,6 @@ export const LOADER_PROP_DESCRIPTIONS = {
     'Native styles merged with the loader color defaults. Explicit styles win.',
   ref: 'Ref to the container div, or the element supplied through render.',
   render: 'Element or render callback composed through Base UI useRender.',
-  children:
-    'Additional content inside the container, after the decorative animated dot.',
   role: 'Supply status to expose loading feedback as a live region. No role is assigned by default.',
   'aria-label': 'Accessible name for a labeled loader status.',
   'aria-labelledby': 'ID of text that names the loader status.',

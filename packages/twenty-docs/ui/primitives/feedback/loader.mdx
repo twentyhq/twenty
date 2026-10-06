@@ -30,6 +30,8 @@ export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
 );
 ```
 
+Place visible status text beside the loader in a wrapper. The loader is a fixed-size visual indicator and does not accept children.
+
 The application owns loading state. Keep the status wrapper mounted so text updates can be announced. The loader assigns no label or live-region role by default. Use `aria-hidden="true"` when surrounding text or a button already supplies loading feedback.
 
 ## Native composition and labeling

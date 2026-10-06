@@ -15,7 +15,6 @@ export const Loader = ({
   style,
   render,
   ref,
-  children,
   ...props
 }: LoaderProps) =>
   useRender({
@@ -31,11 +30,6 @@ export const Loader = ({
         }),
         ...style,
       } as CSSProperties,
-      children: (
-        <>
-          <span className={styles.dot} aria-hidden="true" />
-          {children}
-        </>
-      ),
+      children: <span className={styles.dot} aria-hidden="true" />,
     },
   });

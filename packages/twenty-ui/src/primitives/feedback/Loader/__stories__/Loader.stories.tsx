@@ -32,10 +32,27 @@ export const WithColor: Story = {
 export const WithColorDocumentation: Story = {
   render: () => (
     <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
-      <Loader color="blue" aria-hidden="true" render={<span />} />
-      Saving changes
+      <Loader
+        color="blue"
+        aria-hidden="true"
+        render={<span />}
+        data-testid="decorative-loader"
+      />
+      <Text>Saving changes</Text>
     </Text>
   ),
+  play: async ({ canvas }) => {
+    const status = canvas.getByRole('status');
+    const label = canvas.getByText('Saving changes');
+    const loader = canvas.getByTestId('decorative-loader');
+
+    await expect(status).toHaveTextContent('Saving changes');
+    await expect(label).toBeVisible();
+    await expect(loader).toHaveStyle({ width: '24px', height: '12px' });
+    await expect(label.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      loader.getBoundingClientRect().right,
+    );
+  },
 };
 
 export const WithDefaultCssVariable: Story = {
