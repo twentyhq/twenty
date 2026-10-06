@@ -62,7 +62,7 @@ import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescr
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
-import { TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './textDirectionProviderPropDescriptions';
+import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
@@ -187,11 +187,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
   },
   {
-    name: 'TextDirectionProvider',
-    source: 'primitives/layout/TextDirectionProvider/TextDirectionProvider.tsx',
+    name: 'DirectionProvider',
+    source: 'primitives/layout/DirectionProvider/DirectionProvider.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/text-direction-provider',
-    propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
+    slug: 'layout/direction-provider',
+    propDescriptions: DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',

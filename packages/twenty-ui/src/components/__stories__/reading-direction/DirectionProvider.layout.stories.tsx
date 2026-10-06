@@ -5,7 +5,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DirectionalLayoutExample } from './DirectionalLayoutExample';
 
 const meta: Meta<typeof DirectionalLayoutExample> = {
-  title: 'UI/Layout/TextDirectionProvider/Layout',
+  title: 'UI/Layout/DirectionProvider/Layout',
   component: DirectionalLayoutExample,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
 };

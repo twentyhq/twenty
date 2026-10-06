@@ -817,13 +817,14 @@
       "Collapsible": "primitives/layout/Collapsible/Collapsible",
       "HorizontalSeparator": "primitives/layout/HorizontalSeparator/HorizontalSeparator",
       "ResizeHandle": "primitives/layout/ResizeHandle/ResizeHandle",
-      "TextDirectionProvider": "primitives/layout/TextDirectionProvider/TextDirectionProvider"
+      "DirectionProvider": "primitives/layout/DirectionProvider/DirectionProvider"
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
       "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
       "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
-      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps"
+      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
+      "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps"
     }
   },
   "primitives/navigation": {
