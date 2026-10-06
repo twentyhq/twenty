@@ -841,31 +841,6 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
-  async deleteCoreVersionsByWorkflowIds(
-    workspaceId: string,
-    workflowIds: string[],
-  ): Promise<void> {
-    if (workflowIds.length === 0) {
-      return;
-    }
-
-    const deletedVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workflowId: In(workflowIds) },
-        select: { id: true, coreWorkflowId: true, status: true },
-      },
-    );
-
-    await this.deleteCoreVersionsThroughMigration({
-      workspaceId,
-      coreWorkflowVersionIds: deletedVersions.map(({ id }) => id),
-    });
-
-    await this.invalidateAutomatedTriggerMaps(workspaceId);
-    await this.evictCronTriggerCacheEntries(deletedVersions);
-  }
-
   async deleteCoreVersionsByWorkspaceVersionIds(
     workspaceId: string,
     workflowVersionIds: string[],
