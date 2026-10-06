@@ -12,7 +12,10 @@ export const getPositionBetween = (
     if (prevPosition === nextPosition) {
       return prevPosition - 1;
     }
-    return computeMidpointPosition(prevPosition, nextPosition);
+    return computeMidpointPosition({
+      firstPosition: prevPosition,
+      secondPosition: nextPosition,
+    });
   }
   return 0;
 };

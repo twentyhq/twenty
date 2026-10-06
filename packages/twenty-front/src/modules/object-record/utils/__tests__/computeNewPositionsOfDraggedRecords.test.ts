@@ -60,15 +60,16 @@ describe('computeNewPositionsOfDraggedRecords', () => {
     expect(positionById.get('b')).toBeGreaterThan(positionById.get('a') ?? 0);
   });
 
-  it('should return null when dropping a record on itself', () => {
-    expect(
-      computeNewPositionsOfDraggedRecords({
-        arrayOfRecordsWithPosition: [{ id: 'target', position: 1 }],
-        draggedRecordId: 'target',
-        targetRecordId: 'target',
-        sourceRecordIds: ['target'],
-        isDroppedAfterList: false,
-      }),
-    ).toBeNull();
+  it('should keep a single record in place when dropping it on itself', () => {
+    const result = computeNewPositionsOfDraggedRecords({
+      arrayOfRecordsWithPosition: [{ id: 'target', position: 1 }],
+      draggedRecordId: 'target',
+      targetRecordId: 'target',
+      sourceRecordIds: ['target'],
+      isDroppedAfterList: false,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('target');
   });
 });

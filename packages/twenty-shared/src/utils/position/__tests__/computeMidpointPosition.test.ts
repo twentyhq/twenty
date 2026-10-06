@@ -2,47 +2,82 @@ import { computeMidpointPosition } from '@/utils/position/computeMidpointPositio
 
 describe('computeMidpointPosition', () => {
   it('should return the midpoint of two integers', () => {
-    expect(computeMidpointPosition(0, 10)).toBe(5);
-    expect(computeMidpointPosition(1, 2)).toBe(1.5);
+    expect(
+      computeMidpointPosition({ firstPosition: 0, secondPosition: 10 }),
+    ).toBe(5);
+    expect(
+      computeMidpointPosition({ firstPosition: 1, secondPosition: 2 }),
+    ).toBe(1.5);
   });
 
   it('should not depend on argument order', () => {
-    expect(computeMidpointPosition(3, 1.1)).toBe(2.05);
-    expect(computeMidpointPosition(1.1, 3)).toBe(2.05);
+    expect(
+      computeMidpointPosition({ firstPosition: 3, secondPosition: 1.1 }),
+    ).toBe(2.05);
+    expect(
+      computeMidpointPosition({ firstPosition: 1.1, secondPosition: 3 }),
+    ).toBe(2.05);
   });
 
   it('should handle negative and zero-crossing positions', () => {
-    expect(computeMidpointPosition(-3, -1)).toBe(-2);
-    expect(computeMidpointPosition(-1, 2)).toBe(0.5);
-    expect(computeMidpointPosition(-0.1, 0.1)).toBe(0);
+    expect(
+      computeMidpointPosition({ firstPosition: -3, secondPosition: -1 }),
+    ).toBe(-2);
+    expect(
+      computeMidpointPosition({ firstPosition: -1, secondPosition: 2 }),
+    ).toBe(0.5);
+    expect(
+      computeMidpointPosition({ firstPosition: -0.1, secondPosition: 0.1 }),
+    ).toBe(0);
   });
 
   it('should return a clean decimal where float arithmetic would not', () => {
     expect((0.1 + 0.2) / 2).toBe(0.15000000000000002);
-    expect(computeMidpointPosition(0.1, 0.2)).toBe(0.15);
-    expect(computeMidpointPosition(0.7, 0.8)).toBe(0.75);
+    expect(
+      computeMidpointPosition({ firstPosition: 0.1, secondPosition: 0.2 }),
+    ).toBe(0.15);
+    expect(
+      computeMidpointPosition({ firstPosition: 0.7, secondPosition: 0.8 }),
+    ).toBe(0.75);
   });
 
   it('should return the same position for equal inputs', () => {
     expect(
-      computeMidpointPosition(0.30000000000000004, 0.30000000000000004),
+      computeMidpointPosition({
+        firstPosition: 0.30000000000000004,
+        secondPosition: 0.30000000000000004,
+      }),
     ).toBe(0.30000000000000004);
   });
 
   it('should not overflow near the largest double', () => {
     expect((Number.MAX_VALUE + Number.MAX_VALUE) / 2).toBe(Infinity);
-    expect(computeMidpointPosition(Number.MAX_VALUE, Number.MAX_VALUE)).toBe(
-      Number.MAX_VALUE,
-    );
-    expect(computeMidpointPosition(-Number.MAX_VALUE, Number.MAX_VALUE)).toBe(
-      0,
-    );
+    expect(
+      computeMidpointPosition({
+        firstPosition: Number.MAX_VALUE,
+        secondPosition: Number.MAX_VALUE,
+      }),
+    ).toBe(Number.MAX_VALUE);
+    expect(
+      computeMidpointPosition({
+        firstPosition: -Number.MAX_VALUE,
+        secondPosition: Number.MAX_VALUE,
+      }),
+    ).toBe(0);
   });
 
   it('should handle very small magnitudes', () => {
-    expect(computeMidpointPosition(1e-300, 3e-300)).toBe(2e-300);
+    expect(
+      computeMidpointPosition({
+        firstPosition: 1e-300,
+        secondPosition: 3e-300,
+      }),
+    ).toBe(2e-300);
 
-    const result = computeMidpointPosition(0, Number.MIN_VALUE);
+    const result = computeMidpointPosition({
+      firstPosition: 0,
+      secondPosition: Number.MIN_VALUE,
+    });
 
     expect(result).toBeGreaterThanOrEqual(0);
     expect(result).toBeLessThanOrEqual(Number.MIN_VALUE);
@@ -50,7 +85,10 @@ describe('computeMidpointPosition', () => {
 
   it('should stay within bounds when neighbors are adjacent doubles', () => {
     const upperPosition = 1 + Number.EPSILON;
-    const result = computeMidpointPosition(1, upperPosition);
+    const result = computeMidpointPosition({
+      firstPosition: 1,
+      secondPosition: upperPosition,
+    });
 
     expect([1, upperPosition]).toContain(result);
   });
@@ -61,7 +99,10 @@ describe('computeMidpointPosition', () => {
     let numberOfHalvings = 0;
 
     while (numberOfHalvings < 100) {
-      const midpoint = computeMidpointPosition(lowerPosition, upperPosition);
+      const midpoint = computeMidpointPosition({
+        firstPosition: lowerPosition,
+        secondPosition: upperPosition,
+      });
 
       expect(midpoint).toBeGreaterThanOrEqual(lowerPosition);
       expect(midpoint).toBeLessThanOrEqual(upperPosition);
@@ -88,7 +129,10 @@ describe('computeMidpointPosition', () => {
     for (let iteration = 0; iteration < 1000; iteration++) {
       const firstPosition = (nextRandom() - 0.5) * 10 ** (nextRandom() * 20);
       const secondPosition = (nextRandom() - 0.5) * 10 ** (nextRandom() * 20);
-      const midpoint = computeMidpointPosition(firstPosition, secondPosition);
+      const midpoint = computeMidpointPosition({
+        firstPosition,
+        secondPosition,
+      });
 
       expect(midpoint).toBeGreaterThanOrEqual(
         Math.min(firstPosition, secondPosition),

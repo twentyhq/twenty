@@ -17,8 +17,8 @@ export const calculateNewPosition = ({
     return items[items.length - 1].position + 1;
   }
 
-  return computeMidpointPosition(
-    items[destinationIndex - 1].position,
-    items[destinationIndex].position,
-  );
+  return computeMidpointPosition({
+    firstPosition: items[destinationIndex - 1].position,
+    secondPosition: items[destinationIndex].position,
+  });
 };

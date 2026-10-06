@@ -1,6 +1,6 @@
 import { PositionDecimal } from '@/utils/position/internal/PositionDecimal';
 
-export const computeEvenlySpacedPositions = ({
+export const computeEvenlySpacedPositionsOrThrow = ({
   startingPosition,
   endingPosition,
   numberOfPositions,

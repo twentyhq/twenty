@@ -1,6 +1,6 @@
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import {
-  computeEvenlySpacedPositions,
+  computeEvenlySpacedPositionsOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -72,7 +72,7 @@ export const computeNewPositionsOfDraggedRecords = ({
 
   const [startingPosition, endingPosition] = getInsertionRange();
 
-  const newPositions = computeEvenlySpacedPositions({
+  const newPositions = computeEvenlySpacedPositionsOrThrow({
     startingPosition,
     endingPosition,
     numberOfPositions: sourceRecordIds.length,

@@ -17,7 +17,10 @@ export const computeInsertPositionFromBounds = (
       return previousPosition - 1;
     }
 
-    return computeMidpointPosition(previousPosition, nextPosition);
+    return computeMidpointPosition({
+      firstPosition: previousPosition,
+      secondPosition: nextPosition,
+    });
   }
 
   return 0;

@@ -1,9 +1,9 @@
-import { computeEvenlySpacedPositions } from '@/utils/position/computeEvenlySpacedPositions';
+import { computeEvenlySpacedPositionsOrThrow } from '@/utils/position/computeEvenlySpacedPositionsOrThrow';
 
-describe('computeEvenlySpacedPositions', () => {
+describe('computeEvenlySpacedPositionsOrThrow', () => {
   it('should compute evenly spaced positions between two values', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0,
         endingPosition: 10,
         numberOfPositions: 4,
@@ -13,7 +13,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should return a single midpoint when computing one position', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0,
         endingPosition: 10,
         numberOfPositions: 1,
@@ -23,7 +23,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should return clean decimals where float arithmetic would not', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0,
         endingPosition: 1,
         numberOfPositions: 9,
@@ -31,7 +31,7 @@ describe('computeEvenlySpacedPositions', () => {
     ).toEqual([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
 
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 1,
         endingPosition: 2,
         numberOfPositions: 4,
@@ -39,7 +39,7 @@ describe('computeEvenlySpacedPositions', () => {
     ).toEqual([1.2, 1.4, 1.6, 1.8]);
 
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0.1,
         endingPosition: 0.2,
         numberOfPositions: 1,
@@ -49,7 +49,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should round non-terminating steps to the nearest double', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0,
         endingPosition: 1,
         numberOfPositions: 2,
@@ -59,7 +59,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should handle negative ranges', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: -1,
         endingPosition: 0,
         numberOfPositions: 4,
@@ -71,7 +71,7 @@ describe('computeEvenlySpacedPositions', () => {
     const startingPosition = 0.1;
     const endingPosition = 0.30000000000000004;
 
-    const result = computeEvenlySpacedPositions({
+    const result = computeEvenlySpacedPositionsOrThrow({
       startingPosition,
       endingPosition,
       numberOfPositions: 5,
@@ -86,7 +86,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should return an empty array when no positions are requested', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 0,
         endingPosition: 1,
         numberOfPositions: 0,
@@ -96,7 +96,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should return all same values when gap is zero', () => {
     expect(
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 5,
         endingPosition: 5,
         numberOfPositions: 3,
@@ -106,7 +106,7 @@ describe('computeEvenlySpacedPositions', () => {
 
   it('should throw when starting position is after ending position', () => {
     expect(() =>
-      computeEvenlySpacedPositions({
+      computeEvenlySpacedPositionsOrThrow({
         startingPosition: 10,
         endingPosition: 5,
         numberOfPositions: 1,

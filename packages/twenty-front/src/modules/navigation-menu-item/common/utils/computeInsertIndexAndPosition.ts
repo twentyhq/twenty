@@ -18,6 +18,9 @@ export const computeInsertIndexAndPosition = (
       : items.length;
   const prevPosition = itemsInFolder[targetIndex - 1]?.position ?? 0;
   const nextPosition = itemsInFolder[targetIndex]?.position ?? prevPosition + 1;
-  const position = computeMidpointPosition(prevPosition, nextPosition);
+  const position = computeMidpointPosition({
+    firstPosition: prevPosition,
+    secondPosition: nextPosition,
+  });
   return { flatIndex, position };
 };

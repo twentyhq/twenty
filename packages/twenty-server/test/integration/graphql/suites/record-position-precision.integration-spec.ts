@@ -5,7 +5,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
-  computeEvenlySpacedPositions,
+  computeEvenlySpacedPositionsOrThrow,
   computeMidpointPosition,
 } from 'twenty-shared/utils';
 
@@ -13,7 +13,10 @@ const computePositionAfterRepeatedHalving = (numberOfHalvings: number) => {
   let upperPosition = 2;
 
   for (let index = 0; index < numberOfHalvings; index++) {
-    upperPosition = computeMidpointPosition(1, upperPosition);
+    upperPosition = computeMidpointPosition({
+      firstPosition: 1,
+      secondPosition: upperPosition,
+    });
   }
 
   return upperPosition;
@@ -27,9 +30,9 @@ const EDGE_CASE_POSITIONS = [
   0,
   Number.MIN_VALUE,
   1e-300,
-  computeMidpointPosition(0.1, 0.2),
+  computeMidpointPosition({ firstPosition: 0.1, secondPosition: 0.2 }),
   0.30000000000000004,
-  ...computeEvenlySpacedPositions({
+  ...computeEvenlySpacedPositionsOrThrow({
     startingPosition: 0.4,
     endingPosition: 0.5,
     numberOfPositions: 3,

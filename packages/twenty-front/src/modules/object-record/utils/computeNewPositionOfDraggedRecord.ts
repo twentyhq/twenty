@@ -58,10 +58,10 @@ export const computeNewPositionOfDraggedRecord = ({
       const itemBeforeTargetItem =
         sortedRecordsByAscendingPosition[indexOfTargetItem - 1];
 
-      return computeMidpointPosition(
-        itemBeforeTargetItem.position,
-        targetItem.position,
-      );
+      return computeMidpointPosition({
+        firstPosition: itemBeforeTargetItem.position,
+        secondPosition: targetItem.position,
+      });
     }
 
     const shouldGoAfterTargetItem = indexOfItemToMove < indexOfTargetItem;
@@ -74,10 +74,10 @@ export const computeNewPositionOfDraggedRecord = ({
         return targetItem.position + 1;
       }
 
-      return computeMidpointPosition(
-        targetItem.position,
-        itemAfterTargetItem.position,
-      );
+      return computeMidpointPosition({
+        firstPosition: targetItem.position,
+        secondPosition: itemAfterTargetItem.position,
+      });
     } else {
       const itemBeforeTargetItem =
         sortedRecordsByAscendingPosition[indexOfTargetItem - 1];
@@ -86,10 +86,10 @@ export const computeNewPositionOfDraggedRecord = ({
         return targetItem.position - 1;
       }
 
-      return computeMidpointPosition(
-        itemBeforeTargetItem.position,
-        targetItem.position,
-      );
+      return computeMidpointPosition({
+        firstPosition: itemBeforeTargetItem.position,
+        secondPosition: targetItem.position,
+      });
     }
   }
 };
