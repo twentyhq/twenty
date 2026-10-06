@@ -28,7 +28,6 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -72,7 +71,6 @@ export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
@@ -254,7 +252,7 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldSkipStepExecution &&
       !isDefined(resumedThreadId)
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
+      await this.chargeWorkflowNodeRun(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -441,29 +439,24 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
-  private async sendWorkflowNodeRunEvent(
+  private async chargeWorkflowNodeRun(
     workspaceId: string,
     billingSpenders: WorkflowBillingSpenders,
   ) {
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: billingSpenders,
-      cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.INVOCATION]: 1 },
+      events: [
+        {
+          resourceType: UsageResourceType.WORKFLOW,
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          creditsUsedMicro: 100,
+          quantity: 1,
+          unit: UsageUnit.INVOCATION,
+          resourceId: billingSpenders.workflowId,
+          spenders: billingSpenders,
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.WORKFLOW,
-        operationType: UsageOperationType.WORKFLOW_EXECUTION,
-        creditsUsedMicro: 100,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
-        resourceId: billingSpenders.workflowId,
-        spenders: billingSpenders,
-      },
-    ]);
   }
 
   private async processStepExecutionResult({
