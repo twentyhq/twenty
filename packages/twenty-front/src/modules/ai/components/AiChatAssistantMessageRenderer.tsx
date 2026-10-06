@@ -112,10 +112,12 @@ export const AiChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
   hasError,
+  shouldHideThinkingSteps = false,
 }: {
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
   hasError?: boolean;
+  shouldHideThinkingSteps?: boolean;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
 
@@ -136,7 +138,7 @@ export const AiChatAssistantMessageRenderer = ({
         getEffectiveToolName(part) === 'code_interpreter'
       ),
   );
-  const renderItems = groupContiguousThinkingStepParts(
+  const groupedRenderItems = groupContiguousThinkingStepParts(
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
@@ -145,15 +147,22 @@ export const AiChatAssistantMessageRenderer = ({
         frontComponentIdByToolName.get(getEffectiveToolName(part)),
       ),
   );
+  const renderItems = shouldHideThinkingSteps
+    ? groupedRenderItems.filter(
+        (renderItem) => renderItem.type !== 'thinking-steps',
+      )
+    : groupedRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
 
   if (!renderItems.length && !hasError) {
-    const hasOnlyHiddenReasoning =
-      !isLastMessageStreaming && messageParts.some(isEmptyReasoningPart);
+    const hasOnlyHiddenParts =
+      !isLastMessageStreaming &&
+      (groupedRenderItems.length > 0 ||
+        messageParts.some(isEmptyReasoningPart));
 
     return hasSucceededCompleteWorkspaceSetupToolPart ||
-      hasOnlyHiddenReasoning ? null : (
+      hasOnlyHiddenParts ? null : (
       <AiChatInitialLoadingIndicator />
     );
   }
