@@ -111,6 +111,7 @@ export class PageLayoutUpdateService {
 
     const { tabs, ...updateData } = input;
 
+    // Widget bindings are not cross-checked against these slots: a binding to a slot id the layout no longer has is ignored by the front, and the standalone widget mutations cannot see the layout anyway.
     const flatPageLayoutToUpdate: FlatPageLayout = {
       ...existingPageLayout,
       name: updateData.name,

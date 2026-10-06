@@ -1,11 +1,12 @@
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   type ChartRecordFilter,
   type DashboardFilterBinding,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -100,13 +101,13 @@ const validateSelectFilterOptionsOrThrow = ({
 const findActiveFlatFieldMetadataOfObjectOrThrow = ({
   fieldMetadataId,
   objectMetadataId,
-  describeField,
+  subjectLabel,
   flatFieldMetadataMaps,
   widgetTitle,
 }: {
   fieldMetadataId: string;
   objectMetadataId: string;
-  describeField: string;
+  subjectLabel: string;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   widgetTitle?: string | null;
 }): FlatFieldMetadata => {
@@ -117,20 +118,32 @@ const findActiveFlatFieldMetadataOfObjectOrThrow = ({
 
   if (!isDefined(field)) {
     throw buildChartFieldValidationException(
-      `${describeField} uses field id "${fieldMetadataId}", but it was deleted. Please remove or replace this binding.`,
+      `${subjectLabel} uses field id "${fieldMetadataId}", but it was deleted. Please remove or replace this binding.`,
       widgetTitle,
     );
   }
 
   if (field.objectMetadataId !== objectMetadataId) {
     throw buildChartFieldValidationException(
-      `${describeField} field "${fieldMetadataId}" must belong to objectMetadataId "${objectMetadataId}".`,
+      `${subjectLabel} field "${fieldMetadataId}" must belong to objectMetadataId "${objectMetadataId}".`,
       widgetTitle,
     );
   }
 
   return field;
 };
+
+const isOptionalNonEmptyString = (value: unknown): boolean =>
+  !isDefined(value) || isNonEmptyString(value);
+
+// The DTO only checks that the bindings record is an object, so each entry's shape is established here.
+const isWellFormedDashboardFilterBinding = (
+  binding: unknown,
+): binding is DashboardFilterBinding =>
+  isPlainObject(binding) &&
+  isNonEmptyString(binding.fieldMetadataId) &&
+  isOptionalNonEmptyString(binding.subFieldName) &&
+  isOptionalNonEmptyString(binding.relationTargetFieldMetadataId);
 
 // A binding is a filter without a value: the field it names is checked the way filter fields are, including the relation target it may traverse.
 const validateDashboardFilterBindingOrThrow = ({
@@ -142,7 +155,7 @@ const validateDashboardFilterBindingOrThrow = ({
   allFields,
 }: {
   slotId: string;
-  binding: DashboardFilterBinding;
+  binding: unknown;
   widgetObjectMetadataId: string;
   widgetTitle?: string | null;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -150,10 +163,24 @@ const validateDashboardFilterBindingOrThrow = ({
 }): void => {
   const describeBinding = `Dashboard filter "${slotId}" binding`;
 
+  if (slotId.trim().length === 0) {
+    throw buildChartFieldValidationException(
+      'Dashboard filter bindings must be keyed by a non-blank slot id.',
+      widgetTitle,
+    );
+  }
+
+  if (!isWellFormedDashboardFilterBinding(binding)) {
+    throw buildChartFieldValidationException(
+      `${describeBinding} must be an object with a fieldMetadataId, and optional non-empty subFieldName and relationTargetFieldMetadataId.`,
+      widgetTitle,
+    );
+  }
+
   const boundField = findActiveFlatFieldMetadataOfObjectOrThrow({
     fieldMetadataId: binding.fieldMetadataId,
     objectMetadataId: widgetObjectMetadataId,
-    describeField: describeBinding,
+    subjectLabel: describeBinding,
     flatFieldMetadataMaps,
     widgetTitle,
   });
@@ -177,7 +204,7 @@ const validateDashboardFilterBindingOrThrow = ({
     filteredField = findActiveFlatFieldMetadataOfObjectOrThrow({
       fieldMetadataId: binding.relationTargetFieldMetadataId,
       objectMetadataId: relationTargetObjectMetadataId,
-      describeField: `${describeBinding} relation target`,
+      subjectLabel: `${describeBinding} relation target`,
       flatFieldMetadataMaps,
       widgetTitle,
     });
@@ -191,10 +218,12 @@ const validateDashboardFilterBindingOrThrow = ({
         paramName: describeBinding,
       });
     } catch (error) {
-      throw buildChartFieldValidationException(
-        error instanceof Error ? error.message : String(error),
-        widgetTitle,
-      );
+      // validateCompositeSubfield reports an invalid sub field with a plain Error
+      if (!(error instanceof Error)) {
+        throw error;
+      }
+
+      throw buildChartFieldValidationException(error.message, widgetTitle);
     }
   }
 };

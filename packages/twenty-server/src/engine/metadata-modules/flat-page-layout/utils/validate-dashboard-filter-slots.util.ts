@@ -26,7 +26,17 @@ const buildError = (
   value,
 });
 
-// A whitespace-only id or label would render an unlabelled chip and collide with trimmed ids.
+const DASHBOARD_FILTER_SLOT_LABEL_MAX_LENGTH = 255;
+
+const DASHBOARD_FILTER_SLOT_KEYS = [
+  'id',
+  'label',
+  'filterType',
+  'defaultValue',
+  'isRequired',
+] as const satisfies (keyof DashboardFilterSlot)[];
+
+// Only the update-page-layout mutation trims nested strings before this runs, so blank and padded values are judged on their trimmed form everywhere.
 const isNonBlankString = (value: unknown): value is string =>
   isString(value) && value.trim().length > 0;
 
@@ -112,12 +122,34 @@ const validateDashboardFilterSlot = (
     );
   }
 
-  const slotId = isNonBlankString(slot.id) ? slot.id : String(index);
+  const slotId = isNonBlankString(slot.id) ? slot.id.trim() : String(index);
+
+  const unknownKeys = Object.keys(slot).filter(
+    (key) => !(DASHBOARD_FILTER_SLOT_KEYS as readonly string[]).includes(key),
+  );
+
+  if (unknownKeys.length > 0) {
+    errors.push(
+      buildError(
+        t`Dashboard filter "${slotId}" has unknown keys: ${unknownKeys.join(', ')}`,
+        slot,
+      ),
+    );
+  }
 
   if (!isNonBlankString(slot.label)) {
     errors.push(
       buildError(
         t`Dashboard filter "${slotId}" must have a non-empty label`,
+        slot,
+      ),
+    );
+  } else if (
+    slot.label.trim().length > DASHBOARD_FILTER_SLOT_LABEL_MAX_LENGTH
+  ) {
+    errors.push(
+      buildError(
+        t`Dashboard filter "${slotId}" label must be at most ${DASHBOARD_FILTER_SLOT_LABEL_MAX_LENGTH} characters`,
         slot,
       ),
     );
@@ -181,7 +213,8 @@ export const validateDashboardFilterSlots = (
   const slotIds = dashboardFilters
     .filter(isPlainObject)
     .map((slot) => slot.id)
-    .filter(isNonBlankString);
+    .filter(isNonBlankString)
+    .map((slotId) => slotId.trim());
 
   const duplicatedSlotIds = [
     ...new Set(

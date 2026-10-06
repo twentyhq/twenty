@@ -25,6 +25,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
     tabUniversalIdentifiers: [],
     isSystemSideEffect: false,
     isFirstTabPinned: true,
+    // Manifests cannot ship slots; null is only the forward default, the workspace-owned sync keeps whatever the workspace saved.
     dashboardFilters: null,
     createdAt: now,
     updatedAt: now,

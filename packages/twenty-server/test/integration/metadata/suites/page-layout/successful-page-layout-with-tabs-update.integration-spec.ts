@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/testing';
 import {
   AggregateOperations,
+  type DashboardFilterSlot,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   type PageLayoutWidgetGridPosition,
@@ -17,6 +18,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
@@ -231,6 +233,69 @@ describe('Page layout with tabs update should succeed', () => {
       );
     },
   );
+
+  it('should save dashboard filters with a chart bound to one slot and opted out of another', async () => {
+    const barChartWidgetId = v4();
+    const dashboardFilters: DashboardFilterSlot[] = [
+      { id: 'name', label: 'Name', filterType: 'TEXT' },
+      { id: 'owner', label: 'Owner', filterType: 'RELATION' },
+    ];
+
+    const { data } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: {
+        id: testPageLayoutId,
+        name: 'Dashboard With Filters',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        dashboardFilters,
+        tabs: [
+          {
+            id: testTabId1,
+            title: 'Charts',
+            position: 0,
+            widgets: [
+              {
+                id: barChartWidgetId,
+                pageLayoutTabId: testTabId1,
+                title: 'Bar Chart Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: testFieldMetadataIds.objectMetadataId,
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: {
+                  configurationType: WidgetConfigurationType.BAR_CHART,
+                  layout: BarChartLayout.VERTICAL,
+                  aggregateFieldMetadataId:
+                    testFieldMetadataIds.fieldMetadataId1,
+                  aggregateOperation: AggregateOperations.COUNT,
+                  primaryAxisGroupByFieldMetadataId:
+                    testFieldMetadataIds.fieldMetadataId2,
+                  dashboardFilterBindings: {
+                    name: {
+                      fieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+                    },
+                    owner: null,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(data.updatePageLayoutWithTabsAndWidgets).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny({
+        ...data.updatePageLayoutWithTabsAndWidgets,
+      }),
+    );
+  });
 
   it('should move a widget to another tab when saving layout tabs and widgets', async () => {
     const widgetId = v4();

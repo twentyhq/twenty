@@ -1,5 +1,6 @@
 import {
   AggregateOperations,
+  type DashboardFilterBinding,
   type DashboardFilterBindingsBySlotId,
   FieldMetadataType,
 } from 'twenty-shared/types';
@@ -160,6 +161,44 @@ describe('validateChartConfigurationFieldReferencesOrThrow', () => {
           },
         }),
       ).not.toThrow();
+    });
+
+    it.each([
+      { title: 'an empty object', binding: {} },
+      { title: 'a string', binding: 'abc' },
+      { title: 'a number', binding: 42 },
+      { title: 'an array', binding: [COMPANY_CREATED_AT_FIELD_ID] },
+      { title: 'a null fieldMetadataId', binding: { fieldMetadataId: null } },
+      { title: 'an empty fieldMetadataId', binding: { fieldMetadataId: '' } },
+      {
+        title: 'a non-string subFieldName',
+        binding: { fieldMetadataId: COMPANY_ADDRESS_FIELD_ID, subFieldName: 5 },
+      },
+      {
+        title: 'an empty relationTargetFieldMetadataId',
+        binding: {
+          fieldMetadataId: COMPANY_PEOPLE_FIELD_ID,
+          relationTargetFieldMetadataId: '',
+        },
+      },
+    ])('should reject a binding that is $title', ({ binding }) => {
+      expect(() =>
+        validateCompanyAggregateChart({
+          date: binding as unknown as DashboardFilterBinding,
+        }),
+      ).toThrow(
+        'Chart "Employees": Dashboard filter "date" binding must be an object with a fieldMetadataId, and optional non-empty subFieldName and relationTargetFieldMetadataId.',
+      );
+    });
+
+    it('should reject a binding keyed by a blank slot id', () => {
+      expect(() =>
+        validateCompanyAggregateChart({
+          ' ': { fieldMetadataId: COMPANY_CREATED_AT_FIELD_ID },
+        }),
+      ).toThrow(
+        'Chart "Employees": Dashboard filter bindings must be keyed by a non-blank slot id.',
+      );
     });
 
     it('should reject a binding to an unknown field', () => {

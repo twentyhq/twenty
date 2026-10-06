@@ -93,6 +93,27 @@ describe('validateDashboardFilterSlots', () => {
     ]);
   });
 
+  it('should treat ids that only differ by surrounding whitespace as duplicates', () => {
+    expect(getMessages([DATE_SLOT, { ...OWNER_SLOT, id: 'date ' }])).toEqual([
+      'Dashboard filter ids must be unique, found duplicates: date',
+    ]);
+  });
+
+  it('should reject unknown keys on a slot', () => {
+    expect(
+      getMessages([{ ...DATE_SLOT, color: 'red', fieldMetadataId: 'x' }]),
+    ).toEqual([
+      'Dashboard filter "date" has unknown keys: color, fieldMetadataId',
+    ]);
+  });
+
+  it('should reject a label longer than 255 characters', () => {
+    expect(getMessages([{ ...DATE_SLOT, label: 'a'.repeat(256) }])).toEqual([
+      'Dashboard filter "date" label must be at most 255 characters',
+    ]);
+    expect(getMessages([{ ...DATE_SLOT, label: 'a'.repeat(255) }])).toEqual([]);
+  });
+
   it('should reject a default value whose operand is not allowed for the filter type', () => {
     expect(
       getMessages([

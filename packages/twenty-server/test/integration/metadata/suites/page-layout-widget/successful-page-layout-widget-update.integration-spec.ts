@@ -238,6 +238,26 @@ describe('Page layout widget update should succeed', () => {
         },
       },
       {
+        title:
+          'update page layout widget to a BAR_CHART configuration bound to dashboard filters',
+        context: {
+          buildConfiguration: () => ({
+            configurationType: WidgetConfigurationType.BAR_CHART,
+            layout: BarChartLayout.VERTICAL,
+            aggregateFieldMetadataId: testSetup.fieldMetadataId1,
+            aggregateOperation: AggregateOperations.COUNT,
+            primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
+            primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
+            displayDataLabel: false,
+            axisNameDisplay: AxisNameDisplay.NONE,
+            dashboardFilterBindings: {
+              name: { fieldMetadataId: testSetup.fieldMetadataId2 },
+              owner: null,
+            },
+          }),
+        },
+      },
+      {
         title: 'update page layout widget to VERTICAL BAR_CHART configuration',
         context: {
           buildConfiguration: () => ({

@@ -1,5 +1,99 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Page layout with tabs update should succeed should save dashboard filters with a chart bound to one slot and opted out of another 1`] = `
+{
+  "createdAt": Any<String>,
+  "dashboardFilters": [
+    {
+      "filterType": "TEXT",
+      "id": Any<String>,
+      "label": "Name",
+    },
+    {
+      "filterType": "RELATION",
+      "id": Any<String>,
+      "label": "Owner",
+    },
+  ],
+  "defaultTabToFocusOnMobileAndSidePanelId": null,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Dashboard With Filters",
+  "objectMetadataId": null,
+  "tabs": [
+    {
+      "applicationId": Any<String>,
+      "createdAt": Any<String>,
+      "deletedAt": null,
+      "icon": null,
+      "id": Any<String>,
+      "layoutMode": "GRID",
+      "pageLayoutId": Any<String>,
+      "position": 0,
+      "title": "Charts",
+      "updatedAt": Any<String>,
+      "widgets": [
+        {
+          "configuration": {
+            "aggregateFieldMetadataId": Any<String>,
+            "aggregateOperation": "COUNT",
+            "axisNameDisplay": "NONE",
+            "color": null,
+            "configurationType": "BAR_CHART",
+            "dashboardFilterBindings": {
+              "name": {
+                "fieldMetadataId": Any<String>,
+              },
+              "owner": null,
+            },
+            "description": null,
+            "displayDataLabel": false,
+            "displayLegend": true,
+            "filter": null,
+            "firstDayOfTheWeek": 1,
+            "groupMode": null,
+            "isCumulative": null,
+            "layout": "VERTICAL",
+            "numberFormat": null,
+            "omitNullValues": null,
+            "primaryAxisDateGranularity": "DAY",
+            "primaryAxisGroupByFieldMetadataId": Any<String>,
+            "primaryAxisGroupBySubFieldName": null,
+            "primaryAxisManualSortOrder": null,
+            "primaryAxisOrderBy": null,
+            "rangeMax": null,
+            "rangeMin": null,
+            "secondaryAxisGroupByDateGranularity": "DAY",
+            "secondaryAxisGroupByFieldMetadataId": null,
+            "secondaryAxisGroupBySubFieldName": null,
+            "secondaryAxisManualSortOrder": null,
+            "secondaryAxisOrderBy": null,
+            "timezone": "UTC",
+          },
+          "createdAt": Any<String>,
+          "deletedAt": null,
+          "id": Any<String>,
+          "objectMetadataId": Any<String>,
+          "pageLayoutTabId": Any<String>,
+          "position": {
+            "column": 0,
+            "columnSpan": 1,
+            "layoutMode": "GRID",
+            "row": 0,
+            "rowSpan": 1,
+          },
+          "title": "Bar Chart Widget",
+          "type": "GRAPH",
+          "updatedAt": Any<String>,
+        },
+      ],
+    },
+  ],
+  "type": "DASHBOARD",
+  "updatedAt": Any<String>,
+}
+`;
+
 exports[`Page layout with tabs update should succeed should update page layout with multiple tabs and different widget types 1`] = `
 {
   "createdAt": Any<String>,

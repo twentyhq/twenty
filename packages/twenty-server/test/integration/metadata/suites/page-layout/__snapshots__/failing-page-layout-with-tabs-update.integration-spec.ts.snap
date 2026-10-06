@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Page layout with tabs update should fail dashboard filter validation failures when a dashboard filter has an unknown filter type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboard filter "amount" filter type must be one of DATE, DATE_TIME, RELATION, SELECT, MULTI_SELECT, TEXT, BOOLEAN",
+              "userFriendlyMessage": "Invalid dashboard filters.",
+              "value": {
+                "filterType": "NUMBER",
+                "id": Any<String>,
+                "label": "Amount",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Invalid dashboard filters.",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Page layout with tabs update should fail when updating a non-existent page layout 1`] = `
 {
   "extensions": {

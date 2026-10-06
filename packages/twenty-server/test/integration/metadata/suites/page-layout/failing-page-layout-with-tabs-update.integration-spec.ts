@@ -1,6 +1,7 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
@@ -21,6 +22,9 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { type UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -67,6 +71,140 @@ describe('Page layout with tabs update should fail', () => {
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  describe('dashboard filter validation failures', () => {
+    let testFieldMetadataIds: TestFieldMetadataIds;
+    let personJobTitleFieldMetadataId: string;
+    let testPageLayoutId: string;
+    let testPageLayoutTabId: string;
+
+    const buildChartTab = (
+      dashboardFilterBindings: Record<string, { fieldMetadataId: string }>,
+    ) => [
+      {
+        id: testPageLayoutTabId,
+        title: 'Charts',
+        position: 0,
+        widgets: [
+          {
+            id: v4(),
+            pageLayoutTabId: testPageLayoutTabId,
+            title: 'Companies',
+            type: WidgetType.GRAPH,
+            objectMetadataId: testFieldMetadataIds.objectMetadataId,
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.GRID as const,
+              row: 0,
+              column: 0,
+              rowSpan: 1,
+              columnSpan: 1,
+            },
+            configuration: {
+              configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+              aggregateFieldMetadataId: testFieldMetadataIds.fieldMetadataId1,
+              aggregateOperation: AggregateOperations.COUNT,
+              dashboardFilterBindings,
+            } satisfies AllPageLayoutWidgetConfiguration,
+          },
+        ],
+      },
+    ];
+
+    beforeAll(async () => {
+      testFieldMetadataIds = await fetchTestFieldMetadataIds();
+
+      const { objects } = await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 100 } },
+        gqlFields: `
+          id
+          nameSingular
+          fieldsList {
+            id
+            name
+          }
+        `,
+      });
+
+      const personJobTitleField = objects
+        .find((object) => object.nameSingular === 'person')
+        ?.fieldsList?.find((field) => field.name === 'jobTitle');
+
+      jestExpectToBeDefined(personJobTitleField);
+
+      personJobTitleFieldMetadataId = personJobTitleField.id;
+
+      const { data: layoutData } = await createOnePageLayout({
+        expectToFail: false,
+        input: {
+          name: 'Dashboard Filter Validation Layout',
+          type: PageLayoutType.DASHBOARD,
+        },
+      });
+
+      testPageLayoutId = layoutData.createPageLayout.id;
+
+      const { data: tabData } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: { title: 'Charts', pageLayoutId: testPageLayoutId },
+      });
+
+      testPageLayoutTabId = tabData.createPageLayoutTab.id;
+    });
+
+    afterAll(async () => {
+      await destroyOnePageLayoutTab({
+        expectToFail: false,
+        input: { id: testPageLayoutTabId },
+      });
+      await destroyOnePageLayout({
+        expectToFail: false,
+        input: { id: testPageLayoutId },
+      });
+    });
+
+    it('when a dashboard filter has an unknown filter type', async () => {
+      const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: true,
+        input: {
+          id: testPageLayoutId,
+          name: 'Dashboard Filter Validation Layout',
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: null,
+          dashboardFilters: [
+            { id: 'amount', label: 'Amount', filterType: 'NUMBER' },
+          ],
+          tabs: buildChartTab({}),
+        } as unknown as { id: string } & UpdatePageLayoutWithTabsInput,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+    });
+
+    it('when a chart binds a dashboard filter to a field of another object', async () => {
+      const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: true,
+        input: {
+          id: testPageLayoutId,
+          name: 'Dashboard Filter Validation Layout',
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: null,
+          dashboardFilters: [
+            { id: 'jobTitle', label: 'Job title', filterType: 'TEXT' },
+          ],
+          tabs: buildChartTab({
+            jobTitle: { fieldMetadataId: personJobTitleFieldMetadataId },
+          }),
+        },
+      });
+
+      expect(errors).toHaveLength(1);
+      expect(errors[0].extensions.code).toBe('BAD_USER_INPUT');
+      expect(errors[0].message).toContain(
+        `Chart "Companies": Dashboard filter "jobTitle" binding field "${personJobTitleFieldMetadataId}" must belong to objectMetadataId "${testFieldMetadataIds.objectMetadataId}".`,
+      );
+    });
   });
 
   describe('chart filter validation failures', () => {
