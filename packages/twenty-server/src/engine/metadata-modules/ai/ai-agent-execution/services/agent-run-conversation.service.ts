@@ -16,7 +16,6 @@ import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/util
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
-import { AGENT_MESSAGE_THREAD_LOCK_MAX_RETRIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-message-thread-lock-max-retries.const';
 import {
   AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
   AGENT_RUN_THREAD_LOCK_TTL_MS,
@@ -31,6 +30,9 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+// long enough to wait for another message being sent, not for a run
+const MESSAGE_THREAD_LOCK_MAX_WAIT_MS = 2_000;
 
 @Injectable()
 export class AgentRunConversationService {
@@ -49,13 +51,12 @@ export class AgentRunConversationService {
     workspaceId,
     threadId,
     work,
-    maxRetries = AGENT_RUN_THREAD_LOCK_TTL_MS /
-      AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
+    maxWaitMs = AGENT_RUN_THREAD_LOCK_TTL_MS,
   }: {
     workspaceId: string;
     threadId: string;
     work: () => Promise<TResult>;
-    maxRetries?: number;
+    maxWaitMs?: number;
   }): Promise<TResult> {
     return this.cacheLockService.withLock(
       work,
@@ -63,7 +64,7 @@ export class AgentRunConversationService {
       {
         ttl: AGENT_RUN_THREAD_LOCK_TTL_MS,
         ms: AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
-        maxRetries,
+        maxRetries: maxWaitMs / AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
       },
     );
   }
@@ -85,7 +86,7 @@ export class AgentRunConversationService {
       return await this.withThreadLock({
         workspaceId,
         threadId,
-        maxRetries: AGENT_MESSAGE_THREAD_LOCK_MAX_RETRIES,
+        maxWaitMs: MESSAGE_THREAD_LOCK_MAX_WAIT_MS,
         work: () => {
           isLocked = true;
 
