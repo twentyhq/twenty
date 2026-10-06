@@ -8,6 +8,7 @@ export enum BillingCreditGrantType {
   ONBOARDING_REWARD = 'ONBOARDING_REWARD',
   COMPENSATION = 'COMPENSATION',
   SALES = 'SALES',
+  PURCHASE = 'PURCHASE',
 }
 
 registerEnumType(BillingCreditGrantType, {
@@ -19,7 +20,12 @@ export const CAPPED_BILLING_CREDIT_GRANT_TYPES: BillingCreditGrantType[] = [
   BillingCreditGrantType.ROLLOVER,
 ];
 
-// ROLLOVER and ONBOARDING_REWARD belong to their jobs: by hand they would change carry-forward and the audit trail
+// Spent after free credits, like Stripe's paid category, so customers keep what they bought longest
+export const PAID_BILLING_CREDIT_GRANT_TYPES: BillingCreditGrantType[] = [
+  BillingCreditGrantType.PURCHASE,
+];
+
+// ROLLOVER and ONBOARDING_REWARD belong to their jobs and PURCHASE to a paid Stripe invoice: by hand they would change carry-forward and the audit trail
 export const ADMIN_GRANTABLE_CREDIT_GRANT_TYPES: BillingCreditGrantType[] = [
   BillingCreditGrantType.COMPENSATION,
   BillingCreditGrantType.SALES,

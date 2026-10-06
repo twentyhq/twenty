@@ -241,6 +241,198 @@ describe('computeCarryForwardGrants', () => {
     });
   });
 
+  describe('spending order', () => {
+    const IN_THE_NEXT_PERIOD = new Date('2026-02-20T00:00:00.000Z');
+    const LATER_IN_THE_NEXT_PERIOD = new Date('2026-02-25T00:00:00.000Z');
+
+    it('spends the grant expiring soonest before an older one that never expires', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        liveGrants: [
+          grant({
+            grantId: 'compensation_old',
+            type: BillingCreditGrantType.COMPENSATION,
+            amountMicro: 600_000,
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          }),
+          grant({
+            grantId: 'sales_new',
+            type: BillingCreditGrantType.SALES,
+            amountMicro: 400_000,
+            createdAt: new Date('2026-01-15T00:00:00.000Z'),
+            expiresAt: IN_THE_NEXT_PERIOD,
+          }),
+        ],
+        usageMicro: 500_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.COMPENSATION,
+          amountMicro: 500_000,
+          sourceGrantId: 'compensation_old',
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('spends the earlier of two deadlines first', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        liveGrants: [
+          grant({
+            grantId: 'sales_late',
+            type: BillingCreditGrantType.SALES,
+            amountMicro: 400_000,
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+            expiresAt: LATER_IN_THE_NEXT_PERIOD,
+          }),
+          grant({
+            grantId: 'sales_early',
+            type: BillingCreditGrantType.SALES,
+            amountMicro: 400_000,
+            createdAt: new Date('2026-01-15T00:00:00.000Z'),
+            expiresAt: IN_THE_NEXT_PERIOD,
+          }),
+        ],
+        usageMicro: 400_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.SALES,
+          amountMicro: 400_000,
+          sourceGrantId: 'sales_late',
+          expiresAt: LATER_IN_THE_NEXT_PERIOD,
+        },
+      ]);
+    });
+
+    it('spends free credits before purchased ones, whatever their age', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        liveGrants: [
+          grant({
+            grantId: 'purchase_old',
+            type: BillingCreditGrantType.PURCHASE,
+            amountMicro: 1_000_000,
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          }),
+          grant({
+            grantId: 'compensation_new',
+            type: BillingCreditGrantType.COMPENSATION,
+            amountMicro: 300_000,
+            createdAt: new Date('2026-01-15T00:00:00.000Z'),
+          }),
+        ],
+        usageMicro: 500_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.PURCHASE,
+          amountMicro: 800_000,
+          sourceGrantId: 'purchase_old',
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('spends purchased credits that expire before free credits that never do', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        liveGrants: [
+          grant({
+            grantId: 'compensation_1',
+            type: BillingCreditGrantType.COMPENSATION,
+            amountMicro: 500_000,
+          }),
+          grant({
+            grantId: 'purchase_1',
+            type: BillingCreditGrantType.PURCHASE,
+            amountMicro: 500_000,
+            expiresAt: IN_THE_NEXT_PERIOD,
+          }),
+        ],
+        usageMicro: 500_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.COMPENSATION,
+          amountMicro: 500_000,
+          sourceGrantId: 'compensation_1',
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('carries purchased credits over in full, past the rollover cap', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: ALLOWANCE,
+        liveGrants: [
+          grant({
+            grantId: 'purchase_1',
+            type: BillingCreditGrantType.PURCHASE,
+            amountMicro: 5 * ROLLOVER_CAP,
+          }),
+        ],
+        usageMicro: 0,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.ROLLOVER,
+          amountMicro: ROLLOVER_CAP,
+          sourceGrantId: null,
+          expiresAt: null,
+        },
+        {
+          type: BillingCreditGrantType.PURCHASE,
+          amountMicro: 5 * ROLLOVER_CAP,
+          sourceGrantId: 'purchase_1',
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('still spends the allowance and rollovers before an expiring grant', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: ALLOWANCE,
+        liveGrants: [
+          grant({
+            grantId: 'sales_1',
+            type: BillingCreditGrantType.SALES,
+            amountMicro: 500_000,
+            expiresAt: IN_THE_NEXT_PERIOD,
+          }),
+        ],
+        usageMicro: ALLOWANCE,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.SALES,
+          amountMicro: 500_000,
+          sourceGrantId: 'sales_1',
+          expiresAt: IN_THE_NEXT_PERIOD,
+        },
+      ]);
+    });
+  });
+
   describe('edge cases', () => {
     it('treats a negative allowance as zero', () => {
       const result = computeCarryForwardGrants({

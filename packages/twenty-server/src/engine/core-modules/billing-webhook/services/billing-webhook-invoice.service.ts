@@ -8,6 +8,7 @@ import { type Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
@@ -19,11 +20,14 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { BillingCreditTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-top-up.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
+import { parseCreditTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/parse-credit-top-up-invoice-metadata.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -43,10 +47,12 @@ export class BillingWebhookInvoiceService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
+    private readonly billingCreditTopUpService: BillingCreditTopUpService,
     private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async processStripeEvent(
@@ -179,6 +185,11 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processInvoicePaid(data: Stripe.InvoicePaidEvent.Data) {
+    // A top-up is a one-off charge: the past-due recovery below is about subscription invoices only
+    if (isCreditTopUpInvoice(data.object)) {
+      return this.processCreditTopUpInvoicePaid(data.object);
+    }
+
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
     const stripeCustomerId = data.object.customer as string | undefined;
     const paidInvoicePeriodEnd = data.object.period_end;
@@ -215,6 +226,60 @@ export class BillingWebhookInvoiceService {
     }
 
     return { stripeSubscriptionId };
+  }
+
+  private async processCreditTopUpInvoicePaid(invoice: Stripe.Invoice) {
+    const stripeCustomerId = invoice.customer as string | undefined;
+    const metadata = parseCreditTopUpInvoiceMetadata(invoice.metadata);
+
+    if (!isDefined(metadata)) {
+      return this.skipUngrantableCreditTopUpInvoice(
+        invoice,
+        `its metadata names no workspace or no positive credit amount (${JSON.stringify(invoice.metadata)})`,
+      );
+    }
+
+    const billingCustomer = isDefined(stripeCustomerId)
+      ? await this.billingCustomerRepository.findOne({
+          where: { stripeCustomerId },
+        })
+      : null;
+
+    if (billingCustomer?.workspaceId !== metadata.workspaceId) {
+      return this.skipUngrantableCreditTopUpInvoice(
+        invoice,
+        `its metadata names workspace ${metadata.workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer?.workspaceId ?? 'no workspace'}`,
+      );
+    }
+
+    await this.billingCreditTopUpService.grantPurchasedCredits({
+      workspaceId: metadata.workspaceId,
+      creditAmountMicro: metadata.creditAmountMicro,
+      stripeInvoiceId: invoice.id,
+      stripeInvoiceNumber: invoice.number,
+    });
+
+    void this.eventLogEmitterService
+      .createContext({ workspaceId: metadata.workspaceId })
+      .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+        amountPaid: invoice.amount_paid,
+      });
+
+    return { stripeInvoiceId: invoice.id };
+  }
+
+  // Still a 200: a redelivery carries the same payload, so failing would only make Stripe retry for days.
+  // The customer paid without getting credits, so it goes to Sentry for a manual grant.
+  private skipUngrantableCreditTopUpInvoice(
+    invoice: Stripe.Invoice,
+    reason: string,
+  ) {
+    const message = `Paid credit top-up invoice ${invoice.id} granted nothing: ${reason}`;
+
+    this.logger.error(message);
+    this.exceptionHandlerService.captureExceptions([new Error(message)]);
+
+    return { stripeInvoiceId: invoice.id };
   }
 
   private async finalizePastDueDraftInvoicesAfterPaidInvoice(
