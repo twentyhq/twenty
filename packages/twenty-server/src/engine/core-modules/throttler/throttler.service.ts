@@ -9,6 +9,7 @@ import {
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
+  TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
   TOKEN_BUCKETS_DENY_PARTIAL_ARG,
   TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
 } from 'src/engine/core-modules/throttler/constants/try-consume-token-buckets-script.constant';
@@ -44,6 +45,27 @@ export class ThrottlerService {
         ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }
+  }
+
+  async tokenBucketConsumeUpTo(
+    key: string,
+    tokensToConsume: number,
+    maxTokens: number,
+    timeWindow: number,
+  ): Promise<number> {
+    const [admittedCount] = await this.cacheStorage.runScript<number[]>({
+      script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
+      args: [
+        String(tokensToConsume),
+        JSON.stringify([
+          { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
+        ]),
+        TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
+      ],
+    });
+
+    return admittedCount;
   }
 
   async consumeTokens(

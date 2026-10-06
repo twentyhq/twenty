@@ -71,6 +71,7 @@ type Agent {
   createdAt: DateTime!
   updatedAt: DateTime!
   modelConfiguration: JSON
+  triggers: [JSON!]!
 }
 
 type AuthToken {
@@ -4890,6 +4891,7 @@ input CreateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
+  triggers: [JSON!]
 }
 
 input UpdateAgentInput {
@@ -4903,6 +4905,7 @@ input UpdateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
+  triggers: [JSON!]
 }
 
 input CreateOneObjectInput {
