@@ -1,6 +1,10 @@
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
 import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -26,6 +30,28 @@ describe('shouldCaptureException', () => {
         ),
       ),
     ).toBe(false);
+  });
+
+  it('does not capture a suspended workspace auth exception', () => {
+    expect(
+      shouldCaptureException(
+        new AuthException(
+          'Workspace is suspended',
+          AuthExceptionCode.WORKSPACE_SUSPENDED,
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  it('continues to capture an internal auth exception', () => {
+    expect(
+      shouldCaptureException(
+        new AuthException(
+          'Unexpected auth failure',
+          AuthExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      ),
+    ).toBe(true);
   });
 
   it('continues to capture an unexpected error', () => {
