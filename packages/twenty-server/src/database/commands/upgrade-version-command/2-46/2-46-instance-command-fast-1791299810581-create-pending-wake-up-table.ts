@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.46.0', 1791148642493)
+@RegisteredInstanceCommand('2.46.0', 1791299810581)
 export class CreatePendingWakeUpTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."pendingWakeUp" ("workspaceId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "ownerType" character varying NOT NULL, "ownerId" uuid NOT NULL, "ownerKey" character varying NOT NULL, "condition" jsonb NOT NULL, "eventName" character varying, "resumeAt" TIMESTAMP WITH TIME ZONE, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_PENDING_WAKE_UP_OWNER" UNIQUE ("ownerType", "ownerId", "ownerKey"), CONSTRAINT "PK_cbc9e34921b29ba23534bc3a2e5" PRIMARY KEY ("id"))');
