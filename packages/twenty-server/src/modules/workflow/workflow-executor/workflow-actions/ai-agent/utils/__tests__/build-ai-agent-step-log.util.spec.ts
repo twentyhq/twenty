@@ -30,6 +30,14 @@ const baseExecutionResult: AgentExecutionResult = {
   modelId: 'claude-sonnet-4',
   totalCostInDollars: 0.012,
   creditsUsedMicro: 12_000,
+  turnUsage: {
+    inputTokens: 100,
+    outputTokens: 50,
+    cacheReadTokens: 20,
+    cacheCreationTokens: 5,
+    inputCredits: 0,
+    outputCredits: 0,
+  },
   steps: [],
 };
 
