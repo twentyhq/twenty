@@ -109,6 +109,10 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
+  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
