@@ -10,6 +10,7 @@ import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
+import { getQueueJobProgressPercentage } from 'src/engine/core-modules/message-queue/utils/get-queue-job-progress-percentage.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
@@ -50,6 +51,7 @@ export class QueueJobEventListener {
           state: bullMQToJobStateEnum[job.state],
           attemptsMade: job.attemptsMade,
           failedReason: job.failedReason,
+          progress: getQueueJobProgressPercentage(job.progress),
           enqueuedAt: job.timestamp,
           startedAt: job.processedOn,
           finishedAt: job.finishedOn,
