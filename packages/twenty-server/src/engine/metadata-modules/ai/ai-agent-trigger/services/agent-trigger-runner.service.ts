@@ -12,6 +12,7 @@ import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/uti
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-base-system-prompt.const';
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
@@ -105,42 +106,68 @@ export class AgentTriggerRunnerService {
       agentId: agent.id,
       threadKey: `trigger:${trigger.id}:${v4()}`,
     });
-    const startedAt = new Date();
+    const createdBy = buildCreatedByFromAgent({
+      agent: actingAgent,
+      applicationId: application.id,
+    });
+    const logRecordFailure = (error: unknown) => {
+      this.logger.error(
+        `Failed to record the run of trigger ${triggerId} of agent ${agentId} in thread ${threadId}`,
+        error instanceof Error ? error.stack : error,
+      );
 
-    const execution = await withDedicatedAiTrace(() =>
-      this.agentAsyncExecutorService.executeAgent({
-        agent,
-        messages,
-        baseSystemPrompt: AGENT_TRIGGER_BASE_SYSTEM_PROMPT,
-        actorContext: buildCreatedByFromAgent({
-          agent: actingAgent,
-          applicationId: application.id,
-        }),
-        authContext,
-        workspaceId,
-        userWorkspaceId: null,
-        toolLoadingStrategy: 'lazy',
-      }),
-    );
+      return null;
+    };
 
-    // The agent already acted through its tools, so a failed log write must not fail the run
-    await this.agentRunConversationService
-      .recordTurn({
+    // The agent acts through its tools, so a failed log write must not fail the run
+    const turnId = await this.agentRunConversationService
+      .openTurn({
         workspaceId,
         threadId,
         title: agent.label,
         agentId: agent.id,
-        applicationId: application.id,
+        application,
+        createdBy,
         actor: { type: 'application', applicationId: application.id },
         messages,
-        startedAt,
-        execution,
       })
-      .catch((error: unknown) =>
-        this.logger.error(
-          `Failed to record the run of trigger ${triggerId} of agent ${agentId} in thread ${threadId}`,
-          error instanceof Error ? error.stack : error,
-        ),
+      .catch(logRecordFailure);
+
+    let execution: AgentExecutionResult;
+
+    try {
+      execution = await withDedicatedAiTrace(() =>
+        this.agentAsyncExecutorService.executeAgent({
+          agent,
+          messages,
+          baseSystemPrompt: AGENT_TRIGGER_BASE_SYSTEM_PROMPT,
+          actorContext: createdBy,
+          authContext,
+          workspaceId,
+          userWorkspaceId: null,
+          toolLoadingStrategy: 'lazy',
+        }),
       );
+    } catch (error) {
+      if (isDefined(turnId)) {
+        await this.agentRunConversationService
+          .failTurn({ workspaceId, turnId, error })
+          .catch(logRecordFailure);
+      }
+
+      throw error;
+    }
+
+    if (isDefined(turnId)) {
+      await this.agentRunConversationService
+        .closeTurn({
+          workspaceId,
+          threadId,
+          turnId,
+          agentId: agent.id,
+          execution,
+        })
+        .catch(logRecordFailure);
+    }
   }
 }
