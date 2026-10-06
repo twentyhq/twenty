@@ -7,13 +7,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Free disk space for install
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        # Default GitHub images ship large SDKs this repo does not use; removing
-        # them avoids ENOSPC when restoring or linking a full Yarn node_modules.
-        sudo nohup ionice -c 3 rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL > /dev/null 2>&1 &
     - name: Cache primary key builder
       id: globals
       shell: bash
