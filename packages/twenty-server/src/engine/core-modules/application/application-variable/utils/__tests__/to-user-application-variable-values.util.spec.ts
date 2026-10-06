@@ -1,31 +1,46 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { toUserApplicationVariableValues } from 'src/engine/core-modules/application/application-variable/utils/to-user-application-variable-values.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 
-const buildFlatApplicationVariable = (
-  overrides: Pick<FlatApplicationVariable, 'id' | 'key'> &
-    Partial<FlatApplicationVariable>,
-) =>
+const buildUserFlatApplicationVariable = ({
+  id,
+  key,
+  isSecret = false,
+  defaultValue = null,
+}: {
+  id: string;
+  key: string;
+  isSecret?: boolean;
+  defaultValue?: string | null;
+}) =>
   ({
-    scope: 'USER',
-    isSecret: false,
-    defaultValue: null,
-    ...overrides,
-  }) as FlatApplicationVariable;
+    id,
+    key,
+    label: key,
+    description: '',
+    type: FieldMetadataType.TEXT,
+    options: null,
+    isSecret,
+    isRequired: false,
+    isDeprecated: false,
+    defaultValue,
+  }) satisfies Partial<FlatApplicationVariable>;
 
 const USER_FLAT_APPLICATION_VARIABLES = [
-  buildFlatApplicationVariable({
+  buildUserFlatApplicationVariable({
     id: 'record-my-meetings-id',
     key: 'RECORD_MY_MEETINGS',
     defaultValue: 'off',
   }),
-  buildFlatApplicationVariable({
+  buildUserFlatApplicationVariable({
     id: 'language-id',
     key: 'LANGUAGE',
     defaultValue: 'en',
   }),
-  buildFlatApplicationVariable({ id: 'nickname-id', key: 'NICKNAME' }),
-  buildFlatApplicationVariable({
+  buildUserFlatApplicationVariable({ id: 'nickname-id', key: 'NICKNAME' }),
+  buildUserFlatApplicationVariable({
     id: 'personal-api-key-id',
     key: 'PERSONAL_API_KEY',
     isSecret: true,

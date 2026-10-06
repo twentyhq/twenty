@@ -10,7 +10,19 @@ export const toUserApplicationVariableValues = ({
   shouldMaskSecret,
   getDisplayValue,
 }: {
-  userFlatApplicationVariables: FlatApplicationVariable[];
+  userFlatApplicationVariables: Pick<
+    FlatApplicationVariable,
+    | 'id'
+    | 'key'
+    | 'label'
+    | 'description'
+    | 'type'
+    | 'options'
+    | 'isSecret'
+    | 'isRequired'
+    | 'isDeprecated'
+    | 'defaultValue'
+  >[];
   userValues: Pick<
     UserApplicationVariableValueEntity,
     'applicationVariableId' | 'value'
