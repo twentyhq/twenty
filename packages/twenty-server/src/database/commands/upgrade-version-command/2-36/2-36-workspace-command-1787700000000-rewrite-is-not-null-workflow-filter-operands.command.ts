@@ -1,19 +1,22 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { rewriteIsNotNullFilterOperands } from 'src/database/commands/upgrade-version-command/2-36/utils/rewrite-is-not-null-filter-operands.util';
+import {
+  LEGACY_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_VERSION_OBJECT_UNIVERSAL_IDENTIFIER,
+  type LegacyWorkflowAutomatedTriggerWorkspaceEntity,
+  type LegacyWorkflowVersionWorkspaceEntity,
+} from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
-import { type WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @RegisteredWorkspaceCommand('2.36.0', 1787700000000)
 @Command({
@@ -66,7 +69,8 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     const workflowVersionObject =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        universalIdentifier:
+          LEGACY_WORKFLOW_VERSION_OBJECT_UNIVERSAL_IDENTIFIER,
       });
 
     if (!isDefined(workflowVersionObject)) {
@@ -74,7 +78,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<LegacyWorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -123,7 +127,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+          LEGACY_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER,
       });
 
     if (!isDefined(automatedTriggerObject)) {
@@ -131,7 +135,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
 
     const automatedTriggerRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<LegacyWorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
         { shouldBypassPermissionChecks: true },
       );

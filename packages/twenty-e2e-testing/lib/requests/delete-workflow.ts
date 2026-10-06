@@ -11,10 +11,10 @@ export const deleteWorkflow = async ({
   return postBackendGraphQL({
     page,
     data: {
-      operationName: 'DeleteOneWorkflow',
-      variables: { idToDelete: workflowId },
+      operationName: 'DeleteCoreWorkflows',
+      variables: { input: { coreWorkflowIds: [workflowId] } },
       query:
-        'mutation DeleteOneWorkflow($idToDelete: UUID!) {\n  deleteWorkflow(id: $idToDelete) {\n    __typename\n    deletedAt\n    id\n  }\n}',
+        'mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {\n  deleteCoreWorkflows(input: $input) {\n    __typename\n    id\n  }\n}',
     },
   });
 };

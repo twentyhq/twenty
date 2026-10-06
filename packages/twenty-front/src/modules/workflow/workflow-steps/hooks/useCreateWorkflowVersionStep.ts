@@ -1,67 +1,50 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useMutation } from '@apollo/client/react';
+
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
-import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateCoreWorkflowVersionStepDocument,
-  type CreateWorkflowVersionStepInput,
-  type CreateWorkflowVersionStepMutation,
-  type CreateWorkflowVersionStepMutationVariables,
+  type CreateCoreWorkflowVersionStepInput,
 } from '~/generated/graphql';
+
+type CreateWorkflowVersionStepInput = Omit<
+  CreateCoreWorkflowVersionStepInput,
+  'coreWorkflowVersionId'
+> & {
+  workflowVersionId: string;
+};
 
 export const useCreateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
-  const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
-  const [mutateCore] = useMutation(CreateCoreWorkflowVersionStepDocument, {
+  const handleMutationError = useWorkflowEditorMutationErrorHandler();
+  const [mutate] = useMutation(CreateCoreWorkflowVersionStepDocument, {
     client: apolloCoreClient,
-    onError: handleCoreMutationError,
+    onError: handleMutationError,
   });
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
 
-  const { enqueueToast } = useToast();
-
-  const [mutate] = useMutation<
-    CreateWorkflowVersionStepMutation,
-    CreateWorkflowVersionStepMutationVariables
-  >(CREATE_WORKFLOW_VERSION_STEP, {
-    client: apolloCoreClient,
-  });
-
   const createWorkflowVersionStep = async (
     input: CreateWorkflowVersionStepInput,
   ) => {
     const { workflowVersionId, ...stepInput } = input;
-    const result = isCore
-      ? await mutateCore({
-          variables: {
-            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-        })
-      : await mutate({
-          variables: { input },
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
-          },
-        });
+    const result = await mutate({
+      variables: {
+        input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
+      },
+    });
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;
 
     applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
-      workflowVersionId: input.workflowVersionId,
+      workflowVersionId,
     });
 
-    if (isCore) {
-      await invalidateCoreWorkflowVersions(apolloCoreClient);
-    }
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result;
   };

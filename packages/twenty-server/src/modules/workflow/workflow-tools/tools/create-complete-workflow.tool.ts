@@ -13,7 +13,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { DEFAULT_AGENT_WORKFLOW_ACTOR } from 'src/modules/workflow/workflow-tools/constants/default-agent-workflow-actor.constant';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
@@ -125,7 +124,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       const coreWorkflow =
         await deps.coreWorkflowMutationService.createWorkflow({
           workspaceId,
-          createdBy: context.actorContext ?? DEFAULT_AGENT_WORKFLOW_ACTOR,
           userWorkspaceId: undefined,
           name: parameters.name,
         });
@@ -146,7 +144,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           },
         );
 
-      await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await deps.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
@@ -190,15 +188,13 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           name: parameters.name,
           stepIds: parameters.steps.map((step) => step.id),
         },
-        recordReferences: isDefined(coreWorkflow.workspaceWorkflowId)
-          ? [
-              {
-                objectNameSingular: 'workflow',
-                recordId: coreWorkflow.workspaceWorkflowId,
-                displayName: parameters.name,
-              },
-            ]
-          : [],
+        recordReferences: [
+          {
+            objectNameSingular: 'workflow',
+            recordId: coreWorkflow.id,
+            displayName: parameters.name,
+          },
+        ],
       };
     } catch (error) {
       return {

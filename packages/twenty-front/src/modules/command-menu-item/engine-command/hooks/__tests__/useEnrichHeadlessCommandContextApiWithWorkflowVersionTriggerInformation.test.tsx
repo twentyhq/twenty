@@ -4,32 +4,17 @@ import {
 } from '~/generated/graphql';
 import { type HeadlessEngineCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
 import { useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation } from '@/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation';
-import { renderHook, act } from '@testing-library/react';
-import { createStore, Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
+import { renderHook } from '@testing-library/react';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
-const mockFindOneWorkflowVersion = jest.fn();
 const mockCoreQuery = jest.fn();
-let mockIsCore = false;
-jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
-  useIsWorkflowCoreEnabled: () => mockIsCore,
-}));
 
-jest.mock('@/object-record/hooks/useLazyFindOneRecord', () => ({
-  useLazyFindOneRecord: () => ({
-    findOneRecord: mockFindOneWorkflowVersion,
-  }),
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({ query: mockCoreQuery }),
 }));
-
-const getWrapper =
-  (store = createStore()) =>
-  ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={store}>{children}</JotaiProvider>
-  );
 
 const buildBaseContextApi = (
   overrides: Partial<HeadlessEngineCommandContextApi> = {},
@@ -47,97 +32,18 @@ const buildBaseContextApi = (
   ...overrides,
 });
 
-jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({ query: mockCoreQuery }),
-}));
+const renderEnrichHook = () =>
+  renderHook(() =>
+    useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
+  ).result.current
+    .enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation;
 
 describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockIsCore = false;
-    mockCoreQuery.mockReset().mockResolvedValue({
-      data: { workflowVersionContent: { trigger: { type: 'MANUAL' } } },
-    });
+    mockCoreQuery.mockReset();
   });
 
-  it('should return enriched context with workflow metadata', async () => {
-    const store = createStore();
-    const wrapper = getWrapper(store);
-
-    const workflowVersionRecord = {
-      id: 'wf-version-1',
-      workflowId: 'workflow-1',
-      trigger: { type: 'MANUAL' },
-      __typename: 'WorkflowVersion' as const,
-    };
-
-    mockFindOneWorkflowVersion.mockImplementation(
-      async ({ onCompleted }: { onCompleted: (data: unknown) => void }) => {
-        onCompleted(workflowVersionRecord);
-      },
-    );
-
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper },
-    );
-
-    const headlessEngineCommandContextApi = buildBaseContextApi();
-
-    let enrichedResult: unknown;
-
-    await act(async () => {
-      enrichedResult =
-        await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-          {
-            headlessEngineCommandContextApi,
-            workflowVersionId: 'wf-version-1',
-            availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-            availabilityObjectMetadataId: 'obj-1',
-          },
-        );
-    });
-
-    expect(enrichedResult).toEqual({
-      ...headlessEngineCommandContextApi,
-      workflowId: 'workflow-1',
-      workflowVersionId: 'wf-version-1',
-      trigger: { type: 'MANUAL' },
-      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-      availabilityObjectMetadataId: 'obj-1',
-    });
-  });
-
-  it('should return undefined when workflow version is not found', async () => {
-    const store = createStore();
-    const wrapper = getWrapper(store);
-
-    mockFindOneWorkflowVersion.mockImplementation(async () => {});
-
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper },
-    );
-
-    let enrichedResult: unknown;
-
-    await act(async () => {
-      enrichedResult =
-        await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-          {
-            headlessEngineCommandContextApi: buildBaseContextApi(),
-            workflowVersionId: 'nonexistent',
-            availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-          },
-        );
-    });
-
-    expect(enrichedResult).toBeUndefined();
-  });
-  it('uses the core pointer without loading workspace definitions', async () => {
-    mockIsCore = true;
+  it('reads the core version and its trigger', async () => {
     mockCoreQuery.mockResolvedValue({
       data: {
         coreWorkflowVersion: {
@@ -147,36 +53,34 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
         },
       },
     });
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper: getWrapper() },
-    );
-    const context =
-      await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-        {
-          headlessEngineCommandContextApi: buildBaseContextApi(),
-          workflowVersionId: 'workspace-version',
-          coreWorkflowVersionId: 'core-version',
-          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-        },
-      );
+    const headlessEngineCommandContextApi = buildBaseContextApi();
+
+    const context = await renderEnrichHook()({
+      headlessEngineCommandContextApi,
+      coreWorkflowVersionId: 'core-version',
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: 'obj-1',
+    });
+
     expect(mockCoreQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         query: GetCoreWorkflowVersionDocument,
         variables: { coreWorkflowVersionId: 'core-version' },
       }),
     );
-    expect(context).toMatchObject({
-      coreWorkflowVersionId: 'core-version',
-      workflowVersionId: 'core-version',
+    expect(context).toEqual({
+      ...headlessEngineCommandContextApi,
       workflowId: 'core-workflow',
+      workflowVersionId: 'core-version',
+      coreWorkflowId: 'core-workflow',
+      coreWorkflowVersionId: 'core-version',
+      trigger: { type: 'MANUAL' },
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: 'obj-1',
     });
-    expect(mockFindOneWorkflowVersion).not.toHaveBeenCalled();
   });
 
-  it('resolves legacy command items before reading the core definition', async () => {
-    mockIsCore = true;
+  it('resolves legacy command items through the core alias', async () => {
     mockCoreQuery
       .mockResolvedValueOnce({
         data: { coreWorkflowVersion: { id: 'core-version' } },
@@ -189,19 +93,13 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
           },
         },
       });
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper: getWrapper() },
-    );
-    const context =
-      await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-        {
-          headlessEngineCommandContextApi: buildBaseContextApi(),
-          workflowVersionId: 'workspace-version',
-          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-        },
-      );
+
+    const context = await renderEnrichHook()({
+      headlessEngineCommandContextApi: buildBaseContextApi(),
+      workflowVersionId: 'workspace-version',
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    });
+
     expect(mockCoreQuery).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
@@ -209,61 +107,36 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
         variables: { workspaceWorkflowVersionId: 'workspace-version' },
       }),
     );
-    expect(context).toMatchObject({ coreWorkflowVersionId: 'core-version' });
-    expect(mockFindOneWorkflowVersion).not.toHaveBeenCalled();
-  });
-
-  it('does not fall back to workspace definitions after a core query fails', async () => {
-    mockIsCore = true;
-    mockCoreQuery.mockRejectedValue(new Error('core unavailable'));
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper: getWrapper() },
-    );
-    await expect(
-      result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-        {
-          headlessEngineCommandContextApi: buildBaseContextApi(),
-          coreWorkflowVersionId: 'core-version',
-          workflowVersionId: 'workspace-version',
-          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-        },
-      ),
-    ).rejects.toThrow('core unavailable');
-    expect(mockFindOneWorkflowVersion).not.toHaveBeenCalled();
-  });
-
-  it('keeps workspace IDs when the flag is off even when a core pointer exists', async () => {
-    mockFindOneWorkflowVersion.mockImplementation(
-      async ({ onCompleted }: { onCompleted: (value: unknown) => void }) =>
-        onCompleted({
-          id: 'workspace-version',
-          workflowId: 'workspace-workflow',
-        }),
-    );
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper: getWrapper() },
-    );
-    const context =
-      await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-        {
-          headlessEngineCommandContextApi: buildBaseContextApi(),
-          coreWorkflowVersionId: 'core-version',
-          workflowVersionId: 'workspace-version',
-          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-        },
-      );
     expect(context).toMatchObject({
-      workflowVersionId: 'workspace-version',
-      workflowId: 'workspace-workflow',
+      coreWorkflowVersionId: 'core-version',
+      workflowId: 'core-workflow',
     });
-    expect(mockCoreQuery).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: { workflowVersionId: 'workspace-version' },
+  });
+
+  it('returns undefined when the legacy alias has no core version', async () => {
+    mockCoreQuery.mockResolvedValueOnce({
+      data: { coreWorkflowVersion: null },
+    });
+
+    const context = await renderEnrichHook()({
+      headlessEngineCommandContextApi: buildBaseContextApi(),
+      workflowVersionId: 'unknown-version',
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    });
+
+    expect(context).toBeUndefined();
+    expect(mockCoreQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it('propagates core query failures', async () => {
+    mockCoreQuery.mockRejectedValue(new Error('core unavailable'));
+
+    await expect(
+      renderEnrichHook()({
+        headlessEngineCommandContextApi: buildBaseContextApi(),
+        coreWorkflowVersionId: 'core-version',
+        availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
       }),
-    );
+    ).rejects.toThrow('core unavailable');
   });
 });

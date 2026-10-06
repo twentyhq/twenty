@@ -6,20 +6,7 @@ describe('isWorkflowRelatedObject', () => {
   it('should return true for workflow-related objects', () => {
     expect(
       isWorkflowRelatedObject({
-        universalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
-      }),
-    ).toBe(true);
-
-    expect(
-      isWorkflowRelatedObject({
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
-      }),
-    ).toBe(true);
-
-    expect(
-      isWorkflowRelatedObject({
-        universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
       }),
     ).toBe(true);
   });

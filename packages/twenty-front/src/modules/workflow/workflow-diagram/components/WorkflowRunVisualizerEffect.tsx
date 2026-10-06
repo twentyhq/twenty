@@ -1,4 +1,3 @@
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -30,23 +29,14 @@ export const WorkflowRunVisualizerEffect = ({
   workflowRunId: string;
 }) => {
   const { getIcon } = useIcons();
-  const isCore = useIsWorkflowCoreEnabled();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
   const setWorkflowVisualizerWorkflowRunId = useSetAtomComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
-  const workflowVersionId = isCore
-    ? (workflowRun?.coreWorkflowVersionId ??
-      workflowRun?.workflowVersionId ??
-      undefined)
-    : (workflowRun?.workflowVersionId ?? undefined);
-  const workflowVersion = useWorkflowVersion(
-    isCore
-      ? (workflowRun?.coreWorkflowVersionId ?? undefined)
-      : workflowVersionId,
-  );
+  const workflowVersionId = workflowRun?.coreWorkflowVersionId ?? undefined;
+  const workflowVersion = useWorkflowVersion(workflowVersionId);
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
@@ -93,12 +83,8 @@ export const WorkflowRunVisualizerEffect = ({
       return;
     }
 
-    setWorkflowVisualizerWorkflowId(
-      isCore
-        ? (workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined)
-        : (workflowRun.workflowId ?? undefined),
-    );
-  }, [isCore, setWorkflowVisualizerWorkflowId, workflowRun]);
+    setWorkflowVisualizerWorkflowId(workflowRun.coreWorkflowId ?? undefined);
+  }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   useEffect(() => {
     if (!isDefined(workflowVersionId)) {

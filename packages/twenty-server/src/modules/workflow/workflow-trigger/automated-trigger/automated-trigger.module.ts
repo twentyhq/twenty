@@ -12,7 +12,6 @@ import { RecordShareModule } from 'src/engine/core-modules/record-share/record-s
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
@@ -31,11 +30,10 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     WorkspaceDataSourceModule,
   ],
   providers: [
-    AutomatedTriggerWorkspaceService,
     WorkflowDatabaseEventTriggerListener,
     WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,
   ],
-  exports: [AutomatedTriggerWorkspaceService, WorkflowCronTriggerCronCommand],
+  exports: [WorkflowCronTriggerCronCommand],
 })
 export class AutomatedTriggerModule {}

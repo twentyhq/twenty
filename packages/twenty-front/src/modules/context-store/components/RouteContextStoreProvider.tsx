@@ -1,4 +1,5 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { RouteContextStoreCoreObjectEffect } from '@/context-store/components/RouteContextStoreCoreObjectEffect';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -59,10 +60,18 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.RecordIndexPage,
   );
+  const isCoreWorkflowIndexPage = isMatchingLocation(
+    location,
+    AppPath.WorkflowIndexPage,
+  );
   const isCoreWorkflowShowPage = isMatchingLocation(
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const coreObjectNameSingular =
+    isCoreWorkflowIndexPage || isCoreWorkflowShowPage
+      ? CoreObjectNameSingular.Workflow
+      : undefined;
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   // A chat on screen, full page or in the inbox, is the record page of the chat
   const isAiChatPage =
@@ -77,11 +86,9 @@ export const RouteContextStoreProvider = () => {
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = isCoreWorkflowShowPage
-    ? CoreObjectNameSingular.Workflow
-    : isAiChatPage
-      ? CoreObjectNameSingular.AgentChatThread
-      : routeParams?.objectNameSingular;
+  const objectNameSingular = isAiChatPage
+    ? CoreObjectNameSingular.AgentChatThread
+    : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -146,23 +153,35 @@ export const RouteContextStoreProvider = () => {
 
   const shouldComputeContextStore =
     (isRecordIndexPage ||
+      isCoreWorkflowIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 
+  const coreObjectEffect = (
+    <RouteContextStoreCoreObjectEffect
+      coreObjectNameSingular={coreObjectNameSingular}
+    />
+  );
+
   if (!shouldComputeContextStore) {
-    return null;
+    return coreObjectEffect;
   }
 
   return (
-    <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
-      objectMetadataItem={objectMetadataItem}
-      isRecordIndexPage={isRecordIndexPage}
-      isRecordShowPage={isRecordShowPage}
-      isStandalonePage={isStandalonePage}
-      isSettingsPage={isSettingsPage}
-    />
+    <>
+      {coreObjectEffect}
+      <RouteContextStoreProviderEffect
+        viewId={
+          isDefined(coreObjectNameSingular) || isAiChatPage ? undefined : viewId
+        }
+        objectMetadataItem={objectMetadataItem}
+        isRecordIndexPage={isRecordIndexPage || isCoreWorkflowIndexPage}
+        isRecordShowPage={isRecordShowPage}
+        isStandalonePage={isStandalonePage}
+        isSettingsPage={isSettingsPage}
+      />
+    </>
   );
 };

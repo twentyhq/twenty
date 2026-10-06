@@ -28,7 +28,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
-import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @CoreResolver()
@@ -58,53 +58,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class WorkflowTriggerResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
-
-  @Mutation(() => Boolean)
-  async activateWorkflowVersion(
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('workflowVersionId', { type: () => UUIDScalarType })
-    workflowVersionId: string,
-  ) {
-    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        workspaceWorkflowVersionIds: [workflowVersionId],
-      },
-    );
-
-    return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
-      workflowVersionId,
-      workspace.id,
-    );
-  }
-
-  @Mutation(() => Boolean)
-  async deactivateWorkflowVersion(
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('workflowVersionId', { type: () => UUIDScalarType })
-    workflowVersionId: string,
-  ) {
-    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        workspaceWorkflowVersionIds: [workflowVersionId],
-      },
-    );
-
-    return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
-      workflowVersionId,
-      workspace.id,
-    );
-  }
 
   @Mutation(() => RunWorkflowVersionDTO)
   @UseGuards(
@@ -170,11 +126,11 @@ export class WorkflowTriggerResolver {
         startingApplicationId: callerApplication?.id,
       });
 
-    return this.workflowTriggerWorkspaceService.runWorkflowVersion({
+    return this.workflowRunnerWorkspaceService.run({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
       payload: triggerPayload,
-      createdBy,
+      source: createdBy,
       workspaceId: workspace.id,
     });
   }
@@ -185,9 +141,9 @@ export class WorkflowTriggerResolver {
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.stopWorkflowRun(
-      workflowRunId,
+    return this.workflowRunnerWorkspaceService.stopWorkflowRun(
       workspace.id,
+      workflowRunId,
     );
   }
 
@@ -197,9 +153,9 @@ export class WorkflowTriggerResolver {
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.retryWorkflowRun(
-      workflowRunId,
+    return this.workflowRunnerWorkspaceService.retryWorkflowRun(
       workspace.id,
+      workflowRunId,
     );
   }
 }

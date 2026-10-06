@@ -430,7 +430,7 @@ export class CoreWorkflowListService {
     return this.findOneByFilterExpression({
       workspaceId,
       userWorkspaceId,
-      filterExpression: 'c."workspaceWorkflowId" = $3',
+      filterExpression: '(c."workspaceWorkflowId" = $3 OR c.id = $3)',
       filterParameter: workspaceWorkflowId,
     });
   }

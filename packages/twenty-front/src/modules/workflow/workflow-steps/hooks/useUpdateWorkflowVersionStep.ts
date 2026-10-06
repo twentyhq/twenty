@@ -1,76 +1,43 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import {
-  type WorkflowStep,
-  type WorkflowVersion,
-} from '@/workflow/types/Workflow';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
-import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
 import {
   UpdateCoreWorkflowVersionStepDocument,
-  type UpdateWorkflowVersionStepInput,
-  type UpdateWorkflowVersionStepMutation,
-  type UpdateWorkflowVersionStepMutationVariables,
+  type UpdateCoreWorkflowVersionStepInput,
 } from '~/generated/graphql';
+
+type UpdateWorkflowVersionStepInput = Omit<
+  UpdateCoreWorkflowVersionStepInput,
+  'coreWorkflowVersionId'
+> & {
+  workflowVersionId: string;
+};
 
 export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
-  const handleCoreMutationError =
-    useWorkflowEditorMutationErrorHandler(instanceId);
-  const [mutateCore] = useMutation(UpdateCoreWorkflowVersionStepDocument, {
+  const handleMutationError = useWorkflowEditorMutationErrorHandler(instanceId);
+  const [mutate] = useMutation(UpdateCoreWorkflowVersionStepDocument, {
     client: apolloCoreClient,
-    onError: handleCoreMutationError,
+    onError: handleMutationError,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { enqueueToast } = useToast();
   const { markStepForRecomputation } = useStepsOutputSchema();
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-  });
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-  });
-  const [mutate] = useMutation<
-    UpdateWorkflowVersionStepMutation,
-    UpdateWorkflowVersionStepMutationVariables
-  >(UPDATE_WORKFLOW_VERSION_STEP, {
-    client: apolloCoreClient,
-  });
 
   const updateWorkflowVersionStep = async (
     input: UpdateWorkflowVersionStepInput,
   ) => {
     const { workflowVersionId, ...stepInput } = input;
-    const result = isCore
-      ? await mutateCore({
-          variables: {
-            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-        })
-      : await mutate({
-          variables: { input },
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
-          },
-        });
+    const result = await mutate({
+      variables: {
+        input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
+      },
+    });
     const updatedStep = result?.data?.updateWorkflowVersionStep;
     if (!isDefined(updatedStep)) {
       return;
@@ -78,7 +45,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
 
     markStepForRecomputation({
       stepId: updatedStep.id,
-      workflowVersionId: input.workflowVersionId,
+      workflowVersionId,
     });
 
     setFlow((currentFlow) => {
@@ -88,46 +55,14 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
 
       return {
         ...currentFlow,
-        workflowVersionId: input.workflowVersionId,
+        workflowVersionId,
         steps: (currentFlow.steps ?? []).map((step) =>
           step.id === updatedStep.id ? updatedStep : step,
         ),
       };
     });
 
-    if (isCore) {
-      await invalidateCoreWorkflowVersions(apolloCoreClient);
-      return result;
-    }
-
-    const cachedRecord = getRecordFromCache<WorkflowVersion>(
-      input.workflowVersionId,
-    );
-    if (!isDefined(cachedRecord)) {
-      return result;
-    }
-
-    const newCachedRecord = {
-      ...cachedRecord,
-      steps: (cachedRecord.steps || []).map((step: WorkflowStep) => {
-        if (step.id === updatedStep.id) {
-          return updatedStep;
-        }
-        return step;
-      }),
-    };
-
-    const recordGqlFields = {
-      steps: true,
-    };
-    updateRecordFromCache({
-      objectMetadataItems,
-      objectMetadataItem,
-      cache: apolloCoreClient.cache,
-      record: newCachedRecord,
-      recordGqlFields,
-      objectPermissionsByObjectMetadataId,
-    });
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result;
   };

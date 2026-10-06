@@ -41,11 +41,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             nameSingular: 'new',
           },
           {
-            id: 'workflow-object',
-            namePlural: 'workflows',
-            nameSingular: 'workflow',
-          },
-          {
             id: 'chat-object',
             namePlural: 'agentChatThreads',
             nameSingular: 'agentChatThread',
@@ -97,6 +92,22 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
   ),
 }));
 
+jest.mock(
+  '@/context-store/components/RouteContextStoreCoreObjectEffect',
+  () => ({
+    RouteContextStoreCoreObjectEffect: ({
+      coreObjectNameSingular,
+    }: {
+      coreObjectNameSingular?: string;
+    }) => (
+      <div
+        data-testid="route-context-store-core-object"
+        data-core-object-name-singular={coreObjectNameSingular}
+      />
+    ),
+  }),
+);
+
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
 
 const routeObjects: WorkspaceRouteObject[] = [
@@ -107,6 +118,11 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
   {
     path: AppPath.RecordShowPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.WorkflowIndexPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -190,17 +206,39 @@ describe('RouteContextStoreProvider', () => {
     );
   });
 
-  it('provides workflow context on the core workflow show page', () => {
+  it('provides the core workflow context on the core workflow show page', () => {
     renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
 
-    expect(screen.getByTestId('route-context-store')).toHaveAttribute(
-      'data-object-metadata-id',
-      'workflow-object',
+    const routeContextStore = screen.getByTestId('route-context-store');
+
+    expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
+    expect(routeContextStore).toHaveAttribute(
+      'data-is-record-show-page',
+      'true',
     );
+    expect(
+      screen.getByTestId('route-context-store-core-object'),
+    ).toHaveAttribute('data-core-object-name-singular', 'workflow');
+  });
+
+  it('provides the core workflow context on the workflows index page', () => {
+    renderAt('/workflows', <MainSurfaceRoutes />);
+
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-is-record-index-page',
-      'false',
+      'true',
     );
+    expect(
+      screen.getByTestId('route-context-store-core-object'),
+    ).toHaveAttribute('data-core-object-name-singular', 'workflow');
+  });
+
+  it('clears the core object context on other pages', () => {
+    renderAt('/objects/companies', <MainSurfaceRoutes />);
+
+    expect(
+      screen.getByTestId('route-context-store-core-object'),
+    ).not.toHaveAttribute('data-core-object-name-singular');
   });
 
   it('treats the chat page as the record page of a chat', () => {

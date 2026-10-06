@@ -1,8 +1,6 @@
 import { test as base, expect, Locator, Page } from '@playwright/test';
-import { randomUUID } from 'node:crypto';
 import { createWorkflow } from '../requests/create-workflow';
 import { deleteWorkflow } from '../requests/delete-workflow';
-import { destroyWorkflow } from '../requests/destroy-workflow';
 import { WorkflowActionType, WorkflowTriggerType } from '../types/workflows';
 
 export class WorkflowVisualizerPage {
@@ -95,20 +93,20 @@ export class WorkflowVisualizerPage {
   }
 
   async createOneWorkflow() {
-    const id = randomUUID();
-
     await this.#page.goto('/');
 
     const response = await createWorkflow({
       page: this.#page,
-      workflowId: id,
       workflowName: this.workflowName,
     });
 
     expect(response.status).toBe(200);
-    expect(response.body.data?.createWorkflow.id).toBe(id);
 
-    this.workflowId = id;
+    const id = response.body.data?.createCoreWorkflow.id;
+
+    expect(id).toBeDefined();
+
+    this.workflowId = id as string;
   }
 
   async waitForWorkflowVisualizerLoad() {
@@ -116,17 +114,7 @@ export class WorkflowVisualizerPage {
   }
 
   async goToWorkflowVisualizerPage() {
-    await this.#page.goto(`/`);
-
-    const workflowsLink = this.#page.getByRole('link', { name: 'Workflows' });
-
-    await workflowsLink.click();
-
-    const workflowLink = this.#page
-      .getByTestId(`row-id-${this.workflowId}`)
-      .getByRole('link', { name: this.workflowName });
-
-    await workflowLink.click({ force: true });
+    await this.#page.goto(`/workflow/${this.workflowId}`);
 
     await this.waitForWorkflowVisualizerLoad();
   }
@@ -260,34 +248,7 @@ export class WorkflowVisualizerPage {
   }
 
   async goToWorkflowsIndexPage() {
-    await this.#page.goto('/objects/workflows');
-  }
-
-  async setWorkflowsOpenInMode(mode: 'side-panel' | 'record-page') {
-    const recordTableOptionsButton = this.#page.getByText('Options');
-    await recordTableOptionsButton.click();
-
-    const layoutButton = this.#page.getByText('Layout');
-    await layoutButton.click();
-
-    const openInButton = this.#page.getByText('Open in');
-    await openInButton.click();
-
-    if (mode === 'side-panel') {
-      const openInSidePanelOption = this.#page.getByRole('option', {
-        name: 'Side Panel',
-      });
-
-      await openInSidePanelOption.click();
-    } else {
-      const openInRecordPageOption = this.#page.getByRole('option', {
-        name: 'Record Page',
-      });
-
-      await openInRecordPageOption.click();
-    }
-
-    await recordTableOptionsButton.click();
+    await this.#page.goto('/workflows');
   }
 }
 
@@ -309,12 +270,5 @@ export const test = base.extend<{
       page,
       workflowId: workflowVisualizer.workflowId,
     });
-    await destroyWorkflow({
-      page,
-      workflowId: workflowVisualizer.workflowId,
-    });
-
-    await workflowVisualizer.goToWorkflowsIndexPage();
-    await workflowVisualizer.setWorkflowsOpenInMode('record-page');
   },
 });

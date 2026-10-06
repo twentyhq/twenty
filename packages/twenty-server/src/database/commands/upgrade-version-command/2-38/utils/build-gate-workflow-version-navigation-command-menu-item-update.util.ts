@@ -5,6 +5,9 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 export const LEGACY_WORKFLOW_VERSION_NAVIGATION_AVAILABILITY_EXPRESSION =
   'targetObjectReadPermissions.workflowVersion';
 
+export const GATED_WORKFLOW_VERSION_NAVIGATION_AVAILABILITY_EXPRESSION =
+  'not featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and targetObjectReadPermissions.workflowVersion';
+
 export const buildGateWorkflowVersionNavigationCommandMenuItemUpdate = ({
   existingCommandMenuItem,
   conditionalAvailabilityExpression,

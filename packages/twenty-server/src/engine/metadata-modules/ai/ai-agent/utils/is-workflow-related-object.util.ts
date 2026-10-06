@@ -1,10 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.workflow.universalIdentifier,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
-  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-  STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
 ] as const;
 
 export const isWorkflowRelatedObject = (objectMetadata: {

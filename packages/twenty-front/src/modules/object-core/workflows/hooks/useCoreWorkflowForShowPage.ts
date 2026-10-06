@@ -21,10 +21,10 @@ type CoreWorkflowShowPageWorkflow = Pick<
 
 export const useCoreWorkflowForShowPage = ({
   coreWorkflowId,
-  skip,
+  skip = false,
 }: {
   coreWorkflowId: string | undefined;
-  skip: boolean;
+  skip?: boolean;
 }): {
   coreWorkflow: CoreWorkflowShowPageWorkflow | undefined;
   versions: CoreWorkflowShowPageVersion[];

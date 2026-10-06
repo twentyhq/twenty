@@ -2,14 +2,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 
 describe('getEmptyStateTitle', () => {
-  it('should return the correct title for workflow version', () => {
-    const title = getEmptyStateTitle(
-      CoreObjectNameSingular.WorkflowVersion,
-      'Workflow Version',
-    );
-    expect(title).toBe('No workflow versions yet');
-  });
-
   it('should return the correct title for workflow run', () => {
     const title = getEmptyStateTitle(
       CoreObjectNameSingular.WorkflowRun,

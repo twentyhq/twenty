@@ -1,4 +1,3 @@
-import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
 import { type EntityManager } from 'typeorm';
@@ -19,26 +18,6 @@ import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src
 const WORKFLOW_PREFILL_ID_NAMESPACE = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 
 export const getWorkflowPrefillIds = (workspaceId: string) => ({
-  quickLeadWorkflowId: v5(
-    `quickLeadWorkflow:${workspaceId}`,
-    WORKFLOW_PREFILL_ID_NAMESPACE,
-  ),
-  quickLeadWorkflowVersionId: v5(
-    `quickLeadWorkflowVersion:${workspaceId}`,
-    WORKFLOW_PREFILL_ID_NAMESPACE,
-  ),
-  createCompanyWorkflowId: v5(
-    `createCompanyWorkflow:${workspaceId}`,
-    WORKFLOW_PREFILL_ID_NAMESPACE,
-  ),
-  createCompanyWorkflowVersionId: v5(
-    `createCompanyWorkflowVersion:${workspaceId}`,
-    WORKFLOW_PREFILL_ID_NAMESPACE,
-  ),
-  createCompanyAutomatedTriggerId: v5(
-    `createCompanyAutomatedTrigger:${workspaceId}`,
-    WORKFLOW_PREFILL_ID_NAMESPACE,
-  ),
   coreQuickLeadWorkflowId: v5(
     `coreQuickLeadWorkflow:${workspaceId}`,
     WORKFLOW_PREFILL_ID_NAMESPACE,
@@ -76,17 +55,11 @@ export const getWorkflowPrefillIds = (workspaceId: string) => ({
 export const prefillWorkflows = async (
   entityManager: EntityManager,
   workspaceId: string,
-  schemaName: string,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   applicationIdParam?: string,
 ) => {
   const {
-    quickLeadWorkflowId,
-    quickLeadWorkflowVersionId,
-    createCompanyWorkflowId,
-    createCompanyWorkflowVersionId,
-    createCompanyAutomatedTriggerId,
     coreQuickLeadWorkflowId,
     coreCreateCompanyWorkflowId,
     coreQuickLeadWorkflowVersionId,
@@ -179,60 +152,6 @@ export const prefillWorkflows = async (
   await entityManager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.workflow`, [
-      'id',
-      'name',
-      'lastPublishedVersionId',
-      'statuses',
-      'position',
-      'createdBySource',
-      'createdByWorkspaceMemberId',
-      'createdByName',
-      'createdByContext',
-      'updatedBySource',
-      'updatedByWorkspaceMemberId',
-      'updatedByName',
-      'coreWorkflowId',
-    ])
-    .orIgnore()
-    .values([
-      {
-        id: quickLeadWorkflowId,
-        name: 'Quick Lead',
-        lastPublishedVersionId: quickLeadWorkflowVersionId,
-        statuses: ['ACTIVE'],
-        position: 1,
-        createdBySource: FieldActorSource.SYSTEM,
-        createdByWorkspaceMemberId: null,
-        createdByName: 'System',
-        createdByContext: {},
-        updatedBySource: FieldActorSource.SYSTEM,
-        updatedByWorkspaceMemberId: null,
-        updatedByName: 'System',
-        coreWorkflowId: coreQuickLeadWorkflowId,
-      },
-      {
-        id: createCompanyWorkflowId,
-        name: 'Create company when adding a new person',
-        lastPublishedVersionId: createCompanyWorkflowVersionId,
-        statuses: ['ACTIVE'],
-        position: 2,
-        createdBySource: FieldActorSource.SYSTEM,
-        createdByWorkspaceMemberId: null,
-        createdByName: 'System',
-        createdByContext: {},
-        updatedBySource: FieldActorSource.SYSTEM,
-        updatedByWorkspaceMemberId: null,
-        updatedByName: 'System',
-        coreWorkflowId: coreCreateCompanyWorkflowId,
-      },
-    ])
-    .returning('*')
-    .execute();
-
-  await entityManager
-    .createQueryBuilder()
-    .insert()
     .into(WorkflowEntity)
     .orIgnore()
     .values([
@@ -242,8 +161,6 @@ export const prefillWorkflows = async (
         universalIdentifier: quickLeadWorkflowUniversalIdentifier,
         applicationId,
         name: 'Quick Lead',
-        lastPublishedVersionId: quickLeadWorkflowVersionId,
-        workspaceWorkflowId: quickLeadWorkflowId,
         lastPublishedCoreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
       },
       {
@@ -252,8 +169,6 @@ export const prefillWorkflows = async (
         universalIdentifier: createCompanyWorkflowUniversalIdentifier,
         applicationId,
         name: 'Create company when adding a new person',
-        lastPublishedVersionId: createCompanyWorkflowVersionId,
-        workspaceWorkflowId: createCompanyWorkflowId,
         lastPublishedCoreWorkflowVersionId: coreCreateCompanyWorkflowVersionId,
       },
     ])
@@ -837,45 +752,6 @@ export const prefillWorkflows = async (
   await entityManager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.workflowVersion`, [
-      'id',
-      'name',
-      'trigger',
-      'steps',
-      'status',
-      'position',
-      'workflowId',
-      'coreWorkflowVersionId',
-    ])
-    .orIgnore()
-    .values([
-      {
-        id: quickLeadWorkflowVersionId,
-        name: 'v1',
-        trigger: JSON.stringify(quickLeadTrigger),
-        steps: quickLeadSteps,
-        status: 'ACTIVE',
-        position: 1,
-        workflowId: quickLeadWorkflowId,
-        coreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
-      },
-      {
-        id: createCompanyWorkflowVersionId,
-        name: 'v1',
-        trigger: JSON.stringify(createCompanyTrigger),
-        steps: createCompanySteps,
-        status: 'ACTIVE',
-        position: 2,
-        workflowId: createCompanyWorkflowId,
-        coreWorkflowVersionId: coreCreateCompanyWorkflowVersionId,
-      },
-    ])
-    .returning('*')
-    .execute();
-
-  await entityManager
-    .createQueryBuilder()
-    .insert()
     .into('core.workflowVersion', [
       'id',
       'workspaceId',
@@ -884,9 +760,7 @@ export const prefillWorkflows = async (
       'triggers',
       'steps',
       'status',
-      'workflowId',
       'coreWorkflowId',
-      'workspaceWorkflowVersionId',
     ])
     .orIgnore()
     .values([
@@ -898,9 +772,7 @@ export const prefillWorkflows = async (
         triggers: [quickLeadTrigger],
         steps: JSON.parse(quickLeadSteps),
         status: 'ACTIVE',
-        workflowId: quickLeadWorkflowId,
         coreWorkflowId: coreQuickLeadWorkflowId,
-        workspaceWorkflowVersionId: quickLeadWorkflowVersionId,
       },
       {
         id: coreCreateCompanyWorkflowVersionId,
@@ -910,33 +782,7 @@ export const prefillWorkflows = async (
         triggers: [createCompanyTrigger],
         steps: JSON.parse(createCompanySteps),
         status: 'ACTIVE',
-        workflowId: createCompanyWorkflowId,
         coreWorkflowId: coreCreateCompanyWorkflowId,
-        workspaceWorkflowVersionId: createCompanyWorkflowVersionId,
-      },
-    ])
-    .execute();
-
-  await entityManager
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.workflowAutomatedTrigger`, [
-      'id',
-      'workflowId',
-      'type',
-      'settings',
-    ])
-    .orIgnore()
-    .values([
-      {
-        id: createCompanyAutomatedTriggerId,
-        workflowId: createCompanyWorkflowId,
-        type: 'DATABASE_EVENT',
-        settings: {
-          eventName: 'person.upserted',
-          fields: ['emails'],
-          filter: personSyncSourceFilter,
-        },
       },
     ])
     .execute();

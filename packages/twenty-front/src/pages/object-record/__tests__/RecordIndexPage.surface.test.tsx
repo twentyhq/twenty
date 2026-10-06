@@ -1,8 +1,8 @@
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-const mockIsCoreWorkflowsIndexEnabled = jest.fn();
 let mockObjectNamePlural = 'people';
 
 jest.mock('react-router-dom', () => ({
@@ -33,14 +33,6 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => false,
-}));
-
-jest.mock('@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled', () => ({
-  isCoreWorkflowsIndexEnabled: () => mockIsCoreWorkflowsIndexEnabled(),
-}));
-
 jest.mock(
   '@/object-record/record-index/components/RecordIndexContainerGater',
   () => ({
@@ -58,99 +50,41 @@ jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({
-    objectMetadataItem: { labelPlural: 'Workflows' },
-  }),
-}));
-
-jest.mock('@/object-core/workflows/hooks/useCoreWorkflows', () => ({
-  CORE_WORKFLOWS_INITIAL_SORT: [],
-  CORE_WORKFLOWS_TABLE_ID: 'workflow-table',
-  useCoreWorkflows: () => ({
-    coreWorkflows: [{ id: 'workflow-1' }],
-    hasNextPage: false,
-    loading: false,
-    error: undefined,
-    fetchNextPage: jest.fn(),
-  }),
-}));
-
-jest.mock('@/object-core/workflows/hooks/useCreateCoreWorkflow', () => ({
-  useCreateCoreWorkflow: () => ({
-    createCoreWorkflow: jest.fn(),
-    canCreateCoreWorkflow: false,
-    isCreatingCoreWorkflow: false,
-  }),
-}));
-
-jest.mock('react-intersection-observer', () => ({
-  useInView: () => ({ ref: jest.fn(), inView: false }),
-}));
-
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => ({}),
-}));
-
-jest.mock(
-  '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents',
-  () => ({
-    useListenToCoreWorkflowEvents: () => undefined,
-  }),
-);
-
-jest.mock('@/object-core/components/CoreObjectTable', () => ({
-  CoreObjectTable: () => <div data-testid="workflow-core-index" />,
-}));
-
-jest.mock('@/ui/layout/page/components/PageCardHeader', () => ({
-  PageCardHeader: () => null,
-}));
-
-jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
-  PageCardLayout: ({ children }: { children: React.ReactNode }) => children,
-}));
-
-jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
-  PageTitle: () => null,
-}));
-
 describe('RecordIndexPage workspace surface composition', () => {
-  beforeAll(async () => {
-    await import('~/pages/object-core/WorkflowCoreIndexPage');
-  });
-
   beforeEach(() => {
-    mockIsCoreWorkflowsIndexEnabled.mockReturnValue(false);
     mockObjectNamePlural = 'people';
   });
 
   it('keeps the main page container', () => {
-    render(<RecordIndexPage />);
+    render(
+      <MemoryRouter>
+        <RecordIndexPage />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByTestId('page-container')).toBeInTheDocument();
     expect(screen.getByTestId('record-index-gater')).toBeInTheDocument();
   });
 
-  it('hosts the same specialized workflow index on a secondary surface', async () => {
-    mockIsCoreWorkflowsIndexEnabled.mockReturnValue(true);
+  it('redirects the former workflow object index to the workflows page', () => {
+    mockObjectNamePlural = 'workflows';
 
     render(
-      <WorkspaceSurfaceContext.Provider
-        value={{
-          type: 'side-panel',
-          instanceId: 'side-panel-page-1',
-          ownsRouteLocation: true,
-        }}
-      >
-        <RecordIndexPage />
-      </WorkspaceSurfaceContext.Provider>,
+      <MemoryRouter initialEntries={['/objects/workflows?viewId=legacy']}>
+        <Routes>
+          <Route
+            path="/objects/:objectNamePlural"
+            element={<RecordIndexPage />}
+          />
+          <Route
+            path="/workflows"
+            element={<div data-testid="workflows-page" />}
+          />
+        </Routes>
+      </MemoryRouter>,
     );
 
-    expect(screen.queryByTestId('page-container')).not.toBeInTheDocument();
-    expect(
-      await screen.findByTestId('workflow-core-index', {}, { timeout: 5000 }),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('workflows-page')).toBeInTheDocument();
     expect(screen.queryByTestId('record-index-gater')).not.toBeInTheDocument();
   });
 
@@ -165,7 +99,9 @@ describe('RecordIndexPage workspace surface composition', () => {
           ownsRouteLocation: true,
         }}
       >
-        <RecordIndexPage />
+        <MemoryRouter>
+          <RecordIndexPage />
+        </MemoryRouter>
       </WorkspaceSurfaceContext.Provider>,
     );
 

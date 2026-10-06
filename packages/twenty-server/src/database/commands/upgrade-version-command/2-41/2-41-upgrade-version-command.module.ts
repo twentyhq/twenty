@@ -13,8 +13,8 @@ import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/comma
 import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789482628000-normalize-workflow-record-crud-rich-text-fields.command';
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
 import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565000000-seed-object-initial-view.command';
+import { LegacyWorkflowVersionCoreUpsertModule } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-version-core-upsert.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -32,7 +32,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationRunnerModule,
     WorkspaceSchemaManagerModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
-    WorkflowVersionCoreModule,
+    LegacyWorkflowVersionCoreUpsertModule,
   ],
   providers: [
     CorrectStandardFieldAcronymCasingCommand,

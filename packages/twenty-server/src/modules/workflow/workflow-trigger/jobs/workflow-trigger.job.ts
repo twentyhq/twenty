@@ -97,11 +97,8 @@ export class WorkflowTriggerJob {
 
     if (
       isDefined(workspaceWorkflowVersionId) &&
-      (coreWorkflowVersion.workspaceWorkflowVersionId ??
-        (await this.workflowVersionCoreSyncService.findWorkspaceVersionIdByCoreVersionId(
-          workspaceId,
-          coreWorkflowVersionId,
-        ))) !== workspaceWorkflowVersionId
+      coreWorkflowVersion.workspaceWorkflowVersionId !==
+        workspaceWorkflowVersionId
     ) {
       this.captureDroppedDispatch(
         `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,

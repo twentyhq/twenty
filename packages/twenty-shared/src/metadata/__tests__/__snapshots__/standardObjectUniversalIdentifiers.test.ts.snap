@@ -478,9 +478,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetTask": {
         "universalIdentifier": "ace06117-9980-5506-adae-74c71556728b",
       },
-      "targetWorkflow": {
-        "universalIdentifier": "edbe3ea7-b9ff-5b23-9a81-ef53a190c873",
-      },
       "updatedAt": {
         "universalIdentifier": "8ac2b742-975b-5633-9f7f-fcf9920a72e8",
       },
@@ -509,9 +506,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "taskIdIndex": {
         "universalIdentifier": "b8d4f9a3-0c25-4e7b-9f6a-2d3e4c5b6f70",
-      },
-      "workflowIdIndex": {
-        "universalIdentifier": "fadeab4b-79ee-4173-af79-72c51fbad888",
       },
     },
     "morphIds": {
@@ -553,9 +547,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "targetTask": {
             "universalIdentifier": "cc9c44ea-c27e-5f57-9094-85cf14dae3e2",
-          },
-          "targetWorkflow": {
-            "universalIdentifier": "75d1d092-412f-57b1-9e74-e3f8285a3f0c",
           },
         },
       },
@@ -3576,14 +3567,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetTask": {
         "universalIdentifier": "9022391d-5b5b-519e-be9f-fa954856bb29",
       },
-      "targetWorkflow": {
-        "universalIdentifier": "7bdf04f6-a598-57b2-b485-5263c25e1257",
-      },
       "targetWorkflowRun": {
         "universalIdentifier": "b1df837a-e304-5cde-97e6-ab8348739774",
-      },
-      "targetWorkflowVersion": {
-        "universalIdentifier": "2da44ef9-dc63-5c9c-a9fb-58933ed03bc2",
       },
       "timelineActivityTypeId": {
         "universalIdentifier": "20202020-e5f8-4839-9dcf-781e260624ee",
@@ -3626,14 +3611,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "taskIdIndex": {
         "universalIdentifier": "609cf622-86ef-48d1-812b-e1cab610a46c",
       },
-      "workflowIdIndex": {
-        "universalIdentifier": "d6059ec2-92b0-4cfc-9fd8-78050f03108f",
-      },
       "workflowRunIdIndex": {
         "universalIdentifier": "1a2bd046-7c23-4e0a-9f8a-c3ca3a16d3b9",
-      },
-      "workflowVersionIdIndex": {
-        "universalIdentifier": "d94329b3-5dc8-4141-ae28-31afe28f7135",
       },
       "workspaceMemberIdIndex": {
         "universalIdentifier": "5e0b2391-85ca-4a66-aef4-52d74245bec2",
@@ -3673,187 +3652,11 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "targetTask": {
             "universalIdentifier": "3e21cd2a-77ca-5e49-90be-4532dd804c24",
           },
-          "targetWorkflow": {
-            "universalIdentifier": "8e0e94b7-9c2a-5fda-bbfe-2604a0f9cbb4",
-          },
           "targetWorkflowRun": {
             "universalIdentifier": "13fff327-8fbe-5a91-8d95-4a9ca455cfe9",
           },
-          "targetWorkflowVersion": {
-            "universalIdentifier": "c4aa8b50-d9bb-5395-a90a-fa0d36312634",
-          },
           "workspaceMember": {
             "universalIdentifier": "09d2d7d9-6809-561b-9dc7-1588b6a18673",
-          },
-        },
-      },
-    },
-  },
-  "workflow": {
-    "fields": {
-      "attachments": {
-        "universalIdentifier": "78d27c16-be35-54d2-988a-451dc24f77ff",
-      },
-      "automatedTriggers": {
-        "universalIdentifier": "20202020-3319-4234-a34c-117ecad2b8a9",
-      },
-      "coreWorkflowId": {
-        "universalIdentifier": "20202020-058a-42ad-8eb8-0662a5552aad",
-      },
-      "createdAt": {
-        "universalIdentifier": "0be9023c-cf26-56ef-8512-3c2104b849cc",
-      },
-      "createdBy": {
-        "universalIdentifier": "428266c9-9b2e-5731-9fbb-3593ef69179b",
-      },
-      "deletedAt": {
-        "universalIdentifier": "281f5133-77fa-5a1f-ba01-928f21476076",
-      },
-      "id": {
-        "universalIdentifier": "f9f32131-bd7d-5be4-92a9-8bfd368d595a",
-      },
-      "lastPublishedVersionId": {
-        "universalIdentifier": "20202020-326a-4fba-8639-3456c0a169e8",
-      },
-      "name": {
-        "universalIdentifier": "20202020-b3d3-478f-acc0-5d901e725b20",
-      },
-      "position": {
-        "universalIdentifier": "c3550e45-4525-5690-913e-3803b1e964ae",
-      },
-      "runs": {
-        "universalIdentifier": "20202020-759b-4340-b58b-e73595c4df4f",
-      },
-      "searchVector": {
-        "universalIdentifier": "22c22cc7-cdb9-59f8-bf09-82bd8a8c1a5a",
-      },
-      "statuses": {
-        "universalIdentifier": "20202020-357c-4432-8c50-8c31b4a552d9",
-      },
-      "timelineActivities": {
-        "universalIdentifier": "0ca041cd-598d-5c6b-881c-fe89ee97a0bc",
-      },
-      "updatedAt": {
-        "universalIdentifier": "b277195f-91aa-5e90-9362-3b2a162aaa63",
-      },
-      "updatedBy": {
-        "universalIdentifier": "c88a7b7f-6bcd-5f56-bfed-90c4c1722a3f",
-      },
-      "versions": {
-        "universalIdentifier": "20202020-9432-416e-8f3c-27ee3153d099",
-      },
-    },
-    "indexes": {
-      "searchVectorGinIndex": {
-        "universalIdentifier": "c7e64c55-eb0c-4b93-b076-5cfcf2e2e042",
-      },
-    },
-    "universalIdentifier": "20202020-62be-406c-b9ca-8caa50d51392",
-    "views": {
-      "allWorkflows": {
-        "universalIdentifier": "84dddf6b-edfa-55c4-ab1d-886602c1ca38",
-        "viewFields": {
-          "createdBy": {
-            "universalIdentifier": "982cf2c6-a9a2-5557-9733-e3124168ee9f",
-          },
-          "name": {
-            "universalIdentifier": "d0c96ceb-e6f7-562d-b859-35341481cdf2",
-          },
-          "runs": {
-            "universalIdentifier": "869394ba-f9b4-5ce2-8312-b9a9827baea8",
-          },
-          "statuses": {
-            "universalIdentifier": "47e57811-bc0b-5b77-9936-384590672b71",
-          },
-          "updatedAt": {
-            "universalIdentifier": "22bc20fd-c132-50e0-9bff-b0a405e729db",
-          },
-          "versions": {
-            "universalIdentifier": "4978149a-4ed7-5d59-aafb-2dd69b6cd6fe",
-          },
-        },
-      },
-    },
-  },
-  "workflowAutomatedTrigger": {
-    "fields": {
-      "createdAt": {
-        "universalIdentifier": "7ee2cc68-428a-5444-88a4-5a15d91f1116",
-      },
-      "createdBy": {
-        "universalIdentifier": "af66a149-1b58-5425-ad99-22fa66562ffe",
-      },
-      "deletedAt": {
-        "universalIdentifier": "a324fdae-e74f-5ff7-bbb2-1284cf437d42",
-      },
-      "id": {
-        "universalIdentifier": "6db40451-f242-5339-95e8-f55c05851cb9",
-      },
-      "position": {
-        "universalIdentifier": "01133ea9-73a2-5716-abb0-cb3df663352c",
-      },
-      "searchVector": {
-        "universalIdentifier": "ef7eafb7-035a-5cb9-bf9d-139ab2f2972b",
-      },
-      "settings": {
-        "universalIdentifier": "20202020-3319-4234-a34c-bac8f903de12",
-      },
-      "type": {
-        "universalIdentifier": "20202020-3319-4234-a34c-3f92c1ab56e7",
-      },
-      "updatedAt": {
-        "universalIdentifier": "b41eded4-52ad-5862-aa65-9d8e1db33aec",
-      },
-      "updatedBy": {
-        "universalIdentifier": "75454a63-09aa-5914-834a-c609fc07c858",
-      },
-      "workflow": {
-        "universalIdentifier": "20202020-3319-4234-a34c-8e1a4d2f7c03",
-      },
-    },
-    "indexes": {
-      "workflowIdIndex": {
-        "universalIdentifier": "7331ff89-a3f9-4ac0-9fa9-0de5663ae7b2",
-      },
-    },
-    "universalIdentifier": "20202020-3319-4234-a34c-7f3b9d2e4d1f",
-    "views": {
-      "allWorkflowAutomatedTriggers": {
-        "universalIdentifier": "d53c1b59-4f9c-5647-aaf5-ac8197ca1c3f",
-        "viewFields": {
-          "createdAt": {
-            "universalIdentifier": "5897f02c-e29d-5085-9bbe-60c48a8360b5",
-          },
-          "type": {
-            "universalIdentifier": "f4456853-dad8-57e8-81a4-6987477a40f7",
-          },
-          "workflow": {
-            "universalIdentifier": "53a781ed-4cd6-58fd-8de9-26e5cc7f01a7",
-          },
-        },
-      },
-      "workflowAutomatedTriggerRecordPageFields": {
-        "universalIdentifier": "726cd0e6-fad0-5ab0-b815-bd8d927eae32",
-        "viewFieldGroups": {
-          "general": {
-            "universalIdentifier": "cd93e6a9-298c-5399-96d8-2cdadaf6c0de",
-          },
-          "system": {
-            "universalIdentifier": "f14d5e18-bc68-59ef-b846-b5b66d6a4dbd",
-          },
-        },
-        "viewFields": {
-          "createdAt": {
-            "universalIdentifier": "6e37e868-05a8-5e8a-863c-71b684aa6fbb",
-          },
-          "createdBy": {
-            "universalIdentifier": "d901af0e-43fe-5a20-b744-2e57961e36e9",
-          },
-          "type": {
-            "universalIdentifier": "5798f060-3be3-5d79-83d1-ddf057015b68",
-          },
-          "workflow": {
-            "universalIdentifier": "779e6a36-818a-5610-903d-4655a66db500",
           },
         },
       },
@@ -3915,22 +3718,10 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "updatedBy": {
         "universalIdentifier": "0411c5af-6d79-5c36-b3a6-895d1e40ce8a",
       },
-      "workflow": {
-        "universalIdentifier": "20202020-8c57-4e7f-84f5-f373f68e1b82",
-      },
-      "workflowVersion": {
-        "universalIdentifier": "20202020-2f52-4ba8-8dc4-d0d6adb9578d",
-      },
     },
     "indexes": {
       "searchVectorGinIndex": {
         "universalIdentifier": "e0ac5ad2-d0c8-4f72-b710-8e53b9dc18d9",
-      },
-      "workflowIdIndex": {
-        "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b25",
-      },
-      "workflowVersionIdIndex": {
-        "universalIdentifier": "8183c8d2-9114-4b6e-8c5d-12a3b14a5a14",
       },
     },
     "universalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
@@ -3943,9 +3734,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "status": {
             "universalIdentifier": "f62369bb-a4cc-5d88-ac8e-7740ea318837",
-          },
-          "workflow": {
-            "universalIdentifier": "1c323f33-aa9a-5975-8a60-095817bf6412",
           },
         },
       },
@@ -3989,138 +3777,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "updatedBy": {
             "universalIdentifier": "adba3145-4271-5477-b3f0-d26928c06cbe",
-          },
-          "workflow": {
-            "universalIdentifier": "b4533c40-0bdd-5059-8105-d4174e40d7e9",
-          },
-          "workflowVersion": {
-            "universalIdentifier": "725c75f2-a07e-5740-8b6b-62574e5f3acf",
-          },
-        },
-      },
-    },
-  },
-  "workflowVersion": {
-    "fields": {
-      "coreWorkflowVersionId": {
-        "universalIdentifier": "20202020-58b4-46e8-b6d2-f1f3c74cf7f4",
-      },
-      "createdAt": {
-        "universalIdentifier": "97b8d13e-ea41-5da4-90df-886ff017f584",
-      },
-      "createdBy": {
-        "universalIdentifier": "d0f60c58-354e-5174-b852-98bac4c24285",
-      },
-      "deletedAt": {
-        "universalIdentifier": "0a9cb619-d402-5d91-81ab-5a8e51a95274",
-      },
-      "id": {
-        "universalIdentifier": "81e02441-5817-54f7-9edc-fac66c7c3415",
-      },
-      "name": {
-        "universalIdentifier": "20202020-a12f-4cca-9937-a2e40cc65509",
-      },
-      "position": {
-        "universalIdentifier": "bb0c73bd-d371-5e72-b2a0-05d8be1668f1",
-      },
-      "runs": {
-        "universalIdentifier": "20202020-1d08-46df-901a-85045f18099a",
-      },
-      "searchVector": {
-        "universalIdentifier": "19e1428c-2e0e-5a3d-a4f2-099856164cd8",
-      },
-      "status": {
-        "universalIdentifier": "20202020-5a34-440e-8a25-39d8c3d1d4cf",
-      },
-      "steps": {
-        "universalIdentifier": "20202020-5988-4a64-b94a-1f9b7b989039",
-      },
-      "timelineActivities": {
-        "universalIdentifier": "4be90325-f6ca-5931-a977-1194bb4b3d5c",
-      },
-      "trigger": {
-        "universalIdentifier": "20202020-4eae-43e7-86e0-212b41a30b48",
-      },
-      "updatedAt": {
-        "universalIdentifier": "f1ee5b97-9893-5124-8c7c-1a57888808f1",
-      },
-      "updatedBy": {
-        "universalIdentifier": "c48bd686-933c-57b7-8767-55dba5090eac",
-      },
-      "workflow": {
-        "universalIdentifier": "20202020-afa3-46c3-91b0-0631ca6aa1c8",
-      },
-    },
-    "indexes": {
-      "searchVectorGinIndex": {
-        "universalIdentifier": "6f3a65eb-2aee-4108-b8a0-c62da419d1dc",
-      },
-      "workflowIdIndex": {
-        "universalIdentifier": "8138c3b3-0b14-4ee1-be0e-debdde6b3219",
-      },
-    },
-    "universalIdentifier": "20202020-d65d-4ab9-9344-d77bfb376a3d",
-    "views": {
-      "allWorkflowVersions": {
-        "universalIdentifier": "a305b346-a83c-5bdd-880b-7a8e71310bf3",
-        "viewFields": {
-          "name": {
-            "universalIdentifier": "84a34cf6-7fd8-5972-894d-bc21e026f334",
-          },
-          "runs": {
-            "universalIdentifier": "255ab204-2ebe-582c-bfbd-4a846490d721",
-          },
-          "status": {
-            "universalIdentifier": "6ec4080f-d57e-5837-8f99-b36cebbb2fde",
-          },
-          "updatedAt": {
-            "universalIdentifier": "604b9aaa-ed58-5e44-869a-0e6402c00c64",
-          },
-          "workflow": {
-            "universalIdentifier": "9c66dd1e-1b6d-5ad9-9e81-25c4c0c20799",
-          },
-        },
-      },
-      "workflowVersionRecordPageFields": {
-        "universalIdentifier": "4325242c-c819-5ecf-8b66-4c7b02627a77",
-        "viewFieldGroups": {
-          "general": {
-            "universalIdentifier": "86ed1b24-a576-5498-8fb8-b7819ace07c3",
-          },
-          "system": {
-            "universalIdentifier": "e08b6ee2-ade7-541b-b4e2-2c0cd03b1a5c",
-          },
-        },
-        "viewFields": {
-          "createdAt": {
-            "universalIdentifier": "4e95828c-c5f8-5b7e-a8a3-7f247d8bdfac",
-          },
-          "createdBy": {
-            "universalIdentifier": "2885fb8d-a2c0-5198-bbc3-c6b77bfdd570",
-          },
-          "runs": {
-            "universalIdentifier": "cd54fd1a-bd06-5c9a-ab49-5569ec37f12f",
-          },
-          "status": {
-            "universalIdentifier": "73f2e3f5-38b3-541e-9d96-797f0ae6455a",
-          },
-          "steps": {
-            "universalIdentifier": "300eae90-9f50-5e85-8e5f-9da4a4c6ec28",
-          },
-          "timelineActivities": {
-            "universalIdentifier": "f94ccbfc-4cbf-5a62-b857-b6874698f9da",
-          },
-          "trigger": {
-            "universalIdentifier": "b03c8136-8e0a-5f40-826f-77e5db12ae26",
-          },
-          "updatedAt": {
-            "universalIdentifier": "2467c5d2-a894-59f4-a11c-2e121d02badc",
-          },
-          "updatedBy": {
-            "universalIdentifier": "c9412819-e456-58a8-bae9-8d6110772f09",
-          },
-          "workflow": {
-            "universalIdentifier": "3ca9ea65-0539-5185-8762-a51c26bf08c7",
           },
         },
       },

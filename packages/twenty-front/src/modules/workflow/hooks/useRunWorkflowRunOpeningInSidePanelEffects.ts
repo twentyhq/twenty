@@ -1,4 +1,3 @@
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -20,7 +19,6 @@ import { useIcons } from 'twenty-ui/icon';
 import { useStore } from 'jotai';
 
 export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
-  const isCore = useIsWorkflowCoreEnabled();
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInSidePanel } =
@@ -52,13 +50,8 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
         return;
       }
 
-      const workflowId = isCore
-        ? (workflowRunRecord.coreWorkflowId ?? workflowRunRecord.workflowId)
-        : workflowRunRecord.workflowId;
-      const workflowVersionId = isCore
-        ? (workflowRunRecord.coreWorkflowVersionId ??
-          workflowRunRecord.workflowVersionId)
-        : workflowRunRecord.workflowVersionId;
+      const workflowId = workflowRunRecord.coreWorkflowId;
+      const workflowVersionId = workflowRunRecord.coreWorkflowVersionId;
       if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
         return;
       }
@@ -127,7 +120,6 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       });
     },
     [
-      isCore,
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
       openWorkflowRunViewStepInSidePanel,

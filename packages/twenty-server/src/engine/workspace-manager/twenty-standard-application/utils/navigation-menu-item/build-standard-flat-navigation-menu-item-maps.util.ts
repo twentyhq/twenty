@@ -10,6 +10,7 @@ import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspa
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
+  createStandardNavigationMenuItemFolderLinkFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
@@ -21,11 +22,7 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allTasks',
 ] as const;
 
-const WORKFLOWS_FOLDER_ITEM_NAMES = [
-  'workflowsFolderAllWorkflows',
-  'workflowsFolderAllWorkflowRuns',
-  'workflowsFolderAllWorkflowVersions',
-] as const;
+const WORKFLOWS_FOLDER_ITEM_NAMES = ['workflowsFolderAllWorkflowRuns'] as const;
 
 export const buildStandardFlatNavigationMenuItemMaps = ({
   now,
@@ -87,6 +84,28 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem: workflowsFolder,
+    flatNavigationMenuItemMaps,
+  });
+
+  const workflowsLinkDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolderAllWorkflows;
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemFolderLinkFlatMetadata({
+        universalIdentifier: workflowsLinkDefinition.universalIdentifier,
+        name: workflowsLinkDefinition.name,
+        link: workflowsLinkDefinition.link,
+        icon: workflowsLinkDefinition.icon,
+        folderId: workflowsFolderId,
+        folderUniversalIdentifier:
+          workflowsLinkDefinition.folderUniversalIdentifier,
+        position: workflowsLinkDefinition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
     flatNavigationMenuItemMaps,
   });
 

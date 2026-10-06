@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const getRecordCreationCommandType = ({
   objectNameSingular,
   creationTargetObjectMetadataId,
-  isWorkflowCoreIndexPageEnabled,
   contextObjectMetadataId,
   recordIndexId,
   hasAnySoftDeleteFilterOnView = false,
@@ -14,12 +13,8 @@ export const getRecordCreationCommandType = ({
   contextObjectMetadataId?: string | null;
   recordIndexId?: string | null;
   creationTargetObjectMetadataId?: string | null;
-  isWorkflowCoreIndexPageEnabled: boolean;
 }): 'workflow' | 'global' | 'index' => {
-  if (
-    isWorkflowCoreIndexPageEnabled &&
-    objectNameSingular === CoreObjectNameSingular.Workflow
-  ) {
+  if (objectNameSingular === CoreObjectNameSingular.Workflow) {
     return 'workflow';
   }
 

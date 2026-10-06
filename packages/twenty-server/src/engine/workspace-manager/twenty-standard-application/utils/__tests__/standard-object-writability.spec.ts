@@ -22,7 +22,6 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'messageSuppression',
   'recordShare',
   'shortLink',
-  'workflowAutomatedTrigger',
 ];
 
 describe('Standard object writability', () => {

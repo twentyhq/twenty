@@ -81,21 +81,7 @@ export class CoreWorkflowRunnerService {
       workflowVersion.coreWorkflowId,
     );
 
-    const workspaceWorkflowVersionId =
-      workflowVersion.workspaceWorkflowVersionId ??
-      (isDefined(workflow?.workspaceWorkflowId)
-        ? await this.workflowVersionCoreSyncService.findWorkspaceVersionIdByCoreVersionId(
-            workspaceId,
-            workflowVersion.id,
-          )
-        : null);
-
-    if (
-      !isDefined(workflow) ||
-      workflowVersion.workflowId !== workflow.workspaceWorkflowId ||
-      isDefined(workflow.workspaceWorkflowId) !==
-        isDefined(workspaceWorkflowVersionId)
-    ) {
+    if (!isDefined(workflow)) {
       throw new WorkflowRunException(
         'Core workflow not found',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
@@ -135,8 +121,6 @@ export class CoreWorkflowRunnerService {
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({
         coreWorkflowId: workflow.id,
         coreWorkflowVersionId: workflowVersion.id,
-        workspaceWorkflowId: workflow.workspaceWorkflowId,
-        workspaceWorkflowVersionId,
         workflowName: workflow.name,
         trigger: workflowVersion.triggers[0],
         steps: workflowVersion.steps,

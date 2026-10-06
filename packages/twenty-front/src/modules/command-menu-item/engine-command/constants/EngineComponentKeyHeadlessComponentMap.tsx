@@ -37,14 +37,9 @@ import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/re
 import { AgentChatThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/AgentChatThreadInboxCommand';
 import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
-import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { RetryWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/RetryWorkflowRunSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
-import { SeeRunsWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/SeeRunsWorkflowVersionSingleRecordCommand';
-import { SeeVersionsWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/SeeVersionsWorkflowVersionSingleRecordCommand';
-import { SeeWorkflowWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/SeeWorkflowWorkflowVersionSingleRecordCommand';
-import { UseAsDraftWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand';
 import { ActivateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/ActivateWorkflowSingleRecordCommand';
 import { AddNodeWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/AddNodeWorkflowSingleRecordCommand';
 import { DeactivateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DeactivateWorkflowSingleRecordCommand';
@@ -101,9 +96,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.RETRY_WORKFLOW_RUN]: (
     <RetryWorkflowRunSingleRecordCommand />
   ),
-  [EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: (
-    <UseAsDraftWorkflowVersionSingleRecordCommand />
-  ),
+  [EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: null,
   [EngineComponentKey.SAVE_DASHBOARD_LAYOUT]: (
     <SaveDashboardSingleRecordCommand />
   ),
@@ -188,10 +181,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.GO_TO_WORKFLOWS]: (
-    <HeadlessNavigateEngineCommand
-      to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
-    />
+    <HeadlessNavigateEngineCommand to={AppPath.WorkflowIndexPage} />
   ),
   [EngineComponentKey.GO_TO_RUNS]: (
     <HeadlessNavigateEngineCommand
@@ -236,21 +226,13 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.ADD_NODE_WORKFLOW]: (
     <AddNodeWorkflowSingleRecordCommand />
   ),
-  [EngineComponentKey.SEE_VERSION_WORKFLOW_RUN]: (
-    <SeeVersionWorkflowRunSingleRecordCommand />
-  ),
+  [EngineComponentKey.SEE_VERSION_WORKFLOW_RUN]: null,
   [EngineComponentKey.SEE_WORKFLOW_WORKFLOW_RUN]: (
     <SeeWorkflowWorkflowRunSingleRecordCommand />
   ),
-  [EngineComponentKey.SEE_RUNS_WORKFLOW_VERSION]: (
-    <SeeRunsWorkflowVersionSingleRecordCommand />
-  ),
-  [EngineComponentKey.SEE_WORKFLOW_WORKFLOW_VERSION]: (
-    <SeeWorkflowWorkflowVersionSingleRecordCommand />
-  ),
-  [EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION]: (
-    <SeeVersionsWorkflowVersionSingleRecordCommand />
-  ),
+  [EngineComponentKey.SEE_RUNS_WORKFLOW_VERSION]: null,
+  [EngineComponentKey.SEE_WORKFLOW_WORKFLOW_VERSION]: null,
+  [EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION]: null,
   [EngineComponentKey.TRIGGER_WORKFLOW_VERSION]: (
     <TriggerWorkflowVersionEngineCommand />
   ),

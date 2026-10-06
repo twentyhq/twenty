@@ -116,7 +116,7 @@ export class WorkflowCleanWorkflowRunsJob {
           WITH ranked_runs AS (
             SELECT id,
                    ROW_NUMBER() OVER (
-                      PARTITION BY COALESCE("coreWorkflowId", "workflowId")
+                      PARTITION BY "coreWorkflowId"
                       ORDER BY "createdAt" DESC
                    ) AS rn
             FROM ${schemaName}."workflowRun"

@@ -1,80 +1,50 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useMutation } from '@apollo/client/react';
+
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
-import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components/feedback';
 import {
   DeleteCoreWorkflowVersionStepDocument,
-  type DeleteWorkflowVersionStepInput,
-  type DeleteWorkflowVersionStepMutation,
-  type DeleteWorkflowVersionStepMutationVariables,
+  type DeleteCoreWorkflowVersionStepInput,
 } from '~/generated/graphql';
+
+type DeleteWorkflowVersionStepInput = Omit<
+  DeleteCoreWorkflowVersionStepInput,
+  'coreWorkflowVersionId'
+> & {
+  workflowVersionId: string;
+};
 
 export const useDeleteWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
-  const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
-  const [mutateCore] = useMutation(DeleteCoreWorkflowVersionStepDocument, {
+  const handleMutationError = useWorkflowEditorMutationErrorHandler();
+  const [mutate] = useMutation(DeleteCoreWorkflowVersionStepDocument, {
     client: apolloCoreClient,
-    onError: handleCoreMutationError,
+    onError: handleMutationError,
   });
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { enqueueToast } = useToast();
-
-  const { findOneRecordQuery: findOneWorkflowVersionQuery } =
-    useFindOneRecordQuery({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
-
-  const [mutate] = useMutation<
-    DeleteWorkflowVersionStepMutation,
-    DeleteWorkflowVersionStepMutationVariables
-  >(DELETE_WORKFLOW_VERSION_STEP, {
-    client: apolloCoreClient,
-  });
 
   const deleteWorkflowVersionStep = async (
     input: DeleteWorkflowVersionStepInput,
   ) => {
     const { workflowVersionId, ...stepInput } = input;
-    const result = isCore
-      ? await mutateCore({
-          variables: {
-            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-        })
-      : await mutate({
-          variables: { input },
-          awaitRefetchQueries: true,
-          refetchQueries: [
-            {
-              query: findOneWorkflowVersionQuery,
-              variables: { objectRecordId: input.workflowVersionId },
-            },
-          ],
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
-          },
-        });
+    const result = await mutate({
+      variables: {
+        input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
+      },
+    });
 
     const workflowVersionStepChanges = result?.data?.deleteWorkflowVersionStep;
 
     applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
-      workflowVersionId: input.workflowVersionId,
+      workflowVersionId,
     });
 
-    if (isCore) {
-      await invalidateCoreWorkflowVersions(apolloCoreClient);
-    }
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return workflowVersionStepChanges;
   };

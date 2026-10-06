@@ -1,14 +1,14 @@
 import { Command } from 'nest-commander';
 import { isWorkspaceObjectNotFoundError } from 'src/database/commands/upgrade-version-command/utils/is-workspace-object-not-found-error.util';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-version-core-upsert.service';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @RegisteredWorkspaceCommand('2.20.0', 1783526282685)
 @Command({
@@ -20,7 +20,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly legacyWorkflowVersionCoreUpsertService: LegacyWorkflowVersionCoreUpsertService,
   ) {
     super(workspaceIteratorService);
   }
@@ -29,21 +29,19 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    let workspaceWorkflowVersions: WorkflowVersionWorkspaceEntity[];
+    let workspaceWorkflowVersions: LegacyWorkflowVersionWorkspaceEntity[];
 
     try {
       workspaceWorkflowVersions =
-        await this.workspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workflowVersionRepository =
-              this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
-                { shouldBypassPermissionChecks: true },
-              );
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workflowVersionRepository =
+            this.workspaceOrmManager.getRepository<LegacyWorkflowVersionWorkspaceEntity>(
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
 
-            return workflowVersionRepository.find();
-          },
-          buildSystemAuthContext(workspaceId),
-        );
+          return workflowVersionRepository.find();
+        }, buildSystemAuthContext(workspaceId));
     } catch (error) {
       if (isWorkspaceObjectNotFoundError(error)) {
         this.logger.log(
@@ -64,7 +62,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
       return;
     }
 
-    await this.workflowVersionCoreSyncService.upsertToCore(
+    await this.legacyWorkflowVersionCoreUpsertService.upsertToCore(
       workspaceId,
       workspaceWorkflowVersions,
     );

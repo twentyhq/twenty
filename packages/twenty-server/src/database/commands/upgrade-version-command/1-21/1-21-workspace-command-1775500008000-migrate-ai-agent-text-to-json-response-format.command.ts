@@ -10,8 +10,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 const TEXT_AGENT_DEFAULT_JSON_RESPONSE_FORMAT = {
   type: 'json' as const,
@@ -162,7 +162,8 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWo
     agentIds: string[],
   ): Promise<void> {
     const workflowVersionRepository =
-      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+      this.workspaceOrmManager.getRepository<LegacyWorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 

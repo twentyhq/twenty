@@ -87,16 +87,9 @@ describe('Standard object readability', () => {
       ),
   );
 
-  // workflowRun grants follow the core workflow's visibility, which does not live on the workspace workflow record
-  it('declares workflowRun PRIVATE and leaves workflow and workflowVersion OPEN', () => {
+  it('declares workflowRun PRIVATE', () => {
     expect(findStandardFlatObjectMetadata('workflowRun')).toMatchObject({
       readability: MetadataReadability.PRIVATE,
-    });
-    expect(findStandardFlatObjectMetadata('workflow')).toMatchObject({
-      readability: MetadataReadability.OPEN,
-    });
-    expect(findStandardFlatObjectMetadata('workflowVersion')).toMatchObject({
-      readability: MetadataReadability.OPEN,
     });
   });
 
@@ -169,7 +162,6 @@ describe('Standard object readability', () => {
         'targetOpportunityId',
         'targetPersonId',
         'targetTaskId',
-        'targetWorkflowId',
       ].sort(),
     );
   });

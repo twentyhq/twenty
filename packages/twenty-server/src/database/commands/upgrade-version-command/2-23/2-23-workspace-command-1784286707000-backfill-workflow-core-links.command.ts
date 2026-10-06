@@ -9,7 +9,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type LegacyWorkflowWorkspaceEntity } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 // Full rebuild of the core workflow rows for a workspace once
 // coreWorkflowId is provisioned. Per workspace, in one transaction:
@@ -44,21 +44,19 @@ export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceComman
       return;
     }
 
-    let workspaceWorkflows: WorkflowWorkspaceEntity[];
+    let workspaceWorkflows: LegacyWorkflowWorkspaceEntity[];
 
     try {
       workspaceWorkflows =
-        await this.workspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workflowRepository =
-              this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>('workflow',
-                { shouldBypassPermissionChecks: true },
-              );
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workflowRepository =
+            this.workspaceOrmManager.getRepository<LegacyWorkflowWorkspaceEntity>(
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
 
-            return workflowRepository.find();
-          },
-          buildSystemAuthContext(workspaceId),
-        );
+          return workflowRepository.find();
+        }, buildSystemAuthContext(workspaceId));
     } catch (error) {
       if (isWorkspaceObjectNotFoundError(error)) {
         this.logger.log(

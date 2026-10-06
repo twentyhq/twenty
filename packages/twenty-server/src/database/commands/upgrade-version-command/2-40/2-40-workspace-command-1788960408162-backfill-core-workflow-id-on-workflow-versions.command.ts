@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type LegacyWorkflowWorkspaceEntity } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.40.0', 1788960408162)
 @Command({
@@ -37,7 +37,7 @@ export class BackfillCoreWorkflowIdOnWorkflowVersionsCommand extends Provisioned
     try {
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<LegacyWorkflowWorkspaceEntity>(
             'workflow',
             { shouldBypassPermissionChecks: true },
           );

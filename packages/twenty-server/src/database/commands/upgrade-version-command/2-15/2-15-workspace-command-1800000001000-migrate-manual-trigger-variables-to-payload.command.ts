@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -11,8 +10,11 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  LEGACY_WORKFLOW_VERSION_OBJECT_UNIVERSAL_IDENTIFIER,
+  type LegacyWorkflowVersionWorkspaceEntity,
+} from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.15.0', 1800000001000)
 @Command({
@@ -45,7 +47,8 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
     const workflowVersionObject =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        universalIdentifier:
+          LEGACY_WORKFLOW_VERSION_OBJECT_UNIVERSAL_IDENTIFIER,
       });
 
     if (!isDefined(workflowVersionObject)) {
@@ -57,7 +60,8 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
     }
 
     const workflowVersionRepository =
-      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+      this.workspaceOrmManager.getRepository<LegacyWorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -97,7 +101,7 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
   }
 
   private isManualRecordTrigger(
-    trigger: WorkflowVersionWorkspaceEntity['trigger'],
+    trigger: LegacyWorkflowVersionWorkspaceEntity['trigger'],
   ): boolean {
     if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.MANUAL) {
       return false;
@@ -106,7 +110,8 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
     const availabilityType = trigger.settings?.availability?.type;
 
     return (
-      availabilityType === 'SINGLE_RECORD' || availabilityType === 'BULK_RECORDS'
+      availabilityType === 'SINGLE_RECORD' ||
+      availabilityType === 'BULK_RECORDS'
     );
   }
 }

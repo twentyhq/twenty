@@ -9,11 +9,7 @@ import { createElement, type ReactNode } from 'react';
 const mockMutate = jest.fn();
 let mockOnCoreError: (error: Error) => void;
 const jotaiStore = createStore();
-let mockIsCore = false;
 const mockInvalidate = jest.fn();
-jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
-  useIsWorkflowCoreEnabled: () => mockIsCore,
-}));
 jest.mock(
   '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions',
   () => ({
@@ -21,23 +17,10 @@ jest.mock(
       mockInvalidate(...args),
   }),
 );
-const mockGetRecordFromCache = jest.fn();
 const mockMarkStepForRecomputation = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ cache: {} }),
-}));
-
-jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
-  useObjectMetadataItems: () => ({ objectMetadataItems: [] }),
-}));
-
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({ objectMetadataItem: {} }),
-}));
-
-jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
-  useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
 }));
 
 const mockEnqueueToast = jest.fn();
@@ -45,14 +28,6 @@ const mockEnqueueToast = jest.fn();
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-
-jest.mock('@/object-record/cache/hooks/useGetRecordFromCache', () => ({
-  useGetRecordFromCache: () => mockGetRecordFromCache,
-}));
-
-jest.mock('@/object-record/cache/utils/updateRecordFromCache', () => ({
-  updateRecordFromCache: jest.fn(),
 }));
 
 jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
@@ -85,7 +60,6 @@ const Wrapper = ({ children }: { children: ReactNode }) =>
 describe('useUpdateWorkflowVersionStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsCore = false;
     jotaiStore.set(
       flowComponentState.atomFamily({ instanceId: 'workflow-visualizer-test' }),
       undefined,
@@ -101,11 +75,6 @@ describe('useUpdateWorkflowVersionStep', () => {
 
     mockMutate.mockResolvedValue({
       data: { updateWorkflowVersionStep: updatedStep },
-    });
-
-    mockGetRecordFromCache.mockReturnValue({
-      id: 'version-1',
-      steps: [{ id: 'step-1', name: 'Create Record', type: 'CREATE_RECORD' }],
     });
 
     const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
@@ -142,37 +111,7 @@ describe('useUpdateWorkflowVersionStep', () => {
     expect(mockMarkStepForRecomputation).not.toHaveBeenCalled();
   });
 
-  it('should still mark step for recomputation when cached record is missing', async () => {
-    mockMutate.mockResolvedValue({
-      data: {
-        updateWorkflowVersionStep: {
-          id: 'step-1',
-          name: 'Step',
-          type: 'CODE',
-        },
-      },
-    });
-
-    mockGetRecordFromCache.mockReturnValue(undefined);
-
-    const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
-      wrapper: Wrapper,
-    });
-
-    await act(async () => {
-      await result.current.updateWorkflowVersionStep({
-        workflowVersionId: 'version-1',
-        step: { id: 'step-1', name: 'Step', type: 'CODE' },
-      });
-    });
-
-    expect(mockMarkStepForRecomputation).toHaveBeenCalledWith({
-      stepId: 'step-1',
-      workflowVersionId: 'version-1',
-    });
-  });
   it('sends a core version ID and preserves business record IDs in step input', async () => {
-    mockIsCore = true;
     const step = {
       id: 'step-1',
       type: 'UPDATE_RECORD',
@@ -191,11 +130,9 @@ describe('useUpdateWorkflowVersionStep', () => {
     expect(mockMutate).toHaveBeenCalledWith({
       variables: { input: { coreWorkflowVersionId: 'core-draft-id', step } },
     });
-    expect(mockGetRecordFromCache).not.toHaveBeenCalled();
     expect(mockInvalidate).toHaveBeenCalled();
   });
   it('reports a failed core edit and removes unpersisted diagram changes', async () => {
-    mockIsCore = true;
     const error = new Error('Core save failed');
     const instance = { instanceId: 'workflow-visualizer-test' };
     jotaiStore.set(flowComponentState.atomFamily(instance), {

@@ -11,7 +11,6 @@ import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
@@ -41,8 +40,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   targetOpportunityId: string | null;
   targetDashboard: EntityRelation<DashboardWorkspaceEntity> | null;
   targetDashboardId: string | null;
-  targetWorkflow: EntityRelation<WorkflowWorkspaceEntity> | null;
-  targetWorkflowId: string | null;
   targetAgentChatThread: EntityRelation<AgentChatThreadWorkspaceEntity> | null;
   targetAgentChatThreadId: string | null;
   custom: EntityRelation<CustomWorkspaceEntity>;

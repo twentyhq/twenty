@@ -60,7 +60,7 @@ describe('getDatabaseCrudToolFlatObjects', () => {
   it('continues excluding missing, inactive and workflow objects', () => {
     const inactive = { ...createObject('inactive'), isActive: false };
     const workflow = createObject(
-      STANDARD_OBJECTS.workflow.universalIdentifier,
+      STANDARD_OBJECTS.workflowRun.universalIdentifier,
     );
 
     expect(

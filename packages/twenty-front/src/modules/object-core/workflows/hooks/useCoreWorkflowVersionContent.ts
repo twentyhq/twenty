@@ -9,11 +9,11 @@ import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 export const useCoreWorkflowVersionContent = ({
   coreWorkflowId,
   coreWorkflowVersionId,
-  skip,
+  skip = false,
 }: {
   coreWorkflowId: string | undefined;
   coreWorkflowVersionId: string | undefined;
-  skip: boolean;
+  skip?: boolean;
 }): WorkflowVersion | undefined => {
   const apolloCoreClient = useApolloCoreClient();
 

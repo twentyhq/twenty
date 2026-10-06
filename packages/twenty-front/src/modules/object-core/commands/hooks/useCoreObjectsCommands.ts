@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import {
   ContextStorePageType,
   CoreObjectNameSingular,
-  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -14,13 +13,10 @@ import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constan
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const useCoreObjectsCommands = () => {
@@ -29,18 +25,7 @@ export const useCoreObjectsCommands = () => {
     useContext(CommandMenuContext);
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
-
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
-  const { objectMetadataItem: workflowObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Workflow,
-    });
-  const workflowObjectPermissions = useObjectPermissionsForObject(
-    workflowObjectMetadataItem.id,
-  );
 
   const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
   const coreWorkflowsFilterSettings = useAtomStateValue(
@@ -53,7 +38,6 @@ export const useCoreObjectsCommands = () => {
   });
 
   const isOnCoreWorkflowsIndex =
-    isWorkflowCoreIndexPageEnabled &&
     commandMenuContextApi.pageType === ContextStorePageType.Index &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
       CoreObjectNameSingular.Workflow;
@@ -80,7 +64,6 @@ export const useCoreObjectsCommands = () => {
     !isInPreviewMode &&
     isNonEmptyArray(selectedCoreWorkflowIds) &&
     canManageWorkflows &&
-    workflowObjectPermissions.canSoftDeleteObjectRecords &&
     matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
 
   const coreObjectCommandIds = shouldDisplayCoreWorkflowFiltersCommand
@@ -95,7 +78,10 @@ export const useCoreObjectsCommands = () => {
     isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
       ? {
           label: getSelectedRecordsCountLabel({
-            objectMetadataItem: workflowObjectMetadataItem,
+            objectMetadataItem: {
+              labelSingular: t`Workflow`,
+              labelPlural: t`Workflows`,
+            },
             numberOfSelectedRecords: selectedCoreWorkflowIds.length,
           }),
         }

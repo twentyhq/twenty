@@ -18,7 +18,7 @@ const DISCARD_DRAFT_WORKFLOW_DEFINITION =
 // Independent literal so a regression in the standard definition is caught here
 // rather than silently accepted by asserting the value against itself.
 const EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION =
-  'every(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")';
+  'objectMetadataItem.nameSingular == "workflow" and every(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")';
 
 const buildFlatCommandMenuItemMaps = (
   flatCommandMenuItems: FlatCommandMenuItem[],

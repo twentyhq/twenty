@@ -10,7 +10,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 
 // Delete orphan core.workflowVersion rows left by delete/destroy paths that
 // predated the transactional core cleanup (< 2.25). An orphan is a core row no
@@ -47,17 +47,15 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
       // means it was never provisioned, so there is nothing to repair and the
       // orphan query below would fail to resolve its schema table. Skip cleanly
       // like the sibling backfill commands rather than aborting the upgrade.
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowVersionRepository =
-            this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<LegacyWorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workflowVersionRepository.count();
-        },
-        buildSystemAuthContext(workspaceId),
-      );
+        return workflowVersionRepository.count();
+      }, buildSystemAuthContext(workspaceId));
     } catch (error) {
       if (isWorkspaceObjectNotFoundError(error)) {
         return;

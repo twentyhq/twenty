@@ -214,19 +214,9 @@ export const WIDGET_PROPS = {
     type: WidgetType.FIELD_RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
-  workflow: {
-    title: 'Flow',
-    type: WidgetType.WORKFLOW,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
   messageCampaign: {
     title: 'Email',
     type: WidgetType.MESSAGE_CAMPAIGN_BODY,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
-  workflowVersion: {
-    title: 'Flow',
-    type: WidgetType.WORKFLOW_VERSION,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflowRun: {

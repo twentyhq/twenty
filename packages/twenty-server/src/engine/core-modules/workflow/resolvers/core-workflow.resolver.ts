@@ -3,7 +3,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -79,13 +78,11 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
   ) {}
 
-  private resolveCreatedByOrThrow(principal: {
+  private assertAuthenticatedActorOrThrow(principal: {
     workspaceMember?: WorkspaceMemberWorkspaceEntity;
     application?: FlatApplication;
-  }): ActorMetadata {
-    const createdBy = buildActorMetadataFromPrincipal(principal);
-
-    if (!isDefined(createdBy)) {
+  }): void {
+    if (!isDefined(buildActorMetadataFromPrincipal(principal))) {
       throw new WorkflowQueryValidationException(
         'No authenticated actor to attribute the workflow to',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
@@ -94,8 +91,6 @@ export class CoreWorkflowResolver {
         },
       );
     }
-
-    return createdBy;
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -147,9 +142,10 @@ export class CoreWorkflowResolver {
       coreWorkflowVersionIdToCopy,
     }: DuplicateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
+    this.assertAuthenticatedActorOrThrow({ workspaceMember, application });
+
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
-      createdBy: this.resolveCreatedByOrThrow({ workspaceMember, application }),
       userWorkspaceId,
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
@@ -168,9 +164,10 @@ export class CoreWorkflowResolver {
     userWorkspaceId: string | undefined,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
+    this.assertAuthenticatedActorOrThrow({ workspaceMember, application });
+
     return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
-      createdBy: this.resolveCreatedByOrThrow({ workspaceMember, application }),
       userWorkspaceId,
       ...input,
     });

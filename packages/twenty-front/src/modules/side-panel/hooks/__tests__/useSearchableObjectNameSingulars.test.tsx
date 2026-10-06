@@ -6,20 +6,14 @@ import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchab
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-let isWorkflowCoreEnabled = false;
-
 jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems', () => ({
   useReadableObjectMetadataItems: () => ({
     readableObjectMetadataItems: [
       { nameSingular: 'company', isSearchable: true },
-      { nameSingular: 'workflow', isSearchable: true },
+      { nameSingular: 'workflowRun', isSearchable: false },
       { nameSingular: 'person', isSearchable: true },
     ],
   }),
-}));
-
-jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
-  useIsWorkflowCoreEnabled: () => isWorkflowCoreEnabled,
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -36,36 +30,27 @@ const renderSearchableObjectNameSingulars = (
 
 describe('useSearchableObjectNameSingulars', () => {
   beforeEach(() => {
-    isWorkflowCoreEnabled = false;
     jotaiStore.set(sidePanelShowHiddenObjectsState.atom, false);
   });
 
-  it('excludes workflows when the workflow core index page is enabled', () => {
-    isWorkflowCoreEnabled = true;
-
+  it('searches the searchable readable objects', () => {
     expect(renderSearchableObjectNameSingulars()).toEqual([
       'company',
       'person',
     ]);
   });
 
-  it('keeps workflows when the workflow core index page is disabled', () => {
+  it('includes hidden objects when they are shown', () => {
+    jotaiStore.set(sidePanelShowHiddenObjectsState.atom, true);
+
     expect(renderSearchableObjectNameSingulars()).toEqual([
       'company',
-      'workflow',
+      'workflowRun',
       'person',
     ]);
   });
 
-  it('searches nothing when workflows are explicitly selected under the flag', () => {
-    isWorkflowCoreEnabled = true;
-
-    expect(renderSearchableObjectNameSingulars('workflow')).toEqual([]);
-  });
-
-  it('keeps an explicitly selected object that is not a workflow', () => {
-    isWorkflowCoreEnabled = true;
-
+  it('searches only the explicitly selected object', () => {
     expect(renderSearchableObjectNameSingulars('company')).toEqual(['company']);
   });
 });

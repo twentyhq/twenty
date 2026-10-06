@@ -6,6 +6,7 @@ import { In } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { LEGACY_ATTACHMENT_TARGET_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/utils/legacy-workflow-workspace-entity.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -33,7 +34,7 @@ const PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER: Record<
   [ATTACHMENT_FIELDS.targetCompany.universalIdentifier]: 'Company',
   [ATTACHMENT_FIELDS.targetOpportunity.universalIdentifier]: 'Opportunity',
   [ATTACHMENT_FIELDS.targetDashboard.universalIdentifier]: 'Dashboard',
-  [ATTACHMENT_FIELDS.targetWorkflow.universalIdentifier]: 'Workflow',
+  [LEGACY_ATTACHMENT_TARGET_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER]: 'Workflow',
 };
 
 const ATTACHED_TO_LABEL = 'Attached to';

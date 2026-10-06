@@ -1188,7 +1188,6 @@ export class WorkspaceService {
       await prefillWorkflows(
         queryRunner.manager,
         workspaceId,
-        schemaName,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );

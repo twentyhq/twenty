@@ -5,10 +5,7 @@ import { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './ObjectsSyncedFromConne
 // automation runtime itself (recursion risk), gate access/permissions,
 // or are owned by background sync (writing to them corrupts state).
 export const OBJECTS_BLOCKED_FROM_AUTOMATION = [
-  'workflow',
-  'workflowVersion',
   'workflowRun',
-  'workflowAutomatedTrigger',
   'workspaceMember',
   'dashboard',
   ...OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS,

@@ -1,17 +1,11 @@
 import { Navigate, useParams } from 'react-router-dom';
-import {
-  AppPath,
-  CoreObjectNameSingular,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
-import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 import {
   type RecordShowPageParameters,
@@ -22,11 +16,17 @@ export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
 
   const isInSidePanel = workspaceSurface.type === 'side-panel';
+
+  const CoreObjectShowPage = findCoreObjectShowPage(
+    parameters.objectNameSingular,
+  );
+
+  if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
+    return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
+  }
+
   const isRouteObjectMetadataAvailable =
     isDefined(parameters.objectNameSingular) &&
     objectMetadataItems.some(
@@ -55,23 +55,6 @@ export const RecordShowPage = () => {
     }
 
     return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
-  }
-
-  if (
-    isWorkspaceWorkflowVersionRouteHidden({
-      objectNameSingular: parameters.objectNameSingular,
-      isWorkflowCoreIndexPageEnabled,
-    })
-  ) {
-    return <WorkspaceRouteUnavailable />;
-  }
-
-  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
-    ? findCoreObjectShowPage(parameters.objectNameSingular)
-    : undefined;
-
-  if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
-    return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
   return <RecordShowPageContent parameters={parameters} />;

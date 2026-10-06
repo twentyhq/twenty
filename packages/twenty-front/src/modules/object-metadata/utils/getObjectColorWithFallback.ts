@@ -20,7 +20,6 @@ const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   [CoreObjectNameSingular.Dashboard]: SYSTEM_OBJECT_COLOR,
   [CoreObjectNameSingular.Workflow]: SYSTEM_OBJECT_COLOR,
   [CoreObjectNameSingular.WorkflowRun]: SYSTEM_OBJECT_COLOR,
-  [CoreObjectNameSingular.WorkflowVersion]: SYSTEM_OBJECT_COLOR,
 };
 
 const CUSTOM_OBJECT_ICON_COLORS: ThemeColor[] = MAIN_COLOR_NAMES.filter(

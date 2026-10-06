@@ -18,9 +18,7 @@ import { StandaloneRichTextWidgetRenderer } from '@/page-layout/widgets/standalo
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
-import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
 import { RecordTableWidgetRenderer } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRenderer';
-import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
@@ -69,12 +67,6 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.CALENDAR:
       return <CalendarWidget widget={widget} />;
-
-    case WidgetType.WORKFLOW:
-      return <WorkflowWidget />;
-
-    case WidgetType.WORKFLOW_VERSION:
-      return <WorkflowVersionWidget />;
 
     case WidgetType.WORKFLOW_RUN:
       return <WorkflowRunWidget />;

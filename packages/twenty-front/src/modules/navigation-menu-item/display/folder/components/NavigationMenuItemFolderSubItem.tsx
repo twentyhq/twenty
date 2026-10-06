@@ -1,5 +1,4 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
-import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +13,6 @@ import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -50,12 +48,8 @@ export const NavigationMenuItemFolderSubItem = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemFolderSubItemProps) => {
-  const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const isInitialObjectViewEnabled = useIsFeatureEnabled(
@@ -122,13 +116,7 @@ export const NavigationMenuItemFolderSubItem = ({
           navigateToNavigationMenuItemLink(computedLink);
         });
 
-  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
-    navigationMenuItemType: navigationMenuItem.type,
-    objectNameSingular,
-    isWorkflowCoreIndexPageEnabled,
-  });
-
-  const viewSecondaryLabel =
+  const secondaryLabel =
     navigationMenuItem.type === NavigationMenuItemType.VIEW
       ? getObjectNavigationMenuItemSecondaryLabel({
           isView: true,
@@ -136,10 +124,6 @@ export const NavigationMenuItemFolderSubItem = ({
           navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
         })
       : undefined;
-
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : viewSecondaryLabel;
 
   return (
     <NavigationMenuItemEditable item={navigationMenuItem}>

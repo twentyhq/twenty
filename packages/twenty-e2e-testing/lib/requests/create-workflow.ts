@@ -3,22 +3,19 @@ import { postBackendGraphQL } from './post-backend-graphql';
 
 export const createWorkflow = async ({
   page,
-  workflowId,
   workflowName,
 }: {
   page: Page;
-  workflowId: string;
   workflowName: string;
 }) => {
-  return postBackendGraphQL<{ createWorkflow: { id: string } }>({
+  return postBackendGraphQL<{ createCoreWorkflow: { id: string } }>({
     page,
     data: {
-      operationName: 'CreateOneWorkflow',
+      operationName: 'CreateCoreWorkflow',
       query:
-        'mutation CreateOneWorkflow($input: WorkflowCreateInput!) {  createWorkflow(data: $input) { __typename id } }',
+        'mutation CreateCoreWorkflow($input: CreateCoreWorkflowInput!) {  createCoreWorkflow(input: $input) { __typename id } }',
       variables: {
         input: {
-          id: workflowId,
           name: workflowName,
         },
       },

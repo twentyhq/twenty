@@ -14,7 +14,6 @@ export const filterAndSortNavigationMenuItems = (
     EnrichedObjectMetadataItem,
     'id' | 'isActive' | 'nameSingular'
   >[],
-  isWorkflowCoreIndexPageEnabled: boolean,
 ): NavigationMenuItem[] => {
   const activeObjectMetadataItems = objectMetadataItems.filter(
     (meta) => meta.isActive,
@@ -23,9 +22,6 @@ export const filterAndSortNavigationMenuItems = (
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
     CoreObjectNameSingular.AgentChatThread,
-    ...(isWorkflowCoreIndexPageEnabled
-      ? [CoreObjectNameSingular.Workflow]
-      : []),
   ];
 
   const hiddenRecordObjectMetadataIds = new Set(

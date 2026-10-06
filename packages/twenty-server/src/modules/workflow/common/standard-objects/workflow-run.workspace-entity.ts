@@ -9,8 +9,6 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -65,10 +63,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   stepLogs: WorkflowRunStepLogs | null;
   position: number;
   searchVector: string;
-  workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
-  workflowVersionId: string | null;
-  workflow: EntityRelation<WorkflowWorkspaceEntity>;
-  workflowId: string | null;
   coreWorkflowId: string | null;
   coreWorkflowVersionId: string | null;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;

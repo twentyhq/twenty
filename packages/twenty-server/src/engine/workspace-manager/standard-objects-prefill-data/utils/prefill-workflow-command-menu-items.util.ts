@@ -46,8 +46,7 @@ export const prefillWorkflowCommandMenuItems = async ({
 
   const now = new Date().toISOString();
 
-  const { quickLeadWorkflowVersionId, coreQuickLeadWorkflowVersionId } =
-    getWorkflowPrefillIds(workspaceId);
+  const { coreQuickLeadWorkflowVersionId } = getWorkflowPrefillIds(workspaceId);
 
   const quickLeadFlatCommandMenuItem: FlatCommandMenuItem = {
     id: v4(),
@@ -56,7 +55,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     applicationUniversalIdentifier:
       workspaceCustomFlatApplication.universalIdentifier,
     workspaceId,
-    workflowVersionId: quickLeadWorkflowVersionId,
+    workflowVersionId: null,
     coreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,

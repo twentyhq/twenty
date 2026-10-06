@@ -118,7 +118,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       parentStepConnectionOptions,
     });
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -176,7 +176,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       insertedStep: duplicatedStep,
     });
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -254,7 +254,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     }
 
     try {
-      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await this.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
@@ -311,7 +311,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -368,7 +368,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       stepToDeleteChildrenIds,
     });
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -443,7 +443,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         nextStepIds: [...(trigger.nextStepIds ?? []), target],
       };
 
-      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await this.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
@@ -485,7 +485,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     );
 
     if (shouldPersist) {
-      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await this.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
@@ -548,7 +548,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         ),
       };
 
-      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await this.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
@@ -598,7 +598,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       step.id === source ? updatedSourceStep : step,
     );
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -648,7 +648,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         : step;
     });
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+    await this.coreWorkflowVersionWriteService.writeContent({
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
@@ -694,10 +694,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     coreWorkflowId: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowVersionDTO> {
-    const { coreWorkflow, workspaceWorkflowId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        { workspaceId, userWorkspaceId, coreWorkflowId },
-      );
+    const coreWorkflow =
+      await this.coreWorkflowIdResolutionService.resolveCoreWorkflowOrThrow({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowId,
+      });
 
     const versionToCopy = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -742,7 +744,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     );
 
     if (isDefined(existingDraft)) {
-      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await this.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId: existingDraft.id,
         expectedVersion: existingDraft,
@@ -758,11 +760,10 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     }
 
     const { coreWorkflowVersionId } =
-      await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersionAndMirror(
+      await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersion(
         {
           workspaceId,
           coreWorkflowId: coreWorkflow.id,
-          workspaceWorkflowId,
           trigger: triggerToCopy,
           steps: copiedSteps,
         },

@@ -114,3 +114,54 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     updatedAt: now,
   };
 };
+
+export const createStandardNavigationMenuItemFolderLinkFlatMetadata = ({
+  universalIdentifier,
+  name,
+  link,
+  icon,
+  folderId,
+  folderUniversalIdentifier,
+  position,
+  navigationMenuItemId,
+  workspaceId,
+  twentyStandardApplicationId,
+  now,
+}: {
+  universalIdentifier: string;
+  name: string;
+  link: string;
+  icon: string;
+  folderId: string;
+  folderUniversalIdentifier: string;
+  position: number;
+  navigationMenuItemId: string;
+  workspaceId: string;
+  twentyStandardApplicationId: string;
+  now: string;
+}): FlatNavigationMenuItem => ({
+  id: navigationMenuItemId,
+  type: NavigationMenuItemType.LINK,
+  universalIdentifier,
+  applicationId: twentyStandardApplicationId,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  workspaceId,
+  userWorkspaceId: null,
+  targetRecordId: null,
+  targetObjectMetadataId: null,
+  targetObjectMetadataUniversalIdentifier: null,
+  viewId: null,
+  viewUniversalIdentifier: null,
+  folderId,
+  folderUniversalIdentifier,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
+  name,
+  link,
+  icon,
+  color: 'gray',
+  position,
+  createdAt: now,
+  updatedAt: now,
+});

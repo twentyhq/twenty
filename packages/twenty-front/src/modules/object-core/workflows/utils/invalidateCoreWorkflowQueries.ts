@@ -1,6 +1,5 @@
 import { type ApolloClient } from '@apollo/client';
 
-import { GET_WORKFLOW_VERSION_CONTENT } from '@/workflow/workflow-version/graphql/queries/getWorkflowVersionContent';
 import {
   GetCoreWorkflowDocument,
   GetCoreWorkflowsDocument,
@@ -19,7 +18,6 @@ export const invalidateCoreWorkflowQueries = async (
     'coreWorkflowById',
     'coreWorkflowVersionById',
     'coreWorkflowVersionsByCoreWorkflowId',
-    'workflowVersionContent',
     // The command menu reads this one to decide which workflow actions to offer,
     // so a version change has to refresh it even when the list is left alone.
     'coreWorkflowsWithCurrentVersions',
@@ -35,7 +33,6 @@ export const invalidateCoreWorkflowQueries = async (
       GetCoreWorkflowVersionsDocument,
       GetCoreWorkflowVersionDocument,
       GetCoreWorkflowDocument,
-      GET_WORKFLOW_VERSION_CONTENT,
       GetCoreWorkflowsWithCurrentVersionsDocument,
       ...(shouldInvalidateWorkflowList ? [GetCoreWorkflowsDocument] : []),
     ],

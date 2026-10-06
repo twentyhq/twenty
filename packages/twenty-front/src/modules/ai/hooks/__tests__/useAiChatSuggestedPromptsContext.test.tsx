@@ -5,6 +5,7 @@ import { ContextStorePageType } from 'twenty-shared/types';
 
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentCoreObjectNameSingularComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameSingularComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -29,10 +30,12 @@ const setMainContextStore = ({
   pageType = null,
   viewType = null,
   objectNameSingular,
+  coreObjectNameSingular,
 }: {
   pageType?: ContextStorePageType | null;
   viewType?: ContextStoreViewType | null;
   objectNameSingular?: string;
+  coreObjectNameSingular?: string;
 }) => {
   const instanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
 
@@ -51,6 +54,12 @@ const setMainContextStore = ({
     objectNameSingular === undefined
       ? undefined
       : getObjectMetadataItemId(objectNameSingular),
+  );
+  jotaiStore.set(
+    contextStoreCurrentCoreObjectNameSingularComponentState.atomFamily({
+      instanceId,
+    }),
+    coreObjectNameSingular,
   );
 };
 
@@ -92,11 +101,11 @@ describe('useAiChatSuggestedPromptsContext', () => {
     });
   });
 
-  it('should report the list being browsed in the main page', () => {
+  it('should report the core workflow list being browsed in the main page', () => {
     setMainContextStore({
       pageType: ContextStorePageType.Index,
       viewType: ContextStoreViewType.Table,
-      objectNameSingular: 'workflow',
+      coreObjectNameSingular: 'workflow',
     });
 
     const { result } = renderHook(() => useAiChatSuggestedPromptsContext(), {

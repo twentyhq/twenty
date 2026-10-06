@@ -1,11 +1,9 @@
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -46,14 +44,9 @@ export const WorkflowDiagramEffect = () => {
   const store = useStore();
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
-  const { content, refetchContent, contentUpdatedAt } =
-    useWorkflowVersionContent(currentVersion?.id);
-
-  const [shouldWorkflowRefetchRequest, setShouldWorkflowRefetchRequest] =
-    useAtomFamilyState(
-      shouldWorkflowRefetchRequestFamilyState,
-      workflowVisualizerWorkflowId ?? '',
-    );
+  const { content, contentUpdatedAt } = useWorkflowVersionContent(
+    currentVersion?.id,
+  );
 
   const [seededVersionId, setSeededVersionId] = useState<string>();
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
@@ -108,25 +101,6 @@ export const WorkflowDiagramEffect = () => {
     },
     [workflowDiagram, workflowLastCreatedStepId, store],
   );
-
-  useEffect(() => {
-    if (!shouldWorkflowRefetchRequest || !isDefined(currentVersion?.id)) {
-      return;
-    }
-
-    setShouldWorkflowRefetchRequest(false);
-
-    void refetchContent()
-      .then(() => {
-        setSeededVersionId(undefined);
-      })
-      .catch(() => {});
-  }, [
-    currentVersion?.id,
-    shouldWorkflowRefetchRequest,
-    setShouldWorkflowRefetchRequest,
-    refetchContent,
-  ]);
 
   useEffect(() => {
     if (!isDefined(currentVersion) || !isDefined(content)) {

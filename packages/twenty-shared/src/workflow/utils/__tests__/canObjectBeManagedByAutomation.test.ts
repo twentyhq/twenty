@@ -26,10 +26,7 @@ describe('canObjectBeManagedByAutomation', () => {
   });
 
   it.each([
-    'workflow',
-    'workflowVersion',
     'workflowRun',
-    'workflowAutomatedTrigger',
     'workspaceMember',
     'dashboard',
     'message',
