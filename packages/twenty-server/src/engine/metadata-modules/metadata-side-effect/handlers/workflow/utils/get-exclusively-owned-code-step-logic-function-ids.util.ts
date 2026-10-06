@@ -12,19 +12,15 @@ const isLogicFunctionId = (
 ): logicFunctionId is string =>
   isNonEmptyString(logicFunctionId) && isValidUuid(logicFunctionId);
 
-const getCodeStepLogicFunctionIds = (
-  workflowVersions: WorkflowVersionSteps[],
-): string[] =>
-  workflowVersions
-    .flatMap(({ steps }) => (steps ?? []).filter(isWorkflowCodeAction))
-    .map((step) => step.settings.input.logicFunctionId)
-    .filter(isLogicFunctionId);
+type StepWithLogicFunction = {
+  settings: { input: { logicFunctionId?: string } };
+};
 
-const getLogicFunctionStepLogicFunctionIds = (
-  workflowVersions: WorkflowVersionSteps[],
-): string[] =>
-  workflowVersions
-    .flatMap(({ steps }) => (steps ?? []).filter(isWorkflowLogicFunctionAction))
+const getSteps = (workflowVersions: WorkflowVersionSteps[]) =>
+  workflowVersions.flatMap(({ steps }) => steps ?? []);
+
+const getLogicFunctionIds = (steps: StepWithLogicFunction[]): string[] =>
+  steps
     .map((step) => step.settings.input.logicFunctionId)
     .filter(isLogicFunctionId);
 
@@ -35,13 +31,20 @@ export const getExclusivelyOwnedCodeStepLogicFunctionIds = ({
   deletedWorkflowVersions: WorkflowVersionSteps[];
   remainingWorkflowVersions: WorkflowVersionSteps[];
 }): string[] => {
-  const stillReferencedLogicFunctionIds = new Set([
-    ...getCodeStepLogicFunctionIds(remainingWorkflowVersions),
-    ...getLogicFunctionStepLogicFunctionIds(remainingWorkflowVersions),
-  ]);
+  const remainingSteps = getSteps(remainingWorkflowVersions);
+  const stillReferencedLogicFunctionIds = new Set(
+    getLogicFunctionIds([
+      ...remainingSteps.filter(isWorkflowCodeAction),
+      ...remainingSteps.filter(isWorkflowLogicFunctionAction),
+    ]),
+  );
 
   return [
-    ...new Set(getCodeStepLogicFunctionIds(deletedWorkflowVersions)),
+    ...new Set(
+      getLogicFunctionIds(
+        getSteps(deletedWorkflowVersions).filter(isWorkflowCodeAction),
+      ),
+    ),
   ].filter(
     (logicFunctionId) => !stillReferencedLogicFunctionIds.has(logicFunctionId),
   );
