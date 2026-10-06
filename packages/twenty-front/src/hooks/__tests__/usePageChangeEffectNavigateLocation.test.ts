@@ -416,7 +416,7 @@ const testCases: {
   { loc: AppPath.PageLayoutPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, pageLayoutId: 'valid-standalone-id', useQueryResult: { data: { getPageLayout: { type: PageLayoutType.STANDALONE_PAGE } }, loading: false } },
 
   { loc: AppPath.SettingsCatchAll, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
-  { loc: AppPath.SettingsCatchAll, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.SettingsCatchAll, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.SettingsCatchAll, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
   { loc: AppPath.SettingsCatchAll, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
   { loc: AppPath.SettingsCatchAll, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
@@ -579,4 +579,27 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
     },
   );
+});
+
+describe('usePageChangeEffectNavigateLocation — suspended workspace settings pages', () => {
+  it.each([
+    { loc: getSettingsPath(SettingsPath.Billing), res: undefined },
+    { loc: getSettingsPath(SettingsPath.BillingPlans), res: undefined },
+    { loc: getSettingsPath(SettingsPath.ProfilePage), res: undefined },
+    {
+      loc: getSettingsPath(SettingsPath.Usage),
+      res: getSettingsPath(SettingsPath.Billing),
+    },
+  ])('returns $res from $loc', ({ loc, res }) => {
+    setupMockIsMatchingLocation(loc);
+    setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+    setupMockIsWorkspaceActivationStatusEqualsTo(true);
+    setupMockIsLogged(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseLocation(loc as AppPath);
+    setupMockState();
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(res);
+  });
 });

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { LightIconButton, TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconBuildingSkyscraper,
   IconDotsVertical,

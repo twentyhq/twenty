@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Field } from 'twenty-ui/primitives/input';

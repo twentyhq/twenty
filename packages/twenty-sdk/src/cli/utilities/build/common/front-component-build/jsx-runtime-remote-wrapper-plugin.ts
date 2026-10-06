@@ -14,7 +14,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
   const usePreact = options?.usePreact ?? false;
 
   const jsxRuntimeModule = usePreact
-    ? 'preact/jsx-runtime'
+    ? 'preact/compat/jsx-runtime'
     : 'react/jsx-runtime';
   const reactModule = usePreact ? 'preact/compat' : 'react';
 

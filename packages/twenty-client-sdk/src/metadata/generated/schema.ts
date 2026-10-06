@@ -1379,11 +1379,20 @@ export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' |
 
 export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY'
 
+export interface UsageQuotaOperatorOnlyScope {
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    unit: UsageUnit
+    periodUnit: Scalars['String']
+    __typename: 'UsageQuotaOperatorOnlyScope'
+}
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
     allowedOperations: UsageLimitOperationDefinition[]
     allowedSpenderTypes: Scalars['String'][]
+    operatorOnlyScopes: UsageQuotaOperatorOnlyScope[]
     __typename: 'UsageQuotaDefinition'
 }
 
@@ -5260,11 +5269,21 @@ export interface UsageLimitOperationDefinitionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageQuotaOperatorOnlyScopeGenqlSelection{
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    unit?: boolean | number
+    periodUnit?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageQuotaDefinitionGenqlSelection{
     resourceType?: boolean | number
     limitKind?: boolean | number
     allowedOperations?: UsageLimitOperationDefinitionGenqlSelection
     allowedSpenderTypes?: boolean | number
+    operatorOnlyScopes?: UsageQuotaOperatorOnlyScopeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9168,6 +9187,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isUsageLimitOperationDefinition = (obj?: { __typename?: any } | null): obj is UsageLimitOperationDefinition => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
       return UsageLimitOperationDefinition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageQuotaOperatorOnlyScope_possibleTypes: string[] = ['UsageQuotaOperatorOnlyScope']
+    export const isUsageQuotaOperatorOnlyScope = (obj?: { __typename?: any } | null): obj is UsageQuotaOperatorOnlyScope => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaOperatorOnlyScope"')
+      return UsageQuotaOperatorOnlyScope_possibleTypes.includes(obj.__typename)
     }
     
 

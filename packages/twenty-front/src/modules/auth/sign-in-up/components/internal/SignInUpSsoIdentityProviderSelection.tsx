@@ -7,7 +7,7 @@ import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/gue
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

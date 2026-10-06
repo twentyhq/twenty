@@ -24,7 +24,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout, LightIconButton } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconAlertTriangle,
   IconChevronDown,

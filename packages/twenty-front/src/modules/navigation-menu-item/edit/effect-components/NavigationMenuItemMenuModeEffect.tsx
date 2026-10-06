@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDropdownPage } from 'twenty-ui/components';
+import { useDropdownPage } from 'twenty-ui/components/navigation';
 
 import { type NavigationMenuItemMenuMode } from '@/navigation-menu-item/edit/types/NavigationMenuItemMenuMode';
 

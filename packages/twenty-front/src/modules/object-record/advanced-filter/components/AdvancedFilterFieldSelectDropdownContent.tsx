@@ -4,7 +4,7 @@ import { AdvancedFilterFieldSelectMenu } from '@/object-record/advanced-filter/c
 import { AdvancedFilterRelationTargetFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type AdvancedFilterFieldSelectDropdownContentProps = {
   recordFilterId: string;
