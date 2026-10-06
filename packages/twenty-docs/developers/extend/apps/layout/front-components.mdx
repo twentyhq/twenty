@@ -130,12 +130,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 `scope` says who an item is configured by:
 
 - **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
-- **`USER`** — configured by each member for themselves, under their own user settings.
+- **`USER`** — configured by each member for themselves, under their own user settings. These are the items that render on the app's page under **Settings > App preferences**, one section per item.
 
 <Note>
-  `USER` items are not displayed yet. Their placement under the user's own
-  settings lands with per-member variable values; until then a `USER` item is
-  persisted and synced but nothing renders it.
+  The installed apps listed under App preferences come from a query that
+  requires the `APPLICATIONS` setting permission, so a member without it sees
+  only the preinstalled apps there for now.
 </Note>
 
 A `USER` item runs as the member viewing it. Members cannot save their own value of an application variable yet, even one declared with `scope: 'USER'` (see [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables)). Until they can, an item that stores something per person should persist it through the app's own objects: a workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
