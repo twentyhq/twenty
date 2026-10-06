@@ -12,6 +12,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
@@ -39,12 +40,20 @@ const agentResult = (
     ...overrides,
   }) as AgentExecutionResult;
 
-const waitingResult = (resumeInMs = 1_000) => {
-  const resumeAt = new Date(Date.now() + resumeInMs).toISOString();
+const waitingResult = ({
+  toolName = 'wait_for_duration',
+  wait = {
+    type: 'TIME',
+    resumeAt: new Date(Date.now() + 1_000).toISOString(),
+  },
+}: {
+  toolName?: string;
+  wait?: Record<string, unknown>;
+} = {}) => {
   const output = {
     success: true,
-    message: `Waiting until ${resumeAt}.`,
-    result: { status: 'pending', wait: { type: 'TIME', resumeAt } },
+    message: 'Waiting.',
+    result: { status: 'pending', wait },
   };
 
   return agentResult({
@@ -55,20 +64,18 @@ const waitingResult = (resumeInMs = 1_000) => {
           {
             type: 'tool-call',
             toolCallId: 'wait-1',
-            toolName: 'wait_for_duration',
-            input: { durationInMinutes: 1 },
+            toolName,
+            input: {},
           },
           {
             type: 'tool-result',
             toolCallId: 'wait-1',
-            toolName: 'wait_for_duration',
-            input: { durationInMinutes: 1 },
+            toolName,
+            input: {},
             output,
           },
         ],
-        toolResults: [
-          { toolCallId: 'wait-1', toolName: 'wait_for_duration', output },
-        ],
+        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
       },
     ] as unknown as AgentExecutionResult['steps'],
   });
@@ -104,7 +111,7 @@ const findWaitCallStatus = async (threadId: string) => {
   const [part] = await global.testDataSource.query(
     `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
      JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
-     WHERE message."threadId" = $1 AND part."toolName" = 'wait_for_duration'`,
+     WHERE message."threadId" = $1 AND part."toolName" IN ('wait_for_duration', 'wait_for_event')`,
     [threadId],
   );
 
@@ -252,12 +259,25 @@ describe('agent runs that wait (integration)', () => {
   });
 
   it('drops a waiting triggered run once its trigger is turned off', async () => {
-    // far enough that the wait cannot elapse before the trigger is turned off
-    const executeAgent = mockAgent(waitingResult(60 * 60_000), replyingResult);
+    // an event that never happens, so only the explicit resolution below wakes the run up
+    const executeAgent = mockAgent(
+      waitingResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+      replyingResult,
+    );
 
     await runTrigger();
 
-    const [{ threadId }] = await findSuspensions('AGENT_TRIGGER', agentId);
+    const [{ id: suspensionId, threadId }] = await findSuspensions(
+      'AGENT_TRIGGER',
+      agentId,
+    );
 
     expect(await findWaitCallStatus(threadId)).toBe('pending');
 
@@ -269,9 +289,16 @@ describe('agent runs that wait (integration)', () => {
       },
     });
 
-    await expectEventually(async () => {
-      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
-    });
+    const [{ id: wakeUpId }] = await global.testDataSource.query(
+      `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+      [suspensionId],
+    );
+
+    await getAppProviderByClassName<PendingWakeUpResolverService>(
+      'PendingWakeUpResolverService',
+    ).resolve({ workspaceId, wakeUpId });
+
+    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
 
     expect(executeAgent).toHaveBeenCalledTimes(1);
     expect(await findWaitCallStatus(threadId)).toBe('cancelled');
