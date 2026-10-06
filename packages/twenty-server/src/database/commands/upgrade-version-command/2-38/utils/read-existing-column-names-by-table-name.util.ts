@@ -1,3 +1,5 @@
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 // Filtering on relname lets Postgres use both columns of the pg_class name
@@ -26,14 +28,25 @@ export const readExistingColumnNamesByTableName = async ({
     [schemaName, tableNames],
   );
 
-  const columnNamesByTableName = new Map<string, Set<string>>();
+  const columnNamesByStoredTableName = new Map<string, Set<string>>();
 
   for (const { tableName, columnName } of rows) {
-    const columnNames = columnNamesByTableName.get(tableName) ?? new Set();
+    const columnNames =
+      columnNamesByStoredTableName.get(tableName) ?? new Set();
 
     columnNames.add(columnName);
-    columnNamesByTableName.set(tableName, columnNames);
+    columnNamesByStoredTableName.set(tableName, columnNames);
   }
 
-  return columnNamesByTableName;
+  // Postgres truncates identifiers to 63 bytes, so the table of a 63-character
+  // custom object is stored under a shorter name than the one requested.
+  return new Map(
+    tableNames.flatMap((tableName) => {
+      const columnNames = columnNamesByStoredTableName.get(
+        tableName.slice(0, IDENTIFIER_MAX_CHAR_LENGTH),
+      );
+
+      return isDefined(columnNames) ? [[tableName, columnNames] as const] : [];
+    }),
+  );
 };
