@@ -243,22 +243,6 @@ export const countTestWorkflowRuns = async (
   return count;
 };
 
-export const waitForTestWorkflowRunsToBeDeleted = async (
-  workflowRunIds: string[],
-): Promise<void> => {
-  for (let attempt = 0; attempt < 300; attempt++) {
-    if ((await countTestWorkflowRuns(workflowRunIds)) === 0) {
-      return;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-
-  throw new Error(
-    `Workflow runs ${workflowRunIds.join(', ')} were not deleted`,
-  );
-};
-
 export const countTestCompanies = async (name: string): Promise<number> => {
   const [{ count }] = await globalThis.testDataSource.query(
     `SELECT COUNT(*)::int AS count FROM "${SCHEMA}"."company"

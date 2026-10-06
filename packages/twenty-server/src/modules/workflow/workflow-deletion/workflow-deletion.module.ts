@@ -1,22 +1,17 @@
 import { Module } from '@nestjs/common';
 
-import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { CleanUpDeletedWorkflowsJob } from 'src/modules/workflow/workflow-deletion/jobs/clean-up-deleted-workflows.job';
-import { WorkflowDeletionListener } from 'src/modules/workflow/workflow-deletion/listeners/workflow-deletion.listener';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowDeletionCleanupWorkspaceService } from 'src/modules/workflow/workflow-deletion/services/workflow-deletion-cleanup.workspace-service';
-import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
+import { WorkflowThrottlingModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-throttling.module';
 import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait-store.module';
 
 @Module({
   imports: [
-    WorkflowVersionCoreModule,
+    WorkspaceCacheModule,
     WorkflowStepWaitStoreModule,
-    WorkflowRunQueueModule,
+    WorkflowThrottlingModule,
   ],
-  providers: [
-    WorkflowDeletionCleanupWorkspaceService,
-    WorkflowDeletionListener,
-    CleanUpDeletedWorkflowsJob,
-  ],
+  providers: [WorkflowDeletionCleanupWorkspaceService],
+  exports: [WorkflowDeletionCleanupWorkspaceService],
 })
 export class WorkflowDeletionModule {}

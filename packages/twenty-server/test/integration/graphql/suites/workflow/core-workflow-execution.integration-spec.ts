@@ -21,7 +21,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
-import { type WorkflowDeletionListener } from 'src/modules/workflow/workflow-deletion/listeners/workflow-deletion.listener';
+import { type DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-workflow-runs-deferred-action-handler.workspace-service';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -1758,12 +1758,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     await waitForRun(runId, 'FAILED');
 
-    const deletionListenerSpy = jest
+    const runCleanupSpy = jest
       .spyOn(
-        getAppProviderByClassName<WorkflowDeletionListener>(
-          'WorkflowDeletionListener',
+        getAppProviderByClassName<DeleteWorkflowRunsDeferredActionHandlerWorkspaceService>(
+          'DeleteWorkflowRunsDeferredActionHandlerWorkspaceService',
         ),
-        'handleDeleted',
+        'execute',
       )
       .mockResolvedValue(undefined);
 
@@ -1774,25 +1774,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       expect(deleteResponse.body.errors).toBeUndefined();
-
-      for (
-        let attempt = 0;
-        attempt < 100 && deletionListenerSpy.mock.calls.length === 0;
-        attempt++
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-
-      expect(deletionListenerSpy).toHaveBeenCalledTimes(1);
-      expect(deletionListenerSpy).toHaveBeenCalledWith(
+      expect(runCleanupSpy).toHaveBeenCalledTimes(1);
+      expect(runCleanupSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          events: [
-            expect.objectContaining({ recordId: originalCoreWorkflowId }),
-          ],
+          payload: { coreWorkflowId: originalCoreWorkflowId },
         }),
       );
     } finally {
-      deletionListenerSpy.mockRestore();
+      runCleanupSpy.mockRestore();
     }
 
     await global.testDataSource.query(
