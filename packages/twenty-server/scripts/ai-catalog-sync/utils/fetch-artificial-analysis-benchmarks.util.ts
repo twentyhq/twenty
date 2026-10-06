@@ -22,8 +22,7 @@ type ArtificialAnalysisPage = {
   pagination?: { has_more?: unknown };
 };
 
-// This endpoint returns 0 for "not measured", and a zero tokens-per-second is a
-// lie rather than a datum.
+// The endpoint returns 0 for "not measured"
 const readPositiveNumber = (value: unknown): number | undefined =>
   typeof value === 'number' && Number.isFinite(value) && value > 0
     ? value
@@ -52,9 +51,7 @@ const readNested = ({
 const readModels = (page: ArtificialAnalysisPage): ArtificialAnalysisModel[] =>
   Array.isArray(page.data) ? (page.data as ArtificialAnalysisModel[]) : [];
 
-// How much a row actually says. The endpoint carries several rows per model and
-// some hosts publish no measurements at all, so an unmeasured row must never
-// displace a measured one under the same key.
+// Some hosts publish no measurements, so an unmeasured row must never displace a measured one under the same key
 const informationScore = (record: BenchmarkRecord): number =>
   [
     record.intelligenceIndex,
@@ -62,12 +59,7 @@ const informationScore = (record: BenchmarkRecord): number =>
     record.costPerTask,
   ].filter(isDefined).length;
 
-// The rows for one model are the same model at different reasoning efforts, and
-// the publisher spells the effort only inside a display name. Taking the
-// best-scoring row gives every model its ceiling, measured the same way, which
-// is the whole reason for standing on one publisher. Picking by how populated a
-// row happened to be scored Sonnet 4.6 at low effort against Sonnet 5 at max,
-// and the gap read as a capability difference.
+// Take the best-scoring row (the ceiling): picking by populated fields once compared Sonnet 4.6 at low effort to Sonnet 5 at max
 const preferOver = (
   candidate: BenchmarkRecord,
   existing: BenchmarkRecord,
@@ -108,8 +100,7 @@ const fetchPage = async ({
   return (await response.json()) as ArtificialAnalysisPage;
 };
 
-// The list is paginated and the free tier allows ten requests a day, so every
-// page is read in one run rather than spread across runs.
+// The free tier allows ten requests a day, so every page is read in one run
 const fetchAllModels = async ({
   url,
   apiKey,
@@ -161,9 +152,7 @@ export const fetchArtificialAnalysisBenchmarks = async (
 
     const aliases = [model.slug, model.id, model.name].filter(isDefined);
 
-    // Cost per task is the price of one task of the intelligence index run at
-    // this row's effort, so it reflects reasoning volume where per-token
-    // pricing cannot.
+    // Price of one intelligence-index task at this effort, which reflects reasoning volume unlike per-token pricing
     const record: BenchmarkRecord = {
       intelligenceIndex: readNested({
         model,
@@ -199,8 +188,7 @@ export const fetchArtificialAnalysisBenchmarks = async (
         continue;
       }
 
-      // The bare key keeps the ceiling; the effort key lets a pinned variant
-      // read the figure taken at its own effort.
+      // The bare key keeps the ceiling; the effort key lets a pinned variant read its own effort's figure
       file(key, record);
 
       if (isDefined(record.effort)) {

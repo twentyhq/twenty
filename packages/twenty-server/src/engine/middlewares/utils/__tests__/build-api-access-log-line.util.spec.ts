@@ -127,6 +127,26 @@ describe('buildApiAccessLogLine', () => {
     expect(line).not.toContain('actor_id=');
   });
 
+  it('should log the MCP method and tool name', () => {
+    const line = build({
+      request: {
+        originalUrl: '/mcp',
+        mcpMethod: 'tools/call',
+        mcpToolName: 'find_many_people',
+      },
+    });
+
+    expect(line).toContain('mcp_method=tools/call');
+    expect(line).toContain('mcp_tool=find_many_people');
+  });
+
+  it('should omit MCP fields for a non MCP request', () => {
+    const line = build();
+
+    expect(line).not.toContain('mcp_method=');
+    expect(line).not.toContain('mcp_tool=');
+  });
+
   it('should log the resolvers captured by the graphql pipelines', () => {
     const line = build({
       request: {

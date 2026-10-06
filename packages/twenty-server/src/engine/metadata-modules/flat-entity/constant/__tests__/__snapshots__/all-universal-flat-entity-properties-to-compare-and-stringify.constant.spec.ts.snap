@@ -12,12 +12,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "modelId",
       "responseFormat",
       "modelConfiguration",
-      "evaluationInputs",
+      "triggers",
+      "isSystem",
     ],
     "propertiesToStringify": [
       "responseFormat",
       "modelConfiguration",
-      "evaluationInputs",
+      "triggers",
     ],
   },
   "applicationVariable": {
@@ -192,6 +193,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "writability",
       "readability",
       "readabilityParentFieldUniversalIdentifiers",
+      "sharingReach",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
@@ -505,7 +507,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflow": {
     "propertiesToCompare": [
+      "versionDefinitionHash",
       "name",
+      "isSystem",
       "visibility",
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",
@@ -514,6 +518,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflowVersion": {
     "propertiesToCompare": [
+      "isSystemSideEffect",
       "status",
       "triggers",
       "steps",

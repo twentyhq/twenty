@@ -1,5 +1,4 @@
 import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
-import { type WidgetType } from 'twenty-shared/types';
 
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
@@ -21,7 +20,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     title: pageLayoutWidgetManifest.title,
     isActive: true,
     isSystemSideEffect: false,
-    type: pageLayoutWidgetManifest.type as WidgetType,
+    type: pageLayoutWidgetManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,

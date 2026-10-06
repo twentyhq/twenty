@@ -13,10 +13,7 @@ export type FieldMapsForObject = {
   fieldIdByJoinColumnName: Record<string, string>;
 };
 
-// Flat metadata snapshots are immutable and cached per workspace metadata
-// version, so the maps derived from a given (fieldMaps, objectMetadata) pair can
-// be memoized by identity: several helpers rebuild them per request otherwise
-// (order parsing, cursor encoding per record, cursor conditions per key).
+// flat snapshots are immutable per metadata version, so derived maps can be memoized by identity
 const fieldMapsCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
   WeakMap<FlatObjectMetadata, FieldMapsForObject>

@@ -124,9 +124,7 @@ export class CommandMenuItemDTO {
   @HideField()
   workspaceId: string;
 
-  // Kept out of the schema but needed by the field resolvers: without it they
-  // cannot tell a standard label from one a workspace renamed, and would match
-  // the workspace's own copy against the standard catalog.
+  // field resolvers need it to tell a standard label from a workspace-renamed one
   @HideField()
   overrides?: AuthoredOverrides<CommandMenuItemOverrides> | null;
 

@@ -22,8 +22,7 @@ test('Sign up with invite link via email', async ({
 
   const inviteLink: string =
     await test.step('Go to Settings and copy invite link', async () => {
-      // Later tests reuse the saved session, and signing out or signing up
-      // from it would revoke it server-side.
+      // Signing out or up from the saved session would revoke it server-side for later tests.
       const inviterPage = await browser.newPage({
         storageState: AUTH_STORAGE_STATE_PATH,
         permissions: ['clipboard-read', 'clipboard-write'],

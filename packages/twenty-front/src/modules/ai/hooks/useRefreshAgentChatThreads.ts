@@ -1,14 +1,19 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
+import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
+import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
@@ -17,6 +22,7 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
@@ -28,6 +34,8 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+
+import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useRefreshAgentChatThreads = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -60,6 +68,10 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
+      const currentWorkspaceMemberId = store.get(
+        currentWorkspaceMemberState.atom,
+      )?.id;
+
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({
           query: generateFindManyRecordsQuery({
@@ -70,14 +82,15 @@ export const useRefreshAgentChatThreads = () => {
           }),
           variables: {
             filter: isDefined(threadIdFilter)
-              ? {
-                  and: [
-                    buildAgentChatThreadListFilter(chatObjectMetadataItem),
-                    threadIdFilter,
-                  ],
-                }
-              : buildAgentChatThreadListFilter(chatObjectMetadataItem),
-            orderBy: [{ updatedAt: 'DescNullsLast' }],
+              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
+              : AGENT_CHAT_THREAD_LIST_FILTER,
+            orderBy: [
+              {
+                [getAgentChatThreadLastActivityFieldName(
+                  chatObjectMetadataItem,
+                )]: 'DescNullsLast',
+              },
+            ],
             limit: QUERY_MAX_RECORDS,
             lastCursor,
           },
@@ -91,15 +104,45 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
+      const records = getRecordsFromRecordConnection<
+        AgentChatThreadRecord & { participants?: ObjectRecord[] }
+      >({ recordConnection: connection });
+
       return {
-        threads: getRecordsFromRecordConnection<AgentChatThreadRecord>({
-          recordConnection: connection,
-        }),
+        threads: records.map(
+          ({ participants: _participants, ...thread }) => thread,
+        ),
+        // Roles that read every record get every member's row
+        participants: records
+          .flatMap(({ participants }) => participants ?? [])
+          .filter(
+            (participant) =>
+              participant.workspaceMemberId === currentWorkspaceMemberId,
+          )
+          .map(getAgentChatThreadParticipantFromRecord),
         hasNextPage: connection.pageInfo.hasNextPage ?? false,
         endCursor: connection.pageInfo.endCursor ?? null,
       };
     },
     [apolloCoreClient, objectPermissionsByObjectMetadataId, store],
+  );
+
+  // The member's inbox state comes with the threads it belongs to
+  const addAgentChatThreadParticipants = useCallback(
+    (participants: AgentChatThreadParticipantFieldsFragment[]) => {
+      store.set(agentChatThreadParticipantsState.atom, (loadedParticipants) =>
+        mergeAgentChatThreadParticipants(
+          mergeAgentChatThreadParticipants(
+            loadedParticipants ?? {},
+            participants,
+          ),
+          Object.values(
+            store.get(agentChatThreadStreamedParticipantsState.atom),
+          ),
+        ),
+      );
+    },
+    [store],
   );
 
   const loadAgentChatThreads = useCallback(
@@ -137,8 +180,7 @@ export const useRefreshAgentChatThreads = () => {
           return undefined;
         }
 
-        // Retry once rather than overwrite a record event applied while the
-        // request was in flight
+        // Retry rather than overwrite a record event applied mid-request.
         if (hasChangedSinceRequest()) {
           continue;
         }
@@ -156,6 +198,7 @@ export const useRefreshAgentChatThreads = () => {
         }
 
         upsertRecordsInStore({ partialRecords: page.threads });
+        addAgentChatThreadParticipants(page.participants);
 
         const pageThreadIds = page.threads.map(({ id }) => id);
         const previousThreadIds =
@@ -178,6 +221,7 @@ export const useRefreshAgentChatThreads = () => {
       return undefined;
     },
     [
+      addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
       refreshAgentChatThreadPermissions,
       store,
@@ -195,8 +239,7 @@ export const useRefreshAgentChatThreads = () => {
     [loadAgentChatThreads],
   );
 
-  // A chat opened by URL may sit past the loaded pages. Resolves to null
-  // when the chat is not listed for this member, undefined when unknown
+  // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
   const loadAgentChatThread = useCallback(
     async (threadId: string) => {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -228,9 +271,9 @@ export const useRefreshAgentChatThreads = () => {
         }
 
         addAgentChatThread(thread);
+        addAgentChatThreadParticipants(page.participants);
 
-        // The chat may have been selected before its record was loaded, so
-        // its usage could not be restored then
+        // The chat may have been selected before its record loaded, when usage couldn't be restored.
         const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
           familyKey: { threadId: thread.id },
@@ -247,6 +290,7 @@ export const useRefreshAgentChatThreads = () => {
     },
     [
       addAgentChatThread,
+      addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
       refreshAgentChatThreadPermissions,
       store,

@@ -7,6 +7,14 @@
  *                              |___/
  */
 
+export { Autocomplete } from './Autocomplete/Autocomplete';
+export type { AutocompleteEmptyProps } from './Autocomplete/types/AutocompleteEmptyProps';
+export type { AutocompleteInputGroupProps } from './Autocomplete/types/AutocompleteInputGroupProps';
+export type { AutocompleteInputProps } from './Autocomplete/types/AutocompleteInputProps';
+export type { AutocompleteItemProps } from './Autocomplete/types/AutocompleteItemProps';
+export type { AutocompleteListProps } from './Autocomplete/types/AutocompleteListProps';
+export type { AutocompletePopupProps } from './Autocomplete/types/AutocompletePopupProps';
+export type { AutocompleteRootProps } from './Autocomplete/types/AutocompleteRootProps';
 export { Button } from './Button/Button';
 export type { ButtonColor } from './Button/types/ButtonColor';
 export type { ButtonProps } from './Button/types/ButtonProps';
@@ -25,6 +33,8 @@ export { Input } from './Input/Input';
 export type { InputProps } from './Input/types/InputProps';
 export { InputGroup } from './InputGroup/InputGroup';
 export type { InputGroupProps } from './InputGroup/types/InputGroupProps';
+export { NumberStepper } from './NumberStepper/NumberStepper';
+export type { NumberStepperProps } from './NumberStepper/types/NumberStepperProps';
 export { Radio } from './Radio/Radio';
 export type { RadioProps } from './Radio/types/RadioProps';
 export { RadioGroup } from './RadioGroup/RadioGroup';

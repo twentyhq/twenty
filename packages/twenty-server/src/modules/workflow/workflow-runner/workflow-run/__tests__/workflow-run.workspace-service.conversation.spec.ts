@@ -1,6 +1,7 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { IsNull } from 'typeorm';
 
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -32,13 +33,35 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       find: jest.fn().mockResolvedValue([
         {
           id: 'part-id',
-          toolName: 'ask_questions',
-          toolInput: { questions: QUESTIONS },
-          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+          messageId: 'message-id',
+          toolName: 'ask_question',
+          toolInput: QUESTIONS[0],
+          toolOutput: {
+            result: { question: QUESTIONS[0], status: 'pending' },
+            workflowStep: {
+              workflowRunId: 'workflow-run-id',
+              stepId: 'step-id',
+            },
+          },
         },
       ]),
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      writePart: jest.fn(),
+      query: jest.fn(),
     };
+
+    const turnRecorderService = {
+      endWaitingTurn: jest.fn().mockResolvedValue(undefined),
+    };
+    const threadRecordEventService = {
+      emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
+    };
+
+    messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
+      run({
+        table: (name: string) => name,
+        manager: { query: messagePartRepository.writePart },
+      }),
+    );
     const service = new WorkflowRunWorkspaceService(
       {} as never,
       {} as never,
@@ -46,6 +69,9 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       {} as never,
       threadRepository as never,
       messagePartRepository as never,
+      { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
+      turnRecorderService as never,
+      threadRecordEventService as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -55,8 +81,19 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       },
     });
 
-    const step = { id: 'step-id', name: 'Ask' };
-    const workflowRun = {
+    const step = {
+      id: 'step-id',
+      name: 'Ask',
+      type: WorkflowActionType.AI_AGENT,
+    };
+    const workflowRun: {
+      id: string;
+      status: WorkflowRunStatus;
+      state: {
+        flow: { steps: { id: string; name: string; type: string }[] };
+        stepInfos: Record<string, Record<string, unknown>>;
+      };
+    } = {
       id: 'workflow-run-id',
       status,
       state: { flow: { steps: [step] }, stepInfos: { 'step-id': stepInfo } },
@@ -73,8 +110,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     return {
       service,
       step,
+      workflowRun,
       threadRepository,
       messagePartRepository,
+      turnRecorderService,
+      threadRecordEventService,
       updateWorkflowRun,
     };
   };
@@ -91,6 +131,48 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       const { service, step } = buildService();
 
       expect(await findStep(service)).toEqual(step);
+    });
+
+    it('finds the step a call names among steps sharing one inbox conversation', async () => {
+      const { service, workflowRun } = buildService();
+      const approvalStep = {
+        id: 'second-step-id',
+        name: 'Approve',
+        type: WorkflowActionType.SEND_CHAT_MESSAGE,
+      };
+
+      workflowRun.state = {
+        flow: { steps: [...workflowRun.state.flow.steps, approvalStep] },
+        stepInfos: {
+          'step-id': { status: StepStatus.SUCCESS, threadId: 'thread-id' },
+          'second-step-id': {
+            status: StepStatus.PENDING,
+            threadId: 'thread-id',
+          },
+        },
+      };
+
+      const findNamedStep = (expectedStepId: string) =>
+        service.findStepAwaitingAnswer({
+          threadId: 'thread-id',
+          workflowRunId: 'workflow-run-id',
+          workspaceId: 'workspace-id',
+          expectedStepId,
+        });
+
+      expect(await findNamedStep('second-step-id')).toEqual(approvalStep);
+      expect(await findNamedStep('step-id')).toBeNull();
+      expect(await findStep(service)).toEqual(approvalStep);
+    });
+
+    it('finds nothing for a form step, which is submitted from its run', async () => {
+      const { service, workflowRun } = buildService();
+
+      workflowRun.state.flow.steps = [
+        { id: 'step-id', name: 'Form', type: WorkflowActionType.FORM },
+      ];
+
+      expect(await findStep(service)).toBeNull();
     });
 
     it.each([
@@ -214,8 +296,12 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       });
 
     it('stops its conversations waiting and closes their calls as skipped', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        turnRecorderService,
+      } = buildService();
 
       await endRun(service);
 
@@ -228,26 +314,79 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         },
         { pendingQuestionMessageId: null },
       );
-      expect(messagePartRepository.update).toHaveBeenCalledWith(
-        'workspace-id',
-        { id: 'part-id' },
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        messageId: 'message-id',
+        status: AgentTurnStatus.CANCELLED,
+      });
+      const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
+        messagePartRepository.writePart.mock.calls;
+
+      expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
+      expect({
+        partId,
+        result: JSON.parse(closedToolOutput).result,
+        expectedStatus,
+      }).toEqual({
+        partId: 'part-id',
+        result: { question: QUESTIONS[0], status: 'skipped' },
+        expectedStatus: 'pending',
+      });
+    });
+
+    it('tells open chat lists the conversation no longer waits on an answer', async () => {
+      const { service, threadRecordEventService } = buildService();
+
+      await endRun(service);
+
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        messageId: 'message-id',
+      });
+    });
+
+    it('leaves open a call another run posted in a conversation they share', async () => {
+      const { service, threadRepository, messagePartRepository } =
+        buildService();
+
+      messagePartRepository.find.mockResolvedValue([
         {
-          toolOutput: expect.objectContaining({
-            result: { questions: QUESTIONS, status: 'skipped' },
-          }),
+          id: 'part-id',
+          messageId: 'message-id',
+          toolName: 'ask_question',
+          toolInput: QUESTIONS[0],
+          toolOutput: {
+            result: { question: QUESTIONS[0], status: 'pending' },
+            workflowStep: { workflowRunId: 'other-run-id', stepId: 'step-id' },
+          },
         },
-      );
+      ]);
+
+      await endRun(service);
+
+      expect(threadRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
     });
 
     it('leaves a conversation to the answer holding its claim', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        threadRecordEventService,
+      } = buildService();
 
       threadRepository.update.mockResolvedValue({ affected: 0 });
 
       await endRun(service);
 
-      expect(messagePartRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).not.toHaveBeenCalled();
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {

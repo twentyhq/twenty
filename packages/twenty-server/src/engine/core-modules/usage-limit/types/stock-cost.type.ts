@@ -1,3 +1,3 @@
-import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-export type StockCost = Partial<Record<StockMeter, number>>;
+export type StockCost = Partial<Record<UsageUnit, number>>;

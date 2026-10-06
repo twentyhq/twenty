@@ -24,7 +24,6 @@ export const GET_CHAT_MESSAGES = gql`
         state
         providerExecuted
         errorMessage
-        errorDetails
         sourceUrlSourceId
         sourceUrlUrl
         sourceUrlTitle

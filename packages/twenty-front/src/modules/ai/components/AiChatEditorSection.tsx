@@ -8,10 +8,10 @@ import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
-import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
+import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
@@ -19,7 +19,7 @@ import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
+import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
@@ -111,8 +111,6 @@ const StyledMessageListPlaceholder = styled.div`
   flex-direction: column;
 `;
 
-// Collapsing this spacer is what slides the composer from the middle of an
-// empty page down to the bottom once the conversation starts.
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
@@ -123,8 +121,7 @@ const StyledComposerBottomSpacer = styled.div`
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
-  // Only the collapse is animated: the composer becomes centered again on a
-  // thread switch, where sliding it back up would trail the content change.
+  // Only the collapse animates: re-centering on a thread switch would trail the content change.
   &.is-centered {
     flex-grow: 1;
     transition-property: none;
@@ -133,25 +130,6 @@ const StyledComposerBottomSpacer = styled.div`
   @media (prefers-reduced-motion: reduce) {
     transition-property: none;
   }
-`;
-
-const StyledButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const StyledLeftButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledRightButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const EditableAiChatEditorSection = () => {
@@ -176,23 +154,21 @@ const EditableAiChatEditorSection = () => {
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       <AiChatDictationHint interimText={dictationInterimText} />
-      <StyledButtonsContainer>
-        <StyledLeftButtonsContainer>
-          <AiChatAddMenu editor={editor} />
-          <AiChatDictationButton />
-          <AiChatContextUsageButton />
-        </StyledLeftButtonsContainer>
-        <StyledRightButtonsContainer>
-          <AiModelTierDropdown
-            dropdownId="ai-chat-model-tier-dropdown"
-            disabled={hasNoEnabledModels}
-          />
+      <AiChatComposerActionsRow
+        leftActions={
+          <>
+            <AiChatAddMenu editor={editor} />
+            <AiChatDictationButton />
+          </>
+        }
+        modelTierDropdownId="ai-chat-model-tier-dropdown"
+        sendButton={
           <SendMessageButton
             onSend={handleSendAndClear}
             isDisabled={hasNoEnabledModels}
           />
-        </StyledRightButtonsContainer>
-      </StyledButtonsContainer>
+        }
+      />
     </StyledInputBox>
   );
   const hasMessages = useAtomComponentSelectorValue(
@@ -224,8 +200,9 @@ const EditableAiChatEditorSection = () => {
             message={t`No AI provider is configured on this instance.`}
           />
         )}
-        {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
+        {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
+        <AiChatParticipantMentionBar editor={editor} />
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
       <StyledComposerBottomSpacer

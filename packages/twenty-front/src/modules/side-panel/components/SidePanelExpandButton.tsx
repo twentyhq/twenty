@@ -10,8 +10,7 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 
-// Registered only for targets that claim the shortcut, so pages whose content
-// owns cmd+enter keep it to themselves.
+// Registered only for targets that claim it, so pages whose content owns cmd+enter keep it
 const SidePanelExpandShortcutEffect = ({ expand }: { expand: () => void }) => {
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
@@ -61,9 +60,7 @@ export const SidePanelExpandButton = () => {
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
-  // Expand targets read state scoped to the side panel page. The context
-  // defaults to a blank instance id, which those reads reject, so match the
-  // condition they enforce rather than merely checking the context exists.
+  // The context defaults to a blank instance id that expand targets reject, so check for that rather than presence
   if (!isNonEmptyString(sidePanelPageInstanceId)) {
     return null;
   }

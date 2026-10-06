@@ -4,7 +4,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { type InlineBanner } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
 
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -13,8 +13,9 @@ export const useManageUsageLimitsButton = (): ComponentProps<
 >['button'] => {
   const { t } = useLingui();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageUsageLimits } =
-    usePermissionFlagMap();
+  const hasPermissionToManageUsageLimits = useHasPermissionFlag(
+    PermissionFlagType.WORKSPACE,
+  );
 
   const navigateSettings = useNavigateSettings();
 

@@ -1,17 +1,20 @@
 import { type ReactNode, useCallback } from 'react';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { OpenRecordIn } from 'twenty-shared/types';
 
@@ -40,6 +43,10 @@ export const RecordTableContextProvider = ({
     objectMetadataItem.id,
   );
 
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
+
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
@@ -61,8 +68,7 @@ export const RecordTableContextProvider = ({
 
   const isTouchDevice = useIsTouchDevice();
 
-  // Navigating on mouse down only buys a frame on a real pointer: a tap
-  // synthesises its mouse events after the finger is already gone.
+  // A tap synthesises its mouse events after the finger lifts, so mouse down only helps real pointers.
   const triggerEvent =
     openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
@@ -77,6 +83,11 @@ export const RecordTableContextProvider = ({
         recordTableId,
         objectNameSingular,
         objectPermissions,
+        isObjectReadOnly: isObjectReadOnly({
+          isLayoutCustomizationModeEnabled,
+          objectPermissions,
+          objectMetadataItem,
+        }),
         visibleRecordFields: visibleRecordFields.map((field) => ({
           ...field,
           size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),

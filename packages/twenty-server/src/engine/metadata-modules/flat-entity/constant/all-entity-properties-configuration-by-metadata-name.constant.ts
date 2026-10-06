@@ -82,12 +82,8 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    // isUnique is derived from IndexMetadata at cache build time and is
-    // not a column on the fieldMetadata table. It stays in
-    // propertiesToCompare so per-type validators see the proposed
-    // change (e.g. rejecting unique on FILES), but the field-metadata
-    // runner drops it before issuing the SQL UPDATE — the actual state
-    // change rides on the side-effect index create/delete.
+    // not a column: compared so validators see the change, but the runner drops it before the UPDATE; the
+    // actual change rides on the side-effect index create/delete
     isUnique: {
       toCompare: true,
       toStringify: false,
@@ -283,6 +279,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     readabilityParentFieldUniversalIdentifiers: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    sharingReach: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     isUICreatable: {
@@ -978,9 +979,14 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
-    evaluationInputs: {
+    triggers: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    isSystem: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     isCustom: {
@@ -2118,7 +2124,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflow: {
+    versionDefinitionHash: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    isSystem: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     visibility: {
       toCompare: true,
       toStringify: false,
@@ -2156,6 +2172,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflowVersion: {
+    isSystemSideEffect: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     status: {
       toCompare: true,
       toStringify: false,
@@ -2218,8 +2239,6 @@ export type MetadataEntityOverridablePropertyName<T extends AllMetadataName> =
     (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;
 
-// Which properties are translatable is owned by twenty-shared, because the
-// application SDK extracts against the same list at build time and the two
-// silently drifted when each side kept its own copy.
+// owned by twenty-shared because the application SDK extracts against the same list at build time
 export type MetadataEntityTranslatablePropertyName<T extends AllMetadataName> =
   T extends TranslatableMetadataName ? TranslatablePropertyName<T> : never;

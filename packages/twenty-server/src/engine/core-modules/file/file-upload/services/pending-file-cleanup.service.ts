@@ -72,10 +72,7 @@ export class PendingFileCleanupService {
           continue;
         }
 
-        // Claim the row atomically: delete it only while it is still PENDING.
-        // If completeFileUpload promoted it to UPLOADED between the fetch above
-        // and here, the delete affects no rows and the now-live file (and its
-        // object) are left untouched.
+        // Delete only while still PENDING, so a file completeFileUpload just promoted is left untouched.
         const { affected } = await this.fileRepository.delete({
           id: file.id,
           status: FILE_STATUS.PENDING,
@@ -107,9 +104,7 @@ export class PendingFileCleanupService {
     return deletedCount;
   }
 
-  // The row has already been removed, so this only tidies the (possibly
-  // partial, possibly absent) storage object. A failure here leaks bytes but
-  // never data, so it is logged rather than retried.
+  // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.
   private async deleteStorageObject(file: FileEntity): Promise<void> {
     if (!isDefined(file.workspaceId)) {
       return;
@@ -136,14 +131,8 @@ export class PendingFileCleanupService {
       fileFolder: fileFolder as FileFolder,
     };
 
-    // Normally the object is still in quarantine, but a crash between the move
-    // and the row update leaves it at its final path with the row PENDING.
-    //
-    // Quarantine goes first and the two are not concurrent: while a
-    // quarantined object still exists, a completion racing this cleanup can
-    // move it into the final path after that path has been deleted, orphaning
-    // an object no later run will look for. Both still run regardless of the
-    // other's outcome, since the row is already gone.
+    // A crash between move and row update leaves the object at its final path, so both are deleted.
+    // Quarantine goes first: a racing completion could otherwise move it into an already-cleaned final path.
     const failures: unknown[] = [];
 
     for (const pathToDelete of [

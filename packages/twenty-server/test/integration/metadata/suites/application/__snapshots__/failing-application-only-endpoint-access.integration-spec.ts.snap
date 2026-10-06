@@ -1,0 +1,553 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse GET /app/billing/credits and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse POST /app/billing/charge and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse POST /apps/connections/get and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse POST /apps/connections/list and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse appConnection and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse appConnections and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse appKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse appMessageChannels and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse createAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse deleteAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse deleteAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse enqueueJob and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse enqueueJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse ingestAppMessages and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse reportAppConnectionAuthFailure and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse setAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse updateAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse GET /app/billing/credits and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse POST /app/billing/charge and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse POST /apps/connections/get and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse POST /apps/connections/list and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse appConnection and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse appConnections and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse appKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse appMessageChannels and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse createAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse deleteAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse deleteAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse enqueueJob and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse enqueueJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse ingestAppMessages and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse reportAppConnectionAuthFailure and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse setAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse updateAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse GET /app/billing/credits and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse POST /app/billing/charge and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse POST /apps/connections/get and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse POST /apps/connections/list and leave state unchanged 1`] = `
+{
+  "body": {
+    "error": "Forbidden",
+    "message": "This endpoint is not available to this caller",
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse appConnection and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse appConnections and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse appKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse appMessageChannels and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse createAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse deleteAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse deleteAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse enqueueJob and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse enqueueJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse ingestAppMessages and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse reportAppConnectionAuthFailure and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse setAppKeyValue and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse updateAppMessageChannel and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

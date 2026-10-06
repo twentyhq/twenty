@@ -20,6 +20,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
@@ -145,9 +146,7 @@ export class WorkspaceResolver {
     NoPermissionGuard,
   )
   async activateWorkspace(
-    // Deprecated: the workspace name is set at creation. This argument is kept
-    // for backward compatibility (removing it would be a breaking schema change)
-    // but is ignored.
+    // ignored, kept only because removing it would break the schema
     @Args('data') _data: ActivateWorkspaceInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -166,7 +165,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     CustomPermissionGuard,
   )
@@ -246,7 +245,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
@@ -271,6 +270,19 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  inviteHash(
+    @Parent() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
+  ): string | null {
+    if (isDefined(getScopedCallingApplication(application))) {
+      return null;
+    }
+
+    return workspace.inviteHash ?? null;
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })

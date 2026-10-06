@@ -21,9 +21,9 @@ import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-// Reads are open to chat users so the composer can list skills; mutations
-// stay behind AI settings.
+// Reads only need the AI flag so the chat composer can list skills; mutations need AI_SETTINGS
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {
@@ -64,10 +64,15 @@ export class SkillResolver {
   }
 
   @Query(() => SkillDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async skill(
     @ApplicationTargetArg(
       'id',
-      { kind: 'applicationOwnedEntity', metadataName: 'skill' },
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'skill',
+        requireApplicationRegistrationOwnership: false,
+      },
       { type: () => UUIDScalarType },
     )
     id: string,

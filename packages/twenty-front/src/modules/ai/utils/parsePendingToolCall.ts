@@ -1,11 +1,13 @@
 import { isString } from '@sniptt/guards';
 import { getToolName, isToolUIPart } from 'ai';
 import {
+  ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
+  buildFallbackProposedToolCall,
   type ExtendedUIMessagePart,
-  PROPOSE_EMAIL_TOOL_NAME,
-  type ProposedEmail,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+  type ProposedToolCall,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
 } from 'twenty-shared/ai';
@@ -13,9 +15,7 @@ import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
-// A call the agent paused on waits until its output says otherwise. The server
-// validated its input against the tool's schema when the call was made, so
-// only the shape each card needs is checked here.
+// The server validated input against the tool schema, so only each card's needed shape is checked.
 export const parsePendingToolCall = (
   part: ExtendedUIMessagePart,
 ): AgentChatPendingToolCall | null => {
@@ -30,24 +30,25 @@ export const parsePendingToolCall = (
   }
 
   const { toolCallId, input } = part;
+  const { proposal } = part.output.result;
 
   switch (getToolName(part)) {
+    case ASK_QUESTION_TOOL_NAME:
+      return isString(input.question) &&
+        Array.isArray(input.options) &&
+        isNonEmptyArray(input.options)
+        ? {
+            toolCallId,
+            kind: 'question',
+            question: input as AskQuestionItem,
+          }
+        : null;
     case ASK_QUESTIONS_TOOL_NAME:
       return Array.isArray(input.questions) && isNonEmptyArray(input.questions)
         ? {
             toolCallId,
             kind: 'questions',
             questions: input.questions as AskQuestionItem[],
-          }
-        : null;
-    case PROPOSE_EMAIL_TOOL_NAME:
-      return isPlainObject(input.recipients) &&
-        isString(input.subject) &&
-        isString(input.body)
-        ? {
-            toolCallId,
-            kind: 'emailApproval',
-            email: input as ProposedEmail,
           }
         : null;
     case REQUEST_FORM_TOOL_NAME:
@@ -58,6 +59,37 @@ export const parsePendingToolCall = (
             fields: input.fields as RequestFormField[],
           }
         : null;
+    case PROPOSE_TOOL_CALL_TOOL_NAME: {
+      if (
+        isPlainObject(proposal) &&
+        isString(proposal.toolName) &&
+        isString(proposal.toolLabel) &&
+        isString(proposal.summary) &&
+        isString(proposal.template) &&
+        isPlainObject(proposal.arguments)
+      ) {
+        return {
+          toolCallId,
+          kind: 'toolCallApproval',
+          proposal: proposal as ProposedToolCall,
+        };
+      }
+
+      // the server answers a call recorded without its proposal as a generic one, so the card does too
+      return isString(input.toolName) &&
+        isString(input.summary) &&
+        isPlainObject(input.arguments)
+        ? {
+            toolCallId,
+            kind: 'toolCallApproval',
+            proposal: buildFallbackProposedToolCall({
+              toolName: input.toolName,
+              summary: input.summary,
+              arguments: input.arguments,
+            }),
+          }
+        : null;
+    }
     default:
       return null;
   }

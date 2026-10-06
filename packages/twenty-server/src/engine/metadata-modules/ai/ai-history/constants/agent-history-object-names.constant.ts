@@ -4,5 +4,4 @@ export const AGENT_HISTORY_OBJECT_NAMES = [
   'agentTurn',
   'agentMessage',
   'agentMessagePart',
-  'agentTurnEvaluation',
 ] as const;

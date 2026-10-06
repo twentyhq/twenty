@@ -135,8 +135,7 @@ const CtaRow = styled.div`
   width: 100%;
 `;
 
-// Enterprise inherits the Organization cell unless a row overrides it: the
-// tier is a superset, so unmarked rows read as "same as Organization".
+// Enterprise inherits the Organization cell unless a row overrides it.
 function resolveCell(
   row: PlanTableFeatureRowDataType,
   columnId: PlanTableTierId,
