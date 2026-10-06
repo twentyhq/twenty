@@ -6,7 +6,7 @@ import { getConfigPath } from '@/config/get-config-path';
 import { getCredentialKind } from '@/config/get-credential-kind';
 import { readConfig } from '@/config/read-config';
 import { formatTable } from '@/output/format-table';
-import { colorText, dimText } from '@/output/style';
+import { colorText, commandText, dimText } from '@/output/style';
 
 export const runRemoteListCommand: CommandRun = async () => {
   const config = await readConfig(getConfigPath());
@@ -25,7 +25,7 @@ export const runRemoteListCommand: CommandRun = async () => {
   if (remotes.length === 0) {
     return {
       data: { remotes, defaultRemote: null },
-      human: `No saved remotes. ${dimText('Sign in with: ')}${colorText('cyan', 'twenty auth login --with-token --url <url> --name <name>')}`,
+      human: `No saved remotes. ${dimText('Sign in with: ')}${commandText('twenty auth login --with-token --url <url> --name <name>')}`,
     };
   }
 

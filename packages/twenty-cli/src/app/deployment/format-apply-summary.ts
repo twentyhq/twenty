@@ -7,11 +7,15 @@ import { type AppUploadProgress } from '@/app/deployment/types/app-upload-progre
 import { formatDataValue } from '@/data/format-data-value';
 import { colorText, dimText, formatSuccessLine } from '@/output/style';
 
-const formatChangeCount = (
-  count: number,
-  label: string,
-  color: 'green' | 'yellow' | 'red',
-) => {
+const formatChangeCount = ({
+  count,
+  label,
+  color,
+}: {
+  count: number;
+  label: string;
+  color: 'green' | 'yellow' | 'red';
+}) => {
   const text = `${count} ${label}`;
 
   return count === 0 ? dimText(text) : colorText(color, text);
@@ -36,9 +40,21 @@ export const formatApplySummary = ({
 }) => {
   const changes = isDefined(summary)
     ? [
-        formatChangeCount(summary.create, 'added', 'green'),
-        formatChangeCount(summary.update, 'changed', 'yellow'),
-        formatChangeCount(summary.delete, 'deleted', 'red'),
+        formatChangeCount({
+          count: summary.create,
+          label: 'added',
+          color: 'green',
+        }),
+        formatChangeCount({
+          count: summary.update,
+          label: 'changed',
+          color: 'yellow',
+        }),
+        formatChangeCount({
+          count: summary.delete,
+          label: 'deleted',
+          color: 'red',
+        }),
       ].join(dimText(' · '))
     : dimText('changes not reported');
   const fileLabel = upload.fileCount === 1 ? 'file' : 'files';

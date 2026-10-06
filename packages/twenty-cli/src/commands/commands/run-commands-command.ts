@@ -4,7 +4,7 @@ import { COMMAND_CATALOG } from '@/catalog/command-catalog';
 import { getCommandName } from '@/catalog/get-command-name';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { formatTable } from '@/output/format-table';
-import { colorText, dimText } from '@/output/style';
+import { commandText, dimText } from '@/output/style';
 import { GLOBAL_FLAGS } from '@/program/constants/global-flags.constant';
 
 export const runCommandsCommand: CommandRun = async () => {
@@ -37,7 +37,7 @@ export const runCommandsCommand: CommandRun = async () => {
           { header: 'DESCRIPTION', value: (command) => command.description },
         ],
       }),
-      `${dimText(`${commands.length} commands · details: `)}${colorText('cyan', 'twenty <command> --help')}`,
+      `${dimText(`${commands.length} commands · details: `)}${commandText('twenty <command> --help')}`,
     ].join('\n'),
   };
 };

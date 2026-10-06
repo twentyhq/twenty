@@ -1,7 +1,9 @@
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { WriteStream } from 'node:tty';
 
+import { isDefined } from 'twenty-shared/utils';
 import {
   afterAll,
   afterEach,
@@ -129,7 +131,10 @@ beforeEach(() => {
   });
   setManifest();
 });
-afterEach(() => vi.clearAllMocks());
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.unstubAllEnvs();
+});
 afterAll(async () => server.close());
 
 describe('twenty app exec', () => {
@@ -403,6 +408,116 @@ describe('twenty app exec', () => {
     expect(result.stderr).toContain('Oops');
     expect(result.stderr).toContain('Hello from the function');
   });
+
+  it.each([
+    {
+      status: 'SUCCESS',
+      stdoutIsTTY: true,
+      stderrIsTTY: false,
+      noColor: false,
+    },
+    { status: 'ERROR', stdoutIsTTY: false, stderrIsTTY: true, noColor: false },
+    { status: 'ERROR', stdoutIsTTY: true, stderrIsTTY: false, noColor: false },
+    { status: 'ERROR', stdoutIsTTY: false, stderrIsTTY: true, noColor: true },
+  ])(
+    'styles $status on its destination stream (stdout terminal: $stdoutIsTTY, stderr terminal: $stderrIsTTY, NO_COLOR: $noColor)',
+    async ({ status, stdoutIsTTY, stderrIsTTY, noColor }) => {
+      vi.stubEnv('FORCE_COLOR', undefined);
+      vi.stubEnv('NO_COLOR', noColor ? '1' : undefined);
+      vi.stubEnv('NODE_DISABLE_COLORS', undefined);
+      vi.stubEnv('CI', undefined);
+      vi.stubEnv('TERM', 'xterm-256color');
+      executionResult = {
+        data: {
+          executeOneLogicFunction: {
+            ...EXECUTION,
+            status,
+            error: status === 'ERROR' ? { errorMessage: 'Oops' } : null,
+          },
+        },
+      };
+      const descriptors = [process.stdout, process.stderr].map((stream) => ({
+        stream,
+        properties: {
+          isTTY: Object.getOwnPropertyDescriptor(stream, 'isTTY'),
+          getColorDepth: Object.getOwnPropertyDescriptor(
+            stream,
+            'getColorDepth',
+          ),
+        },
+      }));
+
+      try {
+        for (const { stream } of descriptors) {
+          Object.defineProperties(stream, {
+            isTTY: {
+              configurable: true,
+              value: stream === process.stdout ? stdoutIsTTY : stderrIsTTY,
+            },
+            getColorDepth: {
+              configurable: true,
+              value: WriteStream.prototype.getColorDepth,
+            },
+          });
+        }
+
+        const result = await run('--name', 'helloWorld');
+        const output = status === 'SUCCESS' ? result.stdout : result.stderr;
+        const isTerminal = status === 'SUCCESS' ? stdoutIsTTY : stderrIsTTY;
+
+        expect(result.exitCode).toBe(status === 'SUCCESS' ? 0 : 1);
+        expect(output).toContain('Hello from the function');
+
+        if (isTerminal && !noColor) {
+          expect(output).toContain(
+            status === 'SUCCESS'
+              ? '\u001b[32mSUCCESS\u001b[39m'
+              : '\u001b[31mERROR\u001b[39m',
+          );
+          expect(output).toContain('\u001b[1mLogs:\u001b[22m');
+        } else {
+          expect(output).toContain(`Status     ${status}`);
+          expect(output).not.toContain('\u001b[');
+        }
+
+        if (status === 'ERROR') {
+          expect(result.stdout).toBe('');
+        }
+      } finally {
+        for (const { stream, properties } of descriptors) {
+          for (const [name, descriptor] of Object.entries(properties)) {
+            if (isDefined(descriptor)) {
+              Object.defineProperty(stream, name, descriptor);
+            } else {
+              Reflect.deleteProperty(stream, name);
+            }
+          }
+        }
+      }
+    },
+  );
+
+  it.each(['SUCCESS', 'ERROR'])(
+    'keeps %s JSON output free of ANSI when colors are forced',
+    async (status) => {
+      vi.stubEnv('NO_COLOR', undefined);
+      vi.stubEnv('FORCE_COLOR', '1');
+      executionResult = {
+        data: {
+          executeOneLogicFunction: {
+            ...EXECUTION,
+            status,
+            error: status === 'ERROR' ? { errorMessage: 'Oops' } : null,
+          },
+        },
+      };
+
+      const result = await runJson('--name', 'helloWorld');
+
+      expect(result.exitCode).toBe(status === 'SUCCESS' ? 0 : 1);
+      expect(JSON.stringify(result.envelope)).not.toContain('\\u001b');
+    },
+  );
 
   it('preserves permission errors without retrying execution', async () => {
     executionResult = {

@@ -2,7 +2,7 @@ import { type AppInitNextStep } from '@/app/types/app-init-next-step.type';
 import { formatList } from '@/output/format-list';
 import {
   boldText,
-  colorText,
+  commandText,
   dimText,
   formatSuccessLine,
 } from '@/output/style';
@@ -33,7 +33,7 @@ export const formatAppInitSummary = ({
     boldText('Next steps'),
     ...nextSteps.map(
       ({ command, description }) =>
-        `  ${colorText('cyan', command.padEnd(commandWidth))}  ${dimText(`# ${description}`)}`,
+        `  ${commandText(command.padEnd(commandWidth))}  ${dimText(`# ${description}`)}`,
     ),
   ].join('\n');
 };

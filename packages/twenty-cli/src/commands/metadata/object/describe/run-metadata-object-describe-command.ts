@@ -7,7 +7,7 @@ import { formatDataValue } from '@/data/format-data-value';
 import { fetchMetadataInspection } from '@/metadata/fetch-metadata-inspection';
 import { formatMetadataOwner } from '@/metadata/format-metadata-owner';
 import { formatDetails } from '@/output/format-details';
-import { colorText } from '@/output/style';
+import { commandText } from '@/output/style';
 
 export const runMetadataObjectDescribeCommand: CommandRun<
   TargetCommandContext
@@ -39,7 +39,7 @@ export const runMetadataObjectDescribeCommand: CommandRun<
         ['System', String(object.isSystem)],
         ['Searchable', String(object.isSearchable)],
       ]),
-      `Fields: ${colorText('cyan', `twenty metadata field list ${object.namePlural}`)}`,
+      `Fields: ${commandText(`twenty metadata field list ${object.namePlural}`)}`,
     ].join('\n\n'),
   };
 };

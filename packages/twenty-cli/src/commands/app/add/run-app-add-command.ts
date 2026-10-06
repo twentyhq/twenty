@@ -8,7 +8,7 @@ import { resolveAppProject } from '@/app/project/resolve-app-project';
 import { readStringOption } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { CliError } from '@/output/cli-error';
-import { colorText, formatSuccessLine } from '@/output/style';
+import { commandText, formatSuccessLine } from '@/output/style';
 
 export const runAppAddCommand: CommandRun = async (context) => {
   const { options, signal, output } = context;
@@ -60,7 +60,7 @@ export const runAppAddCommand: CommandRun = async (context) => {
           ]
         : []),
       '',
-      `Review with ${colorText('cyan', 'twenty app plan')}, then run ${colorText('cyan', 'twenty app apply')}.`,
+      `Review with ${commandText('twenty app plan')}, then run ${commandText('twenty app apply')}.`,
     ].join('\n'),
   };
 };
