@@ -127,7 +127,9 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
              wv.steps, wv.status::text::core."workflowVersion_status_enum", wv."workflowId", cw.id, wv.id
            FROM "${schema}"."workflowVersion" wv
            JOIN core."workspace" workspace ON workspace.id = $1
-           JOIN core."workflow" cw ON cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = wv."workflowId"
+           JOIN "${schema}"."workflow" w ON w.id = wv."workflowId"
+           JOIN core."workflow" cw
+             ON cw.id = w."coreWorkflowId" AND cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = wv."workflowId"
            WHERE wv."deletedAt" IS NULL AND wv."coreWorkflowVersionId" IS NULL
              AND NOT EXISTS (
                SELECT 1 FROM core."workflowVersion" existing
@@ -276,7 +278,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       return;
     }
 
-    await this.runLegacyMigration({
+    await this.runSystemWorkspaceMigration({
       workspaceId,
       failureMessage: 'Failed to re-home the workflow commands',
       allFlatEntityOperationByMetadataName: {
@@ -353,7 +355,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
         })
       : undefined;
 
-    await this.runLegacyMigration({
+    await this.runSystemWorkspaceMigration({
       workspaceId,
       failureMessage: 'Failed to drop the legacy workflow objects',
       allFlatEntityOperationByMetadataName: {
@@ -414,7 +416,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       return;
     }
 
-    await this.runLegacyMigration({
+    await this.runSystemWorkspaceMigration({
       workspaceId,
       failureMessage: 'Failed to create the Go to Workflows command',
       allFlatEntityOperationByMetadataName: {
@@ -431,7 +433,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
     );
   }
 
-  private async runLegacyMigration({
+  private async runSystemWorkspaceMigration({
     workspaceId,
     failureMessage,
     allFlatEntityOperationByMetadataName,

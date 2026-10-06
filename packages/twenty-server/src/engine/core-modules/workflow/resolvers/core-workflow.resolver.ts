@@ -84,7 +84,7 @@ export class CoreWorkflowResolver {
   }): void {
     if (!isDefined(buildActorMetadataFromPrincipal(principal))) {
       throw new WorkflowQueryValidationException(
-        'No authenticated actor to attribute the workflow to',
+        'Workflow mutations require an authenticated user or application',
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`Authentication is required to perform this action`,

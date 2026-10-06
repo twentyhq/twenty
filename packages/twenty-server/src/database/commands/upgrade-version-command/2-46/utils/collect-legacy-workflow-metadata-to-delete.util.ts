@@ -12,6 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -22,12 +23,6 @@ export type LegacyWorkflowMetadataToDelete = {
   flatPageLayoutWidgetsToDelete: FlatPageLayoutWidget[];
   flatNavigationMenuItemsToDelete: FlatNavigationMenuItem[];
 };
-
-const getConfigurationFieldMetadataId = (
-  flatPageLayoutWidget: FlatPageLayoutWidget,
-): unknown =>
-  (flatPageLayoutWidget.configuration as { fieldMetadataId?: unknown } | null)
-    ?.fieldMetadataId;
 
 export const collectLegacyWorkflowMetadataToDelete = ({
   flatObjectMetadataMaps,
@@ -141,19 +136,19 @@ export const collectLegacyWorkflowMetadataToDelete = ({
     flatPageLayoutWidgetMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter((flatPageLayoutWidget) => {
-      const fieldMetadataId =
-        getConfigurationFieldMetadataId(flatPageLayoutWidget);
-
-      return (
-        typeof fieldMetadataId === 'string' &&
-        deletedFieldIds.has(fieldMetadataId) &&
+    .filter(
+      (flatPageLayoutWidget) =>
+        !isDefined(flatPageLayoutWidget.deletedAt) &&
+        flatPageLayoutWidget.configuration?.configurationType ===
+          WidgetConfigurationType.FIELD &&
+        deletedFieldIds.has(
+          flatPageLayoutWidget.configuration.fieldMetadataId,
+        ) &&
         !(
           isDefined(flatPageLayoutWidget.objectMetadataId) &&
           deletedObjectIds.has(flatPageLayoutWidget.objectMetadataId)
-        )
-      );
-    });
+        ),
+    );
 
   const deletedViewIds = new Set(
     Object.values(flatViewMaps.byUniversalIdentifier)
