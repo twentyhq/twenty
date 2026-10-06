@@ -209,6 +209,9 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
           const manifestBytes = await readFile(
             join(directory, 'manifest.json'),
           );
+          expect(JSON.parse(manifestBytes.toString())).toEqual(
+            json(actual.manifest),
+          );
           expect(actual.contentHash).toBe(
             createHash('sha256')
               .update(
@@ -232,6 +235,35 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
                   actual.files.find(
                     (file) => file.path === component.builtComponentPath,
                   )?.sha256,
+                );
+              }
+            }
+          }
+          const application = actual.manifest.application;
+          if (
+            isPlainObject(application) &&
+            isPlainObject(application.frontComponentSharedDependencies)
+          ) {
+            const sharedDependencies =
+              application.frontComponentSharedDependencies;
+            const artifact = actual.files.find(
+              (file) => file.path === sharedDependencies.builtPath,
+            );
+            expect(artifact).toBeDefined();
+            expect(sharedDependencies.builtChecksum).toBe(artifact?.sha256);
+          }
+          const logicFunctions = actual.manifest.logicFunctions;
+          if (Array.isArray(logicFunctions)) {
+            for (const logicFunction of logicFunctions) {
+              if (isPlainObject(logicFunction)) {
+                const artifact = actual.files.find(
+                  (file) => file.path === logicFunction.builtHandlerPath,
+                );
+                if (!artifact) throw new Error('Missing function artifact');
+                expect(logicFunction.builtHandlerChecksum).toBe(
+                  createHash('md5')
+                    .update(await readFile(join(directory, artifact.path)))
+                    .digest('hex'),
                 );
               }
             }

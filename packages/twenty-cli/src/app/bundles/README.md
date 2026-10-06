@@ -65,11 +65,13 @@ The parity suite builds all five repository fixtures and a fresh CLI-created app
 through the SDK reference and the production CLI worker. The app has a copy of
 the real authoring SDK without its build/CLI exports or implementation files.
 Successful builds preserve manifest configuration and artifact paths/roles.
-Non-frontend files remain byte-identical to the SDK reference. Frontend bundle
-bytes and checksums are allowed to differ: dedicated tests verify preserved
+Non-frontend files are compared byte for byte, except for `manifest.json` and
+source maps. Frontend bundle bytes and checksums are allowed to differ: dedicated tests verify preserved
 string literals, resolved CSS assets and live shared-dependency bindings. Every
-CLI artifact's size/checksum, its manifest reference and the snapshot content
-hash are checked against the actual bytes. The invalid fixture fails in both
+CLI artifact's size/checksum and the snapshot content hash are checked against
+the actual bytes. Tests also verify the manifest references for function, component
+and shared-dependency bundles, and compare the serialized manifest with the
+worker's manifest result. The invalid fixture fails in both
 pipelines. The fresh CLI template's test setup typechecks with an authoring-only SDK.
 
 Source-map comparisons for unchanged bundles resolve paths against each map's

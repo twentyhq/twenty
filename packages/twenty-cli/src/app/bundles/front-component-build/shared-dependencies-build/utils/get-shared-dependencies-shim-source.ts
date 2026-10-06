@@ -16,6 +16,10 @@ export const getSharedDependenciesShimSource = ({
     ...(exportNames.hasDefaultExport ? ['default'] : []),
   ];
 
+  if (names.length === 0) {
+    return `import ${JSON.stringify(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER)};`;
+  }
+
   return names
     .map(
       (name, index) =>
