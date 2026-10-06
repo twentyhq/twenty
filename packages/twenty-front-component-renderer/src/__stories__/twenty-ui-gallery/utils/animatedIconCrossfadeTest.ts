@@ -16,8 +16,10 @@ export const animatedIconCrossfadeTest: TwentyUiGalleryPlayFunction = async (
   expect(icon).toHaveAttribute('data-composed', 'crossfade');
   expect(icon.getBoundingClientRect().width).toBe(16);
   expect(icon.getBoundingClientRect().height).toBe(16);
-  expect(getComputedStyle(active.parentElement!).opacity).toBe('0');
-  expect(getComputedStyle(inactive.parentElement!).opacity).toBe('1');
+  await waitFor(() => {
+    expect(getComputedStyle(active.parentElement!).opacity).toBe('0');
+    expect(getComputedStyle(inactive.parentElement!).opacity).toBe('1');
+  });
 
   await userEvent.click(
     canvas.getByRole('button', { name: 'Toggle selection' }),
