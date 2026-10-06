@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  convertEmailBodyToEmailDocument,
   getEmailProvidersForOperation,
   isDefined,
   isNonEmptyArray,
@@ -439,8 +440,17 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
+    const bodyConversionResult = convertEmailBodyToEmailDocument(body ?? '');
+
+    if (!bodyConversionResult.success) {
+      throw new EmailToolException(
+        `Invalid outbound email document: ${bodyConversionResult.error}`,
+        EmailToolExceptionCode.INVALID_EMAIL_BODY,
+      );
+    }
+
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(body ?? '');
+      await compileOutboundEmailContent(bodyConversionResult.document);
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =

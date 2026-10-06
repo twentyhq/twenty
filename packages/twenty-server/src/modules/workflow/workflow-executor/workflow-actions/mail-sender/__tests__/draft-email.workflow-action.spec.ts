@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -110,7 +111,13 @@ describe('DraftEmailWorkflowAction', () => {
     });
 
     expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
-      expect.objectContaining({ body: 'John' }),
+      expect.objectContaining({
+        body: JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+          content: [{ type: 'htmlDocument', attrs: { html: 'John' } }],
+        }),
+      }),
       expect.objectContaining({ workspaceId: 'workspace-1' }),
     );
   });

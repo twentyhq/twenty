@@ -1,6 +1,7 @@
 import { type EmailDocument } from 'twenty-shared/utils';
 
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 
 const compileDocument = async (document: EmailDocument): Promise<string> =>
   (await compileOutboundEmailContent(document)).html;
@@ -232,20 +233,6 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('alt="Banner"');
   });
 
-  it('should reject unknown structured nodes before rendering', async () => {
-    await expect(
-      compileOutboundEmailContent({
-        type: 'doc',
-        content: [
-          {
-            type: 'someFutureNode',
-            content: [{ type: 'text', text: 'lost' }],
-          },
-        ],
-      } as unknown as EmailDocument),
-    ).rejects.toThrow('Invalid outbound email document');
-  });
-
   it('should sanitize structured and legacy HTML with the same policy', async () => {
     const structured = await compileDocument({
       type: 'doc',
@@ -258,11 +245,19 @@ describe('compileOutboundEmailContent', () => {
         },
       ],
     });
-    const legacy = await compileOutboundEmailContent(
-      '<a href="javascript:alert(1)" onclick="alert(1)">Open</a><script>alert(1)</script>',
-    );
+    const standalone = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'htmlDocument',
+          attrs: {
+            html: '<a href="javascript:alert(1)" onclick="alert(1)">Open</a><script>alert(1)</script>',
+          },
+        },
+      ],
+    });
 
-    for (const html of [structured, legacy.html]) {
+    for (const html of [structured, standalone]) {
       expect(html).toContain('Open');
       expect(html).not.toContain('javascript:');
       expect(html).not.toContain('onclick');
@@ -270,13 +265,50 @@ describe('compileOutboundEmailContent', () => {
     }
   });
 
-  it('should derive plain text from the sanitized HTML', async () => {
+  it('should send a standalone HTML document verbatim, without the email shell', async () => {
     await expect(
-      compileOutboundEmailContent('<p>Hello <strong>Ada</strong></p>'),
+      compileOutboundEmailContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'htmlDocument',
+            attrs: { html: '<p>Hello <strong>Ada</strong></p>' },
+          },
+        ],
+      }),
     ).resolves.toEqual({
       html: '<p>Hello <strong>Ada</strong></p>',
       plainText: 'Hello Ada',
     });
+  });
+
+  it('should render an HTML document block mixed with other blocks inside the email shell', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'htmlDocument',
+          attrs: { html: '<p>From HTML</p>' },
+        },
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'From text' }],
+        },
+      ],
+    });
+
+    expect(html.startsWith('<!DOCTYPE html')).toBe(true);
+    expect(html).toContain('<p>From HTML</p>');
+    expect(html).toContain('From text');
+  });
+
+  it('should keep the line breaks of a plain-text document in both parts', async () => {
+    const { html, plainText } = await compileOutboundEmailContent(
+      buildEmailDocument('Dear Nick,\n\nThanks,\nJane'),
+    );
+
+    expect(html).toContain('Dear Nick,<br><br>Thanks,<br>Jane');
+    expect(plainText).toBe('Dear Nick,\n\nThanks,\nJane');
   });
 
   describe('unsafe URL schemes', () => {

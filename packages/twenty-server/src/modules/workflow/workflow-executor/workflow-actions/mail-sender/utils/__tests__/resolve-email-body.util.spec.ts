@@ -1,4 +1,12 @@
+import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
+
+const htmlDocument = (html: string) => ({
+  type: 'doc',
+  attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+  content: [{ type: 'htmlDocument', attrs: { html } }],
+});
 
 describe('resolveEmailBody', () => {
   it('should resolve only authored placeholders in structured documents', async () => {
@@ -80,11 +88,63 @@ describe('resolveEmailBody', () => {
     );
   });
 
-  it('should continue resolving legacy HTML bodies', async () => {
+  it('should inject raw values into a legacy HTML body kept as an HTML document', async () => {
+    const resolvedBody = await resolveEmailBody(
+      '<p>Hello {{trigger.name}}</p>',
+      { trigger: { name: '<b>Ada</b>' } },
+    );
+
+    expect(JSON.parse(resolvedBody)).toEqual(
+      htmlDocument('<p>Hello <b>Ada</b></p>'),
+    );
+  });
+
+  it('should send the value of a single-variable body as HTML', async () => {
+    const resolvedBody = await resolveEmailBody('{{code.body}}', {
+      code: { body: '<h1>Report</h1>' },
+    });
+
+    expect(JSON.parse(resolvedBody)).toEqual(htmlDocument('<h1>Report</h1>'));
+  });
+
+  it('should render the email document held by a single-variable body', async () => {
+    const storedDocument = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'From a record' }],
+        },
+      ],
+    };
+
+    const resolvedBody = await resolveEmailBody('{{record.body}}', {
+      record: { body: JSON.stringify(storedDocument) },
+    });
+
+    expect(JSON.parse(resolvedBody)).toEqual(storedDocument);
+  });
+
+  it('should reject a single-variable body holding an invalid email document', async () => {
     await expect(
-      resolveEmailBody('<p>Hello {{trigger.name}}</p>', {
-        trigger: { name: 'Ada' },
+      resolveEmailBody('{{record.body}}', {
+        record: {
+          body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+        },
       }),
-    ).resolves.toBe('<p>Hello Ada</p>');
+    ).rejects.toThrow('Invalid workflow email document');
+  });
+
+  it('should insert values raw into stored plain text and keep its line breaks', async () => {
+    const resolvedBody = await resolveEmailBody(
+      'Hi {{trigger.name}} & co\nBye',
+      {
+        trigger: { name: '<b>Ada</b>' },
+      },
+    );
+
+    expect(JSON.parse(resolvedBody)).toEqual(
+      htmlDocument('Hi <b>Ada</b> &amp; co<br>Bye'),
+    );
   });
 });

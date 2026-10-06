@@ -30,12 +30,14 @@ type CampaignBatchTagFamilyByContext = Record<
 
 const HTML_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
   html: 'htmlEscaped',
+  rawHtml: 'htmlEscaped',
   text: 'htmlEscaped',
   url: 'urlEncoded',
 };
 
 const PLAIN_TEXT_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
   html: 'htmlEscaped',
+  rawHtml: 'htmlEscaped',
   text: 'raw',
   url: 'urlEncoded',
 };
