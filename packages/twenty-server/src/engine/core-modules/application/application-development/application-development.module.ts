@@ -13,8 +13,6 @@ import { ApplicationExportResolver } from 'src/engine/core-modules/application/a
 import { ApplicationSchemaResolver } from 'src/engine/core-modules/application/application-development/application-schema.resolver';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -35,8 +33,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     CacheLockModule,
-    FeatureFlagModule,
-    FileStorageModule,
     FileUploadModule,
     PermissionsModule,
     ThrottlerModule,

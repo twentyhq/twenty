@@ -10,7 +10,6 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     UsageAnalyticsModule,
     UsageLimitModule,
     WorkspaceCacheModule,
-    WorkspaceEventEmitterModule,
   ],
   providers: [
     ApplicationRecurringChargeService,
