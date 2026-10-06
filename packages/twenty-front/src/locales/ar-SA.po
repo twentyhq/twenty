@@ -173,7 +173,7 @@ msgstr "{0, plural, zero {{years} سنة} one {{years} سنة} two {{years} سن
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, zero {لا توجد وظائف تعذّر حذفها} one {تعذّر حذف # وظيفة} two {تعذّر حذف # وظيفتين} few {تعذّر حذف # وظائف} many {تعذّر حذف # وظيفة} other {تعذّر حذف # وظيفة}}"
+msgstr "{0, plural, zero {تعذّر حذف # مهمة} one {تعذّر حذف مهمة واحدة} two {تعذّر حذف مهمتين} few {تعذّر حذف # مهام} many {تعذّر حذف # مهمة} other {تعذّر حذف # مهمة}}"
 
 #. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
@@ -185,7 +185,7 @@ msgstr "{0, plural, zero {لا توجد وظائف تعذّرت إعادة مح�
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
-msgstr "{0, plural, zero {# أشياء} one {# شيء} two {# شيئان} few {# أشياء} many {# أشياء} other {# أشياء}}"
+msgstr "{0, plural, zero {# كائن} one {# كائن} two {# كائنان} few {# كائنات} many {# كائنًا} other {# كائن}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -247,7 +247,7 @@ msgstr "{0} أيام"
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
 msgid "{0} fields"
-msgstr "{0} حقل"
+msgstr "الحقول: {0}"
 
 #. js-lingui-id: l8kqMU
 #. placeholder {0}: loadBalanceObjectMetadataItem.labelPlural
@@ -435,7 +435,7 @@ msgstr "{count, plural, zero {لا مشاهدات للصفحة} one {{formattedC
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} usage event} other {{formattedCount} usage events}}"
-msgstr ""
+msgstr "{count, plural, one {{formattedCount} حدث استخدام} two {{formattedCount} حدثا استخدام} few {{formattedCount} أحداث استخدام} many {{formattedCount} حدث استخدام} other {{formattedCount} حدث استخدام}}"
 
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -477,7 +477,7 @@ msgstr "{failedCount, plural, zero {لا مساحات عمل فاشلة} one {م
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
-msgstr "فشل تحميل {failedCount} ملف/ملفات"
+msgstr "فشل رفع {failedCount} ملف/ملفات"
 
 #. js-lingui-id: bPZh8X
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -512,7 +512,7 @@ msgstr "{formattedType} من {objectLabel}"
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, zero {ممنوح لـ {grantedBy} أشياء} one {ممنوح لـ {grantedBy} شيء} two {ممنوح لـ {grantedBy} شيئين} few {ممنوح لـ {grantedBy} أشياء} many {ممنوح لـ {grantedBy} أشياء} other {ممنوح لـ {grantedBy} أشياء}}"
+msgstr "{grantedBy, plural, zero {ممنوح لـ {grantedBy} كائن} one {ممنوح لـ {grantedBy} كائن} two {ممنوح لـ {grantedBy} كائن} few {ممنوح لـ {grantedBy} كائنات} many {ممنوح لـ {grantedBy} كائنًا} other {ممنوح لـ {grantedBy} كائن}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -554,7 +554,7 @@ msgstr "{invitationCount, plural, zero {لم يتم إرسال أي دعوات} 
 #. js-lingui-id: j9A2IB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {Delete {jobCount} Job} other {Delete {jobCount} Jobs}}"
-msgstr "{jobCount, plural, zero {حذف {jobCount} وظائف} one {حذف {jobCount} وظيفة} two {حذف {jobCount} وظيفتان} few {حذف {jobCount} وظائف} many {حذف {jobCount} وظائف} other {حذف {jobCount} وظائف}}"
+msgstr "{jobCount, plural, zero {حذف {jobCount} مهمة} one {حذف مهمة واحدة} two {حذف مهمتين} few {حذف {jobCount} مهام} many {حذف {jobCount} مهمة} other {حذف {jobCount} مهمة}}"
 
 #. js-lingui-id: 48w++B
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
@@ -564,12 +564,12 @@ msgstr "{jobCount, plural, zero {إعادة محاولة {jobCount} وظائف} 
 #. js-lingui-id: X78+Nn
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will permanently remove it from the queue. This action cannot be undone.} other {This will permanently remove them from the queue. This action cannot be undone.}}"
-msgstr "{jobCount, plural, zero {سيتم إزالة {jobCount} نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} one {سيتم إزالته نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} two {سيتم إزالتهم نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} few {سيتم إزالتهم نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} many {سيتم إزالتهم نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} other {سيتم إزالتهم نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.}}"
+msgstr "{jobCount, plural, zero {ستتم إزالتها نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} one {ستتم إزالتها نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} two {ستتم إزالتهما نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} few {ستتم إزالتها نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} many {ستتم إزالتها نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.} other {ستتم إزالتها نهائيًا من القائمة. لا يمكن التراجع عن هذا الإجراء.}}"
 
 #. js-lingui-id: QJYN9L
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
-msgstr "{jobCount, plural, zero {سيتم إعادة محاولة {jobCount} وظائف. سيتم تنفيذهم مجددًا من البداية.} one {سيتم إعادة محاولة الوظيفة المحددة. سيتم تنفيذها من البداية.} two {سيتم إعادة المحاولة للوظائف المحددة. سيتم تنفيذهم من البداية.} few {سيتم إعادة المحاولة للوظائف المحددة. سيتم تنفيذهم من البداية.} many {سيتم إعادة المحاولة للوظائف المحددة. سيتم تنفيذهم من البداية.} other {سيتم إعادة المحاولة للوظائف المحددة. سيتم تنفيذهم من البداية.}}"
+msgstr "{jobCount, plural, zero {ستتم إعادة محاولة المهام المحددة. سيُعاد تنفيذها من البداية.} one {ستتم إعادة محاولة المهمة المحددة. سيُعاد تنفيذها من البداية.} two {ستتم إعادة محاولة المهمتين المحددتين. سيُعاد تنفيذهما من البداية.} few {ستتم إعادة محاولة المهام المحددة. سيُعاد تنفيذها من البداية.} many {ستتم إعادة محاولة المهام المحددة. سيُعاد تنفيذها من البداية.} other {ستتم إعادة محاولة المهام المحددة. سيُعاد تنفيذها من البداية.}}"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
@@ -663,7 +663,7 @@ msgstr "{retriedCount, plural, zero {تم إعادة محاولة {retriedCount}
 #. js-lingui-id: hcRYEH
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, zero {تم إلغاء {revokedBy} أشياء} one {تم إلغاء {revokedBy} شيء} two {تم إلغاء {revokedBy} شيئين} few {تم إلغاء {revokedBy} أشياء} many {تم إلغاء {revokedBy} أشياء} other {تم إلغاء {revokedBy} أشياء}}"
+msgstr "{revokedBy, plural, zero {مُلغى لـ {revokedBy} كائن} one {مُلغى لـ {revokedBy} كائن} two {مُلغى لـ {revokedBy} كائن} few {مُلغى لـ {revokedBy} كائنات} many {مُلغى لـ {revokedBy} كائنًا} other {مُلغى لـ {revokedBy} كائن}}"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -1453,7 +1453,7 @@ msgstr "إضافة نسخة مخفية"
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 msgid "Add Block"
-msgstr "إضافة بلوك"
+msgstr "إضافة كتلة"
 
 #. js-lingui-id: sFY+gw
 #: src/modules/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner.tsx
@@ -1668,7 +1668,7 @@ msgstr "إضافة مصدر"
 #. js-lingui-id: 7YdkgZ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
-msgstr "اضافة حقل مخرجات"
+msgstr "إضافة حقل مخرجات"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2476,7 +2476,7 @@ msgstr "السماح بالتحرير"
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow email & password login for SSO bypass users."
-msgstr "السماح بتسجيل الدخول عبر البريد الإلكتروني وكلمة المرور للمستخدمين المتجاهلين لـ SSO."
+msgstr "السماح بتسجيل الدخول بالبريد الإلكتروني وكلمة المرور للمستخدمين المستثنين من SSO."
 
 #. js-lingui-id: +XmkDf
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2810,12 +2810,12 @@ msgstr "اسم API"
 #. js-lingui-id: lwCAhN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Plural)"
-msgstr "أسماء واجهة برمجة التطبيقات (جمع)"
+msgstr "اسم API (بصيغة الجمع)"
 
 #. js-lingui-id: KclpRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
-msgstr "اسم الواجهة برمجية (مفرد)"
+msgstr "اسم API (مفرد)"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -3193,7 +3193,7 @@ msgstr "التعيين لعضو"
 #. js-lingui-id: sqEW29
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Assignable to Agents"
-msgstr "محولة إلى الوكلاء"
+msgstr "قابل للتعيين للوكلاء"
 
 #. js-lingui-id: kOksfH
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -3208,7 +3208,7 @@ msgstr "قابل للتعيين لأعضاء مساحة العمل"
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Assigned {roleTargetDisplayName}"
-msgstr "معين {roleTargetDisplayName}"
+msgstr "تم تعيين {roleTargetDisplayName}"
 
 #. js-lingui-id: lxQ+5m
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -3622,7 +3622,7 @@ msgstr "بين {startMonth} و {endMonth}"
 #. js-lingui-id: N7WQ1K
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
 msgid "between {startTime} and {endTime}"
-msgstr "في {startTime} و {endTime}"
+msgstr "بين {startTime} و{endTime}"
 
 #. js-lingui-id: FE1Mq4
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -4123,7 +4123,7 @@ msgstr "لا يمكن تغيير أسماء API للكائنات القياسي�
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
-msgstr "هل لا يمكنك المسح؟ انسخ الـ"
+msgstr "تعذّر المسح؟ انسخ"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
@@ -4250,7 +4250,7 @@ msgstr "لا يمكن حذف طريقة العرض الوحيدة"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Cannot impersonate selected user"
-msgstr "لا يمكن التظاهر بالمستخدم المحدد"
+msgstr "لا يمكن انتحال صفة المستخدم المحدد"
 
 #. js-lingui-id: lbmcW3
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
@@ -4455,7 +4455,7 @@ msgstr "تحقق من عمليات التشغيل الأخيرة لسير الع
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
-msgstr "التحقق من التحقق"
+msgstr "تحقق من التوثيق"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5316,7 +5316,7 @@ msgstr "تأكيد حذف دور {roleName}؟ لا يمكن التراجع عن 
 #. js-lingui-id: kZkFSm
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm downgrade"
-msgstr "تأكيد الترقية"
+msgstr "تأكيد خفض الخطة"
 
 #. js-lingui-id: 28b8wO
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -5326,7 +5326,7 @@ msgstr "تأكيد تحديث الدور"
 #. js-lingui-id: DDbn3x
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm upgrade"
-msgstr "تأكيد التحديث"
+msgstr "تأكيد الترقية"
 
 #. js-lingui-id: OeMn6m
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -5953,7 +5953,7 @@ msgstr "عدّ الفارغ"
 #. js-lingui-id: sLDQbp
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr "عدد الكل"
+msgstr "عدد (خطأ)"
 
 #. js-lingui-id: DzRsDJ
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -5963,7 +5963,7 @@ msgstr "عدّ غير الفارغ"
 #. js-lingui-id: ft6dHY
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr "احتساب العدد الصحيح"
+msgstr "عدد (صحيح)"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -6167,7 +6167,7 @@ msgstr "إنشاء حقل اختيار"
 #. js-lingui-id: jmetDx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Create Select..."
-msgstr "إنشاء اختيار..."
+msgstr "إنشاء حقل Select..."
 
 #. js-lingui-id: Z+6PPA
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
@@ -6384,7 +6384,7 @@ msgstr "قرمزي"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Cron"
-msgstr "كرون"
+msgstr "Cron"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -6908,7 +6908,7 @@ msgstr "يوم"
 #. js-lingui-id: ahA8fy
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day of the week"
-msgstr "يوم من الأسبوع"
+msgstr "يوم الأسبوع"
 
 #. js-lingui-id: J/Upwb
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -7535,7 +7535,7 @@ msgstr "سطح المكتب"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
-msgstr "تدمير"
+msgstr "حذف نهائي"
 
 #. js-lingui-id: YI3c7h
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -7545,7 +7545,7 @@ msgstr "إتلاف {objectLabelPlural}"
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Destroy Records on All Objects"
-msgstr "إتلاف السجلات في جميع العناصر"
+msgstr "حذف السجلات نهائيًا في جميع الكائنات"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -7696,7 +7696,7 @@ msgstr "الاكتشاف على {defaultDomain}"
 #. js-lingui-id: 3gfpE2
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
 msgid "Dismiss AI setup prompt"
-msgstr "رفض مطالبة إعداد الذكاء الاصطناعي"
+msgstr "إخفاء تنبيه إعداد الذكاء الاصطناعي"
 
 #. js-lingui-id: Ldgs6e
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -9965,7 +9965,7 @@ msgstr "فشل رفع الملف \"{fileNameForError}\": {errorMessage}"
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
-msgstr "فشل في تحميل الملف: {fileName}"
+msgstr "فشل رفع الملف: {fileName}"
 
 #. js-lingui-id: Lx8/KQ
 #: src/modules/onboarding/components/OnboardingProfilePictureUploader.tsx
@@ -10315,17 +10315,17 @@ msgstr "إنهاء"
 #. js-lingui-id: O9Sink
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Finish editing the layout to expand chat"
-msgstr "أنه تحرير التخطيط لتوسيع الدردشة"
+msgstr "أنهِ تحرير التخطيط لتوسيع الدردشة"
 
 #. js-lingui-id: yJoako
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open AI"
-msgstr "أنه تحرير التخطيط لفتح الذكاء الاصطناعي"
+msgstr "أنهِ تحرير التخطيط لفتح الذكاء الاصطناعي"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
-msgstr "أنه تحرير التخطيط لفتح الإعدادات"
+msgstr "أنهِ تحرير التخطيط لفتح الإعدادات"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -10360,7 +10360,7 @@ msgstr "أول 10 خطوط"
 #. js-lingui-id: I3hko2
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 2 lines"
-msgstr "أول خطين ٢"
+msgstr "أول سطرين"
 
 #. js-lingui-id: BDDkm3
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -10596,7 +10596,7 @@ msgstr "مكوّن أمامي"
 #. js-lingui-id: NEVf2d
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 msgid "Front component details"
-msgstr "تفاصيل المكون الواجهية"
+msgstr "تفاصيل مكوّن الواجهة الأمامية"
 
 #. js-lingui-id: IvIKDS
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -10969,7 +10969,7 @@ msgstr "نطاقات OAuth الممنوحة"
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr "جراف كيو إل"
+msgstr "GraphQL"
 
 #. js-lingui-id: /YalkJ
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -11018,7 +11018,7 @@ msgstr "مجموعة"
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
-msgstr "المجموعة حسب"
+msgstr "تجميع حسب"
 
 #. js-lingui-id: tyyaxS
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
@@ -11777,7 +11777,7 @@ msgstr "زيادة القيمة"
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "index"
-msgstr "الفهرسات"
+msgstr "الفهرس"
 
 #. js-lingui-id: EIrE3l
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -11860,7 +11860,7 @@ msgstr "الإدخال (الموجّه)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Input must be in camel case and cannot start with a number"
-msgstr "يجب أن تكون الإدخالات بصيغة الحروف الصغيرة والكبيرة ولا يمكن أن تبدأ برقم"
+msgstr "يجب أن يكون الإدخال بصيغة camelCase ولا يمكن أن يبدأ برقم"
 
 #. js-lingui-id: VmBcTm
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -12298,7 +12298,7 @@ msgstr "ليست رابطًا صالحًا"
 #. js-lingui-id: MgIflq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid UUID"
-msgstr "ليست UUID صالحًا"
+msgstr "ليس معرّف UUID صالحًا"
 
 #. js-lingui-id: ldI7NO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -12323,7 +12323,7 @@ msgstr "هو اليوم{timeZoneAbbreviationSuffix}"
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Issuer URI"
-msgstr "معرف URI المصدر"
+msgstr "URI الجهة المُصدِرة"
 
 #. js-lingui-id: TulZsn
 #: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
@@ -12353,7 +12353,7 @@ msgstr "عناصر للتكرار عليها"
 #. js-lingui-id: J6OYmT
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Jade"
-msgstr "يشم"
+msgstr "يشمي"
 
 #. js-lingui-id: A1CyH/
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -12373,7 +12373,7 @@ msgstr "JetBrains AI / Junie"
 #. js-lingui-id: FVzmEZ
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 msgid "Job Actions"
-msgstr "إجراءات الوظيفة"
+msgstr "إجراءات المهمة"
 
 #. js-lingui-id: TH7loN
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -13157,7 +13157,7 @@ msgstr "إدراج"
 #. js-lingui-id: DL2sg0
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
-msgstr "قوائم"
+msgstr "إعلانات"
 
 #. js-lingui-id: C5bVie
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -13241,7 +13241,7 @@ msgstr "جارٍ تحميل رسائل البريد الإلكتروني"
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Loading jobs..."
-msgstr "جارٍ تحميل الوظائف..."
+msgstr "جارٍ تحميل المهام..."
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13558,7 +13558,7 @@ msgstr "إدارة سياسات الأمان"
 #. js-lingui-id: 49MfD1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Manage support access settings"
-msgstr "إدارة إعدادات دعم الوصول"
+msgstr "إدارة إعدادات وصول الدعم"
 
 #. js-lingui-id: WJEtVC
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -13957,7 +13957,7 @@ msgstr "الحد الأدنى للمدى"
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Minimal"
-msgstr "ضئيل"
+msgstr "أدنى"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -14274,7 +14274,7 @@ msgstr "يجب أن تكون مصفوفة من الكائنات تحتوي عل�
 #. js-lingui-id: 5rovyq
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "must be an array of valid emails"
-msgstr "يجب أن تكون مصفوفة من بريد إلكتروني صالح"
+msgstr "يجب أن تكون مصفوفة من عناوين بريد إلكتروني صالحة"
 
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -14373,7 +14373,7 @@ msgstr "اسم مفتاح API الخاص بك"
 #. js-lingui-id: J7w8lI
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Name of your workspace"
-msgstr "اسم فضائك"
+msgstr "اسم مساحة العمل"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -15009,7 +15009,7 @@ msgstr "لم يتم العثور على بيانات"
 #. js-lingui-id: 5K0pqs
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Date field"
-msgstr "لا حقل تاريخ"
+msgstr "لا يوجد حقل تاريخ"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -15175,7 +15175,7 @@ msgstr "لا يوجد نشاط مطابق"
 #. js-lingui-id: Dfn8RY
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "No matching people or roles"
-msgstr "لا توجد أشخاص أو أدوار مطابقة"
+msgstr "لا يوجد أشخاص أو أدوار مطابقة"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -16096,7 +16096,7 @@ msgstr "لا تتوفّر في خطتك الحالية سوى سجلات الت�
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
-msgstr "لا يمكن المطالبة بالتطبيقات إلا إذا كانت منشورة على npm بهذه الطريقة."
+msgstr "لا يمكن بهذه الطريقة المطالبة إلا بالتطبيقات المنشورة على npm."
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -16852,7 +16852,7 @@ msgstr "النسبة المئوية"
 #. js-lingui-id: yIK1GU
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent empty"
-msgstr "النسبة المئوية الفارغة"
+msgstr "نسبة الفارغة"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -17352,7 +17352,7 @@ msgstr "خاص"
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Pro"
-msgstr "محترف"
+msgstr "Pro"
 
 #. js-lingui-id: 977k6M
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17928,7 +17928,7 @@ msgstr "تم نسخ رابط إعادة التوجيه إلى الحافظة"
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirection URI"
-msgstr "عنوان وموقع إعادة التوجيه"
+msgstr "عنوان URI لإعادة التوجيه"
 
 #. js-lingui-id: lCF0wC
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -18499,7 +18499,7 @@ msgstr "تنسيق الاستجابة"
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
-msgstr "استراحة"
+msgstr "REST"
 
 #. js-lingui-id: oC2l7f
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -19083,7 +19083,7 @@ msgstr "ابحث عن لغة..."
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Search a limit"
-msgstr "البحث عن حدّ أقصى."
+msgstr "ابحث عن حد"
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -19523,17 +19523,17 @@ msgstr "اعرض بنية بياناتك كمخطط تفاعلي"
 #. js-lingui-id: Hhnssf
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Seeded"
-msgstr "مُهيأ"
+msgstr "مُضاف مسبقًا"
 
 #. js-lingui-id: AhNP40
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Seek"
-msgstr "تقديم سريع"
+msgstr "الانتقال إلى موضع"
 
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
-msgstr "تقديم التسجيل إلى {formattedStartTimestamp}"
+msgstr "الانتقال في التسجيل إلى {formattedStartTimestamp}"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -20209,7 +20209,7 @@ msgstr "هل ينبغي أن يؤدي تغيير تسمية الحقل أيضا�
 #. js-lingui-id: WFtdWr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
-msgstr "هل يجب أن يؤدي تغيير مسمى العنصر أيضاً إلى تغيير الواجهة برمجية؟"
+msgstr "هل يجب أن يؤدي تغيير تسمية الكائن إلى تغيير اسم API أيضًا؟"
 
 #. js-lingui-id: zasxcV
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -21302,7 +21302,7 @@ msgstr "مزامنة التسمية واسم واجهة برمجة التطبي�
 #. js-lingui-id: WZ6bN9
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Synchronize Objects Labels and API Names"
-msgstr "مزامنة مسميات العناصر وأسماء الواجهات برمجية"
+msgstr "مزامنة تسميات الكائنات وأسماء API"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -22439,7 +22439,7 @@ msgstr "تبديل كافة المجلدات"
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
-msgstr "التبديل بين جميع أذونات العناصر"
+msgstr "تبديل جميع أذونات الكائنات"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -22574,7 +22574,7 @@ msgstr "إجمالي التكلفة"
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Total Jobs"
-msgstr "إجمالي الوظائف"
+msgstr "إجمالي المهام"
 
 #. js-lingui-id: /kXBrK
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -22697,7 +22697,7 @@ msgstr "الخطة التجريبية"
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/hooks/useWorkflowNodeLabel.ts
 msgid "Trigger"
-msgstr "تحفيز"
+msgstr "المشغّل"
 
 #. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -22788,7 +22788,7 @@ msgstr "التركية"
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Turn"
-msgstr "الدورة"
+msgstr "الجولة"
 
 #. js-lingui-id: qsUXL3
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -22844,7 +22844,7 @@ msgstr "يملأ Twenty كل مستوى بأفضل نموذج يلبي متطل�
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
-msgstr "تويتر/X بحث"
+msgstr "بحث Twitter/X"
 
 #. js-lingui-id: 6HI/Yp
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -23500,7 +23500,7 @@ msgstr "جارٍ التحديث..."
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Upgrade"
-msgstr "تحديث"
+msgstr "ترقية"
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -23609,7 +23609,7 @@ msgstr "رفع"
 #. js-lingui-id: 7OP1Xi
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Upload .xlsx, .xls or .csv file"
-msgstr "تحميل ملف .xlsx أو .xls أو .csv"
+msgstr "رفع ملف .xlsx أو .xls أو .csv"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -24245,7 +24245,7 @@ msgstr "عرض الفواتير"
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
 msgid "View Jobs"
-msgstr "عرض الوظائف"
+msgstr "عرض المهام"
 
 #. js-lingui-id: sAPirx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
@@ -24359,7 +24359,7 @@ msgstr "المجموعات المرئية"
 #. js-lingui-id: i1PB0P
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Visible to you"
-msgstr "مرئي لديك"
+msgstr "مرئي لك"
 
 #. js-lingui-id: 6n7jtr
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -24374,7 +24374,7 @@ msgstr "تصوّر نموذج البيانات"
 #. js-lingui-id: Ii6BOL
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
-msgstr "مقارنة بوضع المتوازن"
+msgstr "مقارنة بالوضع المتوازن"
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -24394,7 +24394,7 @@ msgstr "في انتظار"
 #. js-lingui-id: iKFXyT
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting Children"
-msgstr "انتظار الأطفال"
+msgstr "بانتظار المهام الفرعية"
 
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -24629,7 +24629,7 @@ msgstr "حدود معدل خطافات الويب"
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Webhooks"
-msgstr "الويب هوكس"
+msgstr "Webhooks"
 
 #. js-lingui-id: On0aF2
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -25225,7 +25225,7 @@ msgstr "أنت"
 #. js-lingui-id: lWUeEt
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to the workspace {workspaceDisplayName}"
-msgstr "أنت بالفعل تنتمي إلى فضاء العمل {workspaceDisplayName}"
+msgstr "أنت تنتمي بالفعل إلى مساحة العمل {workspaceDisplayName}"
 
 #. js-lingui-id: Q1CQiy
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts

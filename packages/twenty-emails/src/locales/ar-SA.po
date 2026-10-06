@@ -266,7 +266,7 @@ msgstr "للاحتفاظ بمساحة عملك وكل ما أنشأته، أضِ
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
-msgstr "Twenty.com، مؤسسة لنشر الفائدة العامة"
+msgstr "Twenty.com, شركة ذات منفعة عامة"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
