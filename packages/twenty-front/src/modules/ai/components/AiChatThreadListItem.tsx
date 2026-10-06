@@ -53,13 +53,18 @@ const StyledLeading = styled.div`
 `;
 
 // The checkbox takes the avatar's place while the chat is checked, or while
-// the row is hovered or focused, so a click on it starts a selection
+// the row is hovered or focused; without hover, a tap on the avatar checks it
 const StyledCheckboxContainer = styled.div<{ $isChecked: boolean }>`
   display: ${({ $isChecked }) => ($isChecked ? 'flex' : 'none')};
 
-  ${StyledThreadItem}:hover &,
   ${StyledThreadItem}:focus-within & {
     display: flex;
+  }
+
+  @media (hover: hover) {
+    ${StyledThreadItem}:hover & {
+      display: flex;
+    }
   }
 `;
 
@@ -69,10 +74,16 @@ const StyledAvatarContainer = styled.div<{
 }>`
   display: ${({ $isChecked }) => ($isChecked ? 'none' : 'flex')};
 
-  ${StyledThreadItem}:hover &,
   ${StyledThreadItem}:focus-within & {
     display: ${({ $isCheckable, $isChecked }) =>
       $isCheckable || $isChecked ? 'none' : 'flex'};
+  }
+
+  @media (hover: hover) {
+    ${StyledThreadItem}:hover & {
+      display: ${({ $isCheckable, $isChecked }) =>
+        $isCheckable || $isChecked ? 'none' : 'flex'};
+    }
   }
 `;
 
@@ -183,16 +194,19 @@ export const AiChatThreadListItem = ({
         }
       }}
     >
-      <StyledLeading>
+      <StyledLeading
+        data-select-disable={isDefined(onCheckboxClick) || undefined}
+        onClick={
+          isDefined(onCheckboxClick)
+            ? (event) => {
+                event.stopPropagation();
+                onCheckboxClick(thread, event);
+              }
+            : undefined
+        }
+      >
         {isDefined(onCheckboxClick) && (
-          <StyledCheckboxContainer
-            $isChecked={isChecked}
-            data-select-disable
-            onClick={(event) => {
-              event.stopPropagation();
-              onCheckboxClick(thread, event);
-            }}
-          >
+          <StyledCheckboxContainer $isChecked={isChecked}>
             <Checkbox checked={isChecked} aria-label={t`Select chat`} />
           </StyledCheckboxContainer>
         )}
