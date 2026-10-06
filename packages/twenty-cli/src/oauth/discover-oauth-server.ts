@@ -16,7 +16,7 @@ const createUnavailableError = (apiUrl: string, reason: string) =>
   new CliError({
     code: 'OAUTH_UNAVAILABLE',
     message: `Browser sign-in is not available on ${apiUrl}: ${reason}`,
-    hint: `Use an API key instead: printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url ${apiUrl} --name <name>`,
+    hint: 'Retry this command with --with-token and pipe an API key on standard input.',
   });
 
 const parseHttpUrl = (value: unknown) => {

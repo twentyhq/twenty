@@ -56,7 +56,7 @@ const getRecoveryHint = ({
   outcome: AppApplyOutcome;
 }) => {
   if (outcome === 'not-started') {
-    return 'Fix the problem, then run twenty app apply again. It builds and previews from scratch.';
+    return 'Fix the problem, then run twenty app apply again. It rebuilds the app and requests a fresh plan.';
   }
 
   return `The ${phase} step may have changed the workspace. Run twenty app plan to see where it stands before applying again.`;
