@@ -61,8 +61,6 @@ jobs:
       - name: Server / Build
         run: npx nx build twenty-server
 
-      - name: Tune CI Postgres
-        uses: ./.github/actions/tune-ci-postgres
       - name: Create and setup database
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'

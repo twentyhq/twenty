@@ -84,9 +84,6 @@ runs:
         npx nx build twenty-shared
         npx nx build twenty-server
 
-    - name: Tune CI Postgres
-      if: inputs.source == 'local'
-      uses: ./.github/actions/tune-ci-postgres
     - name: Write server env and create databases
       if: inputs.source == 'local'
       shell: bash

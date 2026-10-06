@@ -123,8 +123,6 @@ jobs:
             node_modules/.cache
             packages/*/node_modules/.cache
 
-      - name: Tune CI Postgres
-        uses: ./.github/actions/tune-ci-postgres
       - name: Create and setup database
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
