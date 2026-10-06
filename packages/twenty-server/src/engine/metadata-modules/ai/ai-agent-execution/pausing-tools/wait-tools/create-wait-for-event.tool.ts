@@ -2,9 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { buildSecondWaitRefusalOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-second-wait-refusal-output.util';
-import { buildWaitPendingOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-wait-pending-output.util';
-import { type WorkflowAgentWaitSlot } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/workflow-agent-wait-slot.type';
+import { buildSecondWaitRefusalOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-second-wait-refusal-output.util';
+import { buildWaitPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-pending-output.util';
+import { type AgentWaitSlot } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/agent-wait-slot.type';
 
 const MAX_TIMEOUT_IN_MINUTES = 60 * 24 * 365;
 
@@ -37,9 +37,9 @@ const waitForEventInputSchema = z.object({
     ),
 });
 
-export const createWaitForEventTool = (waitSlot: WorkflowAgentWaitSlot) => ({
+export const createWaitForEventTool = (waitSlot: AgentWaitSlot) => ({
   description:
-    'Pause the workflow until a record is created, updated or deleted. You then continue with the ' +
+    'Pause until a record is created, updated or deleted. You then continue with the ' +
     'id of the record that changed, which you can read with your tools, or learn that the wait timed out.',
   inputSchema: waitForEventInputSchema,
   execute: async ({
@@ -58,7 +58,7 @@ export const createWaitForEventTool = (waitSlot: WorkflowAgentWaitSlot) => ({
     const eventName = `${objectName}.${action}`;
 
     return buildWaitPendingOutput({
-      message: `Waiting for ${eventName}; the workflow resumes when it happens.`,
+      message: `Waiting for ${eventName}; you continue when it happens.`,
       wait: {
         type: 'EVENT',
         eventName,

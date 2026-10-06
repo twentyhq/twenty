@@ -1,8 +1,8 @@
-import { createWorkflowAgentWaitTools } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/create-workflow-agent-wait-tools.util';
+import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 
-describe('createWorkflowAgentWaitTools', () => {
+describe('createAgentWaitTools', () => {
   it('refuses a second wait of the same execution so only one is pending', async () => {
-    const tools = createWorkflowAgentWaitTools();
+    const tools = createAgentWaitTools();
 
     await expect(
       tools.wait_for_event.execute({
@@ -18,13 +18,13 @@ describe('createWorkflowAgentWaitTools', () => {
 
   it('only keeps a field filter on updates, where events report changed fields', async () => {
     const createdEventWait =
-      await createWorkflowAgentWaitTools().wait_for_event.execute({
+      await createAgentWaitTools().wait_for_event.execute({
         objectName: 'company',
         action: 'created',
         updatedFields: ['name'],
       });
     const updatedEventWait =
-      await createWorkflowAgentWaitTools().wait_for_event.execute({
+      await createAgentWaitTools().wait_for_event.execute({
         objectName: 'company',
         action: 'updated',
         updatedFields: ['name'],
@@ -46,8 +46,8 @@ describe('createWorkflowAgentWaitTools', () => {
   });
 
   it('gives each execution its own wait', async () => {
-    const firstExecutionTools = createWorkflowAgentWaitTools();
-    const secondExecutionTools = createWorkflowAgentWaitTools();
+    const firstExecutionTools = createAgentWaitTools();
+    const secondExecutionTools = createAgentWaitTools();
 
     await firstExecutionTools.wait_for_duration.execute({
       durationInMinutes: 5,

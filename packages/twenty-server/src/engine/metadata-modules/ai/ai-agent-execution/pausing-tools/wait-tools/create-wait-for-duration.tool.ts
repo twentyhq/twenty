@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { buildSecondWaitRefusalOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-second-wait-refusal-output.util';
-import { buildWaitPendingOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-wait-pending-output.util';
-import { type WorkflowAgentWaitSlot } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/workflow-agent-wait-slot.type';
+import { buildSecondWaitRefusalOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-second-wait-refusal-output.util';
+import { buildWaitPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-pending-output.util';
+import { type AgentWaitSlot } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/agent-wait-slot.type';
 
 const MAX_DURATION_IN_MINUTES = 60 * 24 * 365;
 
@@ -15,9 +15,9 @@ const waitForDurationInputSchema = z.object({
     .describe('How long to wait, in minutes (e.g. 1440 for one day).'),
 });
 
-export const createWaitForDurationTool = (waitSlot: WorkflowAgentWaitSlot) => ({
+export const createWaitForDurationTool = (waitSlot: AgentWaitSlot) => ({
   description:
-    'Pause the workflow for a while, for example before following up. You continue once the time has passed.',
+    'Pause for a while, for example before following up. You continue once the time has passed.',
   inputSchema: waitForDurationInputSchema,
   execute: async ({
     durationInMinutes,

@@ -162,10 +162,13 @@ export class AgentRunnerService {
     return {
       status: 'PAUSED',
       isResumable: isRecorded,
-      pausedToolResults: lastStepToolResults.map(({ toolName, output }) => ({
-        toolName,
-        output,
-      })),
+      pausedToolResults: lastStepToolResults.map(
+        ({ toolCallId, toolName, output }) => ({
+          toolCallId,
+          toolName,
+          output,
+        }),
+      ),
     };
   }
 }

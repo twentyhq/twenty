@@ -2,10 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString, isString } from '@sniptt/guards';
 
-import {
-  ASK_QUESTION_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
-} from 'twenty-shared/ai';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
@@ -14,8 +10,6 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
@@ -33,11 +27,11 @@ import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/ut
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/application-bound-agent-excluded-tool-names.constant';
-import { WORKFLOW_AGENT_WAIT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-prompt.constant';
-import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
-import { createWorkflowAgentWaitTools } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/create-workflow-agent-wait-tools.util';
-import { buildWaitOutcomeToolOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-wait-outcome-tool-output.util';
-import { findAgentStepWait } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/find-agent-step-wait.util';
+import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
+import { buildAgentRunSystemPrompt } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/build-agent-run-system-prompt.util';
+import { createAgentRunPausingTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/create-agent-run-pausing-tools.util';
+import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
+import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { type WorkflowWaitResolution } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution.type';
 import { type WorkflowWaitResolutionInput } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution-input.type';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
@@ -200,20 +194,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       execution: {
         agent,
         messages,
-        baseSystemPrompt: canAskForHumanInput
-          ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
-          : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
-        pausingTools: {
-          ...createWorkflowAgentWaitTools(),
-          ...(canAskForHumanInput
-            ? {
-                [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                  isWorkspaceSetupThread: false,
-                }),
-                [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-              }
-            : {}),
-        },
+        baseSystemPrompt: buildAgentRunSystemPrompt({
+          baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
+          instructions: canAskForHumanInput
+            ? `${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
+            : null,
+          canWait: true,
+        }),
+        pausingTools: createAgentRunPausingTools({
+          canAskHumans: canAskForHumanInput,
+          canProposeToolCalls: canAskForHumanInput,
+          canWait: true,
+        }),
         canProposeToolCalls: canAskForHumanInput,
         actorContext: executionContext.isActingOnBehalfOfUser
           ? executionContext.initiator
@@ -249,7 +241,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       case 'AWAITING_ANSWER':
         return { wait: { type: 'ANSWER' } };
       case 'PAUSED': {
-        const wait = findAgentStepWait(outcome.pausedToolResults);
+        const wait = findAgentRunWait(outcome.pausedToolResults)?.condition;
 
         // Resuming continues the conversation, so without it the run would wait forever
         if (isDefined(wait) && outcome.isResumable) {
@@ -289,7 +281,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId: runInfo.workflowRunId,
         stepId: step.id,
       }),
-      toolNames: WORKFLOW_AGENT_WAIT_TOOL_NAMES,
+      toolNames: AGENT_WAIT_TOOL_NAMES,
       toolOutput: buildWaitOutcomeToolOutput(outcome),
     });
 
