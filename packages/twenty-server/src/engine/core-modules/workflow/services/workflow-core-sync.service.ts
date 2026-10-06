@@ -514,42 +514,43 @@ export class WorkflowCoreSyncService {
     workspaceId: string,
     coreWorkflowIds: string[],
   ): Promise<void> {
+    const persistedCoreWorkflowIds = (
+      await this.coreWorkflowRepository.find(workspaceId, {
+        where: { id: In(coreWorkflowIds) },
+        select: { id: true },
+      })
+    ).map(({ id }) => id);
+
+    if (persistedCoreWorkflowIds.length === 0) {
+      return;
+    }
+
     const { flatWorkflowMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
       );
 
-    const resolvedFlatWorkflows = coreWorkflowIds.map((coreWorkflowId) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: coreWorkflowId,
-        flatEntityMaps: flatWorkflowMaps,
-      }),
+    const resolvedFlatWorkflows = persistedCoreWorkflowIds.map(
+      (coreWorkflowId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: coreWorkflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        }),
     );
 
-    const missingCoreWorkflowIds = coreWorkflowIds.filter(
+    const unresolvedCoreWorkflowIds = persistedCoreWorkflowIds.filter(
       (_, index) => !isDefined(resolvedFlatWorkflows[index]),
     );
 
-    // gone from the table means the dual-write listener already deleted it; still there means a stale cache, so fail rather than orphan it
-    if (missingCoreWorkflowIds.length > 0) {
-      const stillPersisted = await this.coreWorkflowRepository.find(
-        workspaceId,
-        { where: { id: In(missingCoreWorkflowIds) }, select: { id: true } },
+    // still persisted but missing from the maps means a stale cache, so fail rather than orphan it
+    if (unresolvedCoreWorkflowIds.length > 0) {
+      throw new CoreWorkflowMetadataException(
+        `Core workflows ${unresolvedCoreWorkflowIds.join(', ')} are persisted but missing from the flat entity maps`,
+        CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
       );
-
-      if (stillPersisted.length > 0) {
-        throw new CoreWorkflowMetadataException(
-          `Core workflows ${stillPersisted.map(({ id }) => id).join(', ')} are persisted but missing from the flat entity maps`,
-          CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
-        );
-      }
     }
 
     const flatWorkflowsToDelete = resolvedFlatWorkflows.filter(isDefined);
-
-    if (flatWorkflowsToDelete.length === 0) {
-      return;
-    }
 
     await this.runCoreWorkflowMigration({
       workspaceId,
