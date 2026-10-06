@@ -28,8 +28,7 @@ export const FormRichTextFieldInput = ({
 }: FormRichTextFieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
-      // RICH_TEXT still exposes the legacy BlockNote array contract. Keep the
-      // compatibility projection here until that field is migrated to TipTap.
+      // TODO: drop once RICH_TEXT migrates off the legacy BlockNote array contract.
       blocknote: convertTipTapDocumentToBlockNote(value),
       markdown: null,
     });

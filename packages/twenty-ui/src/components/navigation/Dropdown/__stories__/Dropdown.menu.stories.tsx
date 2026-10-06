@@ -95,7 +95,8 @@ const playSubmenuTextEditing =
   };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Menu',
+  id: 'ui-components-dropdown-interactions-menu',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Menu',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
@@ -207,6 +208,26 @@ export const DisabledCommand: Story = {
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const OptionWithoutSelectionState: Story = {
+  render: () => (
+    <RecordActionsMenu>
+      <Dropdown.OptionItem onSelect={onDuplicate}>
+        Duplicate
+      </Dropdown.OptionItem>
+    </RecordActionsMenu>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openRecordActions(canvasElement);
+    const option = body.getByRole('menuitem', { name: 'Duplicate' });
+
+    expect(option).not.toHaveAttribute('aria-checked');
+    await userEvent.click(option);
+    expect(onDuplicate).toHaveBeenCalledOnce();
   },
 };
 

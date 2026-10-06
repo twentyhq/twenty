@@ -1,6 +1,7 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import {
   Dropdown,
   type DropdownProps,
@@ -8,6 +9,7 @@ import {
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export type CommandMenuItemDropdownProps = CommandMenuItemProps &
   Pick<
@@ -37,6 +39,9 @@ export const CommandMenuItemDropdown = ({
   const { setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
+  const setHasUserSelectedSidePanelListItem = useSetAtomState(
+    hasUserSelectedSidePanelListItemState,
+  );
 
   return (
     <Dropdown
@@ -59,8 +64,10 @@ export const CommandMenuItemDropdown = ({
       dropdownPlacement={dropdownPlacement}
       dropdownOffset={dropdownOffset}
       disableClickForClickableComponent={disabled}
+      // Otherwise the default selection moves back to the first item
       onOpen={() => {
         setSelectedItemId(id);
+        setHasUserSelectedSidePanelListItem(true);
       }}
       middlewareBoundaryPadding={{
         right: 0,

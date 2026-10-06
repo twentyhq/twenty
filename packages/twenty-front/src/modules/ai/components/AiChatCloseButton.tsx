@@ -1,19 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
-import { type ButtonVariant } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type AiChatCloseButtonProps = {
-  variant?: ButtonVariant;
-};
-
-export const AiChatCloseButton = ({
-  variant = 'outline',
-}: AiChatCloseButtonProps) => {
+export const AiChatCloseButton = () => {
   const { t } = useLingui();
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: false,
@@ -25,7 +18,7 @@ export const AiChatCloseButton = ({
   return (
     <IconButton
       size="sm"
-      variant={variant}
+      variant="outline"
       disabled={isWelcomeAnimationVisible}
       onClick={returnFromExpandedAiChat}
       aria-label={t`Close`}

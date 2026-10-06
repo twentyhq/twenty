@@ -12,7 +12,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconAlertTriangle,
   IconCalendar,

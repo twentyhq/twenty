@@ -8,7 +8,8 @@ import { type ReactNode } from 'react';
 
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
-import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -67,7 +68,7 @@ describe('AiChatSentMessageHandOffEffect', () => {
         { wrapper: Wrapper },
       );
 
-      dispatchAgentChatSendMessageEvent();
+      dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
 
       expect(jotaiStore.get(agentChatSentMessageHandOffState.atom)).toEqual(
         expectedHandOff,

@@ -165,10 +165,7 @@ export class MiddlewareService {
     try {
       data = await this.accessTokenService.validateTokenByRequest(request);
     } catch (error) {
-      // Clearing is a response side effect, never a reason to swallow: letting
-      // the request continue unauthenticated builds the schema without the
-      // workspace, so the client gets "Cannot query field" instead of an auth
-      // error and never learns its session was revoked.
+      // Never swallow: continuing unauthenticated yields "Cannot query field" instead of an auth error
       this.clearDeadSessionCookie(request, error);
 
       throw error;

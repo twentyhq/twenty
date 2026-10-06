@@ -30,9 +30,6 @@ const OBJECT_TRANSLATABLE_PROPERTIES =
 type ObjectTranslatableProperty =
   (typeof OBJECT_TRANSLATABLE_PROPERTIES)[number];
 
-// The translate-vs-rename save state machine behind the About form: a label
-// edit made through a translation prompts for intent; every other save is a
-// plain canonical update.
 export const useSaveUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
   formConfig,
@@ -71,9 +68,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
       isDefined(formConfig.formState.dirtyFields[property]),
     );
 
-  // Only dirty fields are ever sent: untouched values hold the viewer-locale
-  // resolved labels, and sending those back would silently turn a translation
-  // into a rename. Standard objects additionally cannot change their names.
+  // Only dirty fields are sent: untouched values hold viewer-locale labels, and sending them back would turn a translation into a rename
   const pickDirtyValues = (
     formValues: SettingsDataModelObjectAboutFormValues,
   ): Partial<SettingsDataModelObjectAboutFormValues> => {
@@ -177,8 +172,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
     const dirtyTranslatableProperties = pickDirtyTranslatableProperties();
 
-    // Editing a label the viewer sees through a translation is ambiguous:
-    // fix the translation, or rename the concept for every language? Ask.
+    // A label seen through a translation is ambiguous: fix the translation, or rename for every language?
     if (
       dirtyTranslatableProperties.length > 0 &&
       currentLocale !== SOURCE_LOCALE
@@ -225,15 +219,11 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
       property,
       value: pendingFormValues[property] ?? null,
     }));
-    // With label↔name sync on, the name fields were auto-derived from the
-    // label being translated (they are not editable directly in that state):
-    // a translation must not rename the API.
+    // With label/name sync on, the names derive from the translated label, and a translation must not rename the API
     const isPendingLabelSyncedWithName =
       pendingFormValues.isLabelSyncedWithName ?? isLabelSyncedWithName;
     const syncDerivedNameProperties: readonly string[] =
       isPendingLabelSyncedWithName ? ['nameSingular', 'namePlural'] : [];
-    // Unrelated dirty edits (icon, ...) ride along as canonical updates —
-    // only the label edits become locale-scoped.
     const dirtyNonTranslatableValues = Object.fromEntries(
       Object.entries(pickDirtyValues(pendingFormValues)).filter(
         ([key]) =>
@@ -252,8 +242,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
     setPendingFormValues(null);
 
     if (updateResult.status === 'successful') {
-      // The form must reflect what was saved: the unchanged API names, not
-      // the ones the sync derived from the translated label.
+      // Reflect the unchanged API names, not the ones sync derived from the translated label
       formConfig.reset(
         isPendingLabelSyncedWithName
           ? { ...pendingFormValues, nameSingular, namePlural }

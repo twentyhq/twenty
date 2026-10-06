@@ -1,4 +1,5 @@
-import { isRenderableSlot } from '../../Tabs/internal/isRenderableSlot';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
+
 import { type TabsTabProps } from '../../Tabs/types/TabsTabProps';
 
 import styles from './Tab.module.scss';

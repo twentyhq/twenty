@@ -236,10 +236,11 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
+    const user =
+      await this.authService.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+        getLoginTokenFromCredentialsInput,
+        workspace,
+      );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -1129,8 +1130,7 @@ export class AuthResolver {
         refreshToken,
       });
     } finally {
-      // This mutation is public and SameSite=Lax keeps the cookie off cross-site
-      // POSTs, so clearing unconditionally would let any site sign a visitor out.
+      // Public, and SameSite=Lax keeps the cookie off cross-site POSTs: clearing unconditionally lets any site sign visitors out
       if (
         isDefined(context.req.res) &&
         this.userSessionCookieService.hasSessionCookie(context.req)

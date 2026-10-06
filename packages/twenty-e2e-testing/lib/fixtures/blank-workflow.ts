@@ -287,7 +287,6 @@ export class WorkflowVisualizerPage {
       await openInRecordPageOption.click();
     }
 
-    // Close the dropdown
     await recordTableOptionsButton.click();
   }
 }

@@ -1,5 +1,394 @@
 [
   {
+    "name": "CountrySelect",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/country-select",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the trigger."
+      },
+      {
+        "name": "countries",
+        "type": "readonly CountryChoice[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared country choices with unique non-empty values, display labels, and optional decorative flags."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents opening and selection while the trigger stays focusable. An empty country list is also disabled."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. Generated when omitted."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional visible label that names the trigger and the popup."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "noCountryLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No country",
+        "description": "Text of the no-country choice, also displayed when no country is selected."
+      },
+      {
+        "name": "noResultsLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No results",
+        "description": "Text displayed when no choice matches the search."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports popup opening and closing."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(value: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Reports the selected choice value, or an empty string when no country is selected."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controls whether the country popup is open."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"aria-labelledby\" | \"keepMounted\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown popup positioning, portal, focus, and event options for host integration."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the trigger element while preserving its behavior and props."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Search",
+        "description": "Placeholder and accessible name of the search input."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Selected choice value. An empty string selects no country."
+      }
+    ]
+  },
+  {
+    "name": "CurrencyPicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/currency-picker",
+    "props": [],
+    "parts": [
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables opening the picker."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID forwarded to the trigger button."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Required currency code displayed beside the chevron. The application chooses its initial value and any fallback."
+          }
+        ]
+      },
+      {
+        "name": "Options",
+        "props": [
+          {
+            "name": "currencies",
+            "type": "readonly CurrencyPickerOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Available currency codes and names, in catalogue order. Each code must be unique. An option can be disabled."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables search and every currency option."
+          },
+          {
+            "name": "emptyLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "No results",
+            "description": "Text announced when no currencies match. Defaults to No results."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(code: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Called with the code chosen by pointer or keyboard. The application updates the selected value."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the non-interactive root div. Forward the supplied props and ref when rendering a custom component."
+          },
+          {
+            "name": "searchLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Search",
+            "description": "Search placeholder and accessible name. Defaults to Search."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Selected currency code. Its matching row appears first and is marked pressed."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ProgressRing",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/progress-ring",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name identifying the measured operation."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible label that names the measured operation."
+      },
+      {
+        "name": "aria-valuetext",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Human-readable progress value when a percentage alone is insufficient."
+      },
+      {
+        "name": "barColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color of the filled arc. Defaults to the blue theme color."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional preformatted value displayed before the ring."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the progress root."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the root element while preserving progress semantics."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Ring diameter: sm (14px) or md (16px). Defaults to md."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the progress root."
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled progress from 0 to 100. Out-of-range values are bounded and NaN renders as zero."
+      }
+    ]
+  },
+  {
+    "name": "MetricRow",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/metric-row",
+    "props": [
+      {
+        "name": "children",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required nonempty text label that also names the optional progress ring."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the row root."
+      },
+      {
+        "name": "progress",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional controlled progress from 0 to 100. Omitting it displays the value without a ring."
+      },
+      {
+        "name": "progressColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color of the filled arc when progress is provided."
+      },
+      {
+        "name": "progressValueText",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the row root element while preserving its contents."
+      },
+      {
+        "name": "startIcon",
+        "type": "IconComponent",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative icon before the label, rendered at 14px."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the row root."
+      },
+      {
+        "name": "value",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text."
+      }
+    ]
+  },
+  {
     "name": "Shortcut",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/shortcut",
@@ -457,7 +846,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS line color. Defaults to the medium border color."
+        "description": "CSS color for the line and text. Defaults to the medium border color."
       },
       {
         "name": "noMargin",
@@ -472,6 +861,13 @@
         "required": false,
         "defaultValue": "",
         "description": "Optional label displayed between two lines."
+      },
+      {
+        "name": "textPosition",
+        "type": "\"center\" | \"end\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Places the text between two lines, or at the end of a single line."
       },
       {
         "name": "visible",
@@ -645,8 +1041,8 @@
   },
   {
     "name": "LightIconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -778,8 +1174,8 @@
   },
   {
     "name": "IconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -904,8 +1300,8 @@
   },
   {
     "name": "MainButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/main-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/main-button",
     "props": [
       {
         "name": "className",
@@ -1016,8 +1412,8 @@
   },
   {
     "name": "LightButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-button",
     "props": [
       {
         "name": "className",
@@ -1627,6 +2023,160 @@
     ]
   },
   {
+    "name": "NumberStepper",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/number-stepper",
+    "props": [
+      {
+        "name": "allowOutOfRange",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Allows onValueChange to receive typed and pasted numbers outside the bounds. Native range validation still applies; buttons and keyboard adjustments remain bounded."
+      },
+      {
+        "name": "aria-roledescription",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Number field",
+        "description": "A user-friendly description of the input's role for assistive tech. This is a role\ndescription, not an accessible name — use `Field.Label` or `aria-label` to name the control."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: NumberFieldInputState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the visible input."
+      },
+      {
+        "name": "decrementLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Decrease value",
+        "description": "Accessible name for the decrement button."
+      },
+      {
+        "name": "defaultValue",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial number when the field owns its value."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables the input and both buttons, and omits the form value."
+      },
+      {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the form that owns the submitted numeric value."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible input. Generated when omitted."
+      },
+      {
+        "name": "incrementLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Increase value",
+        "description": "Accessible name for the increment button."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive maximum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive minimum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Name of the numeric value submitted with a form."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: number | null, eventDetails: NumberFieldRootChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents numeric changes while keeping the input focusable."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the visible input element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, NumberFieldInputState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Requires a numeric value for native form submission."
+      },
+      {
+        "name": "showButtons",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows the decrement and increment buttons."
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Amount added or subtracted by the buttons and arrow keys."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: NumberFieldInputState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the visible input."
+      },
+      {
+        "name": "value",
+        "type": "number | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled numeric value. Use null for an empty field."
+      }
+    ]
+  },
+  {
     "name": "Textarea",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/textarea",
@@ -2022,6 +2572,553 @@
         "required": false,
         "defaultValue": null,
         "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
+      }
+    ]
+  },
+  {
+    "name": "Autocomplete",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/autocomplete",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "actionsRef",
+            "type": "RefObject<AutocompleteRootActions | null>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the autocomplete.\nCall this after any externally controlled closing animation finishes."
+          },
+          {
+            "name": "autoHighlight",
+            "type": "boolean | \"always\"",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the first matching item is highlighted automatically.\n- `true`: highlight after the user types and keep the highlight while the query changes.\n- `'always'`: always highlight the first item."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the popup is initially open.\n\nTo render a controlled popup, use the `open` prop instead."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The uncontrolled input value of the autocomplete when it's initially rendered.\n\nTo render a controlled autocomplete, use the `value` prop instead."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "filter",
+            "type": "((item: TItem, query: string, itemToString?: ((item: TItem) => string) | undefined) => boolean) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Filter function used to match items against the input query."
+          },
+          {
+            "name": "filteredItems",
+            "type": "readonly TItem[] | readonly Group<TItem>[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Filtered items to display in the list.\nWhen provided, the list uses these items instead of filtering the `items` prop internally.\nWhen `items` is also provided, this array must preserve its flat or grouped structure.\nNullish entries are not supported, as in `items`.\nUse when you want to control filtering logic externally with the `useFilter()` hook."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the form that owns the internal input.\nUseful when the autocomplete is rendered outside the form."
+          },
+          {
+            "name": "grid",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether list items are presented in a grid layout.\nWhen enabled, arrow keys navigate across rows and columns inferred from DOM rows."
+          },
+          {
+            "name": "highlightItemOnHover",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether moving the pointer over items should highlight them.\nDisabling this prop allows CSS `:hover` to be differentiated from the `:focus` (`data-highlighted`) state."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The id of the component."
+          },
+          {
+            "name": "inline",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the list is rendered inline without using the component's own popup.\n\nSpecify `open` unconditionally in conjunction with this prop so the list is considered\nvisible: `<Autocomplete.Root inline open>`"
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to the hidden input element."
+          },
+          {
+            "name": "items",
+            "type": "readonly TItem[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Items to display in the list. Nullish entries are not supported."
+          },
+          {
+            "name": "itemToStringValue",
+            "type": "((itemValue: TItem) => string)",
+            "required": false,
+            "defaultValue": null,
+            "description": "When the item values are objects (`<Autocomplete.Item value={object}>`), this function converts the object value to a string representation for both display in the input and form submission.\nIf the shape of the object is `{ value, label }`, the label will be used automatically without needing to specify this prop."
+          },
+          {
+            "name": "keepHighlight",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the highlighted item should be preserved when the pointer leaves the list."
+          },
+          {
+            "name": "limit",
+            "type": "number",
+            "required": false,
+            "defaultValue": "-1",
+            "description": "The maximum number of items to display in the list."
+          },
+          {
+            "name": "locale",
+            "type": "LocalesArgument",
+            "required": false,
+            "defaultValue": null,
+            "description": "The locale to use for string comparison.\nDefaults to the user's runtime locale."
+          },
+          {
+            "name": "loopFocus",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether to loop keyboard focus back to the input when the end of the list is reached while using the arrow keys. The first item can then be reached by pressing <kbd>ArrowDown</kbd> again from the input, or the last item can be reached by pressing <kbd>ArrowUp</kbd> from the input.\nThe input is always included in the focus loop per [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).\nWhen disabled, focus does not move when on the last element and the user presses <kbd>ArrowDown</kbd>, or when on the first element and the user presses <kbd>ArrowUp</kbd>."
+          },
+          {
+            "name": "modal",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Determines if the popup enters a modal state when open.\n- `true`: user interaction is limited to the popup: document page scroll is locked and pointer interactions on outside elements are disabled.\n- `false`: user interaction with the rest of the document is allowed.\n\nOn touch devices, a `true` modal blocks outside taps but leaves the page scrollable unless the popup spans nearly the full viewport width, matching native iOS behavior."
+          },
+          {
+            "name": "mode",
+            "type": "\"both\" | \"inline\" | \"list\" | \"none\"",
+            "required": false,
+            "defaultValue": "list",
+            "description": "Controls how the autocomplete behaves with respect to list filtering and inline autocompletion.\n- `list` (default): items are dynamically filtered based on the input value. The input value does not change based on the active item.\n- `both`: items are dynamically filtered based on the input value, which will temporarily change based on the active item (inline autocompletion).\n- `inline`: items are static (not filtered), and the input value will temporarily change based on the active item (inline autocompletion).\n- `none`: items are static (not filtered), and the input value will not change based on the active item."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the field when a form is submitted."
+          },
+          {
+            "name": "onItemHighlighted",
+            "type": "((highlightedValue: TItem | undefined, eventDetails: HighlightEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: AutocompleteRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the popup is opened or closed."
+          },
+          {
+            "name": "onOpenChangeComplete",
+            "type": "((open: boolean) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called after any animations complete when the popup is opened or closed."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string, eventDetails: AutocompleteRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the input value of the autocomplete changes."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the popup is currently open. Use when controlled."
+          },
+          {
+            "name": "openOnInputClick",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the popup opens when clicking the input."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user should be unable to choose a different option from the popup."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user must choose a value before submitting a form."
+          },
+          {
+            "name": "submitOnItemClick",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether clicking an item should submit the autocomplete's owning form.\nBy default, clicking an item via a pointer or <kbd>Enter</kbd> key does not submit the owning form.\nUseful when the autocomplete is used as a single-field form search input."
+          },
+          {
+            "name": "value",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The input value of the autocomplete. Use when controlled."
+          },
+          {
+            "name": "virtualized",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the items are being externally virtualized."
+          }
+        ]
+      },
+      {
+        "name": "InputGroup",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: AutocompleteInputGroupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AutocompleteInputGroupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AutocompleteInputGroupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Input",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxInputState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"md\" | \"sm\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visual size of the input. Inside an InputGroup, the group size applies."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxInputState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "align",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": "start",
+            "description": "How to align the popup relative to the specified side."
+          },
+          {
+            "name": "alignOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
+          },
+          {
+            "name": "anchor",
+            "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Additional space to maintain from the edge of the collision boundary."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element the popup is portaled into. Defaults to the theme portal container."
+          },
+          {
+            "name": "finalFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the popup is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "initialFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((openType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the popup is opened.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxPopupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "side",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
+            "required": false,
+            "defaultValue": "bottom",
+            "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
+          },
+          {
+            "name": "sideOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "8",
+            "description": "Distance between the anchor and the popup in pixels.\nAlso accepts a function that returns the distance to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "width",
+            "type": "string | number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Width of the popup. Overrides its default minimum anchor width."
+          }
+        ]
+      },
+      {
+        "name": "List",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxListState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxListState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxListState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Item",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: AutocompleteItemState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text, placed according to `descriptionPlacement`."
+          },
+          {
+            "name": "descriptionPlacement",
+            "type": "\"end\" | \"inline\"",
+            "required": false,
+            "defaultValue": "inline",
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered after the content."
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "The index of the item in the list. Improves performance when specified by avoiding the need to calculate the index automatically from the DOM."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
+          },
+          {
+            "name": "onClick",
+            "type": "((event: BaseUIEvent<MouseEvent<HTMLDivElement, MouseEvent>>) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "An optional click handler for the item when selected.\nIt fires when clicking the item with the pointer, as well as when pressing `Enter` with the keyboard if the item is highlighted when the `Input` or `List` element has focus."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AutocompleteItemState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered before the content."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AutocompleteItemState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "value",
+            "type": "any",
+            "required": false,
+            "defaultValue": "null",
+            "description": "A unique value that identifies this item."
+          }
+        ]
+      },
+      {
+        "name": "Empty",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ComboboxEmptyState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxEmptyState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ComboboxEmptyState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -6165,8 +7262,8 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/components",
-    "slug": "feedback/toast",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast",
     "props": [
       {
         "name": "action",
@@ -6718,8 +7815,8 @@
   },
   {
     "name": "SettingsRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/settings-row",
+    "entryPoint": "twenty-ui/components/settings",
+    "slug": "components/settings/settings-row",
     "props": [
       {
         "name": "checked",
@@ -6815,9 +7912,125 @@
     ]
   },
   {
+    "name": "PhoneCountryPicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/phone-country-picker",
+    "props": [],
+    "parts": [
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Required accessible name for the country selector button."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "country",
+            "type": "PhoneCountryOption",
+            "required": false,
+            "defaultValue": null,
+            "description": "Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "300",
+            "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables the native trigger button."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+          },
+          {
+            "name": "openOnHover",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Options",
+        "props": [
+          {
+            "name": "countries",
+            "type": "readonly PhoneCountryOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Prepared choices with a unique value, localized label, calling code without a plus sign, and flag node. The supplied order is preserved after the matching selected country."
+          },
+          {
+            "name": "emptyLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "No results",
+            "description": "Status message shown when no country names match. Defaults to No results."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(value: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Called with the chosen country value. The host owns the selected country and phone number."
+          },
+          {
+            "name": "searchLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Search",
+            "description": "Accessible name and placeholder of the country search field. Defaults to Search."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Selected country value. Its row appears first only while it matches the search."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "Dropdown",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/dropdown",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/dropdown",
     "props": [],
     "parts": [
       {
@@ -6906,13 +8119,6 @@
             "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
           },
           {
-            "name": "handle",
-            "type": "PopoverHandle<unknown>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the trigger with a popover."
-          },
-          {
             "name": "id",
             "type": "string",
             "required": false,
@@ -6932,13 +8138,6 @@
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
-          },
-          {
-            "name": "payload",
-            "type": "unknown",
-            "required": false,
-            "defaultValue": null,
-            "description": "A payload to pass to the popover when it is opened."
           },
           {
             "name": "render",
@@ -7233,7 +8432,7 @@
             "type": "\"check\" | \"checkbox\" | \"none\"",
             "required": false,
             "defaultValue": null,
-            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`."
+            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted."
           },
           {
             "name": "nativeButton",
@@ -7259,9 +8458,9 @@
           {
             "name": "selected",
             "type": "boolean",
-            "required": true,
+            "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types."
+            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state."
           },
           {
             "name": "shortcut",
@@ -7701,6 +8900,13 @@
         "name": "Section",
         "props": [
           {
+            "name": "columns",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row."
+          },
+          {
             "name": "label",
             "type": "ReactNode",
             "required": false,
@@ -7769,9 +8975,44 @@
     ]
   },
   {
+    "name": "OverflowingList",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/overflowing-list",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Complete ordered list of elements, each with a stable key."
+      },
+      {
+        "name": "maxInlineCount",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+      },
+      {
+        "name": "overflowLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Show all items",
+        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
+      },
+      {
+        "name": "showOverflowCount",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
+      }
+    ]
+  },
+  {
     "name": "Section",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/section",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/section",
     "props": [],
     "parts": [
       {
@@ -7873,7 +9114,7 @@
   {
     "name": "CodeEditor",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor",
+    "slug": "components/code-editor/code-editor",
     "props": [
       {
         "name": "autoHeight",
@@ -7985,7 +9226,7 @@
   {
     "name": "CodeEditorHeader",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor-header",
+    "slug": "components/code-editor/code-editor-header",
     "props": [
       {
         "name": "leftNodes",
@@ -8012,8 +9253,8 @@
   },
   {
     "name": "TabButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tab-button",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/tab-button",
     "props": [
       {
         "name": "active",
@@ -8089,8 +9330,8 @@
   },
   {
     "name": "AvatarGroup",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/avatar-group",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/avatar-group",
     "props": [
       {
         "name": "avatars",
@@ -8152,8 +9393,8 @@
   },
   {
     "name": "CommandBlock",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/command-block",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/command-block",
     "props": [
       {
         "name": "button",
@@ -8173,8 +9414,8 @@
   },
   {
     "name": "JsonTree",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/json-tree",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/json-tree",
     "props": [
       {
         "name": "arrowButtonCollapsedLabel",
@@ -8250,8 +9491,8 @@
   },
   {
     "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/notification-counter",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/notification-counter",
     "props": [
       {
         "name": "className",
@@ -8278,8 +9519,8 @@
   },
   {
     "name": "TintedIconTile",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tinted-icon-tile",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/tinted-icon-tile",
     "props": [
       {
         "name": "color",
@@ -8313,8 +9554,8 @@
   },
   {
     "name": "Callout",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/callout",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/callout",
     "props": [
       {
         "name": "action",
@@ -8383,8 +9624,8 @@
   },
   {
     "name": "InlineBanner",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/inline-banner",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/inline-banner",
     "props": [
       {
         "name": "button",
@@ -8439,8 +9680,8 @@
   },
   {
     "name": "ToastProvider",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toast-provider",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast-provider",
     "props": [
       {
         "name": "children",
@@ -8460,8 +9701,8 @@
   },
   {
     "name": "Toaster",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toaster",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toaster",
     "props": [
       {
         "name": "container",
@@ -8487,9 +9728,128 @@
     ]
   },
   {
+    "name": "ImageInput",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/image-input",
+    "props": [
+      {
+        "name": "abortLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Abort",
+        "description": "Label for the Abort action."
+      },
+      {
+        "name": "accept",
+        "type": "string",
+        "required": false,
+        "defaultValue": "image/*",
+        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the root element."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables file selection, removal, and abort actions."
+      },
+      {
+        "name": "errorMessage",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Application error, displayed as an alert and associated with the selection controls."
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "isUploading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
+      },
+      {
+        "name": "onAbort",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onRemove",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
+      },
+      {
+        "name": "onUpload",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "removeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Remove",
+        "description": "Label for the Remove action."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom root element or render function. Keep a non-interactive root."
+      },
+      {
+        "name": "src",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Resolved image URL. Empty or failed images show the image placeholder."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline style applied to the root element."
+      },
+      {
+        "name": "uploadLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Upload",
+        "description": "Label for the preview and Upload action."
+      }
+    ]
+  },
+  {
     "name": "SearchInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/search-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/search-input",
     "props": [
       {
         "name": "aria-label",
@@ -8614,8 +9974,8 @@
   },
   {
     "name": "AnimatedIconCrossfade",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/animated-icon-crossfade",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/animated-icon-crossfade",
     "props": [
       {
         "name": "ActiveIcon",
@@ -8649,8 +10009,8 @@
   },
   {
     "name": "MenuItem",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item",
     "props": [
       {
         "name": "accent",
@@ -8838,8 +10198,8 @@
   },
   {
     "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-avatar",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-avatar",
     "props": [
       {
         "name": "accent",
@@ -8936,8 +10296,8 @@
   },
   {
     "name": "MenuItemDraggable",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-draggable",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-draggable",
     "props": [
       {
         "name": "accent",
@@ -9034,8 +10394,8 @@
   },
   {
     "name": "MenuItemSuggestion",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-suggestion",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-suggestion",
     "props": [
       {
         "name": "className",
@@ -9097,8 +10457,8 @@
   },
   {
     "name": "MenuPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-picker",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-picker",
     "props": [
       {
         "name": "className",

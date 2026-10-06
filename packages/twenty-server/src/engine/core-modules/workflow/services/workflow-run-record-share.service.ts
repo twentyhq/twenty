@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -8,11 +7,10 @@ import {
   WorkflowVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, type Repository } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { buildWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -33,25 +31,19 @@ type CoreWorkflowAccess = {
   creatorWorkspaceMemberId: string | null;
 };
 
-// A run carries its workflow's inputs and outputs, so it is exactly as private
-// as its core workflow. Its grants are derived from that workflow rather than
-// set by hand, which is why the whole derived set is replaced: a visibility
-// change or a new creator must also take away what the old state granted.
+// runs carry their workflow's data, so their grants are derived from it and replaced wholesale to revoke what the old state granted
 @Injectable()
 export class WorkflowRunRecordShareService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
-  // Held across both steps so that a run created meanwhile cannot be granted
-  // from the state this change replaces.
+  // lock held across both steps so a run created meanwhile is not granted from the replaced state
   async updateAccessThenSyncRuns<TResult>({
     workspaceId,
     coreWorkflowId,
@@ -205,15 +197,11 @@ export class WorkflowRunRecordShareService {
                 workspaceId,
                 transactionScope,
                 criteria: [
-                  // Grants written on the run's own behalf rather than by a
-                  // person sharing it: the ones derived here, and the creator
-                  // role an application's create writes, which would otherwise
-                  // keep everyone holding that role reading a private
-                  // workflow's runs.
+                  // grants written on the run's own behalf: those derived here, and the APPLICATION creator-role
+                  // grant, which would otherwise let that role read a private workflow's runs
                   { ...recordScope, sourceId: In(batch) },
                   { ...recordScope, rowCause: RecordShareRowCause.APPLICATION },
-                  // Whatever wrote it, a grant to everyone on a run means
-                  // workspace-visible, which only the core workflow decides.
+                  // a grant to everyone means workspace-visible, which only the core workflow decides
                   {
                     ...recordScope,
                     principalType: RecordSharePrincipalType.EVERYONE,
@@ -234,6 +222,31 @@ export class WorkflowRunRecordShareService {
         buildSystemAuthContext(workspaceId),
       );
     }
+  }
+
+  // a run's conversation goes to this member's inbox, until a workflow can name a team inbox
+  async findCreatorWorkspaceMemberId({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<string | null> {
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowId },
+        select: { id: true, createdByUserWorkspaceId: true },
+        withDeleted: true,
+      },
+    );
+
+    return isDefined(coreWorkflow?.createdByUserWorkspaceId)
+      ? this.resolveWorkspaceMemberId({
+          workspaceId,
+          userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+        })
+      : null;
   }
 
   private async resolveAccess({
@@ -276,28 +289,12 @@ export class WorkflowRunRecordShareService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<string | null> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: userWorkspaceId, workspaceId },
-      select: { id: true, userId: true },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return null;
-    }
-
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
-    const workspaceMemberId =
-      flatWorkspaceMemberMaps.idByUserId[userWorkspace.userId];
-    const workspaceMember = isDefined(workspaceMemberId)
-      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-      : undefined;
 
-    return isDefined(workspaceMember) && !isDefined(workspaceMember.deletedAt)
-      ? workspaceMember.id
-      : null;
+    return flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId] ?? null;
   }
 
   private findRuns({

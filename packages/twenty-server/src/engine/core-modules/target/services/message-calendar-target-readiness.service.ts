@@ -32,8 +32,7 @@ export class MessageCalendarTargetReadinessService {
   }
 
   async isReady(workspaceId: string): Promise<boolean> {
-    // During workspace upgrades the target objects may not exist yet;
-    // retain legacy reads until metadata sync creates both junctions.
+    // During upgrades the target objects may not exist yet, so keep legacy reads until metadata sync creates them.
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',

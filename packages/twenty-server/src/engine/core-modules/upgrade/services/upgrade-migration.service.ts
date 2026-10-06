@@ -238,17 +238,17 @@ export class UpgradeMigrationService {
       }>
     >(
       `
-        SELECT DISTINCT ON (latest_per_name."workspaceId")
-          latest_per_name."workspaceId",
-          latest_per_name.name,
-          latest_per_name.status,
-          latest_per_name."executedByVersion",
-          latest_per_name."errorMessage",
-          latest_per_name."createdAt",
-          latest_per_name."isInitial"
-        FROM (
-          SELECT DISTINCT ON ("workspaceId", name)
-            "workspaceId",
+        SELECT
+          workspace_ids."workspaceId",
+          latest.name,
+          latest.status,
+          latest."executedByVersion",
+          latest."errorMessage",
+          latest."createdAt",
+          latest."isInitial"
+        FROM unnest($1::uuid[]) AS workspace_ids("workspaceId")
+        CROSS JOIN LATERAL (
+          SELECT
             name,
             status,
             "executedByVersion",
@@ -256,10 +256,10 @@ export class UpgradeMigrationService {
             "createdAt",
             "isInitial"
           FROM core."upgradeMigration"
-          WHERE "workspaceId" = ANY($1)
-          ORDER BY "workspaceId", name, attempt DESC
-        ) latest_per_name
-        ORDER BY latest_per_name."workspaceId", latest_per_name."createdAt" DESC
+          WHERE "workspaceId" = workspace_ids."workspaceId"
+          ORDER BY "createdAt" DESC
+          LIMIT 1
+        ) latest
       `,
       [workspaceIds],
     );

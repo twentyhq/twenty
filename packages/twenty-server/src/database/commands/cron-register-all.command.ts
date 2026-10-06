@@ -13,6 +13,7 @@ import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/c
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
+import { AgentCronTriggerCronCommand } from 'src/engine/metadata-modules/ai/ai-agent-trigger/crons/agent-cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
@@ -37,6 +38,7 @@ import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workf
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
+import { WorkflowStepWaitSweepCronCommand } from 'src/modules/workflow/workflow-wait/crons/commands/workflow-step-wait-sweep.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -66,11 +68,13 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
     private readonly workflowCoreConsistencyCronCommand: WorkflowCoreConsistencyCronCommand,
+    private readonly workflowStepWaitSweepCronCommand: WorkflowStepWaitSweepCronCommand,
 
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly checkEmailingDomainVerificationCronCommand: CheckEmailingDomainVerificationCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly agentCronTriggerCronCommand: AgentCronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
@@ -180,8 +184,16 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.workflowCoreConsistencyCronCommand,
       },
       {
+        name: 'WorkflowStepWaitSweep',
+        command: this.workflowStepWaitSweepCronCommand,
+      },
+      {
         name: 'CronTrigger',
         command: this.cronTriggerCronCommand,
+      },
+      {
+        name: 'AgentCronTrigger',
+        command: this.agentCronTriggerCronCommand,
       },
       {
         name: 'CleanSuspendedWorkspaces',

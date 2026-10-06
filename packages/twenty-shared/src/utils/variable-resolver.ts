@@ -77,8 +77,7 @@ export const resolveStringTemplate = (
   });
 };
 
-// Returns the resolved value itself when the whole string is one variable, so
-// `{{step.amount}}` keeps its type instead of being stringified
+// A lone `{{step.amount}}` keeps its type instead of being stringified.
 const resolveString = (
   input: string,
   context: Record<string, unknown>,

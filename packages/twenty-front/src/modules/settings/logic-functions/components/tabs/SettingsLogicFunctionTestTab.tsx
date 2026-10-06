@@ -11,7 +11,7 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconClock,

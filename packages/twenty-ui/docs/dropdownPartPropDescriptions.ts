@@ -49,13 +49,13 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   OptionItem: {
     ...DROPDOWN_ITEM_PROP_DESCRIPTIONS,
     selected:
-      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types.',
+      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state.',
     onSelect:
       'Called when the option is activated. The application owns the selected value.',
     closeOnSelect:
       'Closes the dropdown after selection. Defaults to `true`, or `false` when `multiple` is set.',
     indicator:
-      'Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`.',
+      'Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted.',
   } satisfies Partial<Record<keyof DropdownOptionItemProps, string>>,
   Search: {
     onValueChange:
@@ -80,6 +80,8 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Delay in milliseconds before a submenu opened on hover closes. Requires `openOnHover`. Defaults to `0`.',
   } satisfies Partial<Record<keyof DropdownSubmenuTriggerProps, string>>,
   Section: {
+    columns:
+      'Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row.',
     label:
       'Heading displayed above the rows. It also names the group for assistive technologies.',
     scrollable:

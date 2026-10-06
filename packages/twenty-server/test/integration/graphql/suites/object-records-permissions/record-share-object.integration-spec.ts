@@ -8,7 +8,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { randomUUID } from 'node:crypto';
 
@@ -28,6 +28,9 @@ import { type RecordShareStorageService } from 'src/engine/core-modules/record-s
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 describe('recordShare object', () => {
   let recordShareStorageService: RecordShareStorageService;
@@ -152,8 +155,6 @@ describe('recordShare object', () => {
   });
 
   it('keeps the grants of a deleted thread until a new thread reuses its id', async () => {
-    const chatService =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const metadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
     ).findOneOrFail({
@@ -182,7 +183,7 @@ describe('recordShare object', () => {
         objectMetadataId: metadata.id,
         recordIds: [args.threadId],
       });
-    await chatService.createThread({
+    await getAgentChatThreadService().createThread({
       ...args,
       id: args.threadId,
       title: 'Deleted thread grants test',
@@ -202,10 +203,12 @@ describe('recordShare object', () => {
         threadId: args.threadId,
         token: timAccessToken,
       });
-      await expect(chatService.findWritableThread(args)).resolves.toBeNull();
+      await expect(
+        getAgentChatThreadService().findWritableThread(args),
+      ).resolves.toBeNull();
       await expect(readGrants()).resolves.toHaveLength(2);
 
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...args,
         id: args.threadId,
         title: 'Thread reusing a deleted id',
@@ -215,7 +218,7 @@ describe('recordShare object', () => {
         RecordShareRowCause.OWNER,
       ]);
     } finally {
-      if (await chatService.findWritableThread(args)) {
+      if (await getAgentChatThreadService().findWritableThread(args)) {
         await destroyAgentChatThread({
           threadId: args.threadId,
           token: timAccessToken,

@@ -13,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAdminWorkspaceChatThread = () => {
   const { workspaceId, threadId } = useParams<{

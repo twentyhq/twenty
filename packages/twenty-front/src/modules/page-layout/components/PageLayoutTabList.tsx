@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/components';
+import { TabButton } from 'twenty-ui/components/navigation';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -57,9 +57,7 @@ const StyledNodeDimension = styled(NodeDimension)`
   min-width: 0;
 `;
 
-// In the identifier bar the wrapper must fill its grid track so tabs can
-// reappear when the track grows after an overflow. Standalone it sits in a
-// flex column, where growing would eat the tab content's height.
+// Fill the identifier bar's track so tabs reappear when it grows; standalone, growing would eat content height.
 const identifierBarTrackCssClass = css`
   flex: 1;
 `;
@@ -247,9 +245,7 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  // The overflow dropdown must survive drops into itself: the dragging flag
-  // suppresses its close-on-click-outside while a tab drag is in flight, and a
-  // drop on the more button reopens it on the freshly appended tab.
+  // The dragging flag suppresses click-outside so the overflow dropdown survives drops into it; a drop on the more button reopens it.
   useDragDropMonitor({
     onDragStart: (event) => {
       const sourceData = event.operation.source?.data as
@@ -309,8 +305,7 @@ export const PageLayoutTabList = ({
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
-  // The reorderable strip appends an end drop zone the tab measurement does
-  // not know about; reserve its width so visible tabs never get clipped.
+  // Reserve the strip's end drop zone, which the tab measurement doesn't know about.
   const handleContainerWidthChange = useCallback(
     (dimensions: { width: number; height: number }) => {
       onContainerWidthChange(
@@ -389,9 +384,7 @@ export const PageLayoutTabList = ({
   const shouldRenderStaticDropdown =
     hasHiddenTabs && !canReorderTabs && !shouldScrollTabs;
 
-  // Record pages accept widget drops on vertical-list tabs (dnd-kit drags);
-  // dashboards accept them on grid tabs (react-grid-layout drags bridged by
-  // pointer hit-testing).
+  // Record pages take widget drops on vertical-list tabs, dashboards on grid tabs (hit-tested).
   const widgetDropTargetWidgetsByTabId = new Map<string, PageLayoutWidget[]>(
     pageLayoutType === PageLayoutType.RECORD_PAGE
       ? tabs

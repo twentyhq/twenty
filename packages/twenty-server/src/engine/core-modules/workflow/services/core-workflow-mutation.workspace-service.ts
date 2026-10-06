@@ -350,13 +350,11 @@ export class CoreWorkflowMutationWorkspaceService {
     coreWorkflowId: string;
     name: string;
   }): Promise<void> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
 
     const { workspaceWorkflowId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
@@ -479,10 +477,12 @@ export class CoreWorkflowMutationWorkspaceService {
       name: name ?? null,
       universalIdentifier: uuidv4(),
       workspaceWorkflowId,
+      isSystem: false,
       visibility: visibility ?? WorkflowVisibility.WORKSPACE,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
+      versionDefinitionHash: null,
       createdAt,
       updatedAt: createdAt,
     };
@@ -564,6 +564,7 @@ export class CoreWorkflowMutationWorkspaceService {
       lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId,
+      isSystem: coreWorkflow.isSystem,
       visibility: coreWorkflow.visibility,
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
@@ -580,13 +581,11 @@ export class CoreWorkflowMutationWorkspaceService {
     userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<DeletedCoreWorkflowDTO[]> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds,
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds,
+    });
 
     const coreWorkflowsToDelete = await this.coreWorkflowRepository.find(
       workspaceId,
@@ -734,13 +733,11 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreVersion.coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreVersion.coreWorkflowId],
+    });
 
     const siblingCount = await this.coreWorkflowVersionRepository.count(
       workspaceId,
@@ -767,8 +764,7 @@ export class CoreWorkflowMutationWorkspaceService {
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
-    // The mirror goes first: the other order committed the core delete before the
-    // assert could veto it, which destroyed the version's triggers and steps.
+    // mirror first so the assert can veto before the core delete commits
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -891,7 +887,6 @@ export class CoreWorkflowMutationWorkspaceService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Owning a workflow means being a person, so this one keeps a strict reader
   async updateWorkflowVisibility({
     workspaceId,
     userWorkspaceId,
@@ -901,20 +896,14 @@ export class CoreWorkflowMutationWorkspaceService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
 
-    // Workflows that predate this column have no owner, and the first member to
-    // set a visibility claims one. The ownership test is the UPDATE's own WHERE
-    // rather than a preceding read, so two members claiming at the same moment
-    // cannot both pass it and have the later write silently take the workflow.
-    // A workspace-visible workflow is already editable and deletable by every
-    // member, so claiming one grants no access the claimer did not have.
+    // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win;
+    // a workspace-visible workflow is already editable by every member, so claiming one grants no new access
     const claimResult =
       await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
         workspaceId,

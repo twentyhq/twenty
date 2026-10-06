@@ -1,6 +1,4 @@
-// The three decisions an evaluation model can be asked for. Mirrors the AI SDK
-// evaluation specification, restated here so the domain never depends on an
-// experimental provider type.
+// Restates the AI SDK evaluation spec so the domain never depends on an experimental provider type.
 export const AI_EVALUATION_QUESTION_TYPES = [
   'choice',
   'score',

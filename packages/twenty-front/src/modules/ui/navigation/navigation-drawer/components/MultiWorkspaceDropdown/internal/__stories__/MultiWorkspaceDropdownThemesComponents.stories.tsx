@@ -5,7 +5,9 @@ import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -16,11 +18,12 @@ const updateWorkspaceMemberSettings = fn();
 
 const ThemeDropdown = ({ onParentClick }: { onParentClick: () => void }) => (
   <div onClick={onParentClick}>
-    <Dropdown
-      dropdownId="workspace-theme-story"
-      clickableComponent={<Button>Choose theme</Button>}
-      dropdownComponents={<MultiWorkspaceDropdownThemesComponents />}
-    />
+    <DropdownRoot dropdownId="workspace-theme-story" type="picker">
+      <Dropdown.Trigger render={<Button>Choose theme</Button>} />
+      <DropdownContent>
+        <MultiWorkspaceDropdownThemesComponents />
+      </DropdownContent>
+    </DropdownRoot>
   </div>
 );
 
@@ -64,13 +67,13 @@ export const SelectThemeWithoutClosing: Story = {
     await userEvent.click(canvas.getByText('Choose theme'));
 
     expect(
-      await canvas.findByRole('option', { name: 'Dark', selected: true }),
+      await canvas.findByRole('button', { name: 'Dark', pressed: true }),
     ).toBeVisible();
     expect(
-      canvas.getByRole('option', { name: 'Light', selected: false }),
+      canvas.getByRole('button', { name: 'Light', pressed: false }),
     ).toBeVisible();
 
-    await userEvent.click(canvas.getByRole('option', { name: 'Light' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Light' }));
 
     await waitFor(() => {
       expect(updateWorkspaceMemberSettings).toHaveBeenCalledTimes(1);
@@ -81,10 +84,10 @@ export const SelectThemeWithoutClosing: Story = {
     });
     expect(args.onParentClick).not.toHaveBeenCalled();
     expect(
-      canvas.getByRole('option', { name: 'Light', selected: true }),
+      canvas.getByRole('button', { name: 'Light', pressed: true }),
     ).toBeVisible();
     expect(
-      canvas.getByRole('option', { name: 'Dark', selected: false }),
+      canvas.getByRole('button', { name: 'Dark', pressed: false }),
     ).toBeVisible();
   },
 };

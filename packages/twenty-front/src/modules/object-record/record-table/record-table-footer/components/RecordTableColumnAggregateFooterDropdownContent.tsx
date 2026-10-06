@@ -9,7 +9,7 @@ import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tabl
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { useContext } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { useLingui } from '@lingui/react/macro';
 

@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   type IconComponent,
-  IconComment,
   IconHome,
+  IconInbox,
   IconSettings,
 } from 'twenty-ui/icon';
 
@@ -30,9 +30,7 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     WorkspaceActivationStatus.SUSPENDED,
   );
 
-  // A suspended workspace is held on the billing settings by the route guard,
-  // so offering the modes it would bounce back from only flashes the user out
-  // and in again.
+  // The route guard holds a suspended workspace on billing settings, so other modes would bounce back.
   if (isWorkspaceSuspended) {
     return [];
   }
@@ -46,8 +44,8 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
       label: t`Home`,
     },
     [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY]: {
-      Icon: IconComment,
-      label: t`AI`,
+      Icon: IconInbox,
+      label: t`Inbox`,
     },
     [NAVIGATION_DRAWER_TABS.SETTINGS]: {
       Icon: IconSettings,

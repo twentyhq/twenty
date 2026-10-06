@@ -1,6 +1,5 @@
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useLingui } from '@lingui/react/macro';
-import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useFilteredAvailableWorkspaces } from '@/ui/navigation/navigation-drawer/hooks/useFilteredAvailableWorkspaces';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,20 +19,17 @@ export const WorkspacesForSignIn = ({
   const { searchAvailableWorkspaces } = useFilteredAvailableWorkspaces();
 
   return (
-    <>
-      <StyledDropdownMenuSubheader>{t`Member of`}</StyledDropdownMenuSubheader>
-      <DropdownMenuItemsContainer>
-        {searchAvailableWorkspaces(
-          searchValue,
-          availableWorkspaces.availableWorkspacesForSignIn,
-        ).map((availableWorkspace) => (
-          <AvailableWorkspaceItem
-            key={availableWorkspace.id}
-            availableWorkspace={availableWorkspace}
-            isSelected={currentWorkspace?.id === availableWorkspace.id}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
-    </>
+    <Dropdown.Section label={t`Member of`} scrollable>
+      {searchAvailableWorkspaces(
+        searchValue,
+        availableWorkspaces.availableWorkspacesForSignIn,
+      ).map((availableWorkspace) => (
+        <AvailableWorkspaceItem
+          key={availableWorkspace.id}
+          availableWorkspace={availableWorkspace}
+          isSelected={currentWorkspace?.id === availableWorkspace.id}
+        />
+      ))}
+    </Dropdown.Section>
   );
 };

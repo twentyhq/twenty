@@ -1,6 +1,7 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useMemo, useState } from 'react';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -131,8 +132,7 @@ export const SettingsAdminAI = () => {
 
   const defaultModelByTier = data?.getAdminAiModels?.defaultModelByTier ?? [];
 
-  // A tier default names the model that answers chats and agent runs, so only a
-  // language model can fill one: an evaluation model here is refused server-side.
+  // Tier defaults answer chats and agent runs, so the server refuses evaluation models here.
   const enabledModels = models.filter(
     (model) =>
       model.kind === 'language' &&

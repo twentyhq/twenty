@@ -1,4 +1,5 @@
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
+import { type PlaceDetailsResult } from '@/geo-map/types/PlaceApi';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { act, renderHook } from '@testing-library/react';
@@ -95,6 +96,82 @@ describe('useAddressAutocomplete', () => {
     expect(mockCloseDropdown).toHaveBeenCalled();
   });
 
+  it('should keep edits made while place details are loading', async () => {
+    const mockOnChange = jest.fn();
+    let internalValue = {
+      addressStreet1: '10 Rue',
+      addressStreet2: null as string | null,
+      addressCity: null,
+      addressState: null,
+      addressCountry: null,
+      addressPostcode: null,
+      addressLat: null,
+      addressLng: null,
+    };
+
+    mockGetPlaceDetailsData.mockImplementation(async () => {
+      internalValue = { ...internalValue, addressStreet2: 'Suite 5' };
+
+      return { street: '10 Rue de Rivoli', city: 'Paris' };
+    });
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    await act(async () => {
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'rivoli',
+        token: 'token123',
+        getInternalValue: () => internalValue,
+      });
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        addressStreet1: '10 Rue de Rivoli',
+        addressStreet2: 'Suite 5',
+        addressCity: 'Paris',
+      }),
+    );
+  });
+
+  it('should keep a city edited while place details are loading', async () => {
+    const mockOnChange = jest.fn();
+    let internalValue = {
+      addressStreet1: '10 Rue',
+      addressStreet2: null,
+      addressCity: null as string | null,
+      addressState: null,
+      addressCountry: null,
+      addressPostcode: null,
+      addressLat: null,
+      addressLng: null,
+    };
+
+    mockGetPlaceDetailsData.mockImplementation(async () => {
+      internalValue = { ...internalValue, addressCity: 'Lyon' };
+
+      return { street: '10 Rue de Rivoli', city: 'Paris', postcode: '75001' };
+    });
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    await act(async () => {
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'rivoli',
+        token: 'token123',
+        getInternalValue: () => internalValue,
+      });
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        addressStreet1: '10 Rue de Rivoli',
+        addressCity: 'Lyon',
+        addressPostcode: '75001',
+      }),
+    );
+  });
+
   it('should autofill inputs from place details', async () => {
     const mockOnChange = jest.fn();
     const mockPlaceData = {
@@ -122,12 +199,12 @@ describe('useAddressAutocomplete', () => {
     };
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St',
-        internalValue,
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St',
+        getInternalValue: () => internalValue,
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith({
@@ -157,11 +234,11 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St, Springfield, IL 62704, USA',
-        {
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St, Springfield, IL 62704, USA',
+        getInternalValue: () => ({
           addressStreet1: '',
           addressStreet2: null,
           addressCity: null,
@@ -170,8 +247,8 @@ describe('useAddressAutocomplete', () => {
           addressPostcode: null,
           addressLat: null,
           addressLng: null,
-        },
-      );
+        }),
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith(
@@ -208,12 +285,12 @@ describe('useAddressAutocomplete', () => {
     };
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St',
-        internalValue,
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St',
+        getInternalValue: () => internalValue,
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith({
@@ -236,13 +313,108 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
+  });
+
+  it('should ignore place details of a superseded selection', async () => {
+    const mockOnChange = jest.fn();
+    const resolvePlaceDetailsRequests: Array<
+      (placeDetails: PlaceDetailsResult) => void
+    > = [];
+
+    mockGetPlaceDetailsData.mockImplementation(
+      () =>
+        new Promise<PlaceDetailsResult>((resolve) => {
+          resolvePlaceDetailsRequests.push(resolve);
+        }),
+    );
+
+    const internalValue = {
+      addressStreet1: 'Place',
+      addressStreet2: null,
+      addressCity: null,
+      addressState: null,
+      addressCountry: null,
+      addressPostcode: null,
+      addressLat: null,
+      addressLng: null,
+    };
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    let firstSelection: Promise<unknown> = Promise.resolve();
+    let secondSelection: Promise<unknown> = Promise.resolve();
+
+    act(() => {
+      firstSelection = result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'bellecour',
+        token: 'token123',
+        getInternalValue: () => internalValue,
+      });
+      secondSelection = result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'concorde',
+        token: 'token123',
+        getInternalValue: () => internalValue,
+      });
+    });
+
+    await act(async () => {
+      resolvePlaceDetailsRequests[0]({
+        street: 'Place Bellecour',
+        city: 'Lyon',
+      });
+      await expect(firstSelection).resolves.toBeUndefined();
+    });
+
+    expect(mockOnChange).not.toHaveBeenCalled();
+    expect(mockCloseDropdown).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolvePlaceDetailsRequests[1]({
+        street: 'Place de la Concorde',
+        city: 'Paris',
+      });
+      await secondSelection;
+    });
+
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        addressStreet1: 'Place de la Concorde',
+        addressCity: 'Paris',
+      }),
+    );
+    expect(mockCloseDropdown).toHaveBeenCalled();
+  });
+
+  it('should close dropdown when place details fail to load', async () => {
+    const mockOnChange = jest.fn();
+    mockGetPlaceDetailsData.mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    act(() => {
+      result.current.setTypeOfAddressForAutocomplete('addressStreet1');
+    });
+
+    await act(async () => {
+      await expect(
+        result.current.autoFillInputsFromPlaceDetails({
+          placeId: 'place123',
+          token: 'token123',
+        }),
+      ).rejects.toThrow('Network error');
+    });
+
+    expect(mockOnChange).not.toHaveBeenCalled();
+    expect(mockCloseDropdown).toHaveBeenCalled();
+    expect(result.current.typeOfAddressForAutocomplete).toBeNull();
   });
 
   it('should set token to null after autofilling', async () => {
@@ -263,10 +435,10 @@ describe('useAddressAutocomplete', () => {
     expect(result.current.tokenForPlaceApi).not.toBeNull();
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(result.current.tokenForPlaceApi).toBeNull();
@@ -305,10 +477,10 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(mockFindCountryNameByCountryCode).toHaveBeenCalledWith('US');

@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

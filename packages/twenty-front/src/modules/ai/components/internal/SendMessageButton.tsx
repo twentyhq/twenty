@@ -1,6 +1,6 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
@@ -8,7 +8,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 
 type SendMessageButtonProps = {
@@ -24,7 +24,7 @@ export const SendMessageButton = ({
     agentChatInputIsEmptySelector,
   );
 
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(

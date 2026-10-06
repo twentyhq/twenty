@@ -13,6 +13,8 @@ const WORKSPACE_INSTRUCTIONS_DOCUMENT = JSON.stringify({
   ],
 });
 
+const USER_WORKSPACE_ID = 'user-workspace-id';
+
 const USER_CONTEXT = {
   firstName: 'Ada',
   lastName: 'Lovelace',
@@ -32,6 +34,7 @@ const buildPrompt = (
     toolCatalog: [],
     skillCatalog: [],
     preloadedTools: [],
+    userWorkspaceId: USER_WORKSPACE_ID,
     workspaceInstructions: WORKSPACE_INSTRUCTIONS_DOCUMENT,
     userContext: USER_CONTEXT,
     workspaceId,
@@ -59,6 +62,7 @@ describe('buildFullSystemPrompt', () => {
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
       preloadedTools: [],
+      userWorkspaceId: USER_WORKSPACE_ID,
       workspaceId: EVEN_WORKSPACE_ID,
     });
 
@@ -126,6 +130,7 @@ describe('buildFullSystemPrompt', () => {
         toolCatalog: [],
         skillCatalog: [],
         preloadedTools: [],
+        userWorkspaceId: USER_WORKSPACE_ID,
         workspaceId: EVEN_WORKSPACE_ID,
         canAttachConversationToRecords,
       });
@@ -137,5 +142,11 @@ describe('buildFullSystemPrompt', () => {
       'attach_conversation_to_record',
     );
     expect(buildPrompt(false)).not.toContain('attach_conversation_to_record');
+  });
+
+  it('should end by scoping actions to the current participant', () => {
+    expect(buildPrompt(false)).toMatch(
+      /\n\nThis conversation can have multiple participants\. .*workspace membership user-workspace-id;.*$/,
+    );
   });
 });

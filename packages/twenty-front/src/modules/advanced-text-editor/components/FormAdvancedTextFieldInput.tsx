@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconMaximize } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -31,8 +31,7 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
-  /* Document editors stretch to their available height; field editors keep
-     their intrinsic height so they compose naturally inside forms. */
+  /* Field editors keep their intrinsic height inside forms; document editors stretch. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
@@ -201,7 +200,7 @@ export const FormAdvancedTextFieldInput = ({
         ? focusedHtmlEditor
         : editor;
 
-    variableTargetEditor.commands.insertVariableTag(variableName);
+    variableTargetEditor.chain().focus().insertVariableTag(variableName).run();
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [

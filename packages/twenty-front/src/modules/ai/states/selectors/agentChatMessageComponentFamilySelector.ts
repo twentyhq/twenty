@@ -1,6 +1,5 @@
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesComponentSelector';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Nullable } from 'twenty-shared/types';
@@ -14,12 +13,12 @@ export const agentChatMessageComponentFamilySelector =
     get:
       ({ instanceId, familyKey: { messageId } }) =>
       ({ get }) => {
-        const currentThreadId = get(agentChatDisplayedThreadState);
-
-        const messages = get(agentChatMessagesComponentFamilyState, {
-          instanceId,
-          familyKey: { threadId: currentThreadId },
-        });
+        const messages = get(
+          agentChatDisplayedThreadMessagesComponentSelector,
+          {
+            instanceId,
+          },
+        );
 
         return messages.find((message) => message.id === messageId);
       },

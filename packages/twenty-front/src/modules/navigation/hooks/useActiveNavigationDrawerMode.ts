@@ -7,11 +7,9 @@ import {
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 
-// Settings and the AI chat own a full page each, so the route decides those two
-// modes. The stored tab only has the final say when neither page is open, which
-// is what keeps the chat history listed while the user works on another page.
+// Settings, AI chat and inbox pages decide their mode; elsewhere the stored tab wins so chat history stays listed.
 export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
   const { pathname } = useLocation();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -24,7 +22,7 @@ export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
   }
 
   if (
-    isAiChatPath(pathname) ||
+    isAiModePath(pathname) ||
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
   ) {
     return NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;

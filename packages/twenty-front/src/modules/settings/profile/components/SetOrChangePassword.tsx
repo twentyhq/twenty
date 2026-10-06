@@ -1,7 +1,7 @@
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

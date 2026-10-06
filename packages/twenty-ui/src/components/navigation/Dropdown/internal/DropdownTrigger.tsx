@@ -14,11 +14,14 @@ export const DropdownTrigger = ({
 }: DropdownTriggerProps) => {
   const {
     type,
+    rootType,
+    open,
     setOpen,
     setInitialFocusEdge,
     setFocusOnOpen,
     registerTrigger,
   } = useDropdownContext();
+  const triggerType = open ? type : rootType;
   const registerTriggerElement =
     useRegisterDropdownLabelElement(registerTrigger);
   const mergedRef = useMergedRefs(ref, registerTriggerElement);
@@ -27,7 +30,7 @@ export const DropdownTrigger = ({
     <Popover.Trigger
       {...props}
       ref={mergedRef}
-      aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
+      aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       onClick={(event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -36,7 +39,12 @@ export const DropdownTrigger = ({
       onKeyDown={(event) => {
         onKeyDown?.(event);
 
-        if (event.defaultPrevented || props.disabled || type === 'panel') {
+        if (
+          event.defaultPrevented ||
+          event.baseUIHandlerPrevented ||
+          props.disabled ||
+          triggerType === 'panel'
+        ) {
           return;
         }
 

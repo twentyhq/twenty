@@ -6,7 +6,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
@@ -55,7 +55,7 @@ export const Select = <TValue extends SelectValue>({
   needIconCheck,
   pinnedOption,
   callToActionButton,
-  dropdownOffset,
+  dropdownSideOffset = 0,
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
@@ -160,7 +160,15 @@ export const Select = <TValue extends SelectValue>({
           variant={variant}
         />
       ) : (
-        <DropdownRoot dropdownId={dropdownId} type="picker">
+        <DropdownRoot
+          dropdownId={dropdownId}
+          type="picker"
+          onOpenChange={(open) => {
+            if (open) {
+              setSearchInputValue('');
+            }
+          }}
+        >
           <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               renderAsTag={renderAsTag}
@@ -181,8 +189,7 @@ export const Select = <TValue extends SelectValue>({
             }
             width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
-            sideOffset={dropdownOffset?.y ?? 0}
-            alignOffset={dropdownOffset?.x ?? 0}
+            sideOffset={dropdownSideOffset}
             aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (

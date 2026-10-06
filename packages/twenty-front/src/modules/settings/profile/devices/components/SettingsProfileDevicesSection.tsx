@@ -8,7 +8,8 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -29,8 +30,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-// A flex row so the button keeps its natural width while the card above it
-// stretches to the section.
 const StyledButtonContainer = styled.div`
   display: flex;
 `;

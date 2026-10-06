@@ -125,8 +125,8 @@ jest.mock(
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -1080,8 +1080,7 @@ describe('useFrontComponentExecutionContext', () => {
       new Blob(['recorded-bytes'], { type: 'audio/webm' });
 
     beforeEach(() => {
-      // clearAllMocks keeps implementations; drop resolved/rejected values
-      // so these tests stay order-independent.
+      // clearAllMocks keeps resolved values; reset so these tests stay order-independent.
       mockDirectUploadFile.mockReset();
     });
 

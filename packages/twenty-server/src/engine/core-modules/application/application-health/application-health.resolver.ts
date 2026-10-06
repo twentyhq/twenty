@@ -15,6 +15,7 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -38,10 +39,11 @@ export class ApplicationHealthResolver {
   ) {}
 
   @Mutation(() => ApplicationHealthCheckResultDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async runApplicationHealthCheck(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,

@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
@@ -42,8 +42,7 @@ const StyledDeprecatedSuffix = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-// An evaluation model cannot be chatted with or given to an agent, so a row
-// that looks like every other row would read as interchangeable with them.
+// Evaluation models can't chat or run agents, so their rows are badged apart.
 const StyledKindBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};
   border-radius: ${themeCssVariables.border.radius.sm};

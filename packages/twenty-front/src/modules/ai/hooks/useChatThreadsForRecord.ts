@@ -8,6 +8,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -17,30 +18,33 @@ import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOp
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 
-// The widget shows the most recent conversations in a card rather than a
-// browsable list, so it asks for one page and never pages further.
+// A card of recent conversations, never paged further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
-
-// Every turn updates its thread, so this ranks by the latest activity.
-const CHAT_THREADS_FOR_RECORD_ORDER_BY: RecordGqlOperationOrderBy = [
-  { thread: { updatedAt: 'DescNullsLast' } },
-];
 
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
   threadId: true,
-  thread: { id: true, title: true, deletedAt: true, updatedAt: true },
+  thread: {
+    id: true,
+    title: true,
+    deletedAt: true,
+    updatedAt: true,
+    lastActivityAt: true,
+    lastMessageText: true,
+    lastMessageSenderWorkspaceMemberId: true,
+    writerWorkspaceMemberIds: true,
+    workspaceMemberId: true,
+    pendingQuestionMessageId: true,
+  },
 };
 
-// A link's record event carries its columns but not its conversation, so a
-// new link is read back rather than taken from the event.
+// Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'create-one',
   'create-many',
 ];
 
-// Title and activity changes reach the listed conversations through the
-// record cache; these change which conversations the page holds.
+// Title and activity changes arrive through the record cache; these change which conversations are listed.
 const THREAD_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'delete-one',
   'delete-many',
@@ -72,6 +76,10 @@ export const useChatThreadsForRecord = ({
   );
 
   const isRecordLinkable = isNonEmptyArray(filter?.or);
+  const chatObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) =>
+      nameSingular === CoreObjectNameSingular.AgentChatThread,
+  );
 
   const {
     records: links,
@@ -82,7 +90,14 @@ export const useChatThreadsForRecord = ({
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
-    orderBy: CHAT_THREADS_FOR_RECORD_ORDER_BY,
+    orderBy: [
+      {
+        thread: {
+          [getAgentChatThreadLastActivityFieldName(chatObjectMetadataItem)]:
+            'DescNullsLast',
+        },
+      },
+    ] satisfies RecordGqlOperationOrderBy,
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });
@@ -112,26 +127,23 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable,
   });
 
-  // A custom object leg carries no unique index, so a conversation can be
-  // linked to the record more than once. Sorted here too, as an update to a
-  // listed conversation does not reorder the fetched page.
-  const threads = sortChatThreadsByLastActivityDesc(
-    uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
+  // Custom legs allow duplicate links; sorted since an update doesn't reorder the fetched page.
+  const threads = useMemo(
+    () =>
+      sortChatThreadsByLastActivityDesc(
+        uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
+      ),
+    [links],
   );
 
   const getLinkIdsToThread = (threadId: string) =>
     links.filter((link) => link.threadId === threadId).map(({ id }) => id);
 
-  const chatObjectMetadataItemId = objectMetadataItems.find(
-    ({ nameSingular }) =>
-      nameSingular === CoreObjectNameSingular.AgentChatThread,
-  )?.id;
-
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
-    objectMetadataItemId: chatObjectMetadataItemId,
+    objectMetadataItemId: chatObjectMetadataItem?.id,
     operationTypes: THREAD_OPERATION_TYPES,
-    enabled: isRecordLinkable && isDefined(chatObjectMetadataItemId),
+    enabled: isRecordLinkable && isDefined(chatObjectMetadataItem),
   });
 
   return { threads, getLinkIdsToThread, loading, error, refetch };

@@ -11,11 +11,6 @@ import { type KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/
 import { type TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
-import { type AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -23,11 +18,6 @@ import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable
 // not the column: several members declare their own `workspaceId`, so this is
 // not a "has no workspaceId" predicate and must not be used as one.
 export type AllNonWorkspaceRelatedEntity =
-  | AgentChatThreadEntity
-  | AgentMessagePartEntity
-  | AgentMessageEntity
-  | AgentTurnEntity
-  | AgentTurnEvaluationEntity
   | IndexFieldMetadataEntity
   | ApplicationRegistrationEntity
   | ApplicationRegistrationVariableEntity

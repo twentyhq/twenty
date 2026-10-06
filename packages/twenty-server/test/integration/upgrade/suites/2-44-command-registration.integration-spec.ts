@@ -21,8 +21,7 @@ it('discovers sender expansion through the application upgrade runner', () => {
   );
 });
 
-// The move locks archivedAt again, so it has to run after the command that
-// opened it
+// The move locks archivedAt again, so it must run after the command that opened it.
 it('runs the chat record model commands after archivedAt was opened', () => {
   const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
     'UpgradeCommandRegistryService',

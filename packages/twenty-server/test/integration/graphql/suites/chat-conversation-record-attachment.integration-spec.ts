@@ -4,15 +4,19 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
@@ -34,7 +38,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     targets = getAppProviderByClassName<AgentChatThreadTargetService>(
       'AgentChatThreadTargetService',
     );
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       workspaceId,
       workspaceMemberId,
       id: threadId,
@@ -55,7 +59,6 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     await destroyAgentChatThread({ threadId });
   });
 
-  // Built from the same authorization ChatExecutionService gives the turn.
   const buildTool = async () => {
     const { authorization } = await actors.authorizeJob({
       workspaceId,
@@ -76,7 +79,6 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     });
   };
 
-  // Read back through the record API, the way the record page lists them.
   const listConversationIdsAttachedTo = async (recordId: string) => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
