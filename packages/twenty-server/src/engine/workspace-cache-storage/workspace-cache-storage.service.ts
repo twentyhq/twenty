@@ -12,8 +12,6 @@ export const WORKSPACE_CACHE_KEYS = {
   MetadataVersion: 'metadata:workspace-metadata-version',
   GraphQLOperations: 'graphql:operations',
   GraphQLFeatureFlag: 'graphql:feature-flag',
-  FeatureFlagMap: 'feature-flag:feature-flag-map',
-  FeatureFlagMapVersion: 'feature-flag:feature-flag-map-version',
   MetadataPermissionsRolesPermissions: 'metadata:permissions:roles-permissions',
   MetadataPermissionsRolesPermissionsVersion:
     'metadata:permissions:roles-permissions-version',
