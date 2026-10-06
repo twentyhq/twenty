@@ -113,14 +113,15 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (isWorkspaceSuspended) {
-    const isOnSuspendedWorkspaceBillingPage = [
+    const isOnSuspendedWorkspaceAllowedPage = [
       SettingsPath.Billing,
       SettingsPath.BillingPlans,
+      SettingsPath.ProfilePage,
     ].some((settingsPath) =>
       isMatchingLocation(location, getSettingsPath(settingsPath)),
     );
 
-    if (!isOnSuspendedWorkspaceBillingPage) {
+    if (!isOnSuspendedWorkspaceAllowedPage) {
       return getSettingsPath(SettingsPath.Billing);
     }
 

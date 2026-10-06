@@ -581,10 +581,11 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
   );
 });
 
-describe('usePageChangeEffectNavigateLocation — suspended workspace on billing settings', () => {
+describe('usePageChangeEffectNavigateLocation — suspended workspace settings pages', () => {
   it.each([
     { loc: getSettingsPath(SettingsPath.Billing), res: undefined },
     { loc: getSettingsPath(SettingsPath.BillingPlans), res: undefined },
+    { loc: getSettingsPath(SettingsPath.ProfilePage), res: undefined },
     {
       loc: getSettingsPath(SettingsPath.Usage),
       res: getSettingsPath(SettingsPath.Billing),
