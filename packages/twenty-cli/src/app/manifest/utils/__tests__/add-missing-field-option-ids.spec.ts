@@ -25,6 +25,9 @@ describe('addMissingFieldOptionIds', () => {
 
     const result = addMissingFieldOptionIds(fieldManifest);
 
+    expect(
+      addMissingFieldOptionIds(structuredClone(fieldManifest)).options,
+    ).toEqual(result.options);
     expect(result.options).toHaveLength(2);
     for (const option of result.options ?? []) {
       expect(validate(option.id)).toBe(true);

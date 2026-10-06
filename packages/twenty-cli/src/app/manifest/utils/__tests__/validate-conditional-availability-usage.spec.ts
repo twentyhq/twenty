@@ -30,6 +30,18 @@ describe('validateConditionalAvailabilityUsage', () => {
     ).toHaveLength(1);
   });
 
+  it.each(['src\\example.ts', 'C:\\app\\src\\example.ts'])(
+    'rejects runtime placeholders in Windows paths: %s',
+    (filename) => {
+      expect(
+        validate(
+          "import { objectMetadataItem } from 'twenty-sdk/define'; export const value = objectMetadataItem.nameSingular;",
+          filename,
+        ),
+      ).toHaveLength(1);
+    },
+  );
+
   describe('valid usage', () => {
     it('should allow a variable inside a bare conditionalAvailabilityExpression', () => {
       const source = `

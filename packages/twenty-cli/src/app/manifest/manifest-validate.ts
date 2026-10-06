@@ -283,19 +283,28 @@ export const manifestValidate = (manifest: Manifest) => {
   for (const field of allFields) {
     if (
       (field.type === FieldMetadataType.SELECT ||
-        field.type === FieldMetadataType.MULTI_SELECT) &&
+        field.type === FieldMetadataType.MULTI_SELECT ||
+        field.type === FieldMetadataType.RATING) &&
       isDefined(field.options)
     ) {
+      if (
+        field.options.some(({ id }) => isDefined(id) && !isNonEmptyString(id))
+      ) {
+        errors.push(
+          `Field "${field.name}" has empty option IDs. Set distinct non-empty IDs on these options.`,
+        );
+      }
+
       const duplicateIds = getDuplicateValues(
         field.options
           .map((option) => option.id)
-          .filter(isNonEmptyString)
+          .filter(isDefined)
           .map((id) => id.toLowerCase()),
       );
 
       if (duplicateIds.length > 0)
         errors.push(
-          `Select field "${field.name}" has duplicate option IDs: ${duplicateIds.join(', ')}. Set distinct explicit IDs on these options.`,
+          `Field "${field.name}" has duplicate option IDs: ${duplicateIds.join(', ')}. Set distinct explicit IDs on these options.`,
         );
     }
   }

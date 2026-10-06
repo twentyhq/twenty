@@ -1,3 +1,4 @@
+import { isEngineDerivedLabelIdentifier } from '../../../../../../twenty-sdk/src/sdk/define/objects/is-engine-derived-label-identifier';
 import { getDefaultFieldsInObjectFields } from '@/app/manifest/utils/get-default-fields-in-object-fields';
 import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
@@ -27,6 +28,39 @@ const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
   }) as unknown as ObjectConfig;
 
 describe('getDefaultFieldsInObjectFields', () => {
+  it.each([
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA',
+  ])(
+    'matches SDK default-field inference for label reference %s',
+    (identifier) => {
+      const objectConfig = buildObjectConfig({
+        fields: [
+          {
+            universalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            name: 'title',
+            label: 'Title',
+            type: FieldMetadataType.TEXT,
+          },
+        ],
+        labelIdentifierFieldMetadataUniversalIdentifier: identifier,
+      });
+      const input = { objectConfig, applicationUniversalIdentifier: APP_UID };
+      expect(
+        getDefaultFieldsInObjectFields(input).objectFields.map(
+          ({ name }) => name,
+        ),
+      ).toEqual(
+        isEngineDerivedLabelIdentifier({
+          fields: objectConfig.fields ?? [],
+          labelIdentifierFieldMetadataUniversalIdentifier: identifier,
+        })
+          ? ['title']
+          : ['title', 'name'],
+      );
+    },
+  );
+
   it('adds the default name field when fields is omitted', () => {
     const { objectFields } = getDefaultFieldsInObjectFields({
       objectConfig: buildObjectConfig({ fields: undefined }),

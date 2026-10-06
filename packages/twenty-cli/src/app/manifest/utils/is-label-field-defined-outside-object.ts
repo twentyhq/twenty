@@ -10,6 +10,6 @@ export const isLabelFieldDefinedOutsideObject = ({
   isDefined(labelIdentifierFieldMetadataUniversalIdentifier) &&
   !fields.some(
     (field) =>
-      field.universalIdentifier?.toLowerCase() ===
-      labelIdentifierFieldMetadataUniversalIdentifier?.toLowerCase(),
+      field.universalIdentifier ===
+      labelIdentifierFieldMetadataUniversalIdentifier,
   );

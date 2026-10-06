@@ -12,6 +12,7 @@ const ENGINE_FIELD_NAMES = [
   'updatedBy',
   'deletedAt',
   'position',
+  'searchVector',
 ];
 
 export const getUnresolvedLabelIdentifierWarnings = (

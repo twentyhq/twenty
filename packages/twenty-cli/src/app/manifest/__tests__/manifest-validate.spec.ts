@@ -79,6 +79,58 @@ describe('manifestValidate', () => {
     expect(result.errors.join(' ')).toContain('distinct explicit IDs');
   });
 
+  it.each([
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
+    FieldMetadataType.RATING,
+  ] as const)('rejects colliding and empty IDs in %s options', (type) => {
+    const options = [
+      {
+        id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        label: 'First',
+        value: 'FIRST',
+        color: 'blue' as const,
+        position: 1,
+      },
+      {
+        id: 'AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA',
+        label: 'Second',
+        value: 'SECOND',
+        color: 'blue' as const,
+        position: 2,
+      },
+    ];
+    const field = {
+      universalIdentifier: validField.universalIdentifier,
+      objectUniversalIdentifier: validField.objectUniversalIdentifier,
+      name: 'status',
+      label: 'Status',
+      type,
+      options,
+    } as FieldManifest<
+      | FieldMetadataType.SELECT
+      | FieldMetadataType.MULTI_SELECT
+      | FieldMetadataType.RATING
+    >;
+    expect(
+      manifestValidate({ ...validManifest, fields: [field] }).errors.join(' '),
+    ).toContain('duplicate option IDs');
+    const emptyIds = manifestValidate({
+      ...validManifest,
+      fields: [
+        { ...field, options: options.map((option) => ({ ...option, id: '' })) },
+      ],
+    });
+    expect(emptyIds.errors.join(' ')).toContain('empty option IDs');
+    expect(emptyIds.errors.join(' ')).toContain('duplicate option IDs');
+    expect(
+      manifestValidate({
+        ...validManifest,
+        fields: [{ ...field, options: [options[0]] }],
+      }).isValid,
+    ).toBe(true);
+  });
+
   it('reports unresolved label references without rejecting server-owned fields', () => {
     const object = {
       universalIdentifier: validField.objectUniversalIdentifier,
@@ -97,23 +149,25 @@ describe('manifestValidate', () => {
     expect(
       manifestValidate({ ...manifest, fields: [validField] }).warnings,
     ).toEqual([]);
-    expect(
-      manifestValidate({
-        ...manifest,
-        objects: [
-          {
-            ...object,
-            labelIdentifierFieldMetadataUniversalIdentifier:
-              getFieldUniversalIdentifier({
-                applicationUniversalIdentifier:
-                  validApplication.universalIdentifier,
-                objectUniversalIdentifier: object.universalIdentifier,
-                name: 'id',
-              }),
-          },
-        ],
-      }).warnings,
-    ).toEqual([]);
+    for (const name of ['id', 'searchVector']) {
+      expect(
+        manifestValidate({
+          ...manifest,
+          objects: [
+            {
+              ...object,
+              labelIdentifierFieldMetadataUniversalIdentifier:
+                getFieldUniversalIdentifier({
+                  applicationUniversalIdentifier:
+                    validApplication.universalIdentifier,
+                  objectUniversalIdentifier: object.universalIdentifier,
+                  name,
+                }),
+            },
+          ],
+        }).warnings,
+      ).toEqual([]);
+    }
   });
 
   describe('valid object extensions', () => {
