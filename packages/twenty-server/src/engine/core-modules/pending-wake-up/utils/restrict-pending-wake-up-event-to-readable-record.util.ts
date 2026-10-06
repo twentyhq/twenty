@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 
-// The record read under the run's permissions only holds the fields the run can read
-export const restrictWaitEventToReadableRecord = ({
+// The record read under the owner's permissions only holds the fields the owner can read
+export const restrictPendingWakeUpEventToReadableRecord = ({
   event,
   readableRecord,
 }: {

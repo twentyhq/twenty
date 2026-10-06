@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import {
   AiException,
   AiExceptionCode,
@@ -31,6 +32,8 @@ import {
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
+import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
+import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -172,6 +175,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunConversationService: AgentRunConversationService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -285,16 +289,29 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
           });
 
-          await this.agentRunConversationService.closeTurn({
+          await this.agentRunSuspensionService.suspend({
             workspaceId,
             threadId,
-            turnId,
             caller: buildWorkflowStepCaller({
               workflowRunId,
               stepId: workflow.step.id,
             }),
+            runSpec: isWorkflowAiAgentAction(workflow.step)
+              ? buildWorkflowAgentRunSpec({
+                  step: workflow.step,
+                  isApplicationBound: false,
+                })
+              : null,
+            summary: null,
+          });
+
+          await this.agentRunConversationService.closeTurn({
+            workspaceId,
+            threadId,
+            turnId,
             title: workflow.step.name,
             agentId: null,
+            isAwaitedByCaller: true,
             execution: {
               isPaused: true,
               steps: [{ content }],
@@ -346,7 +363,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId: workflow.step.id,
-      stepInfo: { status: StepStatus.PENDING },
+      stepInfo: { status: StepStatus.PENDING, wait: { type: 'CALLBACK' } },
       workflowRunId,
       workspaceId,
     });

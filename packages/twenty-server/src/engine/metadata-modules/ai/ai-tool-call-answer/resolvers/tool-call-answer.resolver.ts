@@ -28,7 +28,7 @@ import { AnswerToolCallInput } from 'src/engine/metadata-modules/ai/ai-tool-call
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-// permission depends on whether the call waits in a chat or a workflow run, so no class guard
+// permission depends on whether the call waits in a chat or on a caller such as a workflow run, so no class guard
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(

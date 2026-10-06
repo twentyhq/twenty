@@ -1,9 +1,9 @@
-import { restrictWaitEventToReadableRecord } from 'src/modules/workflow/workflow-wait/utils/restrict-wait-event-to-readable-record.util';
+import { restrictPendingWakeUpEventToReadableRecord } from 'src/engine/core-modules/pending-wake-up/utils/restrict-pending-wake-up-event-to-readable-record.util';
 
-describe('restrictWaitEventToReadableRecord', () => {
+describe('restrictPendingWakeUpEventToReadableRecord', () => {
   it('drops the fields the run cannot read from every part of the event', () => {
     expect(
-      restrictWaitEventToReadableRecord({
+      restrictPendingWakeUpEventToReadableRecord({
         event: {
           eventName: 'company.updated',
           recordId: 'company-id',
@@ -24,7 +24,7 @@ describe('restrictWaitEventToReadableRecord', () => {
 
   it('leaves an event without a previous snapshot without one', () => {
     expect(
-      restrictWaitEventToReadableRecord({
+      restrictPendingWakeUpEventToReadableRecord({
         event: {
           eventName: 'company.created',
           recordId: 'company-id',
