@@ -1,11 +1,11 @@
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { type EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
-
-import { type ObjectLiteral, type Repository } from 'typeorm';
+import {
+  DataSource,
+  type EntityTarget,
+  type ObjectLiteral,
+  type Repository,
+} from 'typeorm';
 
 export const getCoreRepository = <Entity extends ObjectLiteral>(
-  target: EntityClassOrSchema,
+  target: EntityTarget<Entity>,
 ): Repository<Entity> =>
-  global.app.get<Repository<Entity>>(getRepositoryToken(target), {
-    strict: false,
-  });
+  global.app.get(DataSource, { strict: false }).getRepository<Entity>(target);
