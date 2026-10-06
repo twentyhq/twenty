@@ -185,17 +185,18 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const name of laterObjectNames) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}"`);
     }
-    // Their select columns leave their enum types behind the tables.
-    const laterObjectEnumTypes: { typname: string }[] = await dataSource.query(
-      `SELECT typname FROM pg_type JOIN pg_namespace ON pg_namespace.oid = pg_type.typnamespace
-       WHERE nspname = $1 AND split_part(typname, '_', 1) = ANY($2)`,
-      [SCHEMA, laterObjectNames],
-    );
-    for (const { typname } of laterObjectEnumTypes) {
-      await dataSource.query(`DROP TYPE "${SCHEMA}"."${typname}"`);
-    }
     for (const { name } of [...ACTIVE_AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
+    }
+    // Their select and actor columns leave their enum types behind the tables.
+    const droppedObjectEnumTypes: { typname: string }[] =
+      await dataSource.query(
+        `SELECT typname FROM pg_type JOIN pg_namespace ON pg_namespace.oid = pg_type.typnamespace
+       WHERE nspname = $1 AND typtype = 'e' AND split_part(typname, '_', 1) = ANY($2)`,
+        [SCHEMA, [...laterObjectNames, ...historyObjectNames]],
+      );
+    for (const { typname } of droppedObjectEnumTypes) {
+      await dataSource.query(`DROP TYPE "${SCHEMA}"."${typname}"`);
     }
     // Pre-upgrade workspaces lack the attachment side too, and the deletion above only cascades its metadata.
     await dataSource.query(

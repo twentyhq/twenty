@@ -15,6 +15,7 @@ import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type GlobalChatThreadsArgs = {
   scope: AdminChatThreadScope;
@@ -113,7 +114,7 @@ export class AdminPanelGlobalChatThreadsService {
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              thread."deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
+              thread."deletedAt", thread."createdAt", thread."updatedAt", COALESCE((SELECT turn.status = '${AgentTurnStatus.FAILED}' FROM ${table('agentTurn')} turn WHERE turn."threadId" = thread.id ORDER BY turn."createdAt" DESC, turn.id DESC LIMIT 1), false) AS "hasError",
               (EXISTS (SELECT 1 FROM ${table('agentMessage')} context WHERE context."threadId" = thread.id AND (context.role = 'system' OR context."isHidden" = true))
                 OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role <> 'system') AS "messageCount",
