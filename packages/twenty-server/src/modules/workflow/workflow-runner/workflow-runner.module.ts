@@ -12,7 +12,7 @@ import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/wor
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowAgentRunCallerHandlerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-agent-run-caller-handler.workspace-service';
-import { AgentRunConversationModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/agent-run-conversation.module';
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
@@ -33,7 +33,7 @@ import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-ex
     WorkflowCoreModule,
     WorkflowVersionCoreModule,
     WorkflowExecutionContextModule,
-    AgentRunConversationModule,
+    AiAgentExecutionModule,
     WorkflowAgentConversationModule,
   ],
   providers: [
