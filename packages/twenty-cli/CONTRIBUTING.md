@@ -94,15 +94,19 @@ The archive includes the command reference, contributor guide and application
 module READMEs so their relative links also work outside a repository checkout.
 It does not include the CLI's TypeScript implementation or tests.
 
-For packaging changes, build and inspect the archive before release:
+For packaging changes, run the build and installation checks:
 
 ```bash
-yarn workspace twenty pack --dry-run
+yarn nx run twenty-cli:test:package
 ```
 
-Check both executable entry points, lazy chunks and templates in the packed
-package. Smoke-test help and app initialization from an extracted archive with
-its declared dependencies. This checks packaging without publishing anything.
+This runs the workspace executable directly, packs the CLI, and installs the
+archive with only its production dependencies in a temporary directory outside
+the monorepo. It checks help, offline doctor, app initialization including the
+template overlay, and a compiler diagnostic from the installed worker. npm
+registry access is required for installation; the commands do not contact a
+Twenty workspace. Temporary files are removed afterward, and nothing is
+published. CI runs the same target for CLI and dependency changes.
 
 ## App integration tests
 
