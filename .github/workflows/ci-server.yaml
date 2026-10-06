@@ -348,19 +348,13 @@ jobs:
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
       - name: Server / Reset Test DB in background
-        working-directory: packages/twenty-server
         env:
           RESET_LOG_FILE: ${{ github.workspace }}/.cache/integration-db-reset.log
           NODE_OPTIONS: --max-old-space-size=12288
         run: |
           mkdir -p "$(dirname "$INTEGRATION_TEST_DB_RESET_STATUS_FILE")"
           {
-            if node dist/database/scripts/truncate-clickhouse.js > "$RESET_LOG_FILE" 2>&1 \
-              && node dist/database/scripts/truncate-db.js >> "$RESET_LOG_FILE" 2>&1 \
-              && node dist/database/scripts/setup-db.js >> "$RESET_LOG_FILE" 2>&1 \
-              && node dist/command/command.js run-instance-commands --force --include-slow >> "$RESET_LOG_FILE" 2>&1 \
-              && node dist/command/command.js cache:flush >> "$RESET_LOG_FILE" 2>&1 \
-              && node dist/command/command.js workspace:seed:dev >> "$RESET_LOG_FILE" 2>&1; then
+            if npx nx database:reset twenty-server --excludeTaskDependencies > "$RESET_LOG_FILE" 2>&1; then
               echo ready > "$INTEGRATION_TEST_DB_RESET_STATUS_FILE.tmp"
             else
               echo failed > "$INTEGRATION_TEST_DB_RESET_STATUS_FILE.tmp"
