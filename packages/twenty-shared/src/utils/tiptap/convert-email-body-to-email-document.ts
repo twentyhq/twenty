@@ -69,8 +69,9 @@ const convertPlainTextToParagraph = (plainText: string): EmailDocument => {
   const paragraphContent = lines.flatMap((line, lineIndex) => {
     const lineBreakBeforeLine =
       lineIndex > 0 ? [{ type: TIPTAP_NODE_TYPES.HARD_BREAK }] : [];
-    const lineText =
-      line === '' ? [] : [{ type: TIPTAP_NODE_TYPES.TEXT, text: line }];
+    const lineText = isNonEmptyString(line)
+      ? [{ type: TIPTAP_NODE_TYPES.TEXT, text: line }]
+      : [];
 
     return [...lineBreakBeforeLine, ...lineText];
   });
