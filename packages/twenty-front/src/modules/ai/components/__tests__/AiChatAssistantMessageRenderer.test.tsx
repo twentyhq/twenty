@@ -48,13 +48,20 @@ jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
 
 const renderAssistantRenderer = (
   messageParts: ExtendedUIMessagePart[],
-  { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
+  {
+    isLastMessageStreaming = false,
+    shouldHideThinkingSteps = false,
+  }: {
+    isLastMessageStreaming?: boolean;
+    shouldHideThinkingSteps?: boolean;
+  } = {},
 ) => {
   return render(
     <ThemeProvider colorScheme="light">
       <AiChatAssistantMessageRenderer
         messageParts={messageParts}
         isLastMessageStreaming={isLastMessageStreaming}
+        shouldHideThinkingSteps={shouldHideThinkingSteps}
       />
     </ThemeProvider>,
   );
@@ -551,5 +558,62 @@ describe('AiChatAssistantMessageRenderer', () => {
     );
 
     expect(container).not.toBeEmptyDOMElement();
+  });
+
+  it('should hide thinking steps but keep the answer when asked to', () => {
+    renderAssistantRenderer(
+      [
+        {
+          type: 'reasoning',
+          text: 'Reasoning content',
+          state: 'done',
+        },
+        {
+          type: 'text',
+          text: 'Welcome',
+        },
+      ] as ExtendedUIMessagePart[],
+      { shouldHideThinkingSteps: true },
+    );
+
+    expect(
+      screen.queryByTestId('thinking-steps-display'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Welcome',
+    );
+  });
+
+  it('should show the loading indicator instead of hidden thinking steps while streaming', () => {
+    const { container } = renderAssistantRenderer(
+      [
+        {
+          type: 'reasoning',
+          text: 'Reasoning content',
+          state: 'streaming',
+        },
+      ] as ExtendedUIMessagePart[],
+      { isLastMessageStreaming: true, shouldHideThinkingSteps: true },
+    );
+
+    expect(
+      screen.queryByTestId('thinking-steps-display'),
+    ).not.toBeInTheDocument();
+    expect(container).not.toBeEmptyDOMElement();
+  });
+
+  it('should still show thinking steps on a finished message that has nothing else to render', () => {
+    renderAssistantRenderer(
+      [
+        {
+          type: 'reasoning',
+          text: 'Reasoning content',
+          state: 'done',
+        },
+      ] as ExtendedUIMessagePart[],
+      { shouldHideThinkingSteps: true },
+    );
+
+    expect(screen.getByTestId('thinking-steps-display')).toBeInTheDocument();
   });
 });

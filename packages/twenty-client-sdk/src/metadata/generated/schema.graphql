@@ -974,7 +974,6 @@ enum OnboardingStatus {
   WORKSPACE_ACTIVATION
   PROFILE_CREATION
   SYNC_EMAIL
-  APPS_INSTALLATION
   INVITE_TEAM
   BOOK_CALL
   COMPLETED
@@ -1770,11 +1769,19 @@ enum UsageUnit {
   COMPLEXITY
 }
 
+type UsageQuotaOperatorOnlyScope {
+  operationType: UsageOperationType!
+  spenderType: String!
+  unit: UsageUnit!
+  periodUnit: String!
+}
+
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
   allowedOperations: [UsageLimitOperationDefinition!]!
   allowedSpenderTypes: [String!]!
+  operatorOnlyScopes: [UsageQuotaOperatorOnlyScope!]!
 }
 
 enum UsageResourceType {
@@ -4276,7 +4283,6 @@ type Mutation {
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!

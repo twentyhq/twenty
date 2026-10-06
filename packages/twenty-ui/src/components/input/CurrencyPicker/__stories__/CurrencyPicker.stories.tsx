@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { CurrencyPickerExample } from './CurrencyPickerExample';
@@ -44,9 +44,9 @@ export const RightToLeft: Story = {
   args: { dir: 'rtl' },
   decorators: [
     (Story) => (
-      <TextDirectionProvider direction="rtl">
+      <DirectionProvider direction="rtl">
         <Story />
-      </TextDirectionProvider>
+      </DirectionProvider>
     ),
   ],
 };

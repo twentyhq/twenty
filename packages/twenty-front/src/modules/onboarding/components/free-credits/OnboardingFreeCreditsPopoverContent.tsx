@@ -8,7 +8,6 @@ import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import {
-  IconApps,
   IconAt,
   IconCoins,
   type IconComponent,
@@ -76,7 +75,6 @@ export const OnboardingFreeCreditsPopoverContent = ({
     { Icon: IconComponent; label: string }
   > = {
     importContacts: { Icon: IconAt, label: t`Import contacts` },
-    installApps: { Icon: IconApps, label: t`Install apps` },
     createProfile: { Icon: IconUserCircle, label: t`Create profile` },
     inviteTeam: { Icon: IconUserPlus, label: t`Invite your team` },
     upgradeTrial: { Icon: IconCreditCard, label: t`Upgrade your trial` },

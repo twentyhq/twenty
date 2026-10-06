@@ -40,7 +40,6 @@ const seedOnboardingFreeCredits = ({
   jotaiStore.set(onboardingConfigState.atom, {
     importContactsCreditsReward: 1,
     inviteTeamCreditsRewardPerUser: 0.5,
-    installAppsCreditsReward: 0.5,
     createProfileCreditsReward: 0.5,
     upgradeCreditsReward: 2,
     inviteTeamMaxInvites: 10,
@@ -119,20 +118,24 @@ export const FirstStep: Story = {
 export const EarnedSoFar: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({
-      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
-      onboardingFreeCredits: { importContacts: 1, seenCredits: 1 },
+      onboardingStatus: OnboardingStatus.INVITE_TEAM,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        createProfile: 0.5,
+        seenCredits: 1.5,
+      },
     });
   },
   play: async ({ canvasElement }) => {
     const freeCreditsLabel =
-      await within(canvasElement).findByText('free credit');
+      await within(canvasElement).findByText('free credits');
 
     await waitFor(() =>
-      expect(freeCreditsLabel.parentElement).toHaveTextContent('1/1'),
+      expect(freeCreditsLabel.parentElement).toHaveTextContent('1.5/1.5'),
     );
     await findVisibleTooltip(
       canvasElement,
-      'Start with apps and earn 0.5 free credits',
+      'Earn 0.5 free credits per teammate who joins',
     );
   },
 };
@@ -140,8 +143,12 @@ export const EarnedSoFar: Story = {
 export const EarnedSoFarOnPhone: Story = {
   beforeEach: () => {
     seedOnboardingFreeCredits({
-      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
-      onboardingFreeCredits: { importContacts: 1, seenCredits: 1 },
+      onboardingStatus: OnboardingStatus.INVITE_TEAM,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        createProfile: 0.5,
+        seenCredits: 1.5,
+      },
     });
 
     return overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true });
@@ -155,7 +162,7 @@ export const EarnedSoFarOnPhone: Story = {
     const pill = await within(canvasElement).findByRole('button', {
       name: /free credit/,
     });
-    const freeCreditsLabel = within(pill).getByText('free credit');
+    const freeCreditsLabel = within(pill).getByText('free credits');
 
     await expect(
       freeCreditsLabel.getBoundingClientRect().width,
@@ -174,10 +181,10 @@ export const NewlyEarned: Story = {
   },
   play: async ({ canvasElement }) => {
     const freeCreditsLabel =
-      await within(canvasElement).findByText('free credits');
+      await within(canvasElement).findByText('free credit');
 
     await waitFor(() =>
-      expect(freeCreditsLabel.parentElement).toHaveTextContent('0/1.5'),
+      expect(freeCreditsLabel.parentElement).toHaveTextContent('0/1'),
     );
 
     jotaiStore.set(
@@ -190,7 +197,7 @@ export const NewlyEarned: Story = {
 
     await within(canvasElement).findByText('+1');
     await waitFor(() =>
-      expect(freeCreditsLabel.parentElement).toHaveTextContent('1/1.5'),
+      expect(freeCreditsLabel.parentElement).toHaveTextContent('1/1'),
     );
     await waitFor(() =>
       expect(within(canvasElement).queryByText('+1')).not.toBeInTheDocument(),
@@ -253,8 +260,7 @@ export const Breakdown: Story = {
       onboardingStatus: OnboardingStatus.COMPLETED,
       onboardingFreeCredits: {
         importContacts: 1,
-        installApps: 0.5,
-        inviteTeam: 1,
+        inviteTeam: 1.5,
         seenCredits: 2.5,
       },
       numberFormat: NumberFormat.DOTS_AND_COMMA,
@@ -272,6 +278,6 @@ export const Breakdown: Story = {
     await expect(popover.getByText('Create profile')).toBeVisible();
     await expect(popover.getByText('0/0,5')).toBeVisible();
     await expect(popover.getByText('Invite your team')).toBeVisible();
-    await expect(popover.getByText('1/5')).toBeVisible();
+    await expect(popover.getByText('1,5/5')).toBeVisible();
   },
 };
