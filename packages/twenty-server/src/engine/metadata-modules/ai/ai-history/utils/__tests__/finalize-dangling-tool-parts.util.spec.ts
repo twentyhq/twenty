@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 
 const buildToolPart = (
   state: string,

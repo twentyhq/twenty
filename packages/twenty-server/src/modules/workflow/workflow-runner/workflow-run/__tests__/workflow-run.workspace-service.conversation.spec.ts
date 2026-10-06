@@ -52,6 +52,9 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     const turnRecorderService = {
       endWaitingTurn: jest.fn().mockResolvedValue(undefined),
     };
+    const threadRecordEventService = {
+      emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
+    };
 
     messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
       run({
@@ -68,6 +71,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       messagePartRepository as never,
       { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
       turnRecorderService as never,
+      threadRecordEventService as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -110,6 +114,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       threadRepository,
       messagePartRepository,
       turnRecorderService,
+      threadRecordEventService,
       updateWorkflowRun,
     };
   };
@@ -329,6 +334,20 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       });
     });
 
+    it('tells open chat lists the conversation no longer waits on an answer', async () => {
+      const { service, threadRecordEventService } = buildService();
+
+      await endRun(service);
+
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        messageId: 'message-id',
+      });
+    });
+
     it('leaves open a call another run posted in a conversation they share', async () => {
       const { service, threadRepository, messagePartRepository } =
         buildService();
@@ -353,14 +372,21 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     });
 
     it('leaves a conversation to the answer holding its claim', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        threadRecordEventService,
+      } = buildService();
 
       threadRepository.update.mockResolvedValue({ affected: 0 });
 
       await endRun(service);
 
       expect(messagePartRepository.writePart).not.toHaveBeenCalled();
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).not.toHaveBeenCalled();
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {
