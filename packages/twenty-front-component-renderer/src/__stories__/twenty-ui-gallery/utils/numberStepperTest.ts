@@ -67,5 +67,17 @@ export const numberStepperTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() =>
     expect(status).toHaveTextContent('Value: 4; Changes: 4; Submissions: 1'),
   );
+
+  await userEvent.clear(input);
+  await waitFor(() =>
+    expect(status).toHaveTextContent(
+      'Value: empty; Changes: 5; Submissions: 1',
+    ),
+  );
+  await userEvent.type(input, '2');
+  await waitFor(() =>
+    expect(status).toHaveTextContent('Value: 2; Changes: 6; Submissions: 1'),
+  );
+  expect(input).toHaveValue('2');
   expect(errorHandler).not.toHaveBeenCalled();
 };
