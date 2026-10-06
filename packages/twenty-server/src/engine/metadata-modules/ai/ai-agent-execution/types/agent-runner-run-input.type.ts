@@ -14,7 +14,8 @@ export type AgentRunnerRunInput = {
   agent: AgentEntity | null;
   // absent when continuing a paused run, whose answer is already the last message
   prompt: string | null;
-  createdBy: ActorMetadata;
+  // resolved while recording the turn, so a failed lookup does not stop the run
+  resolveCreatedBy: () => Promise<ActorMetadata>;
   baseSystemPrompt: string;
   pausingTools: ToolSet;
   canProposeToolCalls: boolean;

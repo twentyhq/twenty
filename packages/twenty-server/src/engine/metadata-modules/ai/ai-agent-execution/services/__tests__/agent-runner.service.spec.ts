@@ -12,7 +12,7 @@ const CREATED_BY = {
   name: 'New deals',
   workspaceMemberId: null,
   context: {},
-} as AgentRunnerRunInput['createdBy'];
+} as Awaited<ReturnType<AgentRunnerRunInput['resolveCreatedBy']>>;
 
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
@@ -51,7 +51,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
   title: 'Draft the quote',
   agent: null,
   prompt: 'Draft a quote',
-  createdBy: CREATED_BY,
+  resolveCreatedBy: async () => CREATED_BY,
   baseSystemPrompt: 'base prompt',
   pausingTools: {},
   canProposeToolCalls: false,
@@ -136,6 +136,28 @@ describe('AgentRunnerService', () => {
     expect(agentCallerConversationService.closeTurn).toHaveBeenCalledWith(
       expect.objectContaining({ turnId: 'turn-id', caller: CALLER }),
     );
+  });
+
+  it('still runs the agent when the turn author cannot be resolved', async () => {
+    const {
+      service,
+      agentAsyncExecutorService,
+      agentCallerConversationService,
+    } = buildService();
+
+    const { outcome } = await service.run({
+      ...RUN_INPUT,
+      resolveCreatedBy: async () => {
+        throw new Error('Workflow not found');
+      },
+    });
+
+    expect(agentCallerConversationService.openTurn).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();
+    expect(outcome).toEqual({
+      status: 'COMPLETED',
+      result: { answer: 'done' },
+    });
   });
 
   it('reads nothing back from a conversation it just created', async () => {

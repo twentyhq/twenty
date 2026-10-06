@@ -186,8 +186,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       title: step.name,
       agent,
       prompt: isDefined(resumedThreadId) ? null : resolvedPrompt,
-      createdBy:
-        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
+      resolveCreatedBy: () =>
+        this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
       baseSystemPrompt: canAskForHumanInput
         ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
         : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,

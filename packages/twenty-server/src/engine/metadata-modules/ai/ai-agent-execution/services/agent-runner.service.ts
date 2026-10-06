@@ -32,7 +32,7 @@ export class AgentRunnerService {
     title,
     agent,
     prompt,
-    createdBy,
+    resolveCreatedBy,
     baseSystemPrompt,
     pausingTools,
     canProposeToolCalls,
@@ -67,14 +67,14 @@ export class AgentRunnerService {
       }
     };
 
-    const turnId = await recordConversation(() =>
+    const turnId = await recordConversation(async () =>
       this.agentCallerConversationService.openTurn({
         workspaceId,
         threadId,
         agentId: agent?.id ?? null,
         prompt,
         senderUserWorkspaceId: userWorkspaceId,
-        createdBy,
+        createdBy: await resolveCreatedBy(),
       }),
     );
 
@@ -132,7 +132,7 @@ export class AgentRunnerService {
       outcome: this.buildOutcome({
         execution,
         isRecorded: isDefined(recordedTurn),
-        isAwaitingAnswer: recordedTurn?.isAwaitingAnswer === true,
+        isAwaitingAnswer: recordedTurn?.isAwaitingAnswer ?? false,
       }),
       summary: buildAgentRunSummary({ execution, durationMs }),
     };
