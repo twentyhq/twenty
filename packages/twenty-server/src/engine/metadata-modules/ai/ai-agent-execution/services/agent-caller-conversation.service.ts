@@ -6,10 +6,8 @@ import { In, IsNull, Not } from 'typeorm';
 
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
-import {
-  type AgentRunCaller,
-  type AgentRunCallerFilter,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { type AgentRunCallerFilter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-filter.type';
 import { type AgentRunnerOpenedConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-opened-conversation.type';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';

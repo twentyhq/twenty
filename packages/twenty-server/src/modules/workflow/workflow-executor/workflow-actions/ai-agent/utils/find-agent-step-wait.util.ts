@@ -4,7 +4,7 @@ import {
   workflowStepWaitSchema,
 } from 'twenty-shared/workflow';
 
-import { type AgentRunPausedToolResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-result.type';
+import { type AgentRunPausedToolResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-paused-tool-result.type';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
 

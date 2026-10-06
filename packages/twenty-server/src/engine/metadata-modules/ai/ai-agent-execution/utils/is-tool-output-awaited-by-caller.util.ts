@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentRunCallerFilter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { type AgentRunCallerFilter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-filter.type';
 import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/utils/read-tool-call-workflow-step.util';
 
 export const isToolOutputAwaitedByCaller = ({

@@ -1,12 +1,4 @@
-export type AgentRunToolCallLog = {
-  toolName: string;
-  toolCallId: string;
-  providerExecuted?: boolean;
-  input?: unknown;
-  output?: unknown;
-  errorMessage?: string;
-  state: 'started' | 'success' | 'error' | 'awaiting-approval';
-};
+import { type AgentRunToolCallLog } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-tool-call-log.type';
 
 export type AgentRunSummary = {
   modelId: string;
