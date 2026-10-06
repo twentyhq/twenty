@@ -42,7 +42,7 @@ export const SettingsApplicationActionButton = ({
     return null;
   }
 
-  const displayedInstallProgress = installProgress ?? 0;
+  const isInstallProgressKnown = isDefined(installProgress);
 
   return (
     <Button
@@ -52,10 +52,13 @@ export const SettingsApplicationActionButton = ({
       size="sm"
       onClick={onInstall}
       disabled={isInstalling}
+      loading={isInstalling && !isInstallProgressKnown}
     >
-      {isInstalling
-        ? t`Installing... (${displayedInstallProgress}%)`
-        : t`Install`}
+      {!isInstalling
+        ? t`Install`
+        : isInstallProgressKnown
+          ? t`Installing (${installProgress}%)`
+          : t`Installing...`}
     </Button>
   );
 };

@@ -3,6 +3,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -21,7 +22,7 @@ export const SettingsApplicationUninstallButton = ({
   const uninstallDialogId = useId();
 
   const confirmationValue = t`yes`;
-  const displayedUninstallProgress = uninstallProgress ?? 0;
+  const isUninstallProgressKnown = isDefined(uninstallProgress);
 
   return (
     <>
@@ -32,10 +33,13 @@ export const SettingsApplicationUninstallButton = ({
         size="sm"
         onClick={() => openDialog(uninstallDialogId)}
         disabled={isUninstalling}
+        loading={isUninstalling && !isUninstallProgressKnown}
       >
-        {isUninstalling
-          ? t`Uninstalling... (${displayedUninstallProgress}%)`
-          : t`Uninstall`}
+        {!isUninstalling
+          ? t`Uninstall`
+          : isUninstallProgressKnown
+            ? t`Uninstalling (${uninstallProgress}%)`
+            : t`Uninstalling...`}
       </Button>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}

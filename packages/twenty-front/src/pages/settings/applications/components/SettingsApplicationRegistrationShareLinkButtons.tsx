@@ -63,7 +63,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const displayedInstallProgress = installProgress ?? 0;
+  const isInstallProgressKnown = isDefined(installProgress);
 
   return (
     <StyledButtonGroup>
@@ -73,11 +73,14 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             startIcon={<IconDownload />}
             onClick={requestInstall}
             disabled={isInstalling}
+            loading={isInstalling && !isInstallProgressKnown}
             variant="outline"
           >
-            {isInstalling
-              ? t`Installing... (${displayedInstallProgress}%)`
-              : t`Install`}
+            {!isInstalling
+              ? t`Install`
+              : isInstallProgressKnown
+                ? t`Installing (${installProgress}%)`
+                : t`Installing...`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}

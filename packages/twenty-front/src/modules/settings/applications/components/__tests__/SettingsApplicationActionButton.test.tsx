@@ -65,20 +65,22 @@ describe('SettingsApplicationActionButton', () => {
     ).toBeDisabled();
   });
 
-  it('shows the installation progress in the label while installing', () => {
+  it('shows the installation progress in the label once it is known', () => {
     renderActionButton({ isInstalling: true, installProgress: 60 });
 
-    expect(
-      screen.getByRole('button', { name: 'Installing... (60%)' }),
-    ).toBeDisabled();
+    const button = screen.getByRole('button', { name: 'Installing (60%)' });
+
+    expect(button).toBeDisabled();
+    expect(button).not.toHaveAttribute('aria-busy', 'true');
   });
 
-  it('starts the installation progress at zero before the first progress event', () => {
+  it('shows a loader until the first progress event', () => {
     renderActionButton({ isInstalling: true });
 
-    expect(
-      screen.getByRole('button', { name: 'Installing... (0%)' }),
-    ).toBeDisabled();
+    const button = screen.getByRole('button', { name: /^Installing\b/ });
+
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
   });
 
   it('links to the application settings once installed', () => {
