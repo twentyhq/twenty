@@ -14,7 +14,6 @@ import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack
 import { findSlackAssistantRequestStatusesBySlackMessages } from 'src/logic-functions/data/find-slack-assistant-request-statuses-by-slack-messages';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
-import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
@@ -236,17 +235,19 @@ export const slackAssistantWorkerHandler = async (
           .filter(isNonEmptyString),
       }).catch((error) => {
         console.warn(
-          `[slack] failed to read the request statuses of thread ${parentMessageTimestamp} in ${slackChannelId}, answering with the whole window: ${toErrorMessage(error)}`,
+          `[slack] failed to read the request statuses of thread ${parentMessageTimestamp} in ${slackChannelId}, answering without Slack context: ${toErrorMessage(error)}`,
         );
 
-        return new Map<string, SlackAssistantRequestStatus>();
+        return undefined;
       });
 
-    const conversationMessages = buildSlackConversationMessages({
-      messages: conversationThreadMessages,
-      assistantBotUserId,
-      requestStatusByMessageTimestamp,
-    });
+    const conversationMessages = isDefined(requestStatusByMessageTimestamp)
+      ? buildSlackConversationMessages({
+          messages: conversationThreadMessages,
+          assistantBotUserId,
+          requestStatusByMessageTimestamp,
+        })
+      : [];
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
