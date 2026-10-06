@@ -1,6 +1,6 @@
 import { type LanguageModelUsage, type StepResult, type ToolSet } from 'ai';
 
-import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-history/types/agent-turn-usage.type';
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 
 export type AgentExecutionResult = {
   result: object;

@@ -1,6 +1,6 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/stamp-pending-tool-parts-with-workflow-step.util';
+import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/utils/stamp-pending-tool-parts-with-workflow-step.util';
 
 const WORKFLOW_STEP = { workflowRunId: 'run-id', stepId: 'step-id' };
 

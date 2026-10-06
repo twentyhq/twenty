@@ -27,10 +27,8 @@ describe('ASK_QUESTION_PAUSING_TOOL', () => {
   });
 
   it('pauses on the question, which chat lists preview', async () => {
-    const pendingOutput = await ASK_QUESTION_PAUSING_TOOL.buildTool().execute?.(
-      QUESTION,
-      { toolCallId: 'call-1', messages: [] },
-    );
+    const pendingOutput =
+      await ASK_QUESTION_PAUSING_TOOL.buildTool().execute(QUESTION);
 
     expect(pendingOutput).toEqual({
       success: true,

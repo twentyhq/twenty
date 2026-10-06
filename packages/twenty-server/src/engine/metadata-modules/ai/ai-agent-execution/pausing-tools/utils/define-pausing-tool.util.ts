@@ -46,7 +46,7 @@ export const definePausingTool = <
     buildTool: (context) => ({
       description,
       inputSchema,
-      execute: async (toolInput: TInput) => {
+      execute: async (toolInput) => {
         const preparedCall = await prepareCall(toolInput, context);
 
         return 'error' in preparedCall

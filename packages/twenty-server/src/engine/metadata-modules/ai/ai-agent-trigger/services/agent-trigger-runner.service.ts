@@ -126,9 +126,9 @@ export class AgentTriggerRunnerService {
         threadId,
         title: agent.label,
         agentId: agent.id,
-        application,
+        senderUserWorkspaceId: null,
+        senderApplicationId: application.id,
         createdBy,
-        actor: { type: 'application', applicationId: application.id },
         messages,
       })
       .catch(logRecordFailure);

@@ -69,10 +69,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
 
   it('hands the model the reason a call could not be proposed', async () => {
     expect(
-      await PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool().execute?.(INPUT, {
-        toolCallId: 'call-1',
-        messages: [],
-      }),
+      await PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool().execute(INPUT),
     ).toMatchObject({ success: false, error: expect.any(String) });
   });
 

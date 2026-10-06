@@ -1,7 +1,14 @@
-import { type Tool } from 'ai';
+import { type z } from 'zod';
 
 import { type PausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call.type';
 import { type PausingToolCallContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call-context.type';
+
+// kept a plain object rather than the SDK's Tool union, so a caller can override a field of it
+export type PausingAgentTool = {
+  description: string;
+  inputSchema: z.ZodType<unknown>;
+  execute: (toolInput: unknown) => Promise<Record<string, unknown>>;
+};
 
 export type PreparedPausingToolCall =
   | { input: unknown; pendingOutput: Record<string, unknown> }
@@ -10,7 +17,7 @@ export type PreparedPausingToolCall =
 // type-erased so tools with different inputs can share one map
 export type PausingTool = {
   // the tool an agent calls; it pauses the conversation on the pending output it returns
-  buildTool: (context?: PausingToolCallContext) => Tool;
+  buildTool: (context?: PausingToolCallContext) => PausingAgentTool;
   // makes a call without an agent, as an application or a workflow step does
   prepareCall: (
     toolInput: unknown,

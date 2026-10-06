@@ -5,7 +5,7 @@ import {
 import {
   STREAM_EXECUTION_FAILED_CODE,
   mapErrorToStreamError,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 
 describe('mapErrorToStreamError', () => {
   it('maps an AiException to its typed code and message', () => {
