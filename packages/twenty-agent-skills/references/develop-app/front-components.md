@@ -54,6 +54,15 @@ Object metadata belongs to the front component's own context, so a side panel ca
 
 Use the generated or core Twenty client for reads and writes. Keep loading, empty, error, disabled, and saving states explicit so runtime failures are visible and recoverable.
 
+## AI Tool Calls
+
+A front component set as a logic function's `toolTriggerSettings.frontComponentUniversalIdentifier` renders that tool's calls in the AI chat. Read the call with `useToolCall()` from `twenty-sdk/front-component`; it returns `{ toolCallId, toolName, status, input, output, errorText }` or `null` outside a tool call.
+
+When the agent proposes a call to the tool for approval, the same component is shown inside the approval card as the call's argument editor, with `status: 'approval-requested'` and the proposed arguments as `input`. Only handle this case when the tool's arguments need a custom editor, such as picking a slot or a record:
+
+- Stage edited arguments with `updateToolCallArguments(arguments)`. The card's own Approve button runs the call with the latest staged arguments.
+- The component cannot approve or reject the call. The person always decides with the card's buttons, so do not render approve or reject controls in the component.
+
 ## Headless Actions And DRY Helpers
 
 Headless front components should be thin action shells. The component file should mostly read SDK hooks, return the `Command` helper, and delegate reusable behavior to helpers.
