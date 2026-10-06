@@ -54,6 +54,7 @@ describe('computeWhereConditionParts', () => {
         value: 'Engineer',
         fieldMetadataType: FieldMetadataType.TEXT,
         expectedSql: `("person"."jobTitle" != :jobTitle0000000000 OR "person"."jobTitle" IS NULL)`,
+        expectedParams: { jobTitle0000000000: 'Engineer' },
       },
       {
         description:
@@ -62,6 +63,7 @@ describe('computeWhereConditionParts', () => {
         value: '',
         fieldMetadataType: FieldMetadataType.TEXT,
         expectedSql: `("person"."jobTitle" != :jobTitle0000000000 AND "person"."jobTitle" IS NOT NULL)`,
+        expectedParams: { jobTitle0000000000: '' },
       },
       {
         description:
@@ -70,6 +72,9 @@ describe('computeWhereConditionParts', () => {
         value: '20202020-0000-4000-8000-000000000001',
         fieldMetadataType: FieldMetadataType.UUID,
         expectedSql: `("person"."companyId" != :companyId0000000000 OR "person"."companyId" IS NULL)`,
+        expectedParams: {
+          companyId0000000000: '20202020-0000-4000-8000-000000000001',
+        },
       },
       {
         description: 'should match NULL dates when compared to a real date',
@@ -77,20 +82,48 @@ describe('computeWhereConditionParts', () => {
         value: '2026-01-01T00:00:00.000Z',
         fieldMetadataType: FieldMetadataType.DATE_TIME,
         expectedSql: `("person"."createdAt" < :createdAt0000000000 OR "person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond' OR "person"."createdAt" IS NULL)`,
+        expectedParams: { createdAt0000000000: '2026-01-01T00:00:00.000Z' },
       },
-    ])('$description', ({ key, value, fieldMetadataType, expectedSql }) => {
-      expect(
-        computeWhereConditionParts({
-          operator: 'neq',
-          objectNameSingular: 'person',
-          key,
-          value,
-          fieldMetadataType,
-        }),
-      ).toEqual({
-        sql: expectedSql,
-        params: { [`${key}0000000000`]: value },
-      });
-    });
+      {
+        description: 'should exclude NULL text values when compared to null',
+        key: 'jobTitle',
+        value: null,
+        fieldMetadataType: FieldMetadataType.TEXT,
+        expectedSql: `("person"."jobTitle" != :jobTitle0000000000 AND "person"."jobTitle" IS NOT NULL)`,
+        expectedParams: { jobTitle0000000000: '' },
+      },
+      {
+        description: 'should match set foreign keys when compared to null',
+        key: 'companyId',
+        value: null,
+        fieldMetadataType: FieldMetadataType.UUID,
+        expectedSql: `"person"."companyId" IS NOT NULL`,
+        expectedParams: {},
+      },
+      {
+        description: 'should match set dates when compared to null',
+        key: 'createdAt',
+        value: null,
+        fieldMetadataType: FieldMetadataType.DATE_TIME,
+        expectedSql: `"person"."createdAt" IS NOT NULL`,
+        expectedParams: {},
+      },
+    ])(
+      '$description',
+      ({ key, value, fieldMetadataType, expectedSql, expectedParams }) => {
+        expect(
+          computeWhereConditionParts({
+            operator: 'neq',
+            objectNameSingular: 'person',
+            key,
+            value,
+            fieldMetadataType,
+          }),
+        ).toEqual({
+          sql: expectedSql,
+          params: expectedParams,
+        });
+      },
+    );
   });
 });

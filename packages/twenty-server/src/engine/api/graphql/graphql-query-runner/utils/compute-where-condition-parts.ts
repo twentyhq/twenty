@@ -80,6 +80,20 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
+      if (hasNullEquivalentFieldValue) {
+        return {
+          sql: `(${fieldReference} != :${key}${paramSuffix} AND ${fieldReference} IS NOT NULL)`,
+          params: { [`${key}${paramSuffix}`]: nullEquivalentFieldValue },
+        };
+      }
+
+      if (value === null) {
+        return {
+          sql: `${fieldReference} IS NOT NULL`,
+          params: {},
+        };
+      }
+
       if (isDateTimeField) {
         return {
           sql: `(${fieldReference} < :${key}${paramSuffix} OR ${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond' OR ${fieldReference} IS NULL)`,
@@ -88,9 +102,7 @@ export const computeWhereConditionParts = ({
       }
 
       return {
-        sql: hasNullEquivalentFieldValue
-          ? `(${fieldReference} != :${key}${paramSuffix} AND ${fieldReference} IS NOT NULL)`
-          : `(${fieldReference} != :${key}${paramSuffix} OR ${fieldReference} IS NULL)`,
+        sql: `(${fieldReference} != :${key}${paramSuffix} OR ${fieldReference} IS NULL)`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':

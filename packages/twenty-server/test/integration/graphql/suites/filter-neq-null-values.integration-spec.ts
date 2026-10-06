@@ -125,6 +125,16 @@ describe('neq filter on NULL values (e2e)', () => {
     );
   });
 
+  it('should only keep records with a relation when comparing its foreign key to null', async () => {
+    expect(await findTestPersonIds({ companyId: { neq: null } })).toEqual(
+      [
+        TEST_PERSON_IDS.ACME_ENGINEER,
+        TEST_PERSON_IDS.GLOBEX_DESIGNER,
+        TEST_PERSON_IDS.ACME_NO_JOB_TITLE,
+      ].sort(),
+    );
+  });
+
   it('should keep a neq filter scoped when combined with a sibling filter', async () => {
     expect(
       await findTestPersonIds({
