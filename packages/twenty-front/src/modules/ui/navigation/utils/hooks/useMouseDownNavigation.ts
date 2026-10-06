@@ -2,7 +2,7 @@ import { isNavigationModifierPressed } from '@/ui/navigation/utils/isNavigationM
 import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
 import { type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-ui/utilities';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseMouseDownNavigationProps = {
   to?: string;
