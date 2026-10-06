@@ -18,6 +18,23 @@ const updateOneFieldMetadataItem = fn();
 
 import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 
+let resolvePendingUpdateOneFieldMetadataItem = () => {};
+
+const enableConfigurableSearchFields = () => {
+  jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      {
+        key: FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
+        value: true,
+      },
+    ],
+  });
+
+  return () => jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+};
+
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectDetail',
   component: SettingsObjectDetailPage,
@@ -62,18 +79,8 @@ export const ObjectTabs: Story = {
 export const SettingsTabDropdowns: Story = {
   beforeEach: () => {
     updateOneFieldMetadataItem.mockClear();
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
-          value: true,
-        },
-      ],
-    });
 
-    return () => jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+    return enableConfigurableSearchFields();
   },
   parameters: {
     msw: {
@@ -137,5 +144,46 @@ export const SettingsTabDropdowns: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(filterPanel).not.toBeInTheDocument());
     await waitFor(() => expect(filterButton).toHaveFocus());
+  },
+};
+
+export const SearchFieldUpdatePending: Story = {
+  beforeEach: enableConfigurableSearchFields,
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.mutation('UpdateOneFieldMetadataItem', async () => {
+          await new Promise<void>((resolve) => {
+            resolvePendingUpdateOneFieldMetadataItem = resolve;
+          });
+
+          return HttpResponse.json({ data: { updateOneField: null } });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByTestId('tab-settings'));
+
+    const addField = await canvas.findByRole('button', { name: 'Add field' });
+
+    await userEvent.click(addField);
+    const addFieldMenu = await body.findByRole('menu', { name: 'Add field' });
+
+    await userEvent.click(
+      within(addFieldMenu).getByRole('menuitem', { name: 'Address' }),
+    );
+
+    await waitFor(() => expect(addField).toHaveAttribute('aria-busy', 'true'));
+    expect(addField).toBeDisabled();
+
+    resolvePendingUpdateOneFieldMetadataItem();
+
+    await waitFor(() => expect(addField).not.toHaveAttribute('aria-busy'));
+    expect(addField).toBeEnabled();
   },
 };

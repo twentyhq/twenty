@@ -32,6 +32,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsObjectSearchSectionProps = {
@@ -45,6 +46,11 @@ type SearchFieldEntry = {
   icon?: string | null;
   fieldType: string;
   isLabelIdentifier: boolean;
+};
+
+type PendingSearchableChange = {
+  fieldMetadataId: string;
+  isSearchable: boolean;
 };
 
 const StyledSearchSectionContent = styled.div`
@@ -120,6 +126,10 @@ export const SettingsObjectSearchSection = ({
     objectMetadataItem.isSearchable,
   );
   const [searchTerm, setSearchTerm] = useState('');
+  const [pendingSearchableChange, setPendingSearchableChange] =
+    useState<PendingSearchableChange | null>(null);
+
+  const isSearchableChangePending = isDefined(pendingSearchableChange);
 
   const searchFields = useMemo(
     () => extractSearchFields(objectMetadataItem),
@@ -165,11 +175,15 @@ export const SettingsObjectSearchSection = ({
     fieldMetadataId: string,
     value: boolean,
   ) => {
+    setPendingSearchableChange({ fieldMetadataId, isSearchable: value });
+
     const result = await updateOneFieldMetadataItem({
       objectMetadataId: objectMetadataItem.id,
       fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isSearchable: value },
     });
+
+    setPendingSearchableChange(null);
 
     if (result.status === 'successful') {
       enqueueToast({
@@ -236,6 +250,11 @@ export const SettingsObjectSearchSection = ({
                     {isEditable && !entry.isLabelIdentifier && (
                       <LightIconButton
                         emphasis="subtle"
+                        disabled={isSearchableChangePending}
+                        loading={
+                          pendingSearchableChange?.isSearchable === false &&
+                          pendingSearchableChange.fieldMetadataId === entry.id
+                        }
                         onClick={() =>
                           handleSetFieldSearchable(entry.id, false)
                         }
@@ -255,12 +274,15 @@ export const SettingsObjectSearchSection = ({
         <StyledButtonContainer>
           <DropdownRoot dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID} type="menu">
             <Dropdown.Trigger
-              disabled={addableFields.length === 0}
+              disabled={addableFields.length === 0 || isSearchableChangePending}
               render={
                 <Button
                   startIcon={<IconPlus />}
                   size="sm"
-                  disabled={addableFields.length === 0}
+                  disabled={
+                    addableFields.length === 0 || isSearchableChangePending
+                  }
+                  loading={pendingSearchableChange?.isSearchable === true}
                   variant="outline"
                 >{t`Add field`}</Button>
               }
