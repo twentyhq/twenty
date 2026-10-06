@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DeferredWorkspaceMigrationActionHandlerDecorator } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/decorators/deferred-workspace-migration-action-handler.decorator';
 import { type DeferredWorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/interfaces/deferred-workspace-migration-action-handler.interface';
 import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
@@ -17,13 +20,26 @@ export class DeleteWorkflowRunsDeferredActionHandlerWorkspaceService implements 
 
   async execute({
     workspaceId,
-    payload: { coreWorkflowId },
+    payload: { coreWorkflowId, coreWorkflowVersionId },
+    allFlatEntityMaps,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
     DeferredWorkspaceMigrationActionPayload<'delete_workflowRuns'>
   >): Promise<void> {
-    await this.workflowDeletionCleanupWorkspaceService.cleanUpDeletedWorkflows({
+    const isWorkflowDeleted = !isDefined(
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: coreWorkflowId,
+        flatEntityMaps: allFlatEntityMaps.flatWorkflowMaps,
+      }),
+    );
+
+    if (isDefined(coreWorkflowVersionId) && isWorkflowDeleted) {
+      return;
+    }
+
+    await this.workflowDeletionCleanupWorkspaceService.deleteWorkflowRuns({
       workspaceId,
-      coreWorkflowIds: [coreWorkflowId],
+      coreWorkflowId,
+      coreWorkflowVersionId,
     });
   }
 }

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowStepWait } from 'twenty-shared/workflow';
-import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -183,22 +182,6 @@ export class WorkflowStepWaitWorkspaceService {
   }): Promise<void> {
     await this.workflowStepWaitRepository.delete(workspaceId, {
       workflowRunId,
-    });
-  }
-
-  async cancelWaitsOfRuns({
-    workspaceId,
-    workflowRunIds,
-  }: {
-    workspaceId: string;
-    workflowRunIds: string[];
-  }): Promise<void> {
-    if (workflowRunIds.length === 0) {
-      return;
-    }
-
-    await this.workflowStepWaitRepository.delete(workspaceId, {
-      workflowRunId: In(workflowRunIds),
     });
   }
 }

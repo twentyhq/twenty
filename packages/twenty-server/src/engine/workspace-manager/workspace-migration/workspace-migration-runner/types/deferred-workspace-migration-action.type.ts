@@ -4,7 +4,10 @@ type DeferredWorkspaceMigrationActionPayloadByName = {
   build_index: { indexMetadataId: string };
   validate_foreignKey: { fieldMetadataId: string };
   delete_logicFunctionResources: { flatLogicFunction: FlatLogicFunction };
-  delete_workflowRuns: { coreWorkflowId: string };
+  delete_workflowRuns: {
+    coreWorkflowId: string;
+    coreWorkflowVersionId?: string;
+  };
 };
 
 export type DeferredWorkspaceMigrationActionName =

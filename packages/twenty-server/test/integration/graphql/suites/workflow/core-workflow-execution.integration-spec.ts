@@ -1778,13 +1778,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(deleteResponse.body.errors).toBeUndefined();
 
       await expectEventually(() => {
-        expect(runCleanupSpy).toHaveBeenCalledTimes(1);
+        expect(runCleanupSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            payload: { coreWorkflowId: originalCoreWorkflowId },
+          }),
+        );
       });
-      expect(runCleanupSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: { coreWorkflowId: originalCoreWorkflowId },
-        }),
-      );
     } finally {
       runCleanupSpy.mockRestore();
     }
