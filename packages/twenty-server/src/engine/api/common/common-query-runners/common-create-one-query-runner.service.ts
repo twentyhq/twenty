@@ -5,6 +5,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -14,6 +15,7 @@ import {
   CreateManyQueryArgs,
   CreateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -104,9 +106,23 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     }
   }
 
-  protected override computeRecordLimitPerOneToManyRelation(
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonExtendedInput<CreateOneQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
-    return args.upsert ? QUERY_MAX_RECORDS : 0;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    return computeMaxFieldCountPerRecord({
+      select: selectedFieldsResult.select,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      recordLimitPerOneToManyRelation: args.upsert ? QUERY_MAX_RECORDS : 0,
+    });
   }
 }

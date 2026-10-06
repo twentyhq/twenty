@@ -152,15 +152,11 @@ export abstract class CommonBaseQueryRunnerService<
     if (isRootOperation) {
       this.recordApiComplexityUsage(
         authContext,
-        this.computeRootRecordCount(processedArgs) *
-          computeMaxFieldCountPerRecord({
-            select: selectedFieldsResult.select,
-            flatObjectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            recordLimitPerOneToManyRelation:
-              this.computeRecordLimitPerOneToManyRelation(processedArgs),
-          }) || 1,
+        this.computeQueryComplexityV2(
+          selectedFieldsResult,
+          processedArgs,
+          queryRunnerContext,
+        ) || 1,
       );
     }
 
@@ -215,14 +211,24 @@ export abstract class CommonBaseQueryRunnerService<
     return selectedFieldsComplexity;
   }
 
-  protected computeRootRecordCount(_args: CommonExtendedInput<Args>): number {
-    return 1;
-  }
-
-  protected computeRecordLimitPerOneToManyRelation(
+  protected computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
     _args: CommonExtendedInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
-    return QUERY_MAX_RECORDS_FROM_RELATION;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    return computeMaxFieldCountPerRecord({
+      select: selectedFieldsResult.select,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
+    });
   }
 
   private async processArgs(

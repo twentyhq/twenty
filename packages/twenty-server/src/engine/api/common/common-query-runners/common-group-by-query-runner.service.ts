@@ -25,6 +25,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
@@ -75,7 +76,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
-
   protected readonly isReadOnly = true;
 
   async run(
@@ -469,17 +469,32 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       : groupByQueryComplexity;
   }
 
-  protected override computeRootRecordCount(
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonExtendedInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
     const groupCount = getGroupLimit(args.limit);
 
-    return args.includeRecords
+    const recordCount = args.includeRecords
       ? groupCount * RECORDS_PER_GROUP_LIMIT
       : groupCount;
-  }
 
-  protected override computeRecordLimitPerOneToManyRelation(): number {
-    return RELATIONS_PER_RECORD_LIMIT;
+    return (
+      recordCount *
+      computeMaxFieldCountPerRecord({
+        select: selectedFieldsResult.select,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        recordLimitPerOneToManyRelation: RELATIONS_PER_RECORD_LIMIT,
+      })
+    );
   }
 }
