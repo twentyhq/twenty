@@ -78,6 +78,12 @@ describe('Record form widget visibility', () => {
     return data.updatePageLayoutWidget as unknown as FormFieldWidget;
   };
 
+  const hideFormFieldWidget = async () => {
+    const widget = await findFormFieldWidgetOrThrow(fieldMetadataId);
+
+    await setWidgetIsActive(widget.id, false);
+  };
+
   beforeAll(async () => {
     const {
       data: {
@@ -172,6 +178,8 @@ describe('Record form widget visibility', () => {
   });
 
   it('keeps the field hidden when it is renamed', async () => {
+    await hideFormFieldWidget();
+
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -187,6 +195,8 @@ describe('Record form widget visibility', () => {
   });
 
   it('keeps the field hidden across unrelated metadata changes', async () => {
+    await hideFormFieldWidget();
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -220,6 +230,8 @@ describe('Record form widget visibility', () => {
   });
 
   it('refuses the change for a member without the layouts permission', async () => {
+    await hideFormFieldWidget();
+
     const widget = await findFormFieldWidgetOrThrow(fieldMetadataId);
 
     const { errors } = await updateOnePageLayoutWidget({
@@ -238,6 +250,8 @@ describe('Record form widget visibility', () => {
   });
 
   it('shows the field again', async () => {
+    await hideFormFieldWidget();
+
     const widget = await findFormFieldWidgetOrThrow(fieldMetadataId);
 
     const updatedWidget = await setWidgetIsActive(widget.id, true);
@@ -246,9 +260,7 @@ describe('Record form widget visibility', () => {
   });
 
   it('forgets the hidden state when the field is deactivated and reactivated', async () => {
-    const widget = await findFormFieldWidgetOrThrow(fieldMetadataId);
-
-    await setWidgetIsActive(widget.id, false);
+    await hideFormFieldWidget();
 
     await updateOneFieldMetadata({
       expectToFail: false,
