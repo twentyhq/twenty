@@ -1,0 +1,359 @@
+---
+title: Good practices
+description: What running apps on hundreds of workspaces taught us. Prefer events to cron, batch database events, pace background jobs, and stay inside the budgets every install shares.
+icon: "gauge-high"
+---
+
+An app is written once and runs once per workspace that installs it. Every trigger, every call to the Twenty API and every request to a third party is multiplied by the number of installs, and most installs share the same budgets. This page collects what we learned shipping the [public apps](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public) (Call Recorder, Last Contact, Slack, Fireflies, Fathom, Granola, People Data Labs and others). Each rule below comes from an incident or a fix in one of them, and their source is the best companion to this page.
+
+## The short version
+
+1. **Prefer database events, webhooks and user actions to cron.** If you keep a cron, make it a daily, bounded backstop that only enqueues work, with a stable per-workspace delay.
+2. **Narrow every database event trigger** with `updatedFields` and run it in `batchMode`. Fold the batch into distinct records before you touch the API.
+3. **Never do heavy work inline in an event handler.** Detect that work is needed, mark it, then enqueue one delayed job with a deterministic `jobId` so a burst collapses into a single run.
+4. **Pace fan-outs with `delayMs`.** Chain pages instead of enqueuing everything at once, and size the pace from the slowest shared budget.
+5. **Count your Twenty API calls per run.** One `in` read and one upsert per object beat one call per record.
+6. **Make every run idempotent and resumable.** Deterministic ids, status fields, conditional writes, persisted cursors.
+7. **Treat third-party budgets as shared.** A server variable API key is one account for every workspace. Parse `Retry-After`, bound retries to the function timeout, never sleep through a rate limit.
+8. **Backfill once, bounded, and only on a fresh install, a version that requires it, or an explicit user action.**
+
+## Everything is multiplied by the number of installs
+
+The platform protects itself with budgets that are counted across installs, not per workspace. The defaults below are those of the hosted instance at the time of writing; a self-hosted instance can change them.
+
+| Budget | Default | Counted over |
+|--------|---------|--------------|
+| Twenty API calls made by your app | 500 per minute | Every workspace on the instance that installed the app |
+| Jobs enqueued by one install | 500 per minute | One workspace |
+| Jobs enqueued by your app | 2,000 per minute | Every install of the app on the instance |
+| Jobs per `enqueueJobs` call | 200 | One call |
+| Events per database event batch | up to 200 | One run |
+| Logic function queue | 20 jobs at a time per worker | Every app and every workspace |
+| Install and upgrade hooks | 1 at a time per worker | Every app and every workspace |
+
+Two consequences shape everything else on this page:
+
+- A handler that makes one API call per record is cheap in one workspace and exhausts the whole app's budget during a mailbox sync in another. The Last Contact app spent 435 to 585 calls per 200-event batch before it batched its reads and writes, which is 22 to 29 minutes of the entire instance's budget for a single 5,000-message sync. The same batch costs 9 calls today.
+- Anything that fires "at the same time in every workspace" fires N times at once. A cron pattern, an upgrade hook, a nightly sweep: each becomes a burst of N runs that all hit the same third party in the same second.
+
+<Note>
+The platform refuses what exceeds a budget rather than queuing it: a Twenty API call answers `429`, an `enqueueJobs` call is rejected, and a cron tick that would exceed the enqueue budget is skipped for that workspace. Design so that a refusal is rare, and so that a skipped run is picked up by the next event or the next sweep.
+</Note>
+
+## Prefer events to cron
+
+Once a minute the server walks every active workspace and enqueues one job for every logic function whose cron pattern matches. Nothing spreads those jobs. With 700 installs, a `*/15 * * * *` pattern puts 700 runs on the queue in the same second, and each run then calls the same provider in the same second. The Call Recorder app ran two recovery crons every 15 minutes across 700+ workspaces and triggered rate-limit alerts at the provider before it moved them to a daily schedule. Past a few thousand installs, a shared pattern also exceeds the per-app enqueue budget, so some workspaces silently miss the tick.
+
+The fix was never a smarter cron. It was moving the real work to an event that fires only where something changed:
+
+- A **database event** for anything that reacts to records. The Call Recorder schedules its bots from `calendarEvent.*` and `callRecording.updated` triggers; the daily crons are only backstops for crashed runs and missed webhooks.
+- A **webhook through a server route** for anything a provider can push. Fathom, Granola, Slack and the Call Recorder all run on provider webhooks; their crons exist to recover deliveries that were lost.
+- A **user action** (a command menu item, a settings button, a workflow action) for anything a person is waiting for.
+- A **post-install hook** for the one-time seed of a fresh workspace.
+
+When you keep a cron, keep it like this:
+
+- **One daily pattern per app, off-peak**, at a minute no other cron of yours uses. The Call Recorder staggers its four daily crons at 03:00, 03:30, 04:00 and 04:30.
+- **A cron handler only enqueues.** It computes a stable per-workspace delay and hands the work to a background job, so the N runs spread over a window instead of bursting. Keep its `timeoutSeconds` small.
+- **Bound what one run touches**: a time window (the last 7 days, the next 7 days), one page per job, a page cap, and an early exit when there is nothing to do.
+- **Make sure the pending set shrinks.** Rows that can never resolve must reach a terminal state, or every sweep re-reads them forever.
+- **A changed pattern reaches an install only on upgrade.** Cron settings live in the installed manifest, so bump the app version when you change one.
+
+```ts src/logic-functions/enqueue-nightly-cleanup.ts
+import { createHash } from 'crypto';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  enqueueJobs,
+  type LogicFunctionExecutionContext,
+} from 'twenty-sdk/logic-function';
+
+const NIGHTLY_CLEANUP = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const DISTRIBUTION_WINDOW_MS = 60 * 60 * 1000;
+
+// Every workspace's cron fires at the same instant; a stable per-workspace
+// offset spreads the provider traffic across the hour instead of bursting it.
+const computeWorkspaceDelay = (workspaceId: string): number =>
+  createHash('sha256').update(workspaceId).digest().readUInt32BE(0) %
+  DISTRIBUTION_WINDOW_MS;
+
+const handler = async (
+  _payload: unknown,
+  { workspaceId }: LogicFunctionExecutionContext,
+) => {
+  const today = new Date().toISOString().slice(0, 10);
+
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier: NIGHTLY_CLEANUP,
+    jobs: [{ payload: {}, jobId: `my-app-cleanup-${today}` }],
+    delayMs: computeWorkspaceDelay(workspaceId),
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'enqueue-nightly-cleanup',
+  timeoutSeconds: 30,
+  cronTriggerSettings: { pattern: '30 4 * * *' },
+  handler,
+});
+```
+
+The hash keeps the delay stable for a workspace from one night to the next, so the schedule stays predictable, while 1,000 workspaces land evenly over the hour.
+
+## Listen to database events carefully
+
+A database event trigger receives one event per record, and the platform writes records in bulk. A mailbox sync emits one `messageParticipant` event per synced message, thousands of them in a few seconds. The first version of the Last Contact app enqueued one job per event and overflowed the workers on large syncs. Around meeting-end peaks, the Call Recorder received one webhook for every recorded call across 700 workspaces at once. Both apps now follow the rules below.
+
+### Pick the narrowest event
+
+Choose the object, the operation and the fields that carry the transition you care about, and let the server filter before a run is created.
+
+- `updatedFields` filtering happens server-side, so an update to an unrelated field never spawns a run. When the Call Recorder declared `updatedFields` on its `callRecording.updated` trigger, the server started dropping the app's own progress writes "before spawning a full execution instead of executing and returning skipped".
+- Listen to the transition, not the creation. The Last Contact app listens to `messageParticipant.updated` with `updatedFields: ['personId']` rather than `message.created`: a participant row is created first and linked to a person later by the sync, and the link is the event that matters. It also fires exactly once per link.
+
+```ts
+export default defineLogicFunction({
+  // ...
+  databaseEventTriggerSettings: {
+    eventName: 'messageParticipant.updated',
+    updatedFields: ['personId'],
+    batchMode: true,
+  },
+});
+```
+
+### Run in batch mode and fold the batch
+
+Set `batchMode: true` so a bulk write arrives as one run of up to 200 events instead of up to 200 runs. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events) for the payload shape.
+
+Batching only helps if the handler does not loop the old per-event work. Fold the batch first:
+
+- Reduce events to the distinct records they touch. 200 messages for the same person become one person write, not 200.
+- Read everything the batch needs with `in` filters, paginated at 200, before the first write.
+- Write once per object with `createMany` and `upsert: true`, or `updateMany` with a filter, so the whole batch is one call per object.
+- Skip the write when nothing changed.
+
+```ts src/logic-functions/on-email-interaction.ts
+import { defineLogicFunction, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
+import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+type MessageParticipantUpdate = {
+  personId?: string | null;
+  messageId?: string | null;
+};
+
+const handler = async (
+  batch: DatabaseEventBatchPayload<ObjectRecordUpdateEvent<MessageParticipantUpdate>>,
+) => {
+  const linkByKey = new Map<string, { personId: string; messageId: string }>();
+
+  for (const event of batch.events) {
+    const { personId, messageId } = event.properties.after;
+
+    if (personId && messageId) {
+      linkByKey.set(`${personId}:${messageId}`, { personId, messageId });
+    }
+  }
+
+  if (linkByKey.size === 0) {
+    return;
+  }
+
+  await applyEmailInteractions(new CoreApiClient(), [...linkByKey.values()]);
+};
+```
+
+Raise `timeoutSeconds` on a batched handler (the apps use 300 seconds), since one run now covers a whole batch, and wrap every read and write in a retry: at one event per run a transient API error cost one event, whereas a batch run that throws leaves every record after the failure unprocessed.
+
+### Do not trigger yourself
+
+An app that writes to the object it listens to re-triggers itself on its own writes, and a loop at scale is an outage. Three layers stop it:
+
+- **At the trigger**: `updatedFields` that exclude the fields you write.
+- **In the handler**: recognize your own writes with data you own. The Call Recorder checks that the only changed field is the one it set and that the bot request is already live before it skips. Ignore `updatedBy` when you compare what changed: every API write stamps it, so it hides an echo rather than revealing one.
+- **On the field**: `isAuditLogged: false` on fields you rewrite on every sync, so each write does not add a timeline entry to the record. The Last Contact app rewrote 23 rollup fields per email and buried every person's timeline under "updated Last contact" entries until it opted them out.
+
+Created events deserve the same care: a run that creates a record and then reacts to that record's `created` event races itself into duplicate work. The Call Recorder schedules inline from the run that inserts the row and reacts only to updates.
+
+### Detect, then backfill with one delayed job
+
+Sometimes an event tells you that more work is needed than the event carries: the first message of a thread you never processed, a connection that just appeared, a bulk import that touched thousands of records. Do not do that work inline, and do not enqueue it once per event.
+
+Instead, mark what needs work (a status field on the record, or a key-value entry), then enqueue **one** job with a deterministic `jobId` and a `delayMs`. While the queue holds that id, further enqueues are accepted and ignored, so a burst of events collapses into a single run that starts once the burst has settled and reads the markers to find its work.
+
+```ts src/logic-functions/on-message-participant-linked.ts
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+const RECOMPUTE_STALE_PEOPLE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+const DEBOUNCE_WINDOW_MS = 5 * 60_000;
+
+const handler = async (batch: MessageParticipantLinkedBatch) => {
+  const personIds = [
+    ...new Set(
+      batch.events
+        .map((event) => event.properties.after.personId)
+        .filter(isDefined),
+    ),
+  ];
+
+  await markPeopleAsStale(personIds);
+
+  // One job per window, however many batches arrive: the queue ignores an id
+  // it already holds, and the job reads the stale markers, not this payload.
+  const window = Math.floor(Date.now() / DEBOUNCE_WINDOW_MS);
+
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier: RECOMPUTE_STALE_PEOPLE,
+    jobs: [{ payload: {}, jobId: `my-app-recompute-stale-people-${window}` }],
+    delayMs: DEBOUNCE_WINDOW_MS,
+  });
+};
+```
+
+Put a time window in the id. A completed job keeps its id for hours, so an id without a window would also swallow the next burst. Granola builds every job id from the payload plus the run window so that "retries dedupe without skipping later runs", and the Call Recorder suffixes its recovery ids with the recovery date. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id) for the retention rules.
+
+### Do not ask the queue to redeliver a batch on a rate limit
+
+A thrown error in a batched handler replays the whole batch. The Call Recorder learned that a replayed batch "can cancel a moved meeting's new bot", and that a rate-limit refusal "would come back inside the same window". Its batched handler retries transient network errors in-run, three attempts, logs a record that still fails, and leaves it to the next change or the daily sweep. Read everything before the first write, so a read that fails after its retries leaves nothing half done.
+
+## Pace background jobs
+
+[Background jobs](/developers/extend/apps/logic/background-jobs) are how an app does work that does not fit in one run. The platform caps a call at 200 jobs and an install at 500 enqueues per minute, which bounds the burst but does not pace it: a thousand jobs enqueued without a delay all become eligible at once, and the logic function queue runs 20 of them at a time per worker.
+
+- **Prefer a paced chain over a giant fan-out** when the work hits a rate-limited provider. The Call Recorder groups its nightly recovery into one-minute slots of at most 60 provider calls, enqueues slot `i` with `delayMs: i * 60_000`, and delays the next page by the number of slots the current page used so pages never pile up. Fireflies staggers its backfill batches 60 seconds apart. Granola paces one note every 4 seconds through a schedule it keeps in the key-value store.
+- **Size the pace from the shared budget, not from one workspace.** The 300 calls per minute the Call Recorder's provider allows are shared by every workspace and by webhook traffic; one workspace's recovery takes a slice of it, 60 per minute, so a few workspaces with a backlog can land in the same minute.
+- **Give every job a deterministic `jobId`** built from the record and the scope of the work: `my-app-${recordId}-transcript`, `my-app-${recordId}-reconcile-${date}`. An overlapping page, a webhook redelivery and a nightly re-run then all collapse into one job. Check `getJobs` before dispatching a repair so you never start work that is still queued.
+- **`retryLimit` bounds one job, not a chain.** A job that re-enqueues itself is a fresh job with fresh attempts, so carry the attempt counter in the payload and stop at a cap you chose.
+- **Only `RetryableLogicFunctionError` is redelivered.** A plain throw is a permanent failure. Throw the retryable error for a provider outage or a `5xx`, and only from handlers that are idempotent, since a redelivery re-runs everything. See [Retry a transient failure](/developers/extend/apps/logic/background-jobs#retry-a-transient-failure).
+- **Never sleep through a rate limit.** Waiting out a `Retry-After` inside the run burns the function budget and the worker slot. Re-enqueue the job with `delayMs` set to what the provider asked for, as the Slack app does for message delivery.
+
+```ts src/logic-functions/deliver-message.ts
+const MAX_DELIVERY_ATTEMPTS = 5;
+
+const handler = async ({ message, attempt = 1 }: DeliveryPayload) => {
+  const result = await postMessage(message);
+
+  if (result.status !== 'rate-limited') {
+    return result;
+  }
+
+  if (attempt >= MAX_DELIVERY_ATTEMPTS) {
+    await markDeliveryFailed(message);
+
+    return result;
+  }
+
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier: DELIVER_MESSAGE,
+    jobs: [{ payload: { message, attempt: attempt + 1 } }],
+    delayMs: result.retryAfterSeconds * 1000,
+  });
+};
+```
+
+- **Pick the queue on purpose.** Post-install and upgrade hooks run one at a time on the application lifecycle queue. A backfill whose jobs would compete with each other for the same API budget can simply run sequentially inside the hook, paging with a cursor inside the 900-second maximum. The Last Contact app moved from a fan-out of batch jobs that ran 20 at a time to exactly that, and stopped hitting the rate limit.
+
+## Count your Twenty API calls
+
+The application API budget is consumed once per root field of a request, not per record. A `createMany` with `upsert: true` carrying 200 records is one call; 200 single updates are 200 calls. Think of every handler as a number of calls per run and keep that number flat as the batch grows.
+
+| Step in a 200-event batch | One call per record | Batched |
+|---------------------------|--------------------:|--------:|
+| Read the people the batch touches | 150 | 1 |
+| Write the people | 150 to 300 | 1 |
+| Read and write their companies | 121 | 2 |
+| Read and write their opportunities | 11 | 2 |
+| Collect participants | 3 | 3 |
+| Total | 435 to 585 | 9 |
+
+- **Read with `in` filters** over the whole batch, 200 ids at a time, with cursor pagination.
+- **Write with upserts**, keyed on the primary key, one call per object type.
+- **Cap scans that depend on data you do not control.** Finding a company's most recently contacted person has no batched "top 1 per company" form, so the Last Contact app scans a few pages for the whole batch and falls back to one lookup per company it could not settle, instead of letting one company with a long history page through everything.
+- **Retry transient errors yourself.** The client SDK throws a plain `Error` on any non-2xx response, so retryability has to be read from the message. Retry `429`, Cloudflare `1015`, `502`, `503`, `504` and network failures with exponential backoff, jitter, a `retry_after` hint when the body carries one, and a hard cap on attempts. Non-retryable errors must throw immediately.
+- **Cache stable facts in the key-value store.** The Slack app asked Slack for its bot user id on every channel-join event, including the joins of humans it then ignored. It now writes the id when the connection is registered and reads it from the store; reconnecting re-runs the hook, so the cache corrects itself without a TTL. See [Key-Value Store](/developers/extend/apps/logic/key-value-store).
+- **Pass ids along instead of re-resolving them.** Listing connections or reading a key is a round trip each. A helper that resolves the same connection its caller just resolved doubles the cost of every hot path.
+
+## Treat third-party budgets as shared
+
+A provider API key stored as a server variable is one provider account for every workspace that installed your app. Every rule for the Twenty API applies there too, with a few more:
+
+- **Know the limit per endpoint** and prefer the roomier one. The Call Recorder's provider allows 60 list calls per minute but 120 creates and 300 reads, so recovery re-sends a bot creation with its stored idempotency key instead of listing bots to find it.
+- **List once per run and match in memory.** One workspace-wide list filtered by your own metadata beats one lookup per stuck record. Treat a truncated list as a failed lookup, never as permission to create.
+- **Record the attempt before the call.** Writing an "attempted at" marker and the idempotency key on the record before you call the provider lets recovery tell a row that never reached the provider (re-send, zero reads) from a row whose outcome is unknown (look it up). Respect the provider's idempotency window: the Call Recorder trusted a stored key for 12 hours when the provider forgot it after one, and created twin bots that were both billed.
+- **Stop a batch when the account is rejected.** On a `401` or `402`, fail the remaining records with that reason instead of calling the provider for every chunk, as the People Data Labs app does.
+- **Bound the provider client to your run.** Library defaults are built for long-lived servers: the Slack client retries for about thirty minutes with no request timeout, the Fathom SDK retries `429` for five minutes. Set a per-request timeout, a small retry budget, and reject rate-limited calls so a `429` surfaces as an error you can defer instead of a sleep that outlives the function. A handler-owned deadline computed at function entry is the only one you control; `timeoutSeconds` is the kill switch.
+- **Stream large payloads to storage** instead of buffering them. Media ingestion in the Call Recorder ran out of memory until it streamed downloads straight into direct uploads and capped the accepted file size. Give long transfers a work budget under `timeoutSeconds` so the outcome is persisted before the run is cut off.
+
+## Make every run idempotent and resumable
+
+Every event can be delivered twice, every job can be retried, and every run can be killed mid-way. The apps that stayed correct at scale share the same building blocks:
+
+- **Deterministic record ids.** A call recording's id is derived from the provider's recording id, so webhooks, syncs and backfills converge on one row, and a concurrent create loses on the primary key rather than creating a twin. Pair it with create-then-fallback: try the create, and on a unique violation read the row that won.
+- **Status fields with terminal states.** `PROCESSING`, `COMPLETED`, `FAILED`, plus a failure reason. A terminal row is skipped by every sweep, and only an explicit user action clears it.
+- **Conditional writes.** Update with a filter that encodes what you expect (`status` still non-terminal, `updatedAt` unchanged, a lease you hold) and treat zero matched rows as "someone else got there first". Never move a status backwards: deliveries are unordered and a late event must not undo a newer one.
+- **Charge only from the write that won.** Charge credits after the conditional update that completes the record succeeds, so a redelivery never bills twice. Never rethrow after a paid step succeeded: a redelivery would pay for it again.
+- **Persist the cursor before the next hop.** A chained job saves its position, in the key-value store or in the payload of the next job, before it enqueues, so a failed link restarts from the last completed page. Order pages by `createdAt` then `id`, so records created during the run sort to the tail instead of shifting the pages.
+- **Ack webhooks fast and dedupe them.** A server route resolver should verify the signature and dispatch; the queued target does the work. Providers redeliver when the ack is late, and each redelivery is a billed invocation, so forward the provider's retry headers and log them to see your redelivery rate. Dedupe with a unique index on the provider's message key, or with a deterministic job id.
+- **Verify ownership from data you wrote**, not from editable fields. A job payload or a webhook can carry a forged provider id; resolve it through the record's persisted external id or the metadata you attached at the provider.
+
+## Backfill once, bounded, and on purpose
+
+A backfill is the one place an app touches every record of a workspace, so it is where the multiplication bites hardest. The public apps converged on three triggers and one shape.
+
+**When to run it:**
+
+- On a **fresh install**, from the post-install hook, for a default window (Fathom and Granola import the last 31 days when a connection is registered, and set a flag so a retried hook does not enqueue it twice).
+- On an **upgrade that requires it**, gated on the version pair. Never on every upgrade.
+- On an **explicit user action** with a visible count, for larger windows (a settings button that posts to an authenticated route and returns at once). Never unattended when it bills: the Call Recorder removed an upgrade-triggered summary backfill because it "would silently bill agent runs".
+
+```ts src/logic-functions/backfill-on-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
+import { compare } from 'semver';
+
+const shouldBackfill = ({ previousVersion, newVersion }: InstallPayload): boolean => {
+  if (!isDefined(previousVersion)) {
+    return true;
+  }
+
+  // 1.6.0 fixed the writes that rate limiting had dropped on earlier versions.
+  return compare(previousVersion, '1.5.0') <= 0 && compare(newVersion, '1.6.0') >= 0;
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'c94f671f-b3fa-47a2-8de6-dde94d13f8d1',
+  name: 'backfill-on-install',
+  timeoutSeconds: 900,
+  shouldRunOnVersionUpgrade: true,
+  handler: async (payload: InstallPayload) => {
+    if (!shouldBackfill(payload)) {
+      return { outcome: 'skipped' };
+    }
+
+    return runBackfill();
+  },
+});
+```
+
+**How to shape it:**
+
+- A **discovery job** lists one provider page and enqueues **batch jobs** of a handful of items, then re-enqueues itself with the next cursor and a delay. Each batch is sequential on purpose: the batch is the unit of pacing against the provider.
+- **Bound everything**: the window (31 days by default, up to a user-chosen maximum), the pages (a cap that ends the chain if a cursor repeats or cycles), and the delay (the queue refuses more than 7 days).
+- **Skip what is already there.** Read the existing field state for the whole batch in one query and fetch only what is missing, so a re-run after a failure costs calls but never duplicates records.
+- **Expose the batch size as a server variable** so an operator can turn it down on a struggling instance without a release.
+- **Recompute from the source**, not from the stored result, so phases can run in any order and a partial run leaves nothing inconsistent.
+
+## Spend credits deliberately
+
+- **Check before you spend at a provider.** The Call Recorder enqueues a delayed job that calls `getCreditAvailability()` ten minutes before a bot joins and cancels the bot when the workspace cannot spend. The check fails open, so an infrastructure hiccup never cancels a call. See [Checking before you spend](/developers/extend/apps/logic/credits#checking-before-you-spend).
+- **Charge for what was delivered**, after the conditional write that completes the record, never on failure or timeout.
+- **Keep the cheap paths cheap.** Every logic function invocation has a flat cost plus a per-millisecond cost. A handler that spends its run concluding "nothing to do" is still an invocation, which is one more reason to filter at the trigger.
+
+## Watch it in production
+
+- **Ship a health check.** `defineHealthCheck` runs when the app's settings page opens. Use it to say "no synced inbox yet" or "the provider rejected the token", with a button to the fix, instead of leaving columns silently empty. Keep it to one query, with no retries, so a flaky API reads as unknown rather than slowing the page down. See [Health check](/developers/extend/apps/logic/logic-functions#health-check).
+- **Log the signals you will need**: a retry delivery, a deferred job, a truncated list, a skipped batch. Every one of the fixes above started from a count in the logs.
+- **Count calls in tests.** An integration test that asserts "a batch of three meetings that already have bots makes four API calls" catches the per-record loop before it reaches production.
+- **Keep unit tests on pure domain functions**: the delay computation, the slot grouping, the retry policy, the status transitions. They are what changes when a scaling bug is fixed, and they are what a reviewer reads.
