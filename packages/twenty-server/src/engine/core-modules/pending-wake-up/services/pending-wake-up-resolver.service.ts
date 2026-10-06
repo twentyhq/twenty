@@ -63,22 +63,24 @@ export class PendingWakeUpResolverService {
       return;
     }
 
-    let readableEvent = event;
+    const shouldReadEventRecord =
+      ownerState.status === 'WAITING' && isDefined(event);
 
-    if (ownerState.status === 'WAITING' && isDefined(event)) {
-      readableEvent = await this.readEventRecord({
-        wakeUp,
-        event,
-        recordReadAttempt,
-        readPermissions: await handler.getReadPermissions({
+    const readableEvent = shouldReadEventRecord
+      ? await this.readEventRecord({
           wakeUp,
-          owner: ownerState.owner,
-        }),
-      });
+          event,
+          recordReadAttempt,
+          readPermissions: await handler.getReadPermissions({
+            wakeUp,
+            owner: ownerState.owner,
+          }),
+        })
+      : event;
 
-      if (!isDefined(readableEvent)) {
-        return;
-      }
+    // an event whose record the owner cannot read yet keeps it waiting
+    if (shouldReadEventRecord && !isDefined(readableEvent)) {
+      return;
     }
 
     const claimedWakeUp = await this.pendingWakeUpService.claim({

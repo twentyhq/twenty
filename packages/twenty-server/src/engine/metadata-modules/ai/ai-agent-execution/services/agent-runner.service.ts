@@ -384,15 +384,31 @@ export class AgentRunnerService {
         });
       }
 
+      if (execution.hasNoMoreAvailableCredits) {
+        return {
+          status: 'FAILED',
+          error: 'Agent stopped: no more available credits.',
+        };
+      }
+
+      if (hasPausedTooOften) {
+        return {
+          status: 'FAILED',
+          error: `Agent stopped: it paused more than ${AGENT_RUN_MAX_CONTINUATIONS} times in one run.`,
+        };
+      }
+
+      if (isDefined(wait)) {
+        return {
+          status: 'FAILED',
+          error:
+            'Agent paused to wait but its conversation could not be recorded.',
+        };
+      }
+
       return {
         status: 'FAILED',
-        error: execution.hasNoMoreAvailableCredits
-          ? 'Agent stopped: no more available credits.'
-          : hasPausedTooOften
-            ? `Agent stopped: it paused more than ${AGENT_RUN_MAX_CONTINUATIONS} times in one run.`
-            : isDefined(wait)
-              ? 'Agent paused to wait but its conversation could not be recorded.'
-              : 'Agent asked a question that could not be recorded.',
+        error: 'Agent asked a question that could not be recorded.',
       };
     }
 
