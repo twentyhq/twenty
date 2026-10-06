@@ -12,6 +12,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   jotaiStore,
@@ -29,6 +30,20 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 }));
 
 const THREAD_IDS = ['thread-1', 'thread-2'];
+
+const buildThread = (
+  id: string,
+  overrides: Partial<AgentChatThreadRecord> = {},
+): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title: null,
+  deletedAt: null,
+  createdAt: '2026-10-01T09:00:00.000Z',
+  updatedAt: '2026-10-01T10:00:00.000Z',
+  lastActivityAt: '2026-10-01T10:00:00.000Z',
+  ...overrides,
+});
 
 const renderTriage = (path = '/') =>
   render(
@@ -49,15 +64,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     setAgentChatThreadList(
       jotaiStore,
-      THREAD_IDS.map(
-        (threadId) =>
-          ({
-            __typename: 'AgentChatThread',
-            id: threadId,
-            deletedAt: null,
-            lastActivityAt: '2026-10-01T10:00:00.000Z',
-          }) as never,
-      ),
+      THREAD_IDS.map((threadId) => buildThread(threadId)),
     );
     jotaiStore.set(agentChatThreadParticipantsState.atom, {});
   });
@@ -129,20 +136,8 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
   it('counts the open chats waiting on an answer under Needs input', () => {
     setAgentChatThreadList(jotaiStore, [
-      {
-        __typename: 'AgentChatThread',
-        id: 'thread-1',
-        deletedAt: null,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
-        pendingQuestionMessageId: 'question',
-      } as never,
-      {
-        __typename: 'AgentChatThread',
-        id: 'thread-2',
-        deletedAt: null,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
-        pendingQuestionMessageId: null,
-      } as never,
+      buildThread('thread-1', { pendingQuestionMessageId: 'question' }),
+      buildThread('thread-2', { pendingQuestionMessageId: null }),
     ]);
     THREAD_IDS.forEach(markThreadAsRead);
 
@@ -189,13 +184,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   it('flags Assigned when a chat assigned to the member is unread', () => {
     jotaiStore.set(currentWorkspaceMemberState.atom, { id: 'jane' } as never);
     setAgentChatThreadList(jotaiStore, [
-      {
-        __typename: 'AgentChatThread',
-        id: 'thread-1',
-        deletedAt: null,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
-        assigneeId: 'jane',
-      } as never,
+      buildThread('thread-1', { assigneeId: 'jane' }),
     ]);
 
     renderTriage();

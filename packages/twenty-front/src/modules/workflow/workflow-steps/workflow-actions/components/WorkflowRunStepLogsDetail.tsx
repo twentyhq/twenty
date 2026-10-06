@@ -97,7 +97,10 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
       case 'AI_AGENT':
         return (
           <>
-            <WorkflowRunStepAiAgentConversationButton stepId={stepId} />
+            <WorkflowRunStepAiAgentConversationButton
+              stepId={stepId}
+              stepLogThreadId={stepLog.details.threadId}
+            />
             <WorkflowRunStepLogsAiAgentDetail details={stepLog.details} />
           </>
         );

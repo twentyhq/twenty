@@ -3741,6 +3741,9 @@ export default {
             "failedReason": [
                 1
             ],
+            "progress": [
+                32
+            ],
             "enqueuedAt": [
                 16
             ],
@@ -6974,6 +6977,9 @@ export default {
             "streamId": [
                 1
             ],
+            "mentionedParticipantWorkspaceMemberIds": [
+                3
+            ],
             "__typename": [
                 1
             ]
@@ -6992,6 +6998,12 @@ export default {
                 4
             ],
             "snoozedUntil": [
+                4
+            ],
+            "isSubscribed": [
+                8
+            ],
+            "lastMentionedAt": [
                 4
             ],
             "updatedAt": [
@@ -10438,6 +10450,10 @@ export default {
                     "fileAttachments": [
                         586,
                         "[FileAttachmentInput!]"
+                    ],
+                    "mentionedWorkspaceMemberIds": [
+                        3,
+                        "[UUID!]"
                     ]
                 }
             ],
@@ -10512,6 +10528,24 @@ export default {
                 }
             ],
             "moveAgentChatThreadToInbox": [
+                392,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "subscribeToAgentChatThread": [
+                392,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "unsubscribeFromAgentChatThread": [
                 392,
                 {
                     "threadId": [

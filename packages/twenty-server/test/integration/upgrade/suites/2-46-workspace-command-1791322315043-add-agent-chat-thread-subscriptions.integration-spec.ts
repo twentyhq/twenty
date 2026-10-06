@@ -2,6 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -87,6 +88,12 @@ describe('2-46 workspace command - add agent chat thread subscriptions (integrat
       commandMenuItems: [],
     });
     expect(await listParticipantColumns()).toEqual([]);
+    // Chats keep working without the inbox until the command reaches them
+    expect(
+      await getAppProviderByClassName<AgentChatSharingService>(
+        'AgentChatSharingService',
+      ).hasInboxState(SEED_APPLE_WORKSPACE_ID),
+    ).toBe(false);
   });
 
   it('adds them back on up, with every existing row subscribed', async () => {
@@ -108,6 +115,11 @@ describe('2-46 workspace command - add agent chat thread subscriptions (integrat
     );
 
     expect(unsubscribedCount).toBe(0);
+    expect(
+      await getAppProviderByClassName<AgentChatSharingService>(
+        'AgentChatSharingService',
+      ).hasInboxState(SEED_APPLE_WORKSPACE_ID),
+    ).toBe(true);
   });
 
   it('changes nothing when it runs again', async () => {

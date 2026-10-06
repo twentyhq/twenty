@@ -13,6 +13,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { type AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -120,7 +121,7 @@ describe('Send chat message workflow step', () => {
       await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
       const [{ threadId }] = await global.testDataSource.query(
-        `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+        `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
         [workflowRunId, stepId],
       );
 
@@ -226,6 +227,55 @@ describe('Send chat message workflow step', () => {
       expect(await readEmployees()).toBe(30);
     }, 120000);
 
+    it('keeps waiting when the step posts its call again', async () => {
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Post a headcount check twice',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+          const [{ threadId }] = await global.testDataSource.query(
+            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+            [workflowRunId, stepId],
+          );
+
+          postedThreadId = threadId;
+
+          await expect(
+            getAppProviderByClassName<AgentRunSuspensionService>(
+              'AgentRunSuspensionService',
+            ).awaitCallerCall({
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              threadId,
+              caller: {
+                type: 'WORKFLOW_STEP',
+                ref: { workflowRunId, stepId },
+              },
+            }),
+          ).resolves.toBeUndefined();
+
+          await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'approve' },
+          });
+        },
+      });
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({ outcome: 'executed' });
+      expect(await readEmployees()).toBe(25);
+    }, 120000);
+
     it('runs nothing when the recipient rejects the action', async () => {
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Reject a headcount change',
@@ -320,7 +370,7 @@ describe('Send chat message workflow step', () => {
             );
 
             const [{ threadId }] = await global.testDataSource.query(
-              `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+              `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
               [workflowRunId, stepId],
             );
 
@@ -381,7 +431,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
             [workflowRunId, stepId],
           );
 
@@ -444,7 +494,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
             [workflowRunId, stepId],
           );
 
