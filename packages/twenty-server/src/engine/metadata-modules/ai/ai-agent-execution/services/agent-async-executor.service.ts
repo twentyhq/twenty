@@ -74,13 +74,12 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
-import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
-import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
-import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
+import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import {
   AiException,
@@ -136,7 +135,6 @@ export class AgentAsyncExecutorService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
-    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
@@ -462,7 +460,7 @@ export class AgentAsyncExecutorService {
           proposableTools = registryToolset.proposableTools;
         }
 
-        const nativeTools = this.nativeToolBinder.bind(
+        const nativeTools = this.aiModelConfigService.getNativeModelTools(
           registeredModel,
           nativeModelToolOptions,
         );
@@ -601,6 +599,14 @@ export class AgentAsyncExecutorService {
             inputSchema,
             error,
             model: registeredModel.model,
+            billingContext: {
+              aiBillingService: this.aiBillingService,
+              modelId: registeredModel.modelId,
+              workspaceId,
+              userWorkspaceId: userWorkspaceId ?? null,
+              agentId: agent?.id ?? null,
+              operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            },
           });
         },
       });
@@ -689,6 +695,10 @@ export class AgentAsyncExecutorService {
         modelId: registeredModel.modelId,
         totalCostInDollars,
         creditsUsedMicro,
+        turnUsage: this.aiBillingService.calculateStepsTurnUsage(
+          registeredModel.modelId,
+          executionSteps,
+        ),
       };
     } catch (error) {
       if (error instanceof AiException) {

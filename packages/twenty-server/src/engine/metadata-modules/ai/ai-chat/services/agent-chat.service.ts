@@ -3,19 +3,28 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { type ActorMetadata, FileFolder } from 'twenty-shared/types';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In } from 'typeorm';
+import {
+  isDefined,
+  isNonEmptyArray,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
+import { type FindOptionsWhere, In, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
+import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -27,12 +36,9 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 @Injectable()
 export class AgentChatService {
-  private readonly logger = new Logger(AgentChatService.name);
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -49,6 +55,7 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   private getMessageSenderValues({
@@ -72,23 +79,41 @@ export class AgentChatService {
     };
   }
 
+  private getMessageSenderActor({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): ActorMetadata | undefined {
+    const context = workspaceAuthContextStorage.getStore();
+
+    return isDefined(context) &&
+      isUserAuthContext(context) &&
+      context.workspace.id === workspaceId &&
+      context.userWorkspaceId === userWorkspaceId
+      ? buildActorMetadataFromAuthContext(context)
+      : undefined;
+  }
+
+  // A message opening its own turn runs the agent unless the caller says nothing will
   async addMessage({
     threadId,
     uiMessage,
     agentId,
     turnId,
+    turnStatus = AgentTurnStatus.RUNNING,
     id,
     workspaceId,
-    isHidden,
     userWorkspaceId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
     agentId?: string;
     turnId?: string;
+    turnStatus?: AgentTurnStatus;
     id?: string;
     workspaceId: string;
-    isHidden?: boolean;
     userWorkspaceId?: string;
   }) {
     const actualTurnId =
@@ -97,6 +122,8 @@ export class AgentChatService {
         workspaceId,
         threadId,
         agentId: agentId ?? null,
+        status: turnStatus,
+        createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
       }));
 
     const senderValues = this.getMessageSenderValues({
@@ -113,7 +140,6 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       ...senderValues,
-      isHidden,
       processedAt,
       parts: uiMessage.parts ?? [],
     });
@@ -168,41 +194,101 @@ export class AgentChatService {
     );
   }
 
-  async findLatestSentUserMessage({
+  // the contexts are the thread owner's, so the turns of other participants run without them
+  async getThreadContexts({
     threadId,
+    workspaceMemberId,
     workspaceId,
   }: {
     threadId: string;
+    workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<Pick<AgentMessageWorkspaceEntity, 'id' | 'turnId'> | null> {
-    return this.messageRepository.findOne(workspaceId, {
-      where: {
-        threadId,
-        role: AgentMessageRole.USER,
-        status: AgentMessageStatus.SENT,
-      },
-      order: {
-        processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
-        createdAt: 'DESC',
-        id: 'DESC',
-      },
-      select: ['id', 'turnId'],
+  }): Promise<string[]> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+      select: ['id', 'workspaceMemberId'],
+    });
+
+    if (thread?.workspaceMemberId !== workspaceMemberId) {
+      return [];
+    }
+
+    // hidden user messages are contexts the 2.46 upgrade has not turned into system messages yet
+    const contextMessages = await this.messageRepository.find(workspaceId, {
+      where: [
+        { threadId, role: AgentMessageRole.SYSTEM },
+        { threadId, isHidden: true },
+      ],
+      order: { createdAt: 'ASC', id: 'ASC' },
+      relations: ['parts'],
+    });
+
+    return contextMessages.flatMap(({ parts }) => {
+      const context = (parts ?? [])
+        .sort((first, second) => first.orderIndex - second.orderIndex)
+        .flatMap(({ textContent }) =>
+          isNonEmptyString(textContent) ? [textContent] : [],
+        )
+        .join('\n\n');
+
+      return isNonEmptyString(context) ? [context] : [];
     });
   }
 
-  async hasConversationMessages({
+  // an earlier attempt that never got an answer left only its context, which would repeat
+  async replaceOpeningTurn({
+    threadId,
+    workspaceId,
+    context,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    context: string;
+  }): Promise<string> {
+    // only the contexts and their turns go, so a message queued meanwhile stays
+    const earlierContexts = await this.messageRepository.find(workspaceId, {
+      where: [
+        { threadId, role: AgentMessageRole.SYSTEM },
+        { threadId, isHidden: true },
+      ],
+      select: ['id', 'turnId'],
+    });
+
+    if (isNonEmptyArray(earlierContexts)) {
+      await this.messageRepository.delete(workspaceId, {
+        id: In(earlierContexts.map(({ id }) => id)),
+      });
+    }
+
+    const earlierTurnIds = earlierContexts.flatMap(({ turnId }) =>
+      isDefined(turnId) ? [turnId] : [],
+    );
+
+    if (isNonEmptyArray(earlierTurnIds)) {
+      await this.turnRepository.delete(workspaceId, {
+        id: In(earlierTurnIds),
+      });
+    }
+
+    return this.conversationWriterService.insertAgentOpenedTurn({
+      workspaceId,
+      threadId,
+      context,
+    });
+  }
+
+  async hasMessages({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const visibleMessage = await this.messageRepository.findOne(workspaceId, {
-      where: { threadId, isHidden: false },
-      select: ['id'],
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      isHidden: false,
+      role: Not(AgentMessageRole.SYSTEM),
     });
-
-    return isDefined(visibleMessage);
   }
 
   async deleteAssistantMessagesForTurn({
@@ -222,87 +308,27 @@ export class AgentChatService {
     threadId,
     workspaceMemberId,
     workspaceId,
-    includeHidden = false,
   }: {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
-    includeHidden?: boolean;
   }) {
-    if (includeHidden) {
-      await this.threadService.getWritableThread({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-      });
-    } else {
-      await this.sharingService.getReadableThread({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-      });
-    }
+    await this.sharingService.getReadableThread({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
 
+    // contexts are given to the model, never shown
     return this.messageRepository.find(workspaceId, {
-      where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
+      where: {
+        threadId,
+        isHidden: false,
+        role: Not(AgentMessageRole.SYSTEM),
+      },
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });
-  }
-
-  async ensureHiddenKickoffMessage({
-    threadId,
-    workspaceId,
-    text,
-    userWorkspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-    text: string;
-    userWorkspaceId: string;
-  }): Promise<{ id: string; turnId: string }> {
-    const existingKickoffMessage = await this.messageRepository.findOne(
-      workspaceId,
-      {
-        where: { threadId, isHidden: true },
-        relations: ['parts'],
-      },
-    );
-
-    if (isDefined(existingKickoffMessage)) {
-      if (
-        isDefined(existingKickoffMessage.turnId) &&
-        isNonEmptyArray(existingKickoffMessage.parts)
-      ) {
-        return {
-          id: existingKickoffMessage.id,
-          turnId: existingKickoffMessage.turnId,
-        };
-      }
-
-      await this.messageRepository.delete(workspaceId, {
-        id: existingKickoffMessage.id,
-      });
-
-      if (isDefined(existingKickoffMessage.turnId)) {
-        await this.turnRepository.delete(workspaceId, {
-          id: existingKickoffMessage.turnId,
-        });
-      }
-    }
-
-    const { id, turnId } = await this.addMessage({
-      threadId,
-      workspaceId,
-      userWorkspaceId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [{ type: 'text' as const, text }],
-      },
-      isHidden: true,
-    });
-
-    return { id, turnId };
   }
 
   async queueMessage({
@@ -344,6 +370,7 @@ export class AgentChatService {
         ? await this.fileRepository.find(workspaceId, {
             where: {
               id: In(fileAttachments.map((attachment) => attachment.id)),
+              path: Like(`${FileFolder.AgentChat}/%`),
             },
             select: ['id'],
           })
@@ -454,6 +481,7 @@ export class AgentChatService {
       workspaceId,
       threadId,
       agentId: null,
+      status: AgentTurnStatus.RUNNING,
     });
 
     const result = await this.messageRepository.update(
@@ -588,12 +616,21 @@ export class AgentChatService {
           [threadId, messageId],
         );
 
-        return clearedThreads.length > 0;
+        if (clearedThreads.length === 0) {
+          return false;
+        }
+
+        await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+          messageId,
+          AgentTurnStatus.COMPLETED,
+        ]);
+
+        return true;
       },
     );
 
     if (isPendingQuestionCleared) {
-      await this.emitPendingQuestionCleared({
+      await this.threadRecordEventService.emitPendingQuestionCleared({
         workspaceId,
         threadId,
         messageId,
@@ -623,45 +660,23 @@ export class AgentChatService {
       return;
     }
 
+    await this.turnRecorderService.endWaitingTurn({
+      workspaceId,
+      messageId,
+      status: AgentTurnStatus.COMPLETED,
+    });
+
     await closeOpenToolParts({
       messagePartRepository: this.messagePartRepository,
       messageId,
       workspaceId,
     });
 
-    await this.emitPendingQuestionCleared({ workspaceId, threadId, messageId });
-  }
-
-  // Chat lists show which chats wait on an answer. The marker is already
-  // cleared, so a lost event must not fail the caller
-  private async emitPendingQuestionCleared({
-    workspaceId,
-    threadId,
-    messageId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    messageId: string;
-  }): Promise<void> {
-    try {
-      const thread = await this.threadRepository.findOne(workspaceId, {
-        where: { id: threadId },
-      });
-
-      if (!isDefined(thread)) {
-        return;
-      }
-
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
-        threadAfter: thread,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
-      );
-    }
+    await this.threadRecordEventService.emitPendingQuestionCleared({
+      workspaceId,
+      threadId,
+      messageId,
+    });
   }
 
   async restoreThread({

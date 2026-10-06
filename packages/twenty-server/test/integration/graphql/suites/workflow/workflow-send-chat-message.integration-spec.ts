@@ -74,8 +74,8 @@ describe('Send chat message workflow step', () => {
       });
       expect(messages).toEqual([
         {
-          role: 'user',
-          isHidden: true,
+          role: 'system',
+          isHidden: false,
           textContent:
             'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
         },
