@@ -7,7 +7,9 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
@@ -33,8 +35,18 @@ export class AgentRunsResolver {
   constructor(private readonly agentRunsService: AgentRunsService) {}
 
   @Query(() => [AgentRunDTO])
+  @UseGuards(ApplicationTargetGuard)
   async agentRuns(
-    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
+    @ApplicationTargetArg(
+      'agentId',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'agent',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    agentId: string,
     @Args('limit', { type: () => Int, defaultValue: 100 }) limit: number,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentRunDTO[]> {

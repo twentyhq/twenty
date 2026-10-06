@@ -1,10 +1,8 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -29,7 +27,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -38,16 +35,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AiModelsModule,
     AiAgentModule,
     ApplicationLookupModule,
-    BillingModule,
     CacheLockModule,
     FileUrlModule,
-    WorkspaceDomainsModule,
     MetricsModule,
     UserWorkspaceModule,
     UserRoleModule,
     PermissionsModule,
-    WorkspaceCacheModule,
-    forwardRef(() => ToolProviderModule),
+    ToolProviderModule,
     TypeOrmModule.forFeature([
       AgentEntity,
       FileEntity,
