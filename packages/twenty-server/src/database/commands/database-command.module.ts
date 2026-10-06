@@ -32,6 +32,7 @@ import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanu
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
@@ -61,7 +62,6 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
-import { WorkflowWaitModule } from 'src/modules/workflow/workflow-wait/workflow-wait.module';
 import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-core-consistency/workflow-core-consistency.module';
 
 @Module({
@@ -76,7 +76,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WebhookSubscriptionModule,
     EmailingModule,
     AutomatedTriggerModule,
-    WorkflowWaitModule,
+    PendingWakeUpModule,
     WorkflowCoreConsistencyModule,
     FileModule,
     WorkspaceModule,

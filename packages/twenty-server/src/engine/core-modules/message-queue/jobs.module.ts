@@ -28,6 +28,7 @@ import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
@@ -123,6 +124,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
     OnboardingModule,
+    PendingWakeUpModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
