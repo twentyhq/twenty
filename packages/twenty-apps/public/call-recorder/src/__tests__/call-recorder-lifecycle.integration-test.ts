@@ -355,6 +355,7 @@ class FakeRecallApi {
   hasExpiredMedia = false;
   failBotCreation = false;
   failNextDelete = false;
+  failFollowUpEnqueue = false;
   failCalendarEventUpdates = false;
   failCallRecordingReads = false;
   failRecallRemovals = false;
@@ -507,6 +508,10 @@ class FakeRecallApi {
         FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
         const delayMs = input.delayMs ?? 0;
+
+        if (this.failFollowUpEnqueue) {
+          return jsonResponse(503, {});
+        }
 
         this.followUps.push(
           ...(input.jobs ?? []).map(({ jobId, payload }) => ({
@@ -2391,6 +2396,53 @@ describe('call recorder app lifecycle (integration)', () => {
       // The API stores a cleared TEXT field as an empty string.
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toEqual([botId]);
+    });
+
+    it('persists cancellation and deletes the bot even when follow-up enqueueing fails', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.failFollowUpEnqueue = true;
+
+      await expect(
+        cancelCallRecordingRequest({
+          client,
+          callRecording: { id: callRecordingId, externalBotId: botId },
+        }),
+      ).rejects.toThrow();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('cancels a meeting in a mixed batch before active follow-up enqueueing fails', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: { id: calendarEventId, data: { isCanceled: true } },
+          id: true,
+        },
+      });
+      const activeCalendarEventId = await createCalendarEvent({
+        conferenceLink: {
+          primaryLinkUrl: 'https://meet.google.com/another-meeting',
+        },
+      });
+      recall.failFollowUpEnqueue = true;
+
+      await expect(
+        reconcileCallRecorderForCalendarEventIds({
+          client,
+          calendarEventIds: [calendarEventId, activeCalendarEventId],
+        }),
+      ).rejects.toThrow();
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+      expect(recall.deletedBotIds).toContain(botId);
     });
 
     it('cancels the bot in the follow-up when the inline Recall cancellation failed', async () => {

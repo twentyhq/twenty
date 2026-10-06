@@ -37,30 +37,32 @@ export const syncCalendarBotSchedulingHandler =
       await findOpenScheduledCallRecordings(client)
     ).map((callRecording) => callRecording.id);
 
-    await enqueueCallRecordingRequestFollowUps({
-      callRecordingIds: openCallRecordingIds,
-    });
+    try {
+      const canceledCallRecordingCount =
+        await cancelOpenScheduledCallRecordingRequests(
+          client,
+          openCallRecordingIds,
+          () => true,
+        );
 
-    const canceledCallRecordingCount =
-      await cancelOpenScheduledCallRecordingRequests(
-        client,
-        openCallRecordingIds,
-        () => true,
-      );
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      });
 
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
-    });
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      });
 
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
-    });
-
-    return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
+      return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
+    } finally {
+      await enqueueCallRecordingRequestFollowUps({
+        callRecordingIds: openCallRecordingIds,
+      });
+    }
   };
 
 export default defineLogicFunction({

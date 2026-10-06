@@ -228,16 +228,6 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
     ).map((callRecording) => [callRecording.id, callRecording]),
   );
 
-  // Armed before any write, so a run that dies mid-batch still leaves every
-  // new or re-enabled request its follow-up.
-  await enqueueCallRecordingRequestFollowUps({
-    callRecordingIds: activeMeetingCallRecordingIds.filter((callRecordingId) =>
-      isUndefined(
-        policyManagedCallRecordingsById.get(callRecordingId)?.externalBotId,
-      ),
-    ),
-  });
-
   const canceledMeetingReconciliations = await reconcileCanceledMeetings({
     client,
     meetingPolicyResults: meetingPolicyResults.filter(
@@ -256,6 +246,16 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
         canceledMeetingReconciliation.calendarEventIdsToClearRecordingOn,
     ),
   );
+
+  // Armed before creating or re-enabling requests, so a run that dies mid-batch still leaves every
+  // new or re-enabled request its follow-up.
+  await enqueueCallRecordingRequestFollowUps({
+    callRecordingIds: activeMeetingCallRecordingIds.filter((callRecordingId) =>
+      isUndefined(
+        policyManagedCallRecordingsById.get(callRecordingId)?.externalBotId,
+      ),
+    ),
+  });
 
   const activeMeetingReconciliations = await reconcileActiveMeetings({
     client,

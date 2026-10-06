@@ -36,7 +36,7 @@ export const enqueueCallRecordingRequestFollowUps = async ({
         jobId: buildCallRecordingRequestFollowUpJobId({
           callRecordingId,
           attempt,
-          dueAt: new Date(now + slotDelayMs),
+          dueAt: new Date(now + delayMs),
         }),
         payload: { callRecordingId, attempt },
       })),
