@@ -118,47 +118,6 @@
   "overrides": [
     {
       "files": [
-        "src/engine/metadata-modules/ai/**",
-        "src/engine/metadata-modules/flat-agent/**"
-      ],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "paths": [
-              {
-                "name": "twenty-shared/i18n",
-                "importNames": ["generateMessageId"],
-                "message": "Provider-owned metadata strings must resolve through resolveEffectiveEntityProperty, which owns the catalog lookup. Hashing message ids by hand is how the per-entity resolvers drifted apart."
-              },
-              {
-                "name": "src/engine/core-modules/i18n/utils/translate-standard-label.util",
-                "message": "Call resolveEffectiveEntityProperty instead: it arbitrates overrides and overrides.translations before delegating here."
-              }
-            ],
-            "patterns": [
-              {
-                "group": ["**../"],
-                "message": "Relative imports are not allowed."
-              },
-              {
-                "group": ["lodash"],
-                "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
-              },
-              {
-                "group": [
-                  "src/modules/workflow/**",
-                  "src/engine/core-modules/workflow/**"
-                ],
-                "message": "Agent code must not depend on workflow code. Move shared pieces to a neutral module; workflows may depend on agents, not the reverse."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": [
         "**/*.spec.ts",
         "**/*.integration-spec.ts",
         "**/__tests__/**",
