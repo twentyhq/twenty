@@ -14,7 +14,6 @@ import {
   runCoreWorkflowVersion,
   type TestApplicationWorkflow,
   waitForTestWorkflowRun,
-  waitForTestWorkflowRunsToBeDeleted,
 } from 'test/integration/graphql/suites/workflow/utils/application-workflow-test.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -245,8 +244,7 @@ describe('removing workflows from an application manifest', () => {
       ).toBeUndefined();
     }
 
-    await waitForTestWorkflowRunsToBeDeleted([formRunId, secondFormRunId]);
-
+    expect(await countTestWorkflowRuns([formRunId, secondFormRunId])).toBe(0);
     expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
 
     const [{ count: applicationFunctionCount }] =
