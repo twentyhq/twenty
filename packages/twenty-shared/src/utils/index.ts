@@ -264,6 +264,7 @@ export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
+export { looksLikeHtml } from './tiptap/looks-like-html';
 export {
   parseEmailDocument,
   parseCanonicalEmailDocument,
