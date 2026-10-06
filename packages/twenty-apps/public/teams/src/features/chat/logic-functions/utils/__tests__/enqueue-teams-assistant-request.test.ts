@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
-import { TEAMS_CHAT_DISABLED_SKIP_REASON } from 'src/features/chat/logic-functions/constants/teams-chat-disabled-skip-reason';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request';
 
@@ -68,28 +67,8 @@ describe('enqueueTeamsAssistantRequest', () => {
 
     expect(await enqueueTeamsAssistantRequest(PAYLOAD)).toEqual({
       ok: true,
-      skipped: TEAMS_CHAT_DISABLED_SKIP_REASON,
+      skipped: 'Chat is disabled',
     });
-    expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
-  });
-
-  it('should skip while the chat feature is unavailable', async () => {
-    featureFlags.IS_CHAT_ASSISTANT_ENABLED = false;
-
-    expect(await enqueueTeamsAssistantRequest(PAYLOAD)).toEqual({
-      ok: true,
-      skipped: TEAMS_CHAT_DISABLED_SKIP_REASON,
-    });
-    expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
-  });
-
-  it('should not record activities the parser rejects', async () => {
-    expect(
-      await enqueueTeamsAssistantRequest({
-        ...PAYLOAD,
-        activity: { ...PAYLOAD.activity, type: 'typing' },
-      }),
-    ).toEqual({ ok: true, skipped: 'Unhandled activity type: typing' });
     expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
   });
 });

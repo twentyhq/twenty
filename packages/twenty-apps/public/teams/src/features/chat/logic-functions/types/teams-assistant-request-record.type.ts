@@ -1,13 +1,8 @@
-export type TeamsAssistantRequestRecord = {
-  id: string;
-  status?: string;
-  teamsActivityId?: string;
-  teamsConversationId?: string;
-  teamsConversationType?: string;
-  teamsServiceUrl?: string;
-  teamsTenantId?: string;
-  teamsUserId?: string;
-  teamsUserAadObjectId?: string;
-  requestText?: string;
-  updatedAt?: string;
-};
+import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
+
+export type TeamsAssistantRequestRecord =
+  Partial<TeamsAssistantRequestDraft> & {
+    id: string;
+    status?: string;
+    updatedAt?: string;
+  };

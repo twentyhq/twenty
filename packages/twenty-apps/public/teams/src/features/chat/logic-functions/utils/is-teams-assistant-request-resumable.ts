@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-timeout-seconds';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
-import { getTeamsAssistantRequestLeaseCutoff } from 'src/features/chat/logic-functions/utils/get-teams-assistant-request-lease-cutoff';
 
 export const isTeamsAssistantRequestResumable = (
   record: Pick<TeamsAssistantRequestRecord, 'status' | 'updatedAt'>,
@@ -20,6 +20,7 @@ export const isTeamsAssistantRequestResumable = (
   }
 
   return (
-    new Date(record.updatedAt) < getTeamsAssistantRequestLeaseCutoff(nowMs)
+    new Date(record.updatedAt).getTime() <
+    nowMs - TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS * 1000
   );
 };

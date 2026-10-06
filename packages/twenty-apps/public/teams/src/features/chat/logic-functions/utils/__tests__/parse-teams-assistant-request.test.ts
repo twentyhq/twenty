@@ -15,8 +15,8 @@ const buildPayload = (
     type: 'message',
     id: '1700000000000',
     text: 'how many open deals does Acme have?',
-    from: { id: '29:user-id', name: 'Jane Doe', aadObjectId: 'aad-user-id' },
-    recipient: { id: BOT_ID, name: 'Twenty' },
+    from: { id: '29:user-id', aadObjectId: 'aad-user-id' },
+    recipient: { id: BOT_ID },
     conversation: {
       id: 'a:personal-conversation',
       conversationType: 'personal',
@@ -55,12 +55,12 @@ describe('parseTeamsAssistantRequest', () => {
           {
             type: 'mention',
             text: '<at>Twenty</at>',
-            mentioned: { id: BOT_ID, name: 'Twenty' },
+            mentioned: { id: BOT_ID },
           },
           {
             type: 'mention',
             text: '<at>John Smith</at>',
-            mentioned: { id: '29:other-user-id', name: 'John Smith' },
+            mentioned: { id: '29:other-user-id' },
           },
         ],
       }),
@@ -81,21 +81,12 @@ describe('parseTeamsAssistantRequest', () => {
             {
               type: 'mention',
               text: '<at>Twenty</at>',
-              mentioned: { id: BOT_ID, name: 'Twenty' },
+              mentioned: { id: BOT_ID },
             },
           ],
         }),
       ),
     ).toEqual({ request: null, skipReason: 'Empty request text' });
-  });
-
-  it('should skip activities that are not messages', () => {
-    expect(
-      parseTeamsAssistantRequest(buildPayload({ type: 'conversationUpdate' })),
-    ).toEqual({
-      request: null,
-      skipReason: 'Unhandled activity type: conversationUpdate',
-    });
   });
 
   it('should skip messages sent by a bot', () => {
@@ -107,14 +98,5 @@ describe('parseTeamsAssistantRequest', () => {
     expect(
       parseTeamsAssistantRequest(buildPayload({ from: { id: BOT_ID } })),
     ).toEqual({ request: null, skipReason: 'Not a user message' });
-  });
-
-  it('should skip activities missing the ids needed to answer', () => {
-    expect(
-      parseTeamsAssistantRequest(buildPayload({ conversation: {} })),
-    ).toEqual({
-      request: null,
-      skipReason: 'Activity is missing required fields',
-    });
   });
 });

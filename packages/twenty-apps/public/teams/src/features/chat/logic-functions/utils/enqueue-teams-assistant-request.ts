@@ -1,6 +1,5 @@
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
-import { TEAMS_CHAT_DISABLED_SKIP_REASON } from 'src/features/chat/logic-functions/constants/teams-chat-disabled-skip-reason';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-functions/types/teams-activities-enqueue-result.type';
 import { enqueueTeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request-record';
@@ -16,7 +15,7 @@ export const enqueueTeamsAssistantRequest = async (
   });
 
   if (!isChatEnabled) {
-    return { ok: true, skipped: TEAMS_CHAT_DISABLED_SKIP_REASON };
+    return { ok: true, skipped: 'Chat is disabled' };
   }
 
   const parsed = parseTeamsAssistantRequest(payload);

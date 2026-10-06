@@ -4,25 +4,28 @@ import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/typ
 
 const MENTION_TAG_PATTERN = /<at>(.*?)<\/at>/g;
 
-const collectBotMentionTexts = (activity: TeamsInboundActivity): string[] =>
-  (activity.entities ?? [])
+export const normalizeTeamsRequestText = ({
+  text,
+  entities,
+  recipient,
+}: TeamsInboundActivity): string => {
+  const botMentionTexts = (entities ?? [])
     .filter(
       (entity) =>
         entity.type === 'mention' &&
-        isNonEmptyString(activity.recipient?.id) &&
-        entity.mentioned?.id === activity.recipient.id,
+        isNonEmptyString(recipient?.id) &&
+        entity.mentioned?.id === recipient.id,
     )
     .map((entity) => entity.text)
     .filter(isNonEmptyString);
 
-export const normalizeTeamsRequestText = (
-  activity: TeamsInboundActivity,
-): string =>
-  collectBotMentionTexts(activity)
+  return botMentionTexts
     .reduce(
-      (text, botMentionText) => text.split(botMentionText).join(' '),
-      activity.text ?? '',
+      (remainingText, botMentionText) =>
+        remainingText.split(botMentionText).join(' '),
+      text ?? '',
     )
     .replace(MENTION_TAG_PATTERN, '$1')
     .replace(/\s+/g, ' ')
     .trim();
+};
