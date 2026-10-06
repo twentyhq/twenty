@@ -116,21 +116,21 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
       });
     }
 
-    const actionOutput =
-      outcome.status === 'FAILED'
-        ? { error: outcome.error }
-        : {
-            result: await this.buildStepResult({
-              workspaceId,
-              workflowRunId,
-              stepId,
-              threadId,
-              result: outcome.result,
-            }),
-          };
-
     // the step stays pending until the job claims it, so the run must not stay running without one
     try {
+      const actionOutput =
+        outcome.status === 'FAILED'
+          ? { error: outcome.error }
+          : {
+              result: await this.buildStepResult({
+                workspaceId,
+                workflowRunId,
+                stepId,
+                threadId,
+                result: outcome.result,
+              }),
+            };
+
       await this.messageQueueService.add<RunWorkflowJobData>(
         RUN_WORKFLOW_JOB_NAME,
         {
