@@ -37,6 +37,8 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -52,6 +54,7 @@ export class WorkflowRunWorkspaceService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -785,10 +788,17 @@ export class WorkflowRunWorkspaceService {
         continue;
       }
 
+      // the question is already cleared, so its calls must close before anything else can fail
       await closeOpenToolParts({
         messagePartRepository: this.messagePartRepository,
         messageId: pendingQuestionMessageId,
         workspaceId,
+      });
+
+      await this.turnRecorderService.endWaitingTurn({
+        workspaceId,
+        messageId: pendingQuestionMessageId,
+        status: AgentTurnStatus.CANCELLED,
       });
     }
   }
