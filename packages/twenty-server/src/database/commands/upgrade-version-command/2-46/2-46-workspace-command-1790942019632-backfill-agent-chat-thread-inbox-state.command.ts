@@ -192,6 +192,8 @@ const backfillAgentChatThreadInboxState = async ({
        ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
      SELECT $1, participant.id, participant."workspaceMemberId", 'WORKSPACE_MEMBER', 'FULL', 'OWNER', participant.id
      FROM ${tables.participant} participant
+     JOIN ${tables.workspaceMember} member
+       ON member.id = participant."workspaceMemberId" AND member."deletedAt" IS NULL
      ON CONFLICT DO NOTHING`,
     [participantObjectMetadataId],
   );

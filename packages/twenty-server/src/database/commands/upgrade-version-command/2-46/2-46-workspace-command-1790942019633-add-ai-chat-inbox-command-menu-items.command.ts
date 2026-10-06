@@ -23,7 +23,6 @@ const AI_CHAT_INBOX_COMMAND_MENU_ITEM_NAMES = [
 
 const NEW_AI_CHAT_UNIVERSAL_IDENTIFIER = '604bc9b2-e438-4572-bd35-726fa0fb2ec7';
 
-// New chat leaves the chat header: the inbox list offers it instead
 @RegisteredWorkspaceCommand('2.46.0', 1790942019633)
 @Command({
   name: 'upgrade:2-46:add-ai-chat-inbox-command-menu-items',
