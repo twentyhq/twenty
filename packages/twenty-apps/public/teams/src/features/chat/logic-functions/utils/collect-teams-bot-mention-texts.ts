@@ -11,7 +11,7 @@ export const collectTeamsBotMentionTexts = ({
       (entity) =>
         entity.type === 'mention' &&
         isNonEmptyString(recipient?.id) &&
-        entity.mentioned?.id === recipient.id,
+        entity.mentioned?.id?.toLowerCase() === recipient.id.toLowerCase(),
     )
     .map((entity) => entity.text)
     .filter(isNonEmptyString);

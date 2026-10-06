@@ -55,7 +55,7 @@ describe('parseTeamsAssistantRequest', () => {
           {
             type: 'mention',
             text: '<at>Twenty</at>',
-            mentioned: { id: BOT_ID },
+            mentioned: { id: BOT_ID.toUpperCase() },
           },
           {
             type: 'mention',
