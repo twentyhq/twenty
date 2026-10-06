@@ -5,7 +5,6 @@ export enum PageFocusId {
   CreateProfile = 'create-profile',
   InviteTeam = 'invite-team',
   SyncEmail = 'sync-email',
-  InstallApps = 'install-apps',
   PlanRequired = 'plan-required',
   RecordShowPage = 'record-show-page',
   RecordIndex = 'record-index',

@@ -112,10 +112,12 @@ export const AiChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
   hasError,
+  shouldHideThinkingSteps = false,
 }: {
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
   hasError?: boolean;
+  shouldHideThinkingSteps?: boolean;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
 
@@ -136,7 +138,7 @@ export const AiChatAssistantMessageRenderer = ({
         getEffectiveToolName(part) === 'code_interpreter'
       ),
   );
-  const renderItems = groupContiguousThinkingStepParts(
+  const groupedRenderItems = groupContiguousThinkingStepParts(
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
@@ -145,6 +147,15 @@ export const AiChatAssistantMessageRenderer = ({
         frontComponentIdByToolName.get(getEffectiveToolName(part)),
       ),
   );
+  const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
+    (renderItem) => renderItem.type !== 'thinking-steps',
+  );
+  // Falling back to the steps keeps a finished message from rendering as an empty entry
+  const renderItems =
+    shouldHideThinkingSteps &&
+    (isLastMessageStreaming || renderItemsWithoutThinkingSteps.length > 0)
+      ? renderItemsWithoutThinkingSteps
+      : groupedRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
 
