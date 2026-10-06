@@ -3741,6 +3741,9 @@ export default {
             "failedReason": [
                 1
             ],
+            "progress": [
+                32
+            ],
             "enqueuedAt": [
                 16
             ],

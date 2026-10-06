@@ -11,6 +11,8 @@ export const colorText = (
   stream: NodeJS.WriteStream = process.stdout,
 ) => styleText(color, text, { stream });
 
+export const commandText = (command: string) => colorText('cyan', command);
+
 export const boldText = (
   text: string,
   stream: NodeJS.WriteStream = process.stdout,

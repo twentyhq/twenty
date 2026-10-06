@@ -10,8 +10,6 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
-import { mapAgentRunCallerToToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-run-caller-to-tool-call-workflow-step.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -138,7 +136,7 @@ export class AgentRunConversationService {
     title,
     agentId,
     execution,
-    caller,
+    isAwaitedByCaller,
   }: {
     workspaceId: string;
     threadId: string;
@@ -146,7 +144,8 @@ export class AgentRunConversationService {
     title: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
-    caller?: AgentRunCaller;
+    // a caller such as a workflow step waits on the calls the run pauses on
+    isAwaitedByCaller?: boolean;
   }): Promise<{ isAwaitingAnswer: boolean }> {
     const turn = { workspaceId, threadId, turnId, execution };
 
@@ -158,9 +157,7 @@ export class AgentRunConversationService {
           turnId,
           agentId,
           execution,
-          workflowStep: isDefined(caller)
-            ? mapAgentRunCallerToToolCallWorkflowStep(caller)
-            : undefined,
+          isAwaitedByCaller,
         })
         .catch(async (error: unknown) => {
           await this.turnRecorderService.finishExecutedTurn({

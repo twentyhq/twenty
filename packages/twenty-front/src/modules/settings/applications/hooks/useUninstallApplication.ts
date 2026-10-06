@@ -39,9 +39,15 @@ export const useUninstallApplication = ({
   );
 
   const runningJobStatus = jobStatusData?.findUninstallApplicationJobStatus;
-  const runningJobId =
-    isDefined(runningJobStatus) && !isTerminalJobState(runningJobStatus.state)
-      ? runningJobStatus.jobId
+  const runningJob =
+    isDefined(runningJobStatus) &&
+    !isTerminalJobState(runningJobStatus.state) &&
+    isDefined(universalIdentifier)
+      ? {
+          jobId: runningJobStatus.jobId,
+          context: universalIdentifier,
+          progress: runningJobStatus.progress ?? undefined,
+        }
       : undefined;
 
   const handleUninstallJobSettled = useCallback(
@@ -79,11 +85,8 @@ export const useUninstallApplication = ({
     [enqueueToast, onCompleted, setCurrentWorkspace],
   );
 
-  const { activeJobId, trackJob } = useTrackedQueueJob({
-    runningJob:
-      isDefined(runningJobId) && isDefined(universalIdentifier)
-        ? { jobId: runningJobId, context: universalIdentifier }
-        : undefined,
+  const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
+    runningJob,
     onQueueJobSettled: handleUninstallJobSettled,
   });
 
@@ -115,5 +118,6 @@ export const useUninstallApplication = ({
   return {
     uninstall,
     isUninstalling: isTriggeringUninstall || isDefined(activeJobId),
+    uninstallProgress: activeJobProgress,
   };
 };
