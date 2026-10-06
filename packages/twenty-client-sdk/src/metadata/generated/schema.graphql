@@ -3620,6 +3620,34 @@ type RecordExport {
   downloadPath: String
 }
 
+type AgentRun {
+  id: UUID!
+  threadId: UUID!
+  threadTitle: String
+  status: AgentTurnStatus!
+  errorMessage: String
+  createdAt: DateTime!
+  startedAt: DateTime
+  endedAt: DateTime
+  modelId: String
+  inputTokens: Int
+  outputTokens: Int
+  credits: Float
+  creatorSource: String!
+  creatorName: String!
+  input: String
+  reply: String
+  toolNames: [String!]!
+}
+
+enum AgentTurnStatus {
+  RUNNING
+  WAITING_FOR_INPUT
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
 type WorkspaceAiStats {
   conversationsCount: Int!
   skillsCount: Int!
@@ -3995,6 +4023,7 @@ type Query {
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
+  agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!

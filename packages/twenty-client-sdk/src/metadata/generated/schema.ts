@@ -3178,6 +3178,29 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
+export interface AgentRun {
+    id: Scalars['UUID']
+    threadId: Scalars['UUID']
+    threadTitle?: Scalars['String']
+    status: AgentTurnStatus
+    errorMessage?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    startedAt?: Scalars['DateTime']
+    endedAt?: Scalars['DateTime']
+    modelId?: Scalars['String']
+    inputTokens?: Scalars['Int']
+    outputTokens?: Scalars['Int']
+    credits?: Scalars['Float']
+    creatorSource: Scalars['String']
+    creatorName: Scalars['String']
+    input?: Scalars['String']
+    reply?: Scalars['String']
+    toolNames: Scalars['String'][]
+    __typename: 'AgentRun'
+}
+
+export type AgentTurnStatus = 'RUNNING' | 'WAITING_FOR_INPUT' | 'COMPLETED' | 'CANCELLED' | 'FAILED'
+
 export interface WorkspaceAiStats {
     conversationsCount: Scalars['Int']
     skillsCount: Scalars['Int']
@@ -3480,6 +3503,7 @@ export interface Query {
     getAiSystemPromptPreview: AiSystemPromptPreview
     skills: Skill[]
     skill?: Skill
+    agentRuns: AgentRun[]
     validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
@@ -7120,6 +7144,28 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentRunGenqlSelection{
+    id?: boolean | number
+    threadId?: boolean | number
+    threadTitle?: boolean | number
+    status?: boolean | number
+    errorMessage?: boolean | number
+    createdAt?: boolean | number
+    startedAt?: boolean | number
+    endedAt?: boolean | number
+    modelId?: boolean | number
+    inputTokens?: boolean | number
+    outputTokens?: boolean | number
+    credits?: boolean | number
+    creatorSource?: boolean | number
+    creatorName?: boolean | number
+    input?: boolean | number
+    reply?: boolean | number
+    toolNames?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WorkspaceAiStatsGenqlSelection{
     conversationsCount?: boolean | number
     skillsCount?: boolean | number
@@ -7430,6 +7476,7 @@ export interface QueryGenqlSelection{
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
+    agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
@@ -10618,6 +10665,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const AgentRun_possibleTypes: string[] = ['AgentRun']
+    export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
+      return AgentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
     export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
@@ -11606,6 +11661,14 @@ export const enumWorkspaceSetupChatOutcome = {
    STARTED: 'STARTED' as const,
    ALREADY_STARTED: 'ALREADY_STARTED' as const,
    UNAVAILABLE: 'UNAVAILABLE' as const
+}
+
+export const enumAgentTurnStatus = {
+   RUNNING: 'RUNNING' as const,
+   WAITING_FOR_INPUT: 'WAITING_FOR_INPUT' as const,
+   COMPLETED: 'COMPLETED' as const,
+   CANCELLED: 'CANCELLED' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumAppKeyValueScope = {
