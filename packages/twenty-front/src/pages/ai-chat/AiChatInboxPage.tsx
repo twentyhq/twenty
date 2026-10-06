@@ -124,10 +124,7 @@ const AiChatInboxPageContent = () => {
   ) =>
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
 
-  const isSelectionShown =
-    selectedRecordIds.length > 1 ||
-    (selectedRecordIds.length === 1 &&
-      selectedRecordIds[0] !== selectedThreadId);
+  const isSelectionShown = selectedRecordIds.length > 0;
 
   // Split view shows the list beside the chat or the selection; otherwise
   // the list and a chat each take the whole page

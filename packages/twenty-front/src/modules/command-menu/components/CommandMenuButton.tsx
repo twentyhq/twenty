@@ -19,7 +19,6 @@ export type CommandMenuButtonProps = {
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
-  // Shown in the button when the key runs it
   hotKey?: string;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;

@@ -9,13 +9,31 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  type CommandMenuItemFieldsFragment,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
-const SNOOZE = {
-  id: 'snooze',
-  hotKeys: ['H'],
-} as CommandMenuItemFieldsFragment;
-const DONE = { id: 'done', hotKeys: ['E'] } as CommandMenuItemFieldsFragment;
+const buildPinnedCommandMenuItem = ({
+  id,
+  hotKeys,
+}: Pick<
+  CommandMenuItemFieldsFragment,
+  'id' | 'hotKeys'
+>): CommandMenuItemFieldsFragment => ({
+  id,
+  hotKeys,
+  label: id,
+  position: 0,
+  isPinned: true,
+  isActive: true,
+  engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+});
+
+const SNOOZE = buildPinnedCommandMenuItem({ id: 'snooze', hotKeys: ['H'] });
+const DONE = buildPinnedCommandMenuItem({ id: 'done', hotKeys: ['E'] });
 
 const ITEM_WIDTHS = {
   [getPinnedCommandMenuItemWidthKey({
