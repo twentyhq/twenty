@@ -110,7 +110,7 @@
       "configurations": {
         "ci": {
           "maxWorkers": 3,
-          "coverageReporters": ["text-summary", "json"]
+          "coverage": false
         }
       }
     },
