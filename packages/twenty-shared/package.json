@@ -101,6 +101,11 @@
       "import": "./dist/metadata.mjs",
       "require": "./dist/metadata.cjs"
     },
+    "./pending-wake-up": {
+      "types": "./dist/pending-wake-up/index.d.ts",
+      "import": "./dist/pending-wake-up.mjs",
+      "require": "./dist/pending-wake-up.cjs"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -151,6 +156,7 @@
     "i18n",
     "logic-function",
     "metadata",
+    "pending-wake-up",
     "testing",
     "timeline",
     "translations",
@@ -182,6 +188,9 @@
       ],
       "metadata": [
         "dist/metadata/index.d.ts"
+      ],
+      "pending-wake-up": [
+        "dist/pending-wake-up/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"

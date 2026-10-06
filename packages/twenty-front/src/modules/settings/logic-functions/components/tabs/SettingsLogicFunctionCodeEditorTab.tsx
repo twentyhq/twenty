@@ -65,7 +65,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
         title={t`Code your function`}
         description={t`Write your function (in typescript) below`}
       />
-      <CodeEditorHeader leftNodes={[HeaderTabList]} rightNodes={[TestButton]} />
+      <CodeEditorHeader startElement={HeaderTabList} endElement={TestButton} />
       {activeTabId && (
         <SettingsLogicFunctionCodeEditor
           files={files}

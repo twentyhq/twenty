@@ -7,6 +7,9 @@ import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/wo
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 } from 'uuid';
 
+import { type PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pending-wake-up/listeners/pending-wake-up-database-event.listener';
+import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -15,8 +18,6 @@ import {
   type WorkflowAction,
   type WorkflowWaitForEventAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowStepWaitDatabaseEventListener } from 'src/modules/workflow/workflow-wait/listeners/workflow-step-wait-database-event.listener';
-import { type WorkflowStepWaitResolverWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait-resolver.workspace-service';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -339,7 +340,7 @@ describe('Wait for event workflow (e2e)', () => {
     });
 
     const storedWaits = await global.testDataSource.query(
-      `SELECT id, "eventName" FROM core."workflowStepWait" WHERE "workflowRunId" = $1`,
+      `SELECT id, "eventName" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1`,
       [createdWorkflowRunId],
     );
 
@@ -348,14 +349,12 @@ describe('Wait for event workflow (e2e)', () => {
     ]);
 
     const listener =
-      getAppProviderByClassName<WorkflowStepWaitDatabaseEventListener>(
-        'WorkflowStepWaitDatabaseEventListener',
+      getAppProviderByClassName<PendingWakeUpDatabaseEventListener>(
+        'PendingWakeUpDatabaseEventListener',
       );
     const scheduleSpy = jest
       .spyOn(
-        getAppProviderByClassName<WorkflowStepWaitWorkspaceService>(
-          'WorkflowStepWaitWorkspaceService',
-        ),
+        getAppProviderByClassName<PendingWakeUpService>('PendingWakeUpService'),
         'scheduleResolution',
       )
       .mockResolvedValue(undefined);
@@ -372,13 +371,17 @@ describe('Wait for event workflow (e2e)', () => {
 
     expect(scheduleSpy).toHaveBeenCalledTimes(1);
 
-    const [{ waitId, event }] = scheduleSpy.mock.calls[0];
+    const [{ wakeUp, event }] = scheduleSpy.mock.calls[0];
 
     scheduleSpy.mockRestore();
 
-    await getAppProviderByClassName<WorkflowStepWaitResolverWorkspaceService>(
-      'WorkflowStepWaitResolverWorkspaceService',
-    ).resolve({ workspaceId: SEED_APPLE_WORKSPACE_ID, waitId, event });
+    await getAppProviderByClassName<PendingWakeUpResolverService>(
+      'PendingWakeUpResolverService',
+    ).resolve({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      wakeUpId: wakeUp.id,
+      event,
+    });
 
     await (
       await global.workflowTestServices.runJob()
@@ -403,7 +406,7 @@ describe('Wait for event workflow (e2e)', () => {
     });
 
     const remainingWaits = await global.testDataSource.query(
-      `SELECT id FROM core."workflowStepWait" WHERE "workflowRunId" = $1`,
+      `SELECT id FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1`,
       [createdWorkflowRunId],
     );
 
@@ -425,7 +428,7 @@ describe('Wait for event workflow (e2e)', () => {
       });
     const findWaits = (): Promise<{ id: string }[]> =>
       global.testDataSource.query(
-        `SELECT id FROM core."workflowStepWait" WHERE "workflowRunId" = $1`,
+        `SELECT id FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1`,
         [workflowRunId],
       );
 

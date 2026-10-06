@@ -12,7 +12,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait-store.module';
+import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait.module';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/
     WorkflowRunRecordShareModule,
     AgentHistoryModule,
     AgentChatThreadLifecycleModule,
-    WorkflowStepWaitStoreModule,
+    WorkflowStepWaitModule,
   ],
   providers: [
     WorkflowRunWorkspaceService,
