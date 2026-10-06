@@ -68,7 +68,7 @@ const NumberStepperExample = () => {
         }}
       />
       <Text role="status" aria-label="Editing state">
-        Amount: {editableValue}; Changes: {editChanges}
+        Amount: {editableValue ?? 'empty'}; Changes: {editChanges}
       </Text>
     </TwentyUiGalleryCard>
   );

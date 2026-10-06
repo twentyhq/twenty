@@ -164,8 +164,8 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-The CountrySelect and reading-directions fixtures live in their own story
-files, so run them separately:
+The Autocomplete, CountrySelect and reading-directions fixtures live in their
+own story files, so run them separately:
 
 ```sh
 npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.tsx
