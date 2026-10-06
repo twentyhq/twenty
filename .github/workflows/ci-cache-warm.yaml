@@ -1,0 +1,42 @@
+name: CI Cache Warm
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  SERVER_BUILD_CACHE_KEY: server-build
+
+jobs:
+  server-build-cache:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Restore server build cache
+        id: restore-server-build-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Save server build cache
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.restore-server-build-cache.outputs.cache-primary-key }}

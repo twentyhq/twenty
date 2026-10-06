@@ -76,11 +76,11 @@ export const Documentation: Story = {
     <div style={{ width: '100%' }}>
       <CodeEditorHeader
         title="workspace.json"
-        rightNodes={[
-          <Button key="format" size="sm" variant="outline">
+        endElement={
+          <Button size="sm" variant="outline">
             Format
-          </Button>,
-        ]}
+          </Button>
+        }
       />
       <CodeEditor {...args} />
     </div>

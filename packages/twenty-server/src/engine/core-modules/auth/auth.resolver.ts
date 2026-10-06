@@ -437,6 +437,8 @@ export class AuthResolver {
       TwoFactorAuthenticationStrategy.TOTP,
     );
 
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
+
     const authTokens = await this.authService.verify(
       email,
       workspace.id,
@@ -847,6 +849,8 @@ export class AuthResolver {
         user.email,
       );
 
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
+
       authTokens =
         await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
@@ -857,6 +861,8 @@ export class AuthResolver {
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
+
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
       authTokens = await this.authService.verify(
         user.email,
