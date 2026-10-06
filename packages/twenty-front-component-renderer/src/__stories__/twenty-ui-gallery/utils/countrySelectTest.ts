@@ -49,22 +49,19 @@ const expectDisabledTriggerIgnoresClick = async (canvas: Canvas) => {
   ).toHaveTextContent('Billing: France; Shipping: Japan');
 };
 
-export const createCountrySelectTest = (
-  runtime: 'react' | 'preact',
-): TwentyUiGalleryPlayFunction => {
-  const billingCountrySelectOpenTest = createDropdownOpenTest({
-    runtime,
-    triggerName: BILLING_COUNTRY_TRIGGER_NAME,
-    popupText: 'Brésil',
-  });
+const billingCountrySelectOpenTest = createDropdownOpenTest({
+  triggerName: BILLING_COUNTRY_TRIGGER_NAME,
+  popupText: 'Brésil',
+});
 
-  return async (context) => {
-    const canvas = within(context.canvasElement);
-    await expectFrontComponentMounted(canvas);
+export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
+  context,
+) => {
+  const canvas = within(context.canvasElement);
+  await expectFrontComponentMounted(canvas);
 
-    expectTriggersShowSavedCountriesWithDecorativeFlags(canvas);
-    await expectDisabledTriggerIgnoresClick(canvas);
-    expect(errorHandler).not.toHaveBeenCalled();
-    await billingCountrySelectOpenTest(context);
-  };
+  expectTriggersShowSavedCountriesWithDecorativeFlags(canvas);
+  await expectDisabledTriggerIgnoresClick(canvas);
+  expect(errorHandler).not.toHaveBeenCalled();
+  await billingCountrySelectOpenTest(context);
 };
