@@ -147,6 +147,10 @@ export class TwoFactorAuthenticationResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningDTO> {
+    await this.twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow(
+      { userId: user.id, workspaceId: workspace.id },
+    );
+
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
         user.id,
@@ -161,6 +165,10 @@ export class TwoFactorAuthenticationResolver {
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow(
+      { userId: user.id, workspaceId: workspace.id },
+    );
 
     return { uri };
   }

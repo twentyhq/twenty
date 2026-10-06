@@ -318,6 +318,54 @@ describe('TwoFactorAuthenticationResolver', () => {
       );
     });
 
+    it('should refuse provisioning while enrollment is reserved for a recovery code redemption', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow.mockRejectedValue(
+        restrictedException,
+      );
+
+      await expect(
+        resolver.initiateOTPProvisioningForAuthenticatedUser(
+          mockUser,
+          mockWorkspace,
+        ),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspace.id,
+      });
+      expect(
+        twoFactorAuthenticationService.initiateStrategyConfiguration,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should withhold the URI when a recovery is redeemed while provisioning runs', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(restrictedException);
+
+      await expect(
+        resolver.initiateOTPProvisioningForAuthenticatedUser(
+          mockUser,
+          mockWorkspace,
+        ),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledTimes(2);
+    });
+
     it('should throw INTERNAL_SERVER_ERROR when URI is missing', async () => {
       twoFactorAuthenticationService.initiateStrategyConfiguration.mockResolvedValue(
         undefined,

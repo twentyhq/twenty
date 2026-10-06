@@ -692,6 +692,19 @@ describe('Two-factor authentication recovery codes (integration)', () => {
           'RECOVERY_ENROLLMENT_RESTRICTED',
         );
 
+        const { errors: authenticatedProvisioningErrors } =
+          await initiateOtpProvisioningForAuthenticatedUser({
+            accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+            expectToFail: true,
+          });
+
+        expect(authenticatedProvisioningErrors?.[0]?.extensions?.subCode).toBe(
+          'RECOVERY_ENROLLMENT_RESTRICTED',
+        );
+        expect(
+          (await selectMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JONY))[0].secret,
+        ).toBe(methodRows[0].secret);
+
         const awaitingStatus = await getRecoveryStatus(USER_DATA_SEED_IDS.JONY);
 
         expect(
