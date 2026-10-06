@@ -14,6 +14,7 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
@@ -63,7 +64,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const isInstallProgressKnown = isDefined(installProgress);
+  const displayedInstallProgress = installProgress ?? 0;
 
   return (
     <StyledButtonGroup>
@@ -71,16 +72,14 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
         <>
           <Button
             startIcon={<IconDownload />}
+            endIcon={isInstalling ? <Loader /> : undefined}
             onClick={requestInstall}
             disabled={isInstalling}
-            loading={isInstalling && !isInstallProgressKnown}
             variant="outline"
           >
-            {!isInstalling
-              ? t`Install`
-              : isInstallProgressKnown
-                ? t`Installing (${installProgress}%)`
-                : t`Installing...`}
+            {isInstalling
+              ? t`Installing (${displayedInstallProgress}%)`
+              : t`Install`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
