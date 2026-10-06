@@ -3441,22 +3441,22 @@ export interface Query {
     object: Object
     objectRecordCounts: ObjectRecordCount[]
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
-    getInviteSuggestions: InviteSuggestion[]
-    applicationConnectionProviders: ApplicationConnectionProvider[]
-    billingPortalSession: BillingSession
-    listPlans: BillingPlan[]
-    getResourceCreditUsage: BillingResourceCreditUsage[]
-    findWorkspaceInvitations: WorkspaceInvitation[]
-    getApprovedAccessDomains: ApprovedAccessDomain[]
-    getRoles: Role[]
-    getRole: Role
     apiKeys: ApiKey[]
     getApiKeyRoles: Role[]
     apiKey?: ApiKey
     getViewFilterGroups: ViewFilterGroup[]
     getViewFilterGroup?: ViewFilterGroup
+    billingPortalSession: BillingSession
+    listPlans: BillingPlan[]
+    getResourceCreditUsage: BillingResourceCreditUsage[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectedAccounts: ApplicationConnectedAccountDTO[]
+    applicationConnectionProviders: ApplicationConnectionProvider[]
+    getInviteSuggestions: InviteSuggestion[]
+    findWorkspaceInvitations: WorkspaceInvitation[]
+    getApprovedAccessDomains: ApprovedAccessDomain[]
+    getRoles: Role[]
+    getRole: Role
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
     getPublicWorkspaceDataById: PublicWorkspaceDataSummary
@@ -3627,10 +3627,14 @@ export interface Mutation {
     updateManyObjects: Object[]
     createOneIndex: Index
     deleteOneIndex: Index
-    skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    completeBookCallOnboardingStep: OnboardingStepSuccess
-    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
-    goBackToPreviousOnboardingStep: OnboardingStepNavigation
+    createApiKey: ApiKey
+    updateApiKey?: ApiKey
+    revokeApiKey?: ApiKey
+    assignRoleToApiKey: Scalars['Boolean']
+    createViewFilterGroup: ViewFilterGroup
+    updateViewFilterGroup: ViewFilterGroup
+    deleteViewFilterGroup: Scalars['Boolean']
+    destroyViewFilterGroup: Scalars['Boolean']
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
     createBillingPaymentMethodSetupIntent: BillingPaymentIntent
@@ -3641,6 +3645,12 @@ export interface Mutation {
     setResourceCreditSubscriptionPrice: BillingUpdate
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchResourceCreditPrice: BillingUpdate
+    deleteConnectedAccount: ConnectedAccountPublicDTO
+    disconnectConnectedAccount: ConnectedAccountPublicDTO
+    skipSyncEmailOnboardingStep: OnboardingStepSuccess
+    completeBookCallOnboardingStep: OnboardingStepSuccess
+    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
+    goBackToPreviousOnboardingStep: OnboardingStepNavigation
     deleteWorkspaceInvitation: Scalars['String']
     resendWorkspaceInvitation: SendInvitations
     sendInvitations: SendInvitations
@@ -3657,16 +3667,6 @@ export interface Mutation {
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
     assignRoleToAgent: Scalars['Boolean']
     removeRoleFromAgent: Scalars['Boolean']
-    createApiKey: ApiKey
-    updateApiKey?: ApiKey
-    revokeApiKey?: ApiKey
-    assignRoleToApiKey: Scalars['Boolean']
-    createViewFilterGroup: ViewFilterGroup
-    updateViewFilterGroup: ViewFilterGroup
-    deleteViewFilterGroup: Scalars['Boolean']
-    destroyViewFilterGroup: Scalars['Boolean']
-    deleteConnectedAccount: ConnectedAccountPublicDTO
-    disconnectConnectedAccount: ConnectedAccountPublicDTO
     activateWorkspace: Workspace
     updateWorkspace: Workspace
     updateWorkspaceAllowedIframeOrigins: Workspace
@@ -7410,22 +7410,22 @@ export interface QueryGenqlSelection{
     id: Scalars['UUID']} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
-    getInviteSuggestions?: InviteSuggestionGenqlSelection
-    applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
-    listPlans?: BillingPlanGenqlSelection
-    getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
-    findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
-    getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
-    getRoles?: RoleGenqlSelection
-    getRole?: (RoleGenqlSelection & { __args: {id: Scalars['UUID']} })
     apiKeys?: ApiKeyGenqlSelection
     getApiKeyRoles?: RoleGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     getViewFilterGroups?: (ViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
+    listPlans?: BillingPlanGenqlSelection
+    getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    getInviteSuggestions?: InviteSuggestionGenqlSelection
+    findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
+    getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
+    getRoles?: RoleGenqlSelection
+    getRole?: (RoleGenqlSelection & { __args: {id: Scalars['UUID']} })
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
     getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7641,10 +7641,14 @@ export interface MutationGenqlSelection{
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
     createOneIndex?: (IndexGenqlSelection & { __args: {input: CreateOneIndexInput} })
     deleteOneIndex?: (IndexGenqlSelection & { __args: {input: DeleteOneIndexInput} })
-    skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
-    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
-    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
-    goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
+    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
+    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
+    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
+    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    createViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
+    updateViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
+    deleteViewFilterGroup?: { __args: {id: Scalars['String']} }
+    destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
     createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
@@ -7655,6 +7659,12 @@ export interface MutationGenqlSelection{
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchResourceCreditPrice?: BillingUpdateGenqlSelection
+    deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
+    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
+    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
+    goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
     sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
@@ -7671,16 +7681,6 @@ export interface MutationGenqlSelection{
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
-    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
-    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
-    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
-    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
-    createViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
-    updateViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
-    deleteViewFilterGroup?: { __args: {id: Scalars['String']} }
-    destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
-    deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     updateWorkspaceAllowedIframeOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedIframeOriginsInput} })
@@ -8064,6 +8064,16 @@ export interface DeleteOneIndexInput {
 /** The id of the custom index to delete. */
 id: Scalars['UUID']}
 
+export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
+
+export interface UpdateApiKeyInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),expiresAt?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
+
+export interface RevokeApiKeyInput {id: Scalars['UUID']}
+
+export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
+
+export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
+
 export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
 
 export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
@@ -8093,16 +8103,6 @@ export interface UpsertRowLevelPermissionPredicatesInput {roleId: Scalars['UUID'
 export interface RowLevelPermissionPredicateInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand: RowLevelPermissionPredicateOperand,value?: (Scalars['JSON'] | null),subFieldName?: (Scalars['String'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
-
-export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
-
-export interface UpdateApiKeyInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),expiresAt?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
-
-export interface RevokeApiKeyInput {id: Scalars['UUID']}
-
-export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
 export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */

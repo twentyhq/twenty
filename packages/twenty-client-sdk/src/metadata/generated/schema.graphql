@@ -3955,22 +3955,22 @@ type Query {
   ): Object!
   objectRecordCounts: [ObjectRecordCount!]!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
-  getInviteSuggestions: [InviteSuggestion!]!
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
-  listPlans: [BillingPlan!]!
-  getResourceCreditUsage: [BillingResourceCreditUsage!]!
-  findWorkspaceInvitations: [WorkspaceInvitation!]!
-  getApprovedAccessDomains: [ApprovedAccessDomain!]!
-  getRoles: [Role!]!
-  getRole(id: UUID!): Role!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
+  billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
+  listPlans: [BillingPlan!]!
+  getResourceCreditUsage: [BillingResourceCreditUsage!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
+  getInviteSuggestions: [InviteSuggestion!]!
+  findWorkspaceInvitations: [WorkspaceInvitation!]!
+  getApprovedAccessDomains: [ApprovedAccessDomain!]!
+  getRoles: [Role!]!
+  getRole(id: UUID!): Role!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
@@ -4275,10 +4275,14 @@ type Mutation {
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   createOneIndex(input: CreateOneIndexInput!): Index!
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
-  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
+  createApiKey(input: CreateApiKeyInput!): ApiKey!
+  updateApiKey(input: UpdateApiKeyInput!): ApiKey
+  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
+  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
+  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
+  deleteViewFilterGroup(id: String!): Boolean!
+  destroyViewFilterGroup(id: String!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -4289,6 +4293,12 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
@@ -4305,16 +4315,6 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
-  createApiKey(input: CreateApiKeyInput!): ApiKey!
-  updateApiKey(input: UpdateApiKeyInput!): ApiKey
-  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
-  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
-  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
-  deleteViewFilterGroup(id: String!): Boolean!
-  destroyViewFilterGroup(id: String!): Boolean!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
@@ -5124,6 +5124,40 @@ input DeleteOneIndexInput {
   id: UUID!
 }
 
+input CreateApiKeyInput {
+  name: String!
+  expiresAt: String!
+  revokedAt: String
+  roleId: UUID!
+}
+
+input UpdateApiKeyInput {
+  id: UUID!
+  name: String
+  expiresAt: String
+  revokedAt: String
+}
+
+input RevokeApiKeyInput {
+  id: UUID!
+}
+
+input CreateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID!
+}
+
+input UpdateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID
+}
+
 input CreateApprovedAccessDomainInput {
   domain: String!
   email: String!
@@ -5231,40 +5265,6 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input CreateApiKeyInput {
-  name: String!
-  expiresAt: String!
-  revokedAt: String
-  roleId: UUID!
-}
-
-input UpdateApiKeyInput {
-  id: UUID!
-  name: String
-  expiresAt: String
-  revokedAt: String
-}
-
-input RevokeApiKeyInput {
-  id: UUID!
-}
-
-input CreateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID!
-}
-
-input UpdateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID
 }
 
 input ActivateWorkspaceInput {
