@@ -220,7 +220,7 @@ import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgr
 import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 import { AddSharingReachToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790876699146-add-sharing-reach-to-object-metadata';
 import { AddIsSystemToAgentAndWorkflowFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791130291063-add-is-system-to-agent-and-workflow';
-import { CreateWorkflowStepWaitTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791148642493-create-workflow-step-wait-table';
+import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791148642493-create-pending-wake-up-table';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791215192958-add-upgrade-migration-workspace-id-created-at-index';
@@ -449,7 +449,7 @@ export const INSTANCE_COMMANDS = [
   AddApplicationWorkflowSideEffectsFastInstanceCommand,
   AddSharingReachToObjectMetadataFastInstanceCommand,
   AddIsSystemToAgentAndWorkflowFastInstanceCommand,
-  CreateWorkflowStepWaitTableFastInstanceCommand,
+  CreatePendingWakeUpTableFastInstanceCommand,
   DropCoreAgentHistoryTablesFastInstanceCommand,
   RenameUsageLimitMeterToUnitFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand,
