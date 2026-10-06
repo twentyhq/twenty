@@ -39,13 +39,13 @@ export class ApplicationJobEnqueueThrottlerService {
     const [admittedCount] = await this.throttlerService.tryConsumeTokenBuckets({
       buckets: [
         {
-          key: `enqueue:throttler:application:${applicationId}`,
+          key: `enqueue:throttler:{${applicationRegistrationId}}:application:${applicationId}`,
           burst: applicationLimit,
           refillPerWindow: applicationLimit,
           windowMs: timeWindow,
         },
         {
-          key: `enqueue:throttler:application-registration:${applicationRegistrationId}`,
+          key: `enqueue:throttler:{${applicationRegistrationId}}:application-registration`,
           burst: registrationLimit,
           refillPerWindow: registrationLimit,
           windowMs: timeWindow,
