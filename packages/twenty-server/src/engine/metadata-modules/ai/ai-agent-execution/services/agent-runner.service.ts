@@ -333,13 +333,24 @@ export class AgentRunnerService {
         });
       }
 
+      if (execution.hasNoMoreAvailableCredits) {
+        return {
+          status: 'FAILED',
+          error: 'Agent stopped: no more available credits.',
+        };
+      }
+
+      if (isDefined(wait)) {
+        return {
+          status: 'FAILED',
+          error:
+            'Agent paused to wait but its conversation could not be recorded.',
+        };
+      }
+
       return {
         status: 'FAILED',
-        error: execution.hasNoMoreAvailableCredits
-          ? 'Agent stopped: no more available credits.'
-          : isDefined(wait)
-            ? 'Agent paused to wait but its conversation could not be recorded.'
-            : 'Agent asked a question that could not be recorded.',
+        error: 'Agent asked a question that could not be recorded.',
       };
     }
 
