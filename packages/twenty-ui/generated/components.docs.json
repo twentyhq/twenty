@@ -949,22 +949,22 @@
     ]
   },
   {
-    "name": "TextDirectionProvider",
+    "name": "DirectionProvider",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/text-direction-provider",
+    "slug": "layout/direction-provider",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Controls that receive the direction context."
       },
       {
         "name": "direction",
         "type": "\"ltr\" | \"rtl\"",
-        "required": true,
-        "defaultValue": null,
+        "required": false,
+        "defaultValue": "ltr",
         "description": "Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content."
       }
     ]

@@ -6,7 +6,7 @@ import { ThemeProvider } from '@ui/theme';
 import { DirectionalLayoutExample } from './DirectionalLayoutExample';
 
 const meta: Meta<typeof DirectionalLayoutExample> = {
-  title: 'UI/Layout/TextDirectionProvider',
+  title: 'UI/Layout/DirectionProvider',
   component: DirectionalLayoutExample,
   parameters: { layout: 'fullscreen', a11y: A11Y_DEFER_COLOR_CONTRAST },
 };

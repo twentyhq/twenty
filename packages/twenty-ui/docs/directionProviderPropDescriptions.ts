@@ -1,11 +1,11 @@
 import { type ComponentProps } from 'react';
 
-import { type TextDirectionProvider } from '../src/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { type DirectionProvider } from '../src/primitives/layout/DirectionProvider/DirectionProvider';
 
-export const TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS = {
+export const DIRECTION_PROVIDER_PROP_DESCRIPTIONS = {
   children: 'Controls that receive the direction context.',
   direction:
     'Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content.',
 } satisfies Partial<
-  Record<keyof ComponentProps<typeof TextDirectionProvider>, string>
+  Record<keyof ComponentProps<typeof DirectionProvider>, string>
 >;

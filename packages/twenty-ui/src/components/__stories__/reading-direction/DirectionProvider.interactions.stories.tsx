@@ -4,7 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DirectionalMenusExample } from './DirectionalMenusExample';
 
 const meta: Meta<typeof DirectionalMenusExample> = {
-  title: 'UI/Layout/TextDirectionProvider/Interactions',
+  title: 'UI/Layout/DirectionProvider/Interactions',
   component: DirectionalMenusExample,
   parameters: { layout: 'fullscreen' },
 };
