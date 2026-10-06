@@ -25,7 +25,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,

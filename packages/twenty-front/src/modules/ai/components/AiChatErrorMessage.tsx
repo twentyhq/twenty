@@ -2,7 +2,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ComponentProps } from 'react';
-import { type InlineBanner } from 'twenty-ui/components';
+import { type InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';

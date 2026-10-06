@@ -4,7 +4,7 @@ import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigatio
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 

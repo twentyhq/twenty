@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type ThemeColor, useTheme } from 'twenty-ui/theme';
 

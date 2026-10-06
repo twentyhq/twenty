@@ -1,6 +1,6 @@
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';

@@ -2,7 +2,7 @@ import { AnimatedContainer } from '@/ui/layout/animation/components/internal/Ani
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';

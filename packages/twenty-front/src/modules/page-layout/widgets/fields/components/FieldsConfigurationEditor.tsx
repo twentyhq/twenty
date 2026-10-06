@@ -29,7 +29,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconNewSection } from 'twenty-ui/icon';
 
 const StyledGroupsDroppable = styled.div`

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { MenuItemSuggestion } from 'twenty-ui/components';
+import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';

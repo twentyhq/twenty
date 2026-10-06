@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { t } from '@lingui/core/macro';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 

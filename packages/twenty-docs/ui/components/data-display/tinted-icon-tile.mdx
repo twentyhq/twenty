@@ -1,0 +1,27 @@
+---
+title: TintedIconTile
+description: An icon on a tinted background derived from a theme color.
+---
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+Pass an icon component through `Icon`. The tile derives its background and foreground shades from the theme palette. Keep a text label beside it; the tile is not an interactive control.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <>
+    <TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />
+    <Text>Companies</Text>
+  </>
+);
+```
+
+`size` sets both the icon and tile dimension in pixels. Without it, the tile uses its standard dimensions and the icon uses the medium theme size. `stroke` overrides the icon stroke width.
+
+## Props
+
+<TintedIconTileReference />

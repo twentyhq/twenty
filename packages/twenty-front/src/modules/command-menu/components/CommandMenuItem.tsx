@@ -1,7 +1,7 @@
 import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconArrowUpRight } from 'twenty-ui/icon';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';

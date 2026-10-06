@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import React, { useMemo } from 'react';

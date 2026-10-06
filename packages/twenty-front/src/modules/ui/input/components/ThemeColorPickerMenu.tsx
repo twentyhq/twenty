@@ -1,7 +1,10 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { Dropdown, DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
+import {
+  Dropdown,
+  DEFAULT_COLOR_LABELS,
+} from 'twenty-ui/components/navigation';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 

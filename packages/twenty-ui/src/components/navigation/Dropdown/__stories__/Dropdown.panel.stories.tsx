@@ -62,7 +62,8 @@ const InsertLinkPanel = () => {
 };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Panel',
+  id: 'ui-components-dropdown-interactions-panel',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Panel',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
