@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -20,7 +21,6 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
 import { type AgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-wait.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';

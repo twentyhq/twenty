@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ASK_QUESTION_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
+  type AgentRunSummary,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -20,7 +21,6 @@ import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
