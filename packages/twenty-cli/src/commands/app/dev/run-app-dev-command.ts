@@ -64,7 +64,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
       await emit(
         {
           kind: 'build-start',
-          message: `Building revision ${revision}…`,
+          message: 'Building app…',
           revision,
         },
         signal,
@@ -154,7 +154,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
       await emit(
         {
           kind: 'sync-start',
-          message: `Previewing revision ${revision}…`,
+          message: 'Planning changes…',
           revision,
           buildId: snapshot.build.buildId,
         },
@@ -190,7 +190,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           await emit(
             {
               kind: 'sync-superseded',
-              message: 'Source changed; a fresh preview is queued.',
+              message: 'Source changed; a fresh plan is queued.',
               revision,
               details: failure.details,
             },
@@ -206,7 +206,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
         await emit(
           {
             kind: 'sync-failure',
-            message: `${failure.message} A new source edit will request a fresh preview.`,
+            message: `${failure.message} A new source edit will request a fresh plan.`,
             revision,
             error: {
               code: failure.code,
@@ -279,7 +279,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           message:
             reason === 'unchanged'
               ? 'Build unchanged since the last acknowledged sync.'
-              : 'Source changed during the build; rebuilding the latest revision.',
+              : 'Source changed during the build; rebuilding…',
           revision,
           reason,
         },
