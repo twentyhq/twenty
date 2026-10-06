@@ -92,8 +92,9 @@ describe('scheduleMeetings', () => {
       '2026-09-01T09:00:00.000Z',
     ]);
 
-    expect(enqueuedFor(MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER))
-      .toHaveLength(0);
+    expect(
+      enqueuedFor(MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER),
+    ).toHaveLength(0);
     expect(
       enqueuedFor(MEETING_HORIZON_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER),
     ).toEqual([
@@ -144,7 +145,10 @@ describe('scheduleUpcomingPersonMeetings', () => {
       },
     });
 
-    return { client: { query: queryMock } as unknown as CoreApiClient, queryMock };
+    return {
+      client: { query: queryMock } as unknown as CoreApiClient,
+      queryMock,
+    };
   };
 
   it('should read upcoming person meetings earliest first through the calendar event relation', async () => {
@@ -171,7 +175,10 @@ describe('scheduleUpcomingPersonMeetings', () => {
   });
 
   it('should stop paging when the server repeats the same cursor', async () => {
-    const { client, queryMock } = buildClient(['2026-06-13T09:00:00.000Z'], true);
+    const { client, queryMock } = buildClient(
+      ['2026-06-13T09:00:00.000Z'],
+      true,
+    );
 
     await scheduleUpcomingPersonMeetings(client);
 

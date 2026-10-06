@@ -39,7 +39,13 @@ export const collectPersonMeetingParticipants = async (
                   ? [{ calendarEventId: { in: calendarEventIds } }]
                   : []),
                 ...(from
-                  ? [{ calendarEvent: { startsAt: { gte: from.toISOString() } } }]
+                  ? [
+                      {
+                        calendarEvent: {
+                          startsAt: { gte: from.toISOString() },
+                        },
+                      },
+                    ]
                   : []),
                 ...(to
                   ? [{ calendarEvent: { startsAt: { lt: to.toISOString() } } }]

@@ -32,7 +32,8 @@ const buildLastContactData = (
   pointOfContact
     ? {
         lastContactAt: pointOfContact.lastContactAt ?? null,
-        lastContactItemMessageId: pointOfContact.lastContactItemMessageId ?? null,
+        lastContactItemMessageId:
+          pointOfContact.lastContactItemMessageId ?? null,
         lastContactItemCalendarEventId:
           pointOfContact.lastContactItemCalendarEventId ?? null,
       }

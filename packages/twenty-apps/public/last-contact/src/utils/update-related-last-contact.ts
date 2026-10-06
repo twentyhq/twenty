@@ -101,8 +101,8 @@ const resolveOpportunitiesByPersonId = async (
   const truncatedPersonIds: string[] = [];
 
   for (const personId of personIds) {
-    const connection = stateByPersonId.get(personId)
-      ?.pointOfContactForOpportunities;
+    const connection =
+      stateByPersonId.get(personId)?.pointOfContactForOpportunities;
     const opportunities = (connection?.edges ?? []).map(({ node }) => node);
 
     const isTruncated =

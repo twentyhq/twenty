@@ -153,7 +153,11 @@ describe('updateRelatedLastContactForPeople', () => {
         ],
         [
           OTHER_PERSON_ID,
-          { occurredAt: OCCURRED_AT, itemId: MESSAGE_ID, kind: 'email' as const },
+          {
+            occurredAt: OCCURRED_AT,
+            itemId: MESSAGE_ID,
+            kind: 'email' as const,
+          },
         ],
       ]),
       new Map([
@@ -213,28 +217,28 @@ describe('updateRelatedLastContactForPeople', () => {
   it.each([null, 60])(
     'reads the opportunities of a person when the nested relation is full and its total count is %s',
     async (totalCount) => {
-    client.query.mockResolvedValue({
-      opportunities: {
-        edges: [],
-        pageInfo: { hasNextPage: false, endCursor: null },
-      },
-    });
+      client.query.mockResolvedValue({
+        opportunities: {
+          edges: [],
+          pageInfo: { hasNextPage: false, endCursor: null },
+        },
+      });
 
-    await updateRelatedLastContactForPeople(
-      client as never,
-      emailContact(),
-      stateFor(
-        buildState({
-          opportunities: Array.from({ length: 60 }, (_, index) => ({
-            id: `opportunity-${index}`,
-            lastContactAt: null,
-          })),
-          totalCount,
-        }),
-      ),
-    );
+      await updateRelatedLastContactForPeople(
+        client as never,
+        emailContact(),
+        stateFor(
+          buildState({
+            opportunities: Array.from({ length: 60 }, (_, index) => ({
+              id: `opportunity-${index}`,
+              lastContactAt: null,
+            })),
+            totalCount,
+          }),
+        ),
+      );
 
-    expect(client.query).toHaveBeenCalledTimes(1);
-  },
+      expect(client.query).toHaveBeenCalledTimes(1);
+    },
   );
 });

@@ -1,12 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { enqueueJobsMock, queryMock, mutationMock, applyMeetingInteractionsMock } =
-  vi.hoisted(() => ({
-    enqueueJobsMock: vi.fn(),
-    queryMock: vi.fn(),
-    mutationMock: vi.fn(),
-    applyMeetingInteractionsMock: vi.fn(),
-  }));
+const {
+  enqueueJobsMock,
+  queryMock,
+  mutationMock,
+  applyMeetingInteractionsMock,
+} = vi.hoisted(() => ({
+  enqueueJobsMock: vi.fn(),
+  queryMock: vi.fn(),
+  mutationMock: vi.fn(),
+  applyMeetingInteractionsMock: vi.fn(),
+}));
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,

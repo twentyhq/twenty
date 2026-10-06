@@ -17,7 +17,9 @@ type CalendarEventUpdate = {
 };
 
 const handler = async (
-  batch: DatabaseEventBatchPayload<ObjectRecordUpdateEvent<CalendarEventUpdate>>,
+  batch: DatabaseEventBatchPayload<
+    ObjectRecordUpdateEvent<CalendarEventUpdate>
+  >,
 ): Promise<void> => {
   const now = new Date();
   const upcomingMeetingStartsAts: string[] = [];
