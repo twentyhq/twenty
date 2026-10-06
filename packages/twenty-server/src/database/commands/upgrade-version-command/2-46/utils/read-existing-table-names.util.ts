@@ -1,3 +1,4 @@
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { type DataSource } from 'typeorm';
 
 // Filtering on relname lets Postgres use both columns of the pg_class name
@@ -21,5 +22,13 @@ export const readExistingTableNames = async ({
     [schemaName, tableNames],
   );
 
-  return new Set(rows.map(({ tableName }) => tableName));
+  const storedTableNames = new Set(rows.map(({ tableName }) => tableName));
+
+  // Postgres truncates identifiers to 63 bytes, so the table of a 63-character
+  // custom object is stored under a shorter name than the one requested.
+  return new Set(
+    tableNames.filter((tableName) =>
+      storedTableNames.has(tableName.slice(0, IDENTIFIER_MAX_CHAR_LENGTH)),
+    ),
+  );
 };
