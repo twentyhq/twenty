@@ -4,7 +4,7 @@ import {
   CommandBlock,
   NotificationCounter,
   TintedIconTile,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/data-display';
 import { IconStar } from 'twenty-ui/icon';
 import {
   Avatar,

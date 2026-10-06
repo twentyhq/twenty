@@ -13,6 +13,8 @@ import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/g
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
 export class AgentChatThreadLifecycleService {
@@ -24,6 +26,7 @@ export class AgentChatThreadLifecycleService {
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async cancelStream({
@@ -159,13 +162,14 @@ export class AgentChatThreadLifecycleService {
       streamId: thread.activeStreamId,
     });
 
-    const { affected } = await this.threadRepository.update(
+    const isReleased = await this.turnRecorderService.releaseStreamClaim({
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null },
-    );
+      threadId: thread.id,
+      streamId: thread.activeStreamId,
+      endRunningTurn: { status: AgentTurnStatus.CANCELLED },
+    });
 
-    if (affected > 0) {
+    if (isReleased) {
       await this.threadRecordEventService.emitThreadUpdated({
         workspaceId,
         threadBefore: thread,

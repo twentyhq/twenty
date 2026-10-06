@@ -62,6 +62,7 @@ const build = () => {
       findPendingForThread: jest.fn().mockResolvedValue([]),
       hasPendingForThread: jest.fn().mockResolvedValue(false),
     } as never,
+    {} as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };

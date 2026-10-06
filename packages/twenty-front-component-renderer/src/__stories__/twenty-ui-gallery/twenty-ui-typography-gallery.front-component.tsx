@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { Button } from 'twenty-ui/primitives/input';
 import {

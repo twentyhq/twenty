@@ -1,8 +1,8 @@
 [
   {
     "name": "CountrySelect",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/country-select",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/country-select",
     "props": [
       {
         "name": "className",
@@ -127,8 +127,8 @@
   },
   {
     "name": "CurrencyPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/currency-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/currency-picker",
     "props": [],
     "parts": [
       {
@@ -320,8 +320,8 @@
   },
   {
     "name": "MetricRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/metric-row",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/metric-row",
     "props": [
       {
         "name": "children",
@@ -1041,8 +1041,8 @@
   },
   {
     "name": "LightIconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1174,8 +1174,8 @@
   },
   {
     "name": "IconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1300,8 +1300,8 @@
   },
   {
     "name": "MainButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/main-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/main-button",
     "props": [
       {
         "name": "className",
@@ -1412,8 +1412,8 @@
   },
   {
     "name": "LightButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-button",
     "props": [
       {
         "name": "className",
@@ -7262,8 +7262,8 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/components",
-    "slug": "feedback/toast",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast",
     "props": [
       {
         "name": "action",
@@ -7815,8 +7815,8 @@
   },
   {
     "name": "SettingsRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/settings-row",
+    "entryPoint": "twenty-ui/components/settings",
+    "slug": "components/settings/settings-row",
     "props": [
       {
         "name": "checked",
@@ -7913,8 +7913,8 @@
   },
   {
     "name": "PhoneCountryPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/phone-country-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/phone-country-picker",
     "props": [],
     "parts": [
       {
@@ -8029,8 +8029,8 @@
   },
   {
     "name": "Dropdown",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/dropdown",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/dropdown",
     "props": [],
     "parts": [
       {
@@ -8976,8 +8976,8 @@
   },
   {
     "name": "OverflowingList",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/overflowing-list",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/overflowing-list",
     "props": [
       {
         "name": "children",
@@ -9011,8 +9011,8 @@
   },
   {
     "name": "Section",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/section",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/section",
     "props": [],
     "parts": [
       {
@@ -9114,7 +9114,7 @@
   {
     "name": "CodeEditor",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor",
+    "slug": "components/code-editor/code-editor",
     "props": [
       {
         "name": "autoHeight",
@@ -9226,7 +9226,7 @@
   {
     "name": "CodeEditorHeader",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor-header",
+    "slug": "components/code-editor/code-editor-header",
     "props": [
       {
         "name": "leftNodes",
@@ -9253,8 +9253,8 @@
   },
   {
     "name": "TabButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tab-button",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/tab-button",
     "props": [
       {
         "name": "active",
@@ -9330,8 +9330,8 @@
   },
   {
     "name": "AvatarGroup",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/avatar-group",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/avatar-group",
     "props": [
       {
         "name": "avatars",
@@ -9393,8 +9393,8 @@
   },
   {
     "name": "CommandBlock",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/command-block",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/command-block",
     "props": [
       {
         "name": "button",
@@ -9414,8 +9414,8 @@
   },
   {
     "name": "JsonTree",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/json-tree",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/json-tree",
     "props": [
       {
         "name": "arrowButtonCollapsedLabel",
@@ -9491,8 +9491,8 @@
   },
   {
     "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/notification-counter",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/notification-counter",
     "props": [
       {
         "name": "className",
@@ -9519,8 +9519,8 @@
   },
   {
     "name": "TintedIconTile",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tinted-icon-tile",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/tinted-icon-tile",
     "props": [
       {
         "name": "color",
@@ -9554,8 +9554,8 @@
   },
   {
     "name": "Callout",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/callout",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/callout",
     "props": [
       {
         "name": "action",
@@ -9624,8 +9624,8 @@
   },
   {
     "name": "InlineBanner",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/inline-banner",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/inline-banner",
     "props": [
       {
         "name": "button",
@@ -9680,8 +9680,8 @@
   },
   {
     "name": "ToastProvider",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toast-provider",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast-provider",
     "props": [
       {
         "name": "children",
@@ -9701,8 +9701,8 @@
   },
   {
     "name": "Toaster",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toaster",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toaster",
     "props": [
       {
         "name": "container",
@@ -9729,8 +9729,8 @@
   },
   {
     "name": "ImageInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/image-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/image-input",
     "props": [
       {
         "name": "abortLabel",
@@ -9848,8 +9848,8 @@
   },
   {
     "name": "SearchInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/search-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/search-input",
     "props": [
       {
         "name": "aria-label",
@@ -9974,8 +9974,8 @@
   },
   {
     "name": "AnimatedIconCrossfade",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/animated-icon-crossfade",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/animated-icon-crossfade",
     "props": [
       {
         "name": "ActiveIcon",
@@ -10009,8 +10009,8 @@
   },
   {
     "name": "MenuItem",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item",
     "props": [
       {
         "name": "accent",
@@ -10198,8 +10198,8 @@
   },
   {
     "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-avatar",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-avatar",
     "props": [
       {
         "name": "accent",
@@ -10296,8 +10296,8 @@
   },
   {
     "name": "MenuItemDraggable",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-draggable",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-draggable",
     "props": [
       {
         "name": "accent",
@@ -10394,8 +10394,8 @@
   },
   {
     "name": "MenuItemSuggestion",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-suggestion",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-suggestion",
     "props": [
       {
         "name": "className",
@@ -10457,8 +10457,8 @@
   },
   {
     "name": "MenuPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-picker",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-picker",
     "props": [
       {
         "name": "className",

@@ -14,7 +14,8 @@ import { LightButton } from '../LightButton';
 import { type LightButtonProps } from '../types/LightButtonProps';
 
 const meta: Meta<typeof LightButton> = {
-  title: 'UI/Components/LightButton',
+  id: 'ui-components-lightbutton',
+  title: 'UI/Components/Input/LightButton',
   component: LightButton,
   args: { children: 'Add filter' },
 };

@@ -5,7 +5,7 @@ import {
 import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, type IconComponent } from 'twenty-ui/icon';
 import { type ThemeColor, useTheme, themeCssVariables } from 'twenty-ui/theme';

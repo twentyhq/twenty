@@ -5,7 +5,8 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, SettingsRow } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 

@@ -12,7 +12,7 @@ import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/Sprea
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { styled } from '@linaria/react';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 

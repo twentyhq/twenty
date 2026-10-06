@@ -20,7 +20,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { StrictMode, useRef } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 const BACKGROUND_FOCUS_ITEM: FocusStackItem = {
   focusId: 'record-page',

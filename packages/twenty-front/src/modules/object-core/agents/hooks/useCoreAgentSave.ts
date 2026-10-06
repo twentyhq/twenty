@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -74,7 +74,11 @@ export const useCoreAgentSave = ({
     prompt: formValues.prompt,
     modelConfiguration: formValues.modelConfiguration,
     responseFormat: formValues.responseFormat,
-    evaluationInputs: formValues.evaluationInputs,
+    // Stored triggers the form could not parse are left out of formValues, so
+    // only send triggers when the user edited them to avoid deleting those
+    ...(!isDeeplyEqual(formValues.triggers, originalFormValues.triggers) && {
+      triggers: formValues.triggers,
+    }),
   });
 
   const autoSave = useDebouncedCallback(async () => {

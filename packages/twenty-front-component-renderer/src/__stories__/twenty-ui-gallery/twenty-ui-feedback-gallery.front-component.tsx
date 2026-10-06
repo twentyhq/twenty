@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, InlineBanner } from 'twenty-ui/components';
+import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
 import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
 import { ThemeProvider } from 'twenty-ui/theme';
 

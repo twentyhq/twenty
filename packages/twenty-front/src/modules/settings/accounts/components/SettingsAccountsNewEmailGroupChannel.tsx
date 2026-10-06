@@ -11,7 +11,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccountsNewEmailGroupChannel = () => {
   const { t } = useLingui();

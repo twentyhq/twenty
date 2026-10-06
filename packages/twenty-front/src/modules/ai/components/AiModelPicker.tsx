@@ -6,7 +6,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';

@@ -30,10 +30,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: {
-    label: msg`Prebuilt logic functions`,
-    description: msg`Run logic functions from prebuilt application bundles.`,
-  },
   [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,

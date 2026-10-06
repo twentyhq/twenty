@@ -78,7 +78,8 @@ const openRecordActions = async (canvasElement: HTMLElement) => {
 };
 
 const meta: Meta<typeof DismissibleRecordActions> = {
-  title: 'UI/Components/Dropdown/Interactions/Dismissal',
+  id: 'ui-components-dropdown-interactions-dismissal',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Dismissal',
   component: DismissibleRecordActions,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],

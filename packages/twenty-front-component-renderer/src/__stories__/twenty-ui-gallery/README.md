@@ -5,36 +5,46 @@ component stories. Each fixture has React and Preact stories built with
 `createGalleryStory`, with an explicit bundle name, runtime, and play function.
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
-shared assertions, render checks, interaction checks, and known-failure scenarios.
-Shared types and error patterns live in `types/` and `constants/`.
-`createGalleryRenderTest` checks the
-exact set of expected failed components. `createSandboxFailureTest` mounts the
-fixture, clicks a trigger and asserts the sandbox errors; its error expectation
-requires at least one error and can allow additional known errors without
-requiring them to occur.
+shared assertions, render checks, interaction checks, and known-failure
+scenarios. Shared types live in `types/` and shared constants in `constants/`;
+known-failure scenarios that assert sandbox errors declare the patterns they
+require.
+`createGalleryRenderTest` checks the exact set of expected failed components.
+`createOverlayOpenTest` checks that a trigger opens its overlay and pins the
+popup content as absent from the page. `createDropdownOpenTest` applies it to
+the Dropdown-based popups in React and pins that they never open in Preact.
+`expectSandboxErrors` requires each listed known error and rejects any other
+error. `expectAssertionToKeepFailing` pins an interaction that must have no
+effect within the interaction timeout.
 
-| Fixture | Components |
-| --- | --- |
-| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
-| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
-| `twenty-ui-display-helpers` | Text |
-| `twenty-ui-avatar-controls` | Avatar (fallback, pointer/keyboard activation and disabled state) |
-| `twenty-ui-avatar-image` | Avatar (decoded images, broken-source fallback, replacement and unmount/remount) |
-| `twenty-ui-image-input` | ImageInput |
-| `twenty-ui-list-item` | ListItem |
-| `twenty-ui-tabs` | Tabs |
-| `twenty-ui-overflowing-list` | OverflowingList |
-| `twenty-ui-phone-country-picker` | PhoneCountryPicker |
-| `twenty-ui-popover` | Popover |
-| `twenty-ui-menu` | Menu |
-| `twenty-ui-select` | Select |
-| `twenty-ui-toast` | Toast |
-| `twenty-ui-alert-dialog` | AlertDialog |
-| `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
-| `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
-| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
-| `twenty-ui-country-select` | CountrySelect (`TwentyUiCountrySelect.stories.tsx`) |
+| Fixture                          | Components                                                                                                                          |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                  |
+| `twenty-ui-number-stepper`       | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission)                                         |
+| `twenty-ui-display-helpers`      | Text                                                                                                                                |
+| `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
+| `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
+| `twenty-ui-image-input`          | ImageInput                                                                                                                          |
+| `twenty-ui-list-item`            | ListItem                                                                                                                            |
+| `twenty-ui-settings-row`         | SettingsRow                                                                                                                         |
+| `twenty-ui-tabs`                 | Tabs                                                                                                                                |
+| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                     |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                  |
+| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                      |
+| `twenty-ui-popover`              | Popover                                                                                                                             |
+| `twenty-ui-dialog`               | Dialog                                                                                                                              |
+| `twenty-ui-menu`                 | Menu                                                                                                                                |
+| `twenty-ui-select`               | Select                                                                                                                              |
+| `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
+| `twenty-ui-toast`                | Toast                                                                                                                               |
+| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
+| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
+| `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
+| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
+| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                             |
+| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                       |
+| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                 |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -57,29 +67,22 @@ retain working source controls, fallback, replacement and unmount/remount checks
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
-work fully in the sandbox. Scenarios that raise errors require specific errors and
-reject unrelated ones, following the existing gallery convention. Known
-precursor errors are optional because the host can coalesce worker errors into
-a single state update. A fix must change the corresponding story to assert
-successful behavior; do not keep or broaden an obsolete error expectation.
-No stories are skipped or marked as expected-to-fail by the runner.
+work fully in the sandbox. Scenarios pin the current behavior exactly: a
+scenario that reaches a gap asserts what the component reports, and one that
+raises errors requires those specific errors and rejects unrelated ones. A fix
+must change the corresponding story to assert successful behavior; do not keep
+or broaden an obsolete expectation. No stories are skipped or marked as
+expected-to-fail by the runner.
 
-| Component | Current limitation |
-| --- | --- |
-| Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
-| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer and typing gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
-| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
-| Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
-| Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
-| OverflowingList | Both runtimes measure, resize, and unmount the inline list, and keep rendering afterwards. A scoped light provider keeps popup portals inside the connected remote root and matches the gallery theme. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the missing native pointer width error; missing native `defaultPrevented` data and event constructor errors are optional. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that opening the trigger activates the surrounding host, then check that popup selection adds no host activation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
-| PhoneCountryPicker | Both runtimes render the triggers, flags, and disabled state. Opening fails while reading pointer contact data from the missing `nativeEvent`. In React the popup still mounts, and the Dropdown search effect then reads `dataset`, which sandbox elements lack; the uncaught error unmounts the React tree, so the React story requires that error and keeps the pointer error optional. See the [PhoneCountryPicker documentation](../../../../twenty-docs/ui/components/phone-country-picker.mdx). |
-| Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
-| Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
-| CountrySelect | Opening fails while reading pointer contact data from the missing `nativeEvent`. React still mounts the popup, and the Dropdown search target then reads `dataset`, which worker elements do not provide, so that error is allowed without being required; Preact stops at the opening error. The fixture checks the selected values and decorative flags, then clicks the disabled trigger and, after a settle delay, requires the opening error alone, so a popup mounted by React fails the story. Clicking an enabled trigger then asserts the opening error. |
-| Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
-| Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
-| Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
-| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                                                                       | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NumberStepper                                                                                                   | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
+| ImageInput                                                                                                      | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                                                                                 |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                                                        |
+| Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (Preact)                                            | The Dropdown-based popups never open. `Popover.Popup` is a plain function component, so Preact hands its ref to the component instance instead of the popup element, and the content reads `dataset` from that instance as soon as it mounts. The error is thrown inside Preact's render queue, so it never reaches the host and Preact stops re-rendering.                                                                                                                                                         |
+| ListItem                                                                                                        | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws.                                                                                                                                                                                                                                                                                                                  |
+| Slider                                                                                                          | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Responsive hooks                                                                                                | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width.                                                         |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
@@ -92,15 +95,48 @@ and remove the attribute when the prop is cleared. `getAttribute` and the
 selector engine read the remote properties React and Preact set, and the
 selector engine matches the sandbox's custom element tags by their HTML tag
 names and reads live control properties. `TooltipPreact` therefore covers hover
-opening and Escape dismissal. Pointer leave still needs document-level
-`mousemove` delivery for the safe polygon, and the compound tooltip's title and
-description are not covered yet.
+opening and Escape dismissal. Pointer leave still needs
+`mousemove` delivery from outside the component for the safe polygon, and the
+compound tooltip's title and description are not covered yet.
 
-Once the remaining gaps are fixed, extend the stories to verify selection,
-disabled items, keyboard navigation, and overlay content, dismissal, and focus
-restoration. The fixtures already include the controlled state, compound parts,
-and callback output for those checks. Passing display, ListItem, and Toast
-stories verify rendering/CSS or interaction behavior directly.
+A page event crosses to the worker when the element it targets, or one of that
+element's ancestors in the component, listens for that event type. It crosses
+once, from the innermost listening element, and the worker dispatches it at the
+element the page event targeted. It bubbles when the page event bubbled, except
+React's per-element `mouseenter`, `mouseleave`, `pointerenter` and
+`pointerleave`, which reach each listening element separately. `target`,
+`currentTarget`, `relatedTarget` and `stopPropagation()` therefore behave as on
+the page, and `document` listeners receive the events that cross. An event
+carries a control's `value` only once the browser has applied the user's change
+(`input`, `change`, `click`, `keyup`, `blur` and `focusout`), `checked` only
+after activation (the same events without `keyup`, which precedes a Space
+activation), and a media element's `muted` only on `volumechange`, so a
+snapshot taken before the change never overwrites what the user did. The SDK
+registers handlers written in JSX and handlers added through
+`React.cloneElement` as element listeners in both runtimes, the element's own
+handlers first, with capture handlers on the capture phase, and keeps
+`event.preventBaseUIHandler()` working as Base UI's prop merging does. That is
+how the OverflowingList popup and event isolation stories, `TooltipReact`,
+`RadioCardReact` and `FieldControlsReact` pass; the
+`div` propagation and clone handler stories pin the delivery itself.
+
+Forwarded events are `PointerEvent`, `MouseEvent`, `KeyboardEvent`,
+`InputEvent`, `WheelEvent`, `FocusEvent` or `ClipboardEvent` instances that
+carry React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`,
+`isPropagationStopped()`, `persist()`), and those constructors exist in the
+worker. `HTMLElement.click()` dispatches a local click, and a click dispatched
+inside the worker on a checkbox or radio input toggles it and fires `input` and
+`change`, which is how Base UI's Switch, Checkbox and Radio variants
+activate. Tabs, SettingsRow, Switch, Checkbox and RadioGroup therefore cover
+activation and disabled items in both runtimes. Events that happen outside the
+component never reach the worker, so dismissal on a press elsewhere on the page
+is not covered.
+
+Once the remaining gaps are fixed, extend the stories to verify keyboard
+navigation, and overlay content, dismissal, and focus restoration. The fixtures
+already include the controlled state, compound parts, and callback output for
+those checks. Passing display, ListItem, and Toast stories verify rendering/CSS
+or interaction behavior directly.
 
 ## Run
 
