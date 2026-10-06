@@ -80,7 +80,6 @@ import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-cha
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import {
   AiException,
@@ -136,7 +135,6 @@ export class AgentAsyncExecutorService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
-    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
@@ -462,7 +460,7 @@ export class AgentAsyncExecutorService {
           proposableTools = registryToolset.proposableTools;
         }
 
-        const nativeTools = this.nativeToolBinder.bind(
+        const nativeTools = this.aiModelConfigService.getNativeModelTools(
           registeredModel,
           nativeModelToolOptions,
         );
@@ -689,6 +687,10 @@ export class AgentAsyncExecutorService {
         modelId: registeredModel.modelId,
         totalCostInDollars,
         creditsUsedMicro,
+        turnUsage: this.aiBillingService.calculateStepsTurnUsage(
+          registeredModel.modelId,
+          executionSteps,
+        ),
       };
     } catch (error) {
       if (error instanceof AiException) {

@@ -39,10 +39,7 @@ import { findAgentStepWait } from 'src/modules/workflow/workflow-executor/workfl
 import { type WorkflowWaitResolution } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution.type';
 import { type WorkflowWaitResolutionInput } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution-input.type';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
-import {
-  type RecordedConversation,
-  WorkflowAgentConversationWorkspaceService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
 import { mergeAiAgentStepLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/merge-ai-agent-step-logs.util';
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
@@ -190,29 +187,12 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         };
 
     // A record of the step, not its outcome, so a write failure must not fail the step
-    const recordConversation = (
-      executionResult: AgentExecutionResult,
-    ): Promise<RecordedConversation | null> =>
-      (conversationThread.isResumed
-        ? this.workflowAgentConversationService.recordContinuation({
-            workspaceId,
-            threadId: conversationThread.threadId,
-            workflowStep,
-            title: step.name,
-            agentId: agent?.id ?? null,
-            executionResult,
-          })
-        : this.workflowAgentConversationService.recordExecution({
-            workspaceId,
-            threadId: conversationThread.threadId,
-            workflowStep,
-            title: step.name,
-            agentId: agent?.id ?? null,
-            prompt: resolvedPrompt,
-            initiatorUserWorkspaceId: userWorkspaceId,
-            executionResult,
-          })
-      ).catch((error: unknown) => {
+    const recordConversation = async <TResult>(
+      record: () => Promise<TResult>,
+    ): Promise<TResult | null> => {
+      try {
+        return await record();
+      } catch (error) {
         this.logger.warn(
           `Failed to record the conversation for workflowRun=${runInfo.workflowRunId} step=${currentStepId}: ${
             error instanceof Error ? error.message : String(error)
@@ -220,54 +200,93 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         );
 
         return null;
-      });
+      }
+    };
+
+    const turnId = await recordConversation(() =>
+      this.workflowAgentConversationService.openTurn({
+        runInfo,
+        threadId: conversationThread.threadId,
+        agentId: agent?.id ?? null,
+        prompt: conversationThread.isResumed ? null : resolvedPrompt,
+        initiatorUserWorkspaceId: userWorkspaceId,
+      }),
+    );
 
     const trimmedHumanInputInstructions = humanInputInstructions?.trim();
     const canAskForHumanInput = isNonEmptyString(trimmedHumanInputInstructions);
 
     const startedAtMs = Date.now();
 
-    const executionResult = await this.aiAgentExecutionService.executeAgent({
-      agent,
-      messages: conversationThread.isResumed
-        ? []
-        : [{ role: 'user', content: resolvedPrompt }],
-      priorMessages: conversationThread.priorMessages,
-      baseSystemPrompt: canAskForHumanInput
-        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
-        : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
-      pausingTools: {
-        ...createWorkflowAgentWaitTools(),
-        ...(canAskForHumanInput
+    let executionResult: AgentExecutionResult;
+
+    try {
+      executionResult = await this.aiAgentExecutionService.executeAgent({
+        agent,
+        messages: conversationThread.isResumed
+          ? []
+          : [{ role: 'user', content: resolvedPrompt }],
+        priorMessages: conversationThread.priorMessages,
+        baseSystemPrompt: canAskForHumanInput
+          ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
+          : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
+        pausingTools: {
+          ...createWorkflowAgentWaitTools(),
+          ...(canAskForHumanInput
+            ? {
+                [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
+                  isWorkspaceSetupThread: false,
+                }),
+                [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+              }
+            : {}),
+        },
+        canProposeToolCalls: canAskForHumanInput,
+        actorContext: executionContext.isActingOnBehalfOfUser
+          ? executionContext.initiator
+          : undefined,
+        authContext: executionContext.authContext,
+        workspaceId,
+        userWorkspaceId,
+        ...(isDefined(application)
           ? {
-              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                isWorkspaceSetupThread: false,
-              }),
-              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+              additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
+                executionContext.rolePermissionConfig,
+              ),
+              additionalExcludedToolNames:
+                APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
             }
           : {}),
-      },
-      canProposeToolCalls: canAskForHumanInput,
-      actorContext: executionContext.isActingOnBehalfOfUser
-        ? executionContext.initiator
-        : undefined,
-      authContext: executionContext.authContext,
-      workspaceId,
-      userWorkspaceId,
-      ...(isDefined(application)
-        ? {
-            additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
-              executionContext.rolePermissionConfig,
-            ),
-            additionalExcludedToolNames:
-              APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
-          }
-        : {}),
-    });
+      });
+    } catch (error) {
+      if (isDefined(turnId)) {
+        await recordConversation(() =>
+          this.workflowAgentConversationService.failTurn({
+            workspaceId,
+            turnId,
+            error,
+          }),
+        );
+      }
+
+      throw error;
+    }
 
     const durationMs = Date.now() - startedAtMs;
 
-    const recordedConversation = await recordConversation(executionResult);
+    const recordedConversation = isDefined(turnId)
+      ? await recordConversation(() =>
+          this.workflowAgentConversationService.closeTurn({
+            workspaceId,
+            threadId: conversationThread.threadId,
+            turnId,
+            workflowStep,
+            title: step.name,
+            agentId: agent?.id ?? null,
+            executionResult,
+          }),
+        )
+      : null;
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,
