@@ -12,7 +12,10 @@ export const AUTH_LOGIN_COMMAND_DEFINITION: LocalCommandDefinition = {
       flags: '--url <url>',
       description: 'Twenty server URL, for example https://acme.twenty.com',
     },
-    { flags: '--name <name>', description: 'Name of the remote to save' },
+    {
+      flags: '--name <name>',
+      description: 'Name of the remote to save (defaults to "default")',
+    },
     { flags: '--use', description: 'Make this remote the default' },
     {
       flags: '--replace',
@@ -20,6 +23,7 @@ export const AUTH_LOGIN_COMMAND_DEFINITION: LocalCommandDefinition = {
     },
   ],
   examples: [
+    'twenty auth login --url https://acme.twenty.com',
     'twenty auth login --url https://acme.twenty.com --name prod',
     'printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name prod',
     'twenty auth login --with-token --remote prod < api-key.txt',
