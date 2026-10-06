@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconExternalLink } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -18,56 +19,78 @@ type Story = StoryObj<typeof AiChatInlineBanner>;
 
 export const NoEnabledModels: Story = {
   args: {
-    message: 'No AI models are enabled.',
-    button: { title: 'Configure models', onClick: () => {} },
+    children: 'No AI models are enabled.',
+    action: (
+      <Button size="sm" variant="outline" color="danger">
+        Configure models
+      </Button>
+    ),
   },
 };
 
 export const NoSettingsPermission: Story = {
   args: {
-    message: 'Ask your workspace admin to enable an AI model.',
+    children: 'Ask your workspace admin to enable an AI model.',
   },
 };
 
 export const UsageLimit: Story = {
   args: {
-    message: 'You’ve reached your AI usage limit.',
-    button: { title: 'Upgrade', onClick: () => {} },
+    children: 'You’ve reached your AI usage limit.',
+    action: (
+      <Button size="sm" variant="outline" color="danger">
+        Upgrade
+      </Button>
+    ),
   },
 };
 
 export const UsageLimitLoading: Story = {
   args: {
-    message: 'You’ve reached your AI usage limit.',
-    button: { title: 'Upgrade', onClick: () => {}, disabled: true },
+    children: 'You’ve reached your AI usage limit.',
+    action: (
+      <Button size="sm" variant="outline" color="danger" disabled>
+        Upgrade
+      </Button>
+    ),
   },
 };
 
 export const NoBillingPermission: Story = {
   args: {
-    message: 'AI usage limit reached. Ask an admin to upgrade the plan.',
+    children: 'AI usage limit reached. Ask an admin to upgrade the plan.',
   },
 };
 
 export const ApiKeyNotConfigured: Story = {
   args: {
-    message: 'Add an API key to enable AI.',
-    button: {
-      title: 'View Docs',
-      Icon: IconExternalLink,
-      onClick: () => {},
-    },
+    children: 'Add an API key to enable AI.',
+    action: (
+      <Button
+        size="sm"
+        variant="outline"
+        color="danger"
+        startIcon={<IconExternalLink />}
+      >
+        View Docs
+      </Button>
+    ),
   },
 };
 
 export const NarrowComposer: Story = {
   args: {
-    message: 'Add an API key to enable AI.',
-    button: {
-      title: 'View Docs',
-      Icon: IconExternalLink,
-      onClick: () => {},
-    },
+    children: 'Add an API key to enable AI.',
+    action: (
+      <Button
+        size="sm"
+        variant="outline"
+        color="danger"
+        startIcon={<IconExternalLink />}
+      >
+        View Docs
+      </Button>
+    ),
   },
   parameters: { container: { width: 320 } },
 };

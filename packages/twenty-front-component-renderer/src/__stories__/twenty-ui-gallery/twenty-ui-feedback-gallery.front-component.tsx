@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
@@ -15,7 +16,20 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
     name: 'Banner',
     node: (
-      <Banner color="blue" variant="primary">
+      <Banner
+        status="error"
+        color="blue"
+        variant="soft"
+        role="status"
+        aria-live="polite"
+        aria-label="Banner result"
+        className="custom-banner"
+        style={{ marginTop: 7 }}
+        render={<section data-composed="true" />}
+        ref={(element) => {
+          if (isDefined(element)) element.dataset.refTag = element.tagName;
+        }}
+      >
         Heads up
       </Banner>
     ),
@@ -30,15 +44,25 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
     name: 'InlineBanner compact link',
     node: (
       <InlineBanner
-        variant="compact"
-        message="Connect your account to keep your contacts in sync."
-        button={{ title: 'Connection settings', href: '#connection-settings' }}
-      />
+        layout="compact"
+        action={
+          <Button
+            size="sm"
+            variant="outline"
+            color="accent"
+            href={'#connection-settings'}
+          >
+            {'Connection settings'}
+          </Button>
+        }
+      >
+        {'Connect your account to keep your contacts in sync.'}
+      </InlineBanner>
     ),
   },
   {
     name: 'InlineBanner',
-    node: <InlineBanner color="blue" message="Inline message" />,
+    node: <InlineBanner status="info">{'Inline message'}</InlineBanner>,
   },
   {
     name: 'Loader',

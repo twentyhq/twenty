@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -65,14 +66,20 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     <>
       <ToastOnQueryErrorEffect error={error} />
       <InlineBanner
-        color="blue"
-        message={message}
-        button={{
-          title: t`Add card`,
-          hidden: !hasPermissionToManageBilling,
-          onClick: openPaymentMethodUpdate,
-        }}
-      />
+        status="info"
+        action={
+          hasPermissionToManageBilling && (
+            <Button
+              size="sm"
+              variant="outline"
+              color="accent"
+              onClick={openPaymentMethodUpdate}
+            >{t`Add card`}</Button>
+          )
+        }
+      >
+        {message}
+      </InlineBanner>
     </>
   );
 };

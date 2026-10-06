@@ -14,7 +14,7 @@ export const AiChatQuotaLimitExhaustedMessage = ({
 }: AiChatQuotaLimitExhaustedMessageProps) => {
   const { t } = useLingui();
 
-  const manageLimitsButton = useManageUsageLimitsButton();
+  const manageLimitsButton = useManageUsageLimitsButton({ color: 'neutral' });
 
   return (
     <AiChatErrorMessage
@@ -24,7 +24,7 @@ export const AiChatQuotaLimitExhaustedMessage = ({
           ? undefined
           : t`Ask an admin to raise the limit.`
       }
-      button={manageLimitsButton}
+      action={manageLimitsButton}
     />
   );
 };

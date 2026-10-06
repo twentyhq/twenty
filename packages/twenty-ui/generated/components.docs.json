@@ -569,32 +569,74 @@
     "slug": "feedback/banner",
     "props": [
       {
+        "name": "action",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trailing ReactNode, such as buttons, links or multiple controls."
+      },
+      {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Message and optional actions displayed inside the banner."
+        "description": "Caller-provided content, including text, links and controls."
       },
       {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the banner."
+        "description": "Class merged onto the root div or composed element."
       },
       {
         "name": "color",
-        "type": "\"blue\" | \"danger\"",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
-        "defaultValue": "blue",
-        "description": "Blue information treatment or danger treatment."
+        "defaultValue": "status palette",
+        "description": "Palette override: gray, blue, green, orange or red. When omitted, status selects the corresponding palette."
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional leading ReactNode. The caller supplies decorative or accessible icon semantics."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or to the DOM element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, BannerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Base UI element or render callback. The callback receives native props/ref and resolved status, variant and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning or error. Defaults to info. Does not assign a role or live region."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root div or composed element."
       },
       {
         "name": "variant",
-        "type": "\"primary\" | \"secondary\"",
+        "type": "\"soft\" | \"solid\"",
         "required": false,
-        "defaultValue": "primary",
-        "description": "Primary solid treatment or secondary translucent treatment."
+        "defaultValue": "solid",
+        "description": "Solid or soft appearance. Defaults to solid, independently of status."
       }
     ]
   },
@@ -9747,53 +9789,88 @@
     "slug": "components/feedback/inline-banner",
     "props": [
       {
-        "name": "button",
-        "type": "InlineBannerButtonProps",
+        "name": "action",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional button or destination link. All fields are optional:\n\n- `title` (`string`): visible action label.\n- `onClick` (`(event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => void`): activation handler, including keyboard activation.\n- `href` (`string`): destination URL; selects native link semantics.\n- `render` (`ReactElement | ((props: HTMLProps, state: { disabled: boolean }) => ReactElement)`): custom root element or renderer. Preserve an anchor when `href` is set, or a native button otherwise. `HTMLProps` includes native element attributes and its ref.\n- `target` (`string`): link browsing context, such as `_blank`.\n- `rel` (`string`): link relationship, such as `noopener noreferrer`.\n- `download` (native anchor attribute): use `true` to download the destination or a `string` to suggest a filename.\n- `disabled` (`boolean`): prevents activation.\n- `hidden` (`boolean`): omits the action from the banner.\n- `aria-label` (`string`): accessible action name, needed when no visible title is supplied.\n- `Icon` (`IconComponent`): decorative icon component displayed before the title.\n\nAction and link fields use the corresponding [Button props](/ui/primitives/input/button). `BaseUIEvent` extends the React event with `preventBaseUIHandler()` and `baseUIHandlerPrevented`."
+        "description": "Optional trailing ReactNode. Compose Button, links or multiple controls with their complete public APIs."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-provided content. Standard plain strings truncate with a focusable tooltip; rich nodes render directly. Compact content wraps."
       },
       {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Class applied to the banner."
+        "description": "Class merged onto the root div or composed element."
       },
       {
         "name": "color",
-        "type": "\"blue\" | \"danger\"",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
-        "defaultValue": "blue",
-        "description": "Banner palette color. An omitted color uses Banner’s default."
+        "defaultValue": "status palette",
+        "description": "Gray, blue, green, orange or red palette override. An omitted color follows status."
       },
       {
         "name": "embedded",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Removes the bottom margin from standard banners. Compact banners have no bottom margin."
+        "description": "Removes the standard bottom margin. Compact layouts have no bottom margin."
       },
       {
-        "name": "LeftIcon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the information icon."
+        "defaultValue": "decorative information icon",
+        "description": "Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it."
       },
       {
-        "name": "message",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Message text. Standard banners truncate with a focusable tooltip; compact banners wrap."
-      },
-      {
-        "name": "variant",
+        "name": "layout",
         "type": "\"compact\" | \"standard\"",
         "required": false,
         "defaultValue": "standard",
-        "description": "Standard full-width banner or compact wrapping message with a 512px maximum content width."
+        "description": "Standard full-width layout or compact wrapping layout with a 512px maximum content width. Defaults to standard."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or to the DOM element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, BannerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Base UI root element or render callback, receiving native props/ref and resolved Banner state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning or error. Defaults to info. Roles and announcements remain caller-owned."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root div or composed element."
+      },
+      {
+        "name": "variant",
+        "type": "\"soft\" | \"solid\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Solid or soft appearance, independently of status and layout. Defaults to soft."
       }
     ]
   },

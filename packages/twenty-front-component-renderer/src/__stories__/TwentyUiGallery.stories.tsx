@@ -61,7 +61,7 @@ import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
 import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
-import { loaderTest } from '@/__stories__/twenty-ui-gallery/utils/loaderTest';
+import { bannerTest } from '@/__stories__/twenty-ui-gallery/utils/bannerTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -89,12 +89,12 @@ export const DataDisplayPreact: Story = createGalleryStory({
 export const FeedbackReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'react',
-  play: loaderTest,
+  play: bannerTest,
 });
 export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
-  play: loaderTest,
+  play: bannerTest,
 });
 
 export const ProgressReact: Story = createGalleryStory({

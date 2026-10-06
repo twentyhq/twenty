@@ -11,18 +11,42 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="children" type="ReactNode" required>
-  Message and optional actions displayed inside the banner.
+<ParamField body="action" type="ReactNode">
+  Optional trailing ReactNode, such as buttons, links or multiple controls.
+</ParamField>
+
+<ParamField body="children" type="ReactNode">
+  Caller-provided content, including text, links and controls.
 </ParamField>
 
 <ParamField body="className" type="string">
-  CSS class applied to the banner.
+  Class merged onto the root div or composed element.
 </ParamField>
 
-<ParamField body="color" type="&quot;blue&quot; | &quot;danger&quot;" default="blue">
-  Blue information treatment or danger treatment.
+<ParamField body="color" type="&quot;blue&quot; | &quot;gray&quot; | &quot;green&quot; | &quot;orange&quot; | &quot;red&quot;" default="status palette">
+  Palette override: gray, blue, green, orange or red. When omitted, status selects the corresponding palette.
 </ParamField>
 
-<ParamField body="variant" type="&quot;primary&quot; | &quot;secondary&quot;" default="primary">
-  Primary solid treatment or secondary translucent treatment.
+<ParamField body="icon" type="ReactNode">
+  Optional leading ReactNode. The caller supplies decorative or accessible icon semantics.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the root div, or to the DOM element supplied through render.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, BannerState&gt;">
+  Base UI element or render callback. The callback receives native props/ref and resolved status, variant and color state.
+</ParamField>
+
+<ParamField body="status" type="&quot;error&quot; | &quot;info&quot; | &quot;neutral&quot; | &quot;success&quot; | &quot;warning&quot;" default="info">
+  Feedback meaning: neutral, info, success, warning or error. Defaults to info. Does not assign a role or live region.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties">
+  Inline styles applied to the root div or composed element.
+</ParamField>
+
+<ParamField body="variant" type="&quot;soft&quot; | &quot;solid&quot;" default="solid">
+  Solid or soft appearance. Defaults to solid, independently of status.
 </ParamField>

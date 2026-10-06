@@ -12,6 +12,7 @@ import { type IconComponent, IconX } from 'twenty-ui/icon';
 import {
   Banner,
   type BannerColor,
+  type BannerStatus,
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
@@ -37,8 +38,9 @@ const StyledContent = styled.div<{ hasCloseButton: boolean }>`
 
 export const InformationBanner = ({
   message,
-  color = 'blue',
-  variant = 'primary',
+  color,
+  status = 'info',
+  variant = 'solid',
   buttonTitle,
   buttonIcon: ButtonIcon,
   buttonOnClick,
@@ -48,6 +50,7 @@ export const InformationBanner = ({
 }: {
   message: string;
   color?: BannerColor;
+  status?: BannerStatus;
   variant?: BannerVariant;
   buttonTitle?: string;
   buttonIcon?: IconComponent;
@@ -61,8 +64,11 @@ export const InformationBanner = ({
     componentInstanceId,
   );
 
-  const isPrimary = variant === 'primary';
-  const buttonColor = color === 'danger' ? 'danger' : 'accent';
+  const isSolid = variant === 'solid';
+  const buttonColor =
+    color === 'red' || (!isDefined(color) && status === 'error')
+      ? 'danger'
+      : 'accent';
 
   return (
     <InformationBannerComponentInstanceContext.Provider
@@ -71,7 +77,7 @@ export const InformationBanner = ({
       }}
     >
       {informationBannerIsOpen && (
-        <Banner color={color} variant={variant}>
+        <Banner color={color} status={status} variant={variant}>
           <StyledContent hasCloseButton={!!onClose}>
             <StyledText>
               <OverflowingTextWithTooltip
@@ -82,20 +88,20 @@ export const InformationBanner = ({
             </StyledText>
             {buttonTitle && buttonOnClick && (
               <Button
-                className={isPrimary ? BUTTON_INVERTED_CLASS_NAME : undefined}
+                className={isSolid ? BUTTON_INVERTED_CLASS_NAME : undefined}
                 startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
                 size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
                 variant="outline"
-                color={isPrimary ? 'neutral' : buttonColor}
+                color={isSolid ? 'neutral' : buttonColor}
               >
                 {buttonTitle}
               </Button>
             )}
           </StyledContent>
           {onClose &&
-            (isPrimary ? (
+            (isSolid ? (
               <IconButton
                 className={INVERTED_ICON_BUTTON_CLASS_NAME}
                 size="sm"

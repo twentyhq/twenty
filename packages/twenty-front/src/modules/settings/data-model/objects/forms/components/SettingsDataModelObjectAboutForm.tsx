@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
@@ -264,17 +265,21 @@ export const SettingsDataModelObjectAboutForm = ({
           <StyledAdvancedSettingsSectionInputWrapper>
             {isDefined(conflictingObjectMetadataItem) && (
               <InlineBanner
-                color={'blue'}
-                message={t`An object with this name already exists`}
-                button={{
-                  title: t`Open`,
-                  onClick: () =>
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        conflictingObjectMetadataItem.namePlural,
-                    }),
-                }}
-              />
+                status="info"
+                action={
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    color="accent"
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          conflictingObjectMetadataItem.namePlural,
+                      })
+                    }
+                  >{t`Open`}</Button>
+                }
+              >{t`An object with this name already exists`}</InlineBanner>
             )}
             {[
               {

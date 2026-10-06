@@ -40,8 +40,8 @@ export const InformationBannerFailPaymentInfo = () => {
     <>
       <InformationBanner
         componentInstanceId="information-banner-fail-payment-info"
-        color="danger"
-        variant="secondary"
+        status="error"
+        variant="soft"
         message={getMessage()}
         buttonTitle={getButtonTitle()}
         buttonOnClick={openPaymentMethodFlow}

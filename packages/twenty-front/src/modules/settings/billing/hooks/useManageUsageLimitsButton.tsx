@@ -1,16 +1,16 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ComponentProps } from 'react';
+import { type ReactNode } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { type InlineBanner } from 'twenty-ui/components/feedback';
+import { type ButtonProps, Button } from 'twenty-ui/primitives/input';
 import { IconSettings } from 'twenty-ui/icon';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const useManageUsageLimitsButton = (): ComponentProps<
-  typeof InlineBanner
->['button'] => {
+export const useManageUsageLimitsButton = ({
+  color = 'danger',
+}: { color?: ButtonProps['color'] } = {}): ReactNode => {
   const { t } = useLingui();
 
   const hasPermissionToManageUsageLimits = useHasPermissionFlag(
@@ -23,9 +23,13 @@ export const useManageUsageLimitsButton = (): ComponentProps<
     return undefined;
   }
 
-  return {
-    title: t`Manage limits`,
-    Icon: IconSettings,
-    onClick: () => navigateSettings(SettingsPath.BillingLimits),
-  };
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      color={color}
+      startIcon={<IconSettings />}
+      onClick={() => navigateSettings(SettingsPath.BillingLimits)}
+    >{t`Manage limits`}</Button>
+  );
 };

@@ -196,9 +196,7 @@ const EditableAiChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
-          <AiChatInlineBanner
-            message={t`No AI provider is configured on this instance.`}
-          />
+          <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}
         {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
