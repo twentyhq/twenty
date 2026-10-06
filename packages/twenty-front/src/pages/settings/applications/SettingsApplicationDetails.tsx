@@ -166,11 +166,18 @@ export const SettingsApplicationDetails = () => {
       return;
     }
 
-    await upgrade({
+    const hasUpgraded = await upgrade({
       appRegistrationId: registrationId,
       targetVersion: latestAvailableVersion,
       hasUserApprovedRoleGrants,
     });
+
+    if (hasUpgraded) {
+      await refetch().catch(() => {});
+
+      return;
+    }
+
     await refetchPermissionSummary().catch(() => {});
   };
 
