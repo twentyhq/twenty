@@ -32,6 +32,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     UserRoleModule,
     PermissionsModule,
     ToolProviderModule,
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       AgentEntity,
       AgentRunSuspensionEntity,

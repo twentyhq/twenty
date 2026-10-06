@@ -3413,6 +3413,7 @@ type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
+  isWaiting: Boolean!
   threadId: UUID
 }
 

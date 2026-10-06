@@ -121,6 +121,11 @@ Key points:
   `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
+- The agent can also pause until a record changes or some time has passed.
+  `runAgent()` then resolves with `success: true`, `isWaiting: true` and
+  `result: null`; the agent goes on by itself later, and its reply lands in the
+  `threadId` conversation. A call to a `thread` whose agent is still waiting
+  fails until it finishes.
 - Every call is stored with its input and status, plus its reply and usage
   when it completes, so it shows up in the agent's runs. Without a `thread`, a call gets a conversation of its
   own: `threadId` names it, and a later call never sees it.

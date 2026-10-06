@@ -8,6 +8,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
@@ -23,15 +25,13 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-type WorkflowStepCallerInput = Parameters<
-  AgentRunCallerHandler['getWaitingState']
->[0];
+type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
 
 // A step waiting on a CALLBACK takes the outcome of what it handed its work to: the agent run the
 // engine continued, or the answer to a call the step posted itself
 @Injectable()
 export class WorkflowAgentRunCallerHandlerWorkspaceService
-  implements AgentRunCallerHandler, OnModuleInit
+  implements AgentRunCallerHandler<WorkflowStepCaller>, OnModuleInit
 {
   readonly callerType = 'WORKFLOW_STEP';
 
@@ -52,7 +52,7 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
   async buildExecutionContext({
     workspaceId,
     caller,
-  }: WorkflowStepCallerInput): Promise<AgentRunExecutionContext> {
+  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunExecutionContext> {
     return buildWorkflowAgentRunExecutionContext(
       await this.workflowExecutionContextService.getExecutionContext({
         workflowRunId: caller.ref.workflowRunId,
@@ -64,7 +64,7 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
   async resolveTurnAuthor({
     workspaceId,
     caller,
-  }: WorkflowStepCallerInput): Promise<ActorMetadata> {
+  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<ActorMetadata> {
     return this.workflowAgentConversationService.findTurnCreatedBy({
       workflowRunId: caller.ref.workflowRunId,
       workspaceId,
@@ -75,7 +75,7 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
   async getWaitingState({
     workspaceId,
     caller,
-  }: WorkflowStepCallerInput): Promise<AgentRunCallerWaitingState> {
+  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunCallerWaitingState> {
     const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
       workflowRunId: caller.ref.workflowRunId,
       workspaceId,
@@ -105,7 +105,9 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
     threadId,
     outcome,
     summary,
-  }: Parameters<AgentRunCallerHandler['onOutcome']>[0]): Promise<void> {
+  }: Parameters<
+    NonNullable<AgentRunCallerHandler<WorkflowStepCaller>['onOutcome']>
+  >[0]): Promise<void> {
     if (isDefined(summary)) {
       await this.workflowRunStepLogService.setAiAgentStepLog({
         workflowRunId,

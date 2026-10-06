@@ -40,8 +40,17 @@ const buildService = () => {
   const service = new AgentRunService(
     agentActorContextService as never,
     agentRunnerService as never,
+    {} as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
+    {} as never,
+    {
+      getOrRecompute: jest.fn().mockResolvedValue({
+        flatRoleTargetByAgentIdMaps: {
+          [AGENT.id]: { roleId: 'agent-role-id' },
+        },
+      }),
+    } as never,
   );
 
   return { service, agentRunnerService };
@@ -88,26 +97,38 @@ describe('AgentRunService', () => {
       result: { response: 'Acme is your biggest customer' },
       error: null,
       success: true,
+      isWaiting: false,
       threadId: expect.any(String),
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
 
-    const { conversation, turn, execution } = runInput(agentRunnerService);
+    const { conversation, spec, prompt, executionContext, resolveCreatedBy } =
+      runInput(agentRunnerService);
 
     expect(conversation).toEqual({
       threadId: result.threadId,
       isCreated: true,
     });
-    expect(turn).toMatchObject({
+    expect(spec).toMatchObject({
       title: AGENT.label,
+      toolLoadingStrategy: 'lazy',
+      capabilities: {
+        canAskHumans: false,
+        canProposeToolCalls: false,
+      },
+    });
+    expect(prompt).toEqual({
       senderUserWorkspaceId: null,
       senderApplicationId: APPLICATION.id,
       messages: userInput('Who is our biggest customer?'),
     });
-    await expect(turn.resolveCreatedBy()).resolves.toMatchObject({
+    expect(executionContext).toMatchObject({
+      rolePermissionConfig: { intersectionOf: ['agent-role-id'] },
+      conversationActor: { type: 'application', applicationId: APPLICATION.id },
+    });
+    await expect(resolveCreatedBy()).resolves.toMatchObject({
       source: 'APPLICATION',
     });
-    expect(execution).toMatchObject({ toolLoadingStrategy: 'lazy' });
   });
 
   it('keeps the replies a run without a thread hands over as its input', async () => {
@@ -120,7 +141,7 @@ describe('AgentRunService', () => {
 
     await run(service, { input: history });
 
-    expect(runInput(agentRunnerService).turn.messages).toEqual(history);
+    expect(runInput(agentRunnerService).prompt.messages).toEqual(history);
   });
 
   it('keeps accepting a prompt', async () => {
@@ -128,7 +149,7 @@ describe('AgentRunService', () => {
 
     await run(service, { prompt: 'Who is our biggest customer?' });
 
-    expect(runInput(agentRunnerService).execution.messages).toEqual(
+    expect(runInput(agentRunnerService).prompt.messages).toEqual(
       userInput('Who is our biggest customer?'),
     );
   });
@@ -147,28 +168,37 @@ describe('AgentRunService', () => {
       runAsWorkspaceMemberId: 'workspace-member-id',
     });
 
-    const { conversation, conversationActor, turn, execution } =
+    const { conversation, caller, prompt, executionContext, resolveCreatedBy } =
       runInput(agentRunnerService);
 
     expect(result.threadId).toBe(threadId);
     expect(conversation).toEqual({ threadId, isCreated: false });
-    expect(conversationActor).toEqual({
-      type: 'user',
-      userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+    expect(caller).toEqual({
+      type: 'AGENT_API_RUN',
+      ref: {
+        agentId: AGENT.id,
+        runAsWorkspaceMemberId: 'workspace-member-id',
+        requestUserWorkspaceId: null,
+        createdBy: RUN_AS_ACTOR,
+      },
     });
-    expect(turn).toMatchObject({
-      title: AGENT.label,
+    expect(prompt).toMatchObject({
       senderUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
     });
-    await expect(turn.resolveCreatedBy()).resolves.toEqual(RUN_AS_ACTOR);
-    expect(execution).toMatchObject({
+    await expect(resolveCreatedBy()).resolves.toEqual(RUN_AS_ACTOR);
+    expect(executionContext).toMatchObject({
       actorContext: RUN_AS_ACTOR,
       userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
       runAsRoleId: 'role-id',
+      rolePermissionConfig: { intersectionOf: ['role-id'] },
+      conversationActor: {
+        type: 'user',
+        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+      },
     });
   });
 
-  it('gives the additional instructions to the model without recording them', async () => {
+  it('keeps the additional instructions with the run rather than in its messages', async () => {
     const { service, agentRunnerService } = buildService();
 
     await run(service, {
@@ -177,13 +207,13 @@ describe('AgentRunService', () => {
       additionalInstructions: 'Answer in Slack markdown',
     });
 
-    const { turn, execution } = runInput(agentRunnerService);
+    const { spec, prompt } = runInput(agentRunnerService);
 
-    expect(execution.messages).toEqual(
-      userInput('Answer in Slack markdown\n\nAnd the second one?'),
-    );
-    expect(turn).toMatchObject({
+    expect(spec).toMatchObject({
       title: 'Acme renewal',
+      instructions: 'Answer in Slack markdown',
+    });
+    expect(prompt).toMatchObject({
       messages: userInput('And the second one?'),
       senderUserWorkspaceId: null,
     });
@@ -201,7 +231,7 @@ describe('AgentRunService', () => {
       },
     );
 
-    expect(runInput(agentRunnerService).turn).toMatchObject({
+    expect(runInput(agentRunnerService).prompt).toMatchObject({
       senderUserWorkspaceId: 'caller-user-workspace-id',
       senderApplicationId: null,
     });

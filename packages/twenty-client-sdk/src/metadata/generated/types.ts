@@ -6600,6 +6600,9 @@ export default {
             "success": [
                 8
             ],
+            "isWaiting": [
+                8
+            ],
             "threadId": [
                 3
             ],

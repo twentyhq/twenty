@@ -2943,6 +2943,7 @@ export interface RunAgentResult {
     result?: Scalars['JSON']
     error?: Scalars['String']
     success: Scalars['Boolean']
+    isWaiting: Scalars['Boolean']
     threadId?: Scalars['UUID']
     __typename: 'RunAgentResult'
 }
@@ -6883,6 +6884,7 @@ export interface RunAgentResultGenqlSelection{
     result?: boolean | number
     error?: boolean | number
     success?: boolean | number
+    isWaiting?: boolean | number
     threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

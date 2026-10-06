@@ -239,7 +239,7 @@ export class AgentRunSuspensionService {
 
     await this.callerHandlerRegistry
       .getHandlerOrThrow(suspension.caller.type)
-      .onOutcome({
+      .onOutcome?.({
         workspaceId,
         caller: suspension.caller,
         threadId: suspension.threadId,

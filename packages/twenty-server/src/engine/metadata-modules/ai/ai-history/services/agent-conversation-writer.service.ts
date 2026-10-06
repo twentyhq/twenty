@@ -215,7 +215,6 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
-    isAwaitedByCaller = false,
     scope,
   }: {
     workspaceId: string;
@@ -223,17 +222,15 @@ export class AgentConversationWriterService {
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
-    // a caller such as a workflow step waits on the calls the run pauses on
-    isAwaitedByCaller?: boolean;
     scope?: AgentHistoryTransactionScope;
   }): Promise<{
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
-    const mappedReplyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
-    const replyParts = isAwaitedByCaller
-      ? stampPendingToolPartsAwaitedByCaller(mappedReplyParts)
-      : mappedReplyParts;
+    // every executed run has a caller waiting on the calls it pauses on
+    const replyParts = stampPendingToolPartsAwaitedByCaller(
+      mapAiStepsToUIMessageParts(execution.steps ?? []),
+    );
 
     if (replyParts.length === 0) {
       return { isAwaitingAnswer: false, replyParts };
