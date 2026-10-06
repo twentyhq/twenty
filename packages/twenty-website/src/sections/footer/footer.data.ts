@@ -69,6 +69,7 @@ export const FOOTER: {
           href: SITE_URLS.docsGettingStarted,
           external: true,
         },
+        { label: msg`Support`, href: '/support' },
         { label: msg`Release Notes`, href: '/releases' },
         { label: msg`Halftone generator`, href: '/halftone' },
       ],
