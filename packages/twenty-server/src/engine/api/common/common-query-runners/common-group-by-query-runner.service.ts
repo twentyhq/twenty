@@ -480,21 +480,31 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    const groupCount = getGroupLimit(args.limit);
+    const availableAggregations =
+      this.groupByArgProcessor.getAvailableAggregations({
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
 
-    const recordCount = args.includeRecords
-      ? groupCount * RECORDS_PER_GROUP_LIMIT
-      : groupCount;
+    const aggregateCount = Object.keys(args.selectedFields).filter(
+      (selectedFieldName) =>
+        isDefined(availableAggregations[selectedFieldName]),
+    ).length;
+
+    const recordFieldCount = args.includeRecords
+      ? RECORDS_PER_GROUP_LIMIT *
+        computeMaxFieldCountPerRecord({
+          select: selectedFieldsResult.select,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          recordLimitPerOneToManyRelation: RELATIONS_PER_RECORD_LIMIT,
+        })
+      : 0;
 
     return (
-      recordCount *
-      computeMaxFieldCountPerRecord({
-        select: selectedFieldsResult.select,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        recordLimitPerOneToManyRelation: RELATIONS_PER_RECORD_LIMIT,
-      })
+      getGroupLimit(args.limit) *
+      (args.groupBy.length + aggregateCount + recordFieldCount)
     );
   }
 }
