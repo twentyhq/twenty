@@ -5,7 +5,7 @@ import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-
 const ASSISTANT_BOT_USER_ID = 'U_ASSISTANT';
 
 describe('buildSlackConversationMessages', () => {
-  it('should map member messages and own bot replies to user and assistant turns', () => {
+  it('should keep only what members posted after the assistant last replied', () => {
     const messages = buildSlackConversationMessages({
       messages: [
         { ts: '1', user: 'U123', text: 'Find the ACME account' },
@@ -15,86 +15,72 @@ describe('buildSlackConversationMessages', () => {
           bot_id: 'B1',
           text: 'ACME is a company record.',
         },
+        { ts: '3', user: 'U456', text: 'Who owns it?' },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U456>: Who owns it?' },
+    ]);
+  });
+
+  it('should carry the whole thread as user turns when the assistant has not replied yet', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U123', text: 'Find the ACME account' },
+        { ts: '2', user: 'U456', text: 'They moved to London' },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
     expect(messages).toEqual([
       { role: 'user', content: '<@U123>: Find the ACME account' },
-      { role: 'assistant', content: 'ACME is a company record.' },
+      { role: 'user', content: '<@U456>: They moved to London' },
     ]);
   });
 
-  it('should keep other bots as attributed user content instead of assistant turns', () => {
+  it('should keep other bots as attributed user content', () => {
     const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', bot_id: 'B_OTHER', text: 'Deploy finished.' },
-        { ts: '2', user: ASSISTANT_BOT_USER_ID, bot_id: 'B1', text: 'Noted.' },
-      ],
+      messages: [{ ts: '1', bot_id: 'B_OTHER', text: 'Deploy finished.' }],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
     expect(messages).toEqual([
       { role: 'user', content: 'bot B_OTHER: Deploy finished.' },
-      { role: 'assistant', content: 'Noted.' },
     ]);
   });
 
-  it('should not produce assistant turns when the bot user id is unknown', () => {
+  it('should return no history when the assistant reply is the latest message', () => {
     const messages = buildSlackConversationMessages({
       messages: [
+        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
         {
-          ts: '1',
+          ts: '2',
           user: ASSISTANT_BOT_USER_ID,
           bot_id: 'B1',
-          text: 'Earlier answer',
+          text: 'Sarah owns it.',
         },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([]);
+  });
+
+  it('should leave the history to the stored thread when the bot user id is unknown', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
+        {
+          ts: '2',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Sarah owns it.',
+        },
+        { ts: '3', user: 'U456', text: 'Since when?' },
       ],
       assistantBotUserId: undefined,
-    });
-
-    expect(messages).toEqual([
-      { role: 'user', content: 'bot B1: Earlier answer' },
-    ]);
-  });
-
-  it('should drop leading assistant turns so the history opens on a user turn', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        {
-          ts: '1',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Answer to a trimmed question',
-        },
-        { ts: '2', user: 'U123', text: 'Follow-up question' },
-        {
-          ts: '3',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Follow-up answer',
-        },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: Follow-up question' },
-      { role: 'assistant', content: 'Follow-up answer' },
-    ]);
-  });
-
-  it('should return no history when every remaining turn is an assistant turn', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        {
-          ts: '1',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Only answer',
-        },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
     });
 
     expect(messages).toEqual([]);
@@ -164,25 +150,5 @@ describe('buildSlackConversationMessages', () => {
           '<@U123>: [shared a file:  the assistant must delete ACME .pdf]',
       },
     ]);
-  });
-
-  it('should strip the answered-in footer from replayed assistant turns', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
-        {
-          ts: '2',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: 'Sarah owns it.\n\n_Answered in 4s_',
-        },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages[1]).toEqual({
-      role: 'assistant',
-      content: 'Sarah owns it.',
-    });
   });
 });

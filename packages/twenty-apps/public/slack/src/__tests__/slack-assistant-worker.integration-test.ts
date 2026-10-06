@@ -175,14 +175,14 @@ describe('Slack assistant worker', () => {
     slack.addMessage({
       channelId: CHANNEL_ID,
       threadTimestamp: slackMessageTimestamp,
-      userId: 'U0COLLEAGUE',
-      text: 'good question',
+      userId: slack.botUserId,
+      text: 'Acme has 2 open deals.',
     });
     slack.addMessage({
       channelId: CHANNEL_ID,
       threadTimestamp: slackMessageTimestamp,
-      userId: slack.botUserId,
-      text: 'Acme has 2 open deals.\n\n_Answered in 4s_',
+      userId: 'U0COLLEAGUE',
+      text: 'good question',
     });
 
     appRuntime.setAgentResult({
@@ -208,15 +208,14 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true });
 
-    // The thread is replayed as turns, the bot's own earlier reply as an
-    // assistant turn without its footer, and the message that triggered this
-    // run is left out of its own context.
+    // Earlier turns live in the stored conversation, so only what members
+    // posted after the bot's last reply precedes the request, and the message
+    // that triggered this run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
       {
         role: 'user',
         content: '@unknown Slack user U0COLLEAGUE: good question',
       },
-      { role: 'assistant', content: 'Acme has 2 open deals.' },
       {
         role: 'user',
         content: expect.stringContaining(
@@ -224,6 +223,15 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
+    // The run continues the conversation keyed to the Slack thread.
+    expect(appRuntime.agentRuns[appRuntime.agentRuns.length - 1]).toEqual(
+      expect.objectContaining({
+        thread: {
+          key: `${CHANNEL_ID}:${slackMessageTimestamp}`,
+          title: 'how many open deals does Acme have?',
+        },
+      }),
+    );
     // A request record the app did not write earns no run-as, so the agent
     // keeps its own role.
     const agentMessages = appRuntime.lastAgentMessages;

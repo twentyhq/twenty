@@ -13,6 +13,7 @@ const BASE_INPUT = {
   agentUniversalIdentifier: 'agent-uid',
   runAsWorkspaceMemberId: undefined,
   messages: [{ role: 'user' as const, content: 'hi' }],
+  thread: { key: 'C123:1700000000.000100', title: 'hi' },
 };
 
 describe('runSlackAssistantAgentWithDeadline', () => {
@@ -46,5 +47,19 @@ describe('runSlackAssistantAgentWithDeadline', () => {
 
     expect(result.success).toBe(true);
     expect(runAgentMock).toHaveBeenCalledOnce();
+  });
+
+  it('should continue the conversation keyed to the Slack thread', async () => {
+    await runSlackAssistantAgentWithDeadline({
+      ...BASE_INPUT,
+      deadlineAtMs: Date.now() + 60_000,
+    });
+
+    expect(runAgentMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: BASE_INPUT.messages,
+        thread: BASE_INPUT.thread,
+      }),
+    );
   });
 });

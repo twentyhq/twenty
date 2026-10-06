@@ -18,6 +18,7 @@ import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
+import { buildSlackAssistantThreadKey } from 'src/logic-functions/utils/build-slack-assistant-thread-key';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
@@ -241,6 +242,13 @@ export const slackAssistantWorkerHandler = async (
     const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
+      thread: {
+        key: buildSlackAssistantThreadKey({
+          channelId: slackChannelId,
+          threadTimestamp: parentMessageTimestamp,
+        }),
+        title: buildSlackAssistantRequestName(requestText),
+      },
       messages: buildSlackAssistantMessages({
         requestText: resolvedMentions.requestText,
         requesterName,

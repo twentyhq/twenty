@@ -60,7 +60,7 @@ const readSlackThreadContext = async ({
   const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
     (error) => {
       console.warn(
-        `[slack] failed to resolve the bot user id, past assistant replies are replayed as user turns: ${error instanceof Error ? error.message : String(error)}`,
+        `[slack] failed to resolve the bot user id, answering from the thread's stored turns only: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;
