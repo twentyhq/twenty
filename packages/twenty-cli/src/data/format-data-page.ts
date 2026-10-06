@@ -20,7 +20,9 @@ export const formatDataPage = ({
     options.fields ??
     [
       ...['id', 'name'].filter((field) => availableFields.includes(field)),
-      ...availableFields.filter((field) => field !== 'id' && field !== 'name'),
+      ...availableFields.filter(
+        (field) => field !== 'id' && field !== 'name' && field !== 'deletedAt',
+      ),
     ].slice(0, 5);
 
   let rowWidth = TABLE_LAYOUT.ROW_INDENT.length;
