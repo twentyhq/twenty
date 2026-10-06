@@ -73,11 +73,6 @@ const StyledFeatureFlagName = styled(Text)`
   min-width: 0;
 `;
 
-const StyledFeatureFlagSwitchContainer = styled.div`
-  align-items: center;
-  display: flex;
-`;
-
 const WORKSPACE_DETAIL_TABS_ID = 'settings-admin-workspace-detail-tabs';
 
 const WORKSPACE_DETAIL_TAB_IDS = {
@@ -294,16 +289,14 @@ export const SettingsAdminWorkspaceDetail = () => {
       label: t`Status`,
       align: 'right',
       Cell: ({ item }) => (
-        <StyledFeatureFlagSwitchContainer>
-          <Switch
-            aria-label={item.label}
-            aria-description={item.description}
-            checked={item.value}
-            onCheckedChange={(newValue) =>
-              handleFeatureFlagUpdate(item.id, newValue)
-            }
-          />
-        </StyledFeatureFlagSwitchContainer>
+        <Switch
+          aria-label={item.label}
+          aria-description={item.description}
+          checked={item.value}
+          onCheckedChange={(newValue) =>
+            handleFeatureFlagUpdate(item.id, newValue)
+          }
+        />
       ),
     },
   ];
