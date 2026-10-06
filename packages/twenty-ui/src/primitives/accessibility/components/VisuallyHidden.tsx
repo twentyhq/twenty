@@ -10,10 +10,11 @@ export const VisuallyHidden = ({
   ref,
   className,
   ...props
-}: VisuallyHiddenProps) =>
-  useRender({
+}: VisuallyHiddenProps) => {
+  return useRender({
     defaultTagName: 'span',
     render,
     ref,
     props: { ...props, className: clsx(styles.root, className) },
   });
+};
