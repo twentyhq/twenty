@@ -407,10 +407,12 @@ const SettingsExperience = lazy(() =>
   ),
 );
 
-const SettingsAccounts = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccounts').then((module) => ({
-    default: module.SettingsAccounts,
-  })),
+const SettingsAppPreferences = lazy(() =>
+  import('~/pages/settings/app-preferences/SettingsAppPreferences').then(
+    (module) => ({
+      default: module.SettingsAppPreferences,
+    }),
+  ),
 );
 
 const SettingsAccountsEmails = lazy(() =>
@@ -753,7 +755,10 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+      <Route
+        path={SettingsPath.Accounts}
+        element={<SettingsAppPreferences />}
+      />
       <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}

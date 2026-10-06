@@ -1308,15 +1308,18 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
     label: i18nLabel(
       msg({
-        message: `Go to Accounts Settings`,
+        message: `Go to App Preferences Settings`,
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconAt',
+    icon: 'IconApps',
     isPinned: false,
     position: 49,
     shortLabel: i18nLabel(
-      msg({ message: `Accounts`, context: 'commandMenuItem.shortLabel' }),
+      msg({
+        message: `App preferences`,
+        context: 'commandMenuItem.shortLabel',
+      }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.CONNECTED_ACCOUNTS',

@@ -16,6 +16,9 @@ export type ConnectedAccount = {
   lastSignedInAt: string | null;
   userWorkspaceId: string;
   connectionProviderId: string | null;
+  // Set on app OAuth connections (provider APP): the installed application the
+  // account was connected through.
+  applicationId: string | null;
   name: string | null;
   // Connection-row visibility — distinct from the `scopes` array above
   // (those are upstream-granted OAuth permissions).

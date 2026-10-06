@@ -7,11 +7,11 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { SettingsAppPreferences } from '~/pages/settings/app-preferences/SettingsAppPreferences';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Accounts/SettingsAccounts',
-  component: SettingsAccounts,
+  title: 'Pages/Settings/AppPreferences/SettingsAppPreferences',
+  component: SettingsAppPreferences,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/accounts',
@@ -24,7 +24,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsAccounts>;
+export type Story = StoryObj<typeof SettingsAppPreferences>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

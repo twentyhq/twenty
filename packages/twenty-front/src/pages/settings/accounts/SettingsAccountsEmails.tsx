@@ -65,7 +65,7 @@ export const SettingsAccountsEmails = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`Accounts`,
+          children: t`App preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: t`Emails` },

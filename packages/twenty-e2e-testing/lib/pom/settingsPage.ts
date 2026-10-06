@@ -25,7 +25,7 @@ export class SettingsPage {
     this.exitSettingsLink = page.getByRole('button', { name: 'Exit Settings' });
     this.profileLink = page.getByRole('link', { name: 'Profile' });
     this.experienceLink = page.getByRole('link', { name: 'Experience' });
-    this.accountsLink = page.getByRole('link', { name: 'Accounts' });
+    this.accountsLink = page.getByRole('link', { name: 'App preferences' });
     this.emailsLink = page.getByRole('link', { name: 'Emails', exact: true });
     this.calendarsLink = page.getByRole('link', { name: 'Calendars' });
     this.generalLink = page.getByRole('link', { name: 'General' });

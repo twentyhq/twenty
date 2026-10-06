@@ -2,6 +2,7 @@ import {
   type SettingsMenuItem,
   SettingsMenuItemScope,
 } from '~/generated-metadata/graphql';
+import { getSettingsMenuItemsForScope } from '~/pages/settings/applications/utils/getSettingsMenuItemsForScope';
 
 export const getWorkspaceSettingsMenuItems = <
   OrderableSettingsMenuItem extends Pick<
@@ -11,15 +12,7 @@ export const getWorkspaceSettingsMenuItems = <
 >(
   settingsMenuItems: OrderableSettingsMenuItem[],
 ): OrderableSettingsMenuItem[] =>
-  settingsMenuItems
-    .filter(
-      (settingsMenuItem) =>
-        settingsMenuItem.scope === SettingsMenuItemScope.WORKSPACE,
-    )
-    .sort(
-      (settingsMenuItemA, settingsMenuItemB) =>
-        settingsMenuItemA.position - settingsMenuItemB.position ||
-        settingsMenuItemA.universalIdentifier.localeCompare(
-          settingsMenuItemB.universalIdentifier,
-        ),
-    );
+  getSettingsMenuItemsForScope(
+    settingsMenuItems,
+    SettingsMenuItemScope.WORKSPACE,
+  );

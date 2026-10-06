@@ -15,7 +15,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   IconAppWindow,
   IconApps,
-  IconAt,
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
@@ -86,9 +85,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconColorSwatch,
         },
         {
-          label: t`Accounts`,
+          label: t`App preferences`,
           path: SettingsPath.Accounts,
-          Icon: IconAt,
+          Icon: IconApps,
           isHidden: !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
           subItems: [
             {

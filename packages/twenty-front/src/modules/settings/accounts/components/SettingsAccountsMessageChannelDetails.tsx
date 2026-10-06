@@ -94,7 +94,7 @@ export const SettingsAccountsMessageChannelDetails = ({
         <Section.Root>
           <Section.Header
             title={t`Import`}
-            description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
+            description={t`Emails from the blocklist will be ignored. Manage blocklist on the "App preferences" setting page.`}
           />
           <SettingsAccountsMessageFolderCard
             onChange={handleMessageFolderImportPolicyChange}

@@ -38,7 +38,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
           {
-            children: t`Accounts`,
+            children: t`App preferences`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
           { children: t`New Account` },

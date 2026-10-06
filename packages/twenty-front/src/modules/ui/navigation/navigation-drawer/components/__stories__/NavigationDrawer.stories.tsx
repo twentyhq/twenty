@@ -21,7 +21,7 @@ import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconAt,
+  IconApps,
   IconBell,
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -139,9 +139,9 @@ export const Settings: Story = {
           />
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
-              label="Accounts"
+              label="App preferences"
               to={getSettingsPath(SettingsPath.Accounts)}
-              Icon={IconAt}
+              Icon={IconApps}
             />
             <NavigationDrawerSubItem
               label="Emails"

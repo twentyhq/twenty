@@ -15,7 +15,7 @@ export const SettingsNewAccount = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`Accounts`,
+          children: t`App preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: t`New` },

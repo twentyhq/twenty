@@ -40,7 +40,7 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case SettingsPathPrefixes.Experience:
       return t`Experience - Settings`;
     case SettingsPathPrefixes.Accounts:
-      return t`Account - Settings`;
+      return t`App preferences - Settings`;
     case SettingsPathPrefixes.Billing:
       return t`Billing - Settings`;
     case SettingsPathPrefixes.Profile:
