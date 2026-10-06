@@ -6,6 +6,7 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { readExistingColumnNamesByTableName } from 'src/database/commands/upgrade-version-command/2-38/utils/read-existing-column-names-by-table-name.util';
 import { findObjectsMissingAgentChatThreadTargetRelation } from 'src/database/commands/upgrade-version-command/2-43/utils/find-objects-missing-agent-chat-thread-target-relation.util';
 import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-43/utils/get-agent-chat-thread-target-schema-additions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -245,39 +246,24 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       objectMetadata: targetFlatObjectMetadata,
     });
 
-    const columnRows = await dataSource.query<{ column_name: string }[]>(
-      `SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2`,
-      [schemaName, tableName],
-    );
-
-    // Looked up by name so Postgres uses the pg_class name index: listing a
-    // schema scans the catalog of every workspace schema on the instance.
-    const tableRows = await dataSource.query<{ name: string }[]>(
-      `SELECT c.relname AS name
-         FROM pg_class c
-         JOIN pg_namespace n ON n.oid = c.relnamespace
-         WHERE n.nspname = $1 AND c.relname = ANY($2) AND c.relkind IN ('r', 'p')`,
-      [
-        schemaName,
-        Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .map((flatObjectMetadata) =>
-            computeObjectTargetTable(flatObjectMetadata),
-          ),
-      ],
-    );
+    const columnNamesByTableName = await readExistingColumnNamesByTableName({
+      dataSource,
+      schemaName,
+      tableNames: Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          computeObjectTargetTable(flatObjectMetadata),
+        ),
+    });
 
     const { flatObjectMetadatas, unprovisionableRelations } =
       findObjectsMissingAgentChatThreadTargetRelation({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         targetFlatObjectMetadata,
-        existingTargetColumnNames: new Set(
-          columnRows.map(({ column_name }) => column_name),
-        ),
-        existingTableNames: new Set(
-          tableRows.map(({ name }) => name),
-        ),
+        existingTargetColumnNames:
+          columnNamesByTableName.get(tableName) ?? new Set(),
+        existingTableNames: new Set(columnNamesByTableName.keys()),
         twentyStandardApplicationUniversalIdentifier,
       });
 

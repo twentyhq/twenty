@@ -4,7 +4,6 @@ import {
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -14,6 +13,7 @@ import {
   type DefaultRelationHolderNameSingular,
   type MissingObjectSystemRelationCandidate,
 } from 'src/database/commands/upgrade-version-command/2-38/utils/build-missing-object-system-relation-candidates.util';
+import { readExistingColumnNamesByTableName } from 'src/database/commands/upgrade-version-command/2-38/utils/read-existing-column-names-by-table-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -26,7 +26,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 @RegisteredWorkspaceCommand('2.38.0', 1788266912940)
 @Command({
@@ -91,22 +90,29 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
       return;
     }
 
-    const existingColumnNamesByHolderNameSingular =
-      await this.readExistingColumnNamesByHolder({
-        dataSource,
-        workspaceId,
-        holderFlatObjectMetadataByNameSingular,
-      });
-
-    const existingTableNames = await this.readExistingTableNames({
+    const columnNamesByTableName = await readExistingColumnNamesByTableName({
       dataSource,
-      workspaceId,
+      schemaName: getWorkspaceSchemaName(workspaceId),
       tableNames: Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
         .filter(isDefined)
         .map((flatObjectMetadata) =>
           computeObjectTargetTable(flatObjectMetadata),
         ),
     });
+
+    const existingColumnNamesByHolderNameSingular = {} as Record<
+      DefaultRelationHolderNameSingular,
+      Set<string>
+    >;
+
+    for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+      existingColumnNamesByHolderNameSingular[holderNameSingular] =
+        columnNamesByTableName.get(
+          computeObjectTargetTable(
+            holderFlatObjectMetadataByNameSingular[holderNameSingular],
+          ),
+        ) ?? new Set();
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -119,7 +125,7 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         flatFieldMetadataMaps,
         holderFlatObjectMetadataByNameSingular,
         existingColumnNamesByHolderNameSingular,
-        existingTableNames,
+        existingTableNames: new Set(columnNamesByTableName.keys()),
         twentyStandardApplicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
       });
@@ -275,64 +281,5 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         reverseFlatFieldMetadata.objectMetadataUniversalIdentifier,
       ),
     );
-  }
-
-  private async readExistingColumnNamesByHolder({
-    dataSource,
-    workspaceId,
-    holderFlatObjectMetadataByNameSingular,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    holderFlatObjectMetadataByNameSingular: Record<
-      DefaultRelationHolderNameSingular,
-      FlatObjectMetadata
-    >;
-  }): Promise<Record<DefaultRelationHolderNameSingular, Set<string>>> {
-    const existingColumnNamesByHolderNameSingular = {} as Record<
-      DefaultRelationHolderNameSingular,
-      Set<string>
-    >;
-
-    for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-        workspaceId,
-        objectMetadata:
-          holderFlatObjectMetadataByNameSingular[holderNameSingular],
-      });
-
-      const rows = await dataSource.query<{ column_name: string }[]>(
-        `SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2`,
-        [schemaName, tableName],
-      );
-
-      existingColumnNamesByHolderNameSingular[holderNameSingular] = new Set(
-        rows.map(({ column_name }) => column_name),
-      );
-    }
-
-    return existingColumnNamesByHolderNameSingular;
-  }
-
-  // Looked up by name so Postgres uses the pg_class name index: listing a
-  // schema scans the catalog of every workspace schema on the instance.
-  private async readExistingTableNames({
-    dataSource,
-    workspaceId,
-    tableNames,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    tableNames: string[];
-  }): Promise<Set<string>> {
-    const rows = await dataSource.query<{ name: string }[]>(
-      `SELECT c.relname AS name
-       FROM pg_class c
-       JOIN pg_namespace n ON n.oid = c.relnamespace
-       WHERE n.nspname = $1 AND c.relname = ANY($2) AND c.relkind IN ('r', 'p')`,
-      [getWorkspaceSchemaName(workspaceId), tableNames],
-    );
-
-    return new Set(rows.map(({ name }) => name));
   }
 }
