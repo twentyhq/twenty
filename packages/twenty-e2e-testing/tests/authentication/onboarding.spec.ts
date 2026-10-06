@@ -40,16 +40,11 @@ test('New workspace signup goes through every onboarding stage', async ({
   });
 
   const syncEmailsStep = page.getByTestId('onboarding-sync-emails-step');
-  const installAppsStep = page.getByTestId('onboarding-install-apps-step');
   const createProfileStep = page.getByTestId('onboarding-create-profile-step');
   const inviteTeamStep = page.getByTestId('onboarding-invite-team-step');
 
-  // Both stages auto-skip when the instance has no connected-account provider
-  // and no vetted marketplace app, which is how the e2e server is configured.
   await test.step('Sync-email stage (when shown)', async () => {
-    await expect(
-      syncEmailsStep.or(installAppsStep).or(createProfileStep),
-    ).toBeVisible({
+    await expect(syncEmailsStep.or(createProfileStep)).toBeVisible({
       timeout: 90000,
     });
 
@@ -58,7 +53,7 @@ test('New workspace signup goes through every onboarding stage', async ({
     }
 
     await loginPage.clickSkipOnboardingStep();
-    await expect(installAppsStep.or(createProfileStep)).toBeVisible();
+    await expect(createProfileStep).toBeVisible();
 
     await test.step('Goes back to the skipped sync-email stage', async () => {
       await page.getByRole('button', { name: 'Go back' }).click();
@@ -70,14 +65,8 @@ test('New workspace signup goes through every onboarding stage', async ({
       });
 
       await loginPage.clickSkipOnboardingStep();
-      await expect(installAppsStep.or(createProfileStep)).toBeVisible();
+      await expect(createProfileStep).toBeVisible();
     });
-  });
-
-  await test.step('Install-apps stage (when shown)', async () => {
-    if (await installAppsStep.isVisible()) {
-      await loginPage.clickSkipOnboardingStep();
-    }
   });
 
   await test.step('Create-profile stage', async () => {
