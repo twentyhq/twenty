@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { IconHandClick } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
@@ -25,6 +26,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledThreadItem = styled.div<{ $isSelected: boolean }>`
   align-items: flex-start;
@@ -111,6 +113,12 @@ const StyledThreadPreview = styled.div`
   white-space: nowrap;
 `;
 
+const StyledAssignee = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+`;
+
 const StyledActivityTime = styled.div<{ $isDropdownOpen: boolean }>`
   color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
@@ -179,6 +187,13 @@ export const AiChatThreadListItem = ({
     currentWorkspaceMembersState,
   );
   const threadMembers = useAgentChatThreadMembers(thread);
+  const assignee = currentWorkspaceMembers.find(
+    (workspaceMember) => workspaceMember.id === thread.assigneeId,
+  );
+  const assigneeName = isDefined(assignee)
+    ? `${assignee.name.firstName} ${assignee.name.lastName}`.trim() ||
+      assignee.userEmail
+    : undefined;
   const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
   const isAwaitingAnswer =
     !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
@@ -302,6 +317,18 @@ export const AiChatThreadListItem = ({
             <span aria-hidden>·</span>
           )}
           <StyledThreadPreview>{previewText}</StyledThreadPreview>
+          {isDefined(assignee) && (
+            <StyledAssignee title={t`Assigned to ${assigneeName}`}>
+              <Avatar
+                src={getAbsoluteImageUrl(assignee.avatarUrl)}
+                colorSeed={assignee.id}
+                name={assigneeName}
+                size="xs"
+                shape="circle"
+              />
+              <VisibilityHidden>{t`, assigned to ${assigneeName}`}</VisibilityHidden>
+            </StyledAssignee>
+          )}
         </StyledThreadSubtitle>
       </StyledThreadContent>
       <StyledMenuTrigger

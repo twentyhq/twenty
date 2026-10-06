@@ -118,6 +118,31 @@ export class AgentChatThreadParticipantService {
     );
   }
 
+  // An assignee follows the chat and finds it in their inbox, unread unless
+  // they assigned it to themselves
+  async markAsAssigned({
+    isSelfAssigned,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    isSelfAssigned: boolean;
+  }): Promise<AgentChatThreadParticipantRow | null> {
+    return this.writeOne(
+      args,
+      ({ participantTable, threadTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
+         SELECT thread.id, $2, CASE WHEN $3::boolean THEN thread."lastActivityAt" END
+         FROM ${threadTable} thread WHERE thread.id = $1
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "lastReadAt" = CASE WHEN $3::boolean THEN participant."lastReadAt" END,
+           "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "isSubscribed" = true,
+           "updatedAt" = now()
+         RETURNING *`,
+      [isSelfAssigned],
+    );
+  }
+
   async subscribe(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
@@ -138,6 +163,18 @@ export class AgentChatThreadParticipantService {
   async unsubscribe(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
+    const thread = await this.threadRepository.findOne(args.workspaceId, {
+      where: { id: args.threadId },
+      select: ['id', 'assigneeId'],
+    });
+
+    if (thread?.assigneeId === args.workspaceMemberId) {
+      throw new AiException(
+        'The assignee of a chat cannot unsubscribe from it',
+        AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
+      );
+    }
+
     return this.upsertOne(
       args,
       ({ participantTable }) =>

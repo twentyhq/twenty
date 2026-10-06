@@ -12,6 +12,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -183,5 +184,24 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
     );
+  });
+
+  it('flags Assigned when a chat assigned to the member is unread', () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, { id: 'jane' } as never);
+    setAgentChatThreadList(jotaiStore, [
+      {
+        __typename: 'AgentChatThread',
+        id: 'thread-1',
+        deletedAt: null,
+        lastActivityAt: '2026-10-01T10:00:00.000Z',
+        assigneeId: 'jane',
+      } as never,
+    ]);
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: /^Assigned\s*, unread$/ }),
+    ).toBeVisible();
   });
 });

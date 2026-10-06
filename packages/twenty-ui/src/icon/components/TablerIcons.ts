@@ -432,6 +432,7 @@ export {
   IconUnlink,
   IconUpload,
   IconUser,
+  IconUserOff,
   IconUserCircle,
   IconUserCog,
   IconUserPin,

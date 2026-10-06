@@ -9,6 +9,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -158,6 +159,80 @@ export class AgentChatThreadService {
     });
 
     return participantMemberIds;
+  }
+
+  // An assignee who could not reply is given edit access, as Front lets an
+  // assignment reach a conversation the assignee could not see. A former
+  // assignee keeps following the chat.
+  async assign({
+    assigneeWorkspaceMemberId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    assigneeWorkspaceMemberId: string | null;
+  }): Promise<void> {
+    const thread = await this.getWritableThread(args);
+
+    if (
+      isDefined(assigneeWorkspaceMemberId) &&
+      assigneeWorkspaceMemberId !== args.workspaceMemberId
+    ) {
+      const [assigneeWhoCanReply] =
+        await this.sharingService.shareThreadWithMembers({
+          ...args,
+          memberIds: [assigneeWorkspaceMemberId],
+        });
+
+      if (!isDefined(assigneeWhoCanReply)) {
+        throw new AiException(
+          'The assignee cannot reply in the chat',
+          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY,
+        );
+      }
+    }
+
+    const assignedThreadIds = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ id: string }[]>(
+          `WITH assigned_thread AS (
+           UPDATE ${table('agentChatThread')}
+           SET "assigneeId" = $2::uuid,
+             "updatedAt" = now(),
+             "writerWorkspaceMemberIds" = CASE
+               WHEN $2::uuid IS NULL
+                 OR $2::uuid = "workspaceMemberId"
+                 OR $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
+               THEN "writerWorkspaceMemberIds"
+               ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
+             END
+           WHERE id = $1
+           RETURNING id
+           )
+           SELECT id FROM assigned_thread`,
+          [args.threadId, assigneeWorkspaceMemberId],
+        ),
+    );
+
+    if (assignedThreadIds.length !== 1) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    if (
+      isDefined(assigneeWorkspaceMemberId) &&
+      (await this.sharingService.hasInboxState(args.workspaceId))
+    ) {
+      await this.participantService.markAsAssigned({
+        workspaceId: args.workspaceId,
+        threadId: args.threadId,
+        workspaceMemberId: assigneeWorkspaceMemberId,
+        isSelfAssigned: assigneeWorkspaceMemberId === args.workspaceMemberId,
+      });
+    }
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
   }
 
   // The message is already sent, so a mention that cannot be applied leaves the

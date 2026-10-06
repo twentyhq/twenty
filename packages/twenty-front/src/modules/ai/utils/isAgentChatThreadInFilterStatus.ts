@@ -4,7 +4,7 @@ import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilt
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-// Needs input and Mentions narrow the open chats, so a chat leaves them once
+// Needs input, Mentions and Assigned narrow the open chats, so a chat leaves them once
 // it is done or snoozed
 export const isAgentChatThreadInFilterStatus = ({
   thread,
@@ -12,7 +12,10 @@ export const isAgentChatThreadInFilterStatus = ({
   filterStatus,
 }: {
   thread: Pick<AgentChatThreadRecord, 'pendingQuestionMessageId'>;
-  inboxStatus: Pick<AgentChatThreadInboxStatus, 'scope' | 'isMentioned'>;
+  inboxStatus: Pick<
+    AgentChatThreadInboxStatus,
+    'scope' | 'isMentioned' | 'isAssignedToMe'
+  >;
   filterStatus: AgentChatThreadFilterStatus;
 }): boolean => {
   switch (filterStatus) {
@@ -25,6 +28,8 @@ export const isAgentChatThreadInFilterStatus = ({
       );
     case 'mentions':
       return inboxStatus.scope === 'INBOX' && inboxStatus.isMentioned;
+    case 'assigned':
+      return inboxStatus.scope === 'INBOX' && inboxStatus.isAssignedToMe;
     case 'snoozed':
       return inboxStatus.scope === 'SNOOZED';
     case 'done':
