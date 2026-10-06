@@ -254,7 +254,7 @@ describe('JwtAuthStrategy', () => {
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
           'User or user workspace not found',
-          expect.any(String),
+          AuthExceptionCode.USER_NOT_FOUND,
           {
             userFriendlyMessage: msg`User does not have access to this workspace`,
           },
@@ -290,7 +290,7 @@ describe('JwtAuthStrategy', () => {
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
           'User or user workspace not found',
-          expect.any(String),
+          AuthExceptionCode.USER_NOT_FOUND,
           {
             userFriendlyMessage: msg`User does not have access to this workspace`,
           },
@@ -399,7 +399,7 @@ describe('JwtAuthStrategy', () => {
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
           'User or user workspace not found',
-          expect.any(String),
+          AuthExceptionCode.USER_NOT_FOUND,
           {
             userFriendlyMessage: msg`User does not have access to this workspace`,
           },
@@ -501,9 +501,13 @@ describe('JwtAuthStrategy', () => {
       strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('Application not found', expect.any(String), {
-          userFriendlyMessage: msg`Application not found.`,
-        }),
+        new AuthException(
+          'Application not found',
+          AuthExceptionCode.APPLICATION_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`Application not found.`,
+          },
+        ),
       );
 
       try {

@@ -17,7 +17,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import {

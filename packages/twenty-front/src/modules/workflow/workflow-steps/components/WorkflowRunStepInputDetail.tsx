@@ -13,7 +13,7 @@ import {
   type GetJsonNodeHighlighting,
   JsonTree,
   type ShouldExpandNodeInitiallyProps,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/data-display';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

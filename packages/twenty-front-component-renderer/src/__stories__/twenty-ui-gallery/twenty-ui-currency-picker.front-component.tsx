@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CurrencyPicker, Dropdown } from 'twenty-ui/components';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';

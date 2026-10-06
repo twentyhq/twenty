@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type UpdateViewMutation,
   type UpdateViewMutationVariables,

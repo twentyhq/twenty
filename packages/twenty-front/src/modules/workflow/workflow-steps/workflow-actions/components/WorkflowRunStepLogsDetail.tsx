@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { workflowRunStepLogSchema } from 'twenty-shared/workflow';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';

@@ -14,7 +14,7 @@ import {
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type InMemoryCache } from '@apollo/client';
 import type { Store } from 'jotai/vanilla/store';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 

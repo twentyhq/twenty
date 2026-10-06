@@ -95,7 +95,8 @@ const playSubmenuTextEditing =
   };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Menu',
+  id: 'ui-components-dropdown-interactions-menu',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Menu',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

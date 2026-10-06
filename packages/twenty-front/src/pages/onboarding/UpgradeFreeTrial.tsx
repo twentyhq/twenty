@@ -31,7 +31,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
