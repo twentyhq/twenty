@@ -1,7 +1,7 @@
 import '@remote-dom/core/polyfill';
 import '@remote-dom/react/polyfill';
 
-import '../generated/remote-elements';
+import { HtmlInputElement } from '../generated/remote-elements';
 
 import { ThreadMessagePort } from '@quilted/threads';
 
@@ -19,14 +19,19 @@ import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/in
 import { installDocumentActiveElementPolyfill } from '@/polyfills/dom/utils/installDocumentActiveElementPolyfill';
 import { findElementByRemoteId } from '@/polyfills/dom/utils/findElementByRemoteId';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installElementDatasetPolyfill } from '@/polyfills/dom/utils/installElementDatasetPolyfill';
+import { installElementClickMethodPolyfill } from '@/polyfills/dom/utils/installElementClickMethodPolyfill';
 import { installFocusAndBlurMethodsPolyfill } from '@/polyfills/dom/utils/installFocusAndBlurMethodsPolyfill';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
+import { installInputClickActivationPolyfill } from '@/polyfills/dom/utils/installInputClickActivationPolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
 import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
+import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
+import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
@@ -68,6 +73,7 @@ installClassAttributeAccessors({
   remoteElementPrototypes: resolveRemoteElementPrototypes(),
 });
 installLocalStyleOnBaseElements(Element.prototype);
+installElementDatasetPolyfill(Element.prototype);
 
 installNodeContainsPolyfill(Node.prototype);
 installCompareDocumentPositionPolyfill({
@@ -102,6 +108,9 @@ installActiveElementDetachmentHook({
   activeElementStore: workerActiveElementStore,
   onRemoveSubtree: workerFocusTransport.blurFocusedElementWithinSubtree,
 });
+installHostEventRetargetingPolyfill(HTMLElement.prototype);
+installElementClickMethodPolyfill(HTMLElement.prototype);
+installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 
@@ -127,6 +136,10 @@ installWindowAliasesPolyfill({
 installMatchMediaPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   environmentSource: mediaQueryEnvironmentSource,
+});
+
+installEventConstructorPolyfills({
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installStorageBridge({

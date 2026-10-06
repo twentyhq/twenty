@@ -1,6 +1,7 @@
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { IsNull } from 'typeorm';
 
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -48,6 +49,13 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       query: jest.fn(),
     };
 
+    const turnRecorderService = {
+      endWaitingTurn: jest.fn().mockResolvedValue(undefined),
+    };
+    const threadRecordEventService = {
+      emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
+    };
+
     messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
       run({
         table: (name: string) => name,
@@ -62,6 +70,8 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       threadRepository as never,
       messagePartRepository as never,
       { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
+      turnRecorderService as never,
+      threadRecordEventService as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -103,6 +113,8 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       workflowRun,
       threadRepository,
       messagePartRepository,
+      turnRecorderService,
+      threadRecordEventService,
       updateWorkflowRun,
     };
   };
@@ -284,8 +296,12 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       });
 
     it('stops its conversations waiting and closes their calls as skipped', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        turnRecorderService,
+      } = buildService();
 
       await endRun(service);
 
@@ -298,6 +314,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         },
         { pendingQuestionMessageId: null },
       );
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        messageId: 'message-id',
+        status: AgentTurnStatus.CANCELLED,
+      });
       const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
         messagePartRepository.writePart.mock.calls;
 
@@ -310,6 +331,20 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         partId: 'part-id',
         result: { question: QUESTIONS[0], status: 'skipped' },
         expectedStatus: 'pending',
+      });
+    });
+
+    it('tells open chat lists the conversation no longer waits on an answer', async () => {
+      const { service, threadRecordEventService } = buildService();
+
+      await endRun(service);
+
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        messageId: 'message-id',
       });
     });
 
@@ -337,14 +372,21 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     });
 
     it('leaves a conversation to the answer holding its claim', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        threadRecordEventService,
+      } = buildService();
 
       threadRepository.update.mockResolvedValue({ affected: 0 });
 
       await endRun(service);
 
       expect(messagePartRepository.writePart).not.toHaveBeenCalled();
+      expect(
+        threadRecordEventService.emitPendingQuestionCleared,
+      ).not.toHaveBeenCalled();
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {

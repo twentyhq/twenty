@@ -47,7 +47,9 @@ const buildAgent = (isTriggerActive = true) => ({
 describe('AgentTriggerRunnerService', () => {
   let service: AgentTriggerRunnerService;
   let executeAgent: jest.Mock;
-  let recordTurn: jest.Mock;
+  let openTurn: jest.Mock;
+  let closeTurn: jest.Mock;
+  let failTurn: jest.Mock;
   let currentRoleId: string | undefined;
   let findAgent: jest.Mock;
   let findApplication: jest.Mock;
@@ -59,7 +61,9 @@ describe('AgentTriggerRunnerService', () => {
       .fn()
       .mockResolvedValue({ id: 'application-id', name: 'App' });
     executeAgent = jest.fn().mockResolvedValue({ result: { text: 'done' } });
-    recordTurn = jest.fn().mockResolvedValue(undefined);
+    openTurn = jest.fn().mockResolvedValue('turn-id');
+    closeTurn = jest.fn().mockResolvedValue(undefined);
+    failTurn = jest.fn().mockResolvedValue(undefined);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -70,7 +74,7 @@ describe('AgentTriggerRunnerService', () => {
         },
         {
           provide: AgentRunConversationService,
-          useValue: { recordTurn },
+          useValue: { openTurn, closeTurn, failTurn },
         },
         {
           provide: ApplicationLookupService,
@@ -119,7 +123,30 @@ describe('AgentTriggerRunnerService', () => {
         toolLoadingStrategy: 'lazy',
       }),
     );
-    expect(recordTurn).toHaveBeenCalled();
+    expect(openTurn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agentId: AGENT_ID,
+        createdBy: expect.objectContaining({ name: 'Enricher' }),
+      }),
+    );
+    expect(closeTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+  });
+
+  it('should record a failed run when the agent throws', async () => {
+    const error = new Error('model unavailable');
+
+    executeAgent.mockRejectedValue(error);
+
+    await expect(service.run(JOB_DATA)).rejects.toThrow('model unavailable');
+
+    expect(failTurn).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      turnId: 'turn-id',
+      error,
+    });
+    expect(closeTurn).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -142,7 +169,7 @@ describe('AgentTriggerRunnerService', () => {
     await service.run(JOB_DATA);
 
     expect(executeAgent).not.toHaveBeenCalled();
-    expect(recordTurn).not.toHaveBeenCalled();
+    expect(openTurn).not.toHaveBeenCalled();
   });
 
   it('should not run when the agent role changed since dispatch', async () => {
@@ -153,8 +180,17 @@ describe('AgentTriggerRunnerService', () => {
     expect(executeAgent).not.toHaveBeenCalled();
   });
 
-  it('should not fail the run when recording it fails', async () => {
-    recordTurn.mockRejectedValue(new Error('history unavailable'));
+  it('should still run the agent when the run cannot be recorded', async () => {
+    openTurn.mockRejectedValue(new Error('history unavailable'));
+
+    await expect(service.run(JOB_DATA)).resolves.toBeUndefined();
+
+    expect(executeAgent).toHaveBeenCalled();
+    expect(closeTurn).not.toHaveBeenCalled();
+  });
+
+  it('should not fail the run when closing its record fails', async () => {
+    closeTurn.mockRejectedValue(new Error('history unavailable'));
 
     await expect(service.run(JOB_DATA)).resolves.toBeUndefined();
   });
