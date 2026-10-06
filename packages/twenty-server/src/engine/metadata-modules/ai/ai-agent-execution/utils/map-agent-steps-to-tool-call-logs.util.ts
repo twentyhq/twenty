@@ -1,8 +1,7 @@
 import { type StepResult, type ToolSet } from 'ai';
 
-import { type AiToolCallLog } from 'twenty-shared/workflow';
-
 import { isFailedToolOutput } from 'src/engine/core-modules/tool-provider/utils/is-failed-tool-output.util';
+import { type AgentRunToolCallLog } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-tool-call-log.type';
 import {
   TRUNCATION_SENTINEL,
   truncateStringToUtf8ByteBudget,
@@ -67,11 +66,11 @@ const truncateUnknownForLog = (value: unknown, maxBytes: number): unknown => {
   return truncated ? truncatedValue : value;
 };
 
-export const mapAiStepsToToolCallLogs = (
+export const mapAgentStepsToToolCallLogs = (
   steps: StepResult<ToolSet>[],
-): AiToolCallLog[] => {
-  const ordered: AiToolCallLog[] = [];
-  const openByCallId = new Map<string, AiToolCallLog>();
+): AgentRunToolCallLog[] => {
+  const ordered: AgentRunToolCallLog[] = [];
+  const openByCallId = new Map<string, AgentRunToolCallLog>();
 
   for (const step of steps) {
     for (const part of step.content) {
@@ -80,7 +79,7 @@ export const mapAiStepsToToolCallLogs = (
       }
 
       if (part.type === 'tool-call') {
-        const entry: AiToolCallLog = {
+        const entry: AgentRunToolCallLog = {
           toolName: part.toolName,
           toolCallId: part.toolCallId,
           input: truncateUnknownForLog(part.input, MAX_TOOL_INPUT_BYTES),

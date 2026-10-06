@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventParticipantMatchParticipantJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
 import { CalendarEventParticipantPersonListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-person.listener';
@@ -14,7 +13,6 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    WorkspaceModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     ContactCreationManagerModule,
     MatchParticipantModule,
