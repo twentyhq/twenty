@@ -12,7 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { GetToolInputSchemaDocument } from '~/generated-metadata/graphql';
 

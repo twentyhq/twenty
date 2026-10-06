@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Updating the workspace value of a user application variable should fail should refuse to set a workspace value on a user variable 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_APPLICATION_VARIABLE_INPUT",
+    "userFriendlyMessage": "Invalid application variable input.",
+  },
+  "message": "Application variable with key API_KEY is a user variable",
+  "name": "UserInputError",
+}
+`;

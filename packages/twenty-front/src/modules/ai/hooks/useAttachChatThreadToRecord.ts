@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

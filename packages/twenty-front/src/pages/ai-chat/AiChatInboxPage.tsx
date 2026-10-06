@@ -4,7 +4,7 @@ import { type MouseEvent, useId, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';

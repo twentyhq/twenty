@@ -31,7 +31,7 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 

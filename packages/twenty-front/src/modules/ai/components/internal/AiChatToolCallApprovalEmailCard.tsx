@@ -8,7 +8,7 @@ import {
   isPlainObject,
   parseCanonicalTipTapJsonDocument,
 } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconDeviceFloppy, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

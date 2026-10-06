@@ -6,7 +6,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
 import { useUploadWorkspaceLogo } from '@/workspace/hooks/useUploadWorkspaceLogo';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

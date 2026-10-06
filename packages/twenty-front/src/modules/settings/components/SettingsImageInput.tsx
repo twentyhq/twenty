@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { ImageInput, type ImageInputProps } from 'twenty-ui/components';
+import { ImageInput, type ImageInputProps } from 'twenty-ui/components/input';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

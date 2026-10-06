@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  AnimatedIconCrossfade,
   IconButton,
   LightButton,
   LightIconButton,
   MainButton,
-  MenuItem,
-  MenuItemDraggable,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import 'twenty-ui/style.css';

@@ -111,7 +111,7 @@ Compose `Button` with `AnimatedIconCrossfade` to change its icon when applicatio
 import { useState } from 'react';
 import { IconPencil, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { AnimatedIconCrossfade } from 'twenty-ui/components';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 
 export const EditActions = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -139,7 +139,7 @@ When an icon is itself an action, use `IconButton` or `LightIconButton` and anim
 
 <StoryEmbed
   title="Button with an animated icon"
-  storyId="ui-input-button-button--animated-icon-documentation"
+  storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"
   height={120}
 />
 

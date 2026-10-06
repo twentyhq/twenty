@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconClock, IconAddressBook, IconTrash } from 'twenty-ui/icon';
 import { Checkbox, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';

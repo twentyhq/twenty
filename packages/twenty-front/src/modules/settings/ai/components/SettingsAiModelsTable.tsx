@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';

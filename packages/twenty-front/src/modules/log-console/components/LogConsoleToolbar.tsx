@@ -4,7 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import {
   type IconComponent,
   IconChevronLeft,

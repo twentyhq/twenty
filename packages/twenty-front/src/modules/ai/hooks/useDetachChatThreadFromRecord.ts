@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';

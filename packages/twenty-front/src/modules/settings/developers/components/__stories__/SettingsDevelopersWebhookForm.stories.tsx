@@ -4,7 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
-import { Toaster } from 'twenty-ui/components';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';

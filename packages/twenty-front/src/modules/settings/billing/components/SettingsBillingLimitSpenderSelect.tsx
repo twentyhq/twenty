@@ -16,7 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
