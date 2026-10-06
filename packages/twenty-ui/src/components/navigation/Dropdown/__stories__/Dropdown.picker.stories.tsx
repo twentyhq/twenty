@@ -580,8 +580,9 @@ export const OptionWithTrailingAction: Story = {
         <Dropdown.OptionItem
           ref={onItemRef}
           render={<div />}
+          role="button"
           data-dnd-sortable-handle
-          selected={false}
+          selected
           aria-label="Overview"
           onSelect={onSelectOption}
           actionsVisibility="always"
@@ -615,6 +616,8 @@ export const OptionWithTrailingAction: Story = {
     const action = body.getByRole('button', { name: 'Edit overview' });
 
     expect(option.tagName).toBe('DIV');
+    expect(option).toHaveAttribute('aria-pressed', 'true');
+    expect(option).not.toHaveAttribute('aria-current');
     expect(option).toHaveAttribute('data-dnd-sortable-handle');
     expect(onItemRef).toHaveBeenCalledWith(option);
     expect(option.contains(action)).toBe(false);

@@ -33,6 +33,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   return (
     <Dropdown.OptionItem
       render={<div />}
+      role="button"
       onSelect={onSelect}
       closeOnSelect={closeOnSelect}
       disabled={disabled}

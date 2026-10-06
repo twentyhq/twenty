@@ -39,9 +39,10 @@ export const DropdownOptionItem = ({
   const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
   const isMenu = type === 'menu';
   const hasSelectionState = isDefined(selected);
-  const isPressableOption = !isMenu && nativeButton;
+  const isPressableOption =
+    !isMenu && (nativeButton || props.role === 'button');
   const isCurrentOption =
-    !isMenu && !nativeButton && hasSelectionState && selected;
+    !isMenu && !isPressableOption && hasSelectionState && selected;
   const selectableMenuOptionRole = multiple
     ? 'menuitemcheckbox'
     : 'menuitemradio';
@@ -66,11 +67,7 @@ export const DropdownOptionItem = ({
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={
-        isMenu
-          ? menuOptionRole
-          : (props.role ?? (nativeButton ? undefined : 'button'))
-      }
+      role={isMenu ? menuOptionRole : props.role}
       aria-checked={isMenu && hasSelectionState ? selected : undefined}
       aria-pressed={
         isPressableOption && hasSelectionState ? selected : undefined
