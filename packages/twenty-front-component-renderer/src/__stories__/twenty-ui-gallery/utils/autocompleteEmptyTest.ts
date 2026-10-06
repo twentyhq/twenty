@@ -6,6 +6,30 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 
 const LIVE_REGION_RESET_WAIT = 250;
 
+const replaceQueryAtWorkerPace = async ({
+  input,
+  autocompleteState,
+  query,
+}: {
+  input: HTMLElement;
+  autocompleteState: HTMLElement;
+  query: string;
+}) => {
+  await userEvent.clear(input);
+  await waitFor(() =>
+    expect(autocompleteState).toHaveTextContent('Query: empty;'),
+  );
+
+  for (let typedLength = 1; typedLength <= query.length; typedLength += 1) {
+    await userEvent.keyboard(query[typedLength - 1]);
+    await waitFor(() =>
+      expect(autocompleteState).toHaveTextContent(
+        `Query: ${query.slice(0, typedLength)};`,
+      ),
+    );
+  }
+};
+
 export const autocompleteEmptyTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
@@ -13,13 +37,14 @@ export const autocompleteEmptyTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   const input = canvas.getByRole('combobox', { name: 'Fruit' });
-  await userEvent.clear(input);
-  await userEvent.type(input, 'Kiwi');
+  const autocompleteState = canvas.getByRole('status', {
+    name: 'Autocomplete state',
+  });
+  await replaceQueryAtWorkerPace({ input, autocompleteState, query: 'Kiwi' });
   const empty = canvas.getByRole('status', { name: 'Matching fruits' });
   await waitFor(() => expect(empty).toHaveTextContent('No matching fruits.'));
   await expect(canvas.queryAllByRole('option')).toHaveLength(0);
-  await userEvent.clear(input);
-  await userEvent.type(input, 'Cherry');
+  await replaceQueryAtWorkerPace({ input, autocompleteState, query: 'Cherry' });
   await canvas.findByRole('option', { name: 'Cherry' });
   await expect(empty).toBeEmptyDOMElement();
 
