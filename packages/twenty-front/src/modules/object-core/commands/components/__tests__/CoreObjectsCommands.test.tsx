@@ -132,8 +132,9 @@ it('closes the side panel and deletes the selection once confirmed', async () =>
     await screen.findByRole('button', { name: 'Delete workflows' }),
   );
 
-  expect(mockCloseSidePanelMenu).toHaveBeenCalled();
+  expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledTimes(1);
+  expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledWith();
 });
 
 it('does not reopen the confirmation when the side panel closes while it is open', async () => {
