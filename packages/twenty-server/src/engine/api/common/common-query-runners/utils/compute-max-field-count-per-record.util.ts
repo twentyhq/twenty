@@ -1,5 +1,5 @@
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -22,24 +22,30 @@ export const computeMaxFieldCountPerRecord = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   recordLimitPerOneToManyRelation: number;
 }): number => {
-  const selectedRelationFields = getFlatFieldsFromFlatObjectMetadata(
+  const selectedRelations = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
   )
     .filter(isMorphOrRelationFlatFieldMetadata)
-    .filter((relationField) => isDefined(select[relationField.name]));
+    .flatMap((relationField) => {
+      const relationSelect = select[relationField.name];
+
+      return isPlainObject(relationSelect)
+        ? [{ relationField, relationSelect }]
+        : [];
+    });
 
   const selectedColumnCount =
-    Object.keys(select).length - selectedRelationFields.length;
+    Object.keys(select).length - selectedRelations.length;
 
-  return selectedRelationFields.reduce(
-    (fieldCount, relationField) =>
+  return selectedRelations.reduce(
+    (fieldCount, { relationField, relationSelect }) =>
       fieldCount +
       (relationField.settings.relationType === RelationType.ONE_TO_MANY
         ? recordLimitPerOneToManyRelation
         : 1) *
         computeMaxFieldCountPerRecord({
-          select: select[relationField.name] as CommonSelectedFields,
+          select: relationSelect,
           flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityId: relationField.relationTargetObjectMetadataId,
             flatEntityMaps: flatObjectMetadataMaps,
