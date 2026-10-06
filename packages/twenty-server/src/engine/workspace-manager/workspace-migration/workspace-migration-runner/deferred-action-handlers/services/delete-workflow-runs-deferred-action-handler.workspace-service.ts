@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { DeferredWorkspaceMigrationActionHandlerDecorator } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/decorators/deferred-workspace-migration-action-handler.decorator';
 import { type DeferredWorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/interfaces/deferred-workspace-migration-action-handler.interface';
 import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
@@ -25,14 +24,15 @@ export class DeleteWorkflowRunsDeferredActionHandlerWorkspaceService implements 
   }: DeferredWorkspaceMigrationActionExecutionArgs<
     DeferredWorkspaceMigrationActionPayload<'delete_workflowRuns'>
   >): Promise<void> {
-    if (
-      isDefined(coreWorkflowVersionId) &&
-      !(await queryRunner.manager.existsBy(WorkflowEntity, {
-        id: coreWorkflowId,
-        workspaceId,
-      }))
-    ) {
-      return;
+    if (isDefined(coreWorkflowVersionId)) {
+      const [existingWorkflow] = await queryRunner.query(
+        `SELECT id FROM core."workflow" WHERE id = $1 AND "workspaceId" = $2`,
+        [coreWorkflowId, workspaceId],
+      );
+
+      if (!isDefined(existingWorkflow)) {
+        return;
+      }
     }
 
     await this.workflowDeletionCleanupWorkspaceService.deleteWorkflowRuns({
