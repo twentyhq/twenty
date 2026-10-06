@@ -505,8 +505,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
             .reduce(
               (total, event) =>
                 total +
-                fromRecordUsageInputToUsageConsumptionRow(event)
-                  .creditsUsedMicro,
+                Number(
+                  fromRecordUsageInputToUsageConsumptionRow(event)
+                    .creditsUsedMicro,
+                ),
               0,
             ),
         });
