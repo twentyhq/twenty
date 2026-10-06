@@ -69,6 +69,8 @@ describe('NavigationDrawerAiChatTriageSection', () => {
         lastReadAt: '2026-10-01T10:00:00.000Z',
         archivedAt: null,
         snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: null,
         id: 'participant-id',
         updatedAt: '2026-10-01T10:00:00.000Z',
       },
@@ -122,5 +124,64 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
       threadId: null,
     });
+  });
+
+  it('counts the open chats waiting on an answer under Needs input', () => {
+    setAgentChatThreadList(jotaiStore, [
+      {
+        __typename: 'AgentChatThread',
+        id: 'thread-1',
+        deletedAt: null,
+        lastActivityAt: '2026-10-01T10:00:00.000Z',
+        pendingQuestionMessageId: 'question',
+      } as never,
+      {
+        __typename: 'AgentChatThread',
+        id: 'thread-2',
+        deletedAt: null,
+        lastActivityAt: '2026-10-01T10:00:00.000Z',
+        pendingQuestionMessageId: null,
+      } as never,
+    ]);
+    THREAD_IDS.forEach(markThreadAsRead);
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: 'Needs input · 1' }),
+    ).toBeVisible();
+  });
+
+  it('flags Mentions when a chat the member was mentioned in is unread', () => {
+    markThreadAsRead('thread-2');
+    jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
+      ...participants,
+      'thread-1': {
+        id: 'mention',
+        threadId: 'thread-1',
+        lastReadAt: null,
+        archivedAt: null,
+        snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: '2026-10-01T10:00:00.000Z',
+        updatedAt: '2026-10-01T10:00:00.000Z',
+      },
+    }));
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: /^Mentions\s*, unread$/ }),
+    ).toBeVisible();
+  });
+
+  it('opens the inbox on the chats the member was mentioned in', async () => {
+    renderTriage();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
+
+    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+    );
   });
 });
