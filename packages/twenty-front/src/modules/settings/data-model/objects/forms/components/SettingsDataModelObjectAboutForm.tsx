@@ -21,7 +21,7 @@ import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
+import { computeMetadataNamesFromLabels } from '@/object-metadata/utils/computeMetadataNamesFromLabels';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;

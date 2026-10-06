@@ -26,7 +26,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 

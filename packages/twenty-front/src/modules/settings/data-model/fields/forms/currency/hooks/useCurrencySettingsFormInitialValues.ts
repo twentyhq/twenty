@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
+import { getFieldMetadataItemInitialValues } from '@/settings/data-model/fields/forms/utils/getFieldMetadataItemInitialValues';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 

@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/client/react';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
-import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
-import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
+import { getColorByEmailingDomainStatus } from '@/settings/emailing-domains/utils/getEmailingDomainStatusColor';
+import { getTextByEmailingDomainStatus } from '@/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 

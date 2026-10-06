@@ -10,7 +10,7 @@ import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWe
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WEBHOOK_EMPTY_OPERATION } from '@/settings/developers/constants/WebhookEmptyOperation';
 
 const mockNavigateSettings = jest.fn();
 

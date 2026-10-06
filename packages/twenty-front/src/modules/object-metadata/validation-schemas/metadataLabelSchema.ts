@@ -1,8 +1,8 @@
 import { errors } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { z } from 'zod';
 
-import { METADATA_LABEL_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataLabelValidPattern';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { METADATA_LABEL_VALID_PATTERN } from '@/object-metadata/constants/MetadataLabelValidPattern';
+import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 export const metadataLabelSchema = (existingLabels?: string[]) => {
   return z
     .string()

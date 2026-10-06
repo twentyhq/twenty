@@ -26,7 +26,7 @@ import {
   GetToolInputSchemaDocument,
 } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
-import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
