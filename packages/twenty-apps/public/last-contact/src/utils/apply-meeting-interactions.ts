@@ -12,19 +12,17 @@ export type CalendarEventParticipantLink = {
 export const applyMeetingInteractions = async (
   client: CoreApiClient,
   links: CalendarEventParticipantLink[],
-): Promise<void> => {
+): Promise<string[]> => {
   const calendarEventIds = [
     ...new Set(links.map((link) => link.calendarEventId)),
   ];
 
   if (calendarEventIds.length === 0) {
-    return;
+    return [];
   }
 
-  const interactionByCalendarEventId = await collectCalendarEventInteractions(
-    client,
-    calendarEventIds,
-  );
+  const { interactionByCalendarEventId, upcomingMeetingStartsAts } =
+    await collectCalendarEventInteractions(client, calendarEventIds);
   const interactionsByPersonId = new Map<string, Interaction[]>();
 
   for (const { personId, calendarEventId } of links) {
@@ -50,4 +48,6 @@ export const applyMeetingInteractions = async (
   }
 
   await applyPersonInteractions(client, interactionsByPersonId);
+
+  return upcomingMeetingStartsAts;
 };
