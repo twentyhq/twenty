@@ -137,7 +137,9 @@ describe('isMatchingFilesFilter', () => {
         }),
       ).toBe(true);
     });
+  });
 
+  describe('like filter', () => {
     it('should match partial file names', () => {
       expect(
         isMatchingFilesFilter({

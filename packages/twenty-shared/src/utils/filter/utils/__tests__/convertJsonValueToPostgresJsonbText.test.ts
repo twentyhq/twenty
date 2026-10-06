@@ -8,6 +8,24 @@ describe('convertJsonValueToPostgresJsonbText', () => {
     expect(convertJsonValueToPostgresJsonbText(null)).toBe('null');
   });
 
+  it('should format numbers in decimal notation like Postgres numeric', () => {
+    expect(convertJsonValueToPostgresJsonbText(1e21)).toBe(
+      '1000000000000000000000',
+    );
+    expect(convertJsonValueToPostgresJsonbText(1e-7)).toBe('0.0000001');
+    expect(convertJsonValueToPostgresJsonbText(-1.5e-7)).toBe('-0.00000015');
+    expect(convertJsonValueToPostgresJsonbText(1.2345e22)).toBe(
+      '12345000000000000000000',
+    );
+    expect(convertJsonValueToPostgresJsonbText([1e21])).toBe(
+      '[1000000000000000000000]',
+    );
+  });
+
+  it('should format undefined as null instead of throwing', () => {
+    expect(convertJsonValueToPostgresJsonbText(undefined)).toBe('null');
+  });
+
   it('should format empty containers without spaces', () => {
     expect(convertJsonValueToPostgresJsonbText([])).toBe('[]');
     expect(convertJsonValueToPostgresJsonbText({})).toBe('{}');

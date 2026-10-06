@@ -206,7 +206,9 @@ function evaluateTextAndArrayFilter(
 
 function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
   const jsonValue = isString(filter.leftOperand)
-    ? (parseJson<unknown>(filter.leftOperand) ?? filter.leftOperand)
+    ? filter.leftOperand.trim() === 'null'
+      ? null
+      : (parseJson<unknown>(filter.leftOperand) ?? filter.leftOperand)
     : filter.leftOperand;
   const isEmpty = !isDefined(jsonValue) || jsonValue === '';
 

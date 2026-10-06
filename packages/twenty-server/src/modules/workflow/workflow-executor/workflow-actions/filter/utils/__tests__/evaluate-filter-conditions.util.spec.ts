@@ -1506,6 +1506,16 @@ describe('evaluateFilterConditions', () => {
         ).toBe(false);
       });
 
+      it('should treat a stringified JSON null as empty', () => {
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_NOT_EMPTY, 'null')).toBe(
+          false,
+        );
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, 'null', 'null'),
+        ).toBe(false);
+      });
+
       it('should search inside stringified JSON', () => {
         expect(
           evaluateRawJson(

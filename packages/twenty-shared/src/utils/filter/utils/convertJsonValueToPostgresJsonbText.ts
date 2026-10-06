@@ -27,6 +27,31 @@ const sortKeysInJsonbOrder = (keys: string[]) =>
     .sort((left, right) => compareJsonbKeyBytes(left.bytes, right.bytes))
     .map(({ key }) => key);
 
+const formatNumberAsDecimal = (value: number): string => {
+  const [mantissa = '', exponentText] = String(value).split('e');
+
+  if (exponentText === undefined) {
+    return mantissa;
+  }
+
+  const sign = mantissa.startsWith('-') ? '-' : '';
+  const [integerDigits = '', fractionDigits = ''] = mantissa
+    .replace('-', '')
+    .split('.');
+  const digits = integerDigits + fractionDigits;
+  const decimalPointIndex = integerDigits.length + Number(exponentText);
+
+  if (decimalPointIndex <= 0) {
+    return `${sign}0.${'0'.repeat(-decimalPointIndex)}${digits}`;
+  }
+
+  if (decimalPointIndex >= digits.length) {
+    return `${sign}${digits}${'0'.repeat(decimalPointIndex - digits.length)}`;
+  }
+
+  return `${sign}${digits.slice(0, decimalPointIndex)}.${digits.slice(decimalPointIndex)}`;
+};
+
 const formatAsJsonbText = (jsonValue: unknown): string => {
   if (Array.isArray(jsonValue)) {
     return `[${jsonValue.map(formatAsJsonbText).join(', ')}]`;
@@ -40,8 +65,17 @@ const formatAsJsonbText = (jsonValue: unknown): string => {
     return `{${formattedEntries.join(', ')}}`;
   }
 
+  if (typeof jsonValue === 'number') {
+    return formatNumberAsDecimal(jsonValue);
+  }
+
   return JSON.stringify(jsonValue);
 };
 
-export const convertJsonValueToPostgresJsonbText = (jsonValue: unknown) =>
-  formatAsJsonbText(JSON.parse(JSON.stringify(jsonValue)));
+export const convertJsonValueToPostgresJsonbText = (jsonValue: unknown) => {
+  if (jsonValue === undefined) {
+    return 'null';
+  }
+
+  return formatAsJsonbText(JSON.parse(JSON.stringify(jsonValue)));
+};
