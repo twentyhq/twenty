@@ -1,5 +1,6 @@
 import { IsNull } from 'typeorm';
 
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 const QUESTIONS = [
@@ -10,18 +11,15 @@ const QUESTIONS = [
   },
 ];
 
-const CLEARED_THREAD = {
-  id: 'thread-id',
-  pendingQuestionMessageId: null,
-};
-
 const buildService = ({ claimAffected = 1 } = {}) => {
   const threadRepository = {
-    findOne: jest.fn().mockResolvedValue(CLEARED_THREAD),
     update: jest.fn().mockResolvedValue({ affected: claimAffected }),
   };
   const threadRecordEventService = {
-    emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
+    emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
+  };
+  const turnRecorderService = {
+    endWaitingTurn: jest.fn().mockResolvedValue(undefined),
   };
   const messagePartRepository = {
     find: jest.fn().mockResolvedValue([
@@ -54,6 +52,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     threadRecordEventService as never,
     {} as never,
     {} as never,
+    turnRecorderService as never,
   );
 
   return {
@@ -61,6 +60,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     threadRepository,
     messagePartRepository,
     threadRecordEventService,
+    turnRecorderService,
   };
 };
 
@@ -73,9 +73,20 @@ const closeArguments = {
 
 describe('AgentChatService closePendingToolCalls', () => {
   it('stops waiting and closes the pending call as skipped', async () => {
-    const { service, threadRepository, messagePartRepository } = buildService();
+    const {
+      service,
+      threadRepository,
+      messagePartRepository,
+      turnRecorderService,
+    } = buildService();
 
     await service.closePendingToolCalls(closeArguments);
+
+    expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      messageId: 'question-message-id',
+      status: AgentTurnStatus.COMPLETED,
+    });
 
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -106,14 +117,15 @@ describe('AgentChatService closePendingToolCalls', () => {
 
     await service.closePendingToolCalls(closeArguments);
 
-    expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledTimes(1);
-    expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledWith({
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
-      threadBefore: {
-        ...CLEARED_THREAD,
-        pendingQuestionMessageId: 'question-message-id',
-      },
-      threadAfter: CLEARED_THREAD,
+      threadId: 'thread-id',
+      messageId: 'question-message-id',
     });
   });
 
@@ -126,7 +138,9 @@ describe('AgentChatService closePendingToolCalls', () => {
     await service.closePendingToolCalls(closeArguments);
 
     expect(messagePartRepository.writePart).not.toHaveBeenCalled();
-    expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).not.toHaveBeenCalled();
   });
 });
 
@@ -152,7 +166,9 @@ describe('AgentChatService recordToolCallAnswer', () => {
       isLastAnswer: true,
     });
 
-    expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledTimes(1);
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it('stays quiet when another caller already stopped the wait', async () => {
@@ -168,7 +184,9 @@ describe('AgentChatService recordToolCallAnswer', () => {
       isLastAnswer: true,
     });
 
-    expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).not.toHaveBeenCalled();
   });
 
   it('stays quiet while other calls still wait on an answer', async () => {
@@ -179,6 +197,8 @@ describe('AgentChatService recordToolCallAnswer', () => {
       isLastAnswer: false,
     });
 
-    expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
+    expect(
+      threadRecordEventService.emitPendingQuestionCleared,
+    ).not.toHaveBeenCalled();
   });
 });

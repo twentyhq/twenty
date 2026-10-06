@@ -2,6 +2,13 @@ import { isFunction } from '@sniptt/guards';
 import { type PointerEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createSeparatorPointerCaptureReleaseTracker } from '@/host/elements/utils/createSeparatorPointerCaptureReleaseTracker';
+
+const {
+  releasePointerCaptureAtGestureEnd,
+  consumePointerCaptureReleasedAtGestureEnd,
+} = createSeparatorPointerCaptureReleaseTracker();
+
 export const createResizableSeparatorProps = (
   reactBindableProps: Record<string, unknown>,
 ): Record<string, unknown> | undefined => {
@@ -21,36 +28,35 @@ export const createResizableSeparatorProps = (
     return undefined;
   }
 
-  const releasePointerCapture = (event: PointerEvent<HTMLElement>) => {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
   return {
     onPointerDown: (event: PointerEvent<HTMLElement>) => {
       if (event.button !== 0 || event.defaultPrevented) {
         return;
       }
 
+      consumePointerCaptureReleasedAtGestureEnd(event);
       event.preventDefault();
       event.currentTarget.focus();
       event.currentTarget.setPointerCapture(event.pointerId);
       remotePointerDown(event);
     },
     onPointerUp: (event: PointerEvent<HTMLElement>) => {
-      releasePointerCapture(event);
+      releasePointerCaptureAtGestureEnd(event);
       if (isFunction(remotePointerUp)) {
         remotePointerUp(event);
       }
     },
     onPointerCancel: (event: PointerEvent<HTMLElement>) => {
-      releasePointerCapture(event);
+      releasePointerCaptureAtGestureEnd(event);
       if (isFunction(remotePointerCancel)) {
         remotePointerCancel(event);
       }
     },
     onLostPointerCapture: (event: PointerEvent<HTMLElement>) => {
+      if (consumePointerCaptureReleasedAtGestureEnd(event)) {
+        return;
+      }
+
       if (isFunction(remotePointerCancel)) {
         remotePointerCancel(event);
       }
