@@ -264,4 +264,53 @@ describe('validateViewFilterOperands', () => {
       validateViewFilterOperands({ views: [], objects: [], fields: [] }),
     ).toEqual([]);
   });
+  it.each([FieldMetadataType.RELATION, FieldMetadataType.MORPH_RELATION])(
+    'uses the selected target field for %s filters',
+    (type) => {
+      const relation = {
+        ...buildRelationField({
+          universalIdentifier: 'relation',
+          relationTargetFieldMetadataUniversalIdentifier: 'paired-field',
+        }),
+        type,
+      } as FieldManifest;
+      const filter = {
+        universalIdentifier: 'filter',
+        fieldMetadataUniversalIdentifier: 'relation',
+        relationTargetFieldMetadataUniversalIdentifier: 'target-name',
+        operand: ViewFilterOperand.CONTAINS,
+        value: 'Acme',
+      };
+      const fields = [
+        relation,
+        buildField({
+          universalIdentifier: 'paired-field',
+          type: FieldMetadataType.NUMBER,
+        }),
+        buildField({
+          universalIdentifier: 'target-name',
+          type: FieldMetadataType.TEXT,
+        }),
+      ];
+
+      expect(
+        validateViewFilterOperands({
+          views: [buildView([filter])],
+          objects: [],
+          fields,
+        }),
+      ).toEqual([]);
+      expect(
+        validateViewFilterOperands({
+          views: [
+            buildView([
+              { ...filter, operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL },
+            ]),
+          ],
+          objects: [],
+          fields,
+        }),
+      ).toHaveLength(1);
+    },
+  );
 });

@@ -74,6 +74,8 @@ describe('extractFrontComponentSharedDependencies', () => {
 
   it.each([
     ['a relative path', ['./local-module']],
+    ['a Windows absolute path', ['C:\\lib']],
+    ['a Windows network path', ['\\\\server\\share']],
     ['a reserved package', ['twenty-sdk/define']],
     ['a duplicated dependency', ['react', 'react']],
     ['a non-string entry', ['react', 42]],

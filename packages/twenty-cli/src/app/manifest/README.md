@@ -26,6 +26,11 @@ and an empty one (`{}`), context-dependent message IDs, authored-over-compiled
 precedence, orphan compiled translations, collision handling and skipped-file
 warnings. It reads catalogs without rewriting them.
 
+Select options without an `id` receive a deterministic ID from their label and
+field identifier. Keep an explicit `id` when changing an option's label or value,
+so existing view filters continue to reference the same option. Duplicate option
+IDs fail validation. Pulled options already carry their server IDs.
+
 ## Implementation
 
 - Definition discovery, detection and evaluation reuse `app/source`, including

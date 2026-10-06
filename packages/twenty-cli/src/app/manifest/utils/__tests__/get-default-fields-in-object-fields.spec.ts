@@ -27,6 +27,15 @@ const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
   }) as unknown as ObjectConfig;
 
 describe('getDefaultFieldsInObjectFields', () => {
+  it('adds the default name field when fields is omitted', () => {
+    const { objectFields } = getDefaultFieldsInObjectFields({
+      objectConfig: buildObjectConfig({ fields: undefined }),
+      applicationUniversalIdentifier: APP_UID,
+    });
+
+    expect(objectFields.map(({ name }) => name)).toEqual(['name']);
+  });
+
   it('should append a name field when the object declares none', () => {
     const { objectFields } = getDefaultFieldsInObjectFields({
       objectConfig: buildObjectConfig({}),

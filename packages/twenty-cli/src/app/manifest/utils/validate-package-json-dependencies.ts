@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type PackageJsonDependencies = {
   dependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
 };
 
 // SDK authoring code is handled by the build, and Twenty supplies the client SDK
@@ -26,9 +27,14 @@ export const validatePackageJsonDependencies = async (
 
   const packageJson = await readJson<PackageJsonDependencies>(packageJsonPath);
 
-  return Object.entries(BUILD_TIME_DEPENDENCY_WARNINGS)
-    .filter(([packageName]) =>
-      isDefined(packageJson.dependencies?.[packageName]),
-    )
-    .map(([, warning]) => warning);
+  return (['dependencies', 'optionalDependencies'] as const).flatMap(
+    (section) =>
+      Object.entries(BUILD_TIME_DEPENDENCY_WARNINGS)
+        .filter(([packageName]) =>
+          isDefined(packageJson[section]?.[packageName]),
+        )
+        .map(([, warning]) =>
+          warning.replace('"dependencies"', `"${section}"`),
+        ),
+  );
 };

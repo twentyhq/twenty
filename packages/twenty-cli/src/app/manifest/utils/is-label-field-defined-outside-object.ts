@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const isEngineDerivedLabelIdentifier = ({
+export const isLabelFieldDefinedOutsideObject = ({
   fields,
   labelIdentifierFieldMetadataUniversalIdentifier,
 }: {
@@ -10,6 +10,6 @@ export const isEngineDerivedLabelIdentifier = ({
   isDefined(labelIdentifierFieldMetadataUniversalIdentifier) &&
   !fields.some(
     (field) =>
-      field.universalIdentifier ===
-      labelIdentifierFieldMetadataUniversalIdentifier,
+      field.universalIdentifier?.toLowerCase() ===
+      labelIdentifierFieldMetadataUniversalIdentifier?.toLowerCase(),
   );

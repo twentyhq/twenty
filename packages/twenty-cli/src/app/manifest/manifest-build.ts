@@ -280,6 +280,15 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
+        if (
+          targetFunctionName === 'definePreInstallLogicFunction' &&
+          isDefined(extract.config.serverRouteTriggerSettings)
+        ) {
+          errors.push(
+            `${relativePath}: pre-install logic functions cannot define serverRouteTriggerSettings.`,
+          );
+        }
+
         const config = await fromLogicFunctionConfigToLogicFunctionManifest({
           logicFunctionConfig: extract.config,
           sourceCode: fileContent,

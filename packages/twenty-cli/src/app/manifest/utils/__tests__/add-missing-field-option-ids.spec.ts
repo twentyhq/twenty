@@ -17,7 +17,7 @@ const buildSelectField = (
 });
 
 describe('addMissingFieldOptionIds', () => {
-  it('should add a UUID v4 id to every option that is missing one for a SELECT field', () => {
+  it('should add a deterministic UUID id to every option that is missing one for a SELECT field', () => {
     const fieldManifest = buildSelectField([
       { color: 'green', label: 'Open', value: 'OPEN', position: 1 },
       { color: 'red', label: 'Closed', value: 'CLOSED', position: 2 },
@@ -116,5 +116,23 @@ describe('addMissingFieldOptionIds', () => {
 
     const ids = result.options?.map((option) => option.id) ?? [];
     expect(new Set(ids).size).toBe(ids.length);
+  });
+  it('keeps explicit option identities across label edits and duplicate labels', () => {
+    const before = addMissingFieldOptionIds(
+      buildSelectField([
+        { color: 'green', label: 'Open', value: 'OPEN', position: 1 },
+        { color: 'red', label: 'Closed', value: 'CLOSED', position: 2 },
+      ]),
+    );
+    const after = addMissingFieldOptionIds(
+      buildSelectField(
+        before.options?.map((option) => ({ ...option, label: 'Status' })),
+      ),
+    );
+
+    expect(after.options?.map(({ id }) => id)).toEqual(
+      before.options?.map(({ id }) => id),
+    );
+    expect(after.options?.[0].id).not.toBe(after.options?.[1].id);
   });
 });

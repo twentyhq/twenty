@@ -51,9 +51,11 @@ export const validateViewFilterOperands = ({
       }
 
       const effectiveFieldType: FieldMetadataType =
-        referencedField.type === FieldMetadataType.RELATION
+        (referencedField.type === FieldMetadataType.RELATION ||
+          referencedField.type === FieldMetadataType.MORPH_RELATION) &&
+        isDefined(filter.relationTargetFieldMetadataUniversalIdentifier)
           ? (fieldByUniversalIdentifier.get(
-              referencedField.relationTargetFieldMetadataUniversalIdentifier,
+              filter.relationTargetFieldMetadataUniversalIdentifier,
             )?.type ?? referencedField.type)
           : referencedField.type;
 

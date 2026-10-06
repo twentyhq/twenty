@@ -21,6 +21,7 @@ type ImportedExpressionVariable = {
 
 const collectImportedExpressionVariables = (
   sourceFile: ts.SourceFile,
+  checker: ts.TypeChecker,
 ): ImportedExpressionVariable[] => {
   const imported: ImportedExpressionVariable[] = [];
 
@@ -51,13 +52,14 @@ const collectImportedExpressionVariables = (
     }
 
     if (ts.isNamespaceImport(namedBindings)) {
-      const namespaceName = namedBindings.name.text;
+      const namespaceSymbol = checker.getSymbolAtLocation(namedBindings.name);
 
       const collectNamespaceMemberUsages = (node: ts.Node): void => {
+        if (ts.isImportDeclaration(node) || ts.isTypeNode(node)) return;
         if (
           ts.isPropertyAccessExpression(node) &&
           ts.isIdentifier(node.expression) &&
-          node.expression.text === namespaceName &&
+          checker.getSymbolAtLocation(node.expression) === namespaceSymbol &&
           EXPRESSION_VARIABLE_NAMES.has(node.name.text)
         ) {
           imported.push({ importedName: node.name.text, node });
@@ -82,7 +84,29 @@ const collectImportedExpressionVariables = (
       const importedName = (element.propertyName ?? element.name).text;
 
       if (EXPRESSION_VARIABLE_NAMES.has(importedName)) {
-        imported.push({ importedName, node: element });
+        const importedSymbol = checker.getSymbolAtLocation(element.name);
+        let usage: ts.Node | undefined;
+        const findUsage = (node: ts.Node): void => {
+          if (
+            isDefined(usage) ||
+            ts.isImportDeclaration(node) ||
+            ts.isTypeNode(node)
+          )
+            return;
+
+          if (ts.isIdentifier(node)) {
+            const symbol = ts.isShorthandPropertyAssignment(node.parent)
+              ? checker.getShorthandAssignmentValueSymbol(node.parent)
+              : checker.getSymbolAtLocation(node);
+
+            if (isDefined(importedSymbol) && symbol === importedSymbol)
+              usage = node;
+          }
+          ts.forEachChild(node, findUsage);
+        };
+
+        findUsage(sourceFile);
+        if (isDefined(usage)) imported.push({ importedName, node: usage });
       }
     }
   }
@@ -138,16 +162,22 @@ export const validateConditionalAvailabilityUsage = (
     relativePath.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 
-  const importedExpressionVariables =
-    collectImportedExpressionVariables(sourceFile);
-
-  if (importedExpressionVariables.length === 0) {
-    return [];
-  }
-
   if (hasConditionalAvailabilityExpressionProperty(sourceFile)) {
     return [];
   }
+
+  const options: ts.CompilerOptions = { noLib: true, noResolve: true };
+  const host = ts.createCompilerHost(options);
+
+  host.getSourceFile = (name) =>
+    name === sourceFile.fileName ? sourceFile : undefined;
+  const checker = ts
+    .createProgram([sourceFile.fileName], options, host)
+    .getTypeChecker();
+  const importedExpressionVariables = collectImportedExpressionVariables(
+    sourceFile,
+    checker,
+  );
 
   return importedExpressionVariables.map(({ importedName, node }) => {
     const { line, character } = sourceFile.getLineAndCharacterOfPosition(

@@ -1,4 +1,4 @@
-import { isEngineDerivedLabelIdentifier } from '@/app/manifest/utils/is-engine-derived-label-identifier';
+import { isLabelFieldDefinedOutsideObject } from '@/app/manifest/utils/is-label-field-defined-outside-object';
 import type { ObjectConfig } from '@/app/manifest/types/object-config.type';
 import {
   getFieldUniversalIdentifier,
@@ -38,22 +38,22 @@ export const getDefaultFieldsInObjectFields = ({
     (field) => field.name,
   );
 
-  const objectFieldsWithDefaults = [...objectConfig.fields];
+  const objectFieldsWithDefaults = [...(objectConfig.fields ?? [])];
 
   const defaultNameObjectField = getDefaultNameObjectField({
     objectConfig,
     applicationUniversalIdentifier,
   });
 
-  const labelIdentifiesAnEngineDerivedField = isEngineDerivedLabelIdentifier({
-    fields: objectConfig.fields,
+  const labelFieldIsDefinedOutsideObject = isLabelFieldDefinedOutsideObject({
+    fields: objectConfig.fields ?? [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       objectConfig.labelIdentifierFieldMetadataUniversalIdentifier,
   });
 
   if (
     !objectConfigFieldNames.includes(defaultNameObjectField.name) &&
-    !labelIdentifiesAnEngineDerivedField
+    !labelFieldIsDefinedOutsideObject
   ) {
     objectFieldsWithDefaults.push(defaultNameObjectField);
   }

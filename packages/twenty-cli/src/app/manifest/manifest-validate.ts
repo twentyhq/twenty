@@ -11,6 +11,7 @@ import {
   normalizePageLayoutTabManifest,
 } from 'twenty-shared/application';
 import {
+  FieldMetadataType,
   GRAPH_WIDGET_CONFIGURATION_TYPES,
   type GraphWidgetConfigurationType,
   type PageLayoutWidgetUniversalConfiguration,
@@ -23,6 +24,7 @@ import {
   isRelationFieldManifest,
 } from '@/app/manifest/utils/manifest-validation-helpers';
 import { getPageLayoutDeprecationWarnings } from '@/app/manifest/utils/get-page-layout-deprecation-warnings';
+import { getUnresolvedLabelIdentifierWarnings } from '@/app/manifest/utils/get-unresolved-label-identifier-warnings';
 import { validateTimelineActivityTypes } from '@/app/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
@@ -249,11 +251,16 @@ const invalidUniversalIdentifierVersions = (
 
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
-  const warnings = getPageLayoutDeprecationWarnings(manifest);
+  const warnings = [
+    ...getPageLayoutDeprecationWarnings(manifest),
+    ...getUnresolvedLabelIdentifierWarnings(manifest),
+  ];
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
-  const duplicates = getDuplicateValues(universalIdentifiers);
+  const duplicates = getDuplicateValues(
+    universalIdentifiers.map((identifier) => identifier.toLowerCase()),
+  );
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
@@ -272,6 +279,26 @@ export const manifestValidate = (manifest: Manifest) => {
     ...manifest.fields,
     ...manifest.objects.flatMap((object) => object.fields),
   ];
+
+  for (const field of allFields) {
+    if (
+      (field.type === FieldMetadataType.SELECT ||
+        field.type === FieldMetadataType.MULTI_SELECT) &&
+      isDefined(field.options)
+    ) {
+      const duplicateIds = getDuplicateValues(
+        field.options
+          .map((option) => option.id)
+          .filter(isNonEmptyString)
+          .map((id) => id.toLowerCase()),
+      );
+
+      if (duplicateIds.length > 0)
+        errors.push(
+          `Select field "${field.name}" has duplicate option IDs: ${duplicateIds.join(', ')}. Set distinct explicit IDs on these options.`,
+        );
+    }
+  }
 
   errors.push(...validateRelationFields(allFields));
 

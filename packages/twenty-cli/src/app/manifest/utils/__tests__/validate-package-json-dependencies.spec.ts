@@ -29,6 +29,22 @@ describe('validatePackageJsonDependencies', () => {
     }
   });
 
+  it('warns about production SDK dependencies in optionalDependencies', async () => {
+    appPath = await writeTempPackageJson({
+      optionalDependencies: {
+        'twenty-sdk': '^2.8.0',
+        'twenty-client-sdk': '^2.8.0',
+      },
+    });
+
+    const warnings = await validatePackageJsonDependencies(appPath);
+
+    expect(warnings).toHaveLength(2);
+    expect(
+      warnings.every((warning) => warning.includes('"optionalDependencies"')),
+    ).toBe(true);
+  });
+
   it('should warn when twenty-sdk is listed under dependencies', async () => {
     appPath = await writeTempPackageJson({
       dependencies: { 'twenty-sdk': '^2.8.0' },

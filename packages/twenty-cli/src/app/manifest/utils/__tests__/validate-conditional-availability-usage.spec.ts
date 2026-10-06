@@ -1,3 +1,5 @@
+import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES as SDK_VARIABLE_NAMES } from '../../../../../../twenty-sdk/src/sdk/define/conditional-availability/conditional-availability-variable-names';
+import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/app/manifest/utils/conditional-availability-variable-names';
 import { describe, expect, it } from 'vitest';
 
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
@@ -8,6 +10,26 @@ const validate = (
 ) => validateConditionalAvailabilityUsage(source, filename);
 
 describe('validateConditionalAvailabilityUsage', () => {
+  it('recognizes every placeholder exported by the SDK', () => {
+    expect(CONDITIONAL_AVAILABILITY_VARIABLE_NAMES).toEqual(SDK_VARIABLE_NAMES);
+  });
+  it.each([
+    "import { objectMetadataItem } from 'twenty-sdk/define'; export const Component = () => null;",
+    "import { objectMetadataItem } from 'twenty-sdk/define'; export type Metadata = typeof objectMetadataItem;",
+    "import { objectMetadataItem as item } from 'twenty-sdk/define'; export const read = (item: { name: string }) => item.name;",
+    "import * as sdk from 'twenty-sdk/define'; export const read = (sdk: { objectMetadataItem: string }) => sdk.objectMetadataItem;",
+  ])('allows unused or shadowed placeholders: %s', (source) => {
+    expect(validate(source)).toEqual([]);
+  });
+
+  it('rejects a runtime shorthand reference to an aliased placeholder', () => {
+    expect(
+      validate(
+        "import { objectMetadataItem as item } from 'twenty-sdk/define'; export const value = { item };",
+      ),
+    ).toHaveLength(1);
+  });
+
   describe('valid usage', () => {
     it('should allow a variable inside a bare conditionalAvailabilityExpression', () => {
       const source = `

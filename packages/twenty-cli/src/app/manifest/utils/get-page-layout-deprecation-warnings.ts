@@ -29,7 +29,7 @@ export const getPageLayoutDeprecationWarnings = (
 
       if ('gridPosition' in widget && isDefined(widget.gridPosition)) {
         warnings.push(
-          `Page layout widget "${widget.title}" uses deprecated gridPosition. Use position with layoutMode: 'GRID' and the same row, column, rowSpan and columnSpan. Existing gridPosition remains supported.`,
+          `Page layout widget "${widget.title}" uses deprecated gridPosition. If position is already set, it takes precedence; remove the ignored gridPosition. Use position with layoutMode: 'GRID' and the same row, column, rowSpan and columnSpan only when position is absent. Existing gridPosition remains supported as a fallback.`,
         );
       }
     }

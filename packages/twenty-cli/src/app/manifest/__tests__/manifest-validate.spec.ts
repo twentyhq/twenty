@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getFieldUniversalIdentifier,
   type ApplicationManifest,
   type FieldManifest,
   type Manifest,
@@ -16,6 +17,7 @@ import {
   PageLayoutWidgetVerticalListHeightBehavior,
   RelationType,
 } from 'twenty-shared/types';
+import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field-option-ids';
 import { manifestValidate } from '@/app/manifest/manifest-validate';
 
 const validApplication: ApplicationManifest = {
@@ -59,6 +61,61 @@ const validManifest: Manifest = {
 };
 
 describe('manifestValidate', () => {
+  it('rejects options with colliding generated IDs before deployment', () => {
+    const field = addMissingFieldOptionIds({
+      universalIdentifier: validField.universalIdentifier,
+      objectUniversalIdentifier: validField.objectUniversalIdentifier,
+      name: 'status',
+      label: 'Status',
+      type: FieldMetadataType.SELECT,
+      options: [
+        { label: 'Same', value: 'FIRST', color: 'blue', position: 1 },
+        { label: 'Same', value: 'SECOND', color: 'blue', position: 2 },
+      ],
+    });
+    const result = manifestValidate({ ...validManifest, fields: [field] });
+
+    expect(result.isValid).toBe(false);
+    expect(result.errors.join(' ')).toContain('distinct explicit IDs');
+  });
+
+  it('reports unresolved label references without rejecting server-owned fields', () => {
+    const object = {
+      universalIdentifier: validField.objectUniversalIdentifier,
+      nameSingular: 'company',
+      namePlural: 'companies',
+      labelSingular: 'Company',
+      labelPlural: 'Companies',
+      fields: [],
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        validField.universalIdentifier,
+    };
+    const manifest = { ...validManifest, objects: [object] };
+    expect(manifestValidate(manifest).warnings.join(' ')).toContain(
+      'Check the identifier',
+    );
+    expect(
+      manifestValidate({ ...manifest, fields: [validField] }).warnings,
+    ).toEqual([]);
+    expect(
+      manifestValidate({
+        ...manifest,
+        objects: [
+          {
+            ...object,
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              getFieldUniversalIdentifier({
+                applicationUniversalIdentifier:
+                  validApplication.universalIdentifier,
+                objectUniversalIdentifier: object.universalIdentifier,
+                name: 'id',
+              }),
+          },
+        ],
+      }).warnings,
+    ).toEqual([]);
+  });
+
   describe('valid object extensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
       const result = manifestValidate({
@@ -135,6 +192,25 @@ describe('manifestValidate', () => {
   });
 
   describe('duplicate universalIdentifier detection', () => {
+    it('rejects differently cased copies of the same UUID', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [
+          validField,
+          {
+            ...validField,
+            name: 'otherScore',
+            universalIdentifier: validField.universalIdentifier.toUpperCase(),
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'Duplicate universal identifiers',
+      );
+    });
+
     it('should fail when extension field has duplicate universalIdentifier', () => {
       const duplicateId = '550e8400-e29b-41d4-a716-446655440001';
 

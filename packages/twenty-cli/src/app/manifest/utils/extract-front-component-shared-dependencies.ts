@@ -26,7 +26,11 @@ const getSharedDependenciesErrors = (dependencies: string[]): string[] => {
       continue;
     }
 
-    if (dependency.startsWith('.') || dependency.startsWith('/')) {
+    if (
+      dependency.startsWith('.') ||
+      path.posix.isAbsolute(dependency) ||
+      path.win32.isAbsolute(dependency)
+    ) {
       errors.push(
         `Shared dependency "${dependency}" must be a package specifier, not a relative or absolute path`,
       );

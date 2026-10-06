@@ -6,6 +6,7 @@ export type PreInstallLogicFunctionConfig = Omit<
   | 'cronTriggerSettings'
   | 'databaseEventTriggerSettings'
   | 'httpRouteTriggerSettings'
+  | 'serverRouteTriggerSettings'
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'
   | 'handler'
