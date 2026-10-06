@@ -1,4 +1,7 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
@@ -67,7 +70,7 @@ export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
-  isRecordSharingEnabled?: boolean;
+  featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -79,7 +82,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
-  readonly isRecordSharingEnabled: boolean;
+  readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
@@ -103,7 +106,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.alias = alias;
     this.tableShape = context.tableShape;
     this.objectRecordsPermissions = context.objectRecordsPermissions;
-    this.isRecordSharingEnabled = context.isRecordSharingEnabled ?? false;
+    this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }
 
