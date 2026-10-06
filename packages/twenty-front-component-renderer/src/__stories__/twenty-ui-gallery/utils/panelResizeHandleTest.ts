@@ -5,7 +5,7 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { withMockPointerCapture } from '@/__stories__/twenty-ui-gallery/utils/withMockPointerCapture';
 
-export const resizablePanelTest: TwentyUiGalleryPlayFunction = async ({
+export const panelResizeHandleTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);

@@ -3,30 +3,30 @@ import { useState } from 'react';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
-import { ResizablePanel } from '../ResizablePanel';
-import { type ResizablePanelProps } from '../types/ResizablePanelProps';
+import { PanelResizeHandle } from '../PanelResizeHandle';
+import { type PanelResizeHandleProps } from '../types/PanelResizeHandleProps';
 
-export const ControlledResizablePanel = ({
-  onSizeChange,
-  onSizeCommit,
+export const ControlledPanelResizeHandle = ({
+  onSizePreview,
+  onSizeCommitted,
   ...props
-}: ResizablePanelProps) => {
-  const initialSize = props.size ?? props.defaultSize ?? props.min;
+}: PanelResizeHandleProps) => {
+  const initialSize = props.size;
   const [size, setSize] = useState(initialSize);
   const [liveSize, setLiveSize] = useState(initialSize);
 
   return (
     <>
-      <ResizablePanel
+      <PanelResizeHandle
         {...props}
         size={size}
-        onSizeChange={(nextSize) => {
+        onSizePreview={(nextSize) => {
           setLiveSize(nextSize);
-          onSizeChange?.(nextSize);
+          onSizePreview?.(nextSize);
         }}
-        onSizeCommit={(nextSize) => {
+        onSizeCommitted={(nextSize) => {
           setSize(nextSize);
-          onSizeCommit?.(nextSize);
+          onSizeCommitted?.(nextSize);
         }}
       />
       <Text>Live size: {liveSize}</Text>

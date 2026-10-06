@@ -2,7 +2,7 @@ import { expect, fireEvent, userEvent, within } from 'storybook/test';
 
 import { withMockPointerCapture } from '@ui/primitives/layout/ResizeHandle/__stories__/withMockPointerCapture';
 
-import { type ResizablePanelProps } from '../types/ResizablePanelProps';
+import { type PanelResizeHandleProps } from '../types/PanelResizeHandleProps';
 
 export const playCancelledPanelResize = async ({
   canvasElement,
@@ -10,7 +10,7 @@ export const playCancelledPanelResize = async ({
   cancellation,
 }: {
   canvasElement: HTMLElement;
-  args: ResizablePanelProps;
+  args: PanelResizeHandleProps;
   cancellation: 'pointerCancel' | 'lostPointerCapture' | 'Escape';
 }) => {
   const handle = within(canvasElement).getByRole('separator');
@@ -26,24 +26,24 @@ export const playCancelledPanelResize = async ({
       });
       await pointer.pointer({ target: handle, coords: { x: 140, y: 10 } });
       await expect(handle).toHaveAttribute('aria-valuenow', '240');
-      await expect(args.onSizeChange).toHaveBeenLastCalledWith(240);
+      await expect(args.onSizePreview).toHaveBeenLastCalledWith(240);
 
       await (cancellation === 'Escape'
         ? userEvent.keyboard('{Escape}')
         : fireEvent[cancellation](handle, { pointerId: 1 }));
 
       await expect(handle).toHaveAttribute('aria-valuenow', '200');
-      await expect(args.onSizeChange).toHaveBeenLastCalledWith(200);
-      await expect(args.onSizeCommit).not.toHaveBeenCalled();
+      await expect(args.onSizePreview).toHaveBeenLastCalledWith(200);
+      await expect(args.onSizeCommitted).not.toHaveBeenCalled();
       await expect(args.onResizeEnd).toHaveBeenLastCalledWith({
         cancelled: true,
-        value: 200,
+        size: 200,
       });
       await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
       await pointer.pointer({ target: handle, coords: { x: 190, y: 10 } });
       await expect(handle).toHaveAttribute('aria-valuenow', '200');
       await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-      await expect(args.onCollapse).not.toHaveBeenCalled();
+      await expect(args.onActivate).not.toHaveBeenCalled();
 
       await pointer.pointer({
         target: handle,
@@ -53,8 +53,8 @@ export const playCancelledPanelResize = async ({
       await pointer.pointer({ target: handle, coords: { x: 110, y: 10 } });
       await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
       await expect(handle).toHaveAttribute('aria-valuenow', '210');
-      await expect(args.onSizeCommit).toHaveBeenCalledTimes(1);
-      await expect(args.onSizeCommit).toHaveBeenCalledWith(210);
+      await expect(args.onSizeCommitted).toHaveBeenCalledTimes(1);
+      await expect(args.onSizeCommitted).toHaveBeenCalledWith(210);
     },
   });
 };

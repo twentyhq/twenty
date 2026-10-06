@@ -3,7 +3,7 @@ import { type ReactNode, useRef, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
-import { ResizablePanel } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedWidth';
@@ -154,16 +154,16 @@ export const NavigationDrawer = ({
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && (
-          <ResizablePanel
+          <PanelResizeHandle
             ref={resizeHandleRef}
-            side="right"
-            min={NAVIGATION_DRAWER_CONSTRAINTS.min}
-            max={NAVIGATION_DRAWER_CONSTRAINTS.max}
+            edge="right"
+            minSize={NAVIGATION_DRAWER_CONSTRAINTS.min}
+            maxSize={NAVIGATION_DRAWER_CONSTRAINTS.max}
             size={navigationDrawerWidth}
-            onSizeChange={handleWidthPreview}
-            onSizeCommit={handleWidthChange}
-            onCollapse={handleCollapse}
-            showHandle={false}
+            onSizePreview={handleWidthPreview}
+            onSizeCommitted={handleWidthChange}
+            onActivate={handleCollapse}
+            showGrip={false}
             aria-label={t`Resize navigation drawer`}
             scale={getUiZoom}
             onResizeEnd={handleResizeEnd}

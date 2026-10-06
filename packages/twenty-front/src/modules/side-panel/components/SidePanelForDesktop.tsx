@@ -13,7 +13,7 @@ import {
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
 import { DialogContainerContext } from '@/ui/layout/dialog/contexts/DialogContainerContext';
-import { ResizablePanel } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -178,15 +178,15 @@ export const SidePanelForDesktop = () => {
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
       {isSidePanelOpened && (
-        <ResizablePanel
-          side="left"
-          min={SIDE_PANEL_CONSTRAINTS.min}
-          max={SIDE_PANEL_CONSTRAINTS.max}
+        <PanelResizeHandle
+          edge="left"
+          minSize={SIDE_PANEL_CONSTRAINTS.min}
+          maxSize={SIDE_PANEL_CONSTRAINTS.max}
           size={sidePanelWidth}
-          onSizeChange={handleWidthPreview}
-          onSizeCommit={handleWidthChange}
-          onCollapse={handleCollapse}
-          variant="gap"
+          onSizePreview={handleWidthPreview}
+          onSizeCommitted={handleWidthChange}
+          onActivate={handleCollapse}
+          placement="gap"
           aria-label={t`Resize side panel`}
           scale={getUiZoom}
           onResizeEnd={handleResizeEnd}

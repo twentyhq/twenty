@@ -7,7 +7,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ToastProvider } from 'twenty-ui/components/feedback';
-import { type ResizablePanelProps } from 'twenty-ui/components';
+import { type PanelResizeHandleProps } from 'twenty-ui/components/layout';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -33,12 +33,12 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-let capturedResizablePanelProps: ResizablePanelProps | undefined;
+let capturedPanelResizeHandleProps: PanelResizeHandleProps | undefined;
 
 jest.mock('twenty-ui/components', () => ({
   ...jest.requireActual('twenty-ui/components'),
-  ResizablePanel: (props: ResizablePanelProps) => {
-    capturedResizablePanelProps = props;
+  PanelResizeHandle: (props: PanelResizeHandleProps) => {
+    capturedPanelResizeHandleProps = props;
     return null;
   },
 }));
@@ -104,7 +104,7 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
 
 describe('LogConsole', () => {
   beforeEach(() => {
-    capturedResizablePanelProps = undefined;
+    capturedPanelResizeHandleProps = undefined;
   });
 
   it('restores the collapsed console when its opening drag is cancelled', () => {
@@ -113,14 +113,14 @@ describe('LogConsole', () => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
-    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
+    act(() => capturedPanelResizeHandleProps?.onResizeStart?.(100));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
 
     act(() =>
-      capturedResizablePanelProps?.onResizeEnd?.({
+      capturedPanelResizeHandleProps?.onResizeEnd?.({
         cancelled: true,
-        value: 0,
+        size: 0,
       }),
     );
 
@@ -133,13 +133,13 @@ describe('LogConsole', () => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
-    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
-    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+    act(() => capturedPanelResizeHandleProps?.onResizeStart?.(100));
+    const onResizeEnd = capturedPanelResizeHandleProps?.onResizeEnd;
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
 
     act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'closed'));
-    act(() => onResizeEnd?.({ cancelled: true, value: 0 }));
+    act(() => onResizeEnd?.({ cancelled: true, size: 0 }));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('closed');
   });
@@ -150,13 +150,13 @@ describe('LogConsole', () => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
-    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
-    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+    act(() => capturedPanelResizeHandleProps?.onResizeStart?.(100));
+    const onResizeEnd = capturedPanelResizeHandleProps?.onResizeEnd;
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
 
     act(() => jotaiStore.set(isLogConsoleFullScreenState.atom, true));
-    act(() => onResizeEnd?.({ cancelled: true, value: 0 }));
+    act(() => onResizeEnd?.({ cancelled: true, size: 0 }));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
     expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(true);
@@ -168,12 +168,12 @@ describe('LogConsole', () => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
-    const onResizeStart = capturedResizablePanelProps?.onResizeStart;
-    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+    const onResizeStart = capturedPanelResizeHandleProps?.onResizeStart;
+    const onResizeEnd = capturedPanelResizeHandleProps?.onResizeEnd;
 
     act(() => {
       onResizeStart?.(100);
-      onResizeEnd?.({ cancelled: true, value: 0 });
+      onResizeEnd?.({ cancelled: true, size: 0 });
     });
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
@@ -187,7 +187,7 @@ describe('LogConsole', () => {
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
 
-    act(() => capturedResizablePanelProps?.onSizeCommit?.(10));
+    act(() => capturedPanelResizeHandleProps?.onSizeCommitted?.(10));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
     expect(jotaiStore.get(logConsoleHeightState.atom)).toBe(450);
@@ -200,13 +200,13 @@ describe('LogConsole', () => {
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     });
 
-    expect(capturedResizablePanelProps?.min).toBe(
+    expect(capturedPanelResizeHandleProps?.minSize).toBe(
       LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
     );
 
-    act(() => capturedResizablePanelProps?.onResizeStart?.(300));
+    act(() => capturedPanelResizeHandleProps?.onResizeStart?.(300));
 
-    expect(capturedResizablePanelProps?.min).toBe(0);
+    expect(capturedPanelResizeHandleProps?.minSize).toBe(0);
   });
 
   it('opens when developer mode is turned on', async () => {

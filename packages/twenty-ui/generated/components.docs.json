@@ -9059,79 +9059,86 @@
     ]
   },
   {
-    "name": "ResizablePanel",
+    "name": "PanelResizeHandle",
     "entryPoint": "twenty-ui/components",
-    "slug": "components/resizable-panel",
+    "slug": "components/panel-resize-handle",
     "props": [
-      {
-        "name": "defaultSize",
-        "type": "number",
-        "required": false,
-        "defaultValue": "min",
-        "description": "Initial committed size when uncontrolled. Defaults to min."
-      },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents resizing and collapse and removes the separator from the tab order."
+        "description": "Prevents resizing and activation and removes the separator from the tab order."
+      },
+      {
+        "name": "edge",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "Physical panel edge. Left and top reverse the size change; right and bottom follow pointer movement."
       },
       {
         "name": "gapSize",
         "type": "number",
         "required": false,
         "defaultValue": "0",
-        "description": "Space occupied by the gap variant, in CSS pixels."
+        "description": "Space occupied by the gap placement, in CSS pixels."
       },
       {
-        "name": "max",
+        "name": "maxSize",
         "type": "number",
         "required": true,
         "defaultValue": null,
         "description": "Maximum allowed size."
       },
       {
-        "name": "min",
+        "name": "minSize",
         "type": "number",
         "required": true,
         "defaultValue": null,
         "description": "Minimum allowed size."
       },
       {
-        "name": "onCollapse",
+        "name": "onActivate",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Requests collapse on a click without dragging or on Enter or Space. The application controls panel visibility."
+        "description": "Requests activation on a click without dragging or on Enter or Space. The application decides whether to collapse or close the panel."
       },
       {
         "name": "onResizeEnd",
-        "type": "((details: { cancelled: boolean; value: number; }) => void)",
+        "type": "((details: { cancelled: boolean; size: number; }) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Reports whether the pointer drag was cancelled and its final or restored size."
       },
       {
         "name": "onResizeStart",
-        "type": "((value: number) => void)",
+        "type": "((size: number) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Reports the first candidate size when a pointer drag passes the movement threshold."
       },
       {
-        "name": "onSizeChange",
+        "name": "onSizeCommitted",
+        "type": "((size: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports the final size after a successful drag or a keyboard size change. Save controlled sizes here."
+      },
+      {
+        "name": "onSizePreview",
         "type": "((size: number) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Reports live size updates and the restored starting size after cancellation. Apply this size to the panel layout."
       },
       {
-        "name": "onSizeCommit",
-        "type": "((size: number) => void)",
+        "name": "placement",
+        "type": "\"edge\" | \"gap\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Reports the final size after a successful drag or a keyboard size change. Save controlled sizes here."
+        "defaultValue": "edge",
+        "description": "An absolute edge inside a positioned panel, or a gap in the surrounding layout."
       },
       {
         "name": "render",
@@ -9148,25 +9155,18 @@
         "description": "Positive CSS zoom or scale factor, or a function evaluated at pointer down. Pointer distance is divided by this value."
       },
       {
-        "name": "showHandle",
+        "name": "showGrip",
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Shows the grip on the edge variant. Does not disable interaction."
-      },
-      {
-        "name": "side",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Physical panel edge. Left and top reverse the size change; right and bottom follow pointer movement."
+        "description": "Shows the grip on the edge placement. Does not disable interaction."
       },
       {
         "name": "size",
         "type": "number",
-        "required": false,
+        "required": true,
         "defaultValue": null,
-        "description": "Controlled committed size. The panel maintains a separate live size during a drag."
+        "description": "Required committed size in CSS pixels. The handle maintains a separate live size during a drag."
       },
       {
         "name": "step",
@@ -9174,13 +9174,6 @@
         "required": false,
         "defaultValue": "10",
         "description": "Keyboard arrow increment in size units. Pointer movement is not snapped."
-      },
-      {
-        "name": "variant",
-        "type": "\"edge\" | \"gap\"",
-        "required": false,
-        "defaultValue": "edge",
-        "description": "An absolute edge inside a positioned panel, or a gap in the surrounding layout."
       }
     ]
   },

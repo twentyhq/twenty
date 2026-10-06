@@ -1,12 +1,12 @@
 import { useId, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { ResizablePanel } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
-const ResizablePanelExample = () => {
+const PanelResizeHandleExample = () => {
   const edgeRegionId = useId();
   const gapRegionId = useId();
   const [edgeSize, setEdgeSize] = useState(160);
@@ -18,26 +18,26 @@ const ResizablePanelExample = () => {
   const [lastResizeResult, setLastResizeResult] = useState('Ready');
 
   return (
-    <TwentyUiGalleryCard title="Resizable panel interactions">
+    <TwentyUiGalleryCard title="Panel resize handle interactions">
       <Card.Root
         id={edgeRegionId}
         style={{ width: edgeSize, height: 100, position: 'relative' }}
       >
         <Text>Edge size: {edgeSize}</Text>
-        <ResizablePanel
+        <PanelResizeHandle
           aria-label="Resize edge panel"
           aria-controls={edgeRegionId}
-          side="left"
-          size={edgeSize}
-          min={100}
-          max={240}
-          onSizeChange={setEdgeSize}
-          onSizeCommit={setCommittedEdgeSize}
+          edge="left"
+          size={committedEdgeSize}
+          minSize={100}
+          maxSize={240}
+          onSizePreview={setEdgeSize}
+          onSizeCommitted={setCommittedEdgeSize}
           onResizeStart={() => setLastResizeResult('Resizing')}
           onResizeEnd={({ cancelled }) =>
             setLastResizeResult(cancelled ? 'Cancelled' : 'Finished')
           }
-          onCollapse={() => setCollapseCount((count) => count + 1)}
+          onActivate={() => setCollapseCount((count) => count + 1)}
           onClick={() => setEdgeClickCount((count) => count + 1)}
         />
       </Card.Root>
@@ -45,18 +45,18 @@ const ResizablePanelExample = () => {
       <Text>Collapse count: {collapseCount}</Text>
       <Text>Edge clicks: {edgeClickCount}</Text>
       <Text>Resize result: {lastResizeResult}</Text>
-      <ResizablePanel
+      <PanelResizeHandle
         aria-label="Resize gap panel"
         aria-controls={gapRegionId}
-        variant="gap"
+        placement="gap"
         gapSize={16}
-        side="top"
-        size={gapSize}
-        min={60}
-        max={180}
+        edge="top"
+        size={committedGapSize}
+        minSize={60}
+        maxSize={180}
         scale={2}
-        onSizeChange={setGapSize}
-        onSizeCommit={setCommittedGapSize}
+        onSizePreview={setGapSize}
+        onSizeCommitted={setCommittedGapSize}
       />
       <Card.Root id={gapRegionId} style={{ height: gapSize }}>
         <Text>Gap size: {gapSize}</Text>
@@ -68,7 +68,7 @@ const ResizablePanelExample = () => {
 
 export default defineFrontComponent({
   universalIdentifier: '63822535-44c3-4d2b-b0c2-5351a355ba53',
-  name: 'twenty-ui-resizable-panel',
-  description: 'Resizable panel sizing and collapse in the sandbox',
-  component: ResizablePanelExample,
+  name: 'twenty-ui-panel-resize-handle',
+  description: 'Panel resize handle sizing and activation in the sandbox',
+  component: PanelResizeHandleExample,
 });

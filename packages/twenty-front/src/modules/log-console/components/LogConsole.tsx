@@ -7,7 +7,7 @@ import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
-import { ResizablePanel } from 'twenty-ui/components';
+import { PanelResizeHandle } from 'twenty-ui/components/layout';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -451,17 +451,17 @@ export const LogConsole = () => {
 
   const handleResizeEnd = ({
     cancelled,
-    value,
+    size,
   }: {
     cancelled: boolean;
-    value: number;
+    size: number;
   }) => {
     setIsResizing(false);
     document.documentElement.style.removeProperty(
       LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
     );
 
-    const isCancelledResizeFromCollapsed = cancelled && value === 0;
+    const isCancelledResizeFromCollapsed = cancelled && size === 0;
     const shouldRestoreCollapsedMode =
       isCancelledResizeFromCollapsed &&
       store.get(logConsoleDisplayModeState.atom) === 'open' &&
@@ -656,17 +656,17 @@ export const LogConsole = () => {
                 isResizing={isDetailPanelResizing}
               >
                 {isDefined(logConsoleSelectedLog) && (
-                  <ResizablePanel
-                    side="left"
-                    min={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
-                    max={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.max}
+                  <PanelResizeHandle
+                    edge="left"
+                    minSize={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
+                    maxSize={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.max}
                     size={detailPanelWidth}
-                    onSizeChange={handleDetailPanelWidthPreview}
-                    onSizeCommit={handleDetailPanelWidthChange}
+                    onSizePreview={handleDetailPanelWidthPreview}
+                    onSizeCommitted={handleDetailPanelWidthChange}
                     aria-label={t`Resize log details`}
                     scale={getUiZoom}
                     onResizeEnd={handleDetailPanelResizeEnd}
-                    showHandle={false}
+                    showGrip={false}
                     onResizeStart={() => setIsDetailPanelResizing(true)}
                   />
                 )}
@@ -676,13 +676,13 @@ export const LogConsole = () => {
           )}
         </TabListRoot>
         {!displayedLayout.isFullScreen && (
-          <ResizablePanel
-            side="top"
-            min={logConsoleResizeConstraints.min}
-            max={logConsoleResizeConstraints.max}
+          <PanelResizeHandle
+            edge="top"
+            minSize={logConsoleResizeConstraints.min}
+            maxSize={logConsoleResizeConstraints.max}
             size={isOpen ? logConsoleBodyHeight : 0}
-            onSizeChange={handleHeightPreview}
-            onSizeCommit={handleHeightChange}
+            onSizePreview={handleHeightPreview}
+            onSizeCommitted={handleHeightChange}
             aria-label={t`Resize log console`}
             scale={getUiZoom}
             onResizeEnd={handleResizeEnd}

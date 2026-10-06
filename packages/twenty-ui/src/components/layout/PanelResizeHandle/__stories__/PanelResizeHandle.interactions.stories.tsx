@@ -12,30 +12,31 @@ import {
 import { withMockPointerCapture } from '@ui/primitives/layout/ResizeHandle/__stories__/withMockPointerCapture';
 import { ComponentDecorator } from '@ui/testing';
 
-import { ResizablePanel } from '../ResizablePanel';
+import { PanelResizeHandle } from '../PanelResizeHandle';
 
-import { ControlledResizablePanel } from './ControlledResizablePanel';
+import { ControlledPanelResizeHandle } from './ControlledPanelResizeHandle';
 import { playCancelledPanelResize } from './playCancelledPanelResize';
-import { ResizablePanelDemo } from './ResizablePanelDemo';
-import { UnmountingResizablePanel } from './UnmountingResizablePanel';
+import { PanelResizeHandleDemo } from './PanelResizeHandleDemo';
+import { UnmountingPanelResizeHandle } from './UnmountingPanelResizeHandle';
 
 const meta = {
-  title: 'UI/Components/ResizablePanel/Interactions',
-  component: ResizablePanel,
+  title: 'UI/Components/PanelResizeHandle/Interactions',
+  component: PanelResizeHandle,
   decorators: [ComponentDecorator],
+  render: (args) => <ControlledPanelResizeHandle {...args} />,
   args: {
-    side: 'right',
-    defaultSize: 200,
-    min: 100,
-    max: 300,
+    edge: 'right',
+    size: 200,
+    minSize: 100,
+    maxSize: 300,
     style: { position: 'relative', width: 16, height: 100 },
-    onSizeChange: fn(),
-    onSizeCommit: fn(),
+    onSizePreview: fn(),
+    onSizeCommitted: fn(),
     onResizeStart: fn(),
     onResizeEnd: fn(),
-    onCollapse: fn(),
+    onActivate: fn(),
   },
-} satisfies Meta<typeof ResizablePanel>;
+} satisfies Meta<typeof PanelResizeHandle>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -49,16 +50,16 @@ export const Keyboard: Story = {
     await expect(handle).toHaveFocus();
     await userEvent.keyboard('{ArrowRight}');
     await expect(handle).toHaveAttribute('aria-valuenow', '230');
-    await expect(args.onSizeChange).toHaveBeenLastCalledWith(230);
-    await expect(args.onSizeCommit).toHaveBeenLastCalledWith(230);
+    await expect(args.onSizePreview).toHaveBeenLastCalledWith(230);
+    await expect(args.onSizeCommitted).toHaveBeenLastCalledWith(230);
     await userEvent.keyboard('{End}{ArrowRight}');
     await expect(handle).toHaveAttribute('aria-valuenow', '300');
-    await expect(args.onSizeCommit).toHaveBeenCalledTimes(2);
+    await expect(args.onSizeCommitted).toHaveBeenCalledTimes(2);
     await userEvent.keyboard('{Home}{ArrowLeft}{ArrowDown}');
     await expect(handle).toHaveAttribute('aria-valuenow', '100');
-    await expect(args.onSizeCommit).toHaveBeenCalledTimes(3);
+    await expect(args.onSizeCommitted).toHaveBeenCalledTimes(3);
     await expect(args.onResizeStart).not.toHaveBeenCalled();
-    await expect(args.onCollapse).not.toHaveBeenCalled();
+    await expect(args.onActivate).not.toHaveBeenCalled();
   },
 };
 
@@ -72,10 +73,22 @@ export const PhysicalEdges: Story = {
   ],
   render: (args) => (
     <>
-      <ResizablePanel {...args} side="left" aria-label="Left edge" />
-      <ResizablePanel {...args} side="right" aria-label="Right edge" />
-      <ResizablePanel {...args} side="top" aria-label="Top edge" />
-      <ResizablePanel {...args} side="bottom" aria-label="Bottom edge" />
+      <ControlledPanelResizeHandle
+        {...args}
+        edge="left"
+        aria-label="Left edge"
+      />
+      <ControlledPanelResizeHandle
+        {...args}
+        edge="right"
+        aria-label="Right edge"
+      />
+      <ControlledPanelResizeHandle {...args} edge="top" aria-label="Top edge" />
+      <ControlledPanelResizeHandle
+        {...args}
+        edge="bottom"
+        aria-label="Bottom edge"
+      />
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -144,7 +157,7 @@ export const PhysicalEdges: Story = {
 
 export const ControlledZoomAndLimits: Story = {
   args: { scale: () => 2 },
-  render: (args) => <ControlledResizablePanel {...args} />,
+  render: (args) => <ControlledPanelResizeHandle {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const handle = canvas.getByRole('separator');
@@ -164,7 +177,7 @@ export const ControlledZoomAndLimits: Story = {
         await expect(handle).toHaveAttribute('aria-valuenow', '250');
         await expect(canvas.getByText('Live size: 250')).toBeVisible();
         await expect(canvas.getByText('Saved size: 200')).toBeVisible();
-        await expect(args.onSizeCommit).not.toHaveBeenCalled();
+        await expect(args.onSizeCommitted).not.toHaveBeenCalled();
         await expect(args.onResizeStart).toHaveBeenCalledTimes(1);
         await expect(args.onResizeStart).toHaveBeenCalledWith(250);
         await fireEvent.pointerMove(handle, { pointerId: 2, clientX: 0 });
@@ -174,13 +187,13 @@ export const ControlledZoomAndLimits: Story = {
         await pointer.pointer({ target: handle, coords: { x: -1000 } });
         await expect(handle).toHaveAttribute('aria-valuenow', '100');
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-        await expect(args.onSizeCommit).toHaveBeenCalledTimes(1);
-        await expect(args.onSizeCommit).toHaveBeenCalledWith(100);
+        await expect(args.onSizeCommitted).toHaveBeenCalledTimes(1);
+        await expect(args.onSizeCommitted).toHaveBeenCalledWith(100);
         await expect(args.onResizeEnd).toHaveBeenLastCalledWith({
           cancelled: false,
-          value: 100,
+          size: 100,
         });
-        await expect(args.onCollapse).not.toHaveBeenCalled();
+        await expect(args.onActivate).not.toHaveBeenCalled();
         await expect(canvas.getByText('Saved size: 100')).toBeVisible();
       },
     });
@@ -222,8 +235,8 @@ export const FastPointerMoves: Story = {
           );
         }
 
-        await expect(args.onSizeChange).toHaveBeenLastCalledWith(240);
-        await expect(args.onSizeCommit).toHaveBeenCalledWith(240);
+        await expect(args.onSizePreview).toHaveBeenLastCalledWith(240);
+        await expect(args.onSizeCommitted).toHaveBeenCalledWith(240);
         await waitFor(() =>
           expect(handle).toHaveAttribute('aria-valuenow', '240'),
         );
@@ -233,7 +246,7 @@ export const FastPointerMoves: Story = {
 };
 
 export const PointerCancel: Story = {
-  render: (args) => <ControlledResizablePanel {...args} />,
+  render: (args) => <ControlledPanelResizeHandle {...args} />,
   play: ({ canvasElement, args }) =>
     playCancelledPanelResize({
       canvasElement,
@@ -271,9 +284,9 @@ export const CollapseAndDrag: Story = {
         });
         await pointer.pointer({ target: handle, coords: { x: 104, y: 10 } });
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-        await expect(args.onCollapse).toHaveBeenCalledTimes(1);
-        await expect(args.onSizeChange).not.toHaveBeenCalled();
-        await expect(args.onSizeCommit).not.toHaveBeenCalled();
+        await expect(args.onActivate).toHaveBeenCalledTimes(1);
+        await expect(args.onSizePreview).not.toHaveBeenCalled();
+        await expect(args.onSizeCommitted).not.toHaveBeenCalled();
 
         await pointer.pointer({
           target: handle,
@@ -283,23 +296,23 @@ export const CollapseAndDrag: Story = {
         await pointer.pointer({ target: handle, coords: { x: 106, y: 10 } });
         await pointer.pointer({ target: handle, coords: { x: 100, y: 10 } });
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-        await expect(args.onCollapse).toHaveBeenCalledTimes(1);
-        await expect(args.onSizeCommit).toHaveBeenCalledTimes(1);
-        await expect(args.onSizeCommit).toHaveBeenCalledWith(200);
+        await expect(args.onActivate).toHaveBeenCalledTimes(1);
+        await expect(args.onSizeCommitted).toHaveBeenCalledTimes(1);
+        await expect(args.onSizeCommitted).toHaveBeenCalledWith(200);
         await expect(handle).toHaveAttribute('aria-valuenow', '200');
       },
     });
 
     handle.focus();
     await userEvent.keyboard('{Enter} ');
-    await expect(args.onCollapse).toHaveBeenCalledTimes(3);
-    await expect(args.onSizeCommit).toHaveBeenCalledTimes(1);
+    await expect(args.onActivate).toHaveBeenCalledTimes(3);
+    await expect(args.onSizeCommitted).toHaveBeenCalledTimes(1);
     await expect(handle).toHaveFocus();
   },
 };
 
 export const DragPinnedAtBound: Story = {
-  args: { defaultSize: 300 },
+  args: { size: 300 },
   play: async ({ canvasElement, args }) => {
     const handle = within(canvasElement).getByRole('separator');
     const pointer = userEvent.setup();
@@ -316,14 +329,16 @@ export const DragPinnedAtBound: Story = {
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         await expect(handle).toHaveAttribute('aria-valuenow', '300');
         await expect(args.onResizeStart).toHaveBeenCalledWith(300);
-        await expect(args.onCollapse).not.toHaveBeenCalled();
+        await expect(args.onActivate).not.toHaveBeenCalled();
       },
     });
   },
 };
 
 export const CollapseMovesFocus: Story = {
-  render: () => <ResizablePanelDemo side="right" min={140} max={360} />,
+  render: () => (
+    <PanelResizeHandleDemo edge="right" minSize={140} maxSize={360} />
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -345,11 +360,11 @@ export const CollapseMovesFocus: Story = {
 export const IndependentInstances: Story = {
   render: (args) => (
     <>
-      <ResizablePanel {...args} aria-label="Notes" />
-      <ResizablePanel
+      <ControlledPanelResizeHandle {...args} aria-label="Notes" />
+      <ControlledPanelResizeHandle
         {...args}
         aria-label="Activity"
-        variant="gap"
+        placement="gap"
         gapSize={12}
       />
     </>
@@ -385,14 +400,14 @@ export const Disabled: Story = {
     handle.focus();
     await userEvent.keyboard('{ArrowRight}{Enter} ');
     await expect(handle).toHaveAttribute('aria-valuenow', '200');
-    await expect(args.onSizeChange).not.toHaveBeenCalled();
-    await expect(args.onSizeCommit).not.toHaveBeenCalled();
-    await expect(args.onCollapse).not.toHaveBeenCalled();
+    await expect(args.onSizePreview).not.toHaveBeenCalled();
+    await expect(args.onSizeCommitted).not.toHaveBeenCalled();
+    await expect(args.onActivate).not.toHaveBeenCalled();
   },
 };
 
 export const UnmountWhileDragging: Story = {
-  render: (args) => <UnmountingResizablePanel {...args} />,
+  render: (args) => <UnmountingPanelResizeHandle {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const handle = canvas.getByRole('separator');
@@ -415,10 +430,10 @@ export const UnmountWhileDragging: Story = {
         await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
         await expect(args.onResizeEnd).toHaveBeenCalledWith({
           cancelled: true,
-          value: 200,
+          size: 200,
         });
-        await expect(args.onSizeCommit).not.toHaveBeenCalled();
-        await expect(args.onCollapse).not.toHaveBeenCalled();
+        await expect(args.onSizeCommitted).not.toHaveBeenCalled();
+        await expect(args.onActivate).not.toHaveBeenCalled();
         await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
       },
     });

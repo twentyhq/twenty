@@ -5,15 +5,18 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
-import { ResizablePanel } from '../ResizablePanel';
-import { type ResizablePanelProps } from '../types/ResizablePanelProps';
+import { PanelResizeHandle } from '../PanelResizeHandle';
+import { type PanelResizeHandleProps } from '../types/PanelResizeHandleProps';
 
-export const ResizablePanelDemo = ({
-  side = 'right',
-  variant = 'edge',
-  min,
-  max,
-}: Pick<ResizablePanelProps, 'side' | 'variant' | 'min' | 'max'>) => {
+export const PanelResizeHandleDemo = ({
+  edge = 'right',
+  placement = 'edge',
+  minSize,
+  maxSize,
+}: Pick<
+  PanelResizeHandleProps,
+  'edge' | 'placement' | 'minSize' | 'maxSize'
+>) => {
   const regionId = useId();
   const separatorRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(220);
@@ -41,27 +44,27 @@ export const ResizablePanelDemo = ({
     setIsCollapsed(false);
   };
 
-  const isHorizontal = side === 'left' || side === 'right';
-  const isBefore = side === 'left' || side === 'top';
+  const isHorizontal = edge === 'left' || edge === 'right';
+  const isBefore = edge === 'left' || edge === 'top';
   const adjacentPanel = (
     <Card.Root style={{ padding: 24 }}>
       <Text>Activity</Text>
     </Card.Root>
   );
   const separator = (
-    <ResizablePanel
+    <PanelResizeHandle
       ref={mergedSeparatorRef}
-      side={side}
-      variant={variant}
+      edge={edge}
+      placement={placement}
       gapSize={12}
       aria-label="Resize notes"
       aria-controls={regionId}
       size={committedSize}
-      min={min}
-      max={max}
-      onSizeChange={setSize}
-      onSizeCommit={setCommittedSize}
-      onCollapse={collapseNotes}
+      minSize={minSize}
+      maxSize={maxSize}
+      onSizePreview={setSize}
+      onSizeCommitted={setCommittedSize}
+      onActivate={collapseNotes}
     />
   );
 
@@ -81,8 +84,8 @@ export const ResizablePanelDemo = ({
         width: isHorizontal ? 'auto' : 320,
       }}
     >
-      {variant === 'gap' && isBefore && adjacentPanel}
-      {variant === 'gap' && isBefore && separator}
+      {placement === 'gap' && isBefore && adjacentPanel}
+      {placement === 'gap' && isBefore && separator}
       <Card.Root
         id={regionId}
         style={{
@@ -97,10 +100,10 @@ export const ResizablePanelDemo = ({
         <Text>Notes</Text>
         <Text>{size} pixels</Text>
         <Text>Saved: {committedSize} pixels</Text>
-        {variant === 'edge' && separator}
+        {placement === 'edge' && separator}
       </Card.Root>
-      {variant === 'gap' && !isBefore && separator}
-      {variant === 'gap' && !isBefore && adjacentPanel}
+      {placement === 'gap' && !isBefore && separator}
+      {placement === 'gap' && !isBefore && adjacentPanel}
     </div>
   );
 };

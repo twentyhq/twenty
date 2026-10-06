@@ -159,12 +159,13 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/layout/animated-icon-crossfade',
   UI_COMPONENTS_LAYOUT_OVERFLOWING_LIST:
     '/ui/components/layout/overflowing-list',
+  UI_COMPONENTS_LAYOUT_PANEL_RESIZE_HANDLE:
+    '/ui/components/layout/panel-resize-handle',
   UI_COMPONENTS_LAYOUT_SECTION: '/ui/components/layout/section',
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
   UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',
-  UI_COMPONENTS_RESIZABLE_PANEL: '/ui/components/resizable-panel',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SETTINGS_SETTINGS_ROW: '/ui/components/settings/settings-row',
   UI_DARK_MODE: '/ui/dark-mode',

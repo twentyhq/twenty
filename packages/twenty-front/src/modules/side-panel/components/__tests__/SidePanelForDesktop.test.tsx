@@ -41,7 +41,7 @@ jest.mock('@/side-panel/components/SidePanelWidthEffect', () => ({
 
 jest.mock('twenty-ui/components', () => ({
   ...jest.requireActual('twenty-ui/components'),
-  ResizablePanel: () => null,
+  PanelResizeHandle: () => null,
 }));
 
 jest.mock(

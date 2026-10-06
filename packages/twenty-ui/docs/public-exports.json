@@ -119,14 +119,14 @@
     "values": {
       "AnimatedIconCrossfade": "components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade",
       "OverflowingList": "components/layout/OverflowingList/OverflowingList",
-      "Section": "components/layout/Section/Section",
-      "ResizablePanel": "components/layout/ResizablePanel/ResizablePanel"
+      "PanelResizeHandle": "components/layout/PanelResizeHandle/PanelResizeHandle",
+      "Section": "components/layout/Section/Section"
     },
     "types": {
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
+      "PanelResizeHandleProps": "components/layout/PanelResizeHandle/types/PanelResizeHandleProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
-      "SectionRootProps": "components/layout/Section/types/SectionRootProps",
-      "ResizablePanelProps": "components/layout/ResizablePanel/types/ResizablePanelProps"
+      "SectionRootProps": "components/layout/Section/types/SectionRootProps"
     }
   },
   "components/navigation": {
