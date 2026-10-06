@@ -32,7 +32,9 @@ export const getAgentChatThreadInboxStatus = ({
       isUnread,
       isSubscribed,
       isMentioned,
-      event: isDefined(archivedAt) ? { type: 'DONE', at: archivedAt } : null,
+      event: isDefined(archivedAt)
+        ? { type: 'UNSUBSCRIBED', at: archivedAt }
+        : null,
     };
   }
 

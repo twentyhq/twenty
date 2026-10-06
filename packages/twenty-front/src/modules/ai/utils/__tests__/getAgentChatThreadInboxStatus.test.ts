@@ -139,7 +139,7 @@ describe('getAgentChatThreadInboxStatus', () => {
       isUnread: true,
       isSubscribed: false,
       isMentioned: false,
-      event: { type: 'DONE', at: ARCHIVED_AT },
+      event: { type: 'UNSUBSCRIBED', at: ARCHIVED_AT },
     });
   });
 

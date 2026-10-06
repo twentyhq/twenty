@@ -5,7 +5,7 @@ export type AgentChatThreadInboxStatus = {
   isMentioned: boolean;
   // The latest inbox change the member made, shown on the row and in the chat
   event: {
-    type: 'SNOOZED' | 'SNOOZE_ENDED' | 'DONE';
+    type: 'SNOOZED' | 'SNOOZE_ENDED' | 'DONE' | 'UNSUBSCRIBED';
     at: string;
   } | null;
 };
