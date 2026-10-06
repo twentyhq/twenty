@@ -177,7 +177,7 @@ export const WorkflowEditActionFindRecords = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
         {isDefined(selectedObjectMetadataItem) && (
           <div>
             <InputLabel>{t`Filter`}</InputLabel>

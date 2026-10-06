@@ -230,7 +230,7 @@ export const AiChatContextUsageButton = () => {
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (
               <>
-                <Separator style={{ margin: 0 }} />
+                <Separator />
                 <StyledFooter>
                   <Button
                     size="sm"

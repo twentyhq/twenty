@@ -288,7 +288,7 @@ export const WorkflowEditActionPickRecord = ({
           </>
         )}
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {isDefined(selectedObjectMetadataItem) && (
           <FormMultiRecordPicker

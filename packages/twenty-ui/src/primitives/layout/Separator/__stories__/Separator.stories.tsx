@@ -18,9 +18,11 @@ type Story = StoryObj<typeof Separator>;
 export const Default: Story = {
   args: { 'aria-label': 'Sections' },
   play: async ({ canvasElement }) => {
-    expect(
-      within(canvasElement).getByRole('separator', { name: 'Sections' }),
-    ).toHaveAttribute('aria-orientation', 'horizontal');
+    const separator = within(canvasElement).getByRole('separator', {
+      name: 'Sections',
+    });
+    await expect(separator).toHaveAttribute('aria-orientation', 'horizontal');
+    await expect(getComputedStyle(separator).margin).toBe('0px');
   },
 };
 
@@ -37,6 +39,7 @@ export const Vertical: Story = {
     expect(separator).toHaveAttribute('aria-orientation', 'vertical');
     expect(separator.getBoundingClientRect().width).toBe(1);
     expect(separator.getBoundingClientRect().height).toBe(80);
+    await expect(getComputedStyle(separator).margin).toBe('0px');
   },
 };
 

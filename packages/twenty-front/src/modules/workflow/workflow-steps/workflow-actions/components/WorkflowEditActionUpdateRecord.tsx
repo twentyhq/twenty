@@ -179,7 +179,7 @@ export const WorkflowEditActionUpdateRecord = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker
@@ -209,7 +209,7 @@ export const WorkflowEditActionUpdateRecord = ({
           />
         )}
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {formData.fieldsToUpdate.map((fieldName) => {
           const fieldDefinition = inlineFieldDefinitions?.find((definition) => {

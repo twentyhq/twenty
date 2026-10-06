@@ -34,7 +34,6 @@ export const LabeledDivider = ({
   const separatorStyle = {
     backgroundColor: color,
     flexGrow: 1,
-    margin: 0,
     width: 'auto',
   };
 

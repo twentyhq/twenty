@@ -178,7 +178,7 @@ export const WorkflowEditActionDelay = ({
           onChange={handleDelayTypeChange}
           disabled={actionOptions.readonly}
         />
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {action.settings.input.delayType === 'SCHEDULED_DATE' && (
           <FormDateTimeFieldInput

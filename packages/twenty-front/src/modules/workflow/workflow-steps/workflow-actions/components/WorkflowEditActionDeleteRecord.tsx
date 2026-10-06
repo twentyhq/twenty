@@ -137,7 +137,7 @@ export const WorkflowEditActionDeleteRecord = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker

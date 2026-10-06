@@ -217,7 +217,7 @@ export const WorkflowEditActionCreateRecord = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
           const currentValue = isFieldRelationManyToOne(fieldDefinition)

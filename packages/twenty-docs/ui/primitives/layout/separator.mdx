@@ -21,17 +21,17 @@ import { Separator } from 'twenty-ui/primitives/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ImportSources = () => (
-  <>
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
     <Text>Import records from a CSV file.</Text>
     <Separator />
     <Text>Connect an external data source.</Text>
-  </>
+  </Text>
 );
 ```
 
 ## Orientation and appearance
 
-`orientation` defaults to `horizontal`. Horizontal separators fill the available width and have vertical margins. Vertical separators stretch along their flex container and have horizontal margins. Give a standalone vertical separator a height. Use native `style` or `className` for spacing and line color. Base UI also accepts functions of the orientation for these props.
+`orientation` defaults to `horizontal`. Margins default to zero in both orientations. Horizontal separators fill the available width. Vertical separators stretch along their flex container. Give a standalone vertical separator a height. Control spacing through the parent layout, or use native `style` or `className` for explicit margins and line color. Base UI also accepts functions of the orientation for these props.
 
 <StoryEmbed
   storyId="ui-layout-separator--vertical-documentation"
@@ -52,18 +52,18 @@ export const LabeledDivider = () => (
     aria-label="or"
     style={{ display: 'flex', alignItems: 'center' }}
   >
-    <Separator aria-hidden style={{ flex: 1, width: 'auto', margin: 0 }} />
+    <Separator aria-hidden style={{ flex: 1, width: 'auto' }} />
     <Text render={<span />} style={{ marginInline: 'var(--t-spacing-2)' }}>
       or
     </Text>
-    <Separator aria-hidden style={{ flex: 1, width: 'auto', margin: 0 }} />
+    <Separator aria-hidden style={{ flex: 1, width: 'auto' }} />
   </Text>
 );
 ```
 
 ## Migration
 
-Replace the former horizontal helper with `Separator`. Replace `noMargin` with `style={{ margin: 0 }}` and `color` with `style={{ backgroundColor: color }}`. Move `text` and `textPosition` into a labeled composition. Replace separators used only for invisible spacing with layout spacing.
+Replace the former horizontal helper with `Separator`. Remove `noMargin`, since margins now default to zero. To keep the former default spacing, add `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Replace `color` with `style={{ backgroundColor: color }}`. Move `text` and `textPosition` into a labeled composition. Replace separators used only for invisible spacing with layout spacing.
 
 ## Props
 

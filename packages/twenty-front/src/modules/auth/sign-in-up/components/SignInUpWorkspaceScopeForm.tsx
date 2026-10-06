@@ -14,6 +14,7 @@ import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpWorkspaceScopeForm = () => {
@@ -56,7 +57,7 @@ export const SignInUpWorkspaceScopeForm = () => {
           providers.microsoft ||
           providers.sso.length > 0) &&
         providers.password ? (
-          <Separator />
+          <Separator style={{ marginBlock: themeCssVariables.spacing[3] }} />
         ) : null}
         {providers.password && (
           // oxlint-disable-next-line react/jsx-props-no-spreading

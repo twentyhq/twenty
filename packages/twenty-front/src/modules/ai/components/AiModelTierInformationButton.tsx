@@ -144,7 +144,7 @@ export const AiModelTierInformationButton = ({
                 {label}
               </MetricRow>
             ))}
-            <Separator style={{ margin: 0 }} />
+            <Separator />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
               <MetricRow key={label} startIcon={Icon} value={value}>

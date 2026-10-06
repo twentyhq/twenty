@@ -137,7 +137,7 @@ export const Toast = ({
           )}
           {isDefined(action) && (
             <div className={styles.footer}>
-              <Separator style={{ margin: 0 }} />
+              <Separator />
               <div className={styles.footerAction}>{action}</div>
             </div>
           )}

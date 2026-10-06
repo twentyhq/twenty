@@ -50,7 +50,7 @@ export const AiChatContextUsageDetails = () => {
     <>
       {isDefined(lastMessage) && (
         <>
-          <Separator style={{ margin: 0 }} />
+          <Separator />
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
             <MetricRow
@@ -83,7 +83,7 @@ export const AiChatContextUsageDetails = () => {
           </StyledSection>
         </>
       )}
-      <Separator style={{ margin: 0 }} />
+      <Separator />
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow

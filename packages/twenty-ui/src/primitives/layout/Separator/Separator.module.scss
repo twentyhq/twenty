@@ -1,16 +1,15 @@
 .root {
   background-color: var(--t-border-color-medium);
   flex-shrink: 0;
+  margin: 0;
 
   &[data-orientation='horizontal'] {
     height: 1px;
-    margin-block: var(--t-spacing-3);
     width: 100%;
   }
 
   &[data-orientation='vertical'] {
     align-self: stretch;
-    margin-inline: var(--t-spacing-3);
     width: 1px;
   }
 }

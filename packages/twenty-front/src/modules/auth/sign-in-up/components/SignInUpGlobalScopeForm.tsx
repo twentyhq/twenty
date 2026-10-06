@@ -253,6 +253,7 @@ export const SignInUpGlobalScopeForm = () => {
             <Separator
               style={{
                 backgroundColor: themeCssVariables.background.transparent.light,
+                marginBlock: themeCssVariables.spacing[3],
               }}
             />
           )}

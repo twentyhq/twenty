@@ -180,7 +180,7 @@ export const WorkflowEditActionWaitForEvent = ({
             actionType="DATABASE_EVENT"
           />
         )}
-        <Separator style={{ margin: 0 }} />
+        <Separator />
         <FormNumberFieldInput
           label={t`Timeout days (Optional)`}
           defaultValue={timeoutDraft.days}

@@ -257,12 +257,10 @@ export const WorkflowEditActionIfElseBody = ({
 
           return (
             <Fragment key={branch.id}>
-              {branchIndex > 0 && !isElse && (
-                <Separator style={{ margin: 0 }} />
-              )}
+              {branchIndex > 0 && !isElse && <Separator />}
               {isElse && !isReadonly && (
                 <>
-                  <Separator style={{ margin: 0 }} />
+                  <Separator />
                   <Button
                     startIcon={<IconPlus />}
                     size="sm"

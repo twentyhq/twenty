@@ -152,7 +152,7 @@ export const WorkflowEditActionClassify = ({
 
         {questions.map((question) => (
           <StyledQuestion key={question.id}>
-            <Separator style={{ margin: 0 }} />
+            <Separator />
 
             <FormFieldInputContainer>
               <StyledNameRow>
@@ -231,7 +231,7 @@ export const WorkflowEditActionClassify = ({
 
         {!readonly && (
           <>
-            <Separator style={{ margin: 0 }} />
+            <Separator />
             <Button
               startIcon={<IconPlus />}
               onClick={() =>

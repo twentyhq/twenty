@@ -114,7 +114,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
       </StyledSection>
       {isNonEmptyArray(earnedCreditsByStep) && (
         <>
-          <Separator style={{ margin: 0 }} />
+          <Separator />
           <StyledSection>
             <StyledSectionTitle>{t`Breakdown`}</StyledSectionTitle>
             {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => (
@@ -133,7 +133,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           </StyledSection>
         </>
       )}
-      <Separator style={{ margin: 0 }} />
+      <Separator />
       <StyledSection>
         <StyledSectionTitle>
           {earnedCredits > 0
@@ -165,7 +165,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           {t`Shared inbox emails`}
         </MetricRow>
       </StyledSection>
-      <Separator style={{ margin: 0 }} />
+      <Separator />
       <StyledFooter>
         <IconInfoCircle size={theme.icon.size.sm} />
         {t`Stacks on top of your plan and never expires`}

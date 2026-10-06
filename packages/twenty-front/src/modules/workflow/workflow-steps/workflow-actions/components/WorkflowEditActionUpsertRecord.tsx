@@ -253,7 +253,7 @@ export const WorkflowEditActionUpsertRecord = ({
             />
           )}
 
-        <Separator style={{ margin: 0 }} />
+        <Separator />
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
           const isIdField = fieldDefinition.metadata.fieldName === 'id';
