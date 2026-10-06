@@ -12,15 +12,13 @@ import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constant
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
+import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
 const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
-
-type SlackAssistantRequestStatus =
-  (typeof SLACK_ASSISTANT_REQUEST_STATUS)[keyof typeof SLACK_ASSISTANT_REQUEST_STATUS];
 
 type SlackAssistantRequestRecordFields = {
   id?: string;

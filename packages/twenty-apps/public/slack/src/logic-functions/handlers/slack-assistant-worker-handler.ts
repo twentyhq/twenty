@@ -14,6 +14,7 @@ import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack
 import { findSlackAssistantRequestStatusesBySlackMessages } from 'src/logic-functions/data/find-slack-assistant-request-statuses-by-slack-messages';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
+import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
@@ -38,6 +39,7 @@ import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
@@ -232,7 +234,13 @@ export const slackAssistantWorkerHandler = async (
         slackMessageTimestamps: conversationThreadMessages
           .map((message) => message.ts)
           .filter(isNonEmptyString),
-      }).catch(() => new Map<string, string>());
+      }).catch((error) => {
+        console.warn(
+          `[slack] failed to read the request statuses of thread ${parentMessageTimestamp} in ${slackChannelId}, answering with the whole window: ${toErrorMessage(error)}`,
+        );
+
+        return new Map<string, SlackAssistantRequestStatus>();
+      });
 
     const conversationMessages = buildSlackConversationMessages({
       messages: conversationThreadMessages,

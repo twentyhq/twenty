@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { buildSlackSharedFilesDescription } from 'src/logic-functions/utils/build-slack-shared-files-description';
 import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
@@ -43,20 +44,21 @@ export const buildSlackConversationMessages = ({
 }: {
   messages: ReadonlyArray<SlackThreadMessage>;
   assistantBotUserId: string | undefined;
-  requestStatusByMessageTimestamp: ReadonlyMap<string, string>;
+  requestStatusByMessageTimestamp: ReadonlyMap<
+    string,
+    SlackAssistantRequestStatus
+  >;
 }): SlackAssistantAgentMessage[] => {
-  const getRequestStatus = (message: SlackThreadMessage): string | undefined =>
+  const getRequestStatus = (
+    message: SlackThreadMessage,
+  ): SlackAssistantRequestStatus | undefined =>
     isNonEmptyString(message.ts)
       ? requestStatusByMessageTimestamp.get(message.ts)
       : undefined;
 
-  let lastAnsweredRequestIndex = -1;
-
-  messages.forEach((message, index) => {
-    if (getRequestStatus(message) === SLACK_ASSISTANT_REQUEST_STATUS.DONE) {
-      lastAnsweredRequestIndex = index;
-    }
-  });
+  const lastAnsweredRequestIndex = messages
+    .map(getRequestStatus)
+    .lastIndexOf(SLACK_ASSISTANT_REQUEST_STATUS.DONE);
 
   return messages
     .slice(lastAnsweredRequestIndex + 1)
