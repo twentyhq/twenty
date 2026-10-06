@@ -12,6 +12,8 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -125,8 +127,69 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     ]);
 
     // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
-    await this.agentChatThreadRepository.delete(workspace.id, {
+    await this.removeAgentChatThreads({
+      workspaceId: workspace.id,
       workspaceMemberId: workspaceMember.id,
     });
+  }
+
+  // A chat in a channel is the channel's, so it stays there without an owner.
+  // The member leaves their channels, along with the grants they read through
+  private async removeAgentChatThreads({
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    if (
+      !isDefined(
+        findAgentChatFlatObjectMetadata(
+          flatObjectMetadataMaps,
+          'agentChatChannel',
+        ),
+      )
+    ) {
+      await this.agentChatThreadRepository.delete(workspaceId, {
+        workspaceMemberId,
+      });
+
+      return;
+    }
+
+    const { memberTable, recordShareTable } =
+      getAgentChatChannelTables(workspaceId);
+
+    await this.agentChatThreadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        await manager.query(
+          `UPDATE ${table('agentChatThread')}
+           SET "workspaceMemberId" = NULL, "userWorkspaceId" = NULL, "updatedAt" = now()
+           WHERE "workspaceMemberId" = $1 AND "channelId" IS NOT NULL`,
+          [workspaceMemberId],
+        );
+        await manager.query(
+          `DELETE FROM ${table('agentChatThread')}
+           WHERE "workspaceMemberId" = $1 AND "channelId" IS NULL`,
+          [workspaceMemberId],
+        );
+        await manager.query(
+          `WITH removed_membership AS (
+             DELETE FROM ${memberTable} WHERE "workspaceMemberId" = $1
+             RETURNING id
+           )
+           DELETE FROM ${recordShareTable}
+           WHERE "rowCause" = 'RULE'
+             AND "sourceId" IN (SELECT id FROM removed_membership)`,
+          [workspaceMemberId],
+        );
+      },
+    );
   }
 }

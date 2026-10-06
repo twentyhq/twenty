@@ -53,9 +53,104 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        readability: MetadataReadability.PRIVATE,
+        // A chat in a channel reads and replies like its channel; a chat
+        // with no channel has no parent and stays private to its grants
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['channel'],
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'title',
+      },
+    }),
+  agentChatChannel: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatChannel'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatChannel',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatChannel.universalIdentifier,
+        nameSingular: 'agentChatChannel',
+        namePlural: 'agentChatChannels',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Channel',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Channels',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Shared inbox where a team triages chats together',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconHash',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        // Members reach a private channel through the grant each membership
+        // carries, and everyone reaches a public one through its general
+        // access; only the channel resolvers write it
+        readability: MetadataReadability.PRIVATE,
+        // Its chats are written through it, which a SYSTEM object would
+        // refuse. Its fields stay SYSTEM, so only the server changes it
+        writability: MetadataWritability.OPEN,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+    }),
+  agentChatChannelMember: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatChannelMember'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatChannelMember',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatChannelMember.universalIdentifier,
+        nameSingular: 'agentChatChannelMember',
+        namePlural: 'agentChatChannelMembers',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Channel member',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Channel members',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Member who joined a channel',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['channel'],
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
       },
     }),
   agentChatThreadTarget: (

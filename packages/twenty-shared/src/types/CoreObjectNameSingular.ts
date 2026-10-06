@@ -1,6 +1,8 @@
 export enum CoreObjectNameSingular {
   Activity = 'activity',
   ActivityTarget = 'activityTarget',
+  AgentChatChannel = 'agentChatChannel',
+  AgentChatChannelMember = 'agentChatChannelMember',
   AgentChatThread = 'agentChatThread',
   AgentChatThreadParticipant = 'agentChatThreadParticipant',
   AgentChatThreadTarget = 'agentChatThreadTarget',

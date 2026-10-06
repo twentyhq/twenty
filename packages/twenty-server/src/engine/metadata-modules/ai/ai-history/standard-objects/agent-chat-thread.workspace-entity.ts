@@ -2,6 +2,7 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { type AgentChatChannelWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-channel.workspace-entity';
 import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -15,12 +16,16 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
   participants: EntityRelation<AgentChatThreadParticipantWorkspaceEntity[]>;
   assignee: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
+  channel: EntityRelation<AgentChatChannelWorkspaceEntity> | null;
 
   archivedAt: string | null;
   userWorkspaceId: string | null;
 
   workspaceMemberId: string | null;
   assigneeId: string | null;
+  channelId: string | null;
+  channelArchivedAt: string | null;
+  channelSnoozedUntil: string | null;
   title: string | null;
   lastActivityAt: string | null;
   lastMessageText: string | null;

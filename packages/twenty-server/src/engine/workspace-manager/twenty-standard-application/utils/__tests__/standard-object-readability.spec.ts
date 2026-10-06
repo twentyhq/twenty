@@ -23,6 +23,8 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
   agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
+  agentChatThread: STANDARD_OBJECT_FIELDS.agentChatThread.channel,
+  agentChatChannelMember: STANDARD_OBJECT_FIELDS.agentChatChannelMember.channel,
 } as const;
 
 describe('Standard object readability', () => {
@@ -66,8 +68,8 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
-    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+    STANDARD_OBJECTS.agentChatChannel.universalIdentifier,
 
     STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
@@ -110,11 +112,44 @@ describe('Standard object readability', () => {
     },
   );
 
-  it('declares agentChatThread PRIVATE, read through its own grants', () => {
-    expect(findStandardFlatObjectMetadata('agentChatThread')).toMatchObject({
+  // A chat with no channel has no parent, so it reads through its own grants
+  it('resolves its channel as the only parent of an agentChatThread', () => {
+    expect(
+      resolveParents('agentChatThread').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'channelId', parentNameSingular: 'agentChatChannel' },
+    ]);
+  });
+
+  // A SYSTEM parent would refuse every write to the chats inheriting from it
+  it('declares agentChatChannel PRIVATE and OPEN, with only SYSTEM fields', () => {
+    expect(findStandardFlatObjectMetadata('agentChatChannel')).toMatchObject({
       readability: MetadataReadability.PRIVATE,
-      readabilityParentFieldUniversalIdentifiers: null,
+      writability: MetadataWritability.OPEN,
     });
+
+    const channelFieldWritabilities = Object.values(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatFieldMetadata) =>
+          flatFieldMetadata.objectMetadataUniversalIdentifier ===
+          STANDARD_OBJECTS.agentChatChannel.universalIdentifier,
+      )
+      .map((flatFieldMetadata) => flatFieldMetadata.writability);
+
+    expect(channelFieldWritabilities.length).toBeGreaterThan(0);
+    expect(new Set(channelFieldWritabilities)).toEqual(
+      new Set([MetadataWritability.SYSTEM]),
+    );
   });
 
   it('declares agentChatThreadParticipant PRIVATE, written only by the chat resolvers', () => {
@@ -188,7 +223,7 @@ describe('Standard object readability', () => {
     ).toContainEqual({
       joinColumnName: 'targetAgentChatThreadId',
       parentNameSingular: 'agentChatThread',
-      parentReadability: MetadataReadability.PRIVATE,
+      parentReadability: MetadataReadability.INHERITED,
     });
   });
 

@@ -51,9 +51,9 @@ export class AgentChatSharingService {
   ) {}
 
   // Fence for the 2.46 cross-upgrade window: until
-  // upgrade:2-46:add-agent-chat-thread-participant-object has reached a
-  // workspace, it has neither the participant table nor the thread's
-  // lastActivityAt column. Remove once 2.46 leaves the window.
+  // upgrade:2-46:add-agent-chat-channels, the last of the 2.46 inbox
+  // commands, has reached a workspace, it lacks some of the participant
+  // table and the thread's inbox columns. Remove once 2.46 leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
     return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
   }
@@ -65,6 +65,17 @@ export class AgentChatSharingService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
+
+    if (
+      !isDefined(
+        findAgentChatFlatObjectMetadata(
+          flatObjectMetadataMaps,
+          'agentChatChannel',
+        ),
+      )
+    ) {
+      return undefined;
+    }
 
     return findAgentChatFlatObjectMetadata(
       flatObjectMetadataMaps,
@@ -205,6 +216,8 @@ export class AgentChatSharingService {
     title?: string;
     // filed under done for its owner, until activity brings it back to their inbox
     isArchived?: boolean;
+    // checked by the caller, as the member must be able to write in it
+    channelId?: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -228,13 +241,14 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
-           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''}${isDefined(args.channelId) ? ', "channelId"' : ''})
+           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}${isDefined(args.channelId) ? ', $5' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
             authContext.workspaceMemberId,
             authContext.userWorkspaceId,
+            ...(isDefined(args.channelId) ? [args.channelId] : []),
           ],
         );
         const record = records[0];

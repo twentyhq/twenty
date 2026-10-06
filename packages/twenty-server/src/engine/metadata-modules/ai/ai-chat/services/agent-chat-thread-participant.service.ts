@@ -35,12 +35,21 @@ type BuildParticipantWriteQuery = (tables: {
   threadTable: string;
 }) => string;
 
+// A member reading or filing a channel chat they do not follow gets a row
+// without following it; any other chat is theirs to follow
+const IS_SUBSCRIBED_BY_DEFAULT = 'thread."channelId" IS NULL';
+
 // A snooze whose end is already due, which its queued end may have checked
 // before this write, is saved as ended. A snoozed thread is meant to come
 // back, so snoozing follows it again
-const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
-  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")
-   VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3)
+const buildArchiveQuery: BuildParticipantWriteQuery = ({
+  participantTable,
+  threadTable,
+}) =>
+  `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed")
+   SELECT thread.id, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3,
+     $3::timestamptz IS NOT NULL OR ${IS_SUBSCRIBED_BY_DEFAULT}
+   FROM ${threadTable} thread WHERE thread.id = $1
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
      "archivedAt" = EXCLUDED."archivedAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
@@ -72,8 +81,9 @@ export class AgentChatThreadParticipantService {
     return this.upsertOne(
       args,
       ({ participantTable, threadTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-         SELECT thread.id, $2, thread."lastActivityAt" FROM ${threadTable} thread WHERE thread.id = $1
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
+         SELECT thread.id, $2, thread."lastActivityAt", ${IS_SUBSCRIBED_BY_DEFAULT}
+         FROM ${threadTable} thread WHERE thread.id = $1
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
            "updatedAt" = now()
@@ -86,9 +96,10 @@ export class AgentChatThreadParticipantService {
   ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
-      ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-         VALUES ($1, $2, NULL)
+      ({ participantTable, threadTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
+         SELECT thread.id, $2, NULL, ${IS_SUBSCRIBED_BY_DEFAULT}
+         FROM ${threadTable} thread WHERE thread.id = $1
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = NULL,
            "updatedAt" = now()
@@ -267,6 +278,19 @@ export class AgentChatThreadParticipantService {
          RETURNING *`,
       [snoozedUntil],
     );
+  }
+
+  async isFollowing(args: AgentChatThreadAccessArgs): Promise<boolean> {
+    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
+      return false;
+    }
+
+    const participant = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager }) => this.findOne({ manager, ...args }),
+    );
+
+    return participant?.isSubscribed ?? false;
   }
 
   // For the row written along with a new thread

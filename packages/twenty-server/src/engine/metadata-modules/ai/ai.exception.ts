@@ -18,6 +18,14 @@ export enum AiExceptionCode {
   CHAT_THREAD_INBOX_STATE_UNAVAILABLE = 'CHAT_THREAD_INBOX_STATE_UNAVAILABLE',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
+  CHAT_THREAD_NOT_IN_CHANNEL = 'CHAT_THREAD_NOT_IN_CHANNEL',
+  CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
+  CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
+  CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
+  CHAT_CHANNEL_MANAGEMENT_FORBIDDEN = 'CHAT_CHANNEL_MANAGEMENT_FORBIDDEN',
+  INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
+  INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
+  INVALID_CHAT_INBOX_VIEW = 'INVALID_CHAT_INBOX_VIEW',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
@@ -66,6 +74,22 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       return msg`Unassign yourself before unsubscribing from this chat.`;
+    case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
+      return msg`This chat is not in a channel.`;
+    case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
+      return msg`This chat has no owner, so it has to stay in a channel.`;
+    case AiExceptionCode.CHAT_CHANNEL_NOT_FOUND:
+      return msg`Channel not found.`;
+    case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
+      return msg`Move this channel's chats to another channel before deleting it.`;
+    case AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN:
+      return msg`Only the people who manage this channel can do this.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
+      return msg`A channel needs a name.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
+      return msg`Pick another channel to move the chats to.`;
+    case AiExceptionCode.INVALID_CHAT_INBOX_VIEW:
+      return msg`This inbox view is not valid.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:

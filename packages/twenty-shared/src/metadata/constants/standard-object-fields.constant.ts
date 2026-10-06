@@ -74,6 +74,15 @@ export const STANDARD_OBJECT_FIELDS = {
     assignee: {
       universalIdentifier: 'e77858ef-4b01-4a32-b921-8b88b1fd3020',
     },
+    channel: {
+      universalIdentifier: '5ca89166-27aa-47b6-a72a-e6b8e5ee8364',
+    },
+    channelArchivedAt: {
+      universalIdentifier: 'ec6f5b94-277e-4f06-85f9-08d724518eda',
+    },
+    channelSnoozedUntil: {
+      universalIdentifier: '6d2963a4-7266-42b9-8d76-a06c3f2b7520',
+    },
     lastActivityAt: {
       universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
     },
@@ -106,6 +115,29 @@ export const STANDARD_OBJECT_FIELDS = {
     lastMentionedAt: {
       universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
     },
+  },
+  agentChatChannel: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannel,
+    ),
+    name: { universalIdentifier: '7f6437b5-95d5-44aa-9fcf-a381a2bf3c65' },
+    icon: { universalIdentifier: 'e24cad7e-fd14-46e3-b353-a3abf9eafba1' },
+    color: { universalIdentifier: 'b6ecf477-41c9-4df0-b699-16269a2936e7' },
+    visibility: {
+      universalIdentifier: '5398ec43-dfa3-4aac-80d7-9f9c382031c2',
+    },
+    threads: { universalIdentifier: '5dea92c2-d9f2-4c28-92fc-ad6a8b82d5d9' },
+    members: { universalIdentifier: '4a873332-b705-444a-8455-fcc4dec2f1f3' },
+  },
+  agentChatChannelMember: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannelMember,
+    ),
+    channel: { universalIdentifier: 'f7f37494-96b5-4ae1-a7f5-4552a8cdd2dd' },
+    workspaceMember: {
+      universalIdentifier: '24215714-8c82-4890-be0d-721a8c87f2e9',
+    },
+    position: { universalIdentifier: 'aeb116a6-1873-45ea-8a30-82cca663aae4' },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -1623,6 +1655,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     assignedAgentChatThreads: {
       universalIdentifier: 'a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c',
+    },
+    agentChatChannelMemberships: {
+      universalIdentifier: 'f843966f-9652-40da-8bbe-5032c2077298',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',

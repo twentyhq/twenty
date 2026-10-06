@@ -53,11 +53,79 @@ export type Agent = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type AgentChatChannel = {
+  __typename?: 'AgentChatChannel';
+  color?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  visibility: AgentChatChannelVisibility;
+};
+
+export enum AgentChatChannelAssignmentFilter {
+  ANY = 'ANY',
+  ASSIGNED_TO_ME = 'ASSIGNED_TO_ME',
+  UNASSIGNED = 'UNASSIGNED'
+}
+
+export enum AgentChatChannelThreadStatus {
+  DONE = 'DONE',
+  OPEN = 'OPEN',
+  SNOOZED = 'SNOOZED'
+}
+
+export enum AgentChatChannelVisibility {
+  PRIVATE = 'PRIVATE',
+  PUBLIC = 'PUBLIC'
+}
+
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
   event: Scalars['JSON']['output'];
   threadId: Scalars['String']['output'];
 };
+
+export type AgentChatInboxChannelSummary = {
+  __typename?: 'AgentChatInboxChannelSummary';
+  channelId: Scalars['UUID']['output'];
+  hasUnreadOpen: Scalars['Boolean']['output'];
+  openCount: Scalars['Int']['output'];
+};
+
+export type AgentChatInboxSummary = {
+  __typename?: 'AgentChatInboxSummary';
+  channels: Array<AgentChatInboxChannelSummary>;
+  hasUnreadAssigned: Scalars['Boolean']['output'];
+  hasUnreadMention: Scalars['Boolean']['output'];
+  hasUnreadOpen: Scalars['Boolean']['output'];
+  needsInputCount: Scalars['Int']['output'];
+  openCount: Scalars['Int']['output'];
+};
+
+export type AgentChatInboxThreadIds = {
+  __typename?: 'AgentChatInboxThreadIds';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+  threadIds: Array<Scalars['UUID']['output']>;
+};
+
+export type AgentChatInboxViewInput = {
+  assignment?: InputMaybe<AgentChatChannelAssignmentFilter>;
+  channelId?: InputMaybe<Scalars['UUID']['input']>;
+  channelStatus?: InputMaybe<AgentChatChannelThreadStatus>;
+  kind: AgentChatInboxViewKind;
+};
+
+export enum AgentChatInboxViewKind {
+  ASSIGNED = 'ASSIGNED',
+  CHANNEL = 'CHANNEL',
+  DONE = 'DONE',
+  MENTIONS = 'MENTIONS',
+  NEEDS_INPUT = 'NEEDS_INPUT',
+  OPEN = 'OPEN',
+  RECENT = 'RECENT',
+  SNOOZED = 'SNOOZED'
+}
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
@@ -1318,6 +1386,14 @@ export type ConnectionParametersInput = {
   password?: InputMaybe<Scalars['String']['input']>;
   port: Scalars['Float']['input'];
   username?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateAgentChatChannelInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  memberIds?: Array<Scalars['UUID']['input']>;
+  name: Scalars['String']['input'];
+  visibility?: AgentChatChannelVisibility;
 };
 
 export type CreateAgentInput = {
@@ -3090,6 +3166,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
+  addAgentChatChannelMembers: Scalars['Boolean']['output'];
   addAgentChatThreadParticipants: Array<Scalars['UUID']['output']>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   archiveAgentChatThread: AgentChatThreadParticipant;
@@ -3112,6 +3189,7 @@ export type Mutation = {
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl;
+  createAgentChatChannel: AgentChatChannel;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
@@ -3160,6 +3238,7 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
+  deleteAgentChatChannel: Scalars['Boolean']['output'];
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
@@ -3237,16 +3316,22 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
+  joinAgentChatChannel: Scalars['Boolean']['output'];
+  leaveAgentChatChannel: Scalars['Boolean']['output'];
+  markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   markAgentChatThreadAsRead: AgentChatThreadParticipant;
   markAgentChatThreadAsUnread: AgentChatThreadParticipant;
+  moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToInbox: AgentChatThreadParticipant;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
+  removeAgentChatChannelMember: Scalars['Boolean']['output'];
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
   renewToken: AuthTokens;
+  reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
   resendEmailVerificationToken: ResendEmailVerificationToken;
   resendWorkspaceInvitation: SendInvitations;
@@ -3282,6 +3367,7 @@ export type Mutation = {
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   snoozeAgentChatThread: AgentChatThreadParticipant;
+  snoozeAgentChatThreadInChannel: Scalars['Boolean']['output'];
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
@@ -3297,6 +3383,7 @@ export type Mutation = {
   triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult;
   uninstallApplication: Scalars['Boolean']['output'];
   unsubscribeFromAgentChatThread: AgentChatThreadParticipant;
+  updateAgentChatChannel: AgentChatChannel;
   updateApiKey?: Maybe<ApiKey>;
   updateAppMessageChannel: MessageChannel;
   updateApplication: Application;
@@ -3377,6 +3464,12 @@ export type MutationActivateSkillArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAddAgentChatChannelMembersArgs = {
+  channelId: Scalars['UUID']['input'];
+  workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
 
@@ -3485,6 +3578,11 @@ export type MutationCompleteWorkspaceMemberProfilePictureUploadArgs = {
 };
 
 
+export type MutationCreateAgentChatChannelArgs = {
+  input: CreateAgentChatChannelInput;
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
 };
@@ -3513,6 +3611,11 @@ export type MutationCreateApprovedAccessDomainArgs = {
 
 export type MutationCreateCalendarEventArgs = {
   input: CreateCalendarEventInput;
+};
+
+
+export type MutationCreateChatThreadArgs = {
+  channelId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 
@@ -3728,6 +3831,12 @@ export type MutationCreateWebhookArgs = {
 
 export type MutationDeactivateSkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteAgentChatChannelArgs = {
+  channelId: Scalars['UUID']['input'];
+  destinationChannelId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 
@@ -4083,6 +4192,21 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
+export type MutationJoinAgentChatChannelArgs = {
+  channelId: Scalars['UUID']['input'];
+};
+
+
+export type MutationLeaveAgentChatChannelArgs = {
+  channelId: Scalars['UUID']['input'];
+};
+
+
+export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
+  threadId: Scalars['UUID']['input'];
+};
+
+
 export type MutationMarkAgentChatThreadAsReadArgs = {
   threadId: Scalars['UUID']['input'];
 };
@@ -4093,8 +4217,20 @@ export type MutationMarkAgentChatThreadAsUnreadArgs = {
 };
 
 
+export type MutationMoveAgentChatThreadToChannelArgs = {
+  channelId?: InputMaybe<Scalars['UUID']['input']>;
+  threadId: Scalars['UUID']['input'];
+};
+
+
 export type MutationMoveAgentChatThreadToInboxArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRemoveAgentChatChannelMemberArgs = {
+  channelId: Scalars['UUID']['input'];
+  memberWorkspaceMemberId: Scalars['UUID']['input'];
 };
 
 
@@ -4121,6 +4257,11 @@ export type MutationRenewApplicationTokenArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationReopenAgentChatThreadInChannelArgs = {
+  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -4324,6 +4465,12 @@ export type MutationSnoozeAgentChatThreadArgs = {
 };
 
 
+export type MutationSnoozeAgentChatThreadInChannelArgs = {
+  snoozedUntil: Scalars['DateTime']['input'];
+  threadId: Scalars['UUID']['input'];
+};
+
+
 export type MutationStartChannelSyncArgs = {
   connectedAccountId: Scalars['UUID']['input'];
 };
@@ -4383,6 +4530,12 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUnsubscribeFromAgentChatThreadArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationUpdateAgentChatChannelArgs = {
+  channelId: Scalars['UUID']['input'];
+  input: UpdateAgentChatChannelInput;
 };
 
 
@@ -5265,6 +5418,8 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  agentChatInboxSummary: AgentChatInboxSummary;
+  agentChatInboxThreadIds: AgentChatInboxThreadIds;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   apiKey?: Maybe<ApiKey>;
@@ -5400,6 +5555,13 @@ export type Query = {
   validationRules: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentChatInboxThreadIdsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  view: AgentChatInboxViewInput;
 };
 
 
@@ -6610,6 +6772,13 @@ export enum UnsubscribeTopicVisibility {
   PRIVATE = 'PRIVATE',
   PUBLIC = 'PUBLIC'
 }
+
+export type UpdateAgentChatChannelInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  visibility?: InputMaybe<AgentChatChannelVisibility>;
+};
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;

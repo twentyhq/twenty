@@ -34,4 +34,14 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
+  // Channel lists page through a channel's chats by last activity
+  channelLastActivityIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'channelLastActivityIndex',
+      relatedFieldNames: ['channel', 'lastActivityAt'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
 });

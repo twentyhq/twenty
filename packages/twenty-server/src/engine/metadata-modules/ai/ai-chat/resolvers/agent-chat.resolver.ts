@@ -148,10 +148,13 @@ export class AgentChatResolver {
   async createChatThread(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('channelId', { type: () => UUIDScalarType, nullable: true })
+    channelId?: string | null,
   ) {
     return this.threadService.createThread({
       workspaceMemberId,
       workspaceId: workspace.id,
+      channelId: channelId ?? undefined,
     });
   }
 

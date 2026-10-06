@@ -24,6 +24,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.ROLE_NOT_FOUND:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND:
       case AiExceptionCode.EVALUATION_MODEL_NOT_FOUND:
+      case AiExceptionCode.CHAT_CHANNEL_NOT_FOUND:
         throw new NotFoundError(error);
       case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       case AiExceptionCode.INVALID_AGENT_INPUT:
@@ -33,6 +34,11 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
       case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
+      case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
+      case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
+      case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
+      case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
+      case AiExceptionCode.INVALID_CHAT_INBOX_VIEW:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
@@ -40,12 +46,14 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
       case AiExceptionCode.THREAD_AWAITING_ANSWER:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
+      case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+      case AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:

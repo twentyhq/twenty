@@ -1417,6 +1417,27 @@ export const STANDARD_OBJECTS = {
       assigneeIndex: {
         universalIdentifier: 'a65524f8-c999-448b-b9f4-c9ecce15fd13',
       },
+      channelLastActivityIndex: {
+        universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
+      },
+    },
+  },
+  agentChatChannel: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannel,
+    fields: STANDARD_OBJECT_FIELDS.agentChatChannel,
+    indexes: {},
+  },
+  agentChatChannelMember: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatChannelMember,
+    fields: STANDARD_OBJECT_FIELDS.agentChatChannelMember,
+    indexes: {
+      channelWorkspaceMemberUniqueIndex: {
+        universalIdentifier: '71f41cff-9aff-42b3-bb8b-7efc8a265d67',
+      },
+      workspaceMemberIndex: {
+        universalIdentifier: '8f78d7a8-f06c-4428-809e-650ca7d59cd7',
+      },
     },
   },
   agentChatThreadParticipant: {

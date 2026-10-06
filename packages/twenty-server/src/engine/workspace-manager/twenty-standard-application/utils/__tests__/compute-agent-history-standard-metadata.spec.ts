@@ -96,7 +96,7 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.PRIVATE,
+      readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {

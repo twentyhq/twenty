@@ -13,6 +13,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
@@ -37,6 +38,7 @@ export class AgentChatThreadParticipantResolver {
   constructor(
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
+    private readonly triageService: AgentChatThreadTriageService,
   ) {}
 
   @Mutation(() => AgentChatThreadParticipantDTO)
@@ -71,8 +73,9 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO> {
-    return this.participantService.archive({
+    return this.triageService.applyToMemberCopy({
       threadId,
+      change: { type: 'DONE' },
       workspaceMemberId,
       workspaceId,
     });
@@ -85,9 +88,9 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO> {
-    return this.participantService.snooze({
+    return this.triageService.applyToMemberCopy({
       threadId,
-      snoozedUntil,
+      change: { type: 'SNOOZE', snoozedUntil },
       workspaceMemberId,
       workspaceId,
     });
@@ -99,8 +102,9 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO> {
-    return this.participantService.moveToInbox({
+    return this.triageService.applyToMemberCopy({
       threadId,
+      change: { type: 'REOPEN' },
       workspaceMemberId,
       workspaceId,
     });

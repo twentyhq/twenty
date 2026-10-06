@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
+import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
@@ -29,11 +30,21 @@ export class AgentChatThreadService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
+    private readonly channelService: AgentChatChannelService,
   ) {}
 
   async createThread(
     args: Parameters<AgentChatSharingService['createThread']>[0],
   ) {
+    if (isDefined(args.channelId)) {
+      await this.channelService.assertChannelAccess({
+        workspaceId: args.workspaceId,
+        workspaceMemberId: args.workspaceMemberId,
+        channelId: args.channelId,
+        operationType: 'update',
+      });
+    }
+
     const savedThread = await this.sharingService.createThread(args);
 
     // Sent first, so the new thread never shows as unread to its owner
@@ -228,6 +239,56 @@ export class AgentChatThreadService {
         isSelfAssigned: assigneeWorkspaceMemberId === args.workspaceMemberId,
       });
     }
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
+  }
+
+  // Members who reach the chat only through its former channel lose it. A
+  // chat with no owner reads through nothing outside a channel, so it stays
+  // in one. Its place in the new channel starts open.
+  async moveToChannel({
+    channelId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    channelId: string | null;
+  }): Promise<void> {
+    const thread = await this.getWritableThread(args);
+
+    if (isDefined(channelId)) {
+      await this.channelService.assertChannelAccess({
+        ...args,
+        channelId,
+        operationType: 'update',
+      });
+    } else if (!isDefined(thread.workspaceMemberId)) {
+      throw new AiException(
+        'A chat without an owner cannot leave its channel',
+        AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL,
+      );
+    }
+
+    if (thread.channelId === channelId) {
+      return;
+    }
+
+    await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
+      manager.query(
+        `WITH moved_thread AS (
+           UPDATE ${table('agentChatThread')}
+           SET "channelId" = $2::uuid,
+             "channelArchivedAt" = NULL,
+             "channelSnoozedUntil" = NULL,
+             "updatedAt" = now()
+           WHERE id = $1
+           RETURNING id
+         )
+         SELECT id FROM moved_thread`,
+        [args.threadId, channelId],
+      ),
+    );
 
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId: args.workspaceId,

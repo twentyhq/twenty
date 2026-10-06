@@ -4,6 +4,8 @@ import { buildAgentMessagePartStandardFlatFieldMetadatas } from 'src/engine/work
 import { buildAgentMessageStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util';
 import { buildAgentTurnStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util';
 import { buildAgentChatThreadStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util';
+import { buildAgentChatChannelMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-channel-member-standard-flat-field-metadata.util';
+import { buildAgentChatChannelStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-channel-standard-flat-field-metadata.util';
 import { buildAgentChatThreadParticipantStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util';
 import { buildAgentChatThreadTargetStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util';
 import { type FieldMetadataType } from 'twenty-shared/types';
@@ -61,6 +63,8 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   agentChatThreadTarget: buildAgentChatThreadTargetStandardFlatFieldMetadatas,
   agentChatThreadParticipant:
     buildAgentChatThreadParticipantStandardFlatFieldMetadatas,
+  agentChatChannel: buildAgentChatChannelStandardFlatFieldMetadatas,
+  agentChatChannelMember: buildAgentChatChannelMemberStandardFlatFieldMetadatas,
   attachment: buildAttachmentStandardFlatFieldMetadatas,
   blocklist: buildBlocklistStandardFlatFieldMetadatas,
   calendarChannelEventAssociation:
