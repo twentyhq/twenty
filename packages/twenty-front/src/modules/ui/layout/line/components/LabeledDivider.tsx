@@ -30,25 +30,23 @@ export const LabeledDivider = ({
   noMargin = false,
   color,
   textPosition = 'center',
-}: LabeledDividerProps) => (
-  <StyledContainer role="separator" aria-label={children} noMargin={noMargin}>
-    <Separator
-      aria-hidden
-      style={{ backgroundColor: color, flexGrow: 1, margin: 0, width: 'auto' }}
-    />
-    <StyledLabel render={<span />} style={{ color }}>
-      {children}
-    </StyledLabel>
-    {textPosition === 'center' && (
-      <Separator
-        aria-hidden
-        style={{
-          backgroundColor: color,
-          flexGrow: 1,
-          margin: 0,
-          width: 'auto',
-        }}
-      />
-    )}
-  </StyledContainer>
-);
+}: LabeledDividerProps) => {
+  const separatorStyle = {
+    backgroundColor: color,
+    flexGrow: 1,
+    margin: 0,
+    width: 'auto',
+  };
+
+  return (
+    <StyledContainer role="separator" aria-label={children} noMargin={noMargin}>
+      <Separator aria-hidden style={separatorStyle} />
+      <StyledLabel render={<span />} style={{ color }}>
+        {children}
+      </StyledLabel>
+      {textPosition === 'center' && (
+        <Separator aria-hidden style={separatorStyle} />
+      )}
+    </StyledContainer>
+  );
+};
