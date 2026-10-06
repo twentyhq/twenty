@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
@@ -59,7 +59,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const [{ collision }] = await runner.query(
         `SELECT EXISTS (SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })} source JOIN core.${escapeIdentifier(table.name)} target USING (id) WHERE target."workspaceId" <> $1) AS collision`,
         [workspaceId],
@@ -99,7 +99,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const coreColumns = await getAgentHistoryMigrationColumns({
         runner,
         table,
@@ -141,7 +141,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const rows: { column_name: string }[] = await runner.query(
         'SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2',
         ['core', table.name],
@@ -251,7 +251,6 @@ export class AgentHistoryMigrationValidationService {
       ['agentMessage', 'threadId', 'agentChatThread'],
       ['agentMessage', 'turnId', 'agentTurn'],
       ['agentMessagePart', 'messageId', 'agentMessage'],
-      ['agentTurnEvaluation', 'turnId', 'agentTurn'],
     ]) {
       const [{ invalid }]: { invalid: boolean }[] = await runner.query(
         `SELECT EXISTS (

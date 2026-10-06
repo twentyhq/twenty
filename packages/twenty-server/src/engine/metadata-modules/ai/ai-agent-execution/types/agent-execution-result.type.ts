@@ -1,5 +1,7 @@
 import { type LanguageModelUsage, type StepResult, type ToolSet } from 'ai';
 
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
+
 export type AgentExecutionResult = {
   result: object;
   usage: LanguageModelUsage;
@@ -11,4 +13,5 @@ export type AgentExecutionResult = {
   modelId: string;
   totalCostInDollars: number;
   creditsUsedMicro: number;
+  turnUsage: AgentTurnUsage;
 };

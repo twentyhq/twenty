@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 type AgentHistorySchemaMaps = Pick<
@@ -18,7 +18,7 @@ export const getAgentHistorySchemaAdditions = ({
   standard: AgentHistorySchemaMaps;
 }) => {
   const objectIdentifiers = new Set<string>(
-    AGENT_HISTORY_TABLES.map(
+    ACTIVE_AGENT_HISTORY_TABLES.map(
       ({ name }) => STANDARD_OBJECTS[name].universalIdentifier,
     ),
   );

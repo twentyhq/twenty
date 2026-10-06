@@ -10,6 +10,10 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -238,20 +242,52 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         workflowRunId,
         workflow,
         initiator: agentWorkflow.initiator,
-        recordConversation: () =>
-          this.workflowAgentConversationService.recordExecution({
-            workspaceId,
-            workflowRunId,
-            stepId: workflow.step.id,
-            title: workflow.step.name,
+        recordConversation: async () => {
+          const openConversation = (
+            recipientWorkspaceMemberId: string | null,
+          ) =>
+            this.workflowAgentConversationService.openConversation({
+              runInfo: { workspaceId, workflowRunId },
+              stepId: workflow.step.id,
+              title: workflow.step.name,
+              recipientWorkspaceMemberId,
+              threadKey: `${workflowRunId}:${workflow.step.id}`,
+            });
+          // an initiator who cannot hold a chat in this workspace leaves the question with no recipient
+          const { threadId } = await openConversation(
+            INITIATORS[agentWorkflow.initiator].workspaceMemberId,
+          ).catch((error) => {
+            if (
+              error instanceof AiException &&
+              error.code === AiExceptionCode.THREAD_NOT_FOUND
+            ) {
+              return openConversation(null);
+            }
+
+            throw error;
+          });
+
+          const turnId = await this.workflowAgentConversationService.openTurn({
+            runInfo: { workspaceId, workflowRunId },
+            threadId,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
             initiatorUserWorkspaceId: null,
+          });
+
+          await this.workflowAgentConversationService.closeTurn({
+            workspaceId,
+            threadId,
+            turnId,
+            workflowStep: { workflowRunId, stepId: workflow.step.id },
+            title: workflow.step.name,
+            agentId: null,
             executionResult: {
               isPaused: true,
               steps: [{ content }],
             },
-          }),
+          });
+        },
       });
     }
   }

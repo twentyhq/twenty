@@ -113,17 +113,17 @@ export class FrontendService {
     );
 
     try {
-      const { workspace, isIsolatedOrigin } = await this.workspaceDomainsService
+      const { workspace, isPublicDomain } = await this.workspaceDomainsService
         .resolveWorkspaceAndPublicDomain(getRequestBaseUrl(request))
         .catch((error: unknown) => {
           if (error === WorkspaceNotFoundDefaultError) {
-            return { workspace: undefined, isIsolatedOrigin: false };
+            return { workspace: undefined, isPublicDomain: false };
           }
 
           throw error;
         });
 
-      if (isIsolatedOrigin) {
+      if (isPublicDomain) {
         response.status(404).end();
 
         return;

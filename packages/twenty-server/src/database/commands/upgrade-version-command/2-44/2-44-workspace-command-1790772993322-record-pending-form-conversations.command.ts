@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
+import { LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-workflow-run-universal-identifiers.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -58,8 +58,7 @@ export class RecordPendingFormConversationsCommand extends ProvisionedWorkspaceC
     if (
       !isDefined(
         flatFieldMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.fields.workflowRun
-            .universalIdentifier
+          LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER
         ],
       )
     ) {
@@ -101,8 +100,9 @@ export class RecordPendingFormConversationsCommand extends ProvisionedWorkspaceC
       });
     const workflowRunRepository =
       getRepository<WorkflowRunWorkspaceEntity>('workflowRun');
-    const threadRepository =
-      getRepository<AgentChatThreadWorkspaceEntity>('agentChatThread');
+    const threadRepository = getRepository<
+      AgentChatThreadWorkspaceEntity & { workflowRunId: string | null }
+    >('agentChatThread');
     const turnRepository = getRepository<AgentTurnWorkspaceEntity>('agentTurn');
     const messageRepository =
       getRepository<AgentMessageWorkspaceEntity>('agentMessage');
