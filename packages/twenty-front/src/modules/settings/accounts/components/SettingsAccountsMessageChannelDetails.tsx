@@ -7,7 +7,7 @@ import {
   MessageChannelType,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconBriefcase, IconUsers } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';

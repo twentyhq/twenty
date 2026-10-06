@@ -17,35 +17,35 @@ the Dropdown-based popups in React and pins that they never open in Preact.
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
 
-| Fixture | Components |
-| --- | --- |
-| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
-| `twenty-ui-number-stepper` | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms) |
-| `twenty-ui-autocomplete` | Autocomplete (inline Home/End, controlled editing, composing confirmation, filtering, disabled state and Empty cleanup; `TwentyUiAutocomplete.stories.tsx`) |
-| `twenty-ui-display-helpers` | Text |
-| `twenty-ui-avatar-controls` | Avatar (fallback, pointer/keyboard activation and disabled state) |
-| `twenty-ui-avatar-image` | Avatar (decoded images, broken-source fallback, replacement and unmount/remount) |
-| `twenty-ui-image-input` | ImageInput |
-| `twenty-ui-list-item` | ListItem |
-| `twenty-ui-settings-row` | SettingsRow |
-| `twenty-ui-tabs` | Tabs |
-| `twenty-ui-overflowing-list` | OverflowingList |
-| `twenty-ui-phone-country-picker` | PhoneCountryPicker |
-| `twenty-ui-currency-picker` | CurrencyPicker |
-| `twenty-ui-popover` | Popover |
-| `twenty-ui-dialog` | Dialog |
-| `twenty-ui-menu` | Menu |
-| `twenty-ui-select` | Select |
-| `twenty-ui-dropdown` | Dropdown |
-| `twenty-ui-toast` | Toast |
-| `twenty-ui-alert-dialog` | AlertDialog |
-| `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
-| `twenty-ui-checkbox` | Checkbox |
-| `twenty-ui-radio-group` | RadioGroup, Radio (standard and card) |
-| `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
-| `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
-| `twenty-ui-country-select` | CountrySelect (`TwentyUiCountrySelect.stories.tsx`) |
+| Fixture                          | Components                                                                                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                                          |
+| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)                              |
+| `twenty-ui-autocomplete`         | Autocomplete (inline Home/End, controlled editing, composing confirmation, filtering, disabled state and Empty cleanup; `TwentyUiAutocomplete.stories.tsx`) |
+| `twenty-ui-display-helpers`      | Text                                                                                                                                                        |
+| `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                                           |
+| `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                                            |
+| `twenty-ui-image-input`          | ImageInput                                                                                                                                                  |
+| `twenty-ui-list-item`            | ListItem                                                                                                                                                    |
+| `twenty-ui-settings-row`         | SettingsRow                                                                                                                                                 |
+| `twenty-ui-tabs`                 | Tabs                                                                                                                                                        |
+| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                                             |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                                          |
+| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                                              |
+| `twenty-ui-popover`              | Popover                                                                                                                                                     |
+| `twenty-ui-dialog`               | Dialog                                                                                                                                                      |
+| `twenty-ui-menu`                 | Menu                                                                                                                                                        |
+| `twenty-ui-select`               | Select                                                                                                                                                      |
+| `twenty-ui-dropdown`             | Dropdown                                                                                                                                                    |
+| `twenty-ui-toast`                | Toast                                                                                                                                                       |
+| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                                                 |
+| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                                     |
+| `twenty-ui-checkbox`             | Checkbox                                                                                                                                                    |
+| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                                                       |
+| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                                     |
+| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                                               |
+| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)                         |
+| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                                         |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -91,14 +91,14 @@ must change the corresponding story to assert successful behavior; do not keep
 or broaden an obsolete expectation. No stories are skipped or marked as
 expected-to-fail by the runner.
 
-| Component | Current limitation |
-| --- | --- |
-| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
-| Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (Preact) | The Dropdown-based popups never open. `Popover.Popup` is a plain function component, so Preact hands its ref to the component instance instead of the popup element, and the content reads `dataset` from that instance as soon as it mounts. The error is thrown inside Preact's render queue, so it never reaches the host and Preact stops re-rendering. |
-| ListItem | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws. |
-| Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
-| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                                                                                     | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ImageInput                                                                                                                    | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                |
+| Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (Preact)                                                          | The Dropdown-based popups never open. `Popover.Popup` is a plain function component, so Preact hands its ref to the component instance instead of the popup element, and the content reads `dataset` from that instance as soon as it mounts. The error is thrown inside Preact's render queue, so it never reaches the host and Preact stops re-rendering.                                                                                                 |
+| ListItem                                                                                                                      | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws.                                                                                                                                                                                                                                                          |
+| Slider                                                                                                                        | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
+| Responsive hooks                                                                                                              | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by

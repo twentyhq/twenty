@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';

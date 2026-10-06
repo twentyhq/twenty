@@ -14,7 +14,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   steps: StepOutputSchemaV2[];

@@ -14,7 +14,8 @@ import { CountrySelectExample } from './CountrySelectExample';
 import { waitForCountryPopup } from './waitForCountryPopup';
 
 const meta: Meta<typeof CountrySelectExample> = {
-  title: 'UI/Input/CountrySelect/Interactions',
+  id: 'ui-input-countryselect-interactions',
+  title: 'UI/Components/Input/CountrySelect/Interactions',
   component: CountrySelectExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
