@@ -8338,15 +8338,6 @@ export default {
                     ]
                 }
             ],
-            "applicationUpgradeRoleGrants": [
-                290,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "findApplicationRegistrationByClientId": [
                 246,
                 {
@@ -8442,6 +8433,15 @@ export default {
                 227,
                 {
                     "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "applicationUpgradeRoleGrants": [
+                290,
+                {
+                    "applicationId": [
                         3,
                         "UUID!"
                     ]
@@ -11225,6 +11225,15 @@ export default {
                     ]
                 }
             ],
+            "runApplicationHealthCheck": [
+                260,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "grantApplicationCapabilities": [
                 269,
                 {
@@ -11300,15 +11309,6 @@ export default {
             ],
             "syncMarketplaceCatalog": [
                 8
-            ],
-            "runApplicationHealthCheck": [
-                260,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
             ],
             "createOIDCIdentityProvider": [
                 254,
