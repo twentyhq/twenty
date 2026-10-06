@@ -1,12 +1,12 @@
-import { WorkflowOutputSchemaFieldHeader } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaFieldHeader';
+import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-const meta: Meta<typeof WorkflowOutputSchemaFieldHeader> = {
-  title: 'Modules/Workflow/WorkflowOutputSchemaFieldHeader',
-  component: WorkflowOutputSchemaFieldHeader,
+const meta: Meta<typeof AgentOutputSchemaFieldHeader> = {
+  title: 'Modules/AI/AgentOutputSchemaFieldHeader',
+  component: AgentOutputSchemaFieldHeader,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 320 } },
   args: {
@@ -18,7 +18,7 @@ const meta: Meta<typeof WorkflowOutputSchemaFieldHeader> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof WorkflowOutputSchemaFieldHeader>;
+type Story = StoryObj<typeof AgentOutputSchemaFieldHeader>;
 
 const expectRowHeight = async (canvasElement: HTMLElement) => {
   const header = within(canvasElement).getByRole('button', {
@@ -46,7 +46,7 @@ export const KeyboardExpansion: Story = {
     const [isExpanded, setIsExpanded] = useState(args.isExpanded);
 
     return (
-      <WorkflowOutputSchemaFieldHeader
+      <AgentOutputSchemaFieldHeader
         {...args}
         isExpanded={isExpanded}
         onToggle={() => {

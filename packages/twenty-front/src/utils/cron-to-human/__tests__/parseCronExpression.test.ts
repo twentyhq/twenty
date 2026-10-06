@@ -1,4 +1,4 @@
-import { parseCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/parseCronExpression';
+import { parseCronExpression } from '~/utils/cron-to-human/utils/parseCronExpression';
 
 describe('parseCronExpression', () => {
   it('should parse 4-field cron expression', () => {

@@ -3,19 +3,19 @@ import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { type AgentResponseFieldType } from 'twenty-shared/ai';
 
-type WorkflowOutputFieldTypeSelectorProps = {
+type AgentOutputFieldTypeSelectorProps = {
   value?: AgentResponseFieldType;
   onChange: (value: AgentResponseFieldType) => void;
   disabled?: boolean;
   dropdownId: string;
 };
 
-export const WorkflowOutputFieldTypeSelector = ({
+export const AgentOutputFieldTypeSelector = ({
   value,
   onChange,
   disabled,
   dropdownId,
-}: WorkflowOutputFieldTypeSelectorProps) => {
+}: AgentOutputFieldTypeSelectorProps) => {
   return (
     <Select
       dropdownId={dropdownId}

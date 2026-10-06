@@ -6,7 +6,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconVariable, IconX } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-type WorkflowOutputSchemaFieldHeaderProps = {
+type AgentOutputSchemaFieldHeaderProps = {
   name: string;
   isExpanded: boolean;
   onToggle: () => void;
@@ -88,12 +88,12 @@ const StyledChevron = styled.span`
   }
 `;
 
-export const WorkflowOutputSchemaFieldHeader = ({
+export const AgentOutputSchemaFieldHeader = ({
   name,
   isExpanded,
   onToggle,
   onRemove,
-}: WorkflowOutputSchemaFieldHeaderProps) => {
+}: AgentOutputSchemaFieldHeaderProps) => {
   const theme = useTheme();
 
   return (
