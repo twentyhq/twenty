@@ -9,7 +9,8 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { CodeEditorHeader } from '../CodeEditorHeader';
 
 const meta: Meta<typeof CodeEditorHeader> = {
-  title: 'UI/Components/CodeEditorHeader',
+  id: 'ui-components-codeeditorheader',
+  title: 'UI/Components/Code editor/CodeEditorHeader',
   component: CodeEditorHeader,
   args: { title: 'workspace.json' },
   parameters: {

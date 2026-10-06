@@ -10,7 +10,8 @@ const LONG_COUNTRY_LABEL =
   'A country with a long localized name that exceeds the trigger width';
 
 const meta: Meta<typeof CountrySelectExample> = {
-  title: 'UI/Input/CountrySelect/Accessibility',
+  id: 'ui-input-countryselect-accessibility',
+  title: 'UI/Components/Input/CountrySelect/Accessibility',
   component: CountrySelectExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],

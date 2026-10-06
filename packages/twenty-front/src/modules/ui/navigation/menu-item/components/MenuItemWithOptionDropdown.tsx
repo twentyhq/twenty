@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useTheme } from 'twenty-ui/theme';

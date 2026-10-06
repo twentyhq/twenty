@@ -10,7 +10,8 @@ import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MetricRow> = {
-  title: 'UI/Data Display/MetricRow',
+  id: 'ui-data-display-metricrow',
+  title: 'UI/Components/Data display/MetricRow',
   component: MetricRow,
   decorators: [ComponentDecorator],
   parameters: {

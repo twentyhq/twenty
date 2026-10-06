@@ -17,7 +17,8 @@ const WORKSPACE_SETTINGS_JSON = JSON.stringify(
 const handleChange = fn();
 
 const meta: Meta<typeof CodeEditor> = {
-  title: 'UI/Components/CodeEditor',
+  id: 'ui-components-codeeditor',
+  title: 'UI/Components/Code editor/CodeEditor',
   component: CodeEditor,
   args: {
     value: WORKSPACE_SETTINGS_JSON,

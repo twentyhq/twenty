@@ -8,7 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconArrowUp, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   type Application,
   PermissionFlagType,

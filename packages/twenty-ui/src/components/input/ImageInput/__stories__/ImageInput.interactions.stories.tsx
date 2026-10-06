@@ -21,7 +21,8 @@ const getFileInput = (canvasElement: HTMLElement) => {
 };
 
 const meta: Meta<typeof ImageInput> = {
-  title: 'UI/Input/ImageInput/Interactions',
+  id: 'ui-input-imageinput-interactions',
+  title: 'UI/Components/Input/ImageInput/Interactions',
   component: ImageInput,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],

@@ -12,7 +12,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useOpenFilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();

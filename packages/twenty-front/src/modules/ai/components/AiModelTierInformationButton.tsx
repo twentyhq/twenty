@@ -12,7 +12,7 @@ import {
   IconInfoCircle,
 } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { MetricRow } from 'twenty-ui/components';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
 
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';

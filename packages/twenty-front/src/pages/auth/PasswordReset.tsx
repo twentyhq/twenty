@@ -30,7 +30,8 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import {

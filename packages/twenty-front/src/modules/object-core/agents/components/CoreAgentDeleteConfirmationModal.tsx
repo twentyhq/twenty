@@ -6,7 +6,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 import { useMutation } from '@apollo/client/react';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

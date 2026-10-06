@@ -2,7 +2,7 @@ import { type MouseEvent } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
-import { MenuItemSuggestion } from 'twenty-ui/components';
+import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

@@ -4,7 +4,7 @@ import {
   AGENT_TRIGGER_LIMITS,
   type AgentTrigger,
 } from 'twenty-shared/application';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconClock, IconAddressBook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

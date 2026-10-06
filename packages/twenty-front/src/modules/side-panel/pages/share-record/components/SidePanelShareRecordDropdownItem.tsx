@@ -1,5 +1,5 @@
 import { type ReactNode, useId } from 'react';
-import { Dropdown, type DropdownType } from 'twenty-ui/components';
+import { Dropdown, type DropdownType } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
