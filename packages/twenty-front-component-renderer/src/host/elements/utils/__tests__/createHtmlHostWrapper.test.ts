@@ -302,10 +302,11 @@ describe('createHtmlHostWrapper client events', () => {
     expect(node.hasAttribute('value')).toBe(false);
   });
 
-  it('should keep a file input uncontrolled when the worker echoes the selected file path', () => {
+  it('should keep the selected file when the worker echoes its path, then accept a new selection', async () => {
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
+    const user = userEvent.setup();
     const Wrapper = createHtmlHostWrapper('input');
     const handleChange = jest.fn();
 
@@ -314,6 +315,13 @@ describe('createHtmlHostWrapper client events', () => {
         createElement(Wrapper, { type: 'file', onChange: handleChange }),
       );
     });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['report'], 'report.pdf'));
+    });
+
     act(() => {
       root.render(
         createElement(Wrapper, {
@@ -324,12 +332,15 @@ describe('createHtmlHostWrapper client events', () => {
       );
     });
 
-    const node = container.firstElementChild as HTMLInputElement;
-    act(() => {
-      node.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(node.value).toBe('C:\\fakepath\\report.pdf');
+    expect(node.files?.[0]?.name).toBe('report.pdf');
+
+    await act(async () => {
+      await user.upload(node, new File(['summary'], 'summary.pdf'));
     });
 
-    expect(node.value).toBe('');
+    expect(node.files?.[0]?.name).toBe('summary.pdf');
+    expect(handleChange).toHaveBeenCalledTimes(2);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
