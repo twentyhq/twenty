@@ -302,7 +302,32 @@ export class AgentRunService
       select: ['id'],
     });
 
-    return isDefined(agent) ? 'WAITING' : 'GONE';
+    if (!isDefined(agent)) {
+      return 'GONE';
+    }
+
+    if (!isDefined(caller.ref.runAsWorkspaceMemberId)) {
+      return 'WAITING';
+    }
+
+    // a run acting as a member who left can never continue, so it must release its thread
+    try {
+      await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
+        workspaceMemberId: caller.ref.runAsWorkspaceMemberId,
+        workspaceId,
+      });
+
+      return 'WAITING';
+    } catch (error) {
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND
+      ) {
+        return 'GONE';
+      }
+
+      throw error;
+    }
   }
 
   // a member calling without runAs still sent the input, while an app's call has no member behind it
