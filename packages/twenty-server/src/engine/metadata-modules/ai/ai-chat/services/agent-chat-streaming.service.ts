@@ -31,7 +31,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/utils/read-tool-call-workflow-step.util';
+import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -615,7 +615,7 @@ export class AgentChatStreamingService {
   }
 
   // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
-  // an answer holding the stream keeps them, and workflow-step calls gate the run, so a chat message never closes them
+  // an answer holding the stream keeps them, and calls a caller waits on gate that caller, so a chat message never closes them
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -632,10 +632,10 @@ export class AgentChatStreamingService {
       return;
     }
 
-    if (await this.isAwaitingWorkflowStep({ messageId, workspaceId })) {
+    if (await this.isAwaitingCaller({ messageId, workspaceId })) {
       throw new AiException(
-        'This conversation is waiting on an answer to its workflow run',
-        AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
+        'This conversation is waiting on an answer to the run that asked',
+        AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
       );
     }
 
@@ -647,8 +647,8 @@ export class AgentChatStreamingService {
     });
   }
 
-  // a call a workflow step posted gates that step until it is answered
-  private async isAwaitingWorkflowStep({
+  // a call a caller such as a workflow step waits on gates that caller until it is answered
+  private async isAwaitingCaller({
     messageId,
     workspaceId,
   }: {
@@ -660,9 +660,7 @@ export class AgentChatStreamingService {
       select: ['id', 'toolOutput'],
     });
 
-    return parts.some((part) =>
-      isDefined(readToolCallWorkflowStep(part.toolOutput)),
-    );
+    return parts.some((part) => isToolOutputAwaitedByCaller(part.toolOutput));
   }
 
   private async enqueueStreamJob({

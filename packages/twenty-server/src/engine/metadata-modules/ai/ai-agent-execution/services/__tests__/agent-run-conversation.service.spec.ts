@@ -171,7 +171,7 @@ describe('AgentRunConversationService', () => {
     });
   });
 
-  it('names the caller on the calls it leaves pending', async () => {
+  it('marks the calls it leaves pending as awaited by a caller', async () => {
     const { service, conversationWriterService, threadService } =
       buildService();
 
@@ -180,16 +180,11 @@ describe('AgentRunConversationService', () => {
       title: 'Draft the quote',
       agentId: null,
       execution,
-      caller: {
-        type: 'WORKFLOW_STEP',
-        ref: { workflowRunId: 'run-id', stepId: 'step-id' },
-      },
+      isAwaitedByCaller: true,
     });
 
     expect(conversationWriterService.insertExecutionReply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        workflowStep: { workflowRunId: 'run-id', stepId: 'step-id' },
-      }),
+      expect.objectContaining({ isAwaitedByCaller: true }),
     );
     expect(threadService.recordThreadActivity).not.toHaveBeenCalled();
   });
