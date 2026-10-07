@@ -225,11 +225,11 @@ export const AppPreferencesAccounts: Story = {
       }),
     );
     await expect(
-      body.getByRole('menuitem', { name: 'Emails settings' }),
-    ).toHaveAttribute('href', getSettingsPath(SettingsPath.AccountsEmails));
+      body.queryByRole('menuitem', { name: 'Emails settings' }),
+    ).not.toBeInTheDocument();
     await expect(
-      body.getByRole('menuitem', { name: 'Calendar settings' }),
-    ).toHaveAttribute('href', getSettingsPath(SettingsPath.AccountsCalendars));
+      body.queryByRole('menuitem', { name: 'Calendar settings' }),
+    ).not.toBeInTheDocument();
     await userEvent.click(
       body.getByRole('menuitem', { name: 'Disconnect account' }),
     );

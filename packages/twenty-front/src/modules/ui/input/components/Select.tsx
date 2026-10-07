@@ -37,6 +37,8 @@ const StyledDescription = styled.span`
 `;
 
 export const Select = <TValue extends SelectValue>({
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
@@ -151,14 +153,21 @@ export const Select = <TValue extends SelectValue>({
     >
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
-        <SelectControl
-          renderAsTag={renderAsTag}
-          selectedOption={controlSelectedOption}
-          isDisabled={isDisabled}
-          selectSizeVariant={selectSizeVariant}
-          hasRightElement={hasRightElement}
-          variant={variant}
-        />
+        <div
+          role="button"
+          aria-disabled
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+        >
+          <SelectControl
+            renderAsTag={renderAsTag}
+            selectedOption={controlSelectedOption}
+            isDisabled={isDisabled}
+            selectSizeVariant={selectSizeVariant}
+            hasRightElement={hasRightElement}
+            variant={variant}
+          />
+        </div>
       ) : (
         <DropdownRoot
           dropdownId={dropdownId}
@@ -169,7 +178,12 @@ export const Select = <TValue extends SelectValue>({
             }
           }}
         >
-          <Dropdown.Trigger render={<div />} nativeButton={false}>
+          <Dropdown.Trigger
+            render={
+              <div aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} />
+            }
+            nativeButton={false}
+          >
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}

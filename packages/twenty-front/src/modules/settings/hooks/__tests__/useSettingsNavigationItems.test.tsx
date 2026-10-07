@@ -233,5 +233,28 @@ describe('useSettingsNavigationItems', () => {
       SettingsPath.AccountsEmails,
       SettingsPath.AccountsCalendars,
     ]);
+    expect(accountsItem?.subItems?.every((item) => !item.isHidden)).toBe(true);
+  });
+
+  it('hides legacy email/calendar children under the enabled App preferences entry', () => {
+    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
+      ],
+    });
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+    const appPreferencesItem = result.current
+      .find((section) => section.label === 'User')
+      ?.items.find((item) => item.path === SettingsPath.AppPreferences);
+
+    expect(appPreferencesItem?.isHidden).toBe(false);
+    expect(appPreferencesItem?.subItems?.every((item) => item.isHidden)).toBe(
+      true,
+    );
   });
 });

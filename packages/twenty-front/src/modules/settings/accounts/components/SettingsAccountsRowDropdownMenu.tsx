@@ -11,8 +11,10 @@ import {
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
+import { useBuiltInApps } from '@/settings/app-preferences/hooks/useBuiltInApps';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   IconAt,
@@ -27,9 +29,10 @@ import {
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Link } from 'react-router-dom';
-import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
-import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
-import { isConnectedAccountEligibleForProviderReconnect } from '../utils/isConnectedAccountEligibleForProviderReconnect';
+import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
+import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
+import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -45,6 +48,31 @@ export const SettingsAccountsRowDropdownMenu = ({
 
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+  const { builtInApps } = useBuiltInApps();
+  const messagingApp = builtInApps.find(
+    (application) =>
+      application.provider === account.provider && application.hasMessaging,
+  );
+  const calendarApp = builtInApps.find(
+    (application) =>
+      application.provider === account.provider && application.hasCalendar,
+  );
+  const accountSearchParams = new URLSearchParams({
+    connectedAccountId: account.id,
+  });
+  const messagingSettingsPath = !isAppPreferencesEnabled
+    ? getSettingsPath(SettingsPath.AccountsEmails)
+    : isDefined(messagingApp)
+      ? `${getSettingsPath(SettingsPath.AppPreferencesBuiltInApplication, { builtInAppId: messagingApp.id })}?${accountSearchParams}#messaging`
+      : undefined;
+  const calendarSettingsPath = !isAppPreferencesEnabled
+    ? getSettingsPath(SettingsPath.AccountsCalendars)
+    : isDefined(calendarApp)
+      ? `${getSettingsPath(SettingsPath.AppPreferencesBuiltInApplication, { builtInAppId: calendarApp.id })}?${accountSearchParams}#calendar`
+      : undefined;
 
   const apolloClient = useApolloClient();
   const [deleteConnectedAccountMutation] = useMutation(
@@ -121,18 +149,18 @@ export const SettingsAccountsRowDropdownMenu = ({
                 }
               >{t`Connection settings`}</Dropdown.ActionItem>
             )}
-            <Dropdown.ActionItem
-              startIcon={<IconMail />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
-              }
-            >{t`Emails settings`}</Dropdown.ActionItem>
-            <Dropdown.ActionItem
-              startIcon={<IconCalendarEvent />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsCalendars)} />
-              }
-            >{t`Calendar settings`}</Dropdown.ActionItem>
+            {isDefined(messagingSettingsPath) && (
+              <Dropdown.ActionItem
+                startIcon={<IconMail />}
+                render={<Link to={messagingSettingsPath} />}
+              >{t`Emails settings`}</Dropdown.ActionItem>
+            )}
+            {isDefined(calendarSettingsPath) && (
+              <Dropdown.ActionItem
+                startIcon={<IconCalendarEvent />}
+                render={<Link to={calendarSettingsPath} />}
+              >{t`Calendar settings`}</Dropdown.ActionItem>
+            )}
             {isEligibleForProviderReconnect && (
               <Dropdown.ActionItem
                 startIcon={<IconRefresh />}

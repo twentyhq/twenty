@@ -107,6 +107,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               path: SettingsPath.AccountsEmails,
               Icon: IconMail,
               isHidden:
+                isAppPreferencesEnabled ||
                 !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },
@@ -115,6 +116,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               path: SettingsPath.AccountsCalendars,
               Icon: IconCalendarEvent,
               isHidden:
+                isAppPreferencesEnabled ||
                 !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },

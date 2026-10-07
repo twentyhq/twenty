@@ -4,6 +4,8 @@ import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActi
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 export type SelectProps<TValue extends SelectValue> = {
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
   className?: string;
   renderAsTag?: boolean;
   disabled?: boolean;
