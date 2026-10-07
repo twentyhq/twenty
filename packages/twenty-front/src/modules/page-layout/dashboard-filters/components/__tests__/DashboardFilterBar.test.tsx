@@ -1,5 +1,5 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DashboardFilterBar } from '@/page-layout/dashboard-filters/components/DashboardFilterBar';
+import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -21,7 +21,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
@@ -33,13 +33,11 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
@@ -77,6 +75,20 @@ const COMPANY_NAME_SLOT: DashboardFilterSlot = {
   defaultOperand: ViewFilterOperand.CONTAINS,
 };
 
+const COMPANY_NAME_SLOT_WITH_DEFAULT: DashboardFilterSlot = {
+  ...COMPANY_NAME_SLOT,
+  defaultValue: 'Acme',
+};
+
+const COMPANY_NAME_URL_ENTRY = `/?dashboardFilter[${COMPANY_NAME_SLOT.id}][operand]=CONTAINS&dashboardFilter[${COMPANY_NAME_SLOT.id}][value]=Globex`;
+
+const getDashboardFilterValues = () =>
+  jotaiStore.get(
+    dashboardFilterValuesComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    }),
+  );
+
 const companyChartWidget = buildDraftPageLayoutWidget({
   id: 'company-widget',
   pageLayoutTabId: 'tab-1',
@@ -100,26 +112,16 @@ const companyChartWidget = buildDraftPageLayoutWidget({
 
 const renderDashboardFilterBar = async ({
   pageLayoutType,
-  isDashboardFiltersEnabled = true,
   isInEditMode = false,
   dashboardFilters = null,
+  initialEntry = '/',
 }: {
   pageLayoutType: PageLayoutType;
-  isDashboardFiltersEnabled?: boolean;
   isInEditMode?: boolean;
   dashboardFilters?: DashboardFilterSlot[] | null;
+  initialEntry?: string;
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-        value: isDashboardFiltersEnabled,
-      },
-    ],
-  });
 
   const pageLayout = {
     id: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -158,7 +160,7 @@ const renderDashboardFilterBar = async ({
     <I18nProvider i18n={i18n}>
       <ThemeProvider colorScheme="light">
         <JotaiProvider store={jotaiStore}>
-          <MemoryRouter>
+          <MemoryRouter initialEntries={[initialEntry]}>
             <JestObjectMetadataItemSetter>
               <PageLayoutTestWrapper
                 store={jotaiStore}
@@ -189,16 +191,6 @@ describe('DashboardFilterBar', () => {
 
     expect(screen.getByText('Date')).toBeVisible();
     expect(screen.getByText('Owner')).toBeVisible();
-  });
-
-  it('renders nothing when the feature flag is off', async () => {
-    await renderDashboardFilterBar({
-      pageLayoutType: PageLayoutType.DASHBOARD,
-      isDashboardFiltersEnabled: false,
-    });
-
-    expect(screen.queryByText('Date')).not.toBeInTheDocument();
-    expect(screen.queryByText('Owner')).not.toBeInTheDocument();
   });
 
   it('renders nothing when the layout is not a dashboard', async () => {
@@ -310,15 +302,81 @@ describe('DashboardFilterBar', () => {
     expect(screen.queryByText('Edit')).not.toBeInTheDocument();
   });
 
-  it('does not show the Add filter button when the feature flag is off even in edit mode', async () => {
+  it('hides Reset while every slot holds its default', async () => {
     await renderDashboardFilterBar({
       pageLayoutType: PageLayoutType.DASHBOARD,
-      isInEditMode: true,
-      isDashboardFiltersEnabled: false,
+      dashboardFilters: [COMPANY_NAME_SLOT_WITH_DEFAULT],
     });
 
+    await waitFor(() =>
+      expect(getDashboardFilterValues()).toEqual({
+        [COMPANY_NAME_SLOT.id]: {
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+        },
+      }),
+    );
+
     expect(
-      screen.queryByRole('button', { name: 'Add filter' }),
+      screen.queryByRole('button', { name: 'Reset' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('hides Reset on a dashboard whose built-in slots are unset', async () => {
+    await renderDashboardFilterBar({
+      pageLayoutType: PageLayoutType.DASHBOARD,
+    });
+
+    expect(screen.getByText('Date')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows Reset when a slot value differs from its default and restores the default on click', async () => {
+    await renderDashboardFilterBar({
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      dashboardFilters: [COMPANY_NAME_SLOT_WITH_DEFAULT],
+      initialEntry: COMPANY_NAME_URL_ENTRY,
+    });
+
+    await waitFor(() =>
+      expect(getDashboardFilterValues()[COMPANY_NAME_SLOT.id]?.value).toBe(
+        'Globex',
+      ),
+    );
+
+    await userEvent
+      .setup()
+      .click(await screen.findByRole('button', { name: 'Reset' }));
+
+    await waitFor(() =>
+      expect(getDashboardFilterValues()).toEqual({
+        [COMPANY_NAME_SLOT.id]: {
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+        },
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Reset' }),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it('shows Reset when a slot without a default is set and clears it on click', async () => {
+    await renderDashboardFilterBar({
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      dashboardFilters: [COMPANY_NAME_SLOT],
+      initialEntry: COMPANY_NAME_URL_ENTRY,
+    });
+
+    await userEvent
+      .setup()
+      .click(await screen.findByRole('button', { name: 'Reset' }));
+
+    await waitFor(() => expect(getDashboardFilterValues()).toEqual({}));
   });
 });

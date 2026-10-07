@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DashboardFilterUnaffectedWidgetIndicator } from '@/page-layout/dashboard-filters/components/DashboardFilterUnaffectedWidgetIndicator';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
 import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
@@ -27,14 +26,12 @@ import {
 } from 'twenty-shared/types';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const INDICATOR_LABEL = 'Not affected by dashboard filters';
@@ -105,13 +102,6 @@ const renderIndicator = async ({
   dashboardFilterValues: Record<string, DashboardFilterValue | undefined>;
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
-    ],
-  });
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({

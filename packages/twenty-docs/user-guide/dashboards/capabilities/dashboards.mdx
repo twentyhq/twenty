@@ -79,6 +79,22 @@ Dashboards currently display data based on the timezone of the user viewing them
 **Coming soon**: We will add the ability to set a specific timezone for a dashboard, so all users see consistent data regardless of their location.
 </Note>
 
+## Dashboard Filters
+
+A filter bar above the tabs filters every chart on the dashboard at once. A new dashboard starts with two filters, **Date** and **Owner**, applied to each chart's creation date and owner-like field. Pick a value in a chip to filter, clear the chip to remove it, and click **Reset** to go back to the dashboard's defaults. Hover a chip to see how many widgets it applies to; a chart a filter does not reach shows a small crossed-out filter icon in its header.
+
+Your selection is kept in the page URL, so reloading the page or sharing the link restores the same filters. It is not saved to the dashboard.
+
+### Configuring Filters
+
+1. In edit mode, click **Add filter** in the filter bar to open the filters side panel
+2. Add a filter from the dimensions found across your charts, such as a company, a date or a select field
+3. For each chart, pick the field the filter applies to, or choose **Not applied**
+4. Optionally set a **Default** value, applied whenever the dashboard opens, and turn on **Required** so a chart only loads once the filter has a value
+5. Save the dashboard
+
+Clicking a bar or a slice to open the underlying records carries the dashboard filters along with the chart's own filters.
+
 <Note>
-**Coming soon**: Dashboard-level filters will allow you to apply filters across all widgets at once, making it faster to explore your data.
+Date filters on a dashboard follow the timezone of the user viewing them, like the rest of the dashboard.
 </Note>

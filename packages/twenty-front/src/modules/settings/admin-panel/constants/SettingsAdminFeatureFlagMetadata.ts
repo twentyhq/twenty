@@ -80,8 +80,4 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
-  [FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED]: {
-    label: msg`Dashboard filters`,
-    description: msg`Show a filter bar above dashboards that filters every chart at once.`,
-  },
 };

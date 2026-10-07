@@ -1,4 +1,4 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
@@ -32,13 +32,12 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -118,6 +117,7 @@ const buildBarChartWidget = ({
   id,
   objectMetadataId,
   filter,
+  timezone,
 }: {
   id: string;
   objectMetadataId: string;
@@ -125,13 +125,17 @@ const buildBarChartWidget = ({
     recordFilters: RecordFilter[];
     recordFilterGroups: (typeof existingRecordFilterGroup)[];
   };
+  timezone?: string;
 }) =>
   buildDraftPageLayoutWidget({
     id,
     pageLayoutTabId: 'tab-1',
     title: id,
     type: WidgetType.GRAPH,
-    configuration: { ...buildDefaultBarChartConfiguration({}), filter },
+    configuration: {
+      ...buildDefaultBarChartConfiguration({ timezone }),
+      filter,
+    },
     position: {
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
@@ -149,6 +153,15 @@ const companyWidget = buildBarChartWidget({
     recordFilters: [existingRecordFilter],
     recordFilterGroups: [existingRecordFilterGroup],
   },
+});
+
+// Stored at creation in the editor's timezone, which is not the viewer's in these tests.
+const WIDGET_STORED_TIMEZONE = 'Europe/Paris';
+
+const companyWidgetWithStoredTimezone = buildBarChartWidget({
+  id: 'company-widget-with-timezone',
+  objectMetadataId: companyObjectMetadataItem.id,
+  timezone: WIDGET_STORED_TIMEZONE,
 });
 
 const personWidget = buildBarChartWidget({
@@ -199,14 +212,12 @@ const OWNER_ME_VALUES = {
 };
 
 const renderWithDashboard = async <THookResult,>({
-  isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   dashboardFilterValues = {},
   widgets = [companyWidget],
   objectMetadataItems,
   useHookUnderTest,
 }: {
-  isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   dashboardFilterValues?: Record<string, DashboardFilterValue | undefined>;
   widgets?: PageLayoutWidget[];
@@ -215,15 +226,7 @@ const renderWithDashboard = async <THookResult,>({
 }) => {
   resetJotaiStore();
 
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-        value: isDashboardFiltersEnabled,
-      },
-    ],
-  });
+  jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
@@ -405,17 +408,6 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
     expect(result.current.note).toBe(noteWidget.configuration);
   });
 
-  it('returns the widget configuration untouched when the feature flag is off', async () => {
-    const { result } = await renderWithDashboard({
-      isDashboardFiltersEnabled: false,
-      dashboardFilterValues: DATE_VALUES,
-      useHookUnderTest: () =>
-        useWidgetConfigurationWithDashboardFilters(companyWidget),
-    });
-
-    expect(result.current).toBe(companyWidget.configuration);
-  });
-
   it('returns the widget configuration untouched outside dashboards', async () => {
     const { result } = await renderWithDashboard({
       pageLayoutType: PageLayoutType.RECORD_PAGE,
@@ -425,5 +417,53 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
     });
 
     expect(result.current).toBe(companyWidget.configuration);
+  });
+
+  it('sends the merged configuration in the viewer timezone while the widget keeps its stored one', async () => {
+    const { result } = await renderWithDashboard({
+      dashboardFilterValues: DATE_VALUES,
+      widgets: [companyWidgetWithStoredTimezone],
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(
+          companyWidgetWithStoredTimezone,
+        ),
+    });
+
+    if (!isWidgetConfigurationOfTypeGraph(result.current)) {
+      throw new Error('Expected a chart configuration');
+    }
+
+    expect(result.current.timezone).toBe(mockedWorkspaceMemberData.timeZone);
+    expect(getChartFilter(result.current).recordFilters).toHaveLength(1);
+
+    if (
+      !isWidgetConfigurationOfTypeGraph(
+        companyWidgetWithStoredTimezone.configuration,
+      )
+    ) {
+      throw new Error('Expected a chart configuration');
+    }
+
+    expect(companyWidgetWithStoredTimezone.configuration.timezone).toBe(
+      WIDGET_STORED_TIMEZONE,
+    );
+  });
+
+  it('keeps the widget stored timezone when no dashboard filter is merged', async () => {
+    const { result } = await renderWithDashboard({
+      widgets: [companyWidgetWithStoredTimezone],
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(
+          companyWidgetWithStoredTimezone,
+        ),
+    });
+
+    expect(result.current).toBe(companyWidgetWithStoredTimezone.configuration);
+
+    if (!isWidgetConfigurationOfTypeGraph(result.current)) {
+      throw new Error('Expected a chart configuration');
+    }
+
+    expect(result.current.timezone).toBe(WIDGET_STORED_TIMEZONE);
   });
 });

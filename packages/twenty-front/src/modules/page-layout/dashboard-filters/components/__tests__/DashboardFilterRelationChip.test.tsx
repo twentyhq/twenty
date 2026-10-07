@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DashboardFilterBar } from '@/page-layout/dashboard-filters/components/DashboardFilterBar';
 import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
@@ -31,13 +30,11 @@ import {
 } from 'twenty-shared/utils';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 // The record picker and the chip label both query workspace members; the mock stands in for Apollo and returns none.
@@ -76,13 +73,6 @@ const renderDashboardFilterBar = async ({
   dashboardFilterValues?: Record<string, DashboardFilterValue | undefined>;
 } = {}) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
-    ],
-  });
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({

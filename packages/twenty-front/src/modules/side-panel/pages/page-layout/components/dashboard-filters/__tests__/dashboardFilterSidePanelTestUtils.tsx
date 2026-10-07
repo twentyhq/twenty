@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -26,13 +25,11 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export const SIDE_PANEL_PAGE_TEST_INSTANCE_ID = 'side-panel-page-test';
@@ -126,13 +123,6 @@ export const setUpDashboardStore = ({
   dashboardFilters: DashboardFilterSlot[] | null;
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
-    ],
-  });
 
   const pageLayout = {
     id: PAGE_LAYOUT_TEST_INSTANCE_ID,

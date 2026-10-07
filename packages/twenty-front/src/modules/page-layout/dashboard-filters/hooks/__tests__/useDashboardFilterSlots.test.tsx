@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
 import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
@@ -28,13 +27,11 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
@@ -118,27 +115,15 @@ const widgetWithoutBindings = buildBarChartWidget({
 });
 
 const renderUseDashboardFilterSlots = async ({
-  isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   dashboardFilters,
   widgets,
 }: {
-  isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   dashboardFilters: DashboardFilterSlot[] | null;
   widgets: PageLayoutWidget[];
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-        value: isDashboardFiltersEnabled,
-      },
-    ],
-  });
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
@@ -253,17 +238,6 @@ describe('useDashboardFilterSlots', () => {
         fieldMetadataId: companyAccountOwnerFieldId,
       },
     });
-  });
-
-  it('returns nothing when the feature flag is off', async () => {
-    const { result } = await renderUseDashboardFilterSlots({
-      isDashboardFiltersEnabled: false,
-      dashboardFilters: PERSISTED_SLOTS,
-      widgets: [boundWidget],
-    });
-
-    expect(result.current.slots).toEqual([]);
-    expect(result.current.bindingsByWidgetId).toEqual({});
   });
 
   it('returns nothing outside dashboards', async () => {

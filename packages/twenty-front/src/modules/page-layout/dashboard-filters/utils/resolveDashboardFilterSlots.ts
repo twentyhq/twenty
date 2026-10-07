@@ -30,7 +30,6 @@ const EMPTY_RESULT: ResolvedDashboardFilterSlots = {
 export const resolveDashboardFilterSlots = ({
   pageLayout,
   objectMetadataItems,
-  isDashboardFiltersEnabled,
   builtInSlots,
 }: {
   pageLayout:
@@ -38,14 +37,9 @@ export const resolveDashboardFilterSlots = ({
     | null
     | undefined;
   objectMetadataItems: ComputeBuiltInBindingsArgs['objectMetadataItems'];
-  isDashboardFiltersEnabled: boolean;
   builtInSlots: DashboardFilterSlot[];
 }): ResolvedDashboardFilterSlots => {
-  if (
-    !isDashboardFiltersEnabled ||
-    !isDefined(pageLayout) ||
-    pageLayout.type !== PageLayoutType.DASHBOARD
-  ) {
+  if (!isDefined(pageLayout) || pageLayout.type !== PageLayoutType.DASHBOARD) {
     return EMPTY_RESULT;
   }
 

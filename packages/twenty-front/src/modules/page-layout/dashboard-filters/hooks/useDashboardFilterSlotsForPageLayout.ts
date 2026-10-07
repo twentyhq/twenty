@@ -7,9 +7,7 @@ import {
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 // Side-panel pages render outside the page layout instance context, so the draft is read by id.
 export const useDashboardFilterSlotsForPageLayout = (
@@ -23,23 +21,13 @@ export const useDashboardFilterSlotsForPageLayout = (
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const builtInSlots = useBuiltInDashboardFilterSlots();
 
-  const isDashboardFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-  );
-
   return useMemo(
     () =>
       resolveDashboardFilterSlots({
         pageLayout: pageLayoutDraft,
         objectMetadataItems,
-        isDashboardFiltersEnabled,
         builtInSlots,
       }),
-    [
-      pageLayoutDraft,
-      objectMetadataItems,
-      isDashboardFiltersEnabled,
-      builtInSlots,
-    ],
+    [pageLayoutDraft, objectMetadataItems, builtInSlots],
   );
 };

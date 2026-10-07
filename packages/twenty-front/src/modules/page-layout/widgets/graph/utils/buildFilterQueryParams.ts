@@ -54,24 +54,26 @@ export const buildFilterQueryParams = ({
         );
       }
     }
-  } else {
-    const parentlessFilters = recordFilters.filter(
-      (filter) => !isDefined(filter.recordFilterGroupId),
-    );
+  }
 
-    for (const filter of parentlessFilters) {
-      const urlFilter = mapRecordFilterToUrlFilter({
-        recordFilter: filter,
-        objectMetadataItem,
-      });
+  // Parentless filters (merged dashboard filters among them) are ANDed with the group by the records view,
+  // the same way computeRecordGqlOperationFilter combines them for the chart.
+  const parentlessFilters = recordFilters.filter(
+    (filter) => !isDefined(filter.recordFilterGroupId),
+  );
 
-      if (isDefined(urlFilter)) {
-        const fieldName = isDefined(urlFilter.subField)
-          ? `${urlFilter.field}.${urlFilter.subField}`
-          : urlFilter.field;
+  for (const filter of parentlessFilters) {
+    const urlFilter = mapRecordFilterToUrlFilter({
+      recordFilter: filter,
+      objectMetadataItem,
+    });
 
-        params.append(`filter[${fieldName}][${urlFilter.op}]`, urlFilter.value);
-      }
+    if (isDefined(urlFilter)) {
+      const fieldName = isDefined(urlFilter.subField)
+        ? `${urlFilter.field}.${urlFilter.subField}`
+        : urlFilter.field;
+
+      params.append(`filter[${fieldName}][${urlFilter.op}]`, urlFilter.value);
     }
   }
 

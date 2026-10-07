@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -27,13 +26,11 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock(
@@ -122,13 +119,6 @@ const renderDataSourceDropdown = async ({
   dashboardFilterBindings?: Record<string, DashboardFilterBinding | null>;
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
-    ],
-  });
 
   jotaiStore.set(getDraftAtom(), {
     ...makeDraft([
