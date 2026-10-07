@@ -72,6 +72,42 @@ describe('parseTeamsAssistantRequest', () => {
     });
   });
 
+  it('should keep line breaks and indentation in the request', () => {
+    const parsed = parseTeamsAssistantRequest(
+      buildPayload({
+        text: '<at>Twenty</at> import these leads:\nname,email\n  Jane,jane@acme.com',
+        entities: [
+          {
+            type: 'mention',
+            text: '<at>Twenty</at>',
+            mentioned: { id: BOT_ID },
+          },
+        ],
+      }),
+    );
+
+    expect(parsed.request?.requestText).toBe(
+      'import these leads:\nname,email\n  Jane,jane@acme.com',
+    );
+  });
+
+  it('should close the gap left by a bot mention in the middle of a sentence', () => {
+    const parsed = parseTeamsAssistantRequest(
+      buildPayload({
+        text: 'hey <at>Twenty</at> list my open deals',
+        entities: [
+          {
+            type: 'mention',
+            text: '<at>Twenty</at>',
+            mentioned: { id: BOT_ID },
+          },
+        ],
+      }),
+    );
+
+    expect(parsed.request?.requestText).toBe('hey list my open deals');
+  });
+
   it('should skip a message that only mentions the bot', () => {
     expect(
       parseTeamsAssistantRequest(
