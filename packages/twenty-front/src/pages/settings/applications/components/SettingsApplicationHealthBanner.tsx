@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { Callout } from 'twenty-ui/components/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
 import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
 
@@ -26,7 +27,12 @@ export const SettingsApplicationHealthBanner = ({
   return (
     <Callout
       status={appearance.status}
-      icon={<appearance.Icon size={16} aria-hidden={true} />}
+      icon={
+        <appearance.Icon
+          size={themeCssVariables.icon.size.md}
+          aria-hidden={true}
+        />
+      }
       title={title}
       description={description}
       action={

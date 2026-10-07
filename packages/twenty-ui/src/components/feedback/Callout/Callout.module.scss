@@ -61,8 +61,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  height: var(--t-spacing-4);
-  width: var(--t-spacing-4);
+  height: calc(var(--t-icon-size-md) * 1px);
+  width: calc(var(--t-icon-size-md) * 1px);
 }
 
 .title {
@@ -85,7 +85,7 @@
 }
 
 .descriptionWrapperWithIcon {
-  padding-inline-start: var(--t-spacing-6);
+  padding-inline-start: calc(var(--t-icon-size-md) * 1px + var(--t-spacing-2));
 }
 
 .descriptionWrapperWithAction {

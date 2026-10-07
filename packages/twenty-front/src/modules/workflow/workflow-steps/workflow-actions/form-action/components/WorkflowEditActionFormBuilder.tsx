@@ -267,7 +267,12 @@ export const WorkflowEditActionFormBuilder = ({
           <StyledCalloutContainer>
             <Callout
               status={'warning'}
-              icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
               title={t`Forms are meant for manual triggers`}
               description={t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`}
               closeLabel={t`Close`}

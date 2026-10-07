@@ -52,7 +52,12 @@ export const SettingsLogicFunctionTriggersTab = ({
       <StyledCalloutWrapper>
         <Callout
           status="info"
-          icon={<IconInfoCircle size={16} aria-hidden="true" />}
+          icon={
+            <IconInfoCircle
+              size={themeCssVariables.icon.size.md}
+              aria-hidden="true"
+            />
+          }
           title={t`Bundled with ${applicationName}`}
           description={t`This function has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
         />

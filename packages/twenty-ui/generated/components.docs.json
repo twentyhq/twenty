@@ -10334,7 +10334,7 @@
         "name": "icon",
         "type": "ReactNode",
         "required": false,
-        "defaultValue": "<IconHelp size={16} aria-hidden=\"true\" />",
+        "defaultValue": "<IconHelp size={themeCssVariables.icon.size.md} aria-hidden=\"true\" />",
         "description": "Leading icon node. Defaults to a decorative help icon. Pass null to omit it."
       },
       {

@@ -4,6 +4,7 @@ import { Callout } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const CalloutGalleryExample = () => {
   const [dismissRequests, setDismissRequests] = useState(0);
@@ -23,7 +24,12 @@ export const CalloutGalleryExample = () => {
             .
           </Text>
         }
-        icon={<IconAlertTriangle size={16} aria-label="Import warning" />}
+        icon={
+          <IconAlertTriangle
+            size={themeCssVariables.icon.size.md}
+            aria-label="Import warning"
+          />
+        }
         action={
           <>
             <Button

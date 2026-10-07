@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Callout } from '@ui/components/feedback/Callout/Callout';
 import { type CalloutStatus } from '@ui/components/feedback/Callout/types/CalloutStatus';
+import { InlineBanner } from '@ui/components/feedback/InlineBanner/InlineBanner';
 import { IconAlertTriangle } from '@ui/icon';
 import { Button } from '@ui/primitives/input';
 import { Text } from '@ui/primitives/typography';
@@ -13,6 +14,10 @@ import {
   ComponentDecorator,
   type CatalogStory,
 } from '@ui/testing';
+
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
+
+const THEMED_ICON_SIZE = 20;
 
 const onDismiss = fn();
 const onAction = fn();
@@ -64,6 +69,54 @@ export const FullWidth: Story = {
   },
 };
 
+export const ThemeIconSize: Story = {
+  args: {
+    title: 'Themed feedback',
+    description: 'Callout text follows the themed icon.',
+  },
+  render: (args) => (
+    <ThemeProvider
+      colorScheme="light"
+      applyToRoot={false}
+      overrides={{ '--t-icon-size-md': THEMED_ICON_SIZE }}
+    >
+      <Callout {...args} />
+      <Callout
+        title="Custom themed icon"
+        icon={
+          <IconAlertTriangle
+            size={themeCssVariables.icon.size.md}
+            aria-label="Custom themed icon"
+          />
+        }
+      />
+      <InlineBanner>Theme-sized inline message</InlineBanner>
+    </ThemeProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const icons = canvasElement.querySelectorAll('svg');
+
+    await expect(icons).toHaveLength(3);
+
+    for (const icon of icons) {
+      await expect(icon).toHaveStyle({
+        width: `${THEMED_ICON_SIZE}px`,
+        height: `${THEMED_ICON_SIZE}px`,
+      });
+    }
+
+    const title = canvas.getByText('Themed feedback');
+    const description = canvas.getByText(
+      'Callout text follows the themed icon.',
+    );
+
+    await expect(description.getBoundingClientRect().left).toBe(
+      title.getBoundingClientRect().left,
+    );
+  },
+};
+
 export const DismissalRequest: Story = {
   args: {
     status: 'warning',
@@ -77,7 +130,12 @@ export const DismissalRequest: Story = {
         .
       </Text>
     ),
-    icon: <IconAlertTriangle size={16} aria-label="Import warning" />,
+    icon: (
+      <IconAlertTriangle
+        size={themeCssVariables.icon.size.md}
+        aria-label="Import warning"
+      />
+    ),
     action: (
       <Button size="sm" variant="ghost" onClick={onAction}>
         Review import
