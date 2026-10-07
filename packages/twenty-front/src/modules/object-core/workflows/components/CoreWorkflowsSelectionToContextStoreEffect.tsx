@@ -5,11 +5,11 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
+import { useSetAtomIfChanged } from '@/object-core/workflows/hooks/useSetAtomIfChanged';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { buildWorkflowRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowRecordFromCoreWorkflow';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useSetAtomIfChanged } from '@/ui/utilities/state/jotai/hooks/useSetAtomIfChanged';
 
 type CoreWorkflowsSelectionToContextStoreEffectProps = {
   selectedCoreWorkflows: CoreWorkflow[];

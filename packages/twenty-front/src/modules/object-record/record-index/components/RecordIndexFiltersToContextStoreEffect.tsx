@@ -1,4 +1,4 @@
-import { useStore } from 'jotai';
+import { type PrimitiveAtom, useStore } from 'jotai';
 import { useEffect } from 'react';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -17,7 +17,7 @@ import { selectedRecordIdsComponentSelector } from '@/object-record/record-selec
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomIfChanged } from '@/ui/utilities/state/jotai/hooks/useSetAtomIfChanged';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
@@ -54,8 +54,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const setIfChanged = useSetAtomIfChanged();
-
   const contextStoreTargetedRecordsRuleAtom =
     useAtomComponentStateCallbackState(
       contextStoreTargetedRecordsRuleComponentState,
@@ -80,6 +78,15 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     );
 
   useEffect(() => {
+    const setIfChanged = <TValue,>(
+      atom: PrimitiveAtom<TValue>,
+      value: TValue,
+    ) => {
+      if (!isDeeplyEqual(store.get(atom), value)) {
+        store.set(atom, value);
+      }
+    };
+
     const selectedRecordIdSet = new Set(selectedRecordIds);
 
     setIfChanged(
@@ -128,7 +135,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     hasUserSelectedAllRecords,
     recordIndexAllRecordIds,
     selectedRecordIds,
-    setIfChanged,
     store,
   ]);
 
