@@ -3,7 +3,7 @@ import { chmod, cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { after, afterEach, before, beforeEach, test } from 'node:test';
+import { test } from 'node:test';
 
 import {
   checkPublishReadiness,
@@ -22,7 +22,14 @@ const registry = createServer((request, response) => {
   response.statusCode = registryStatuses.get(request.url) ?? 404;
   response.end('{}');
 });
-let registryUrl;
+
+await new Promise((resolve, reject) => {
+  registry.once('error', reject);
+  registry.listen(0, '127.0.0.1', resolve);
+});
+registry.unref();
+
+const registryUrl = `http://127.0.0.1:${registry.address().port}`;
 let root;
 
 const createCliSource = ({
@@ -125,43 +132,41 @@ const assertFailure = (promise, pattern) =>
     return true;
   });
 
-before(async () => {
-  await new Promise((resolve, reject) => {
-    registry.once('error', reject);
-    registry.listen(0, '127.0.0.1', resolve);
+const testPublishCheck = (name, run) =>
+  test(name, async () => {
+    root = await mkdtemp(join(tmpdir(), 'twenty-publish-check-test-'));
+    registryStatuses.clear();
+
+    for (const pin of PINS) {
+      registryStatuses.set(`/${pin.name}/${pin.version}`, 200);
+    }
+
+    try {
+      await run();
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
-  registryUrl = `http://127.0.0.1:${registry.address().port}`;
-});
 
-after(() => new Promise((resolve) => registry.close(resolve)));
+await testPublishCheck(
+  'accepts a complete build whose app init pins are on npm',
+  async () => {
+    const packageDirectory = await createPackage();
 
-beforeEach(async () => {
-  root = await mkdtemp(join(tmpdir(), 'twenty-publish-check-test-'));
-  registryStatuses.clear();
+    assert.deepEqual(
+      await checkPublishReadiness({ packageDirectory, registryUrl }),
+      {
+        version: PACKAGE_VERSION,
+        executable: 'dist/cli.cjs',
+        bundleFileCount: 3,
+        templateFileCount: 2,
+        pins: PINS,
+      },
+    );
+  },
+);
 
-  for (const { name, version } of PINS) {
-    registryStatuses.set(`/${name}/${version}`, 200);
-  }
-});
-
-afterEach(() => rm(root, { recursive: true, force: true }));
-
-test('accepts a complete build whose app init pins are on npm', async () => {
-  const packageDirectory = await createPackage();
-
-  assert.deepEqual(
-    await checkPublishReadiness({ packageDirectory, registryUrl }),
-    {
-      version: PACKAGE_VERSION,
-      executable: 'dist/cli.cjs',
-      bundleFileCount: 3,
-      templateFileCount: 2,
-      pins: PINS,
-    },
-  );
-});
-
-test('refuses a package without its executable', async () => {
+await testPublishCheck('refuses a package without its executable', async () => {
   const packageDirectory = await createPackage();
 
   await rm(join(packageDirectory, 'dist/cli.cjs'));
@@ -171,34 +176,40 @@ test('refuses a package without its executable', async () => {
   );
 });
 
-test('refuses a build whose lazy chunk is missing', async () => {
-  const packageDirectory = await createPackage();
+await testPublishCheck(
+  'refuses a build whose lazy chunk is missing',
+  async () => {
+    const packageDirectory = await createPackage();
 
-  await rm(join(packageDirectory, 'dist/chunks/commands.cjs'));
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /requires \.\/chunks\/commands\.cjs, which is missing/,
-  );
-});
+    await rm(join(packageDirectory, 'dist/chunks/commands.cjs'));
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /requires \.\/chunks\/commands\.cjs, which is missing/,
+    );
+  },
+);
 
-test('refuses a missing or stale copy of the app template', async () => {
-  const packageDirectory = await createPackage();
-  const copiedFile = join(packageDirectory, 'dist/app-template/package.json');
+await testPublishCheck(
+  'refuses a missing or stale copy of the app template',
+  async () => {
+    const packageDirectory = await createPackage();
+    const copiedFile = join(packageDirectory, 'dist/app-template/package.json');
 
-  await writeFile(copiedFile, '{"stale":true}');
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /^dist\/app-template\/package\.json differs from/,
-  );
+    await writeFile(copiedFile, '{"stale":true}');
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /^dist\/app-template\/package\.json differs from/,
+    );
 
-  await rm(copiedFile);
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /^dist\/app-template\/package\.json is missing/,
-  );
-});
+    await rm(copiedFile);
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /^dist\/app-template\/package\.json is missing/,
+    );
+  },
+);
 
-test('refuses a build made for another version', async () => {
+await testPublishCheck('refuses a build made for another version', async () => {
   const packageDirectory = await createPackage({ version: '0.9.0' });
 
   await assertFailure(
@@ -207,53 +218,65 @@ test('refuses a build made for another version', async () => {
   );
 });
 
-test('refuses a CLI run that exits with an error after printing success', async () => {
-  const packageDirectory = await createPackage({ exitCode: 1 });
+await testPublishCheck(
+  'refuses a CLI run that exits with an error after printing success',
+  async () => {
+    const packageDirectory = await createPackage({ exitCode: 1 });
 
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /^twenty version exited with code 1 without an error result/,
-  );
-});
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /^twenty version exited with code 1 without an error result/,
+    );
+  },
+);
 
-test('refuses a CLI run that does not finish in time', async () => {
-  const packageDirectory = await createPackage({ hangs: true });
+await testPublishCheck(
+  'refuses a CLI run that does not finish in time',
+  async () => {
+    const packageDirectory = await createPackage({ hangs: true });
 
-  await assertFailure(
-    checkPublishReadiness({
-      packageDirectory,
-      registryUrl,
-      commandTimeoutMilliseconds: 1_000,
-    }),
-    /^twenty version timed out after 1s/,
-  );
-});
+    await assertFailure(
+      checkPublishReadiness({
+        packageDirectory,
+        registryUrl,
+        commandTimeoutMilliseconds: 1_000,
+      }),
+      /^twenty version timed out after 1s/,
+    );
+  },
+);
 
-test('refuses an app init that leaves out an essential file', async () => {
-  const packageDirectory = await createPackage({
-    skippedFiles: ['.yarnrc.yml'],
-  });
+await testPublishCheck(
+  'refuses an app init that leaves out an essential file',
+  async () => {
+    const packageDirectory = await createPackage({
+      skippedFiles: ['.yarnrc.yml'],
+    });
 
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /^app init did not create \.yarnrc\.yml/,
-  );
-});
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /^app init did not create \.yarnrc\.yml/,
+    );
+  },
+);
 
-test('refuses pins that differ from the generated package.json', async () => {
-  const packageDirectory = await createPackage({
-    renderedPins: PINS.map((pin) =>
-      pin.name === 'twenty-sdk' ? { ...pin, version: '2.44.0' } : pin,
-    ),
-  });
+await testPublishCheck(
+  'refuses pins that differ from the generated package.json',
+  async () => {
+    const packageDirectory = await createPackage({
+      renderedPins: PINS.map((pin) =>
+        pin.name === 'twenty-sdk' ? { ...pin, version: '2.44.0' } : pin,
+      ),
+    });
 
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /reported twenty-sdk@2\.45\.0, but the generated package\.json pins 2\.44\.0/,
-  );
-});
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /reported twenty-sdk@2\.45\.0, but the generated package\.json pins 2\.44\.0/,
+    );
+  },
+);
 
-test('refuses pins that npm does not serve', async () => {
+await testPublishCheck('refuses pins that npm does not serve', async () => {
   const packageDirectory = await createPackage();
 
   registryStatuses.delete('/twenty-sdk/2.45.0');
@@ -263,20 +286,25 @@ test('refuses pins that npm does not serve', async () => {
   );
 });
 
-test('reports registry errors apart from missing versions', async () => {
-  const packageDirectory = await createPackage();
+await testPublishCheck(
+  'reports registry errors apart from missing versions',
+  async () => {
+    const packageDirectory = await createPackage();
 
-  registryStatuses.set('/twenty-ui/2.45.0', 500);
-  await assertFailure(
-    checkPublishReadiness({ packageDirectory, registryUrl }),
-    /^Could not verify these versions on http:\/\/127\.0\.0\.1:\d+: twenty-ui@2\.45\.0 \(HTTP 500\)/,
-  );
+    registryStatuses.set('/twenty-ui/2.45.0', 500);
+    await assertFailure(
+      checkPublishReadiness({ packageDirectory, registryUrl }),
+      /^Could not verify these versions on http:\/\/127\.0\.0\.1:\d+: twenty-ui@2\.45\.0 \(HTTP 500\)/,
+    );
 
-  await assertFailure(
-    checkPublishReadiness({
-      packageDirectory,
-      registryUrl: 'http://127.0.0.1:1',
-    }),
-    /^Could not verify these versions on http:\/\/127\.0\.0\.1:1: twenty-client-sdk@2\.45\.0 \(.+\)/,
-  );
-});
+    await assertFailure(
+      checkPublishReadiness({
+        packageDirectory,
+        registryUrl: 'http://127.0.0.1:1',
+      }),
+      /^Could not verify these versions on http:\/\/127\.0\.0\.1:1: twenty-client-sdk@2\.45\.0 \(.+\)/,
+    );
+  },
+);
+
+await new Promise((resolve) => registry.close(resolve));
