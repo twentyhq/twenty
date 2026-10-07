@@ -203,7 +203,10 @@ export class AgentRunSuspensionService {
       workspaceId,
       suspension,
       outcome: isDefined(answer)
-        ? { status: 'ANSWERED', answer }
+        ? {
+            status: 'COMPLETED',
+            result: { threadId: suspension.threadId, ...answer },
+          }
         : {
             status: 'FAILED',
             error: 'The answer to the proposed call could not be read',
