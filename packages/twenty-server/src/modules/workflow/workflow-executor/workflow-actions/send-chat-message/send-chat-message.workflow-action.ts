@@ -15,6 +15,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-history/utils/read-tool-call-status.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
@@ -26,6 +27,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
 import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
@@ -33,7 +35,6 @@ import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-e
 import { findMissingRequiredToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/find-missing-required-tool-arguments.util';
 import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
 import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-input.type';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_SEND_ATTEMPTS = 10;
 
@@ -43,7 +44,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     private readonly agentInboxService: AgentInboxService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
 
@@ -109,7 +110,6 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
             toolCall,
             summary: text,
             runInfo,
-            stepId: currentStepId,
           });
 
           return awaitingToolCall;
@@ -154,15 +154,17 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       }
 
       if (status === 'pending' || status === 'running') {
-        // the step waits for the member, and their answer finds it through this thread
-        await this.workflowRunWorkspaceService.setStepThreadId({
-          stepId: currentStepId,
-          threadId,
-          workflowRunId: runInfo.workflowRunId,
+        // the step waits for the member, and the engine hands it their answer
+        await this.agentRunSuspensionService.awaitCallerCall({
           workspaceId: runInfo.workspaceId,
+          threadId,
+          caller: buildWorkflowStepCaller({
+            workflowRunId: runInfo.workflowRunId,
+            stepId: currentStepId,
+          }),
         });
 
-        return { wait: { type: 'ANSWER' } };
+        return { wait: { type: 'CALLBACK' } };
       }
 
       return {
@@ -184,12 +186,10 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     toolCall,
     summary,
     runInfo,
-    stepId,
   }: {
     toolCall: NonNullable<WorkflowSendChatMessageActionInput['toolCall']>;
     summary: string;
     runInfo: WorkflowActionInput['runInfo'];
-    stepId: string;
   }) {
     const { authContext, rolePermissionConfig, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
@@ -246,7 +246,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       input,
       output: {
         ...buildProposeToolCallPendingOutput(resolution.proposal),
-        workflowStep: { workflowRunId: runInfo.workflowRunId, stepId },
+        awaitedByCaller: true,
       },
     };
   }
