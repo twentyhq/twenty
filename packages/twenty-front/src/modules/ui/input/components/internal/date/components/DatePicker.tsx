@@ -209,21 +209,41 @@ export const DatePicker = ({
           fallback={
             <StyledDatePickerFallback>
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}

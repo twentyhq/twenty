@@ -28,7 +28,15 @@ const StyledContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  return <Skeleton height={SKELETON_HEIGHT_SIZES.s} />;
+  return (
+    <Skeleton
+      layout="line"
+      baseColor={themeCssVariables.background.tertiary}
+      highlightColor={themeCssVariables.background.transparent.lighter}
+      borderRadius={themeCssVariables.border.radius.smRound}
+      height={SKELETON_HEIGHT_SIZES.s}
+    />
+  );
 };
 
 const isActivityObject = (

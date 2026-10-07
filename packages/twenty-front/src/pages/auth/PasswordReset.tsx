@@ -220,17 +220,16 @@ export const PasswordReset = () => {
           <Title animate>{passwordActionLabel}</Title>
           <StyledOnboardingContentContainer>
             {!email ? (
-              Array.from({ length: 2 }, (_, index) => (
-                <Skeleton
-                  height={SKELETON_HEIGHT_SIZES.m}
-                  key={index}
-                  style={{
-                    marginBottom: themeCssVariables.spacing[2],
-                  }}
-                  baseColor={themeCssVariables.background.quaternary}
-                  highlightColor={themeCssVariables.background.secondary}
-                />
-              ))
+              <Skeleton
+                layout="line"
+                height={SKELETON_HEIGHT_SIZES.m}
+                count={2}
+                style={{
+                  marginBottom: themeCssVariables.spacing[2],
+                }}
+                baseColor={themeCssVariables.background.quaternary}
+                highlightColor={themeCssVariables.background.secondary}
+              />
             ) : (
               <StyledForm onSubmit={handleSubmit(onSubmit)}>
                 <StyledFullWidthContainer>

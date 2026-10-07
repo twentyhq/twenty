@@ -61,6 +61,9 @@ export const LeftPanelSkeletonLoader = () => {
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <Skeleton
+            layout="line"
+            highlightColor={themeCssVariables.background.transparent.lighter}
+            borderRadius={4}
             width={96}
             height={SKELETON_HEIGHT_SIZES.s}
             baseColor={themeCssVariables.background.quaternary}

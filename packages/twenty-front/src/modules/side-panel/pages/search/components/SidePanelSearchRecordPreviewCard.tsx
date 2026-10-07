@@ -195,7 +195,14 @@ export const SidePanelSearchRecordPreviewCard = ({
               </FieldContext.Provider>
             </RecordFieldComponentInstanceContext.Provider>
           ) : (
-            <Skeleton width={120} height={SKELETON_HEIGHT} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              width={120}
+              height={SKELETON_HEIGHT}
+            />
           )}
         </StyledFieldValue>
       </StyledFieldRow>

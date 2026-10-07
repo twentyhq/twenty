@@ -36,24 +36,70 @@ export const CoreAgentDetailSkeletonLoader = () => {
         <StyledIconNameRow>
           <StyledIconContainer>
             <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
               width={SKELETON_HEIGHT_SIZES.l}
               height={SKELETON_HEIGHT_SIZES.l}
             />
           </StyledIconContainer>
           <StyledNameContainer>
-            <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              height={SKELETON_HEIGHT_SIZES.l}
+              width="100%"
+            />
           </StyledNameContainer>
         </StyledIconNameRow>
 
-        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          height={SKELETON_HEIGHT_SIZES.l}
+          width="100%"
+        />
 
-        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          height={SKELETON_HEIGHT_SIZES.l}
+          width="100%"
+        />
 
-        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          height={SKELETON_HEIGHT_SIZES.l}
+          width="100%"
+        />
 
-        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          height={SKELETON_HEIGHT_SIZES.l}
+          width="100%"
+        />
 
-        <Skeleton height={120} width="100%" />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          height={120}
+          width="100%"
+        />
       </StyledFormSection>
     </StyledSkeletonContainer>
   );

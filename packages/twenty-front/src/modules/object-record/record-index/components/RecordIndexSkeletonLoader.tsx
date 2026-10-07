@@ -18,8 +18,22 @@ export const RecordIndexSkeletonLoader = () => (
   <PageContentSkeletonLoader
     secondaryBar={
       <StyledSecondaryBar>
-        <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.s} />
-        <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          width={120}
+          height={SKELETON_HEIGHT_SIZES.s}
+        />
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          width={180}
+          height={SKELETON_HEIGHT_SIZES.s}
+        />
       </StyledSecondaryBar>
     }
   />

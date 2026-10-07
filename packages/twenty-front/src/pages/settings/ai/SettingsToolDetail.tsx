@@ -12,6 +12,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -200,10 +201,30 @@ export const SettingsToolDetail = () => {
       <SettingsPageContainer>
         {loading ? (
           <Section.Root>
-            <Skeleton height={20} width={200} />
-            <Skeleton height={20} width={400} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              height={20}
+              width={200}
+            />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              height={20}
+              width={400}
+            />
 
-            <Skeleton height={80} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              height={80}
+            />
           </Section.Root>
         ) : (
           <>

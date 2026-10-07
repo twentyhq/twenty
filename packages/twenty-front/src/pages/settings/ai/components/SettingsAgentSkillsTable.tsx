@@ -59,7 +59,7 @@ export const SettingsAgentSkillsTable = ({
       </StyledTableHeaderRowContainer>
       {showSkeleton
         ? Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton height={32} borderRadius={4} key={index} />
+            <Skeleton layout="line" height={32} borderRadius={4} key={index} />
           ))
         : skills.map((skill) => (
             <SettingsSkillTableRow

@@ -190,7 +190,16 @@ export const LogConsoleTable = ({
               >
                 {columns.map((column) => (
                   <TableCell key={column.id}>
-                    <Skeleton width={80} height={16} />
+                    <Skeleton
+                      layout="line"
+                      baseColor={themeCssVariables.background.tertiary}
+                      highlightColor={
+                        themeCssVariables.background.transparent.lighter
+                      }
+                      borderRadius={4}
+                      width={80}
+                      height={16}
+                    />
                   </TableCell>
                 ))}
               </TableRow>

@@ -90,10 +90,35 @@ export const SettingsUsageUserDetail = () => {
       <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
         <SettingsPageContainer>
           <StyledUserHeader>
-            <Skeleton width={40} height={40} borderRadius={8} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              width={40}
+              height={40}
+              borderRadius={8}
+            />
             <StyledUserInfo>
-              <Skeleton width={160} height={16} />
-              <Skeleton width={100} height={13} />
+              <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
+                borderRadius={4}
+                width={160}
+                height={16}
+              />
+              <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
+                borderRadius={4}
+                width={100}
+                height={13}
+              />
             </StyledUserInfo>
           </StyledUserHeader>
           <UsageSectionSkeleton />

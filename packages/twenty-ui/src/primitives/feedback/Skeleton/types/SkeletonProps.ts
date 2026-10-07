@@ -11,4 +11,7 @@ export type SkeletonProps = Omit<
   baseColor?: CSSProperties['backgroundColor'];
   highlightColor?: CSSProperties['backgroundColor'];
   animated?: boolean;
+  layout?: 'shape' | 'line';
+  count?: number;
+  containerClassName?: string;
 };

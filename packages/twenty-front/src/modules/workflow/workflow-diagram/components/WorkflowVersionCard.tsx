@@ -19,9 +19,27 @@ const StyledLoadingSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledLoadingSkeletonContainer>
-      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
-      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
-      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
     </StyledLoadingSkeletonContainer>
   );
 };

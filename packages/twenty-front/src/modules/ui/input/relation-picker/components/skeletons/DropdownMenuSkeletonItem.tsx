@@ -28,6 +28,7 @@ export const DropdownMenuSkeletonItem = ({
   return (
     <StyledDropdownMenuSkeletonContainer>
       <Skeleton
+        layout="line"
         height={SKELETON_HEIGHT_SIZES.s}
         style={{ lineHeight: 0 }}
         width={width}

@@ -269,10 +269,46 @@ export const DateTimePicker = ({
           <Suspense
             fallback={
               <StyledDatePickerFallback>
-                <Skeleton width={200} height={SKELETON_HEIGHT_SIZES.m} />
-                <Skeleton width={240} height={SKELETON_HEIGHT_SIZES.l} />
-                <Skeleton width={220} height={SKELETON_HEIGHT_SIZES.m} />
-                <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+                <Skeleton
+                  layout="line"
+                  baseColor={themeCssVariables.background.tertiary}
+                  highlightColor={
+                    themeCssVariables.background.transparent.lighter
+                  }
+                  borderRadius={4}
+                  width={200}
+                  height={SKELETON_HEIGHT_SIZES.m}
+                />
+                <Skeleton
+                  layout="line"
+                  baseColor={themeCssVariables.background.tertiary}
+                  highlightColor={
+                    themeCssVariables.background.transparent.lighter
+                  }
+                  borderRadius={4}
+                  width={240}
+                  height={SKELETON_HEIGHT_SIZES.l}
+                />
+                <Skeleton
+                  layout="line"
+                  baseColor={themeCssVariables.background.tertiary}
+                  highlightColor={
+                    themeCssVariables.background.transparent.lighter
+                  }
+                  borderRadius={4}
+                  width={220}
+                  height={SKELETON_HEIGHT_SIZES.m}
+                />
+                <Skeleton
+                  layout="line"
+                  baseColor={themeCssVariables.background.tertiary}
+                  highlightColor={
+                    themeCssVariables.background.transparent.lighter
+                  }
+                  borderRadius={4}
+                  width={180}
+                  height={SKELETON_HEIGHT_SIZES.s}
+                />
               </StyledDatePickerFallback>
             }
           >

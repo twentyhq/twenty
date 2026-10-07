@@ -8,11 +8,19 @@ import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncr
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
 import { memo, Suspense, useRef } from 'react';
 import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const MarkdownLoadingSkeleton = () => {
   return (
     <StyledSkeletonContainer>
-      <Skeleton width={200} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={themeCssVariables.border.radius.smRound}
+        width={200}
+        height={SKELETON_HEIGHT_SIZES.s}
+      />
     </StyledSkeletonContainer>
   );
 };

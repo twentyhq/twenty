@@ -4,13 +4,19 @@ import { expect } from 'storybook/test';
 import { Skeleton } from '@ui/primitives/feedback';
 import { Text } from '@ui/primitives/typography';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme';
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
 
 const meta: Meta<typeof Skeleton> = {
   title: 'UI/Feedback/Skeleton',
   component: Skeleton,
   decorators: [ComponentDecorator],
-  args: { width: 240, height: 16 },
+  args: {
+    width: 240,
+    height: 16,
+    baseColor: themeCssVariables.background.tertiary,
+    highlightColor: themeCssVariables.background.transparent.lighter,
+    borderRadius: 4,
+  },
   render: (args) => <Skeleton {...args} data-testid="placeholder" />,
 };
 
@@ -28,26 +34,69 @@ export const Default: Story = {
     await expect(placeholder).toBeVisible();
     await expect(placeholder).toHaveAttribute('aria-hidden', 'true');
     await expect(placeholder).toHaveStyle({ width: '240px', height: '16px' });
+    const highlight = getComputedStyle(placeholder, '::after');
     const isAnimating =
-      getComputedStyle(placeholder, '::after').animationName !== 'none';
+      highlight.animationName !== 'none' && highlight.display !== 'none';
 
     await expect(isAnimating).toBe(isMotionEnabled());
+
+    const shapeStyle = getComputedStyle(placeholder);
+    const highlightColor = shapeStyle
+      .getPropertyValue('--skeleton-highlight-color')
+      .trim();
+
+    await expect(highlight.backgroundImage).toBe(
+      `linear-gradient(90deg, ${shapeStyle.backgroundColor} 0%, ${highlightColor} 50%, ${shapeStyle.backgroundColor} 100%)`,
+    );
+    await expect(highlight.animationDuration).toBe('1.5s');
+    await expect(highlight.animationTimingFunction).toBe('ease-in-out');
+    await expect(highlight.animationIterationCount).toBe('infinite');
+  },
+};
+
+export const Lines: Story = {
+  args: { layout: 'line', count: 4, height: 32 },
+  render: (args) => (
+    <Text
+      render={<div />}
+      data-testid="rows"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        lineHeight: 0,
+      }}
+    >
+      <Skeleton {...args} data-testid="placeholder" />
+    </Text>
+  ),
+  play: async ({ canvas }) => {
+    const placeholders = canvas.getAllByTestId('placeholder');
+
+    await expect(placeholders).toHaveLength(4);
+    await expect(
+      canvas.getByTestId('rows').getBoundingClientRect().height,
+    ).toBe(128);
+
+    for (const placeholder of placeholders) {
+      await expect(placeholder.getBoundingClientRect().height).toBe(32);
+    }
   },
 };
 
 export const Shapes: Story = {
-  render: () => (
+  render: (args) => (
     <Text
       render={<div />}
       style={{ display: 'flex', gap: 16, alignItems: 'center' }}
     >
-      <Skeleton width={40} height={40} borderRadius="50%" />
+      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
       <Text
         render={<div />}
         style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
       >
-        <Skeleton width={180} height={16} />
-        <Skeleton width={120} height={13} />
+        <Skeleton {...args} width={180} height={16} />
+        <Skeleton {...args} width={120} height={13} />
       </Text>
     </Text>
   ),
@@ -88,11 +137,11 @@ export const RightToLeft: Story = {
     );
 
     if (!isMotionEnabled()) {
-      await expect(highlight.animationName).toBe('none');
+      await expect(highlight.display).toBe('none');
       return;
     }
 
-    await expect(highlight.animationDirection).toBe('reverse');
+    await expect(highlight.animationDirection).toBe('normal');
   },
 };
 

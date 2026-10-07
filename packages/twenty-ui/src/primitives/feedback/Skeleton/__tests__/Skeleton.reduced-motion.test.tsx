@@ -14,7 +14,7 @@ it('disables the shimmer when the browser prefers reduced motion', () => {
   expect(window.matchMedia('(prefers-reduced-motion: reduce)').matches).toBe(
     true,
   );
-  expect(highlight.animationName).toBe('none');
   expect(highlight.display).toBe('none');
+  expect(placeholder.getAnimations({ subtree: true })).toHaveLength(0);
   expect(placeholder.getBoundingClientRect().height).toBe(16);
 });

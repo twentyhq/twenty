@@ -186,7 +186,18 @@ export const EventLogResultsTable = ({
               <TableRow gridTemplateColumns={gridTemplateColumns}>
                 {baseColumns.map((column, index) => (
                   <TableCell key={column.id}>
-                    {index === 0 && <Skeleton width={120} height={16} />}
+                    {index === 0 && (
+                      <Skeleton
+                        layout="line"
+                        baseColor={themeCssVariables.background.tertiary}
+                        highlightColor={
+                          themeCssVariables.background.transparent.lighter
+                        }
+                        borderRadius={4}
+                        width={120}
+                        height={16}
+                      />
+                    )}
                   </TableCell>
                 ))}
               </TableRow>

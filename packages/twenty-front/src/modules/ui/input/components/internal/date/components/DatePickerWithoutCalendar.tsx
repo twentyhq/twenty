@@ -141,6 +141,11 @@ export const DatePickerWithoutCalendar = ({
           fallback={
             <StyledDatePickerFallback>
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
@@ -148,6 +153,11 @@ export const DatePickerWithoutCalendar = ({
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
@@ -155,6 +165,11 @@ export const DatePickerWithoutCalendar = ({
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
@@ -162,6 +177,11 @@ export const DatePickerWithoutCalendar = ({
                 borderRadius={2}
               />
               <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }

@@ -69,7 +69,12 @@ export const MetadataTranslationsTable = ({
             <TableBody>
               {showSkeleton
                 ? Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton height={32} borderRadius={4} key={index} />
+                    <Skeleton
+                      layout="line"
+                      height={32}
+                      borderRadius={4}
+                      key={index}
+                    />
                   ))
                 : languageRows.map(({ locale, label, translations }) => (
                     <MetadataTranslationsTableRow

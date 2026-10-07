@@ -34,6 +34,9 @@ const LoadingSkeleton = () => {
   return (
     <StyledSkeletonContainer>
       <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
         height={SKELETON_HEIGHT_SIZES.s}
         borderRadius={themeCssVariables.border.radius.md}
       />

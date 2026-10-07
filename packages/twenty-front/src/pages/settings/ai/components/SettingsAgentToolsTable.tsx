@@ -56,7 +56,14 @@ export const SettingsAgentToolsTable = ({
       </StyledTableHeaderRowContainer>
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton height={32} borderRadius={4} key={index} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              height={32}
+              borderRadius={4}
+              key={index}
+            />
           ))
         : tools.map((tool) => {
             const application = isDefined(tool.applicationId)

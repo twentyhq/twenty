@@ -1,6 +1,7 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
   align-items: flex-start;
@@ -24,11 +25,24 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
 }) => {
   return (
     <StyledSkeletonContainer>
-      {title && <Skeleton width={48} height={SKELETON_HEIGHT_SIZES.xs} />}
+      {title && (
+        <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
+          width={48}
+          height={SKELETON_HEIGHT_SIZES.xs}
+        />
+      )}
       {Array.from({ length }).map((_, index) => (
         <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          highlightColor={themeCssVariables.background.transparent.lighter}
+          borderRadius={4}
           key={index}
-          className={fillSkeletonContainer}
+          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
         />
       ))}

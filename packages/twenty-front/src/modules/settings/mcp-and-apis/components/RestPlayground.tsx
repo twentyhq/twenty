@@ -63,7 +63,16 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     return null;
   }
 
-  const fallback = <Skeleton width="100%" height="100%" />;
+  const fallback = (
+    <Skeleton
+      layout="line"
+      baseColor={themeCssVariables.background.tertiary}
+      highlightColor={themeCssVariables.background.transparent.lighter}
+      borderRadius={4}
+      width="100%"
+      height="100%"
+    />
+  );
 
   return (
     <StyledContainer>

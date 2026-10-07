@@ -49,7 +49,10 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
       <RecordCardHeaderContainer isCompact={isCompactModeActive}>
         <StyledSkeletonTitle>
           <Skeleton
+            render={<div />}
             animated={false}
+            baseColor={themeCssVariables.background.tertiary}
+            borderRadius={themeCssVariables.border.radius.sm}
             width={titleSkeletonWidth}
             height={12}
             style={{ display: 'block' }}
@@ -62,12 +65,20 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
             <RecordCardBodyContainer key={id}>
               <StyledSkeletonIconAndText>
                 <Skeleton
+                  render={<div />}
                   animated={false}
+                  baseColor={themeCssVariables.background.tertiary}
+                  borderRadius={themeCssVariables.border.radius.sm}
+                  style={{ display: 'block' }}
                   width={16}
                   height={SKELETON_HEIGHT_SIZES.s}
                 />
                 <Skeleton
+                  render={<div />}
                   animated={false}
+                  baseColor={themeCssVariables.background.tertiary}
+                  borderRadius={themeCssVariables.border.radius.sm}
+                  style={{ display: 'block' }}
                   width={151}
                   height={SKELETON_HEIGHT_SIZES.s}
                 />

@@ -18,9 +18,14 @@ export const SettingsSectionSkeletonLoader = ({
 }: SettingsSectionSkeletonLoaderProps) => {
   return (
     <StyledRows>
-      {Array.from({ length: rowCount }, (_, index) => (
-        <Skeleton key={index} height={SKELETON_HEIGHT_SIZES.l} />
-      ))}
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={4}
+        count={rowCount}
+        height={SKELETON_HEIGHT_SIZES.l}
+      />
     </StyledRows>
   );
 };

@@ -38,10 +38,31 @@ export const SettingsMessageFoldersSkeletonLoader = () => {
       {SKELETON_ROWS.map((row, index) => (
         <StyledSkeletonRow key={index}>
           <StyledSkeletonFolderInfo>
-            <Skeleton width={20} height={SKELETON_HEIGHT_SIZES.s} />
-            <Skeleton width={row.width} height={SKELETON_HEIGHT_SIZES.s} />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              width={20}
+              height={SKELETON_HEIGHT_SIZES.s}
+            />
+            <Skeleton
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
+              borderRadius={4}
+              width={row.width}
+              height={SKELETON_HEIGHT_SIZES.s}
+            />
           </StyledSkeletonFolderInfo>
-          <Skeleton width={16} height={SKELETON_HEIGHT_SIZES.s} />
+          <Skeleton
+            layout="line"
+            baseColor={themeCssVariables.background.tertiary}
+            highlightColor={themeCssVariables.background.transparent.lighter}
+            borderRadius={4}
+            width={16}
+            height={SKELETON_HEIGHT_SIZES.s}
+          />
         </StyledSkeletonRow>
       ))}
     </StyledSkeletonContainer>

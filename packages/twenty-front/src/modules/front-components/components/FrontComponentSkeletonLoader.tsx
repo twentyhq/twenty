@@ -16,6 +16,9 @@ export const FrontComponentSkeletonLoader = () => {
   return (
     <StyledContainer>
       <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
         height="100%"
         borderRadius={themeCssVariables.border.radius.mdRound}
       />

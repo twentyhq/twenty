@@ -31,6 +31,9 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
     <NavigationDrawerSection>
       <StyledTitleSkeleton>
         <Skeleton
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          borderRadius={4}
           width={72}
           height={SKELETON_HEIGHT_SIZES.xs}
           highlightColor={themeCssVariables.background.transparent.light}
@@ -38,17 +41,26 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
       </StyledTitleSkeleton>
       <StyledRowsContainer>
         <Skeleton
-          className={fillSkeletonContainer}
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          borderRadius={4}
+          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <Skeleton
-          className={fillSkeletonContainer}
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          borderRadius={4}
+          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <Skeleton
-          className={fillSkeletonContainer}
+          layout="line"
+          baseColor={themeCssVariables.background.tertiary}
+          borderRadius={4}
+          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />

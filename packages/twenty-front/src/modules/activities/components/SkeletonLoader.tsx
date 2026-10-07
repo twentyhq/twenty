@@ -25,6 +25,10 @@ const StyledSkeletonSubSectionContent = styled.div`
   justify-content: center;
 `;
 
+const StyledSkeletonColumn = styled(Skeleton)`
+  corner-shape: round;
+`;
+
 const SKELETON_COLUMN_HEIGHTS = {
   short: 84,
   tall: 120,
@@ -41,11 +45,21 @@ export const SkeletonLoader = ({
 
   return (
     <StyledSkeletonContainer>
-      <Skeleton width={440} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={4}
+        width={440}
+        height={SKELETON_HEIGHT_SIZES.s}
+      />
       {withSubSections &&
         skeletonItems.map(({ id }, index) => (
           <StyledSkeletonSubSection key={id}>
-            <Skeleton
+            <StyledSkeletonColumn
+              layout="line"
+              baseColor={themeCssVariables.background.tertiary}
+              highlightColor={themeCssVariables.background.transparent.lighter}
               width={24}
               borderRadius={80}
               height={
@@ -55,10 +69,37 @@ export const SkeletonLoader = ({
               }
             />
             <StyledSkeletonSubSectionContent>
-              <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
-              <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
+              <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
+                borderRadius={4}
+                width={400}
+                height={SKELETON_HEIGHT_SIZES.m}
+              />
+              <Skeleton
+                layout="line"
+                baseColor={themeCssVariables.background.tertiary}
+                highlightColor={
+                  themeCssVariables.background.transparent.lighter
+                }
+                borderRadius={4}
+                width={400}
+                height={SKELETON_HEIGHT_SIZES.m}
+              />
               {index === 1 && (
-                <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
+                <Skeleton
+                  layout="line"
+                  baseColor={themeCssVariables.background.tertiary}
+                  highlightColor={
+                    themeCssVariables.background.transparent.lighter
+                  }
+                  borderRadius={4}
+                  width={400}
+                  height={SKELETON_HEIGHT_SIZES.m}
+                />
               )}
             </StyledSkeletonSubSectionContent>
           </StyledSkeletonSubSection>

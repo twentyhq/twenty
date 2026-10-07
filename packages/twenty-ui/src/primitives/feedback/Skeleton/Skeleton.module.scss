@@ -1,32 +1,33 @@
 .root {
-  background-color: var(--t-background-tertiary);
-  border-radius: var(--t-border-radius-sm-round);
-  corner-shape: round;
-  display: inline-block;
-  height: 1em;
-  isolation: isolate;
+  --skeleton-base-color: #ebebeb;
+  --skeleton-highlight-color: #f5f5f5;
+
+  background-color: var(--skeleton-base-color);
+  border-radius: 0.25rem;
+  display: inline-flex;
   line-height: 1;
-  max-width: 100%;
   overflow: hidden;
   position: relative;
+  user-select: none;
   width: 100%;
 
   &[data-animated]::after {
     animation: skeletonShimmer 1.5s ease-in-out infinite;
     background-image: linear-gradient(
       90deg,
-      transparent,
-      var(--skeleton-highlight-color, var(--t-background-transparent-lighter)),
-      transparent
+      var(--skeleton-base-color) 0%,
+      var(--skeleton-highlight-color) 50%,
+      var(--skeleton-base-color) 100%
     );
-    content: '';
-    inset: 0;
+    background-repeat: no-repeat;
+    content: ' ';
+    display: block;
+    height: 100%;
+    left: 0;
     position: absolute;
+    right: 0;
+    top: 0;
     transform: translateX(-100%);
-  }
-
-  &:dir(rtl)::after {
-    animation-direction: reverse;
   }
 }
 
@@ -38,7 +39,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .root[data-animated]::after {
-    animation: none;
     display: none;
   }
 }

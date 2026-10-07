@@ -12,7 +12,14 @@ const StyledSidePanelContainer = styled.div`
 export const SidePanelSkeletonLoader = () => {
   return (
     <StyledSidePanelContainer>
-      <Skeleton height={SKELETON_HEIGHT_SIZES.m} width={140} />
+      <Skeleton
+        layout="line"
+        baseColor={themeCssVariables.background.tertiary}
+        highlightColor={themeCssVariables.background.transparent.lighter}
+        borderRadius={4}
+        height={SKELETON_HEIGHT_SIZES.m}
+        width={140}
+      />
     </StyledSidePanelContainer>
   );
 };

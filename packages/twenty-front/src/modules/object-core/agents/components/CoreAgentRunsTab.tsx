@@ -78,7 +78,7 @@ export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
         <Table>
           {header}
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton height={32} borderRadius={4} key={index} />
+            <Skeleton layout="line" height={32} borderRadius={4} key={index} />
           ))}
         </Table>
       </StyledTableContainer>
