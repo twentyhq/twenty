@@ -12,17 +12,25 @@ export const createCoreIndexConcurrently = async ({
   indexName: string;
   createIndexQuery: string;
 }): Promise<void> => {
+  const coreDataSourceOptions = dataSource.options;
+
+  if (coreDataSourceOptions.type !== 'postgres') {
+    throw new Error(
+      `Concurrent index builds need a postgres datasource, got ${coreDataSourceOptions.type}`,
+    );
+  }
+
   const indexBuildDataSource = await new DataSource({
-    ...dataSource.options,
+    ...coreDataSourceOptions,
     entities: [],
     migrations: [],
     subscribers: [],
     poolSize: 1,
     extra: {
-      ...(dataSource.options.extra as Record<string, unknown> | undefined),
+      ...coreDataSourceOptions.extra,
       query_timeout: undefined,
     },
-  } as typeof dataSource.options).initialize();
+  }).initialize();
 
   try {
     const invalidIndexes: { name: string }[] =
