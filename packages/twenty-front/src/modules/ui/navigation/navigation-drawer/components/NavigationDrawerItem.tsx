@@ -17,7 +17,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
@@ -247,8 +247,7 @@ export const NavigationDrawerItem = ({
     }
   };
 
-  const isExternalLink =
-    isDefined(to) && (to.startsWith('http://') || to.startsWith('https://'));
+  const isExternalLink = isDefined(to) && isAbsoluteUrl(to);
   const isInternalLink = isDefined(to) && !isExternalLink;
 
   const handleExternalLinkClick = () => {

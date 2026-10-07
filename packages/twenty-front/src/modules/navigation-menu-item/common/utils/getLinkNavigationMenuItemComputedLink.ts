@@ -15,7 +15,5 @@ export const getLinkNavigationMenuItemComputedLink = (
     return linkUrl;
   }
 
-  return ensureAbsoluteUrl(linkUrl).replace(/^https?:\/\//i, (scheme) =>
-    scheme.toLowerCase(),
-  );
+  return ensureAbsoluteUrl(linkUrl);
 };

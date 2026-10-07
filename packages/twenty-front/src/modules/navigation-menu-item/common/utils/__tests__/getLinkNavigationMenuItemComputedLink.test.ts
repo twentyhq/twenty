@@ -31,10 +31,18 @@ describe('getLinkNavigationMenuItemComputedLink', () => {
     ).toBe('https:///\t/evil.com');
   });
 
-  it('lowercases an uppercase scheme so the link stays external', () => {
+  it('keeps an uppercase scheme as is', () => {
     expect(
       getLinkNavigationMenuItemComputedLink({ link: 'HTTPS://twenty.com' }),
-    ).toBe('https://twenty.com');
+    ).toBe('HTTPS://twenty.com');
+  });
+
+  it('keeps localhost URLs external', () => {
+    expect(
+      getLinkNavigationMenuItemComputedLink({
+        link: 'localhost:3000/workflows',
+      }),
+    ).toBe('https://localhost:3000/workflows');
   });
 
   it('returns an empty string without a link', () => {
