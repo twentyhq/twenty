@@ -20,6 +20,7 @@ import { z } from 'zod';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
@@ -89,6 +90,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentRunnerService: AgentRunnerService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly apiKeyService: ApiKeyService,
     private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -487,6 +489,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           workspace: agentAuthContext.workspace,
           apiKey: fromApiKeyEntityToFlat(apiKey),
         }),
+        callerRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
+          apiKey.id,
+          workspaceId,
+        ),
       };
     }
 

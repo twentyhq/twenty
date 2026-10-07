@@ -10,7 +10,6 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { type AgentTrigger } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
@@ -379,7 +378,7 @@ describe('agent runs that wait (integration)', () => {
         type: 'apiKey',
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
-      roleTargetId: null,
+      roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
     },
   ])(
     'goes on with a waiting runAgent call as $title',
@@ -420,9 +419,7 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const roleRestrictionIds = isDefined(roleTargetId)
-        ? [await findCallerRoleId(roleTargetId)]
-        : undefined;
+      const roleRestrictionIds = [await findCallerRoleId(roleTargetId)];
 
       expect(
         executeAgent.mock.calls.map(

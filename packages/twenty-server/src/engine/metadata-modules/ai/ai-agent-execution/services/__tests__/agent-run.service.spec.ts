@@ -46,6 +46,7 @@ const buildService = () => {
     agentActorContextService as never,
     agentRunnerService as never,
     {} as never,
+    { getRoleIdForApiKeyId: jest.fn() } as never,
     { validateApiKey: jest.fn() } as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
