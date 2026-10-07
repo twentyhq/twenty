@@ -247,8 +247,6 @@ export class AgentChatDefaultChannelService {
     return systemChannel?.id ?? null;
   }
 
-  // Seeding follows the creation of the first member, which the cached map
-  // may not hold yet
   // A conversation no member started lands in System already done, and
   // comes back when it waits on an answer or fails
   async findSystemThreadChannel(
@@ -264,6 +262,8 @@ export class AgentChatDefaultChannelService {
       : {};
   }
 
+  // Seeding follows the creation of the first member, which the cached map
+  // may not hold yet
   private async findDefaultMemberIds(
     workspaceId: string,
   ): Promise<Record<AgentChatDefaultChannelKind, string[]>> {
