@@ -13,10 +13,9 @@ const RELATIVE_REQUIRE_PATTERN = /require\(["'`](\.{1,2}\/[^"'`]+)["'`]\)/g;
 const REQUIRED_FILES = ['dist/app-worker.cjs'];
 const COPIED_DIRECTORIES = [
   {
-    source: '../create-twenty-app/src/constants/template',
+    source: 'app-template',
     target: 'dist/app-template',
   },
-  { source: 'app-template-overlay', target: 'dist/app-template-overlay' },
 ];
 const RENDERED_APP_FILES = [
   'package.json',

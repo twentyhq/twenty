@@ -52,7 +52,7 @@ changed server workflows against a disposable workspace when appropriate.
 | `src/doctor` | Read-only setup and connection diagnostics |
 | `src/app` | Project tooling and application lifecycle, see its [module map](src/app/README.md) |
 | `src/input`, `src/output` | Input parsing, human/JSON/NDJSON output and error contracts |
-| `app-template-overlay` | CLI-based test harness applied over the shared app template |
+| `app-template` | App source, configuration and CLI-based integration-test harness copied by `app init` |
 
 Command definitions are the source for help and `twenty commands`. Keep handlers
 lazy so discovery does not load compiler or app code. Put a workflow's rules in
@@ -85,7 +85,7 @@ Changes must preserve these contracts:
 ## Packaging
 
 Vite builds the CLI, its worker and lazy chunks into `dist`. It also copies the
-`create-twenty-app` template and the CLI test-harness overlay there. Chokidar,
+CLI-owned `app-template` there. Chokidar,
 esbuild, tinyglobby and the CLI's TypeScript parser are runtime dependencies;
 other imported libraries are bundled. The parser is separate from the app's
 compiler used for typechecking.
@@ -103,7 +103,7 @@ yarn nx run twenty-cli:test:package
 This runs the binary declared in the workspace's `package.json` directly, packs
 the CLI, and installs the archive with only its production dependencies in a
 temporary directory outside the monorepo. It checks help, offline doctor, app initialization including the
-template overlay, and a compiler diagnostic from the installed worker. npm
+integration-test harness, and a compiler diagnostic from the installed worker. npm
 registry access is required for installation; the commands do not contact a
 Twenty workspace. Temporary files are removed afterward, and nothing is
 published. CI runs the same target for CLI and dependency changes.
@@ -114,7 +114,7 @@ The CLI has its own release line. A `cli/vX.Y.Z` tag publishes the `twenty`
 package at that version, which must match `package.json`.
 
 `app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
-`create-twenty-app` version of the commit the CLI was built from. `main` moves
+`twenty-sdk` version of the commit the CLI was built from. `main` moves
 to the next, unpublished SDK version right after each SDK release, so a CLI
 release must be built from the commit of an SDK release:
 
@@ -137,7 +137,7 @@ node packages/twenty-cli/scripts/check-publish.mjs
 
 ## App integration tests
 
-`app-template-overlay` supplies the integration-test setup for CLI-created apps.
+`app-template/src/__tests__` supplies the integration-test setup for CLI-created apps.
 It deploys the app before tests and uninstalls it afterward by invoking the
 installed CLI with `--json`. Apps invoke the executable rather than import the
 CLI as a library or add it as a dependency. See the
