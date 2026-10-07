@@ -21,7 +21,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const RECORD_ITEM_ID = 'record';
 

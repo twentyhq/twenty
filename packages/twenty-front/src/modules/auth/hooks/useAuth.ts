@@ -12,6 +12,7 @@ import {
   CheckUserExistsDocument,
   GetAuthTokensFromLoginTokenDocument,
   GetAuthTokensFromOtpDocument,
+  GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeDocument,
   GetLoginTokenFromCredentialsDocument,
   GetWorkspaceCreationDefaultsDocument,
   SignInDocument,
@@ -104,6 +105,9 @@ export const useAuth = () => {
     VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
   );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
+  const [getAuthTokensFromTwoFactorAuthenticationRecoveryCode] = useMutation(
+    GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeDocument,
+  );
   const [signOutMutation] = useMutation(SignOutDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
@@ -626,6 +630,51 @@ export const useAuth = () => {
     [getAuthTokensFromOtp, origin, handleLoadWorkspaceAfterAuthentication],
   );
 
+  const handleGetAuthTokensFromTwoFactorAuthenticationRecoveryCode =
+    useCallback(
+      async (
+        recoveryCode: string,
+        loginToken: string,
+        captchaToken?: string,
+      ) => {
+        const result =
+          await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
+            variables: {
+              captchaToken,
+              origin,
+              recoveryCode,
+              loginToken,
+            },
+          });
+
+        if (isDefined(result.error)) {
+          throw result.error;
+        }
+
+        const redemption =
+          result.data?.getAuthTokensFromTwoFactorAuthenticationRecoveryCode;
+
+        if (!isDefined(redemption)) {
+          throw new Error(
+            'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
+          );
+        }
+
+        if (isDefined(redemption.provisioningUri)) {
+          return { provisioningUri: redemption.provisioningUri };
+        }
+
+        await handleLoadWorkspaceAfterAuthentication();
+
+        return { provisioningUri: null };
+      },
+      [
+        getAuthTokensFromTwoFactorAuthenticationRecoveryCode,
+        origin,
+        handleLoadWorkspaceAfterAuthentication,
+      ],
+    );
+
   return {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     verifyEmailAndGetWorkspaceAgnosticToken:
@@ -642,6 +691,8 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode:
+      handleGetAuthTokensFromTwoFactorAuthenticationRecoveryCode,
     navigateAfterMultiWorkspaceSignInUp,
   };
 };

@@ -229,6 +229,7 @@ import { AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand } from
 import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791299810581-create-pending-wake-up-table';
 import { CreateAgentRunSuspensionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791301683545-create-agent-run-suspension-table';
 import { AddUserApplicationVariableValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791328043361-add-user-application-variable-value';
+import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791375726691-add-two-factor-authentication-recovery-code-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -460,4 +461,5 @@ export const INSTANCE_COMMANDS = [
   CreatePendingWakeUpTableFastInstanceCommand,
   CreateAgentRunSuspensionTableFastInstanceCommand,
   AddUserApplicationVariableValueFastInstanceCommand,
+  AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand,
 ];

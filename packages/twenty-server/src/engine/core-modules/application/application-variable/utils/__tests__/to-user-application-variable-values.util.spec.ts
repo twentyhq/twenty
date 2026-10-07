@@ -47,16 +47,19 @@ const FLAT_USER_APPLICATION_VARIABLES = [
   }),
 ];
 
-const USER_VALUES = [
-  {
-    applicationVariableId: 'record-my-meetings-id',
-    value: 'enc:on' as EncryptedString,
+const USER_WORKSPACE_ID = 'user-workspace-id';
+
+const USER_APPLICATION_VARIABLE_VALUE_MAPS = {
+  byApplicationVariableId: {
+    'record-my-meetings-id': {
+      [USER_WORKSPACE_ID]: 'enc:on' as EncryptedString,
+      'other-user-workspace-id': 'enc:off' as EncryptedString,
+    },
+    'personal-api-key-id': {
+      [USER_WORKSPACE_ID]: 'enc:key' as EncryptedString,
+    },
   },
-  {
-    applicationVariableId: 'personal-api-key-id',
-    value: 'enc:key' as EncryptedString,
-  },
-];
+};
 
 const getDisplayValue = ({
   value,
@@ -70,7 +73,8 @@ describe('toUserApplicationVariableValues', () => {
   it('should use the member value, else the default, else an empty string', () => {
     const values = toUserApplicationVariableValues({
       flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
-      userValues: USER_VALUES,
+      userApplicationVariableValueMaps: USER_APPLICATION_VARIABLE_VALUE_MAPS,
+      userWorkspaceId: USER_WORKSPACE_ID,
       shouldMaskSecret: false,
       getDisplayValue,
     });
@@ -86,7 +90,8 @@ describe('toUserApplicationVariableValues', () => {
   it('should mask secrets only when asked to', () => {
     const values = toUserApplicationVariableValues({
       flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
-      userValues: USER_VALUES,
+      userApplicationVariableValueMaps: USER_APPLICATION_VARIABLE_VALUE_MAPS,
+      userWorkspaceId: USER_WORKSPACE_ID,
       shouldMaskSecret: true,
       getDisplayValue,
     });

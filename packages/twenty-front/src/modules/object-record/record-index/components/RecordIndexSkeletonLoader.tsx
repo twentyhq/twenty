@@ -1,6 +1,6 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import Skeleton from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
@@ -19,14 +19,8 @@ export const RecordIndexSkeletonLoader = () => (
   <PageContentSkeletonLoader
     secondaryBar={
       <StyledSecondaryBar>
-        <Skeleton
-          width={120}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-        <Skeleton
-          width={180}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
+        <SkeletonLine width={120} height={SKELETON_HEIGHT_SIZES.s} />
+        <SkeletonLine width={180} height={SKELETON_HEIGHT_SIZES.s} />
       </StyledSecondaryBar>
     }
   />
