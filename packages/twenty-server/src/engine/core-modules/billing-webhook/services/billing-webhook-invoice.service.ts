@@ -238,16 +238,28 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    const billingCustomer = isDefined(stripeCustomerId)
-      ? await this.billingCustomerRepository.findOne({
-          where: { stripeCustomerId },
-        })
-      : null;
-
-    if (billingCustomer?.workspaceId !== metadata.workspaceId) {
+    if (!isDefined(stripeCustomerId)) {
       return this.skipUngrantableCreditTopUpInvoice(
         invoice,
-        `its metadata names workspace ${metadata.workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer?.workspaceId ?? 'no workspace'}`,
+        'it has no customer',
+      );
+    }
+
+    const billingCustomer = await this.billingCustomerRepository.findOne({
+      where: { stripeCustomerId },
+    });
+
+    if (!isDefined(billingCustomer)) {
+      return this.skipUngrantableCreditTopUpInvoice(
+        invoice,
+        `customer ${stripeCustomerId} matches no billing customer`,
+      );
+    }
+
+    if (billingCustomer.workspaceId !== metadata.workspaceId) {
+      return this.skipUngrantableCreditTopUpInvoice(
+        invoice,
+        `its metadata names workspace ${metadata.workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer.workspaceId}`,
       );
     }
 
