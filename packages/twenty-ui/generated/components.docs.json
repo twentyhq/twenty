@@ -697,7 +697,14 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Shows a loading indicator and disables activation while preserving the button width."
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
             "name": "render",
@@ -10218,7 +10225,14 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Shows a loading indicator and disables activation while preserving the button width."
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
             "name": "render",

@@ -79,7 +79,11 @@
 </ParamField>
 
 <ParamField body="Action.loading" type="boolean">
-  Shows a loading indicator and disables activation while preserving the button width.
+  Shows a loading indicator and disables activation.
+</ParamField>
+
+<ParamField body="Action.loadingPosition" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;">
+  Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner.
 </ParamField>
 
 <ParamField body="Action.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
