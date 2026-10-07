@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/primitives/input';
 import { Callout } from 'twenty-ui/components/feedback';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
 import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
@@ -24,11 +25,23 @@ export const SettingsApplicationHealthBanner = ({
 
   return (
     <Callout
-      variant={appearance.variant}
-      Icon={appearance.Icon}
+      status={appearance.status}
+      icon={<appearance.Icon size={16} aria-hidden={true} />}
       title={title}
       description={description}
-      action={action}
+      action={
+        isDefined(action) ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+            onClick={action.onClick}
+          >
+            {action.label}
+          </Button>
+        ) : undefined
+      }
       fullWidth
     />
   );

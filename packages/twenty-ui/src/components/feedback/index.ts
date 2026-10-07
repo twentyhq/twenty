@@ -8,7 +8,10 @@
  */
 
 export { Callout } from './Callout/Callout';
+export type { CalloutColor } from './Callout/types/CalloutColor';
 export type { CalloutProps } from './Callout/types/CalloutProps';
+export type { CalloutState } from './Callout/types/CalloutState';
+export type { CalloutStatus } from './Callout/types/CalloutStatus';
 export type { CalloutVariant } from './Callout/types/CalloutVariant';
 export { InlineBanner } from './InlineBanner/InlineBanner';
 export type { InlineBannerLayout } from './InlineBanner/types/InlineBannerLayout';

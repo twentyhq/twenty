@@ -157,8 +157,8 @@ export const SettingsObjectNewIndex = () => {
         <SettingsPageContainer>
           <Section.Root>
             <Callout
-              variant="warning"
-              Icon={IconAlertTriangle}
+              status="warning"
+              icon={<IconAlertTriangle size={16} aria-hidden="true" />}
               title={t`Use indexes sparingly`}
               description={t`Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves.`}
             />

@@ -66,7 +66,10 @@
       "useToast": "components/feedback/Toast/hooks/useToast"
     },
     "types": {
+      "CalloutColor": "components/feedback/Callout/types/CalloutColor",
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
+      "CalloutState": "components/feedback/Callout/types/CalloutState",
+      "CalloutStatus": "components/feedback/Callout/types/CalloutStatus",
       "CalloutVariant": "components/feedback/Callout/types/CalloutVariant",
       "InlineBannerLayout": "components/feedback/InlineBanner/types/InlineBannerLayout",
       "InlineBannerProps": "components/feedback/InlineBanner/types/InlineBannerProps",

@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconAlertTriangle,
@@ -265,22 +266,27 @@ export const WorkflowEditActionFormBuilder = ({
         {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
           <StyledCalloutContainer>
             <Callout
-              variant={'warning'}
-              Icon={IconAlertTriangle}
+              status={'warning'}
+              icon={<IconAlertTriangle size={16} aria-hidden="true" />}
               title={t`Forms are meant for manual triggers`}
               description={t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`}
-              isClosable
               closeLabel={t`Close`}
-              onClose={() => setIsCalloutVisible(false)}
-              action={{
-                label: t`Learn more`,
-                onClick: () =>
-                  window.open(
-                    'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
-                    '_blank',
-                    'noopener,noreferrer',
-                  ),
-              }}
+              onDismiss={() => setIsCalloutVisible(false)}
+              action={
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                  onClick={() =>
+                    window.open(
+                      'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
+                      '_blank',
+                      'noopener,noreferrer',
+                    )
+                  }
+                >{t`Learn more`}</Button>
+              }
             />
           </StyledCalloutContainer>
         )}
@@ -298,8 +304,7 @@ export const WorkflowEditActionFormBuilder = ({
         {formData.length === 0 && (
           <StyledNotClosableCalloutContainer>
             <Callout
-              variant={'neutral'}
-              isClosable={false}
+              status={'neutral'}
               title={t`Add inputs to your form`}
               description={t`Click on "Add Field" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run.`}
             />

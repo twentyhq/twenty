@@ -11,38 +11,58 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="action" type="{ label: string; onClick: () =&gt; void; }">
-  Optional footer action with a label and onClick callback.
+<ParamField body="action" type="ReactNode">
+  Optional footer node, such as a Button, link, or group of actions.
+</ParamField>
+
+<ParamField body="className" type="string">
+  Additional class names merged onto the root.
 </ParamField>
 
 <ParamField body="closeLabel" type="string" default="Close">
   Accessible name of the dismiss button. Defaults to `Close`.
 </ParamField>
 
-<ParamField body="description" type="string">
-  Optional supporting text. Empty strings are hidden.
+<ParamField body="color" type="&quot;blue&quot; | &quot;gray&quot; | &quot;green&quot; | &quot;orange&quot; | &quot;red&quot;" default="CALLOUT_STATUS_COLORS[status]">
+  Palette override: gray, blue, green, orange, or red. Defaults to the status palette.
+</ParamField>
+
+<ParamField body="description" type="ReactNode">
+  Optional supporting content node. Empty slots are hidden.
 </ParamField>
 
 <ParamField body="fullWidth" type="boolean" default="false">
-  Fills the available container width.
+  Removes the default 512px maximum width.
 </ParamField>
 
-<ParamField body="Icon" type="IconComponent">
-  Leading icon component. Defaults to the help icon.
+<ParamField body="icon" type="ReactNode" default="&lt;IconHelp size={16} aria-hidden=&quot;true&quot; /&gt;">
+  Leading icon node. Defaults to a decorative help icon. Pass null to omit it.
 </ParamField>
 
-<ParamField body="isClosable" type="boolean" default="false">
-  Shows a close button that hides the callout until it is remounted.
+<ParamField body="onDismiss" type="(() =&gt; void)">
+  Shows a dismiss button and notifies the caller once per activation. The caller owns visibility.
 </ParamField>
 
-<ParamField body="onClose" type="(() =&gt; void)">
-  Called after the close button hides the callout.
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the root div, or the element supplied through render.
 </ParamField>
 
-<ParamField body="title" type="string" required>
-  Main message displayed beside the icon.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, CalloutState&gt;">
+  Element or callback composition for the root. Receives status, variant, and color state.
 </ParamField>
 
-<ParamField body="variant" type="&quot;error&quot; | &quot;info&quot; | &quot;neutral&quot; | &quot;success&quot; | &quot;warning&quot;" required>
-  Semantic appearance: info, warning, error, neutral, or success.
+<ParamField body="status" type="&quot;error&quot; | &quot;info&quot; | &quot;neutral&quot; | &quot;success&quot; | &quot;warning&quot;" default="info">
+  Feedback meaning: neutral, info, success, warning, or error. Defaults to info.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties">
+  Inline styles forwarded to the root.
+</ParamField>
+
+<ParamField body="title" type="ReactNode" required>
+  Main message node displayed beside the icon.
+</ParamField>
+
+<ParamField body="variant" type="&quot;soft&quot;" default="soft">
+  Supported appearance: soft.
 </ParamField>

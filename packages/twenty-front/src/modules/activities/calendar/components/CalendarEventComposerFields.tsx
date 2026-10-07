@@ -23,7 +23,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { Switch } from 'twenty-ui/primitives/input';
+import { Button, Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
@@ -304,7 +304,7 @@ export const CalendarEventComposerFields = ({
         <StyledNoticesContainer>
           {composerState.accountOptions.length === 0 && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Connect a calendar account`}
               description={
                 isDefined(onAddAccount)
@@ -312,15 +312,21 @@ export const CalendarEventComposerFields = ({
                   : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
               }
               action={
-                isDefined(onAddAccount)
-                  ? { label: t`Add account`, onClick: onAddAccount }
-                  : undefined
+                isDefined(onAddAccount) ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                    onClick={onAddAccount}
+                  >{t`Add account`}</Button>
+                ) : undefined
               }
             />
           )}
           {composerState.missingScopes.length > 0 && (
             <Callout
-              variant="error"
+              status="error"
               title={t`Calendar access needs approval`}
               description={
                 isDefined(onReauthorize)
@@ -328,15 +334,21 @@ export const CalendarEventComposerFields = ({
                   : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
               }
               action={
-                isDefined(onReauthorize)
-                  ? { label: t`Reconnect`, onClick: onReauthorize }
-                  : undefined
+                isDefined(onReauthorize) ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                    onClick={onReauthorize}
+                  >{t`Reconnect`}</Button>
+                ) : undefined
               }
             />
           )}
           {!composerState.hasValidDateRange && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Check the event dates`}
               description={
                 composerState.isFullDay
@@ -347,7 +359,7 @@ export const CalendarEventComposerFields = ({
           )}
           {composerState.hasTooManyAttendees && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Too many guests`}
               description={t`Remove some guests before creating this event.`}
             />

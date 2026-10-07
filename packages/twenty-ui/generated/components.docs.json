@@ -10290,10 +10290,17 @@
     "props": [
       {
         "name": "action",
-        "type": "{ label: string; onClick: () => void; }",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional footer action with a label and onClick callback."
+        "description": "Optional footer node, such as a Button, link, or group of actions."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
@@ -10303,53 +10310,81 @@
         "description": "Accessible name of the dismiss button. Defaults to `Close`."
       },
       {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
+        "required": false,
+        "defaultValue": "CALLOUT_STATUS_COLORS[status]",
+        "description": "Palette override: gray, blue, green, orange, or red. Defaults to the status palette."
+      },
+      {
         "name": "description",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional supporting text. Empty strings are hidden."
+        "description": "Optional supporting content node. Empty slots are hidden."
       },
       {
         "name": "fullWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Fills the available container width."
+        "description": "Removes the default 512px maximum width."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the help icon."
+        "defaultValue": "<IconHelp size={16} aria-hidden=\"true\" />",
+        "description": "Leading icon node. Defaults to a decorative help icon. Pass null to omit it."
       },
       {
-        "name": "isClosable",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a close button that hides the callout until it is remounted."
-      },
-      {
-        "name": "onClose",
+        "name": "onDismiss",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called after the close button hides the callout."
+        "description": "Shows a dismiss button and notifies the caller once per activation. The caller owns visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CalloutState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or callback composition for the root. Receives status, variant, and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to info."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       },
       {
         "name": "title",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Main message displayed beside the icon."
+        "description": "Main message node displayed beside the icon."
       },
       {
         "name": "variant",
-        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Semantic appearance: info, warning, error, neutral, or success."
+        "type": "\"soft\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Supported appearance: soft."
       }
     ]
   },

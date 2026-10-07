@@ -1,109 +1,85 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { useState } from 'react';
-import { type CalloutProps } from './types/CalloutProps';
-import { type CalloutVariant } from './types/CalloutVariant';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Callout.module.scss';
+import { type CalloutColor } from './types/CalloutColor';
+import { type CalloutProps } from './types/CalloutProps';
+import { type CalloutStatus } from './types/CalloutStatus';
 
-const CALLOUT_CONTAINER_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
-  info: styles.containerInfo,
-  warning: styles.containerWarning,
-  error: styles.containerError,
-  neutral: styles.containerNeutral,
-  success: styles.containerSuccess,
-};
-
-const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
-  info: styles.iconContainerInfo,
-  warning: styles.iconContainerWarning,
-  error: styles.iconContainerError,
-  neutral: styles.iconContainerNeutral,
-  success: styles.iconContainerSuccess,
-};
+const CALLOUT_STATUS_COLORS = {
+  neutral: 'gray',
+  info: 'blue',
+  success: 'green',
+  warning: 'orange',
+  error: 'red',
+} satisfies Record<CalloutStatus, CalloutColor>;
 
 export const Callout = ({
-  variant,
+  status = 'info',
+  variant = 'soft',
+  color = CALLOUT_STATUS_COLORS[status],
   title,
   description,
   fullWidth = false,
-  Icon = IconHelp,
+  icon = <IconHelp size={16} aria-hidden="true" />,
   action,
-  isClosable = false,
   closeLabel = 'Close',
-  onClose,
+  onDismiss,
+  className,
+  render,
+  ref,
+  ...props
 }: CalloutProps) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const hasIcon = isRenderableSlot(icon);
+  const hasAction = isRenderableSlot(action);
 
-  const handleClose = () => {
-    if (!isClosable) {
-      return;
-    }
-
-    setIsVisible(false);
-    onClose?.();
-  };
-
-  if (!isVisible) {
-    return null;
-  }
-
-  return (
-    <div
-      className={clsx(
+  return useRender({
+    render,
+    ref,
+    state: { status, variant, color },
+    props: {
+      ...props,
+      className: clsx(
         styles.container,
-        CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
         fullWidth && styles.containerFullWidth,
-      )}
-    >
-      <div className={styles.header}>
-        <div
-          className={clsx(
-            styles.iconContainer,
-            CALLOUT_ICON_VARIANT_CLASS_NAMES[variant],
+        className,
+      ),
+      children: (
+        <>
+          <div className={styles.header}>
+            {hasIcon && <div className={styles.iconContainer}>{icon}</div>}
+            <div className={styles.title}>{title}</div>
+            {isDefined(onDismiss) && (
+              <Button
+                type="button"
+                startIcon={<IconX aria-hidden="true" />}
+                className={styles.closeButton}
+                variant="ghost"
+                size="sm"
+                aria-label={closeLabel}
+                onClick={() => onDismiss()}
+              />
+            )}
+          </div>
+          {isRenderableSlot(description) && (
+            <div
+              className={clsx(
+                styles.descriptionWrapper,
+                hasIcon && styles.descriptionWrapperWithIcon,
+                hasAction && styles.descriptionWrapperWithAction,
+              )}
+            >
+              <div className={styles.description}>{description}</div>
+            </div>
           )}
-        >
-          <Icon size={16} />
-        </div>
-        <div className={styles.title}>{title}</div>
-        {isClosable && (
-          <Button
-            startIcon={<IconX />}
-            className={styles.closeButton}
-            variant="ghost"
-            size="sm"
-            aria-label={closeLabel}
-            onClick={handleClose}
-          />
-        )}
-      </div>
-      {isNonEmptyString(description) && (
-        <div
-          className={clsx(
-            styles.descriptionWrapper,
-            isDefined(action) && styles.descriptionWrapperWithAction,
-          )}
-        >
-          <div className={styles.description}>{description}</div>
-        </div>
-      )}
-      {isDefined(action) && (
-        <div className={styles.footer}>
-          <Button
-            type="button"
-            onClick={action.onClick}
-            size="sm"
-            variant="ghost"
-            style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-          >
-            {action.label}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+          {hasAction && <div className={styles.footer}>{action}</div>}
+        </>
+      ),
+    },
+  });
 };

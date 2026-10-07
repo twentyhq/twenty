@@ -23,7 +23,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconPlus } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/primitives/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -131,7 +131,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         />
         {isDefined(missingScopes) && (
           <Callout
-            variant={'error'}
+            status={'error'}
             title={t`Missing calendar permission.`}
             description={
               hasConnectedAccountsPermission
@@ -139,9 +139,15 @@ export const WorkflowEditActionCreateCalendarEvent = ({
                 : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
             }
             action={
-              hasConnectedAccountsPermission
-                ? { label: t`Reauthorize`, onClick: handleReauthorize }
-                : undefined
+              hasConnectedAccountsPermission ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                  onClick={handleReauthorize}
+                >{t`Reauthorize`}</Button>
+              ) : undefined
             }
           />
         )}

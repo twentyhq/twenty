@@ -227,23 +227,28 @@ export const SettingsClaimApplicationSection = () => {
       {isDefined(claimError) && (
         <StyledCalloutContainer>
           <Callout
-            variant="error"
+            status="error"
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}
-            action={{
-              label: t`Read documentation`,
-              onClick: () =>
-                window.open(
-                  getDocumentationUrl({
-                    locale: currentWorkspaceMember?.locale,
-                    path: claimError.docPath,
-                  }),
-                  '_blank',
-                ),
-            }}
-            isClosable
+            action={
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                onClick={() =>
+                  window.open(
+                    getDocumentationUrl({
+                      locale: currentWorkspaceMember?.locale,
+                      path: claimError.docPath,
+                    }),
+                    '_blank',
+                  )
+                }
+              >{t`Read documentation`}</Button>
+            }
             closeLabel={t`Close`}
-            onClose={dismissClaimError}
+            onDismiss={dismissClaimError}
           />
         </StyledCalloutContainer>
       )}
