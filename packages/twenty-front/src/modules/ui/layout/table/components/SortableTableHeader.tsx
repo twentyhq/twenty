@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -64,7 +63,7 @@ export const SortableTableHeader = ({
         </StyledSortIconContainer>
       ) : null}
       {Icon && <Icon size={14} />}
-      <TableHeaderText>{label}</TableHeaderText>
+      {label}
       {isSortActive && align === 'left' ? (
         <StyledSortIconContainer>
           {isAsc ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />}
