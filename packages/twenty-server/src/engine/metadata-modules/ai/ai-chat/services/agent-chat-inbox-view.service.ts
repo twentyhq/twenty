@@ -13,7 +13,7 @@ import { type AgentChatInboxViewInput } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatInboxViewKind } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-view-kind.enum';
-import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { decodeAgentChatInboxViewCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-inbox-view-cursor.util';
 import { encodeAgentChatInboxViewCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-inbox-view-cursor.util';
@@ -63,7 +63,7 @@ const CHANNEL_STATUS_PREDICATES: Record<AgentChatChannelThreadStatus, string> =
 export class AgentChatInboxViewService {
   constructor(
     private readonly sharingService: AgentChatSharingService,
-    private readonly channelService: AgentChatChannelService,
+    private readonly channelAccessService: AgentChatChannelAccessService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -234,7 +234,7 @@ export class AgentChatInboxViewService {
           );
         }
 
-        await this.channelService.assertChannelAccess({
+        await this.channelAccessService.assertChannelAccess({
           ...args,
           channelId: view.channelId,
           operationType: 'select',

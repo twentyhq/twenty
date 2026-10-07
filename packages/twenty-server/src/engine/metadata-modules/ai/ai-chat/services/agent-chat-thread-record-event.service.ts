@@ -101,6 +101,52 @@ export class AgentChatThreadRecordEventService {
     });
   }
 
+  // For chats changed together in SQL, sent as one batch
+  async emitThreadsUpdated({
+    workspaceId,
+    threads,
+  }: {
+    workspaceId: string;
+    threads: {
+      before: AgentChatThreadWorkspaceEntity;
+      after: AgentChatThreadWorkspaceEntity;
+    }[];
+  }): Promise<void> {
+    if (threads.length === 0) {
+      return;
+    }
+
+    const { objectMetadata, flatFieldMetadataMaps } =
+      await this.findThreadMetadata(workspaceId);
+
+    if (!isDefined(objectMetadata)) {
+      return;
+    }
+
+    const events = threads
+      .map(({ before, after }) =>
+        buildAgentChatThreadUpdateEvent({
+          threadBefore: before,
+          threadAfter: after,
+          objectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    if (events.length === 0) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadata.nameSingular,
+      action: DatabaseEventAction.UPDATED,
+      events,
+      objectMetadata,
+      workspaceId,
+    });
+  }
+
   // Chat lists show which chats wait on an answer. The marker is already
   // cleared, so a lost event must not fail the caller
   async emitPendingQuestionCleared({

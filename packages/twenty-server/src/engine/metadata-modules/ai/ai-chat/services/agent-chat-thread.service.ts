@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
-import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
@@ -31,14 +31,14 @@ export class AgentChatThreadService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
-    private readonly channelService: AgentChatChannelService,
+    private readonly channelAccessService: AgentChatChannelAccessService,
   ) {}
 
   async createThread(
     args: Parameters<AgentChatSharingService['createThread']>[0],
   ) {
     if (isDefined(args.channelId)) {
-      await this.channelService.assertChannelAccess({
+      await this.channelAccessService.assertChannelAccess({
         workspaceId: args.workspaceId,
         workspaceMemberId: args.workspaceMemberId,
         channelId: args.channelId,
@@ -267,7 +267,7 @@ export class AgentChatThreadService {
     const thread = await this.getWritableThread(args);
 
     if (isDefined(channelId)) {
-      await this.channelService.assertChannelAccess({
+      await this.channelAccessService.assertChannelAccess({
         ...args,
         channelId,
         operationType: 'update',

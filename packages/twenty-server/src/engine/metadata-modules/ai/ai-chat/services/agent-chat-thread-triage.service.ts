@@ -15,6 +15,7 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-triage-change.type';
+import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -47,18 +48,36 @@ export class AgentChatThreadTriageService {
   }: AgentChatThreadAccessArgs & {
     change: AgentChatThreadTriageChange;
   }): Promise<AgentChatThreadParticipantDTO> {
-    const participant = await this.writeMemberCopy({ ...args, change });
-
-    const thread = await this.threadRepository.findOne(args.workspaceId, {
+    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
       where: { id: args.threadId },
-      select: ['id', 'channelId', 'assigneeId'],
+    });
+    const isAssigneeOfChannelThread =
+      isDefined(threadBefore?.channelId) &&
+      threadBefore.assigneeId === args.workspaceMemberId;
+
+    if (isAssigneeOfChannelThread) {
+      await this.prepareChannelCopyWrite({ ...args, change });
+    }
+
+    const channelCopyWrite = this.buildChannelCopyWrite({
+      ...args,
+      change,
+      isAssigneeOnly: true,
     });
 
-    if (
-      isDefined(thread?.channelId) &&
-      thread.assigneeId === args.workspaceMemberId
-    ) {
-      await this.writeChannelCopy({ ...args, change });
+    const participant = await this.writeMemberCopy({
+      ...args,
+      change,
+      writeThread: isAssigneeOfChannelThread
+        ? channelCopyWrite.write
+        : undefined,
+    });
+
+    if (isDefined(threadBefore) && channelCopyWrite.isWritten()) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId: args.workspaceId,
+        threadBefore,
+      });
     }
 
     return participant;
@@ -70,22 +89,44 @@ export class AgentChatThreadTriageService {
   }: AgentChatThreadAccessArgs & {
     change: AgentChatThreadTriageChange;
   }): Promise<void> {
-    const thread = await this.sharingService.getThreadWithAccess({
+    const threadBefore = await this.sharingService.getThreadWithAccess({
       ...args,
       operationType: 'update',
     });
 
-    if (!isDefined(thread.channelId)) {
+    if (!isDefined(threadBefore.channelId)) {
       throw new AiException(
         'The chat is not in a channel',
         AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL,
       );
     }
 
-    await this.writeChannelCopy({ ...args, change });
+    await this.prepareChannelCopyWrite({ ...args, change });
+
+    const channelCopyWrite = this.buildChannelCopyWrite({
+      ...args,
+      change,
+      isAssigneeOnly: false,
+    });
 
     if (await this.participantService.isFollowing(args)) {
-      await this.writeMemberCopy({ ...args, change });
+      await this.writeMemberCopy({
+        ...args,
+        change,
+        writeThread: channelCopyWrite.write,
+      });
+    } else {
+      await this.threadRepository.query(
+        args.workspaceId,
+        channelCopyWrite.write,
+      );
+    }
+
+    if (channelCopyWrite.isWritten()) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId: args.workspaceId,
+        threadBefore,
+      });
     }
   }
 
@@ -160,6 +201,7 @@ export class AgentChatThreadTriageService {
     ...args
   }: AgentChatThreadAccessArgs & {
     change: AgentChatThreadTriageChange;
+    writeThread?: AgentChatThreadWriteStep;
   }): Promise<AgentChatThreadParticipantDTO> {
     switch (change.type) {
       case 'DONE':
@@ -174,45 +216,48 @@ export class AgentChatThreadTriageService {
     }
   }
 
-  // Timestamps are stamped by Postgres, as for a member's copy, so new
-  // activity is compared against them on the same clock
-  private async writeChannelCopy({
+  // Queued before the write, so no saved snooze lacks its end; the end of a
+  // snooze that was never saved finds nothing to end
+  private async prepareChannelCopyWrite({
     change,
     ...args
   }: AgentChatThreadAccessArgs & {
     change: AgentChatThreadTriageChange;
   }): Promise<void> {
-    const snoozedUntil = change.type === 'SNOOZE' ? change.snoozedUntil : null;
-
-    if (isDefined(snoozedUntil)) {
-      if (snoozedUntil.getTime() <= Date.now()) {
-        throw new AiException(
-          'Snooze time must be in the future',
-          AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
-        );
-      }
-
-      // Queued before the write, so no saved snooze lacks its end
-      await this.scheduleChannelSnoozeEnd({
-        workspaceId: args.workspaceId,
-        threadId: args.threadId,
-        snoozedUntil: snoozedUntil.toISOString(),
-        delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
-      });
-    }
-
-    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
-      where: { id: args.threadId },
-    });
-
-    if (!isDefined(threadBefore?.channelId)) {
+    if (change.type !== 'SNOOZE') {
       return;
     }
 
-    const isFiled = change.type !== 'REOPEN';
+    if (change.snoozedUntil.getTime() <= Date.now()) {
+      throw new AiException(
+        'Snooze time must be in the future',
+        AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
+      );
+    }
 
-    await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
-      manager.query(
+    await this.scheduleChannelSnoozeEnd({
+      workspaceId: args.workspaceId,
+      threadId: args.threadId,
+      snoozedUntil: change.snoozedUntil.toISOString(),
+      delay: Math.max(change.snoozedUntil.getTime() - Date.now(), 0),
+    });
+  }
+
+  // Timestamps are stamped by Postgres, as for a member's copy, so new
+  // activity is compared against them on the same clock. Written in the
+  // member copy's transaction when both change, so the two never disagree
+  private buildChannelCopyWrite({
+    change,
+    isAssigneeOnly,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    change: AgentChatThreadTriageChange;
+    isAssigneeOnly: boolean;
+  }): { write: AgentChatThreadWriteStep; isWritten: () => boolean } {
+    let isWritten = false;
+
+    const write: AgentChatThreadWriteStep = async ({ manager, table }) => {
+      const filedThreadIds = await manager.query<{ id: string }[]>(
         `WITH filed_thread AS (
            UPDATE ${table('agentChatThread')}
            SET "channelArchivedAt" = CASE
@@ -223,17 +268,23 @@ export class AgentChatThreadTriageService {
              "channelSnoozedUntil" = $3,
              "updatedAt" = now()
            WHERE id = $1 AND "channelId" IS NOT NULL
+             AND (NOT $5::boolean OR "assigneeId" = $4::uuid)
            RETURNING id
          )
          SELECT id FROM filed_thread`,
-        [args.threadId, isFiled, snoozedUntil],
-      ),
-    );
+        [
+          args.threadId,
+          change.type !== 'REOPEN',
+          change.type === 'SNOOZE' ? change.snoozedUntil : null,
+          args.workspaceMemberId,
+          isAssigneeOnly,
+        ],
+      );
 
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId: args.workspaceId,
-      threadBefore,
-    });
+      isWritten = filedThreadIds.length === 1;
+    };
+
+    return { write, isWritten: () => isWritten };
   }
 
   private async scheduleChannelSnoozeEnd({

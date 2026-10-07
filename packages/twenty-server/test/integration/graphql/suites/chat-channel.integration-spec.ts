@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
 
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -9,6 +11,12 @@ import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-cha
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
+import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -762,6 +770,11 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(selfResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
+    const eventSpy = jest.spyOn(
+      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
+      'emitDatabaseBatchEvent',
+    );
+
     expectNoErrors(
       await makeMetadataApiRequest({
         query: DELETE_CHANNEL,
@@ -773,6 +786,16 @@ describe('Chat channels through the authenticated API', () => {
       destinationChannelId,
     );
     expect(await readMemberIds(channelId)).toEqual([]);
+    // Moved in SQL, so the move is sent for clients watching the chat
+    expect(
+      eventSpy.mock.calls.some(
+        ([batchEvent]) =>
+          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
+          batchEvent.events.some(
+            (event) => 'recordId' in event && event.recordId === threadId,
+          ),
+      ),
+    ).toBe(true);
 
     const grants: unknown[] = await global.testDataSource.query(
       `SELECT 1 FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1`,
@@ -809,6 +832,89 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(janeSummary.openCount).toBe(janeOpenThreadIds.length);
     expect(janeSummary.hasUnreadOpen).toBe(true);
+  });
+
+  it('refuses channel writes through the record API', async () => {
+    const channelId = await createChannel('PUBLIC');
+
+    for (const operation of [
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'agentChatChannel',
+        gqlFields: 'id',
+        recordId: channelId,
+      }),
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'agentChatChannel',
+        gqlFields: 'id',
+        recordId: channelId,
+      }),
+    ]) {
+      const response = await makeGraphqlApiRequest(operation);
+
+      expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    }
+
+    const channels: unknown[] = await global.testDataSource.query(
+      `SELECT 1 FROM ${SCHEMA}."agentChatChannel"
+       WHERE id = $1 AND "deletedAt" IS NULL`,
+      [channelId],
+    );
+
+    expect(channels).toHaveLength(1);
+  });
+
+  it('keeps the channel chats of a removed member in their channel', async () => {
+    const channelId = await createChannel('PUBLIC', [JONY]);
+    const channelThreadId = await createThreadInChannel(
+      channelId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    const ownThreadId = await createThreadInChannel(
+      null,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    const { flatObjectMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+
+    await detachAgentChatChannelThreadsFromWorkspaceMember({
+      threadRepository: global.app.get<
+        string,
+        AgentHistoryRepository<AgentChatThreadWorkspaceEntity>
+      >(getAgentHistoryRepositoryToken('agentChatThread'), { strict: false }),
+      flatObjectMetadataMaps,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: JONY,
+    });
+
+    const owners: { id: string; workspaceMemberId: string | null }[] =
+      await global.testDataSource.query(
+        `SELECT id, "workspaceMemberId" FROM ${SCHEMA}."agentChatThread"
+         WHERE id = ANY($1::uuid[]) ORDER BY id`,
+        [[channelThreadId, ownThreadId]],
+      );
+
+    expect(owners).toEqual(
+      [
+        { id: channelThreadId, workspaceMemberId: null },
+        { id: ownThreadId, workspaceMemberId: JONY },
+      ].sort((threadA, threadB) => threadA.id.localeCompare(threadB.id)),
+    );
+    expect(await readMemberIds(channelId)).toEqual([JANE]);
+
+    // Neither chat is Jane's to destroy any more
+    await global.testDataSource.query(
+      `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = ANY($1::uuid[])`,
+      [[channelThreadId, ownThreadId]],
+    );
+    createdThreadIds.splice(
+      0,
+      createdThreadIds.length,
+      ...createdThreadIds.filter(
+        (threadId) => ![channelThreadId, ownThreadId].includes(threadId),
+      ),
+    );
   });
 
   it('pages a view by last activity', async () => {

@@ -15,6 +15,7 @@ import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-module
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
@@ -23,17 +24,12 @@ import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
-// Runs in the participant write's transaction, after the participant row is
-// locked, in the order member activity takes the two locks
-type WriteThreadStep = (context: AgentHistoryStorageContext) => Promise<void>;
 
 type BuildParticipantWriteQuery = (tables: {
   participantTable: string;
@@ -144,7 +140,7 @@ export class AgentChatThreadParticipantService {
     ...args
   }: AgentChatThreadAccessArgs & {
     isSelfAssigned: boolean;
-    writeAssignment: WriteThreadStep;
+    writeAssignment: AgentChatThreadWriteStep;
   }): Promise<AgentChatThreadParticipantRow | null> {
     return this.writeOne(
       args,
@@ -186,7 +182,10 @@ export class AgentChatThreadParticipantService {
   async unsubscribe(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
-    const assertIsNotAssignee: WriteThreadStep = async ({ manager, table }) => {
+    const assertIsNotAssignee: AgentChatThreadWriteStep = async ({
+      manager,
+      table,
+    }) => {
       const [thread] = await manager.query<{ assigneeId: string | null }[]>(
         `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
         [args.threadId],
@@ -216,17 +215,22 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  archive(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.setArchive(args, null);
+  archive({
+    writeThread,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    writeThread?: AgentChatThreadWriteStep;
+  }): Promise<AgentChatThreadParticipantDTO> {
+    return this.setArchive(args, null, writeThread);
   }
 
   async snooze({
     snoozedUntil,
+    writeThread,
     ...args
   }: AgentChatThreadAccessArgs & {
     snoozedUntil: Date;
+    writeThread?: AgentChatThreadWriteStep;
   }): Promise<AgentChatThreadParticipantDTO> {
     if (snoozedUntil.getTime() <= Date.now()) {
       throw new AiException(
@@ -245,7 +249,7 @@ export class AgentChatThreadParticipantService {
       delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
     });
 
-    return this.setArchive(args, snoozedUntil);
+    return this.setArchive(args, snoozedUntil, writeThread);
   }
 
   // A snooze ends by moving the chat back to the inbox. The snooze stays
@@ -331,9 +335,12 @@ export class AgentChatThreadParticipantService {
     });
   }
 
-  async moveToInbox(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
+  async moveToInbox({
+    writeThread,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    writeThread?: AgentChatThreadWriteStep;
+  }): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
       ({ participantTable }) =>
@@ -345,6 +352,8 @@ export class AgentChatThreadParticipantService {
            "isSubscribed" = true,
            "updatedAt" = now()
          RETURNING *`,
+      [],
+      writeThread,
     );
   }
 
@@ -501,15 +510,16 @@ export class AgentChatThreadParticipantService {
   private setArchive(
     args: AgentChatThreadAccessArgs,
     snoozedUntil: Date | null,
+    writeThread?: AgentChatThreadWriteStep,
   ): Promise<AgentChatThreadParticipantDTO> {
-    return this.upsertOne(args, buildArchiveQuery, [snoozedUntil]);
+    return this.upsertOne(args, buildArchiveQuery, [snoozedUntil], writeThread);
   }
 
   private async upsertOne(
     args: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
-    writeThread?: WriteThreadStep,
+    writeThread?: AgentChatThreadWriteStep,
   ): Promise<AgentChatThreadParticipantDTO> {
     await this.assertCanWriteInboxState(args);
 
@@ -543,7 +553,7 @@ export class AgentChatThreadParticipantService {
     args: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[],
-    writeThread?: WriteThreadStep,
+    writeThread?: AgentChatThreadWriteStep,
   ): Promise<AgentChatThreadParticipantDTO> {
     return (
       (await this.writeOne(args, buildQuery, extraParameters, writeThread)) ??
@@ -557,7 +567,7 @@ export class AgentChatThreadParticipantService {
     { workspaceId, workspaceMemberId, threadId }: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
-    writeThread?: WriteThreadStep,
+    writeThread?: AgentChatThreadWriteStep,
   ): Promise<AgentChatThreadParticipantRow | null> {
     const parameters = [
       threadId,

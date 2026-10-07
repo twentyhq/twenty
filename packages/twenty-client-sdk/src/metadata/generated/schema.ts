@@ -3117,6 +3117,41 @@ export interface SendChatMessageResult {
     __typename: 'SendChatMessageResult'
 }
 
+export interface AgentChatChannel {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    icon?: Scalars['String']
+    color?: Scalars['String']
+    visibility: AgentChatChannelVisibility
+    __typename: 'AgentChatChannel'
+}
+
+export type AgentChatChannelVisibility = 'PUBLIC' | 'PRIVATE'
+
+export interface AgentChatInboxChannelSummary {
+    channelId: Scalars['UUID']
+    openCount: Scalars['Int']
+    hasUnreadOpen: Scalars['Boolean']
+    __typename: 'AgentChatInboxChannelSummary'
+}
+
+export interface AgentChatInboxSummary {
+    openCount: Scalars['Int']
+    hasUnreadOpen: Scalars['Boolean']
+    needsInputCount: Scalars['Int']
+    hasUnreadMention: Scalars['Boolean']
+    hasUnreadAssigned: Scalars['Boolean']
+    channels: AgentChatInboxChannelSummary[]
+    __typename: 'AgentChatInboxSummary'
+}
+
+export interface AgentChatInboxThreadIds {
+    threadIds: Scalars['UUID'][]
+    hasNextPage: Scalars['Boolean']
+    endCursor?: Scalars['String']
+    __typename: 'AgentChatInboxThreadIds'
+}
+
 export interface AgentChatThreadParticipant {
     id: Scalars['UUID']
     threadId: Scalars['UUID']
@@ -3497,6 +3532,8 @@ export interface Query {
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
+    agentChatInboxThreadIds: AgentChatInboxThreadIds
+    agentChatInboxSummary: AgentChatInboxSummary
     skills: Skill[]
     skill?: Skill
     agentRuns: AgentRun[]
@@ -3545,6 +3582,12 @@ export interface Query {
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
+
+export type AgentChatInboxViewKind = 'RECENT' | 'OPEN' | 'NEEDS_INPUT' | 'MENTIONS' | 'ASSIGNED' | 'SNOOZED' | 'DONE' | 'CHANNEL'
+
+export type AgentChatChannelThreadStatus = 'OPEN' | 'SNOOZED' | 'DONE'
+
+export type AgentChatChannelAssignmentFilter = 'ANY' | 'UNASSIGNED' | 'ASSIGNED_TO_ME'
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
@@ -3725,6 +3768,17 @@ export interface Mutation {
     retryChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
+    createAgentChatChannel: AgentChatChannel
+    updateAgentChatChannel: AgentChatChannel
+    deleteAgentChatChannel: Scalars['Boolean']
+    joinAgentChatChannel: Scalars['Boolean']
+    leaveAgentChatChannel: Scalars['Boolean']
+    addAgentChatChannelMembers: Scalars['Boolean']
+    removeAgentChatChannelMember: Scalars['Boolean']
+    moveAgentChatThreadToChannel: Scalars['Boolean']
+    markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
+    snoozeAgentChatThreadInChannel: Scalars['Boolean']
+    reopenAgentChatThreadInChannel: Scalars['Boolean']
     markAgentChatThreadAsRead: AgentChatThreadParticipant
     markAgentChatThreadAsUnread: AgentChatThreadParticipant
     archiveAgentChatThread: AgentChatThreadParticipant
@@ -7092,6 +7146,43 @@ export interface SendChatMessageResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentChatChannelGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    icon?: boolean | number
+    color?: boolean | number
+    visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatInboxChannelSummaryGenqlSelection{
+    channelId?: boolean | number
+    openCount?: boolean | number
+    hasUnreadOpen?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatInboxSummaryGenqlSelection{
+    openCount?: boolean | number
+    hasUnreadOpen?: boolean | number
+    needsInputCount?: boolean | number
+    hasUnreadMention?: boolean | number
+    hasUnreadAssigned?: boolean | number
+    channels?: AgentChatInboxChannelSummaryGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatInboxThreadIdsGenqlSelection{
+    threadIds?: boolean | number
+    hasNextPage?: boolean | number
+    endCursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentChatThreadParticipantGenqlSelection{
     id?: boolean | number
     threadId?: boolean | number
@@ -7487,6 +7578,8 @@ export interface QueryGenqlSelection{
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
+    agentChatInboxThreadIds?: (AgentChatInboxThreadIdsGenqlSelection & { __args: {view: AgentChatInboxViewInput, first?: (Scalars['Int'] | null), after?: (Scalars['String'] | null)} })
+    agentChatInboxSummary?: AgentChatInboxSummaryGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
@@ -7562,6 +7655,8 @@ export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReaso
 export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
+
+export interface AgentChatInboxViewInput {kind: AgentChatInboxViewKind,channelId?: (Scalars['UUID'] | null),channelStatus?: (AgentChatChannelThreadStatus | null),assignment?: (AgentChatChannelAssignmentFilter | null)}
 
 export interface MetadataTranslationsInput {objectMetadataId?: (Scalars['UUID'] | null),fieldMetadataId?: (Scalars['UUID'] | null),locale?: (Scalars['String'] | null)}
 
@@ -7749,11 +7844,22 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
-    createChatThread?: AgentChatThreadGenqlSelection
+    createChatThread?: (AgentChatThreadGenqlSelection & { __args?: {channelId?: (Scalars['UUID'] | null)} })
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
+    createAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
+    updateAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {channelId: Scalars['UUID'], input: UpdateAgentChatChannelInput} })
+    deleteAgentChatChannel?: { __args: {channelId: Scalars['UUID'], destinationChannelId?: (Scalars['UUID'] | null)} }
+    joinAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
+    leaveAgentChatChannel?: { __args: {channelId: Scalars['UUID']} }
+    addAgentChatChannelMembers?: { __args: {channelId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
+    removeAgentChatChannelMember?: { __args: {channelId: Scalars['UUID'], memberWorkspaceMemberId: Scalars['UUID']} }
+    moveAgentChatThreadToChannel?: { __args: {threadId: Scalars['UUID'], channelId?: (Scalars['UUID'] | null)} }
+    markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
+    snoozeAgentChatThreadInChannel?: { __args: {threadId: Scalars['UUID'], snoozedUntil: Scalars['DateTime']} }
+    reopenAgentChatThreadInChannel?: { __args: {threadId: Scalars['UUID']} }
     markAgentChatThreadAsRead?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     markAgentChatThreadAsUnread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
@@ -8240,6 +8346,10 @@ export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?:
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface CreateAgentChatChannelInput {name: Scalars['String'],icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),visibility: AgentChatChannelVisibility,memberIds: Scalars['UUID'][]}
+
+export interface UpdateAgentChatChannelInput {name?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),visibility?: (AgentChatChannelVisibility | null)}
 
 export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],toolCall?: (Scalars['JSON'] | null)}
 
@@ -10628,6 +10738,38 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const AgentChatChannel_possibleTypes: string[] = ['AgentChatChannel']
+    export const isAgentChatChannel = (obj?: { __typename?: any } | null): obj is AgentChatChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannel"')
+      return AgentChatChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatInboxChannelSummary_possibleTypes: string[] = ['AgentChatInboxChannelSummary']
+    export const isAgentChatInboxChannelSummary = (obj?: { __typename?: any } | null): obj is AgentChatInboxChannelSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatInboxChannelSummary"')
+      return AgentChatInboxChannelSummary_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatInboxSummary_possibleTypes: string[] = ['AgentChatInboxSummary']
+    export const isAgentChatInboxSummary = (obj?: { __typename?: any } | null): obj is AgentChatInboxSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatInboxSummary"')
+      return AgentChatInboxSummary_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatInboxThreadIds_possibleTypes: string[] = ['AgentChatInboxThreadIds']
+    export const isAgentChatInboxThreadIds = (obj?: { __typename?: any } | null): obj is AgentChatInboxThreadIds => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatInboxThreadIds"')
+      return AgentChatInboxThreadIds_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentChatThreadParticipant_possibleTypes: string[] = ['AgentChatThreadParticipant']
     export const isAgentChatThreadParticipant = (obj?: { __typename?: any } | null): obj is AgentChatThreadParticipant => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
@@ -11707,6 +11849,11 @@ export const enumUnsubscribeTopicVisibility = {
    PRIVATE: 'PRIVATE' as const
 }
 
+export const enumAgentChatChannelVisibility = {
+   PUBLIC: 'PUBLIC' as const,
+   PRIVATE: 'PRIVATE' as const
+}
+
 export const enumWorkspaceSetupChatOutcome = {
    STARTED: 'STARTED' as const,
    ALREADY_STARTED: 'ALREADY_STARTED' as const,
@@ -11806,6 +11953,29 @@ export const enumAllMetadataName = {
    validationRule: 'validationRule' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
+}
+
+export const enumAgentChatInboxViewKind = {
+   RECENT: 'RECENT' as const,
+   OPEN: 'OPEN' as const,
+   NEEDS_INPUT: 'NEEDS_INPUT' as const,
+   MENTIONS: 'MENTIONS' as const,
+   ASSIGNED: 'ASSIGNED' as const,
+   SNOOZED: 'SNOOZED' as const,
+   DONE: 'DONE' as const,
+   CHANNEL: 'CHANNEL' as const
+}
+
+export const enumAgentChatChannelThreadStatus = {
+   OPEN: 'OPEN' as const,
+   SNOOZED: 'SNOOZED' as const,
+   DONE: 'DONE' as const
+}
+
+export const enumAgentChatChannelAssignmentFilter = {
+   ANY: 'ANY' as const,
+   UNASSIGNED: 'UNASSIGNED' as const,
+   ASSIGNED_TO_ME: 'ASSIGNED_TO_ME' as const
 }
 
 export const enumEventLogTable = {

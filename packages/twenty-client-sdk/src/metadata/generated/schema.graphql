@@ -3569,6 +3569,40 @@ type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
 }
 
+type AgentChatChannel {
+  id: UUID!
+  name: String!
+  icon: String
+  color: String
+  visibility: AgentChatChannelVisibility!
+}
+
+enum AgentChatChannelVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+type AgentChatInboxChannelSummary {
+  channelId: UUID!
+  openCount: Int!
+  hasUnreadOpen: Boolean!
+}
+
+type AgentChatInboxSummary {
+  openCount: Int!
+  hasUnreadOpen: Boolean!
+  needsInputCount: Int!
+  hasUnreadMention: Boolean!
+  hasUnreadAssigned: Boolean!
+  channels: [AgentChatInboxChannelSummary!]!
+}
+
+type AgentChatInboxThreadIds {
+  threadIds: [UUID!]!
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
 type AgentChatThreadParticipant {
   id: UUID!
   threadId: UUID!
@@ -4021,6 +4055,8 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
+  agentChatInboxThreadIds(view: AgentChatInboxViewInput!, first: Int, after: String): AgentChatInboxThreadIds!
+  agentChatInboxSummary: AgentChatInboxSummary!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
@@ -4139,6 +4175,36 @@ input ListAppConnectionsInput {
   providerName: String
   userWorkspaceId: String
   visibility: String
+}
+
+input AgentChatInboxViewInput {
+  kind: AgentChatInboxViewKind!
+  channelId: UUID
+  channelStatus: AgentChatChannelThreadStatus
+  assignment: AgentChatChannelAssignmentFilter
+}
+
+enum AgentChatInboxViewKind {
+  RECENT
+  OPEN
+  NEEDS_INPUT
+  MENTIONS
+  ASSIGNED
+  SNOOZED
+  DONE
+  CHANNEL
+}
+
+enum AgentChatChannelThreadStatus {
+  OPEN
+  SNOOZED
+  DONE
+}
+
+enum AgentChatChannelAssignmentFilter {
+  ANY
+  UNASSIGNED
+  ASSIGNED_TO_ME
 }
 
 input MetadataTranslationsInput {
@@ -4368,11 +4434,22 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
-  createChatThread: AgentChatThread!
+  createChatThread(channelId: UUID): AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
+  updateAgentChatChannel(channelId: UUID!, input: UpdateAgentChatChannelInput!): AgentChatChannel!
+  deleteAgentChatChannel(channelId: UUID!, destinationChannelId: UUID): Boolean!
+  joinAgentChatChannel(channelId: UUID!): Boolean!
+  leaveAgentChatChannel(channelId: UUID!): Boolean!
+  addAgentChatChannelMembers(channelId: UUID!, workspaceMemberIds: [UUID!]!): Boolean!
+  removeAgentChatChannelMember(channelId: UUID!, memberWorkspaceMemberId: UUID!): Boolean!
+  moveAgentChatThreadToChannel(threadId: UUID!, channelId: UUID): Boolean!
+  markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
+  snoozeAgentChatThreadInChannel(threadId: UUID!, snoozedUntil: DateTime!): Boolean!
+  reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   markAgentChatThreadAsRead(threadId: UUID!): AgentChatThreadParticipant!
   markAgentChatThreadAsUnread(threadId: UUID!): AgentChatThreadParticipant!
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
@@ -5603,6 +5680,21 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input CreateAgentChatChannelInput {
+  name: String!
+  icon: String
+  color: String
+  visibility: AgentChatChannelVisibility! = PUBLIC
+  memberIds: [UUID!]! = []
+}
+
+input UpdateAgentChatChannelInput {
+  name: String
+  icon: String
+  color: String
+  visibility: AgentChatChannelVisibility
 }
 
 input SendInboxMessageInput {
