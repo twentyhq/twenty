@@ -1,7 +1,8 @@
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 
 export const buildWaitOutcomeToolOutput = (
-  outcome: PendingWakeUpOutcome,
+  // a run dropped while it waits cancels its wait
+  outcome: PendingWakeUpOutcome | { type: 'CANCELLED' },
 ): Record<string, unknown> => {
   switch (outcome.type) {
     case 'TIME_ELAPSED':
@@ -29,6 +30,13 @@ export const buildWaitOutcomeToolOutput = (
         message:
           'Stopped waiting: the event did not happen before the timeout.',
         result: { status: 'expired' },
+      };
+    case 'CANCELLED':
+      return {
+        success: true,
+        message:
+          'Stopped waiting: the run was stopped before the wait was over.',
+        result: { status: 'cancelled' },
       };
   }
 };

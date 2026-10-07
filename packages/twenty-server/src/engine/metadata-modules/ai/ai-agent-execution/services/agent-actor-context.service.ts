@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
@@ -20,7 +21,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { type ApplicationAgentContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/application-agent-context.type';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import {
   PermissionsException,
@@ -66,7 +66,11 @@ export class AgentActorContextService {
   }: {
     workspaceId: string;
     agent: Pick<AgentEntity, 'id' | 'applicationId'>;
-  }): Promise<ApplicationAgentContext | null> {
+  }): Promise<{
+    application: FlatApplication;
+    authContext: ApplicationWorkspaceAuthContext;
+    agentRoleId: string | undefined;
+  } | null> {
     const [workspace, application, agentRoleId] = await Promise.all([
       this.workspaceRepository.findOneOrFail({ where: { id: workspaceId } }),
       this.applicationLookupService.findById({

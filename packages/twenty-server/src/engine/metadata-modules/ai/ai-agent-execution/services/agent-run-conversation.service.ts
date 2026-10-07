@@ -10,6 +10,7 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { CacheLockException } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -25,6 +26,13 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+
+// long enough to wait for another message being sent, not for a run
+const MESSAGE_THREAD_LOCK_MAX_WAIT_MS = 2_000;
 
 @Injectable()
 export class AgentRunConversationService {
@@ -43,10 +51,12 @@ export class AgentRunConversationService {
     workspaceId,
     threadId,
     work,
+    maxWaitMs = AGENT_RUN_THREAD_LOCK_TTL_MS,
   }: {
     workspaceId: string;
     threadId: string;
     work: () => Promise<TResult>;
+    maxWaitMs?: number;
   }): Promise<TResult> {
     return this.cacheLockService.withLock(
       work,
@@ -54,11 +64,45 @@ export class AgentRunConversationService {
       {
         ttl: AGENT_RUN_THREAD_LOCK_TTL_MS,
         ms: AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
-        maxRetries:
-          AGENT_RUN_THREAD_LOCK_TTL_MS /
-          AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
+        maxRetries: maxWaitMs / AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
       },
     );
+  }
+
+  // A member's message waits a moment for a run going on in the conversation, then is refused like
+  // one sent while the run waits
+  async withThreadLockForMessage<TResult>({
+    workspaceId,
+    threadId,
+    work,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    work: () => Promise<TResult>;
+  }): Promise<TResult> {
+    let isLocked = false;
+
+    try {
+      return await this.withThreadLock({
+        workspaceId,
+        threadId,
+        maxWaitMs: MESSAGE_THREAD_LOCK_MAX_WAIT_MS,
+        work: () => {
+          isLocked = true;
+
+          return work();
+        },
+      });
+    } catch (error) {
+      if (!isLocked && error instanceof CacheLockException) {
+        throw new AiException(
+          'A run is going on in the conversation; send the next message once it has finished',
+          AiExceptionCode.THREAD_AWAITING_ANSWER,
+        );
+      }
+
+      throw error;
+    }
   }
 
   // The turn is written before the agent runs, so a run in progress or one that fails is on record
@@ -169,12 +213,20 @@ export class AgentRunConversationService {
       isAwaitingAnswer,
     });
 
+    // the waiting call is already saved and can be answered from the conversation, so a
+    // failure to bring it back to the inbox must not fail the run
     if (isAwaitingAnswer) {
-      await this.recordWaitingActivity({
-        workspaceId,
-        threadId,
-        text: findLastMessageText(replyParts) ?? title,
-      });
+      await this.threadService
+        .recordThreadActivity({
+          workspaceId,
+          threadId,
+          text: findLastMessageText(replyParts) ?? title,
+        })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record waiting activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
     }
 
     return { isAwaitingAnswer };
@@ -195,22 +247,6 @@ export class AgentRunConversationService {
       status: AgentTurnStatus.FAILED,
       error: mapErrorToStreamError(error),
     });
-  }
-
-  // the waiting call is already saved and can be answered from the conversation, so a
-  // failure to bring it back to the inbox must not fail the run
-  private async recordWaitingActivity(args: {
-    workspaceId: string;
-    threadId: string;
-    text: string;
-  }): Promise<void> {
-    await this.threadService
-      .recordThreadActivity(args)
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not record waiting activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-      );
   }
 
   private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {
