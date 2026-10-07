@@ -13,7 +13,6 @@ import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/se
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
-import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -22,12 +21,11 @@ import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-ag
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
-import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
@@ -47,8 +45,7 @@ export class AgentRunSuspensionService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
-    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     @InjectMessageQueue(MessageQueue.aiQueue)
@@ -331,33 +328,12 @@ export class AgentRunSuspensionService {
       return;
     }
 
-    const { affected } = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, pendingQuestionMessageId, activeStreamId: IsNull() },
-      { pendingQuestionMessageId: null },
-    );
-
-    if (affected === 0) {
-      return;
-    }
-
-    await this.threadRecordEventService.emitPendingQuestionCleared({
+    await this.threadLifecycleService.closePendingQuestion({
       workspaceId,
       threadId,
       messageId: pendingQuestionMessageId,
-    });
-
-    // the question is already cleared, so its calls must close before anything else can fail
-    await closeOpenToolParts({
-      messagePartRepository: this.messagePartRepository,
-      messageId: pendingQuestionMessageId,
-      workspaceId,
-    });
-
-    await this.turnRecorderService.endWaitingTurn({
-      workspaceId,
-      messageId: pendingQuestionMessageId,
-      status: AgentTurnStatus.CANCELLED,
+      activeStreamId: null,
+      turnStatus: AgentTurnStatus.CANCELLED,
     });
   }
 }
