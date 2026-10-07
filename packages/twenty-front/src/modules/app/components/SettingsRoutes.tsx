@@ -426,6 +426,12 @@ const SettingsAppPreferencesBuiltInApplication = lazy(() =>
   ),
 );
 
+const SettingsAppPreferencesApplication = lazy(() =>
+  import('~/pages/settings/app-preferences/SettingsAppPreferencesApplication').then(
+    (module) => ({ default: module.SettingsAppPreferencesApplication }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -763,6 +769,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AppPreferences}
         element={<SettingsAppPreferences />}
+      />
+      <Route
+        path={SettingsPath.AppPreferencesApplication}
+        element={<SettingsAppPreferencesApplication />}
       />
       <Route
         element={

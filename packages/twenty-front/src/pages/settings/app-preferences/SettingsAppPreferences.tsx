@@ -1,6 +1,7 @@
 import { SettingsAppPreferencesAccountsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountsSection';
 import { SettingsAppPreferencesAppsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsTable';
 import { SettingsAppPreferencesBuiltInApplicationRows } from '@/settings/app-preferences/components/SettingsAppPreferencesBuiltInApplicationRows';
+import { SettingsAppPreferencesInstalledApplicationRows } from '@/settings/app-preferences/components/SettingsAppPreferencesInstalledApplicationRows';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -37,6 +38,7 @@ export const SettingsAppPreferences = () => {
             {canManageConnectedAccounts && (
               <SettingsAppPreferencesBuiltInApplicationRows />
             )}
+            <SettingsAppPreferencesInstalledApplicationRows />
           </SettingsAppPreferencesAppsTable>
         </Section.Root>
       </SettingsPageContainer>
