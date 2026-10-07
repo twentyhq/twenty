@@ -32,7 +32,7 @@ const buildService = () => {
   const agentActorContextService = {
     buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
       actorContext: RUN_AS_ACTOR,
-      authContext: { userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
+      authContext: { type: 'user', userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
       roleId: 'role-id',
     }),
     buildApplicationAgentContext: jest.fn().mockResolvedValue({
@@ -224,13 +224,13 @@ describe('AgentRunService', () => {
       { input: userInput('Who is our biggest customer?') },
       {
         isCalledByApplication: false,
-        requestUserWorkspaceId: 'caller-user-workspace-id',
-        requestWorkspaceMemberId: 'caller-workspace-member-id',
+        requestUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+        requestWorkspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,
       },
     );
 
     expect(runInput(agentRunnerService).prompt).toMatchObject({
-      senderUserWorkspaceId: 'caller-user-workspace-id',
+      senderUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
       senderApplicationId: null,
     });
   });
