@@ -1,15 +1,15 @@
 /* @license Enterprise */
 
-import { ArgsType, Field, Float } from '@nestjs/graphql';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsPositive, IsUUID } from 'class-validator';
+import { IsInt, IsNotEmpty, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 export class BillingPurchaseCreditOneTimeTopUpInput {
-  @Field(() => Float)
-  @IsPositive()
+  @Field(() => Int)
+  @IsInt()
   creditAmount: number;
 
   @Field(() => UUIDScalarType)

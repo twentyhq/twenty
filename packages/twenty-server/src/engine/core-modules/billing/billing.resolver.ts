@@ -13,7 +13,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingCreditOneTimeTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up-offer.dto';
+import { BillingCreditOneTimeTopUpPriceDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up-price.dto';
 import { BillingCreditOneTimeTopUpDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up.dto';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
@@ -545,7 +545,7 @@ export class BillingResolver {
     };
   }
 
-  @Query(() => [BillingCreditOneTimeTopUpOfferDTO])
+  @Query(() => BillingCreditOneTimeTopUpPriceDTO, { nullable: true })
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -560,10 +560,10 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async getCreditOneTimeTopUpOffers(
+  async getCreditOneTimeTopUpPrice(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<BillingCreditOneTimeTopUpOfferDTO[]> {
-    return this.billingCreditOneTimeTopUpService.getOffers(workspace.id);
+  ): Promise<BillingCreditOneTimeTopUpPriceDTO | null> {
+    return this.billingCreditOneTimeTopUpService.getPrice(workspace.id);
   }
 
   @Mutation(() => BillingCreditOneTimeTopUpDTO)

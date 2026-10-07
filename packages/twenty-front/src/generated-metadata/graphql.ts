@@ -794,13 +794,13 @@ export type BillingCreditOneTimeTopUp = {
   status: BillingInvoicePaymentStatus;
 };
 
-export type BillingCreditOneTimeTopUpOffer = {
-  __typename?: 'BillingCreditOneTimeTopUpOffer';
-  /** Price before tax, in cents */
-  amountCents: Scalars['Float']['output'];
-  /** Credits added to the workspace */
-  creditAmount: Scalars['Float']['output'];
+export type BillingCreditOneTimeTopUpPrice = {
+  __typename?: 'BillingCreditOneTimeTopUpPrice';
+  /** Price of one credit before tax, in cents */
+  amountCentsPerCredit: Scalars['Int']['output'];
   currency: Scalars['String']['output'];
+  maximumCreditAmount: Scalars['Int']['output'];
+  minimumCreditAmount: Scalars['Int']['output'];
 };
 
 export type BillingCustomer = {
@@ -4138,7 +4138,7 @@ export type MutationMoveAgentChatThreadToInboxArgs = {
 
 
 export type MutationPurchaseCreditOneTimeTopUpArgs = {
-  creditAmount: Scalars['Float']['input'];
+  creditAmount: Scalars['Int']['input'];
   idempotencyKey: Scalars['UUID']['input'];
 };
 
@@ -5387,7 +5387,7 @@ export type Query = {
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
-  getCreditOneTimeTopUpOffers: Array<BillingCreditOneTimeTopUpOffer>;
+  getCreditOneTimeTopUpPrice?: Maybe<BillingCreditOneTimeTopUpPrice>;
   getEmailingDomains: Array<EmailingDomain>;
   getInviteSuggestions: Array<InviteSuggestion>;
   getJobs: Array<JobStatus>;

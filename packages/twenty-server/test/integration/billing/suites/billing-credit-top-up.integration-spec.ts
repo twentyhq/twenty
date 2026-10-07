@@ -54,19 +54,20 @@ const postCreditTopUpInvoicePaid = ({
       }),
     );
 
-const OFFERS_QUERY = gql`
-  query GetCreditOneTimeTopUpOffers {
-    getCreditOneTimeTopUpOffers {
-      creditAmount
-      amountCents
+const PRICE_QUERY = gql`
+  query GetCreditOneTimeTopUpPrice {
+    getCreditOneTimeTopUpPrice {
+      amountCentsPerCredit
       currency
+      minimumCreditAmount
+      maximumCreditAmount
     }
   }
 `;
 
 const PURCHASE_MUTATION = gql`
   mutation PurchaseCreditOneTimeTopUp(
-    $creditAmount: Float!
+    $creditAmount: Int!
     $idempotencyKey: UUID!
   ) {
     purchaseCreditOneTimeTopUp(
@@ -226,19 +227,19 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
     await quitBillingFixtureRedis();
   });
 
-  it('prices every offered amount at the plan rate', async () => {
-    const response = await makeMetadataApiRequest({ query: OFFERS_QUERY });
+  it('prices one credit at the plan rate, with the allowed range', async () => {
+    const response = await makeMetadataApiRequest({ query: PRICE_QUERY });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.getCreditOneTimeTopUpOffers).toEqual([
-      { creditAmount: 10, amountCents: 10_000, currency: 'USD' },
-      { creditAmount: 50, amountCents: 50_000, currency: 'USD' },
-      { creditAmount: 100, amountCents: 100_000, currency: 'USD' },
-      { creditAmount: 500, amountCents: 500_000, currency: 'USD' },
-    ]);
+    expect(response.body.data.getCreditOneTimeTopUpPrice).toEqual({
+      amountCentsPerCredit: 1_000,
+      currency: 'USD',
+      minimumCreditAmount: 1,
+      maximumCreditAmount: 1_000,
+    });
   });
 
-  it('offers nothing while the subscription is trialing', async () => {
+  it('has no price while the subscription is trialing', async () => {
     await setupResourceCreditSubscription({
       workspaceId,
       periodStart: PERIOD_START,
@@ -247,20 +248,23 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
       status: 'trialing',
     });
 
-    const response = await makeMetadataApiRequest({ query: OFFERS_QUERY });
+    const response = await makeMetadataApiRequest({ query: PRICE_QUERY });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.getCreditOneTimeTopUpOffers).toEqual([]);
+    expect(response.body.data.getCreditOneTimeTopUpPrice).toBeNull();
   });
 
-  it('refuses an amount that is not offered', async () => {
-    const response = await purchaseCreditOneTimeTopUp({ creditAmount: 7 });
+  it.each([0, 1_001])(
+    'refuses %s credits, outside the allowed range',
+    async (creditAmount) => {
+      const response = await purchaseCreditOneTimeTopUp({ creditAmount });
 
-    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-      'BILLING_CREDIT_AMOUNT_INVALID',
-    );
-    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
-  });
+      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+        'BILLING_CREDIT_AMOUNT_INVALID',
+      );
+      expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+    },
+  );
 
   it('refuses a trialing subscription before charging anything', async () => {
     await setupResourceCreditSubscription({
