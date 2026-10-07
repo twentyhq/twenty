@@ -226,13 +226,10 @@ export class CommandMenuItemResolver {
 
     return commandMenuItems.filter(
       ({ coreWorkflowVersionId, workflowVersionId }) =>
-        !(
-          isDefined(coreWorkflowVersionId) &&
-          inaccessibleWorkflowVersionIds.has(coreWorkflowVersionId)
-        ) &&
-        !(
-          isDefined(workflowVersionId) &&
-          inaccessibleWorkflowVersionIds.has(workflowVersionId)
+        ![coreWorkflowVersionId, workflowVersionId].some(
+          (workflowVersionIdToCheck) =>
+            isDefined(workflowVersionIdToCheck) &&
+            inaccessibleWorkflowVersionIds.has(workflowVersionIdToCheck),
         ),
     );
   }

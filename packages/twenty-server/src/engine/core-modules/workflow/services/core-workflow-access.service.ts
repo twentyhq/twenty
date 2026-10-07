@@ -316,12 +316,8 @@ export class CoreWorkflowAccessService {
       workspaceId,
       {
         where: [
-          ...(coreWorkflowVersionIds.length > 0
-            ? [{ id: In(coreWorkflowVersionIds) }]
-            : []),
-          ...(workspaceWorkflowVersionIds.length > 0
-            ? [{ workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) }]
-            : []),
+          { id: In(coreWorkflowVersionIds) },
+          { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
         ],
         select: {
           id: true,

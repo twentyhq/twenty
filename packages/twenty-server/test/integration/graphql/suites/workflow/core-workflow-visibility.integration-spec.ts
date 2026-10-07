@@ -11,6 +11,8 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
+import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
@@ -18,8 +20,8 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -615,7 +617,10 @@ describe('core workflow visibility (e2e)', () => {
     let manualCoreWorkflowId: string;
     let manualWorkspaceWorkflowVersionId: string;
 
-    const listCommandMenuItemWorkflowVersionIds = async (token: string) => {
+    const listCommandMenuItemValues = async (
+      token: string,
+      field: 'id' | 'workflowVersionId' = 'workflowVersionId',
+    ) => {
       const { data } = await findCommandMenuItems({
         expectToFail: false,
         gqlFields: 'id workflowVersionId',
@@ -624,7 +629,7 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       return data.commandMenuItems.map(
-        ({ workflowVersionId }) => workflowVersionId,
+        (commandMenuItem) => commandMenuItem[field],
       );
     };
 
@@ -654,9 +659,7 @@ describe('core workflow visibility (e2e)', () => {
 
     it('puts its command menu item in every member command menu', async () => {
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).toContain(manualWorkspaceWorkflowVersionId);
     });
 
@@ -669,72 +672,46 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).not.toContain(manualWorkspaceWorkflowVersionId);
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JANE_ADMIN_ACCESS_TOKEN),
       ).toContain(manualWorkspaceWorkflowVersionId);
     });
 
     it('takes out an item that only carries the core version id', async () => {
-      const [{ coreWorkflowVersionId: manualCoreWorkflowVersionId }] =
-        await global.testDataSource.query(
-          `SELECT "coreWorkflowVersionId" FROM core."commandMenuItem"
-           WHERE "workspaceId" = $1 AND "workflowVersionId" = $2`,
-          [SEED_APPLE_WORKSPACE_ID, manualWorkspaceWorkflowVersionId],
-        );
+      await setVisibility(manualCoreWorkflowId, WorkflowVisibility.PRIVATE);
 
-      const setItemWorkflowVersionId = async (
-        from: string | null,
-        to: string | null,
-      ) => {
-        await global.testDataSource.query(
-          `UPDATE core."commandMenuItem" SET "workflowVersionId" = $3
-           WHERE "workspaceId" = $1 AND "coreWorkflowVersionId" = $2
-             AND "workflowVersionId" IS NOT DISTINCT FROM $4`,
-          [SEED_APPLE_WORKSPACE_ID, manualCoreWorkflowVersionId, to, from],
-        );
-        await getAppProviderByClassName<WorkspaceCacheService>(
-          'WorkspaceCacheService',
-        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-          'flatCommandMenuItemMaps',
-        ]);
-      };
+      const versionResponse = await workflowGraphqlRequest(
+        CORE_WORKFLOW_VERSION_QUERY,
+        { workspaceWorkflowVersionId: manualWorkspaceWorkflowVersionId },
+      );
+      const coreWorkflowVersionId: string =
+        versionResponse.body.data.coreWorkflowVersion.id;
 
-      const listCommandMenuItemCoreWorkflowVersionIds = async (
-        token: string,
-      ) => {
-        const { data } = await findCommandMenuItems({
-          expectToFail: false,
-          gqlFields: 'id coreWorkflowVersionId',
-          input: undefined,
-          token,
-        });
-
-        return data.commandMenuItems.map(
-          ({ coreWorkflowVersionId }) => coreWorkflowVersionId,
-        );
-      };
-
-      await setItemWorkflowVersionId(manualWorkspaceWorkflowVersionId, null);
+      const { data } = await createCommandMenuItem({
+        expectToFail: false,
+        input: {
+          coreWorkflowVersionId,
+          engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+          label: 'Core-only manual trigger',
+        },
+        gqlFields: 'id',
+      });
+      const coreOnlyCommandMenuItemId = data.createCommandMenuItem.id;
 
       try {
         expect(
-          await listCommandMenuItemCoreWorkflowVersionIds(
-            APPLE_JONY_MEMBER_ACCESS_TOKEN,
-          ),
-        ).not.toContain(manualCoreWorkflowVersionId);
+          await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN, 'id'),
+        ).not.toContain(coreOnlyCommandMenuItemId);
         expect(
-          await listCommandMenuItemCoreWorkflowVersionIds(
-            APPLE_JANE_ADMIN_ACCESS_TOKEN,
-          ),
-        ).toContain(manualCoreWorkflowVersionId);
+          await listCommandMenuItemValues(APPLE_JANE_ADMIN_ACCESS_TOKEN, 'id'),
+        ).toContain(coreOnlyCommandMenuItemId);
       } finally {
-        await setItemWorkflowVersionId(null, manualWorkspaceWorkflowVersionId);
+        await deleteCommandMenuItem({
+          expectToFail: false,
+          input: { id: coreOnlyCommandMenuItemId },
+        });
       }
     });
   });
