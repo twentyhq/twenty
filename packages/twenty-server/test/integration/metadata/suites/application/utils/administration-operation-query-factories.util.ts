@@ -135,6 +135,25 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       input: { universalIdentifier: applicationUniversalIdentifier },
     },
   }),
+  triggerUpgradeApplicationJob: ({
+    applicationUniversalIdentifier,
+  }: CallingApplication) => ({
+    query: gql`
+      mutation TriggerUpgradeApplicationJob(
+        $input: TriggerUpgradeApplicationJobInput!
+      ) {
+        triggerUpgradeApplicationJob(input: $input) {
+          __typename
+        }
+      }
+    `,
+    variables: {
+      input: {
+        universalIdentifier: applicationUniversalIdentifier,
+        targetVersion: PLACEHOLDER_TEXT,
+      },
+    },
+  }),
   updateApplication: ({ applicationId }: CallingApplication) => ({
     query: gql`
       mutation UpdateApplication($id: UUID!, $input: UpdateApplicationInput!) {

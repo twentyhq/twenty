@@ -3135,6 +3135,7 @@ type Mutation {
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
   triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
+  triggerUpgradeApplicationJob(input: TriggerUpgradeApplicationJobInput!): TriggerUpgradeApplicationJobResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
   unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
@@ -3769,6 +3770,7 @@ type Query {
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4461,6 +4463,15 @@ input TriggerUninstallApplicationJobInput {
 }
 
 type TriggerUninstallApplicationJobResult {
+  jobId: String!
+}
+
+input TriggerUpgradeApplicationJobInput {
+  targetVersion: String!
+  universalIdentifier: String!
+}
+
+type TriggerUpgradeApplicationJobResult {
   jobId: String!
 }
 

@@ -35,6 +35,26 @@ const TRIGGER_UNINSTALL_APPLICATION_JOB = gql`
   }
 `;
 
+const TRIGGER_UPGRADE_APPLICATION_JOB = gql`
+  mutation TriggerUpgradeApplicationJob(
+    $input: TriggerUpgradeApplicationJobInput!
+  ) {
+    triggerUpgradeApplicationJob(input: $input) {
+      jobId
+    }
+  }
+`;
+
+const FIND_UPGRADE_APPLICATION_JOB_STATUS = gql`
+  query FindUpgradeApplicationJobStatus($universalIdentifier: String!) {
+    findUpgradeApplicationJobStatus(universalIdentifier: $universalIdentifier) {
+      jobId
+      state
+      failedReason
+    }
+  }
+`;
+
 const FIND_UNINSTALL_APPLICATION_JOB_STATUS = gql`
   query FindUninstallApplicationJobStatus($universalIdentifier: String!) {
     findUninstallApplicationJobStatus(
@@ -73,6 +93,25 @@ describe('Application lifecycle jobs', () => {
     expect(response.body.errors).toBeUndefined();
 
     return response.body.data.findUninstallApplicationJobStatus;
+  };
+
+  const triggerUpgradeApplicationJob = () =>
+    makeMetadataApiRequest({
+      query: TRIGGER_UPGRADE_APPLICATION_JOB,
+      variables: {
+        input: { universalIdentifier: appId, targetVersion: '1.0.0' },
+      },
+    });
+
+  const findUpgradeApplicationJobStatus = async () => {
+    const response = await makeMetadataApiRequest({
+      query: FIND_UPGRADE_APPLICATION_JOB_STATUS,
+      variables: { universalIdentifier: appId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.findUpgradeApplicationJobStatus;
   };
 
   beforeAll(() => {
@@ -158,6 +197,63 @@ describe('Application lifecycle jobs', () => {
       expect(installResponse.body.errors).toHaveLength(1);
       expect(installResponse.body.errors[0].message).toBe(
         `Cannot install application ${appId} while its uninstall is in progress`,
+      );
+    } finally {
+      await workspaceQueue.resume();
+    }
+
+    await waitForAllJobsToFinish();
+  }, 60000);
+
+  it('reports the waiting upgrade job and refuses a conflicting uninstall', async () => {
+    await workspaceQueue.pause();
+
+    try {
+      const upgradeResponse = await triggerUpgradeApplicationJob();
+
+      expect(upgradeResponse.body.errors).toBeUndefined();
+
+      const jobId = upgradeResponse.body.data.triggerUpgradeApplicationJob
+        .jobId as string;
+
+      expect(getQueueJobIdPrefix(jobId)).toBe(
+        `upgrade-application.${SEED_APPLE_WORKSPACE_ID}.${appId}`,
+      );
+
+      expect(await findUpgradeApplicationJobStatus()).toMatchObject({
+        jobId,
+        state: JobStateEnum.PRIORITIZED,
+      });
+
+      const uninstallResponse = await makeMetadataApiRequest({
+        query: TRIGGER_UNINSTALL_APPLICATION_JOB,
+        variables: { input: { universalIdentifier: appId } },
+      });
+
+      expect(uninstallResponse.body.errors).toHaveLength(1);
+      expect(uninstallResponse.body.errors[0].message).toBe(
+        `Cannot uninstall application ${appId} while its upgrade is in progress`,
+      );
+    } finally {
+      await workspaceQueue.resume();
+    }
+
+    await waitForAllJobsToFinish();
+
+    expect(await findUpgradeApplicationJobStatus()).toBeNull();
+  }, 60000);
+
+  it('refuses an upgrade while the uninstall is in progress', async () => {
+    await workspaceQueue.pause();
+
+    try {
+      await triggerUninstallApplicationJob();
+
+      const upgradeResponse = await triggerUpgradeApplicationJob();
+
+      expect(upgradeResponse.body.errors).toHaveLength(1);
+      expect(upgradeResponse.body.errors[0].message).toBe(
+        `Cannot upgrade application ${appId} while its uninstall is in progress`,
       );
     } finally {
       await workspaceQueue.resume();
