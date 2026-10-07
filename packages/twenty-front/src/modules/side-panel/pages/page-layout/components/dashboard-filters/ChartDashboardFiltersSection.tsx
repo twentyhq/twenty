@@ -7,12 +7,10 @@ import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidg
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconFilter } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type ChartDashboardFiltersSectionProps = {
   pageLayoutId: string;
@@ -24,10 +22,6 @@ export const ChartDashboardFiltersSection = ({
   pageLayoutId,
   widget,
 }: ChartDashboardFiltersSectionProps) => {
-  const isDashboardFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-  );
-
   const { slots, bindingsByWidgetId, isUsingBuiltInFilters } =
     useDashboardFilterEditor(pageLayoutId);
 
@@ -39,10 +33,6 @@ export const ChartDashboardFiltersSection = ({
   );
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
-
-  if (!isDashboardFiltersEnabled) {
-    return null;
-  }
 
   const widgetBindings = bindingsByWidgetId[widget.id] ?? {};
 

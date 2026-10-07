@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { BUILT_IN_DASHBOARD_FILTER_SLOT_IDS } from '@/page-layout/dashboard-filters/constants/BuiltInDashboardFilterSlotIds';
 import { useIsWidgetUnaffectedByDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useIsWidgetUnaffectedByDashboardFilters';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
@@ -17,13 +16,8 @@ import { renderHook } from '@testing-library/react';
 import { type Store } from 'jotai/vanilla/store';
 import { type ReactNode } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import {
-  FeatureFlagKey,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const COMPANY_CHART_WIDGET_ID = 'company-chart';
@@ -64,27 +58,15 @@ const WIDGETS = [
 const renderUseIsWidgetUnaffectedByDashboardFilters = ({
   widgetId,
   widgets = WIDGETS,
-  isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   dashboardFilterValues,
 }: {
   widgetId: string;
   widgets?: PageLayoutWidget[];
-  isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   dashboardFilterValues: DashboardFilterValues;
 }) => {
   const onInitializeJotaiStore = (store: Store) => {
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-          value: isDashboardFiltersEnabled,
-        },
-      ],
-    });
-
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -186,18 +168,6 @@ describe('useIsWidgetUnaffectedByDashboardFilters', () => {
   it('never flags a widget that is not a graph', () => {
     const { result } = renderUseIsWidgetUnaffectedByDashboardFilters({
       widgetId: RECORD_TABLE_WIDGET_ID,
-      dashboardFilterValues: {
-        [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER]: OWNER_SLOT_VALUE,
-      },
-    });
-
-    expect(result.current).toBe(false);
-  });
-
-  it('is off when the feature flag is off', () => {
-    const { result } = renderUseIsWidgetUnaffectedByDashboardFilters({
-      widgetId: PERSON_CHART_WIDGET_ID,
-      isDashboardFiltersEnabled: false,
       dashboardFilterValues: {
         [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER]: OWNER_SLOT_VALUE,
       },

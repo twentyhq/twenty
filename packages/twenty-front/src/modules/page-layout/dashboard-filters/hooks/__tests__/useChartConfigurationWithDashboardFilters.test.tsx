@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { BUILT_IN_DASHBOARD_FILTER_SLOT_IDS } from '@/page-layout/dashboard-filters/constants/BuiltInDashboardFilterSlotIds';
 import { useChartConfigurationWithDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useChartConfigurationWithDashboardFilters';
@@ -23,12 +22,10 @@ import { type RecordFilter } from 'twenty-shared/utils';
 import {
   AggregateOperations,
   type BarChartConfiguration,
-  FeatureFlagKey,
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -83,14 +80,12 @@ const buildConfiguration = (objectMetadataItem: EnrichedObjectMetadataItem) =>
   }) as unknown as BarChartConfiguration;
 
 const renderUseChartConfigurationWithDashboardFilters = ({
-  isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   widgetObjectMetadataItem = companyObjectMetadataItem,
   dashboardFilterValues = {
     [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.DATE]: DATE_SLOT_VALUE,
   },
 }: {
-  isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   widgetObjectMetadataItem?: EnrichedObjectMetadataItem;
   dashboardFilterValues?: DashboardFilterValues;
@@ -107,16 +102,6 @@ const renderUseChartConfigurationWithDashboardFilters = ({
   } as unknown as PageLayoutWidget;
 
   const onInitializeJotaiStore = (store: Store) => {
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-          value: isDashboardFiltersEnabled,
-        },
-      ],
-    });
-
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -173,15 +158,6 @@ const expectedDateRecordFilter = (
   });
 
 describe('useChartConfigurationWithDashboardFilters', () => {
-  it('returns the same configuration when the feature flag is off', () => {
-    const { result, widgetConfiguration } =
-      renderUseChartConfigurationWithDashboardFilters({
-        isDashboardFiltersEnabled: false,
-      });
-
-    expect(result.current).toBe(widgetConfiguration);
-  });
-
   it('appends the dashboard filter after the chart own filters without touching the input', () => {
     const { result, widgetConfiguration } =
       renderUseChartConfigurationWithDashboardFilters({});

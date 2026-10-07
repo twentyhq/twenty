@@ -4,14 +4,12 @@ import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-fil
 import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import {
   buildRecordFiltersFromDashboardFilters,
   isDefined,
   type RecordFilter,
 } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const NO_RECORD_FILTERS: RecordFilter[] = [];
 
@@ -19,10 +17,6 @@ const NO_RECORD_FILTERS: RecordFilter[] = [];
 export const useDashboardFilterRecordFilters = (): {
   dashboardFilterRecordFilters: RecordFilter[];
 } => {
-  const isDashboardFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-  );
-
   const currentWidget = useCurrentWidgetOrNull();
 
   const { slots, bindingsByWidgetId } = useDashboardFilterSlots();
@@ -40,11 +34,7 @@ export const useDashboardFilterRecordFilters = (): {
     : undefined;
 
   const dashboardFilterRecordFilters = useMemo(() => {
-    if (
-      !isDashboardFiltersEnabled ||
-      slots.length === 0 ||
-      !isDefined(currentWidgetBindings)
-    ) {
+    if (slots.length === 0 || !isDefined(currentWidgetBindings)) {
       return NO_RECORD_FILTERS;
     }
 
@@ -55,7 +45,6 @@ export const useDashboardFilterRecordFilters = (): {
       fieldMetadataItems: flattenedFieldMetadataItems,
     });
   }, [
-    isDashboardFiltersEnabled,
     slots,
     currentWidgetBindings,
     dashboardFilterValues,

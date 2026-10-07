@@ -52,10 +52,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing visibility`,
     description: msg`Apply record sharing visibility rules when accessing records.`,
   },
-  [FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED]: {
-    label: msg`Dashboard filters`,
-    description: msg`Filter every chart of a dashboard at once from a filter bar.`,
-  },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,

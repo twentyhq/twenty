@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { hasInitializedDashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/hasInitializedDashboardFilterValuesComponentState';
 import { buildChartWidget } from '@/page-layout/dashboard-filters/testing/dashboardFilterTestFixtures';
@@ -20,9 +19,8 @@ import {
   type DashboardFilterSlot,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -52,11 +50,9 @@ const REQUIRED_DATE_SLOT: DashboardFilterSlot = {
 };
 
 const renderGraphWidget = ({
-  isDashboardFiltersEnabled = true,
   dashboardFilterValues = {},
   hasInitializedDashboardFilterValues = true,
 }: {
-  isDashboardFiltersEnabled?: boolean;
   dashboardFilterValues?: DashboardFilterValues;
   hasInitializedDashboardFilterValues?: boolean;
 }) => {
@@ -71,16 +67,6 @@ const renderGraphWidget = ({
   });
 
   const onInitializeJotaiStore = (store: Store) => {
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-          value: isDashboardFiltersEnabled,
-        },
-      ],
-    });
-
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -149,15 +135,6 @@ describe('GraphWidget', () => {
 
     expect(screen.getByTestId('bar-chart-renderer')).toBeInTheDocument();
     expect(screen.queryByText('Set the Period filter')).not.toBeInTheDocument();
-  });
-
-  it('never blocks the chart when the feature flag is off', () => {
-    renderGraphWidget({
-      isDashboardFiltersEnabled: false,
-      hasInitializedDashboardFilterValues: false,
-    });
-
-    expect(screen.getByTestId('bar-chart-renderer')).toBeInTheDocument();
   });
 
   it('shows a skeleton and mounts nothing else until the dashboard filter values are seeded', () => {

@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useMissingRequiredDashboardFilterSlot } from '@/page-layout/dashboard-filters/hooks/useMissingRequiredDashboardFilterSlot';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { buildChartWidget } from '@/page-layout/dashboard-filters/testing/dashboardFilterTestFixtures';
@@ -19,9 +18,8 @@ import {
   type DashboardFilterSlot,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -67,25 +65,13 @@ const WIDGETS = [
 const renderUseMissingRequiredDashboardFilterSlot = ({
   widgetId,
   slots = [REQUIRED_DATE_SLOT],
-  isDashboardFiltersEnabled = true,
   dashboardFilterValues = {},
 }: {
   widgetId: string;
   slots?: DashboardFilterSlot[];
-  isDashboardFiltersEnabled?: boolean;
   dashboardFilterValues?: DashboardFilterValues;
 }) => {
   const onInitializeJotaiStore = (store: Store) => {
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-          value: isDashboardFiltersEnabled,
-        },
-      ],
-    });
-
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -162,15 +148,6 @@ describe('useMissingRequiredDashboardFilterSlot', () => {
     const { result } = renderUseMissingRequiredDashboardFilterSlot({
       widgetId: BOUND_CHART_WIDGET_ID,
       slots: [OPTIONAL_DATE_SLOT],
-    });
-
-    expect(result.current).toBeUndefined();
-  });
-
-  it('returns undefined when the feature flag is off', () => {
-    const { result } = renderUseMissingRequiredDashboardFilterSlot({
-      widgetId: BOUND_CHART_WIDGET_ID,
-      isDashboardFiltersEnabled: false,
     });
 
     expect(result.current).toBeUndefined();

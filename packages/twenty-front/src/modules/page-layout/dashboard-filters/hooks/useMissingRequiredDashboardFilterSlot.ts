@@ -3,19 +3,13 @@ import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-fil
 import { findMissingRequiredDashboardFilterSlotForWidget } from '@/page-layout/dashboard-filters/utils/findMissingRequiredDashboardFilterSlotForWidget';
 import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 // Read before any chart query hook runs: a chart bound to a required slot without value has nothing meaningful to show.
 export const useMissingRequiredDashboardFilterSlot = ():
   | DashboardFilterSlot
   | undefined => {
-  const isDashboardFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-  );
-
   const currentWidget = useCurrentWidgetOrNull();
 
   const { slots, bindingsByWidgetId } = useDashboardFilterSlots();
@@ -24,7 +18,7 @@ export const useMissingRequiredDashboardFilterSlot = ():
     dashboardFilterValuesComponentState,
   );
 
-  if (!isDashboardFiltersEnabled || !isDefined(currentWidget)) {
+  if (!isDefined(currentWidget)) {
     return undefined;
   }
 

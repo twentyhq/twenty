@@ -4,10 +4,8 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 
 const isEditDashboardFiltersAvailable = ({
   isDashboardPageLayoutInEditMode,
-  isDashboardFiltersEnabled,
 }: {
   isDashboardPageLayoutInEditMode: boolean;
-  isDashboardFiltersEnabled: boolean;
 }) =>
   evaluateConditionalAvailabilityExpression(
     STANDARD_COMMAND_MENU_ITEMS.editDashboardFilters
@@ -15,7 +13,6 @@ const isEditDashboardFiltersAvailable = ({
     {
       pageType: 'RECORD_PAGE',
       isDashboardPageLayoutInEditMode,
-      featureFlags: { IS_DASHBOARD_FILTERS_ENABLED: isDashboardFiltersEnabled },
       selectedRecords: [
         { id: 'dashboard-1', deletedAt: null, pageLayoutId: 'page-layout-1' },
       ],
@@ -24,11 +21,10 @@ const isEditDashboardFiltersAvailable = ({
   );
 
 describe('editDashboardFilters command menu item', () => {
-  it('is available while a dashboard layout is edited and the flag is on', () => {
+  it('is available while a dashboard layout is edited', () => {
     expect(
       isEditDashboardFiltersAvailable({
         isDashboardPageLayoutInEditMode: true,
-        isDashboardFiltersEnabled: true,
       }),
     ).toBe(true);
   });
@@ -37,16 +33,6 @@ describe('editDashboardFilters command menu item', () => {
     expect(
       isEditDashboardFiltersAvailable({
         isDashboardPageLayoutInEditMode: false,
-        isDashboardFiltersEnabled: true,
-      }),
-    ).toBe(false);
-  });
-
-  it('is hidden when the dashboard filters flag is off', () => {
-    expect(
-      isEditDashboardFiltersAvailable({
-        isDashboardPageLayoutInEditMode: true,
-        isDashboardFiltersEnabled: false,
       }),
     ).toBe(false);
   });
