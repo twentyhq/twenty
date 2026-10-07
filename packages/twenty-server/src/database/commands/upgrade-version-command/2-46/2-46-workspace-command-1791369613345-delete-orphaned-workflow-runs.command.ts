@@ -49,7 +49,22 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
       return;
     }
 
-    const workflowRunTable = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."workflowRun"`;
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const coreIdColumns: { column_name: string }[] = await dataSource.query(
+      `SELECT column_name
+       FROM information_schema.columns
+       WHERE table_schema = $1
+         AND table_name = 'workflowRun'
+         AND column_name IN ('coreWorkflowId', 'coreWorkflowVersionId')`,
+      [schemaName],
+    );
+
+    if (coreIdColumns.length < 2) {
+      return;
+    }
+
+    const workflowRunTable = `${escapeIdentifier(schemaName)}."workflowRun"`;
 
     if (options.dryRun) {
       const [{ count }]: [{ count: number }] = await dataSource.query(
