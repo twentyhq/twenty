@@ -16,7 +16,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
-import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
+import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
 
 const StyledLoadingContainer = styled.div`
   align-items: center;

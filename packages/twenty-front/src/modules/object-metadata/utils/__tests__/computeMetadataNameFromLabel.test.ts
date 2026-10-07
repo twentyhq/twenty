@@ -1,4 +1,4 @@
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 
 describe('computeMetadataNameFromLabel', () => {
   it('computes name for label with non-latin char', () => {

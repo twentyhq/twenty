@@ -8,8 +8,8 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
-import { getSettingsObjectFieldType } from '~/pages/settings/data-model/utils/getSettingsObjectFieldType';
+import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
+import { getSettingsObjectFieldType } from '@/settings/data-model/utils/getSettingsObjectFieldType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
