@@ -13,6 +13,7 @@ import {
 import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { type OneOffInvoicePayment } from 'src/engine/core-modules/billing/types/one-off-invoice-payment.type';
+import { toOneOffInvoicePayment } from 'src/engine/core-modules/billing/utils/to-one-off-invoice-payment.util';
 import { isInvoicePaymentActionRequiredError } from 'src/engine/core-modules/billing/utils/is-invoice-payment-action-required-error.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -305,19 +306,3 @@ export class StripeInvoiceService {
     return error instanceof Error ? error.message : 'unknown error';
   }
 }
-
-const toOneOffInvoicePayment = ({
-  invoice,
-  status,
-}: {
-  invoice: Stripe.Invoice;
-  status: BillingInvoicePaymentStatus;
-}): OneOffInvoicePayment => ({
-  status,
-  stripeInvoiceId: invoice.id,
-  stripeInvoiceNumber: invoice.number,
-  hostedInvoiceUrl:
-    status === BillingInvoicePaymentStatus.REQUIRES_ACTION
-      ? (invoice.hosted_invoice_url ?? null)
-      : null,
-});
