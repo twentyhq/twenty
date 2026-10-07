@@ -1,6 +1,6 @@
 import { type ActionToolId } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 
-export const WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES = [
+export const AGENT_RUN_EXCLUDED_TOOL_NAMES = [
   'search_help_center',
   'create_file_upload',
   'complete_file_upload',
