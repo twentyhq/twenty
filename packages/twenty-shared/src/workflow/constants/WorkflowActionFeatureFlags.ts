@@ -6,5 +6,4 @@ export const WORKFLOW_ACTION_FEATURE_FLAGS: Partial<
 > = {
   [WorkflowActionType.SEND_CHAT_MESSAGE]:
     FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
-  [WorkflowActionType.WAIT_FOR_EVENT]: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
 };

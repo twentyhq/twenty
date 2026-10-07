@@ -62,7 +62,7 @@ export class UnpinNewAiChatCommand extends ProvisionedWorkspaceCommandRunner {
       `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${isPinned ? 'pinning' : 'unpinning'} New chat`,
     );
 
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       return;
     }
 

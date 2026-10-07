@@ -13,7 +13,10 @@ import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawer
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import {
+  type NavigationDrawerActiveTab,
+  NAVIGATION_DRAWER_TABS,
+} from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -130,6 +133,16 @@ export const MainNavigationDrawerModeSwitcher = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
+  const getDisabledModeTooltip = (mode: NavigationDrawerActiveTab) => {
+    if (mode === NAVIGATION_DRAWER_TABS.SETTINGS) {
+      return t`Finish editing the layout to open Settings`;
+    }
+
+    return isAiChatInboxEnabled
+      ? t`Finish editing the layout to open Inbox`
+      : t`Finish editing the layout to open AI`;
+  };
+
   if (modes.length === 0) {
     return null;
   }
@@ -157,15 +170,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         return (
           <Tooltip
             key={mode}
-            content={
-              isDisabled
-                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
-                  ? t`Finish editing the layout to open Settings`
-                  : isAiChatInboxEnabled
-                    ? t`Finish editing the layout to open Inbox`
-                    : t`Finish editing the layout to open AI`
-                : label
-            }
+            content={isDisabled ? getDisabledModeTooltip(mode) : label}
             disabled={!shouldShowTooltips && !isDisabled}
             delay={TooltipDelay.noDelay}
             side={isExpanded ? 'bottom' : 'right'}
