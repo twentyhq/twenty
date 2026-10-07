@@ -7,7 +7,6 @@ import {
 import type { Response } from 'express';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
@@ -29,7 +28,7 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
       return this.httpExceptionHandlerService.handleError(
         exception,
         response,
-        getAuthExceptionRestStatus(exception),
+        exception.statusCode ?? 500,
       );
     }
 
