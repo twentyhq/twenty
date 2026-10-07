@@ -133,12 +133,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 - **`USER`** — configured by each member for themselves, under their own user settings.
 
 <Note>
-  `USER` items are not displayed yet. Their placement under the user's own
-  settings lands with per-member variable values; until then a `USER` item is
-  persisted and synced but nothing renders it.
+  `USER` items are not displayed yet. Until their placement under the member's
+  own settings lands, a `USER` item is persisted and synced but nothing renders
+  it.
 </Note>
 
-A `USER` item runs as the member viewing it. Members cannot save their own value of an application variable yet, even one declared with `scope: 'USER'` (see [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables)). Until they can, an item that stores something per person should persist it through the app's own objects: a workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyUserApplicationVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -502,7 +502,7 @@ Object metadata can be available even when no records are selected. It belongs t
 
 ## Application variables
 
-Workspace application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
+Application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -567,6 +567,7 @@ Notes:
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
 - Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Your component cannot write it: `updateMyUserApplicationVariable` refuses application tokens and takes the member's own session only. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### System variables
 

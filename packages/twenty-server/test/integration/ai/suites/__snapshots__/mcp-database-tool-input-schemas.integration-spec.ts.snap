@@ -489,7 +489,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, createdAt (date), title, updatedAt (date).",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, title, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
       "items": {
         "anyOf": [
           {
@@ -584,6 +584,72 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           {
             "additionalProperties": false,
             "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
               "title": {
                 "const": true,
                 "type": "boolean",
@@ -636,6 +702,72 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             },
             "required": [
               "updatedAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
             ],
             "type": "object",
           },
@@ -3284,7 +3416,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: age, averageCostOfKibblePerMonth.amountMicros, averageCostOfKibblePerMonth.currencyCode, bio, birthday (date), comments, createdAt (date), interestingFacts (multi-value, {"interestingFacts": {"unnest": true}} counts each value), isGoodWithKids, location.addressStreet1, location.addressStreet2, location.addressCity, location.addressPostcode, location.addressState, location.addressCountry, location.addressLat, location.addressLng, makesOwnerThinkOf.firstName, makesOwnerThinkOf.lastName, name, pictures.primaryLinkLabel, pictures.primaryLinkUrl, polymorphicOwnerRocketId, polymorphicOwnerSurveyResultId, soundSwag, species, traits (multi-value, {"traits": {"unnest": true}} counts each value), updatedAt (date), vetEmail.primaryEmail, vetPhone.primaryPhoneNumber, vetPhone.primaryPhoneCountryCode, vetPhone.primaryPhoneCallingCode.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: age, averageCostOfKibblePerMonth.amountMicros, averageCostOfKibblePerMonth.currencyCode, bio, birthday (date), comments, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, interestingFacts (multi-value, {"interestingFacts": {"unnest": true}} counts each value), isGoodWithKids, location.addressStreet1, location.addressStreet2, location.addressCity, location.addressPostcode, location.addressState, location.addressCountry, location.addressLat, location.addressLng, makesOwnerThinkOf.firstName, makesOwnerThinkOf.lastName, name, pictures.primaryLinkLabel, pictures.primaryLinkUrl, polymorphicOwnerRocketId, polymorphicOwnerSurveyResultId, soundSwag, species, traits (multi-value, {"traits": {"unnest": true}} counts each value), updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name, vetEmail.primaryEmail, vetPhone.primaryPhoneNumber, vetPhone.primaryPhoneCountryCode, vetPhone.primaryPhoneCallingCode.",
       "items": {
         "anyOf": [
           {
@@ -3457,6 +3589,72 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             },
             "required": [
               "createdAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
             ],
             "type": "object",
           },
@@ -3904,6 +4102,72 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             },
             "required": [
               "updatedAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
             ],
             "type": "object",
           },
@@ -7987,7 +8251,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: averageEstimatedNumberOfAtomsInTheUniverse, comments, createdAt (date), helpedPetsId, name, participants, percentageOfCompletion, score, shortNotes, updatedAt (date).",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: averageEstimatedNumberOfAtomsInTheUniverse, comments, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, helpedPetsId, name, participants, percentageOfCompletion, score, shortNotes, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
       "items": {
         "anyOf": [
           {
@@ -8058,6 +8322,72 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             },
             "required": [
               "createdAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "createdBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "createdBy",
             ],
             "type": "object",
           },
@@ -8181,6 +8511,72 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             },
             "required": [
               "updatedAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "source": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "source",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "workspaceMemberId": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "workspaceMemberId",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "name",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedBy",
             ],
             "type": "object",
           },

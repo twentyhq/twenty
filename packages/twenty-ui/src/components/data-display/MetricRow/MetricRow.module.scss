@@ -16,3 +16,8 @@
   gap: var(--t-spacing-1);
   min-width: 0;
 }
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+}
