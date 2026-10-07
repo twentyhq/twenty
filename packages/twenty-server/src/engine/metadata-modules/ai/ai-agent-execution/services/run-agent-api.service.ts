@@ -254,16 +254,21 @@ export class RunAgentApiService
     }
   }
 
-  // Only runs started through this API are read, and an app reads the runs of its own agents only,
-  // as it runs only those
+  // Only runs started through this API are read, under the rules that start them: an app reads the
+  // runs of its own agents only, and a request made for a member only the runs that member asked
+  // for or that acted as them, as it can only run as that member
   async findRun({
     workspaceId,
     runId,
     callerApplication,
+    requestUserWorkspaceId,
+    requestWorkspaceMemberId,
   }: {
     workspaceId: string;
     runId: string;
     callerApplication?: FlatApplication;
+    requestUserWorkspaceId: string | null;
+    requestWorkspaceMemberId: string | null;
   }): Promise<AgentRunState> {
     const run = await this.agentRunService.findOne({ workspaceId, id: runId });
     const notFoundError = new NotFoundException(`Agent run ${runId} not found`);
@@ -272,9 +277,20 @@ export class RunAgentApiService
       throw notFoundError;
     }
 
+    const { ref } = run.caller;
+
+    if (
+      isDefined(requestUserWorkspaceId) &&
+      ref.requestUserWorkspaceId !== requestUserWorkspaceId &&
+      (!isDefined(ref.runAsWorkspaceMemberId) ||
+        ref.runAsWorkspaceMemberId !== requestWorkspaceMemberId)
+    ) {
+      throw notFoundError;
+    }
+
     if (isDefined(callerApplication)) {
       const agent = await this.agentRepository.findOne(workspaceId, {
-        where: { id: run.caller.ref.agentId },
+        where: { id: ref.agentId },
         select: ['id', 'applicationId'],
       });
 

@@ -31,10 +31,14 @@ const buildService = () => {
     cancel: jest.fn().mockResolvedValue(undefined),
   };
 
+  const messagePartRepository = {
+    query: jest.fn().mockResolvedValue(undefined),
+  };
+
   const service = new AgentRunService(
     runRepository as never,
     { findOne: jest.fn().mockResolvedValue(null) } as never,
-    { query: jest.fn().mockResolvedValue(undefined) } as never,
+    messagePartRepository as never,
     {} as never,
     pendingWakeUpService as never,
     { getHandlerOrThrow: () => ({ onOutcome }) } as never,
@@ -47,6 +51,7 @@ const buildService = () => {
     messageQueueService,
     runRepository,
     pendingWakeUpService,
+    messagePartRepository,
   };
 };
 
@@ -94,7 +99,7 @@ describe('AgentRunService', () => {
       });
       expect(runRepository.update).toHaveBeenCalledWith(
         'workspace-id',
-        { id: 'run-id' },
+        expect.objectContaining({ id: 'run-id' }),
         expect.objectContaining({
           status: 'COMPLETED',
           outcome: {
@@ -159,9 +164,41 @@ describe('AgentRunService', () => {
       });
       expect(runRepository.update).toHaveBeenCalledWith(
         'workspace-id',
-        { id: 'run-id' },
+        expect.objectContaining({ id: 'run-id' }),
         { status: 'CANCELLED' },
       );
+      expect(onOutcome).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('settle', () => {
+    it('leaves a run its caller dropped while it went on as it ended', async () => {
+      const {
+        service,
+        onOutcome,
+        runRepository,
+        pendingWakeUpService,
+        messagePartRepository,
+      } = buildService();
+
+      runRepository.update.mockResolvedValue({ affected: 0 });
+
+      await service.settle({
+        workspaceId: 'workspace-id',
+        run: buildRun({ runSpec: {} as never }),
+        outcome: { status: 'COMPLETED', result: { answer: 'done' } },
+      });
+
+      expect(runRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        {
+          id: 'run-id',
+          status: expect.objectContaining({ _value: ['RUNNING', 'SUSPENDED'] }),
+        },
+        expect.objectContaining({ status: 'COMPLETED' }),
+      );
+      expect(pendingWakeUpService.cancel).not.toHaveBeenCalled();
+      expect(messagePartRepository.query).not.toHaveBeenCalled();
       expect(onOutcome).not.toHaveBeenCalled();
     });
   });

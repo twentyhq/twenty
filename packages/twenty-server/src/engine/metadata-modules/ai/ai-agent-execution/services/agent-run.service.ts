@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
 import { type AgentRunSummary } from 'twenty-shared/ai';
+import { type AgentRunStatus } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Raw } from 'typeorm';
+import { In, IsNull, Not, Raw } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -34,6 +35,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+const AGENT_RUN_ONGOING_STATUSES: AgentRunStatus[] = ['RUNNING', 'SUSPENDED'];
 
 // Agent runs from start to end: what continues a suspended one, and who gets its outcome
 @Injectable()
@@ -227,7 +230,8 @@ export class AgentRunService {
     });
   }
 
-  // kept on the run, so whoever started it can read how it ended
+  // kept on the run, so whoever started it can read how it ended. A run that already ended, as one
+  // its caller dropped while it went on, keeps its end, so false tells the outcome reaches no one
   async recordOutcome({
     workspaceId,
     runId,
@@ -238,18 +242,56 @@ export class AgentRunService {
     runId: string;
     outcome: AgentRunCallerOutcome;
     summary: AgentRunSummary | null;
-  }): Promise<void> {
-    await this.runRepository.update(workspaceId, { id: runId }, {
-      status: outcome.status,
-      outcome:
-        outcome.status === 'COMPLETED'
-          ? { result: outcome.result }
-          : { error: outcome.error },
-      summary,
-    } as QueryDeepPartialEntity<AgentRunEntity>);
+  }): Promise<boolean> {
+    const { affected } = await this.runRepository.update(
+      workspaceId,
+      { id: runId, status: In(AGENT_RUN_ONGOING_STATUSES) },
+      {
+        status: outcome.status,
+        outcome:
+          outcome.status === 'COMPLETED'
+            ? { result: outcome.result }
+            : { error: outcome.error },
+        summary,
+      } as QueryDeepPartialEntity<AgentRunEntity>,
+    );
+
+    return affected !== 0;
   }
 
-  // A run that ended, or could not go on, leaves nothing to wait on, and its caller gets the outcome
+  // A run that ended leaves nothing to wait on: its wake-ups and the calls it waited on are closed
+  async end({
+    workspaceId,
+    run,
+    outcome,
+    summary,
+  }: {
+    workspaceId: string;
+    run: Pick<AgentRunEntity, 'id' | 'threadId'>;
+    outcome: AgentRunCallerOutcome;
+    summary: AgentRunSummary | null;
+  }): Promise<boolean> {
+    if (
+      !(await this.recordOutcome({
+        workspaceId,
+        runId: run.id,
+        outcome,
+        summary,
+      }))
+    ) {
+      return false;
+    }
+
+    await this.pendingWakeUpService.cancel({
+      workspaceId,
+      owner: { type: 'AGENT_RUN', id: run.id },
+    });
+    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+
+    return true;
+  }
+
+  // A run that ended, or could not go on, hands its outcome to its caller
   async settle({
     workspaceId,
     run,
@@ -261,12 +303,9 @@ export class AgentRunService {
     outcome: AgentRunCallerOutcome;
     summary?: AgentRunSummary | null;
   }): Promise<void> {
-    await this.pendingWakeUpService.cancel({
-      workspaceId,
-      owner: { type: 'AGENT_RUN', id: run.id },
-    });
-    await this.recordOutcome({ workspaceId, runId: run.id, outcome, summary });
-    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+    if (!(await this.end({ workspaceId, run, outcome, summary }))) {
+      return;
+    }
 
     await this.callerHandlerRegistry
       .getHandlerOrThrow(run.caller.type)
@@ -318,7 +357,7 @@ export class AgentRunService {
     });
     await this.runRepository.update(
       workspaceId,
-      { id: run.id },
+      { id: run.id, status: In(AGENT_RUN_ONGOING_STATUSES) },
       { status: 'CANCELLED' },
     );
     await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });

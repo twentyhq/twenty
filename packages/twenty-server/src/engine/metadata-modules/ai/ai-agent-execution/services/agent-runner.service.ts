@@ -63,16 +63,18 @@ export class AgentRunnerService {
 
   // The caller gets the outcome back, so it is recorded on the run without the caller's handler
   async run(input: AgentRunnerRunInput): Promise<AgentRunnerResult> {
+    const { workspaceId } = input;
     const runId = input.runId ?? v4();
     let result: AgentRunnerResult;
 
     try {
       result = await this.runSegment({ input, runId, run: null });
     } catch (error) {
-      await this.tryRecording(`record the failure of agent run ${runId}`, () =>
-        this.agentRunService.recordOutcome({
-          workspaceId: input.workspaceId,
-          runId,
+      // a run that threw after it paused may have armed a wake-up or left calls waiting
+      await this.recordRunEnd(runId, () =>
+        this.agentRunService.end({
+          workspaceId,
+          run: { id: runId, threadId: input.conversation.threadId },
           outcome: {
             status: 'FAILED',
             error: error instanceof Error ? error.message : String(error),
@@ -87,9 +89,9 @@ export class AgentRunnerService {
     if (result.outcome.status !== 'SUSPENDED') {
       const { outcome, summary } = result;
 
-      await this.tryRecording(`record the outcome of agent run ${runId}`, () =>
+      await this.recordRunEnd(runId, () =>
         this.agentRunService.recordOutcome({
-          workspaceId: input.workspaceId,
+          workspaceId,
           runId,
           outcome,
           summary,
@@ -452,7 +454,26 @@ export class AgentRunnerService {
     return { status: 'SUSPENDED' };
   }
 
-  // A record of the run, not its outcome, so a write failure must not fail the run
+  // Callers read how a run ended from its row, so a failed write is tried again rather than leaving
+  // it RUNNING; it still does not fail a run that ended, like any record of the run
+  private async recordRunEnd(
+    runId: string,
+    record: () => Promise<boolean>,
+  ): Promise<void> {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const isRecorded = await this.tryRecording(
+        `record the end of agent run ${runId}`,
+        record,
+      );
+
+      if (isDefined(isRecorded)) {
+        return;
+      }
+    }
+  }
+
+  // Records of the run, its turns and how it ended, do not decide its outcome, so a failure to write
+  // one is logged rather than thrown
   private async tryRecording<TResult>(
     description: string,
     record: () => Promise<TResult>,

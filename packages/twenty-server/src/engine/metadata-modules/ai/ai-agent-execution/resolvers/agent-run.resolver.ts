@@ -73,13 +73,19 @@ export class AgentRunResolver {
   async agentRun(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
     callerApplication: FlatApplication | undefined,
+    @AuthWorkspaceMemberId()
+    workspaceMemberId: string | undefined,
   ): Promise<AgentRunStateDTO> {
     return this.runAgentApiService.findRun({
       workspaceId: workspace.id,
       runId: id,
       callerApplication,
+      requestUserWorkspaceId: userWorkspaceId ?? null,
+      requestWorkspaceMemberId: workspaceMemberId ?? null,
     });
   }
 }

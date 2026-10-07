@@ -326,6 +326,8 @@ describe('RunAgentApiService', () => {
           workspaceId: 'workspace-id',
           runId: 'run-id',
           callerApplication: APPLICATION as never,
+          requestUserWorkspaceId: null,
+          requestWorkspaceMemberId: null,
         }),
       ).resolves.toEqual({
         id: 'run-id',
@@ -350,6 +352,8 @@ describe('RunAgentApiService', () => {
           workspaceId: 'workspace-id',
           runId: 'run-id',
           callerApplication: APPLICATION as never,
+          requestUserWorkspaceId: null,
+          requestWorkspaceMemberId: null,
         }),
       ).rejects.toThrow('Agent run run-id not found');
     });
@@ -363,8 +367,157 @@ describe('RunAgentApiService', () => {
       });
 
       await expect(
-        service.findRun({ workspaceId: 'workspace-id', runId: 'run-id' }),
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          requestUserWorkspaceId: null,
+          requestWorkspaceMemberId: null,
+        }),
       ).rejects.toThrow('Agent run run-id not found');
+    });
+
+    it("hides another member's run from a request made for a member", async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue({
+        ...storedRun,
+        caller: {
+          type: 'AGENT_API_RUN',
+          ref: {
+            agentId: AGENT.id,
+            runAsWorkspaceMemberId: 'other-member-id',
+            requestUserWorkspaceId: 'other-user-workspace-id',
+          },
+        },
+      });
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          callerApplication: APPLICATION as never,
+          requestUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+          requestWorkspaceMemberId: 'workspace-member-id',
+        }),
+      ).rejects.toThrow('Agent run run-id not found');
+    });
+
+    it('reads a run that acted as the member the request is made for', async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue({
+        ...storedRun,
+        caller: {
+          type: 'AGENT_API_RUN',
+          ref: {
+            agentId: AGENT.id,
+            runAsWorkspaceMemberId: 'workspace-member-id',
+            requestUserWorkspaceId: null,
+          },
+        },
+      });
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          callerApplication: APPLICATION as never,
+          requestUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+          requestWorkspaceMemberId: 'workspace-member-id',
+        }),
+      ).resolves.toMatchObject({ id: 'run-id', status: 'COMPLETED' });
+    });
+
+    const memberRun = (ref: Record<string, unknown>) => ({
+      ...storedRun,
+      caller: {
+        type: 'AGENT_API_RUN',
+        ref: {
+          agentId: AGENT.id,
+          runAsWorkspaceMemberId: null,
+          requestUserWorkspaceId: null,
+          ...ref,
+        },
+      },
+    });
+
+    it('reads the run a member asked for in their own session', async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(
+        memberRun({ requestUserWorkspaceId: 'user-workspace-id' }),
+      );
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          requestUserWorkspaceId: 'user-workspace-id',
+          requestWorkspaceMemberId: 'workspace-member-id',
+        }),
+      ).resolves.toMatchObject({ id: 'run-id' });
+    });
+
+    it("hides another member's run from a member's session", async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(
+        memberRun({
+          requestUserWorkspaceId: 'other-user-workspace-id',
+          runAsWorkspaceMemberId: 'other-member-id',
+        }),
+      );
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          requestUserWorkspaceId: 'user-workspace-id',
+          requestWorkspaceMemberId: 'workspace-member-id',
+        }),
+      ).rejects.toThrow('Agent run run-id not found');
+    });
+
+    it("hides another application's run from a token bound to its member", async () => {
+      const { service, agentRunService, agentRepository } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(
+        memberRun({ runAsWorkspaceMemberId: 'workspace-member-id' }),
+      );
+      agentRepository.findOne.mockResolvedValue({
+        ...AGENT,
+        applicationId: 'other-application-id',
+      });
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          callerApplication: APPLICATION as never,
+          requestUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+          requestWorkspaceMemberId: 'workspace-member-id',
+        }),
+      ).rejects.toThrow('Agent run run-id not found');
+    });
+
+    it('lets an API key read any run started through the API, as it can start any', async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(
+        memberRun({
+          requestUserWorkspaceId: 'other-user-workspace-id',
+          runAsWorkspaceMemberId: 'other-member-id',
+        }),
+      );
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          requestUserWorkspaceId: null,
+          requestWorkspaceMemberId: null,
+        }),
+      ).resolves.toMatchObject({ id: 'run-id' });
     });
   });
 });

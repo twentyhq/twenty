@@ -92,8 +92,10 @@ const buildService = (execution = buildExecution()) => {
   const agentRunService = {
     assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
     closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
-    recordOutcome: jest.fn().mockResolvedValue(undefined),
+    recordOutcome: jest.fn().mockResolvedValue(true),
+    end: jest.fn().mockResolvedValue(true),
   };
+  const pendingWakeUpService = { arm: jest.fn().mockResolvedValue(undefined) };
   const runRepository = {
     insert: jest.fn().mockResolvedValue(undefined),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
@@ -107,7 +109,7 @@ const buildService = (execution = buildExecution()) => {
     conversationReaderService as never,
     agentRunService as never,
     {} as never,
-    {} as never,
+    pendingWakeUpService as never,
     runRepository as never,
     {} as never,
   );
@@ -118,6 +120,7 @@ const buildService = (execution = buildExecution()) => {
     agentRunConversationService,
     conversationReaderService,
     agentRunService,
+    pendingWakeUpService,
     runRepository,
   };
 };
@@ -299,11 +302,82 @@ describe('AgentRunnerService', () => {
       error,
     });
     expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
-    expect(agentRunService.recordOutcome).toHaveBeenCalledWith(
-      expect.objectContaining({
-        outcome: { status: 'FAILED', error: 'provider down' },
+    expect(agentRunService.end).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      run: { id: expect.any(String), threadId: 'thread-id' },
+      outcome: { status: 'FAILED', error: 'provider down' },
+      summary: null,
+    });
+    expect(agentRunService.recordOutcome).not.toHaveBeenCalled();
+  });
+
+  it('closes what a run that threw after it paused left waiting', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunService,
+      pendingWakeUpService,
+    } = buildService(
+      buildExecution({
+        isPaused: true,
+        steps: [
+          {
+            content: [],
+            toolResults: [
+              {
+                toolCallId: 'wait-1',
+                toolName: 'wait_for_event',
+                output: {
+                  success: true,
+                  result: {
+                    status: 'pending',
+                    wait: { type: 'EVENT', eventName: 'company.updated' },
+                  },
+                },
+              },
+            ],
+          },
+        ] as never,
       }),
     );
+    pendingWakeUpService.arm.mockRejectedValue(new Error('queue down'));
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: false,
+    });
+
+    await expect(
+      service.run({ ...RUN_INPUT, runId: 'run-id' }),
+    ).rejects.toThrow('queue down');
+    expect(agentRunService.end).toHaveBeenCalledWith(
+      expect.objectContaining({
+        run: { id: 'run-id', threadId: 'thread-id' },
+        outcome: { status: 'FAILED', error: 'queue down' },
+      }),
+    );
+  });
+
+  it('tries the end of a run again rather than leave it running, without failing the run', async () => {
+    const { service, agentRunService } = buildService();
+
+    agentRunService.recordOutcome
+      .mockRejectedValueOnce(new Error('db down'))
+      .mockResolvedValueOnce(true);
+
+    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
+      outcome: { status: 'COMPLETED' },
+    });
+    expect(agentRunService.recordOutcome).toHaveBeenCalledTimes(2);
+  });
+
+  it('still hands a run that ended to its caller when its end cannot be recorded', async () => {
+    const { service, agentRunService } = buildService();
+
+    agentRunService.recordOutcome.mockRejectedValue(new Error('db down'));
+
+    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
+      outcome: { status: 'COMPLETED' },
+    });
+    expect(agentRunService.recordOutcome).toHaveBeenCalledTimes(2);
   });
 
   it('fails a run that ran out of credits', async () => {
