@@ -126,7 +126,10 @@ const assertFailure = (promise, pattern) =>
   });
 
 before(async () => {
-  await new Promise((resolve) => registry.listen(0, '127.0.0.1', resolve));
+  await new Promise((resolve, reject) => {
+    registry.once('error', reject);
+    registry.listen(0, '127.0.0.1', resolve);
+  });
   registryUrl = `http://127.0.0.1:${registry.address().port}`;
 });
 
@@ -274,6 +277,6 @@ test('reports registry errors apart from missing versions', async () => {
       packageDirectory,
       registryUrl: 'http://127.0.0.1:1',
     }),
-    /^Could not verify these versions on http:\/\/127\.0\.0\.1:1: .*\(fetch failed\)/,
+    /^Could not verify these versions on http:\/\/127\.0\.0\.1:1: twenty-client-sdk@2\.45\.0 \(.+\)/,
   );
 });
