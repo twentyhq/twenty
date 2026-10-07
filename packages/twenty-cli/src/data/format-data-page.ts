@@ -4,6 +4,7 @@ import { type readDataListOptions } from '@/data/read-data-list-options';
 import { type DataPage, type DataRecord } from '@/data/types/data-page.type';
 import { TABLE_LAYOUT } from '@/output/constants/table-layout.constant';
 import { formatTable } from '@/output/format-table';
+import { dimText } from '@/output/style';
 
 const PRIORITIZED_TABLE_FIELDS = ['id', 'name'];
 
@@ -68,7 +69,9 @@ export const formatDataPage = ({
         });
   const footer = `${page.records.length} of ${page.totalCount} records`;
 
-  return page.pageInfo.hasNextPage
-    ? `${table}\n${footer} · --all for every page · --json for the next cursor`
-    : `${table}\n${footer}`;
+  return `${table}\n${dimText(
+    page.pageInfo.hasNextPage
+      ? `${footer} · --all for every page · --json for the next cursor`
+      : footer,
+  )}`;
 };
