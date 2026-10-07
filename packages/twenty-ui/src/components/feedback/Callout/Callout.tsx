@@ -3,26 +3,17 @@ import { clsx } from 'clsx';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { FEEDBACK_STATUS_COLORS } from '@ui/primitives/feedback/internal/constants/FeedbackStatusColors';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Callout.module.scss';
-import { type CalloutColor } from './types/CalloutColor';
 import { type CalloutProps } from './types/CalloutProps';
-import { type CalloutStatus } from './types/CalloutStatus';
-
-const CALLOUT_STATUS_COLORS = {
-  neutral: 'gray',
-  info: 'blue',
-  success: 'green',
-  warning: 'orange',
-  error: 'red',
-} satisfies Record<CalloutStatus, CalloutColor>;
 
 export const Callout = ({
   status = 'info',
   variant = 'soft',
-  color = CALLOUT_STATUS_COLORS[status],
+  color = FEEDBACK_STATUS_COLORS[status],
   title,
   description,
   fullWidth = false,

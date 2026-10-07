@@ -10313,7 +10313,7 @@
         "name": "color",
         "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
-        "defaultValue": "CALLOUT_STATUS_COLORS[status]",
+        "defaultValue": "FEEDBACK_STATUS_COLORS[status]",
         "description": "Palette override: gray, blue, green, orange, or red. Defaults to the status palette."
       },
       {
