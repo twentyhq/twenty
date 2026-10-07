@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -35,16 +34,6 @@ export const BottomEdge: Story = {
 
 export const Gap: Story = {
   args: { edge: 'top', placement: 'gap' },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const activity = canvas.getByRole('region', { name: 'Activity' });
-    const notes = canvas.getByRole('region', { name: 'Notes' });
-
-    await expect(
-      notes.getBoundingClientRect().top -
-        activity.getBoundingClientRect().bottom,
-    ).toBe(12);
-  },
 };
 
 export const Dark: Story = {

@@ -452,3 +452,25 @@ export const UnmountWhileDragging: Story = {
     });
   },
 };
+
+export const GapLayout: Story = {
+  render: () => (
+    <ResizeHandlePanelDemo
+      edge="top"
+      placement="gap"
+      value={220}
+      min={140}
+      max={360}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const activity = canvas.getByRole('region', { name: 'Activity' });
+    const notes = canvas.getByRole('region', { name: 'Notes' });
+
+    await expect(
+      notes.getBoundingClientRect().top -
+        activity.getBoundingClientRect().bottom,
+    ).toBe(12);
+  },
+};
