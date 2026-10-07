@@ -55,6 +55,10 @@ export const Shapes: Story = {
 
 export const Static: Story = {
   args: { animated: false },
+};
+
+export const StaticBehavior: Story = {
+  ...Static,
   play: async ({ canvas }) => {
     const placeholder = canvas.getByTestId('placeholder');
 
