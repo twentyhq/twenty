@@ -195,7 +195,7 @@ export const WorkflowCoreShowPage = () => {
   const { coreWorkflowId } = useParams<{ coreWorkflowId: string }>();
   const isCore = useIsWorkflowCoreEnabled();
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
-  if (isCore && !canManageWorkflows) {
+  if (!canManageWorkflows) {
     return (
       <WorkspaceRouteUnavailable>{t`You do not have permission to access workflows.`}</WorkspaceRouteUnavailable>
     );
