@@ -6,8 +6,9 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   color: 'Semantic color of the button.',
   size: 'Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size.',
   fullWidth: 'Expands the button to fill its container width.',
-  loading:
-    'Shows a loading indicator and disables activation while preserving the button width.',
+  loading: 'Shows a loading indicator and disables activation.',
+  loadingPosition:
+    'Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner.',
   elevated:
     'Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.',
   startIcon: 'Decorative content displayed before the label.',

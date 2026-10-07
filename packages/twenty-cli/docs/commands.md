@@ -39,8 +39,6 @@ twenty remote use dev
 
 A remote is a named workspace connection. Browser login requires an interactive
 terminal and saves a user OAuth session after verifying it with the server.
-Workspace commands do not require an app project or register an application in
-that workspace. Application deployment is a separate operation.
 
 For scripts, pass an API key through standard input:
 
@@ -87,8 +85,8 @@ twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
 twenty api graphql --metadata --query '{ currentWorkspace { displayName } }'
 ```
 
-Both commands use the selected connection without an app project. REST paths
-stay inside its API URL; credentials are not sent to an arbitrary host. REST
+Both commands use the selected connection. REST paths stay inside its API URL;
+credentials are not sent to an arbitrary host. REST
 uses GET by default. `--body` accepts JSON inline, `@file.json`, or `-` for stdin
 and requires an explicit `--method`.
 
@@ -100,8 +98,8 @@ twenty api graphql --query @query.graphql --variables @variables.json
 GraphQL uses the core endpoint by default and the metadata endpoint with
 `--metadata`. `--query` accepts a document inline, `@file.graphql` or `-`;
 `--variables` accepts a JSON object through the same input forms. Only one option
-can read stdin. Mutations and REST writes execute directly, without the app
-plan/apply confirmation flow. Server permissions still apply.
+can read stdin. Mutations and REST writes execute directly, without a
+confirmation step. Server permissions still apply.
 
 Human output displays the response body. In JSON mode, REST returns status,
 selected response headers and body in `data`; GraphQL returns its data there.
@@ -188,7 +186,7 @@ twenty app init my-app
 twenty app init billing --path ./apps/billing --display-name Billing --json
 ```
 
-`app init` creates a new app from the template bundled with the CLI, with fresh universal identifiers and `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` pinned to the exact version the CLI was built with. It needs no installed SDK, saved remote or network access, and it only writes files: it does not install dependencies, create a Git repository, start a server, sign in or sync anything. The next steps it prints, and returns as `data.nextSteps` in JSON, cover the rest, and name the remote when you pass `--remote`.
+`app init` creates a new app from the template bundled with the CLI, with fresh universal identifiers and `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` pinned to the exact version the CLI was built with. It needs no installed SDK, saved remote or network access, and it only writes files: it does not install dependencies, create a Git repository, start a server, sign in or sync anything. A published CLI also writes a `yarn.lock`, so the first `yarn install` uses exact, integrity-checked versions. The next steps it prints, and returns as `data.nextSteps` in JSON, cover the rest, and name the remote when you pass `--remote`.
 
 The name must be a valid npm package name, otherwise the command fails with `INVALID_APP_NAME` (exit 2). The app is created in `./<name>` unless `--path` says otherwise; `--display-name` and `--description` set what Twenty shows. The target must not exist yet or be an empty directory; anything else fails with `APP_PATH_UNAVAILABLE` (exit 6) and nothing is written. The template is rendered in a hidden sibling directory and moved into place only after every placeholder was filled, so a failure or Ctrl+C does not leave a half-created app behind. An existing empty directory is filled with create-only writes, so a file that appears there meanwhile is never overwritten.
 
@@ -526,7 +524,7 @@ Commands print readable text by default. With `--json`, a command prints exactly
   "ok": true,
   "command": "version",
   "data": {
-    "version": "0.3.0",
+    "version": "0.4.0",
     "node": "24.9.0",
     "platform": "darwin",
     "arch": "arm64"

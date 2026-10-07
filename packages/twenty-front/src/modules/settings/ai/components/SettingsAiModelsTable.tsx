@@ -235,16 +235,19 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
 
       {anchorPrefix && hoveredModel && (
         <Tooltip.Root key={hoveredModel.modelId} open>
-          <Tooltip.Popup
-            anchor={hoveredRowRef}
-            side="top"
-            align="end"
-            sideOffset={8}
-            className={hoverCardTooltipClass}
-            maxWidth="320px"
-          >
-            <SettingsAiModelHoverCard model={hoveredModel} />
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner
+              anchor={hoveredRowRef}
+              side="top"
+              align="end"
+              sideOffset={8}
+              style={{ maxWidth: '320px' }}
+            >
+              <Tooltip.Popup className={hoverCardTooltipClass}>
+                <SettingsAiModelHoverCard model={hoveredModel} />
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       )}
     </>

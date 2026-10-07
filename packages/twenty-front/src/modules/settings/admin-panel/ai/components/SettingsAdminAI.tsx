@@ -47,7 +47,7 @@ import {
   type AdminAiModelTierDefault,
   AiModelTier as GraphqlAiModelTier,
 } from '~/generated-admin/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 

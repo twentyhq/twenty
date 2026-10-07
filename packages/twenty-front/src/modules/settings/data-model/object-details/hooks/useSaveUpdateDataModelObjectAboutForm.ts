@@ -19,7 +19,7 @@ import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectCol
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { updatedObjectNamePluralState } from '@/settings/data-model/object-details/states/updatedObjectNamePluralState';
 
 export const TRANSLATION_INTENT_MODAL_ID =
   'object-label-translation-intent-modal';

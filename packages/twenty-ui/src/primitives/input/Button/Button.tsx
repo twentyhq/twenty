@@ -17,6 +17,7 @@ export const Button = ({
   size = 'md',
   fullWidth = false,
   loading = false,
+  loadingPosition = 'center',
   elevated = false,
   startIcon,
   endIcon,
@@ -35,6 +36,11 @@ export const Button = ({
   const resolvedSize = buttonGroup?.size ?? size;
   const isLink = isDefined(href);
   const linkProps = isLink ? { href } : undefined;
+  const isCenterLoading = loading && loadingPosition === 'center';
+  const resolvedStartIcon =
+    loading && loadingPosition === 'start' ? <Loader /> : startIcon;
+  const resolvedEndIcon =
+    loading && loadingPosition === 'end' ? <Loader /> : endIcon;
 
   return (
     <ButtonPrimitive
@@ -53,18 +59,18 @@ export const Button = ({
       nativeButton={!isLink}
       render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
     >
-      <span className={clsx(styles.content, loading && styles.hidden)}>
-        {isDefined(startIcon) && (
+      <span className={clsx(styles.content, isCenterLoading && styles.hidden)}>
+        {isDefined(resolvedStartIcon) && (
           <span className={styles.icon} aria-hidden>
-            {startIcon}
+            {resolvedStartIcon}
           </span>
         )}
         {isDefined(children) && (
           <span className={styles.label}>{children}</span>
         )}
-        {isDefined(endIcon) && (
+        {isDefined(resolvedEndIcon) && (
           <span className={styles.icon} aria-hidden>
-            {endIcon}
+            {resolvedEndIcon}
           </span>
         )}
         {isDefined(shortcut) && (
@@ -77,7 +83,7 @@ export const Button = ({
           />
         )}
       </span>
-      {loading && (
+      {isCenterLoading && (
         <span className={styles.loader} aria-hidden>
           <Loader />
         </span>

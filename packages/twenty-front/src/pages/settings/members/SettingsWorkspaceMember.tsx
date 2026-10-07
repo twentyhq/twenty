@@ -57,6 +57,8 @@ export const SettingsWorkspaceMember = () => {
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
     useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
+  const canManageTwoFactorAuthenticationRecovery =
+    useHasPermissionFlag(PermissionFlagType.SECURITY) && !isImpersonating;
 
   const {
     roles,
@@ -235,6 +237,14 @@ export const SettingsWorkspaceMember = () => {
                 }
                 onNameChange={debouncedUpdateName}
                 onDelete={() => openDialog(DELETE_MEMBER_MODAL_ID)}
+                twoFactorAuthenticationRecoveryUserId={
+                  canManageTwoFactorAuthenticationRecovery &&
+                  isDefined(member.userId) &&
+                  isDefined(currentUser?.id) &&
+                  member.userId !== currentUser.id
+                    ? member.userId
+                    : undefined
+                }
               />
             )}
 
