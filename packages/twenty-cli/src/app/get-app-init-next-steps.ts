@@ -38,7 +38,7 @@ export const getAppInitNextSteps = ({
       ? []
       : [
           {
-            command: `twenty auth login --url <url> --name ${isDefined(remoteName) ? quoteForShell(remoteName) : '<name>'}`,
+            command: `twenty auth login --url <url>${isDefined(remoteName) ? ` --name ${quoteForShell(remoteName)}` : ''}`,
             description: 'Connect a workspace',
           },
         ]),

@@ -4,6 +4,5 @@ import { WorkspaceFlatNavigationMenuItemMapCacheService } from 'src/engine/metad
 
 @Module({
   providers: [WorkspaceFlatNavigationMenuItemMapCacheService],
-  exports: [WorkspaceFlatNavigationMenuItemMapCacheService],
 })
 export class FlatNavigationMenuItemModule {}

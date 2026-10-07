@@ -85,7 +85,7 @@ const obtainCredentials = async ({
       exitCode: EXIT_CODE.USAGE,
       message:
         'Browser sign-in only runs in an interactive terminal, not with --no-input, JSON output, redirected stdin or in CI.',
-      hint: `In scripts and CI, pipe an API key: printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url ${apiUrl} --name <name>`,
+      hint: 'In scripts and CI, retry this command with --with-token and pipe an API key on standard input.',
     });
   }
 

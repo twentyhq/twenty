@@ -12,11 +12,13 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -38,12 +40,20 @@ const agentResult = (
     ...overrides,
   }) as AgentExecutionResult;
 
-const waitingResult = () => {
-  const resumeAt = new Date(Date.now() + 1_000).toISOString();
+const waitingResult = ({
+  toolName = 'wait_for_duration',
+  wait = {
+    type: 'TIME',
+    resumeAt: new Date(Date.now() + 1_000).toISOString(),
+  },
+}: {
+  toolName?: string;
+  wait?: Record<string, unknown>;
+} = {}) => {
   const output = {
     success: true,
-    message: `Waiting until ${resumeAt}.`,
-    result: { status: 'pending', wait: { type: 'TIME', resumeAt } },
+    message: 'Waiting.',
+    result: { status: 'pending', wait },
   };
 
   return agentResult({
@@ -54,20 +64,18 @@ const waitingResult = () => {
           {
             type: 'tool-call',
             toolCallId: 'wait-1',
-            toolName: 'wait_for_duration',
-            input: { durationInMinutes: 1 },
+            toolName,
+            input: {},
           },
           {
             type: 'tool-result',
             toolCallId: 'wait-1',
-            toolName: 'wait_for_duration',
-            input: { durationInMinutes: 1 },
+            toolName,
+            input: {},
             output,
           },
         ],
-        toolResults: [
-          { toolCallId: 'wait-1', toolName: 'wait_for_duration', output },
-        ],
+        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
       },
     ] as unknown as AgentExecutionResult['steps'],
   });
@@ -98,6 +106,17 @@ const findSuspensions = (callerType: string, agentId: string) =>
      WHERE suspension.caller->>'type' = $1 AND suspension.caller->'ref'->>'agentId' = $2`,
     [callerType, agentId],
   );
+
+const findWaitCallStatus = async (threadId: string) => {
+  const [part] = await global.testDataSource.query(
+    `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
+     JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+     WHERE message."threadId" = $1 AND part."toolName" IN ('wait_for_duration', 'wait_for_event')`,
+    [threadId],
+  );
+
+  return part?.status;
+};
 
 const findTurnStatuses = async (threadId: string) =>
   (
@@ -166,6 +185,17 @@ describe('agent runs that wait (integration)', () => {
     const [suspension] = await findSuspensions('AGENT_TRIGGER', agentId);
 
     expect(suspension).toMatchObject({ ownerType: 'AGENT_RUN' });
+
+    // the run reads its conversation when it goes on, so a chat message cannot slip in while it waits
+    await expect(
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      ).streamAgentChat({
+        thread: { id: suspension.threadId, pendingQuestionMessageId: null },
+        workspace: { id: workspaceId },
+        text: 'Any news?',
+      } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
     expect(executeAgent.mock.calls[0][0].baseSystemPrompt).toContain(
       'wait_for_duration',
     );
@@ -188,12 +218,68 @@ describe('agent runs that wait (integration)', () => {
     ]);
   });
 
-  it('drops a waiting triggered run once its trigger is turned off', async () => {
-    const executeAgent = mockAgent(waitingResult(), replyingResult);
+  it('refuses a chat message while a run goes on in its conversation', async () => {
+    let chatAttempt: Promise<unknown> | undefined;
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<AgentAsyncExecutorService>(
+          'AgentAsyncExecutorService',
+        ),
+        'executeAgent',
+      )
+      .mockImplementationOnce(async () => {
+        const [{ threadId }] = await global.testDataSource.query(
+          `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
+           ORDER BY "createdAt" DESC LIMIT 1`,
+          [agentId],
+        );
+
+        // the run is not suspended yet, so only its lock on the conversation keeps the message out
+        chatAttempt = getAppProviderByClassName<AgentChatStreamingService>(
+          'AgentChatStreamingService',
+        )
+          .streamAgentChat({
+            thread: { id: threadId, pendingQuestionMessageId: null },
+            workspace: { id: workspaceId },
+            text: 'Any news?',
+          } as Parameters<AgentChatStreamingService['streamAgentChat']>[0])
+          .catch((error: unknown) => error);
+
+        await chatAttempt;
+
+        return replyingResult;
+      });
 
     await runTrigger();
 
-    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toHaveLength(1);
+    expect(await chatAttempt).toMatchObject({
+      code: AiExceptionCode.THREAD_AWAITING_ANSWER,
+    });
+  });
+
+  it('drops a waiting triggered run once its trigger is turned off', async () => {
+    // an event that never happens, so only the explicit resolution below wakes the run up
+    const executeAgent = mockAgent(
+      waitingResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+      replyingResult,
+    );
+
+    await runTrigger();
+
+    const [{ id: suspensionId, threadId }] = await findSuspensions(
+      'AGENT_TRIGGER',
+      agentId,
+    );
+
+    expect(await findWaitCallStatus(threadId)).toBe('pending');
 
     await updateOneAgent({
       expectToFail: false,
@@ -203,11 +289,19 @@ describe('agent runs that wait (integration)', () => {
       },
     });
 
-    await expectEventually(async () => {
-      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
-    });
+    const [{ id: wakeUpId }] = await global.testDataSource.query(
+      `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+      [suspensionId],
+    );
+
+    await getAppProviderByClassName<PendingWakeUpResolverService>(
+      'PendingWakeUpResolverService',
+    ).resolve({ workspaceId, wakeUpId });
+
+    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
 
     expect(executeAgent).toHaveBeenCalledTimes(1);
+    expect(await findWaitCallStatus(threadId)).toBe('cancelled');
 
     await updateOneAgent({
       expectToFail: false,

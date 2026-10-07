@@ -106,6 +106,32 @@ export class AgentChatThreadParticipantResolver {
     });
   }
 
+  @Mutation(() => AgentChatThreadParticipantDTO)
+  async subscribeToAgentChatThread(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadParticipantDTO> {
+    return this.participantService.subscribe({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadParticipantDTO)
+  async unsubscribeFromAgentChatThread(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadParticipantDTO> {
+    return this.participantService.unsubscribe({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
   // Returns the members who were added, leaving out those who cannot reply in the chat
   @Mutation(() => [UUIDScalarType])
   async addAgentChatThreadParticipants(

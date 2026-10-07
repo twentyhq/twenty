@@ -55,7 +55,6 @@ const InternalJwtModule = NestJwtModule.registerAsync({
     JwtWrapperService,
     JwtKeyManagerService,
     SigningKeyVerifyCounterService,
-    SigningKeyRotationService,
   ],
 })
 export class JwtModule {}

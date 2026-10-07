@@ -8,6 +8,5 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [FeatureFlagModule, WorkspaceCacheModule],
   providers: [MinimalMetadataResolver, MinimalMetadataService],
-  exports: [MinimalMetadataService],
 })
 export class MinimalMetadataModule {}
