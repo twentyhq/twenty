@@ -1,0 +1,1 @@
+export const MAX_CORE_WORKFLOW_IDS_PER_REQUEST = 500;

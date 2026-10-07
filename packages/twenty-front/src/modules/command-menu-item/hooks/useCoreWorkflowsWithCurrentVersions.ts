@@ -1,4 +1,5 @@
 import { skipToken, useQuery } from '@apollo/client/react';
+import { MAX_CORE_WORKFLOW_IDS_PER_REQUEST } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -15,7 +16,8 @@ export const useCoreWorkflowsWithCurrentVersions = (
 
   const { data } = useQuery(
     GetCoreWorkflowsWithCurrentVersionsDocument,
-    coreWorkflowIds.length === 0
+    coreWorkflowIds.length === 0 ||
+      coreWorkflowIds.length > MAX_CORE_WORKFLOW_IDS_PER_REQUEST
       ? skipToken
       : {
           client: apolloCoreClient,
