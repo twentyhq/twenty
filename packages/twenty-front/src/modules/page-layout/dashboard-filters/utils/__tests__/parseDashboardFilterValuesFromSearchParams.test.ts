@@ -59,6 +59,49 @@ describe('parseDashboardFilterValuesFromSearchParams', () => {
     ).toEqual({});
   });
 
+  it('keeps valid slots when a foreign dashboardFilter entry is malformed', () => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('dashboardFilter[date][operand]', 'IS_AFTER');
+    searchParams.set('dashboardFilter[date][value]', '2026-01-01');
+    searchParams.set('dashboardFilter[x]', '1');
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams({
+        searchParams,
+        slotIds: ['date', 'x'],
+      }),
+    ).toEqual({
+      date: { operand: ViewFilterOperand.IS_AFTER, value: '2026-01-01' },
+    });
+  });
+
+  it('drops only the slot whose entry is malformed', () => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('dashboardFilter[date]', 'not-an-object');
+    searchParams.set('dashboardFilter[owner][operand]', 'IS');
+    searchParams.set('dashboardFilter[owner][value]', '["member-id"]');
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams({
+        searchParams,
+        slotIds: ['date', 'owner'],
+      }),
+    ).toEqual({
+      owner: { operand: ViewFilterOperand.IS, value: '["member-id"]' },
+    });
+  });
+
+  it('returns nothing when dashboardFilter is not an object', () => {
+    const searchParams = new URLSearchParams('dashboardFilter=1');
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams({
+        searchParams,
+        slotIds: ['date'],
+      }),
+    ).toEqual({});
+  });
+
   it('returns nothing when the URL has no dashboard filter params', () => {
     const searchParams = new URLSearchParams('filter[name][IS]=Acme');
 

@@ -1,5 +1,4 @@
 import {
-  type CompositeFieldSubFieldName,
   type DashboardFilterBinding,
   type DashboardFilterSlot,
   type DashboardFilterValue,
@@ -66,10 +65,7 @@ export const buildRecordFiltersFromDashboardFilters = ({
         type: getFilterTypeFromFieldType(boundFieldMetadataItem.type),
         operand: value.operand,
         value: value.value,
-        subFieldName: binding.subFieldName as
-          | CompositeFieldSubFieldName
-          | null
-          | undefined,
+        subFieldName: binding.subFieldName,
         relationTargetFieldMetadataId:
           binding.relationTargetFieldMetadataId ?? null,
       },

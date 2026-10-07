@@ -1,9 +1,10 @@
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { applyDashboardFilterValuesToSearchParams } from '@/page-layout/dashboard-filters/utils/applyDashboardFilterValuesToSearchParams';
 import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/dashboard-filters/utils/parseDashboardFilterValuesFromSearchParams';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 
 type DashboardFilterUrlSyncEffectProps = {
@@ -13,7 +14,13 @@ type DashboardFilterUrlSyncEffectProps = {
 export const DashboardFilterUrlSyncEffect = ({
   slots,
 }: DashboardFilterUrlSyncEffectProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { search, hash, state } = useLocation();
+  const navigate = useNavigate();
+
+  // A dashboard opened in a side panel must not read or write the main page's URL.
+  const { ownsRouteLocation } = useWorkspaceSurface();
+
+  const searchParams = useMemo(() => new URLSearchParams(search), [search]);
 
   const [dashboardFilterValues, setDashboardFilterValues] =
     useAtomComponentState(dashboardFilterValuesComponentState);
@@ -22,7 +29,7 @@ export const DashboardFilterUrlSyncEffect = ({
 
   // The URL is authoritative on first mount so a reload or shared link restores the same values.
   useEffect(() => {
-    if (hasInitializedFromUrl) {
+    if (!ownsRouteLocation || hasInitializedFromUrl) {
       return;
     }
 
@@ -33,10 +40,16 @@ export const DashboardFilterUrlSyncEffect = ({
       }),
     );
     setHasInitializedFromUrl(true);
-  }, [hasInitializedFromUrl, searchParams, setDashboardFilterValues, slots]);
+  }, [
+    ownsRouteLocation,
+    hasInitializedFromUrl,
+    searchParams,
+    setDashboardFilterValues,
+    slots,
+  ]);
 
   useEffect(() => {
-    if (!hasInitializedFromUrl) {
+    if (!ownsRouteLocation || !hasInitializedFromUrl) {
       return;
     }
 
@@ -49,12 +62,19 @@ export const DashboardFilterUrlSyncEffect = ({
       return;
     }
 
-    setSearchParams(nextSearchParams, { replace: true });
+    // useSearchParams would drop the active tab hash; navigate keeps it and the history entry.
+    navigate(
+      { search: `?${nextSearchParams.toString()}`, hash },
+      { replace: true, state },
+    );
   }, [
+    ownsRouteLocation,
     hasInitializedFromUrl,
     dashboardFilterValues,
     searchParams,
-    setSearchParams,
+    hash,
+    state,
+    navigate,
   ]);
 
   return null;

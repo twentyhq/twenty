@@ -7,16 +7,21 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import z from 'zod';
 
+// A malformed entry for one slot must only drop that slot, never the whole record.
 const dashboardFilterUrlQueryParamsSchema = z.object({
   [DASHBOARD_FILTER_URL_QUERY_PARAM_KEY]: z
     .record(
       z.string(),
-      z.object({
-        operand: z.enum(ViewFilterOperand),
-        value: z.string().optional(),
-      }),
+      z
+        .object({
+          operand: z.enum(ViewFilterOperand),
+          value: z.string().optional(),
+        })
+        .optional()
+        .catch(undefined),
     )
-    .optional(),
+    .optional()
+    .catch(undefined),
 });
 
 export const parseDashboardFilterValuesFromSearchParams = ({

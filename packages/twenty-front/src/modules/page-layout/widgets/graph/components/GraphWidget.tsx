@@ -10,7 +10,7 @@ import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 export const GraphWidget = () => {
   const widget = useCurrentWidget();
 
-  // Single merge point: every chart type queries and drills down with the dashboard filters applied.
+  // Renderers take the widget as a prop so one merge covers every chart type without changing useCurrentWidget consumers repo-wide.
   const configurationWithDashboardFilters =
     useWidgetConfigurationWithDashboardFilters(widget);
 

@@ -19,6 +19,12 @@ const OWNER_SLOT: DashboardFilterSlot = {
   filterType: 'RELATION',
 };
 
+const CITY_SLOT: DashboardFilterSlot = {
+  id: 'city-slot',
+  label: 'City',
+  filterType: 'ADDRESS',
+};
+
 const CREATED_AT_FIELD = {
   id: 'created-at-field-id',
   type: FieldMetadataType.DATE_TIME,
@@ -153,7 +159,38 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
     expect(recordFilters).toEqual([]);
   });
 
-  it('carries subFieldName and relationTargetFieldMetadataId from the binding', () => {
+  it('carries subFieldName from a composite field binding', () => {
+    const recordFilters = buildRecordFiltersFromDashboardFilters({
+      slots: [CITY_SLOT],
+      values: {
+        [CITY_SLOT.id]: {
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Paris',
+        },
+      },
+      bindings: {
+        [CITY_SLOT.id]: {
+          fieldMetadataId: ADDRESS_FIELD.id,
+          subFieldName: 'addressCity',
+        },
+      },
+      fieldMetadataItems: FIELD_METADATA_ITEMS,
+    });
+
+    expect(recordFilters).toEqual([
+      {
+        id: 'dashboard-filter-city-slot',
+        fieldMetadataId: ADDRESS_FIELD.id,
+        type: 'ADDRESS',
+        operand: ViewFilterOperand.CONTAINS,
+        value: 'Paris',
+        subFieldName: 'addressCity',
+        relationTargetFieldMetadataId: null,
+      },
+    ]);
+  });
+
+  it('carries relationTargetFieldMetadataId from a relation binding', () => {
     const recordFilters = buildRecordFiltersFromDashboardFilters({
       slots: [OWNER_SLOT],
       values: {
@@ -165,7 +202,6 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
       bindings: {
         [OWNER_SLOT.id]: {
           fieldMetadataId: ACCOUNT_OWNER_FIELD.id,
-          subFieldName: 'addressCity',
           relationTargetFieldMetadataId: 'target-field-id',
         },
       },
@@ -179,7 +215,7 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
         type: 'RELATION',
         operand: ViewFilterOperand.IS,
         value: '["workspace-member-id"]',
-        subFieldName: 'addressCity',
+        subFieldName: undefined,
         relationTargetFieldMetadataId: 'target-field-id',
       },
     ]);

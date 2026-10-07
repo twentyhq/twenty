@@ -5,6 +5,7 @@ import { DashboardFilterChipDropdown } from '@/page-layout/dashboard-filters/com
 import { DashboardFilterChipValueSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterChipValueSyncEffect';
 import { getDashboardFilterChipInstanceId } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChipInstanceId';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import {
   type DashboardFilterBinding,
   type DashboardFilterSlot,
@@ -22,10 +23,13 @@ export const DashboardFilterChip = ({
 }: DashboardFilterChipProps) => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const instanceId = getDashboardFilterChipInstanceId({
-    pageLayoutId: currentPageLayout.id,
-    slotId: slot.id,
-  });
+  // The same dashboard can be open in the main surface and a side panel; each needs its own dropdown and scratch filter.
+  const instanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    getDashboardFilterChipInstanceId({
+      pageLayoutId: currentPageLayout.id,
+      slotId: slot.id,
+    }),
+  );
 
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider value={{ instanceId }}>

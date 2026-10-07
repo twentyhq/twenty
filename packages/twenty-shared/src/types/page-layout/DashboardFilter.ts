@@ -1,3 +1,4 @@
+import { type CompositeFieldSubFieldName } from '../CompositeFieldSubFieldNameType';
 import { type FilterableAndTSVectorFieldType } from '../FilterableFieldType';
 import { type SerializedRelation } from '../SerializedRelation';
 import { type ViewFilterOperand } from '../ViewFilterOperand';
@@ -14,7 +15,7 @@ export type DashboardFilterSlot = {
 
 export type DashboardFilterBinding = {
   fieldMetadataId: SerializedRelation;
-  subFieldName?: string | null;
+  subFieldName?: CompositeFieldSubFieldName | null;
   relationTargetFieldMetadataId?: SerializedRelation | null;
 };
 

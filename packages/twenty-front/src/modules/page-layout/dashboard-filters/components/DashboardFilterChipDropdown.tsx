@@ -98,8 +98,7 @@ export const DashboardFilterChipDropdown = ({
   const filterType = getFilterTypeFromFieldType(
     representativeFieldMetadataItem.type,
   );
-  const subFieldName =
-    representativeBinding.subFieldName as RecordFilter['subFieldName'];
+  const subFieldName = representativeBinding.subFieldName;
   const relationTargetFieldMetadataId =
     representativeBinding.relationTargetFieldMetadataId ?? null;
 

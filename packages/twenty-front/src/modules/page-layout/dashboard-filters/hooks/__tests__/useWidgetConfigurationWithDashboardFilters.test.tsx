@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
 import { useWidgetConfigurationWithDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useWidgetConfigurationWithDashboardFilters';
@@ -38,16 +39,48 @@ import {
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const opportunityObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('opportunity');
 
-const companyCreatedAtField = companyObjectMetadataItem.fields.find(
-  (field) => field.name === 'createdAt',
+const getCreatedAtFieldOrThrow = (
+  objectMetadataItem: EnrichedObjectMetadataItem,
+) => {
+  const createdAtField = objectMetadataItem.fields.find(
+    (field) => field.name === 'createdAt',
+  );
+
+  if (!isDefined(createdAtField)) {
+    throw new Error(
+      `Expected the ${objectMetadataItem.nameSingular} mock to have a createdAt field`,
+    );
+  }
+
+  return createdAtField;
+};
+
+const companyCreatedAtField = getCreatedAtFieldOrThrow(
+  companyObjectMetadataItem,
 );
+const personCreatedAtField = getCreatedAtFieldOrThrow(personObjectMetadataItem);
 
-if (!isDefined(companyCreatedAtField)) {
-  throw new Error('Expected the company mock to have a createdAt field');
-}
+// Opportunities lose createdAt so one chart has nothing to bind the date slot to.
+const opportunityWithoutCreatedAt: EnrichedObjectMetadataItem = {
+  ...opportunityObjectMetadataItem,
+  fields: opportunityObjectMetadataItem.fields.filter(
+    (field) => field.name !== 'createdAt',
+  ),
+};
+
+const objectMetadataItemsWithoutOpportunityCreatedAt =
+  getTestEnrichedObjectMetadataItemsMock().map((objectMetadataItem) =>
+    objectMetadataItem.id === opportunityObjectMetadataItem.id
+      ? opportunityWithoutCreatedAt
+      : objectMetadataItem,
+  );
 
 const existingRecordFilter: RecordFilter = {
   id: 'existing-filter',
@@ -65,26 +98,51 @@ const existingRecordFilterGroup = {
   logicalOperator: RecordFilterGroupLogicalOperator.AND,
 };
 
-const barChartWidget = buildDraftPageLayoutWidget({
-  id: 'bar-chart-widget',
-  pageLayoutTabId: 'tab-1',
-  title: 'Companies',
-  type: WidgetType.GRAPH,
-  configuration: {
-    ...buildDefaultBarChartConfiguration({}),
-    filter: {
-      recordFilters: [existingRecordFilter],
-      recordFilterGroups: [existingRecordFilterGroup],
+const buildBarChartWidget = ({
+  id,
+  objectMetadataId,
+  filter,
+}: {
+  id: string;
+  objectMetadataId: string;
+  filter?: {
+    recordFilters: RecordFilter[];
+    recordFilterGroups: (typeof existingRecordFilterGroup)[];
+  };
+}) =>
+  buildDraftPageLayoutWidget({
+    id,
+    pageLayoutTabId: 'tab-1',
+    title: id,
+    type: WidgetType.GRAPH,
+    configuration: { ...buildDefaultBarChartConfiguration({}), filter },
+    position: {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 2,
     },
-  },
-  position: {
-    layoutMode: PageLayoutTabLayoutMode.GRID,
-    row: 0,
-    column: 0,
-    rowSpan: 2,
-    columnSpan: 2,
-  },
+    objectMetadataId,
+  });
+
+const companyWidget = buildBarChartWidget({
+  id: 'company-widget',
   objectMetadataId: companyObjectMetadataItem.id,
+  filter: {
+    recordFilters: [existingRecordFilter],
+    recordFilterGroups: [existingRecordFilterGroup],
+  },
+});
+
+const personWidget = buildBarChartWidget({
+  id: 'person-widget',
+  objectMetadataId: personObjectMetadataItem.id,
+});
+
+const opportunityWidget = buildBarChartWidget({
+  id: 'opportunity-widget',
+  objectMetadataId: opportunityObjectMetadataItem.id,
 });
 
 const getChartFilter = (configuration: PageLayoutWidget['configuration']) => {
@@ -100,14 +158,22 @@ const DATE_VALUE: DashboardFilterValue = {
   value: '2026-01-01T00:00:00.000Z',
 };
 
-const renderUseWidgetConfigurationWithDashboardFilters = async ({
+const DATE_VALUES = { [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE };
+
+const renderWithDashboard = async <THookResult,>({
   isDashboardFiltersEnabled = true,
   pageLayoutType = PageLayoutType.DASHBOARD,
   dashboardFilterValues = {},
+  widgets = [companyWidget],
+  objectMetadataItems,
+  useHookUnderTest,
 }: {
   isDashboardFiltersEnabled?: boolean;
   pageLayoutType?: PageLayoutType;
   dashboardFilterValues?: Record<string, DashboardFilterValue | undefined>;
+  widgets?: PageLayoutWidget[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
+  useHookUnderTest: () => THookResult;
 }) => {
   resetJotaiStore();
 
@@ -130,9 +196,7 @@ const renderUseWidgetConfigurationWithDashboardFilters = async ({
       name: 'Dashboard',
       type: pageLayoutType,
       objectMetadataId: null,
-      tabs: [
-        makeTab('tab-1', [barChartWidget], 0, PageLayoutTabLayoutMode.GRID),
-      ],
+      tabs: [makeTab('tab-1', widgets, 0, PageLayoutTabLayoutMode.GRID)],
     } as PageLayout,
   );
 
@@ -146,7 +210,7 @@ const renderUseWidgetConfigurationWithDashboardFilters = async ({
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={jotaiStore}>
-        <JestObjectMetadataItemSetter>
+        <JestObjectMetadataItemSetter objectMetadataItems={objectMetadataItems}>
           <PageLayoutTestWrapper store={jotaiStore} layoutType={pageLayoutType}>
             {children}
           </PageLayoutTestWrapper>
@@ -155,10 +219,7 @@ const renderUseWidgetConfigurationWithDashboardFilters = async ({
     </I18nProvider>
   );
 
-  const renderResult = renderHook(
-    () => useWidgetConfigurationWithDashboardFilters(barChartWidget),
-    { wrapper: Wrapper },
-  );
+  const renderResult = renderHook(useHookUnderTest, { wrapper: Wrapper });
 
   await waitFor(() => expect(renderResult.result.current).toBeDefined());
 
@@ -167,21 +228,22 @@ const renderUseWidgetConfigurationWithDashboardFilters = async ({
 
 describe('useWidgetConfigurationWithDashboardFilters', () => {
   it('returns the widget configuration untouched when no slot has a value', async () => {
-    const { result } = await renderUseWidgetConfigurationWithDashboardFilters(
-      {},
-    );
+    const { result } = await renderWithDashboard({
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
+    });
 
-    expect(result.current).toBe(barChartWidget.configuration);
+    expect(result.current).toBe(companyWidget.configuration);
   });
 
   it('appends one root-level record filter per valued slot and keeps groups intact', async () => {
-    const { result } = await renderUseWidgetConfigurationWithDashboardFilters({
-      dashboardFilterValues: {
-        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE,
-      },
+    const { result } = await renderWithDashboard({
+      dashboardFilterValues: DATE_VALUES,
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
     });
 
-    expect(result.current).not.toBe(barChartWidget.configuration);
+    expect(result.current).not.toBe(companyWidget.configuration);
     expect(getChartFilter(result.current).recordFilters).toEqual([
       existingRecordFilter,
       {
@@ -200,36 +262,67 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
   });
 
   it('does not mutate the widget configuration it was given', async () => {
-    await renderUseWidgetConfigurationWithDashboardFilters({
-      dashboardFilterValues: {
-        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE,
-      },
+    await renderWithDashboard({
+      dashboardFilterValues: DATE_VALUES,
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
     });
 
-    expect(getChartFilter(barChartWidget.configuration).recordFilters).toEqual([
+    expect(getChartFilter(companyWidget.configuration).recordFilters).toEqual([
       existingRecordFilter,
     ]);
   });
 
-  it('returns the widget configuration untouched when the feature flag is off', async () => {
-    const { result } = await renderUseWidgetConfigurationWithDashboardFilters({
-      isDashboardFiltersEnabled: false,
-      dashboardFilterValues: {
-        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE,
-      },
+  it('filters every chart whose object has createdAt and leaves the others untouched', async () => {
+    const { result } = await renderWithDashboard({
+      dashboardFilterValues: DATE_VALUES,
+      widgets: [companyWidget, personWidget, opportunityWidget],
+      objectMetadataItems: objectMetadataItemsWithoutOpportunityCreatedAt,
+      useHookUnderTest: () => ({
+        company: useWidgetConfigurationWithDashboardFilters(companyWidget),
+        person: useWidgetConfigurationWithDashboardFilters(personWidget),
+        opportunity:
+          useWidgetConfigurationWithDashboardFilters(opportunityWidget),
+      }),
     });
 
-    expect(result.current).toBe(barChartWidget.configuration);
+    const companyRecordFilters = getChartFilter(
+      result.current.company,
+    ).recordFilters;
+    const personRecordFilters = getChartFilter(
+      result.current.person,
+    ).recordFilters;
+
+    expect(companyRecordFilters).toHaveLength(2);
+    expect(companyRecordFilters[1].fieldMetadataId).toBe(
+      companyCreatedAtField.id,
+    );
+    expect(personRecordFilters).toHaveLength(1);
+    expect(personRecordFilters[0].fieldMetadataId).toBe(
+      personCreatedAtField.id,
+    );
+    expect(result.current.opportunity).toBe(opportunityWidget.configuration);
+  });
+
+  it('returns the widget configuration untouched when the feature flag is off', async () => {
+    const { result } = await renderWithDashboard({
+      isDashboardFiltersEnabled: false,
+      dashboardFilterValues: DATE_VALUES,
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
+    });
+
+    expect(result.current).toBe(companyWidget.configuration);
   });
 
   it('returns the widget configuration untouched outside dashboards', async () => {
-    const { result } = await renderUseWidgetConfigurationWithDashboardFilters({
+    const { result } = await renderWithDashboard({
       pageLayoutType: PageLayoutType.RECORD_PAGE,
-      dashboardFilterValues: {
-        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE,
-      },
+      dashboardFilterValues: DATE_VALUES,
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
     });
 
-    expect(result.current).toBe(barChartWidget.configuration);
+    expect(result.current).toBe(companyWidget.configuration);
   });
 });
