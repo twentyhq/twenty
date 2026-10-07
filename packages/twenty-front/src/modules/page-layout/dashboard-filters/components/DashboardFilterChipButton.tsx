@@ -1,4 +1,5 @@
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { DashboardFilterChipCrossFilterFrame } from '@/page-layout/dashboard-filters/components/DashboardFilterChipCrossFilterFrame';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
@@ -12,6 +13,7 @@ type DashboardFilterChipButtonProps = {
   testId: string;
   onClick: () => void;
   onRemove: () => void;
+  isCrossFilter?: boolean;
 };
 
 export const DashboardFilterChipButton = ({
@@ -21,6 +23,7 @@ export const DashboardFilterChipButton = ({
   testId,
   onClick,
   onRemove,
+  isCrossFilter = false,
 }: DashboardFilterChipButtonProps) => {
   const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
 
@@ -29,14 +32,16 @@ export const DashboardFilterChipButton = ({
     : '';
 
   return (
-    <SortOrFilterChip
-      testId={testId}
-      labelKey={slot.label}
-      labelValue={labelValue}
-      Icon={Icon}
-      onRemove={onRemove}
-      onClick={onClick}
-      type="filter"
-    />
+    <DashboardFilterChipCrossFilterFrame isCrossFilter={isCrossFilter}>
+      <SortOrFilterChip
+        testId={testId}
+        labelKey={slot.label}
+        labelValue={labelValue}
+        Icon={Icon}
+        onRemove={onRemove}
+        onClick={onClick}
+        type="filter"
+      />
+    </DashboardFilterChipCrossFilterFrame>
   );
 };

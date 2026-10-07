@@ -1,9 +1,13 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
+import { GraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/components/GraphWidgetChartBucketMenu';
+import { GraphWidgetChartClickCaptureArea } from '@/page-layout/widgets/graph/components/GraphWidgetChartClickCaptureArea';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useGraphBarChartWidgetData';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSlice';
+import { useGraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/hooks/useGraphWidgetChartBucketMenu';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
@@ -104,15 +108,12 @@ export const GraphWidgetBarChartRenderer = ({
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);
 
-  const handleSliceClick = (slice: BarChartSlice) => {
-    const displayValue = slice.indexValue;
-    const rawValue = formattedToRawLookup.get(displayValue) ?? null;
-
+  const navigateToBucketRecords = (bucketRawValue: RawDimensionValue) => {
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration,
       clickedData: {
-        primaryBucketRawValue: rawValue,
+        primaryBucketRawValue: bucketRawValue,
       },
       viewId: indexViewId,
       timezone: userTimezone,
@@ -128,6 +129,31 @@ export const GraphWidgetBarChartRenderer = ({
     navigate(url);
   };
 
+  const {
+    canCrossFilterChartBuckets,
+    handleChartClickCapture,
+    tryOpenChartBucketMenu,
+  } = useGraphWidgetChartBucketMenu({
+    widgetId: widget.id,
+    configuration,
+    objectMetadataItem,
+  });
+
+  const canClickChartBuckets =
+    canRedirectToFilteredView || canCrossFilterChartBuckets;
+
+  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
+  const handleSliceClick = (slice: BarChartSlice) => {
+    const displayValue = slice.indexValue;
+    const rawValue = formattedToRawLookup.get(displayValue) ?? null;
+
+    if (tryOpenChartBucketMenu(rawValue) || !canRedirectToFilteredView) {
+      return;
+    }
+
+    navigateToBucketRecords(rawValue);
+  };
+
   if (loading) {
     return <WidgetSkeletonLoader />;
   }
@@ -141,31 +167,41 @@ export const GraphWidgetBarChartRenderer = ({
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
-      <GraphWidgetBarChart
-        key={chartFilterKey}
-        data={data}
-        series={series}
-        indexBy={indexBy}
-        keys={keys}
-        xAxisLabel={xAxisLabelToDisplay}
-        yAxisLabel={yAxisLabelToDisplay}
-        showValues={showDataLabels}
-        showLegend={showLegend}
-        layout={layout}
-        groupMode={groupMode}
-        colorMode={colorMode}
-        id={widget.id}
-        decimals={chartValueFormatOptions.decimals}
-        displayType={chartValueFormatOptions.displayType}
-        axisDisplayType="shortNumber"
-        tooltipDisplayType="number"
-        rangeMin={configuration.rangeMin ?? undefined}
-        rangeMax={configuration.rangeMax ?? undefined}
-        omitNullValues={configuration.omitNullValues ?? false}
-        onSliceClick={
-          isPageLayoutInEditMode || !canRedirectToFilteredView
-            ? undefined
-            : handleSliceClick
+      <GraphWidgetChartClickCaptureArea
+        onClickCapture={handleChartClickCapture}
+      >
+        <GraphWidgetBarChart
+          key={chartFilterKey}
+          data={data}
+          series={series}
+          indexBy={indexBy}
+          keys={keys}
+          xAxisLabel={xAxisLabelToDisplay}
+          yAxisLabel={yAxisLabelToDisplay}
+          showValues={showDataLabels}
+          showLegend={showLegend}
+          layout={layout}
+          groupMode={groupMode}
+          colorMode={colorMode}
+          id={widget.id}
+          decimals={chartValueFormatOptions.decimals}
+          displayType={chartValueFormatOptions.displayType}
+          axisDisplayType="shortNumber"
+          tooltipDisplayType="number"
+          rangeMin={configuration.rangeMin ?? undefined}
+          rangeMax={configuration.rangeMax ?? undefined}
+          omitNullValues={configuration.omitNullValues ?? false}
+          onSliceClick={
+            isPageLayoutInEditMode || !canClickChartBuckets
+              ? undefined
+              : handleSliceClick
+          }
+        />
+      </GraphWidgetChartClickCaptureArea>
+      <GraphWidgetChartBucketMenu
+        widgetId={widget.id}
+        onOpenRecords={
+          canRedirectToFilteredView ? navigateToBucketRecords : undefined
         }
       />
     </Suspense>

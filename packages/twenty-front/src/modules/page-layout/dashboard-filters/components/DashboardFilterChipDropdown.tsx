@@ -15,8 +15,11 @@ import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/uti
 import { DashboardFilterChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterChipButton';
 import { DashboardFilterChipDropdownContent } from '@/page-layout/dashboard-filters/components/DashboardFilterChipDropdownContent';
 import { DashboardFilterRelationChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterRelationChipButton';
+import { useClearDashboardFilterCrossFilterMarker } from '@/page-layout/dashboard-filters/hooks/useClearDashboardFilterCrossFilterMarker';
+import { dashboardFilterCrossFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterCrossFilterValuesComponentState';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { type DashboardFilterSlotWidgetCounts } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotWidgetCounts';
+import { isDashboardFilterSlotCrossFiltered } from '@/page-layout/dashboard-filters/utils/isDashboardFilterSlotCrossFiltered';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -68,6 +71,13 @@ export const DashboardFilterChipDropdown = ({
   const [dashboardFilterValues, setDashboardFilterValues] =
     useAtomComponentState(dashboardFilterValuesComponentState);
 
+  const dashboardFilterCrossFilterValues = useAtomComponentStateValue(
+    dashboardFilterCrossFilterValuesComponentState,
+  );
+
+  const { clearDashboardFilterCrossFilterMarker } =
+    useClearDashboardFilterCrossFilterMarker();
+
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -118,6 +128,12 @@ export const DashboardFilterChipDropdown = ({
   const slotValue = dashboardFilterValues[slot.id];
   const recordFilterId = getDashboardFilterRecordFilterId(slot.id);
 
+  const isCrossFiltered = isDashboardFilterSlotCrossFiltered({
+    slotId: slot.id,
+    dashboardFilterValues,
+    dashboardFilterCrossFilterValues,
+  });
+
   // A RELATION slot whose only bindings are charts' own id fields still edits record ids: the picker and the
   // label are driven by the derived target object instead of a relation on the field.
   const isBoundThroughOwnId =
@@ -160,6 +176,7 @@ export const DashboardFilterChipDropdown = ({
         ? removePropertiesFromRecord(previousDashboardFilterValues, [slot.id])
         : previousDashboardFilterValues,
     );
+    clearDashboardFilterCrossFilterMarker(slot.id);
     store.set(currentRecordFilters, []);
     store.set(objectFilterDropdownCurrentRecordFilter, null);
   };
@@ -240,6 +257,7 @@ export const DashboardFilterChipDropdown = ({
                 testId={recordFilterId}
                 onClick={handleChipClick}
                 onRemove={handleRemove}
+                isCrossFilter={isCrossFiltered}
               />
             ) : (
               <DashboardFilterChipButton
@@ -249,6 +267,7 @@ export const DashboardFilterChipDropdown = ({
                 testId={recordFilterId}
                 onClick={handleChipClick}
                 onRemove={handleRemove}
+                isCrossFilter={isCrossFiltered}
               />
             )}
           </div>

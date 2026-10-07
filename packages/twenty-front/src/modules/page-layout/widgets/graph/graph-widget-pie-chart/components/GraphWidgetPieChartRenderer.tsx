@@ -1,9 +1,13 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
+import { GraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/components/GraphWidgetChartBucketMenu';
+import { GraphWidgetChartClickCaptureArea } from '@/page-layout/widgets/graph/components/GraphWidgetChartClickCaptureArea';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graph-widget-pie-chart/hooks/useGraphPieChartWidgetData';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
+import { useGraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/hooks/useGraphWidgetChartBucketMenu';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { getChartValueFormatOptions } from '@/page-layout/widgets/graph/utils/getChartValueFormatOptions';
@@ -76,14 +80,12 @@ export const GraphWidgetPieChartRenderer = ({
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(groupByField);
 
-  const handleSliceClick = (datum: PieChartDataItemWithColor) => {
-    const rawValue = formattedToRawLookup.get(datum.key) ?? null;
-
+  const navigateToBucketRecords = (bucketRawValue: RawDimensionValue) => {
     const drilldownQueryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration: widget.configuration,
       clickedData: {
-        primaryBucketRawValue: rawValue,
+        primaryBucketRawValue: bucketRawValue,
       },
       viewId: indexViewId,
       timezone: userTimezone,
@@ -98,7 +100,31 @@ export const GraphWidgetPieChartRenderer = ({
       Object.fromEntries(drilldownQueryParams),
     );
 
-    return navigate(url);
+    navigate(url);
+  };
+
+  const {
+    canCrossFilterChartBuckets,
+    handleChartClickCapture,
+    tryOpenChartBucketMenu,
+  } = useGraphWidgetChartBucketMenu({
+    widgetId: widget.id,
+    configuration: widget.configuration,
+    objectMetadataItem,
+  });
+
+  const canClickChartBuckets =
+    canRedirectToFilteredView || canCrossFilterChartBuckets;
+
+  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
+  const handleSliceClick = (datum: PieChartDataItemWithColor) => {
+    const rawValue = formattedToRawLookup.get(datum.key) ?? null;
+
+    if (tryOpenChartBucketMenu(rawValue) || !canRedirectToFilteredView) {
+      return;
+    }
+
+    navigateToBucketRecords(rawValue);
   };
 
   if (loading) {
@@ -114,23 +140,33 @@ export const GraphWidgetPieChartRenderer = ({
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
-      <GraphWidgetPieChart
-        data={data}
-        id={widget.id}
-        objectMetadataItemId={widget.objectMetadataId}
-        configuration={widget.configuration}
-        showLegend={showLegend}
-        colorMode={colorMode}
-        decimals={chartValueFormatOptions.decimals}
-        displayType={chartValueFormatOptions.displayType}
-        tooltipDisplayType="number"
-        onSliceClick={
-          isPageLayoutInEditMode || !canRedirectToFilteredView
-            ? undefined
-            : handleSliceClick
+      <GraphWidgetChartClickCaptureArea
+        onClickCapture={handleChartClickCapture}
+      >
+        <GraphWidgetPieChart
+          data={data}
+          id={widget.id}
+          objectMetadataItemId={widget.objectMetadataId}
+          configuration={widget.configuration}
+          showLegend={showLegend}
+          colorMode={colorMode}
+          decimals={chartValueFormatOptions.decimals}
+          displayType={chartValueFormatOptions.displayType}
+          tooltipDisplayType="number"
+          onSliceClick={
+            isPageLayoutInEditMode || !canClickChartBuckets
+              ? undefined
+              : handleSliceClick
+          }
+          showDataLabels={showDataLabels}
+          showCenterMetric={showCenterMetric}
+        />
+      </GraphWidgetChartClickCaptureArea>
+      <GraphWidgetChartBucketMenu
+        widgetId={widget.id}
+        onOpenRecords={
+          canRedirectToFilteredView ? navigateToBucketRecords : undefined
         }
-        showDataLabels={showDataLabels}
-        showCenterMetric={showCenterMetric}
       />
     </Suspense>
   );

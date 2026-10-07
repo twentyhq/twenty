@@ -1,9 +1,13 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
+import { GraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/components/GraphWidgetChartBucketMenu';
+import { GraphWidgetChartClickCaptureArea } from '@/page-layout/widgets/graph/components/GraphWidgetChartClickCaptureArea';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-line-chart/constants/LineChartConstants';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useGraphLineChartWidgetData';
+import { useGraphWidgetChartBucketMenu } from '@/page-layout/widgets/graph/hooks/useGraphWidgetChartBucketMenu';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
@@ -113,15 +117,12 @@ export const GraphWidgetLineChartRenderer = ({
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);
 
-  const handlePointClick = (point: Point<LineSeries>) => {
-    const xValue = (point.data as LineChartDataPoint).x;
-    const rawValue = formattedToRawLookup.get(xValue as string) ?? null;
-
+  const navigateToBucketRecords = (bucketRawValue: RawDimensionValue) => {
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration,
       clickedData: {
-        primaryBucketRawValue: rawValue,
+        primaryBucketRawValue: bucketRawValue,
       },
       viewId: indexViewId,
       timezone: userTimezone,
@@ -137,6 +138,31 @@ export const GraphWidgetLineChartRenderer = ({
     navigate(url);
   };
 
+  const {
+    canCrossFilterChartBuckets,
+    handleChartClickCapture,
+    tryOpenChartBucketMenu,
+  } = useGraphWidgetChartBucketMenu({
+    widgetId: widget.id,
+    configuration,
+    objectMetadataItem,
+  });
+
+  const canClickChartBuckets =
+    canRedirectToFilteredView || canCrossFilterChartBuckets;
+
+  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
+  const handlePointClick = (point: Point<LineSeries>) => {
+    const xValue = (point.data as LineChartDataPoint).x;
+    const rawValue = formattedToRawLookup.get(xValue as string) ?? null;
+
+    if (tryOpenChartBucketMenu(rawValue) || !canRedirectToFilteredView) {
+      return;
+    }
+
+    navigateToBucketRecords(rawValue);
+  };
+
   if (loading) {
     return <WidgetSkeletonLoader />;
   }
@@ -150,27 +176,37 @@ export const GraphWidgetLineChartRenderer = ({
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
-      <GraphWidgetLineChart
-        key={chartFilterKey}
-        id={widget.id}
-        data={series}
-        xAxisLabel={displayXAxisLabel}
-        yAxisLabel={displayYAxisLabel}
-        enablePointLabel={showDataLabels}
-        showLegend={showLegend}
-        rangeMin={configuration.rangeMin ?? undefined}
-        rangeMax={configuration.rangeMax ?? undefined}
-        omitNullValues={configuration.omitNullValues ?? false}
-        groupMode={groupMode}
-        colorMode={colorMode}
-        decimals={chartValueFormatOptions.decimals}
-        displayType={chartValueFormatOptions.displayType}
-        axisDisplayType="shortNumber"
-        tooltipDisplayType="number"
-        onSliceClick={
-          isPageLayoutInEditMode || !canRedirectToFilteredView
-            ? undefined
-            : handlePointClick
+      <GraphWidgetChartClickCaptureArea
+        onClickCapture={handleChartClickCapture}
+      >
+        <GraphWidgetLineChart
+          key={chartFilterKey}
+          id={widget.id}
+          data={series}
+          xAxisLabel={displayXAxisLabel}
+          yAxisLabel={displayYAxisLabel}
+          enablePointLabel={showDataLabels}
+          showLegend={showLegend}
+          rangeMin={configuration.rangeMin ?? undefined}
+          rangeMax={configuration.rangeMax ?? undefined}
+          omitNullValues={configuration.omitNullValues ?? false}
+          groupMode={groupMode}
+          colorMode={colorMode}
+          decimals={chartValueFormatOptions.decimals}
+          displayType={chartValueFormatOptions.displayType}
+          axisDisplayType="shortNumber"
+          tooltipDisplayType="number"
+          onSliceClick={
+            isPageLayoutInEditMode || !canClickChartBuckets
+              ? undefined
+              : handlePointClick
+          }
+        />
+      </GraphWidgetChartClickCaptureArea>
+      <GraphWidgetChartBucketMenu
+        widgetId={widget.id}
+        onOpenRecords={
+          canRedirectToFilteredView ? navigateToBucketRecords : undefined
         }
       />
     </Suspense>

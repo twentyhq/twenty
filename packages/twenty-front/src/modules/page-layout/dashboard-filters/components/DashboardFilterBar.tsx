@@ -1,5 +1,6 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
+import { DashboardFilterCrossFilterTabChangeEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterCrossFilterTabChangeEffect';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { useOpenDashboardFilterEditor } from '@/page-layout/dashboard-filters/hooks/useOpenDashboardFilterEditor';
@@ -128,6 +129,7 @@ export const DashboardFilterBar = () => {
           slots={slots}
         />
       )}
+      {slots.length > 0 && <DashboardFilterCrossFilterTabChangeEffect />}
       {(chips.length > 0 || canEditDashboardFilters) && (
         <StyledBar className="page-layout-tab-list-print-hidden">
           {chips.map(

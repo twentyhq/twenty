@@ -1,7 +1,9 @@
-import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useClearDashboardFilterCrossFilterMarker } from '@/page-layout/dashboard-filters/hooks/useClearDashboardFilterCrossFilterMarker';
+import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import {
   isDefined,
@@ -21,9 +23,14 @@ export const DashboardFilterChipValueSyncEffect = ({
     currentRecordFiltersComponentState,
   );
 
-  const setDashboardFilterValues = useSetAtomComponentState(
+  const store = useStore();
+
+  const dashboardFilterValuesState = useAtomComponentStateCallbackState(
     dashboardFilterValuesComponentState,
   );
+
+  const { clearDashboardFilterCrossFilterMarker } =
+    useClearDashboardFilterCrossFilterMarker();
 
   useEffect(() => {
     const [currentRecordFilter] = currentRecordFilters;
@@ -33,31 +40,45 @@ export const DashboardFilterChipValueSyncEffect = ({
       return;
     }
 
-    setDashboardFilterValues((previousDashboardFilterValues) => {
-      const previousValue = previousDashboardFilterValues[slotId];
+    const previousDashboardFilterValues = store.get(dashboardFilterValuesState);
+    const previousValue = previousDashboardFilterValues[slotId];
 
-      if (!isRecordFilterValueValid(currentRecordFilter)) {
-        return isDefined(previousValue)
-          ? removePropertiesFromRecord(previousDashboardFilterValues, [slotId])
-          : previousDashboardFilterValues;
+    if (!isRecordFilterValueValid(currentRecordFilter)) {
+      if (!isDefined(previousValue)) {
+        return;
       }
 
-      if (
-        previousValue?.operand === currentRecordFilter.operand &&
-        previousValue?.value === currentRecordFilter.value
-      ) {
-        return previousDashboardFilterValues;
-      }
+      store.set(
+        dashboardFilterValuesState,
+        removePropertiesFromRecord(previousDashboardFilterValues, [slotId]),
+      );
+      clearDashboardFilterCrossFilterMarker(slotId);
+      return;
+    }
 
-      return {
-        ...previousDashboardFilterValues,
-        [slotId]: {
-          operand: currentRecordFilter.operand,
-          value: currentRecordFilter.value,
-        },
-      };
+    // Opening the chip re-seeds the scratch with the slot value, which must not count as the viewer editing it.
+    if (
+      previousValue?.operand === currentRecordFilter.operand &&
+      previousValue?.value === currentRecordFilter.value
+    ) {
+      return;
+    }
+
+    store.set(dashboardFilterValuesState, {
+      ...previousDashboardFilterValues,
+      [slotId]: {
+        operand: currentRecordFilter.operand,
+        value: currentRecordFilter.value,
+      },
     });
-  }, [currentRecordFilters, setDashboardFilterValues, slotId]);
+    clearDashboardFilterCrossFilterMarker(slotId);
+  }, [
+    currentRecordFilters,
+    store,
+    dashboardFilterValuesState,
+    clearDashboardFilterCrossFilterMarker,
+    slotId,
+  ]);
 
   return null;
 };
