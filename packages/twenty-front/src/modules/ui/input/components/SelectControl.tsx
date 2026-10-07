@@ -147,10 +147,17 @@ export const SelectControl = ({
           {isDefined(selectedOption?.Icon) ? (
             isDefined(selectedOption.iconThemeColor) ? (
               <TintedIconTile
-                Icon={selectedOption.Icon}
+                icon={
+                  <selectedOption.Icon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                }
                 color={selectedOption.iconThemeColor}
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
+                style={{
+                  width: theme.icon.size.md,
+                  height: theme.icon.size.md,
+                }}
               />
             ) : (
               <selectedOption.Icon

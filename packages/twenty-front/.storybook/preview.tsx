@@ -31,7 +31,7 @@ import '../src/modules/app/utils/setupMonacoEnvironment';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
-import { ThemeProvider } from 'twenty-ui/theme';
+import { GRAY_SCALE_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -40,8 +40,7 @@ i18n.activate(SOURCE_LOCALE);
 // oxlint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
-const MOCK_IMAGE_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="#d9d9d9"/></svg>';
+const MOCK_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="${GRAY_SCALE_LIGHT.gray6}"/></svg>`;
 
 const respondWithMockImage = () =>
   new HttpResponse(MOCK_IMAGE_SVG, {

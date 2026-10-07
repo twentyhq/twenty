@@ -3,4 +3,6 @@ export const RESIZE_HANDLE_DEFAULTS = {
   min: 50,
   max: 500,
   step: 10,
+  dragThreshold: 0,
+  edgeDragThreshold: 5,
 };

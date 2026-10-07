@@ -7,6 +7,5 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [WorkspaceCacheModule],
   providers: [ApplicationJobService, ApplicationJobResolver],
-  exports: [ApplicationJobService],
 })
 export class ApplicationJobModule {}

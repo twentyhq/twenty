@@ -29,7 +29,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   controllers: [McpCoreController],
-  exports: [McpProtocolService],
   providers: [
     JwtAuthGuard,
     McpInstructionBuilderService,

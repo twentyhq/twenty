@@ -1,3 +1,4 @@
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -174,9 +175,11 @@ const renderInbox = (path = `/inbox/${firstThread.id}`) =>
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <MemoryRouter initialEntries={[path]}>
-          <Routes>
-            <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
-          </Routes>
+          <MemoryRouterAppNavigatorProvider>
+            <Routes>
+              <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
+            </Routes>
+          </MemoryRouterAppNavigatorProvider>
         </MemoryRouter>
       </I18nProvider>
     </JotaiProvider>,

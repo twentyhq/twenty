@@ -37,7 +37,6 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     NavigationMenuItemToolWorkspaceService,
   ],
   exports: [
-    NavigationMenuItemService,
     NavigationMenuItemRecordIdentifierService,
     NavigationMenuItemToolWorkspaceService,
   ],

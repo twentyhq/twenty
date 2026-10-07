@@ -18,6 +18,7 @@ export const isDropdownDismissPrevented = ({
 
   onDismiss({
     target: getDropdownDismissTarget(event),
+    type: event.type,
     preventDefault: () => {
       isPrevented = true;
     },

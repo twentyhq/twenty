@@ -18,12 +18,6 @@ import { SesS3InboundEmailMessageSourceService } from 'src/modules/messaging/mes
     ResendInboundEmailMessageSourceService,
     InboundEmailMessageSourceResolverService,
   ],
-  exports: [
-    InboundEmailS3ClientProvider,
-    InboundEmailStorageService,
-    InboundEmailParserService,
-    SesS3InboundEmailMessageSourceService,
-    InboundEmailMessageSourceResolverService,
-  ],
+  exports: [InboundEmailMessageSourceResolverService],
 })
 export class MessagingInboundEmailDriverModule {}

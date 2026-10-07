@@ -7,6 +7,7 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export type UnprovisionableAgentChatThreadTargetRelation = {
   objectNameSingular: string;
@@ -24,6 +25,7 @@ type FindObjectsMissingAgentChatThreadTargetRelationArgs = Pick<
 > & {
   targetFlatObjectMetadata: FlatObjectMetadata;
   existingTargetColumnNames: Set<string>;
+  existingTableNames: Set<string>;
   twentyStandardApplicationUniversalIdentifier: string;
 };
 
@@ -36,6 +38,7 @@ export const findObjectsMissingAgentChatThreadTargetRelation = ({
   flatFieldMetadataMaps,
   targetFlatObjectMetadata,
   existingTargetColumnNames,
+  existingTableNames,
   twentyStandardApplicationUniversalIdentifier,
 }: FindObjectsMissingAgentChatThreadTargetRelationArgs): ObjectsMissingAgentChatThreadTargetRelation => {
   const targetFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
@@ -159,6 +162,15 @@ export const findObjectsMissingAgentChatThreadTargetRelation = ({
     if (existingTargetColumnNames.has(joinColumnName)) {
       pushUnprovisionable(
         `column "${joinColumnName}" already exists on the ${targetFlatObjectMetadata.nameSingular} table`,
+      );
+      continue;
+    }
+
+    const sourceTableName = computeObjectTargetTable(sourceFlatObjectMetadata);
+
+    if (!existingTableNames.has(sourceTableName)) {
+      pushUnprovisionable(
+        `table "${sourceTableName}" does not exist in the workspace schema`,
       );
       continue;
     }
