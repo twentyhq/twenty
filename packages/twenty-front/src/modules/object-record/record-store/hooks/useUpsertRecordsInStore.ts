@@ -49,12 +49,7 @@ export const useUpsertRecordsInStore = () => {
             })
           : currentRecord;
 
-        if (
-          !isDeeplyEqual(filteredCurrentRecord, {
-            ...filteredCurrentRecord,
-            ...filteredPartialRecord,
-          })
-        ) {
+        if (!isDeeplyEqual(filteredCurrentRecord, filteredPartialRecord)) {
           const updatedRecord = {
             ...currentRecord,
             ...filteredPartialRecord,

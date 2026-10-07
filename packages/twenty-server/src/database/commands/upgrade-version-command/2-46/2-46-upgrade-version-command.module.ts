@@ -14,6 +14,7 @@ import { BackfillFailedAgentTurnsCommand } from 'src/database/commands/upgrade-v
 import { SuspendPausedAgentStepsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791306663446-suspend-paused-agent-steps.command';
 import { AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { DeleteOrphanedWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791369613345-delete-orphaned-workflow-runs.command';
+import { LimitWorkflowCommandsToSingleSelectionCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791391050203-limit-workflow-commands-to-single-selection.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -39,6 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SuspendPausedAgentStepsCommand,
     AddAgentChatThreadSubscriptionsCommand,
     DeleteOrphanedWorkflowRunsCommand,
+    LimitWorkflowCommandsToSingleSelectionCommand,
   ],
 })
 export class V2_46_UpgradeVersionCommandModule {}
