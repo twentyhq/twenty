@@ -254,6 +254,10 @@ export class SsoAuthController {
       },
     });
 
+    if (!user.isEmailVerified) {
+      await this.userService.markEmailAsVerified(user.id);
+    }
+
     if (ssoContext) {
       await this.authService.createSsoConnectedAccountIfFeatureFlagIsOn({
         workspaceId: workspace.id,
