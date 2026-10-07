@@ -27,10 +27,8 @@ import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/u
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  type WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
 import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';

@@ -18,10 +18,8 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
