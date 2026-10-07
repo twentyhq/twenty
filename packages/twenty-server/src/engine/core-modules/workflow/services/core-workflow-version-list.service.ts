@@ -42,7 +42,7 @@ export class CoreWorkflowVersionListService {
     );
 
     if (
-      isDefined(parentCoreWorkflow) &&
+      !isDefined(parentCoreWorkflow) ||
       !(await this.coreWorkflowAccessService.isCoreWorkflowAccessible({
         workspaceId,
         userWorkspaceId,
@@ -55,7 +55,7 @@ export class CoreWorkflowVersionListService {
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
-        where: { workflowId: workspaceWorkflowId },
+        where: { coreWorkflowId: parentCoreWorkflow.id },
         order: { createdAt: 'ASC', id: 'ASC' },
         select: {
           id: true,

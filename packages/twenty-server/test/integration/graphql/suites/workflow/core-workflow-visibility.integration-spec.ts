@@ -551,6 +551,34 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
     });
 
+    it('refuses its version list to another member when the core workflow has no workspace alias', async () => {
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "workspaceWorkflowId" = NULL WHERE id = $1`,
+        [coreWorkflowId],
+      );
+
+      try {
+        const response = await asOtherMember(
+          `
+            query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+              coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+                id
+              }
+            }
+          `,
+          { workspaceWorkflowId },
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.coreWorkflowVersions).toEqual([]);
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."workflow" SET "workspaceWorkflowId" = $2 WHERE id = $1`,
+          [coreWorkflowId, workspaceWorkflowId],
+        );
+      }
+    });
+
     // This resolver reads version content straight from its id, bypassing the workflow lookup.
     it('refuses to compute a step output schema from its version for another member', async () => {
       const response = await asOtherMember(
