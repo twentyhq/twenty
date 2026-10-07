@@ -1,9 +1,12 @@
+import { useLingui } from '@lingui/react';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordColumnResizeHandle } from '@/object-record/record-index/components/RecordColumnResizeHandle';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { getRecordTableResizeHandlePhysicalPosition } from '@/object-record/record-table/utils/getRecordTableResizeHandlePhysicalPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { getLocaleTextDirection } from 'twenty-shared/translations';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordTableHeaderResizeHandler = ({
@@ -19,6 +22,13 @@ export const RecordTableHeaderResizeHandler = ({
     position === 'left'
       ? visibleRecordFields[recordFieldIndex - 1]
       : visibleRecordFields[recordFieldIndex];
+
+  const { i18n } = useLingui();
+
+  const physicalPosition = getRecordTableResizeHandlePhysicalPosition({
+    position,
+    textDirection: getLocaleTextDirection(i18n.locale),
+  });
 
   const isMobile = useIsMobile();
 
@@ -41,7 +51,7 @@ export const RecordTableHeaderResizeHandler = ({
     !columnResizeDisabled && (
       <RecordColumnResizeHandle
         isResizing={isResizing}
-        position={position}
+        position={physicalPosition}
         onPointerDown={handlePointerDown}
       />
     )
