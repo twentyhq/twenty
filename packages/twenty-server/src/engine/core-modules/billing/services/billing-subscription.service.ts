@@ -317,10 +317,6 @@ export class BillingSubscriptionService {
       updatedSubscription.id,
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'currentBillingSubscription',
-    ]);
-
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
       hasPaymentMethod: true,
@@ -462,6 +458,10 @@ export class BillingSubscriptionService {
         );
       }
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
 
     return currentBillingSubscription;
   }

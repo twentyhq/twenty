@@ -14,7 +14,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 export const TEST_STRIPE_CUSTOMER_ID = 'cus_default0';
 export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 
-const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
+export const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
 const TEST_STRIPE_PRICE_ID = 'price_resource_credit_test';
 export const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
 
@@ -96,19 +96,10 @@ export const setupResourceCreditSubscription = async ({
     [TEST_STRIPE_PRODUCT_ID, JSON.stringify({ productKey: 'RESOURCE_CREDIT' })],
   );
 
-  await query(
-    `INSERT INTO core."billingPrice"
-       ("stripePriceId", "stripeProductId", active, currency, "taxBehavior",
-        type, "billingScheme", "usageType", interval, "unitAmount", metadata)
-     VALUES ($1, $2, true, 'usd', 'UNSPECIFIED', 'RECURRING', 'PER_UNIT',
-             'LICENSED', 'month', 1000, $3)
-     ON CONFLICT ("stripePriceId") DO UPDATE SET metadata = EXCLUDED.metadata`,
-    [
-      TEST_STRIPE_PRICE_ID,
-      TEST_STRIPE_PRODUCT_ID,
-      JSON.stringify({ credit_amount: String(creditAmountMicro) }),
-    ],
-  );
+  await upsertResourceCreditPrice({
+    stripePriceId: TEST_STRIPE_PRICE_ID,
+    creditAmountMicro,
+  });
 
   await query(
     `INSERT INTO core."billingSubscriptionItem"
@@ -128,6 +119,28 @@ export const setupResourceCreditSubscription = async ({
   );
 
   return { subscriptionId: subscription.id };
+};
+
+export const upsertResourceCreditPrice = async ({
+  stripePriceId,
+  creditAmountMicro,
+}: {
+  stripePriceId: string;
+  creditAmountMicro: number;
+}): Promise<void> => {
+  await query(
+    `INSERT INTO core."billingPrice"
+       ("stripePriceId", "stripeProductId", active, currency, "taxBehavior",
+        type, "billingScheme", "usageType", interval, "unitAmount", metadata)
+     VALUES ($1, $2, true, 'usd', 'UNSPECIFIED', 'RECURRING', 'PER_UNIT',
+             'LICENSED', 'month', 1000, $3)
+     ON CONFLICT ("stripePriceId") DO UPDATE SET metadata = EXCLUDED.metadata`,
+    [
+      stripePriceId,
+      TEST_STRIPE_PRODUCT_ID,
+      JSON.stringify({ credit_amount: String(creditAmountMicro) }),
+    ],
+  );
 };
 
 export const insertCreditGrant = async ({
