@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -62,7 +63,7 @@ export const AgentChatStreamKeepAliveEffect = () => {
       store.set(
         errorFamilyCallback(familyKey),
         createAiChatCodedError(
-          'Connection to the assistant was lost. Reload to see the response.',
+          t`Connection to the assistant was lost. Reload to see the response.`,
           AiChatErrorCode.CONNECTION_LOST,
         ),
       );

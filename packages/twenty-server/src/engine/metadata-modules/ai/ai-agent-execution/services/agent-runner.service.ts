@@ -257,7 +257,7 @@ export class AgentRunnerService {
                 }
               : {}),
           },
-          canProposeToolCalls: spec.capabilities.canProposeToolCalls,
+          canProposeToolCalls: spec.capabilities.canAskHumans,
           actorContext: executionContext.actorContext,
           authContext: executionContext.authContext,
           workspaceId,

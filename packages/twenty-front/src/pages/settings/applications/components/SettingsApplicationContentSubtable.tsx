@@ -1,4 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { type ApplicationContentRow } from '@/settings/applications/types/ApplicationContentRow';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
@@ -10,15 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
-export type ApplicationContentRow = {
-  key: string;
-  name: string;
-  applicationId?: string;
-  icon?: string;
-  secondary?: string;
-  link?: string;
-};
 
 const GRID_TEMPLATE_COLUMNS = '200px 1fr 160px 32px';
 
