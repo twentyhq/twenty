@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceFlatCommandMenuItemMapCacheService } from 'src/engine/metadata-modules/flat-command-menu-item/services/workspace-flat-command-menu-item-map-cache.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
@@ -19,7 +18,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       FrontComponentEntity,
       PageLayoutEntity,
     ]),
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     WorkspaceFlatCommandMenuItemMapCacheService,

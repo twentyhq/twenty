@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatPageLayoutWidgetModule } from 'src/engine/metadata-modules/flat-page-layout-widget/flat-page-layout-widget.module';
@@ -12,7 +11,6 @@ import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-
 import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layout-widget/resolvers/page-layout-widget.resolver';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';
@@ -22,8 +20,6 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([PageLayoutWidgetEntity, WorkspaceEntity]),
     PermissionsModule,
-    FeatureFlagModule,
-    WorkspaceCacheStorageModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     FlatPageLayoutWidgetModule,

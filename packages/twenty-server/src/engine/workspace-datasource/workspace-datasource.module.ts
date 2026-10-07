@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { WorkspaceSchemaService } from './workspace-schema.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkspaceEntity]), TypeORMModule],
+  imports: [TypeOrmModule.forFeature([WorkspaceEntity])],
   exports: [WorkspaceSchemaService],
   providers: [WorkspaceSchemaService],
 })

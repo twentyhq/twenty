@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -25,11 +23,9 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationRegistrationLookupModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([AgentEntity]),
-    AiModelsModule,
     PermissionsModule,
     WorkspaceMigrationModule,
     ApplicationModule,
-    FlatAgentModule,
     WorkspaceCacheModule,
   ],
   providers: [
