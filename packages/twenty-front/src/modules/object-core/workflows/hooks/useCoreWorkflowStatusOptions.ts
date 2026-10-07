@@ -1,15 +1,12 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-
 export const useCoreWorkflowStatusOptions = (): SelectOption[] => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-  });
+  const { t } = useLingui();
 
-  return (
-    objectMetadataItem.fields.find((field) => field.name === 'statuses')
-      ?.options ?? []
-  );
+  return [
+    { value: 'DRAFT', label: t`Draft`, color: 'yellow' },
+    { value: 'ACTIVE', label: t`Active`, color: 'green' },
+    { value: 'DEACTIVATED', label: t`Deactivated`, color: 'gray' },
+  ];
 };

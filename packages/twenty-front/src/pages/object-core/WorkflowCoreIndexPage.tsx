@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconSettingsAutomation } from 'twenty-ui/icon';
 
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
@@ -24,9 +25,8 @@ import {
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
@@ -36,10 +36,6 @@ export const WorkflowCoreIndexPage = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-  });
 
   const {
     coreWorkflows,
@@ -82,8 +78,8 @@ export const WorkflowCoreIndexPage = () => {
 
   return (
     <CoreObjectIndexPageLayout
-      labelPlural={objectMetadataItem.labelPlural}
-      icon={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
+      labelPlural={t`Workflows`}
+      icon={<ColoredIcon Icon={IconSettingsAutomation} color="gray" />}
       numberOfSelectedRecords={selectedRowCount}
       actionButton={
         <>
@@ -109,12 +105,12 @@ export const WorkflowCoreIndexPage = () => {
       emptyState={{
         hasAppliedFilters,
         title: hasAppliedFilters
-          ? t`No ${objectMetadataItem.labelPlural} found`
-          : t`Add your first ${objectMetadataItem.labelSingular}`,
+          ? t`No Workflows found`
+          : t`Add your first Workflow`,
         subTitle: hasAppliedFilters
-          ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
-          : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`,
-        buttonTitle: t`Add a ${objectMetadataItem.labelSingular}`,
+          ? t`No Workflows match your filters. Try removing some of them.`
+          : t`Create a Workflow to automate your work.`,
+        buttonTitle: t`Add a Workflow`,
         onButtonClick: canCreateCoreWorkflow ? createCoreWorkflow : undefined,
       }}
       hasNextPage={hasNextPage}
@@ -136,7 +132,7 @@ export const WorkflowCoreIndexPage = () => {
       />
       {canCreateCoreWorkflow && (
         <CoreObjectTableAddNewRow
-          label={t`New ${objectMetadataItem.labelSingular}`}
+          label={t`New Workflow`}
           onClick={createCoreWorkflow}
           disabled={isCreatingCoreWorkflow}
         />
