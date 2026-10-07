@@ -12,7 +12,6 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
@@ -50,7 +49,6 @@ export class UsageLimitService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitStockService: UsageLimitStockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
@@ -294,19 +292,19 @@ export class UsageLimitService {
   }
 
   private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
-    if (isStockLimit(usageLimit)) {
-      return this.usageLimitStockService.dropStockCounters({
-        workspaceId: usageLimit.workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        unit: usageLimit.unit,
-        limitValue: usageLimit.limitValue,
-      });
+    if (!isStockLimit(usageLimit)) {
+      return;
     }
 
-    return this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.usageLimitStockService.dropStockCounters({
+      workspaceId: usageLimit.workspaceId,
+      resourceType: usageLimit.resourceType,
+      operationType: usageLimit.operationType,
+      spenderType: usageLimit.spenderType,
+      spenderId: usageLimit.spenderId,
+      unit: usageLimit.unit,
+      limitValue: usageLimit.limitValue,
+    });
   }
 
   private async validateSpenderBelongsToWorkspace({

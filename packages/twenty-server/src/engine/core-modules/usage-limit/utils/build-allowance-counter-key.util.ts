@@ -4,4 +4,5 @@ export const buildAllowanceCounterKey = ({
 }: {
   workspaceId: string;
   periodStart: Date;
-}): string => `{${workspaceId}}:quota:allowance:${periodStart.getTime()}`;
+}): string =>
+  `{${workspaceId}}:quota-consumed:allowance:${periodStart.getTime()}`;

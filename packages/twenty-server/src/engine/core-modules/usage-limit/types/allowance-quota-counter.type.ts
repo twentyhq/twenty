@@ -3,6 +3,7 @@ import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.e
 export type AllowanceQuotaCounter = {
   kind: 'allowance';
   key: string;
+  limitValue: number;
   unit: UsageUnit.CREDIT;
   periodStart: Date;
   periodEnd: Date;

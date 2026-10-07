@@ -183,61 +183,55 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it.failing(
-    'keeps in-flight usage on the allowance when a grant lands',
-    async () => {
-      await refreshCurrentBillingSubscription(workspaceId);
+  it('keeps in-flight usage on the allowance when a grant lands', async () => {
+    await refreshCurrentBillingSubscription(workspaceId);
 
-      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
-      await grantCredits({
-        workspaceId,
-        amount: 2,
-        type: BillingCreditGrantType.COMPENSATION,
-        reason: null,
-      });
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+    await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
 
-      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
-        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
-      );
-    },
-  );
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
+  });
 
-  it.failing(
-    'takes a revoked grant off the ledger and keeps in-flight usage',
-    async () => {
-      const granted = await grantCredits({
-        workspaceId,
-        amount: 2,
-        type: BillingCreditGrantType.COMPENSATION,
-        reason: null,
-      });
-      const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
-      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+  it('takes a revoked grant off the ledger and keeps in-flight usage', async () => {
+    const granted = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
-      const revoked = await callAdminGraphql(REVOKE_MUTATION, {
-        workspaceId,
-        creditGrantId,
-      });
+    const revoked = await callAdminGraphql(REVOKE_MUTATION, {
+      workspaceId,
+      creditGrantId,
+    });
 
-      expect(revoked.body.errors).toBeUndefined();
-      expect(
-        revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
-      ).not.toBeNull();
+    expect(revoked.body.errors).toBeUndefined();
+    expect(
+      revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
+    ).not.toBeNull();
 
-      const grants = await listCreditGrants(workspaceId);
+    const grants = await listCreditGrants(workspaceId);
 
-      expect(grants[0].revokedAt).not.toBeNull();
-      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
-        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
-      );
-    },
-  );
+    expect(grants[0].revokedAt).not.toBeNull();
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
+  });
 
-  it.failing('keeps in-flight usage when a revocation is retried', async () => {
+  it('keeps in-flight usage when a revocation is retried', async () => {
     const granted = await grantCredits({
       workspaceId,
       amount: 2,

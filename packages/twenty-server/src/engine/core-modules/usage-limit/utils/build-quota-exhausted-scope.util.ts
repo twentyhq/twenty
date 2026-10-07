@@ -6,11 +6,9 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 export const buildQuotaExhaustedScope = ({
   resourceType,
   counter,
-  allowanceMicro,
 }: {
   resourceType: UsageResourceType;
   counter: QuotaCounter;
-  allowanceMicro: number | null;
 }): ExhaustedScope => {
   const retryAfterMs = Math.max(counter.periodEnd.getTime() - Date.now(), 0);
 
@@ -40,7 +38,7 @@ export const buildQuotaExhaustedScope = ({
     spenderId: null,
     operationType: UsageOperationType.ALL,
     unit: counter.unit,
-    limitValue: allowanceMicro ?? 0,
+    limitValue: counter.limitValue,
     remaining: 0,
     periodCount: null,
     periodUnit: null,

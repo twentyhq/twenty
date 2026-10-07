@@ -12,6 +12,7 @@ const PERIOD_END = new Date('2026-09-01T00:00:00.000Z');
 const allowanceCounter: AllowanceQuotaCounter = {
   kind: 'allowance',
   key: 'allowance',
+  limitValue: 1_000_000,
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
@@ -19,7 +20,9 @@ const allowanceCounter: AllowanceQuotaCounter = {
 
 const buildLimitCounter = (unit: UsageUnit): LimitQuotaCounter => ({
   kind: 'limit',
+  usageLimitId: null,
   isDefault: false,
+  isEnforced: true,
   key: unit,
   limitValue: 1_000_000,
   unit,

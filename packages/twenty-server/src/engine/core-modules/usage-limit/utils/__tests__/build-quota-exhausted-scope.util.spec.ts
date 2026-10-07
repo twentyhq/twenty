@@ -13,7 +13,9 @@ const buildLimitCounter = (
   overrides: Partial<LimitQuotaCounter> = {},
 ): LimitQuotaCounter => ({
   kind: 'limit',
+  usageLimitId: 'limit-1',
   isDefault: false,
+  isEnforced: true,
   key: 'counter-key',
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,
@@ -30,6 +32,7 @@ const buildLimitCounter = (
 const allowanceCounter: AllowanceQuotaCounter = {
   kind: 'allowance',
   key: 'allowance-key',
+  limitValue: 2_000_000,
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
@@ -49,7 +52,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter(),
-        allowanceMicro: null,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -73,7 +75,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: buildLimitCounter({ isDefault: true }),
-        allowanceMicro: null,
       }),
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
@@ -83,7 +84,6 @@ describe('buildQuotaExhaustedScope', () => {
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
         counter: allowanceCounter,
-        allowanceMicro: 2_000_000,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -101,16 +101,6 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
-  it('reports a zero allowance when it is gone since the counter was read', () => {
-    expect(
-      buildQuotaExhaustedScope({
-        resourceType: UsageResourceType.AI,
-        counter: allowanceCounter,
-        allowanceMicro: null,
-      }),
-    ).toMatchObject({ exhaustedKind: 'allowance', limitValue: 0 });
-  });
-
   it('clamps the retry delay to zero once the period has ended', () => {
     expect(
       buildQuotaExhaustedScope({
@@ -118,7 +108,6 @@ describe('buildQuotaExhaustedScope', () => {
         counter: buildLimitCounter({
           periodEnd: new Date('2026-08-10T00:00:00.000Z'),
         }),
-        allowanceMicro: null,
       }),
     ).toMatchObject({ retryAfterMs: 0 });
   });

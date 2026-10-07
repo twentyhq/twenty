@@ -609,7 +609,7 @@ describe('Usage quota consumption', () => {
       );
     });
 
-    it.failing('keeps in-flight usage when the cap is edited', async () => {
+    it('keeps in-flight usage when the cap is edited', async () => {
       const { spenderId, usageLimitId } = await saveCreditQuotaForNewSpender();
 
       await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 });
@@ -625,83 +625,76 @@ describe('Usage quota consumption', () => {
       );
     });
 
-    it.failing(
-      'counts a charge made with the limits a stale pod still holds',
-      async () => {
-        const { spenderId, usageLimitId } =
-          await saveCreditQuotaForNewSpender();
-        const workspaceCacheService =
-          getAppProviderByClassName<WorkspaceCacheService>(
-            'WorkspaceCacheService',
-          );
-        const { usageLimits: preEditUsageLimits } =
-          await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-            'usageLimits',
-          ]);
-
-        await usageLimitRepository.update(
-          { id: usageLimitId },
-          { limitValue: 500 },
+    it('counts a charge made with the limits a stale pod still holds', async () => {
+      const { spenderId, usageLimitId } = await saveCreditQuotaForNewSpender();
+      const workspaceCacheService =
+        getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
         );
-        await refreshUsageLimitsCache();
+      const { usageLimits: preEditUsageLimits } =
+        await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'usageLimits',
+        ]);
 
-        expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
+      await usageLimitRepository.update(
+        { id: usageLimitId },
+        { limitValue: 500 },
+      );
+      await refreshUsageLimitsCache();
 
-        const getOrRecompute = workspaceCacheService.getOrRecompute.bind(
-          workspaceCacheService,
+      expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
+
+      const getOrRecompute = workspaceCacheService.getOrRecompute.bind(
+        workspaceCacheService,
+      );
+      const stalePodSpy = jest
+        .spyOn(workspaceCacheService, 'getOrRecompute')
+        .mockImplementation(async (workspaceId, cacheKeyNames) =>
+          cacheKeyNames.includes('usageLimits')
+            ? ({ usageLimits: preEditUsageLimits } as never)
+            : getOrRecompute(workspaceId, cacheKeyNames),
         );
-        const stalePodSpy = jest
-          .spyOn(workspaceCacheService, 'getOrRecompute')
-          .mockImplementation(async (workspaceId, cacheKeyNames) =>
-            cacheKeyNames.includes('usageLimits')
-              ? ({ usageLimits: preEditUsageLimits } as never)
-              : getOrRecompute(workspaceId, cacheKeyNames),
-          );
 
-        try {
-          await chargeRun({ spenderId, creditsUsedMicro: 400 });
-        } finally {
-          stalePodSpy.mockRestore();
-        }
+      try {
+        await chargeRun({ spenderId, creditsUsedMicro: 400 });
+      } finally {
+        stalePodSpy.mockRestore();
+      }
 
-        expect(await findRunRefusal({ spenderId, costMicro: 100 })).toBeNull();
+      expect(await findRunRefusal({ spenderId, costMicro: 100 })).toBeNull();
+      expect(await findRunRefusal({ spenderId, costMicro: 101 })).toMatchObject(
+        { exhaustedKind: 'limit', limitValue: 500 },
+      );
+    });
+
+    it('debits a limit the workspace is not entitled to without refusing on it', async () => {
+      const { spenderId } = await saveCreditQuotaForNewSpender({
+        limitValue: 500,
+        isInstanceOverride: false,
+      });
+      const entitlementSpy = jest
+        .spyOn(
+          getAppProviderByClassName<UsageLimitEntitlementService>(
+            'UsageLimitEntitlementService',
+          ),
+          'isIntraWorkspaceLimitEntitled',
+        )
+        .mockResolvedValue(false);
+
+      try {
         expect(
-          await findRunRefusal({ spenderId, costMicro: 101 }),
-        ).toMatchObject({ exhaustedKind: 'limit', limitValue: 500 });
-      },
-    );
+          await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 }),
+        ).toEqual({ exhaustedKind: null });
+        expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
+        entitlementSpy.mockResolvedValue(true);
 
-    it.failing(
-      'debits a limit the workspace is not entitled to without refusing on it',
-      async () => {
-        const { spenderId } = await saveCreditQuotaForNewSpender({
-          limitValue: 500,
-          isInstanceOverride: false,
-        });
-        const entitlementSpy = jest
-          .spyOn(
-            getAppProviderByClassName<UsageLimitEntitlementService>(
-              'UsageLimitEntitlementService',
-            ),
-            'isIntraWorkspaceLimitEntitled',
-          )
-          .mockResolvedValue(false);
-
-        try {
-          expect(
-            await debitRunAheadOfRecord({ spenderId, creditsUsedMicro: 600 }),
-          ).toEqual({ exhaustedKind: null });
-          expect(await findRunRefusal({ spenderId, costMicro: 0 })).toBeNull();
-          entitlementSpy.mockResolvedValue(true);
-
-          expect(
-            await findRunRefusal({ spenderId, costMicro: 0 }),
-          ).toMatchObject({ exhaustedKind: 'limit', limitValue: 500 });
-        } finally {
-          entitlementSpy.mockRestore();
-        }
-      },
-    );
+        expect(await findRunRefusal({ spenderId, costMicro: 0 })).toMatchObject(
+          { exhaustedKind: 'limit', limitValue: 500 },
+        );
+      } finally {
+        entitlementSpy.mockRestore();
+      }
+    });
   });
 
   describe('on the daily email default', () => {
@@ -834,7 +827,7 @@ describe('Usage quota consumption', () => {
       expect(await findEmailRefusal(2)).toBeNull();
     });
 
-    it.failing(
+    it(
       'forgives nothing when the override is deleted, recreated or moved off the default',
       async () => {
         await debitEmailAheadOfRecord(1);
@@ -945,7 +938,7 @@ describe('Usage quota consumption', () => {
         'getConsumptionRowsForAllScopes',
       );
 
-    it.failing.each([
+    it.each([
       {
         failure: 'its ClickHouse read fails',
         spyOnFailure: () =>

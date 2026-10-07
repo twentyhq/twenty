@@ -17,7 +17,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type GrantCreditsParams = {
@@ -43,7 +42,6 @@ export class BillingCreditService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async grantCredits(
@@ -166,8 +164,6 @@ export class BillingCreditService {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'currentBillingSubscription',
     ]);
-
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
   }
 }
 

@@ -2,26 +2,30 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { isLimitExhausted } from 'src/engine/core-modules/usage-limit/utils/is-limit-exhausted.util';
 
 export const findExhaustedCounters = ({
   counters,
-  remainings,
+  consumedValues,
   cost,
 }: {
   counters: QuotaCounter[];
-  remainings: (number | null)[];
+  consumedValues: (number | null)[];
   cost?: QuotaCost;
 }): QuotaCounter[] =>
   counters.filter((counter, index) => {
-    const remaining = remainings[index];
+    const consumed = consumedValues[index];
 
-    if (!isDefined(remaining)) {
+    if (
+      !isDefined(consumed) ||
+      (counter.kind === 'limit' && !counter.isEnforced)
+    ) {
       return false;
     }
 
-    if (remaining <= 0) {
-      return true;
-    }
-
-    return remaining < (cost?.[counter.unit] ?? 0);
+    return isLimitExhausted({
+      consumed,
+      cost: cost?.[counter.unit] ?? 0,
+      limitValue: counter.limitValue,
+    });
   });

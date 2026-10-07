@@ -8,34 +8,28 @@ export const buildLimitQuotaCounter = ({
   workspaceId,
   limit,
   period,
+  isEnforced,
 }: {
   workspaceId: string;
-  limit: Omit<
-    FlatQuotaLimit,
-    'id' | 'limitKind' | 'periodCount' | 'burstValue'
-  >;
+  limit: Omit<FlatQuotaLimit, 'limitKind' | 'periodCount' | 'burstValue'>;
   period: UsagePeriod;
-}): LimitQuotaCounter => ({
-  kind: 'limit',
-  isDefault: false,
-  key: buildQuotaCounterKey({
-    workspaceId,
-    resourceType: limit.resourceType,
-    operationType: limit.operationType,
-    spenderType: limit.spenderType,
-    spenderId: limit.spenderId,
+  isEnforced: boolean;
+}): LimitQuotaCounter => {
+  const counter = {
+    kind: 'limit' as const,
+    usageLimitId: limit.id,
+    isDefault: false,
+    isEnforced,
+    limitValue: limit.limitValue,
     unit: limit.unit,
+    resourceType: limit.resourceType,
     periodUnit: limit.periodUnit,
     periodStart: period.periodStart,
-    limitValue: limit.limitValue,
-  }),
-  limitValue: limit.limitValue,
-  unit: limit.unit,
-  resourceType: limit.resourceType,
-  periodUnit: limit.periodUnit,
-  periodStart: period.periodStart,
-  periodEnd: period.periodEnd,
-  spenderType: limit.spenderType,
-  spenderId: normalizeSpenderId(limit.spenderId),
-  operationType: limit.operationType,
-});
+    periodEnd: period.periodEnd,
+    spenderType: limit.spenderType,
+    spenderId: normalizeSpenderId(limit.spenderId),
+    operationType: limit.operationType,
+  };
+
+  return { ...counter, key: buildQuotaCounterKey({ workspaceId, counter }) };
+};
