@@ -18,12 +18,14 @@ import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-fil
 import { type DashboardFilterSlotWidgetCounts } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotWidgetCounts';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import {
   type DashboardFilterBinding,
@@ -54,13 +56,17 @@ export const DashboardFilterChipDropdown = ({
     ObjectFilterDropdownComponentInstanceContext,
   );
 
-  const { t } = useLingui();
   const store = useStore();
   const { getIcon } = useIcons();
   const { closeDropdown } = useCloseDropdown();
 
   const [dashboardFilterValues, setDashboardFilterValues] =
     useAtomComponentState(dashboardFilterValuesComponentState);
+
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
@@ -113,6 +119,7 @@ export const DashboardFilterChipDropdown = ({
   const relationTargetFieldMetadataId =
     representativeBinding.relationTargetFieldMetadataId ?? null;
 
+  // A relation value is JSON that the chip label resolves from records; left as displayValue it would surface when a record is gone.
   const buildRecordFilterFromSlotValue = (
     value: DashboardFilterValue,
   ): RecordFilter => ({
@@ -121,7 +128,7 @@ export const DashboardFilterChipDropdown = ({
     type: filterType,
     operand: value.operand,
     value: value.value,
-    displayValue: value.value,
+    displayValue: filterType === 'RELATION' ? '' : value.value,
     label: slot.label,
     subFieldName,
     relationTargetFieldMetadataId,
@@ -193,9 +200,12 @@ export const DashboardFilterChipDropdown = ({
       clickableComponent={
         <Tooltip
           delay={TooltipDelay.mediumDelay}
-          content={t`Applies to ${boundWidgetCount} of ${graphWidgetCount} widgets`}
+          content={plural(graphWidgetCount, {
+            one: `Applies to ${boundWidgetCount} of # widget`,
+            other: `Applies to ${boundWidgetCount} of # widgets`,
+          })}
           side="bottom"
-          closeOnClick
+          disabled={isDropdownOpen}
         >
           <div>
             {slot.filterType === 'RELATION' ? (

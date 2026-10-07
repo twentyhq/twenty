@@ -1,10 +1,11 @@
 import { computeBuiltInDateBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInDateBindings';
-import { computeBuiltInOwnerBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInOwnerBindings';
+import {
+  type ComputeBuiltInOwnerBindingsArgs,
+  computeBuiltInOwnerBindings,
+} from '@/page-layout/dashboard-filters/utils/computeBuiltInOwnerBindings';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
 
-type ComputeBuiltInBindingsArgs = Parameters<
-  typeof computeBuiltInOwnerBindings
->[0];
+export type ComputeBuiltInBindingsArgs = ComputeBuiltInOwnerBindingsArgs;
 
 export const computeBuiltInBindings = (
   args: ComputeBuiltInBindingsArgs,

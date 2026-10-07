@@ -12,7 +12,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-const PREFERRED_OWNER_FIELD_NAMES = ['accountOwner', 'assignee'];
+const PREFERRED_OWNER_FIELD_NAMES = ['accountOwner', 'owner', 'assignee'];
 
 type OwnerBindingCandidateField = {
   id: string;
@@ -25,7 +25,7 @@ type OwnerBindingCandidateField = {
   } | null;
 };
 
-type ComputeBuiltInOwnerBindingsArgs = {
+export type ComputeBuiltInOwnerBindingsArgs = {
   widgets: Pick<PageLayoutWidget, 'id' | 'type' | 'objectMetadataId'>[];
   objectMetadataItems: {
     id: string;
@@ -33,7 +33,18 @@ type ComputeBuiltInOwnerBindingsArgs = {
   }[];
 };
 
-// Metadata field order is not stable across workspaces, so ties fall back to the field name.
+// Metadata field order is not stable across workspaces, so ties fall back to a locale-independent name order.
+const compareFieldNames = (
+  fieldA: OwnerBindingCandidateField,
+  fieldB: OwnerBindingCandidateField,
+) => {
+  if (fieldA.name < fieldB.name) {
+    return -1;
+  }
+
+  return fieldA.name > fieldB.name ? 1 : 0;
+};
+
 const findOwnerField = (fields: OwnerBindingCandidateField[]) => {
   const ownerFieldCandidates = fields.filter(
     (field) =>
@@ -49,10 +60,7 @@ const findOwnerField = (fields: OwnerBindingCandidateField[]) => {
   ).find(isDefined);
 
   return (
-    preferredOwnerField ??
-    [...ownerFieldCandidates].sort((fieldA, fieldB) =>
-      fieldA.name.localeCompare(fieldB.name),
-    )[0]
+    preferredOwnerField ?? [...ownerFieldCandidates].sort(compareFieldNames)[0]
   );
 };
 

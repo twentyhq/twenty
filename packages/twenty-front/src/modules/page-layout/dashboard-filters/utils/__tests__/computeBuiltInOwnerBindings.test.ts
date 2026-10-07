@@ -71,6 +71,20 @@ const TASK_OBJECT = {
   ],
 };
 
+const OPPORTUNITY_OBJECT = {
+  id: 'opportunity-object-id',
+  fields: [
+    buildWorkspaceMemberRelationField({
+      id: 'approver-field-id',
+      name: 'approver',
+    }),
+    buildWorkspaceMemberRelationField({
+      id: 'owner-field-id',
+      name: 'owner',
+    }),
+  ],
+};
+
 const OBJECT_WITH_TWO_CUSTOM_OWNER_FIELDS = {
   id: 'two-custom-owner-fields-object-id',
   fields: [
@@ -115,6 +129,7 @@ const OBJECT_WITH_ONE_TO_MANY_WORKSPACE_MEMBER_FIELD = {
 const OBJECT_METADATA_ITEMS = [
   COMPANY_OBJECT,
   TASK_OBJECT,
+  OPPORTUNITY_OBJECT,
   OBJECT_WITH_TWO_CUSTOM_OWNER_FIELDS,
   OBJECT_WITHOUT_OWNER_FIELD,
   OBJECT_WITH_INACTIVE_OWNER_FIELD,
@@ -153,6 +168,21 @@ describe('computeBuiltInOwnerBindings', () => {
       'task-widget': {
         [BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID]: {
           fieldMetadataId: 'assignee-field-id',
+        },
+      },
+    });
+  });
+
+  it('prefers owner over a custom member relation that sorts before it', () => {
+    const bindingsByWidgetId = computeBuiltInOwnerBindings({
+      widgets: [buildGraphWidget('opportunity-widget', OPPORTUNITY_OBJECT.id)],
+      objectMetadataItems: OBJECT_METADATA_ITEMS,
+    });
+
+    expect(bindingsByWidgetId).toEqual({
+      'opportunity-widget': {
+        [BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID]: {
+          fieldMetadataId: 'owner-field-id',
         },
       },
     });

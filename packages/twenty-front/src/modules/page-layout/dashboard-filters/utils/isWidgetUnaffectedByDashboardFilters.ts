@@ -7,12 +7,6 @@ import {
 import { isDefined, isRecordFilterValueValid } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
-// Record tables filter through their view, so they are the only non-chart widgets a viewer could expect the chips to reach.
-const DASHBOARD_DATA_WIDGET_TYPES: WidgetType[] = [
-  WidgetType.GRAPH,
-  WidgetType.RECORD_TABLE,
-];
-
 export const isWidgetUnaffectedByDashboardFilters = ({
   widget,
   slots,
@@ -24,7 +18,8 @@ export const isWidgetUnaffectedByDashboardFilters = ({
   values: Record<string, DashboardFilterValue | undefined>;
   bindings: Record<string, DashboardFilterBinding | null> | undefined;
 }): boolean => {
-  if (!DASHBOARD_DATA_WIDGET_TYPES.includes(widget.type)) {
+  // Only charts can be bound; record tables filter through their view and are out of scope.
+  if (widget.type !== WidgetType.GRAPH) {
     return false;
   }
 

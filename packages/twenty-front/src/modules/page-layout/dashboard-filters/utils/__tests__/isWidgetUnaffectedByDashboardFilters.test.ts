@@ -110,18 +110,8 @@ describe('isWidgetUnaffectedByDashboardFilters', () => {
     ).toBe(false);
   });
 
-  it('applies to record table widgets', () => {
-    expect(
-      isWidgetUnaffectedByDashboardFilters({
-        widget: { type: WidgetType.RECORD_TABLE },
-        slots: SLOTS,
-        values: { date: DATE_VALUE },
-        bindings: undefined,
-      }),
-    ).toBe(true);
-  });
-
   it.each([
+    WidgetType.RECORD_TABLE,
     WidgetType.IFRAME,
     WidgetType.STANDALONE_RICH_TEXT,
     WidgetType.FRONT_COMPONENT,
