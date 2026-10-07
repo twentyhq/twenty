@@ -1,3 +1,4 @@
+import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { type AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 
@@ -60,6 +61,7 @@ describe('AgentRunSuspensionService', () => {
       });
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(onOutcome).toHaveBeenCalledTimes(1);
       expect(onOutcome).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         caller: CALLER,
@@ -89,6 +91,7 @@ describe('AgentRunSuspensionService', () => {
         toolResult: { success: true, result: { status: 'pending' } },
       });
 
+      expect(onOutcome).toHaveBeenCalledTimes(1);
       expect(onOutcome).toHaveBeenCalledWith(
         expect.objectContaining({
           outcome: {
@@ -109,6 +112,14 @@ describe('AgentRunSuspensionService', () => {
       });
 
       expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        CONTINUE_AGENT_RUN_JOB_NAME,
+        {
+          workspaceId: 'workspace-id',
+          suspensionId: 'suspension-id',
+          resumeCount: 0,
+        },
+      );
       expect(onOutcome).not.toHaveBeenCalled();
     });
   });
