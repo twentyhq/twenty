@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
@@ -14,7 +13,6 @@ import { CalDavImportEventsService } from 'src/modules/calendar/calendar-event-i
 @Module({
   imports: [
     SecureHttpClientModule,
-    TwentyConfigModule,
     ConnectedAccountTokenEncryptionModule,
     TypeOrmModule.forFeature([ConnectedAccountEntity]),
   ],
