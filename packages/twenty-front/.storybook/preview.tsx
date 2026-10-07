@@ -28,7 +28,6 @@ import { UserContext } from '../src/modules/users/contexts/UserContext';
 // oxlint-disable-next-line no-restricted-imports
 import '../src/modules/app/utils/setupMonacoEnvironment';
 
-import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
