@@ -44,6 +44,26 @@ export default defineLogicFunction({
                                    N × calls  →  429
 ```
 
+With a random delay over a one-hour window, the same runs are spread out:
+
+```text
+   pattern "0 3 * * *"  +  random delayMs in [0, 60 min)
+                                                  │
+              ┌───────────────┬───────────────────┼───────────────┐
+              ▼               ▼                   ▼               ▼
+        workspace A     workspace B     workspace C   ...   workspace N
+          03:00:00        03:00:00        03:00:00            03:00:00
+           + 12 min        + 41 min        + 03 min            + 27 min
+              │               │                   │               │
+              ▼               ▼                   ▼               ▼
+          03:12:00        03:41:00        03:03:00            03:27:00
+              │               │                   │               │
+              └───────────────┴─────────┬─────────┴───────────────┘
+                                        ▼
+                      500 requests per minute for the whole app
+                          N × calls spread over 60 minutes  →  OK
+```
+
 - **Batch database event triggers.** A bulk write such as a mailbox sync emits one event per record, thousands within seconds, and one run per event means one request per record. Set `batchMode: true`, declare `updatedFields`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
 
 - **Make one request per batch, not per record.** The limit counts requests, not records: a `createMany` with `upsert: true` carrying 200 records is one request, 200 single updates are 200. Read with `in` filters and write with `createMany` or `updateMany`.
