@@ -3,7 +3,7 @@ import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
 const PIPE_HINT =
-  'Pipe it in, for example: printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url <url> --name <name>';
+  'Pipe it in, for example: printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url <url>';
 
 export const readApiKeyFromStandardInput = async (signal: AbortSignal) => {
   if (process.stdin.isTTY === true) {
