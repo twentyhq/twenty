@@ -1,5 +1,4 @@
 import { type ApolloClient } from '@apollo/client';
-
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 
 export interface ApolloManager {
