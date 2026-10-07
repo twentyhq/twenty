@@ -13,11 +13,20 @@ const SHEBANG = '#!/usr/bin/env node';
 const PACKAGE_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]*$/;
 const EXACT_VERSION_PATTERN = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
 const RELATIVE_REQUIRE_PATTERN = /require\(["'`](\.{1,2}\/[^"'`]+)["'`]\)/g;
-const REQUIRED_FILES = [
-  'dist/app-worker.cjs',
-  'dist/app-template/package.json',
-  'dist/app-template-overlay/src/__tests__/global-setup.ts',
-  'dist/app-template-overlay/src/__tests__/run-twenty.ts',
+const REQUIRED_FILES = ['dist/app-worker.cjs'];
+const COPIED_DIRECTORIES = [
+  {
+    source: '../create-twenty-app/src/constants/template',
+    target: 'dist/app-template',
+  },
+  { source: 'app-template-overlay', target: 'dist/app-template-overlay' },
+];
+const RENDERED_APP_FILES = [
+  'package.json',
+  'tsconfig.json',
+  '.yarnrc.yml',
+  'src/application-config.ts',
+  'src/__tests__/run-twenty.ts',
 ];
 const BUILD_HINT = 'Build it first with: yarn nx build twenty-cli';
 
@@ -65,6 +74,51 @@ const checkRequiredFiles = async () => {
       fail(`${requiredFile} is missing or empty. ${BUILD_HINT}`);
     }
   }
+};
+
+const listFiles = async (directory) => {
+  const entries = await readdir(directory, {
+    withFileTypes: true,
+    recursive: true,
+  });
+
+  return entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => relative(directory, join(entry.parentPath, entry.name)));
+};
+
+const checkCopiedDirectories = async () => {
+  let fileCount = 0;
+
+  for (const { source, target } of COPIED_DIRECTORIES) {
+    const sourceFiles = await listFiles(join(PACKAGE_DIRECTORY, source)).catch(
+      () => [],
+    );
+
+    if (sourceFiles.length === 0) {
+      fail(`${source} is missing. Run this check from a repository checkout.`);
+    }
+
+    for (const file of sourceFiles) {
+      const copied = await readFile(
+        join(PACKAGE_DIRECTORY, target, file),
+      ).catch(() => undefined);
+
+      if (copied === undefined) {
+        fail(`${target}/${file} is missing. ${BUILD_HINT}`);
+      }
+
+      if (
+        !copied.equals(await readFile(join(PACKAGE_DIRECTORY, source, file)))
+      ) {
+        fail(`${target}/${file} differs from ${source}/${file}. ${BUILD_HINT}`);
+      }
+    }
+
+    fileCount += sourceFiles.length;
+  }
+
+  return fileCount;
 };
 
 const listBundleFiles = async (directory) => {
@@ -184,18 +238,30 @@ const readTemplatePins = async ({ executable, home }) => {
     home,
   });
   const appDirectory = join(home, appName);
+
+  for (const file of RENDERED_APP_FILES) {
+    const size = await getFileSize(join(appDirectory, file));
+
+    if (size === undefined || size === 0) {
+      fail(`app init did not create ${file}.`);
+    }
+  }
+
+  if (
+    !(
+      await readFile(join(appDirectory, 'src/application-config.ts'), 'utf8')
+    ).includes('defineApplication')
+  ) {
+    fail(
+      'app init created src/application-config.ts without defineApplication.',
+    );
+  }
+
   const appPackageJson = await readJson(join(appDirectory, 'package.json'));
   const renderedVersions = {
     ...appPackageJson.dependencies,
     ...appPackageJson.devDependencies,
   };
-
-  if (
-    (await getFileSize(join(appDirectory, 'src/__tests__/run-twenty.ts'))) ===
-    undefined
-  ) {
-    fail('app init did not apply the CLI test harness overlay.');
-  }
 
   if (!Array.isArray(data.packages) || data.packages.length === 0) {
     fail('app init did not report the packages it pins.');
@@ -276,6 +342,7 @@ const main = async () => {
   await checkExecutable(bin);
   await checkRequiredFiles();
 
+  const templateFileCount = await checkCopiedDirectories();
   const bundleFileCount = await checkBundleReferences();
   const home = await mkdtemp(join(tmpdir(), 'twenty-publish-check-'));
 
@@ -288,7 +355,7 @@ const main = async () => {
 
     console.log(`twenty ${version} is ready to publish:`);
     console.log(
-      `  ${bin}, the app worker, templates and ${bundleFileCount} bundle files are present`,
+      `  ${bin}, the app worker, ${bundleFileCount} bundle files and ${templateFileCount} template files are present`,
     );
     console.log(
       `  app init pins ${pins.map(({ name, version: pinnedVersion }) => `${name}@${pinnedVersion}`).join(', ')}, all on npm`,
