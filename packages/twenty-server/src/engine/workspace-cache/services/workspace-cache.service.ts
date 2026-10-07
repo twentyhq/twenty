@@ -116,6 +116,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceDerivedCacheProvider
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly memoizerBypassedKeys = new Set<WorkspaceCacheKeyName>();
   private readonly packingPonderationByKey = new Map<
     WorkspaceCacheKeyName,
     number
@@ -167,6 +168,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         if (isDefined(options)) {
           if (options.localDataOnly) {
             this.localDataOnlyKeys.add(workspaceCacheKeyName);
+          }
+
+          if (options.bypassMemoizer) {
+            this.memoizerBypassedKeys.add(workspaceCacheKeyName);
           }
 
           this.packingPonderationByKey.set(
@@ -317,6 +322,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   ): Promise<CacheEntriesResult> {
     const memoKey =
       `${workspaceId}-${[...cacheKeyNames].sort().join(',')}` as const;
+
+    if (
+      cacheKeyNames.some((cacheKeyName) =>
+        this.memoizerBypassedKeys.has(cacheKeyName),
+      )
+    ) {
+      await this.memoizer.clearKey(memoKey);
+    }
 
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,

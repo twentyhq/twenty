@@ -16,6 +16,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { type UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -146,6 +148,24 @@ describe('User application variable value cache', () => {
     await updateValue('second');
     await expectVisibleValues('second');
     await updateValue('');
+    await expectVisibleValues('');
+  });
+
+  it('serves a value cleared on another server without waiting for the memoizer', async () => {
+    await updateValue('first');
+    await expectVisibleValues('first');
+
+    // Another server's clear: the row and the shared hash go, this server's memoizer stays.
+    await global.testDataSource.query(
+      'DELETE FROM core."userApplicationVariableValue" WHERE "applicationVariableId" = $1',
+      [applicationVariableId],
+    );
+    await global.app
+      .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
+      .del(`userApplicationVariableValueMaps:${SEED_APPLE_WORKSPACE_ID}:hash`);
+    // Past the 100 ms window in which a local entry is served without checking the shared hash.
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
     await expectVisibleValues('');
   });
 

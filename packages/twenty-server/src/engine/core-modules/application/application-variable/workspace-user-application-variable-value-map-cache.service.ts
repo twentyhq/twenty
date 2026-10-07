@@ -15,7 +15,10 @@ const USER_APPLICATION_VARIABLE_VALUE_ROWS_REQUIREMENT = {
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
-@WorkspaceCache('userApplicationVariableValueMaps', { packingPonderation: 1 })
+@WorkspaceCache('userApplicationVariableValueMaps', {
+  packingPonderation: 1,
+  bypassMemoizer: true,
+})
 export class WorkspaceUserApplicationVariableValueMapCacheService extends WorkspaceCacheProvider<UserApplicationVariableValueMaps> {
   override readonly rowsRequirement =
     USER_APPLICATION_VARIABLE_VALUE_ROWS_REQUIREMENT;

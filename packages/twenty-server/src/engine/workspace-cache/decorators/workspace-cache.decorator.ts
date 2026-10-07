@@ -9,6 +9,8 @@ import {
 export type WorkspaceCacheOptions = {
   packingPonderation: number;
   localDataOnly?: boolean;
+  // The memoizer is per server, so it would keep serving a value another server invalidated until its TTL.
+  bypassMemoizer?: boolean;
 };
 
 export const WORKSPACE_CACHE_KEY = 'WORKSPACE_CACHE_KEY';
