@@ -2,6 +2,7 @@ import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { isFunction, isNumber, isString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type TooltipProps } from '../types/TooltipProps';
@@ -54,11 +55,10 @@ export const TooltipComponent = <TPayload,>({
   portalProps,
   ...popupProps
 }: TooltipProps<TPayload>) => {
+  const hasDescription = isRenderableSlot(description);
   const isDisabled =
     disabled ||
-    (!isDefined(content) && !isDefined(description)) ||
-    content === '' ||
-    content === false;
+    (!isFunction(content) && !isRenderableSlot(content) && !hasDescription);
 
   const trigger = (
     <TooltipPrimitive.Trigger
@@ -71,11 +71,17 @@ export const TooltipComponent = <TPayload,>({
   );
 
   const renderContent = (resolvedContent: ReactNode) => {
+    const hasContent = isRenderableSlot(resolvedContent) || hasDescription;
+
+    if (!hasContent) {
+      return <>{trigger}</>;
+    }
+
     const hasTextLayout =
       isString(resolvedContent) ||
       isNumber(resolvedContent) ||
-      isDefined(description) ||
-      isDefined(startIcon);
+      hasDescription ||
+      isRenderableSlot(startIcon);
 
     return (
       <>

@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 
 import styles from '../Tooltip.module.scss';
 
@@ -16,9 +16,9 @@ export const TooltipBody = ({
   startIcon,
 }: TooltipBodyProps) => (
   <div className={styles.content}>
-    {isDefined(children) && children !== '' && (
+    {isRenderableSlot(children) && (
       <div className={styles.title}>
-        {isDefined(startIcon) && (
+        {isRenderableSlot(startIcon) && (
           <span className={styles.icon} aria-hidden>
             {startIcon}
           </span>
@@ -26,7 +26,7 @@ export const TooltipBody = ({
         <span>{children}</span>
       </div>
     )}
-    {isDefined(description) && (
+    {isRenderableSlot(description) && (
       <div className={styles.description}>{description}</div>
     )}
   </div>

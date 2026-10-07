@@ -217,6 +217,80 @@ describe('Tooltip interactions', () => {
 });
 
 describe('Tooltip shorthand configuration', () => {
+  it('shows a description when its title is empty', async () => {
+    const user = userEvent.setup();
+    render(
+      <Tooltip content="" description="Account help">
+        <button type="button">Account</button>
+      </Tooltip>,
+    );
+
+    await user.tab();
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Account help',
+    );
+  });
+
+  it('suppresses empty payloads without disconnecting their triggers', async () => {
+    const user = userEvent.setup();
+    const handle = Tooltip.createHandle<string>();
+    render(
+      <>
+        <Tooltip.Trigger handle={handle}>Missing</Tooltip.Trigger>
+        <Tooltip.Trigger handle={handle} payload="">
+          Empty
+        </Tooltip.Trigger>
+        <Tooltip<string>
+          handle={handle}
+          content={({ payload }) => payload}
+          triggerProps={{ payload: 'Account help' }}
+        >
+          <button type="button">Account</button>
+        </Tooltip>
+      </>,
+    );
+
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Account help',
+    );
+
+    await user.tab({ shift: true });
+    expect(screen.getByRole('button', { name: 'Empty' })).toHaveFocus();
+    await waitFor(() => expect(screen.queryByRole('tooltip')).toBeNull());
+
+    await user.tab({ shift: true });
+    expect(screen.getByRole('button', { name: 'Missing' })).toHaveFocus();
+    expect(screen.queryByRole('tooltip')).toBeNull();
+
+    await user.tab();
+    await user.tab();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Account help',
+    );
+  });
+
+  it('shows a description when a payload callback returns no title', async () => {
+    const user = userEvent.setup();
+    render(
+      <Tooltip<string>
+        content={({ payload }) => payload}
+        description="Account help"
+      >
+        <button type="button">Account</button>
+      </Tooltip>,
+    );
+
+    await user.tab();
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Account help',
+    );
+  });
+
   it('shares typed payloads with detached triggers and exposes imperative actions', async () => {
     const user = userEvent.setup();
     const handle = Tooltip.createHandle<string>();
