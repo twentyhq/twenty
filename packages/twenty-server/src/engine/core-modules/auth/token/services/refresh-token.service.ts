@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { type EntityManager, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -114,6 +114,7 @@ export class RefreshTokenService {
   async generateRefreshToken(
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
     isImpersonationToken: boolean = false,
+    entityManager?: EntityManager,
   ): Promise<AuthToken> {
     const expiresIn = isImpersonationToken
       ? '1d'
@@ -128,13 +129,16 @@ export class RefreshTokenService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const refreshToken = this.appTokenRepository.create({
+    const appTokenRepository =
+      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
+
+    const refreshToken = appTokenRepository.create({
       ...payload,
       expiresAt,
       type: AppTokenType.RefreshToken,
     });
 
-    await this.appTokenRepository.save(refreshToken);
+    await appTokenRepository.save(refreshToken);
 
     const jwtPayload: RefreshTokenJwtPayload = {
       ...payload,

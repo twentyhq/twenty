@@ -27,6 +27,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -302,6 +303,12 @@ export class TwoFactorAuthenticationRecoveryService {
 
     const redemption = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {
+        await acquireUserAuthenticationLock({
+          entityManager,
+          userId,
+          mode: 'exclusive',
+        });
+
         const appTokenRepository = entityManager.getRepository(AppTokenEntity);
 
         // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued

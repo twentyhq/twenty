@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import IORedis from 'ioredis';
 import { authenticator } from 'otplib';
+import { type QueryRunner } from 'typeorm';
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/generate-two-factor-authentication-recovery-code.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
@@ -15,6 +16,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
@@ -237,6 +239,47 @@ const setTwoFactorAuthenticationEnforced = async (
   );
 
   expect(response.body.errors).toBeUndefined();
+};
+
+const holdUserAuthenticationLock = async (
+  userId: string,
+): Promise<QueryRunner> => {
+  const queryRunner = global.testDataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+  await acquireUserAuthenticationLock({
+    entityManager: queryRunner.manager,
+    userId,
+    mode: 'exclusive',
+  });
+
+  return queryRunner;
+};
+
+const waitUntilARequestAwaitsTheUserAuthenticationLock =
+  async (): Promise<void> => {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const waitingLocks = await global.testDataSource.query(
+        `SELECT 1 FROM pg_locks WHERE "locktype" = 'advisory' AND NOT "granted"`,
+      );
+
+      if (waitingLocks.length > 0) {
+        return;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    throw new Error('No request waited on the user authentication lock');
+  };
+
+const releaseUserAuthenticationLock = async (queryRunner: QueryRunner) => {
+  if (queryRunner.isTransactionActive) {
+    await queryRunner.rollbackTransaction();
+  }
+
+  await queryRunner.release();
 };
 
 describe('Two-factor authentication recovery codes (integration)', () => {
@@ -741,6 +784,89 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       } finally {
         await setTwoFactorAuthenticationEnforced(false);
       }
+    });
+
+    it('keeps the enrollment reservation of a recovery that lands while an OTP sign-in is in flight', async () => {
+      const loginToken = await getJonyLoginToken();
+      const otp = await generateOtp(jonySecret);
+      const lock = await holdUserAuthenticationLock(USER_DATA_SEED_IDS.JONY);
+
+      let otpSignIn: ReturnType<typeof getAuthTokensFromOtp> | undefined;
+
+      try {
+        otpSignIn = getAuthTokensFromOtp({
+          loginToken,
+          otp,
+          origin: buildAppleWorkspaceOrigin(),
+          expectToFail: true,
+        });
+
+        await waitUntilARequestAwaitsTheUserAuthenticationLock();
+
+        await lock.query(
+          `DELETE FROM core."twoFactorAuthenticationMethod" WHERE "userWorkspaceId" = $1`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JONY],
+        );
+        await lock.query(
+          `INSERT INTO core."appToken" ("userId", "workspaceId", "type", "value", "expiresAt", "deletedAt") VALUES ($1, $2, $3, $4, now() + interval '1 hour', now())`,
+          [
+            USER_DATA_SEED_IDS.JONY,
+            SEED_APPLE_WORKSPACE_ID,
+            AppTokenType.TwoFactorAuthenticationRecoveryCode,
+            hashTwoFactorAuthenticationRecoveryCode('RESERVED-ENROLLMENT'),
+          ],
+        );
+        await lock.commitTransaction();
+      } finally {
+        await releaseUserAuthenticationLock(lock);
+      }
+
+      const { errors } = await otpSignIn;
+
+      expect(errors?.[0]?.extensions?.subCode).toBe('INVALID_CONFIGURATION');
+      expect(await selectOpenRecoveryCodes()).toHaveLength(1);
+
+      await deleteRecoveryCodes();
+      jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    });
+
+    it('refuses a refresh token renewal that was in flight when a recovery revoked the sessions', async () => {
+      const { data } = await getAuthTokensFromOtp({
+        loginToken: await getJonyLoginToken(),
+        otp: await generateOtp(jonySecret),
+        origin: buildAppleWorkspaceOrigin(),
+        expectToFail: false,
+      });
+
+      const lock = await holdUserAuthenticationLock(USER_DATA_SEED_IDS.JONY);
+
+      let renewal: ReturnType<typeof renewToken> | undefined;
+
+      try {
+        renewal = renewToken(
+          data.getAuthTokensFromOTP.tokens.refreshToken.token,
+        );
+
+        await waitUntilARequestAwaitsTheUserAuthenticationLock();
+
+        await lock.query(
+          `UPDATE core."appToken" SET "revokedAt" = COALESCE("revokedAt", now()), "context" = COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', $4::text) WHERE "userId" = $1 AND "workspaceId" = $2 AND "type" = $3`,
+          [
+            USER_DATA_SEED_IDS.JONY,
+            SEED_APPLE_WORKSPACE_ID,
+            AppTokenType.RefreshToken,
+            UserSessionRevokedReason.TwoFactorAuthenticationReset,
+          ],
+        );
+        await lock.commitTransaction();
+      } finally {
+        await releaseUserAuthenticationLock(lock);
+      }
+
+      const response = await renewal;
+
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
     it('stops accepting guesses once the member bucket is spent', async () => {

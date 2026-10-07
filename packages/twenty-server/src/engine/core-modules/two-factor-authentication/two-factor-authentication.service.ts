@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { type EntityManager, IsNull, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -16,6 +16,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -243,16 +244,38 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.update(
-      workspaceId,
-      { id: userTwoFactorAuthenticationMethod.id },
-      { status: OTPStatus.VERIFIED },
-    );
+    await this.appTokenRepository.manager.transaction(async (entityManager) => {
+      await acquireUserAuthenticationLock({
+        entityManager,
+        userId,
+        mode: 'exclusive',
+      });
 
-    await this.revokeRecoveryCodes({
-      workspaceId,
-      userId,
-      includeRedeemed: true,
+      // A recovery that committed after the read replaced this method, and its enrollment reservation must survive
+      const updateResult = await entityManager
+        .getRepository(TwoFactorAuthenticationMethodEntity)
+        .update(
+          {
+            id: userTwoFactorAuthenticationMethod.id,
+            workspaceId,
+            secret: userTwoFactorAuthenticationMethod.secret,
+          },
+          { status: OTPStatus.VERIFIED },
+        );
+
+      if ((updateResult.affected ?? 0) === 0) {
+        throw new TwoFactorAuthenticationException(
+          'Two Factor Authentication Method not found.',
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+        );
+      }
+
+      await this.revokeRecoveryCodes({
+        workspaceId,
+        userId,
+        includeRedeemed: true,
+        entityManager,
+      });
     });
   }
 
@@ -260,12 +283,17 @@ export class TwoFactorAuthenticationService {
     workspaceId,
     userId,
     includeRedeemed = false,
+    entityManager,
   }: {
     workspaceId: WorkspaceEntity['id'];
     userId: UserEntity['id'];
     includeRedeemed?: boolean;
+    entityManager?: EntityManager;
   }): Promise<number> {
-    const updateResult = await this.appTokenRepository.update(
+    const appTokenRepository =
+      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
+
+    const updateResult = await appTokenRepository.update(
       {
         workspaceId,
         userId,

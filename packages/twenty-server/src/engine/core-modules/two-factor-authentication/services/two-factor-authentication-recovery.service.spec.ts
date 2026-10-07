@@ -119,6 +119,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     };
 
     const entityManager = {
+      query: jest.fn(),
       getRepository: (entity: unknown) => {
         if (entity === TwoFactorAuthenticationMethodEntity) {
           return transactionalRepositories.method;
