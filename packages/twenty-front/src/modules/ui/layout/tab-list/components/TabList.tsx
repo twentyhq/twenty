@@ -70,6 +70,7 @@ export const TabList = ({
   behaveAsLinks = true,
   className,
   componentInstanceId,
+  selectedTabId,
   onChangeTab,
   onClickTab,
   rightComponent,
@@ -85,6 +86,7 @@ export const TabList = ({
     activeTabIdComponentState,
     componentInstanceId,
   );
+  const resolvedActiveTabId = selectedTabId ?? activeTabId;
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
   const routeTabId = location.hash.replace('#', '');
@@ -92,11 +94,13 @@ export const TabList = ({
     behaveAsLinks &&
     workspaceSurface.ownsRouteLocation &&
     visibleTabs.some((tab) => tab.id === routeTabId);
-  const nextActiveTabId = shouldSelectRouteTab
-    ? routeTabId
-    : activeTabExists
-      ? activeTabId
-      : (visibleTabs[0]?.id ?? null);
+  const nextActiveTabId = isDefined(selectedTabId)
+    ? selectedTabId
+    : shouldSelectRouteTab
+      ? routeTabId
+      : activeTabExists
+        ? activeTabId
+        : (visibleTabs[0]?.id ?? null);
 
   const {
     visibleTabCount,
@@ -118,7 +122,7 @@ export const TabList = ({
   const shouldShowOverflowDropdown = hasHiddenTabs && !shouldScrollTabs;
 
   const { tabRowRef } = useScrollActiveTabIntoView({
-    activeTabId,
+    activeTabId: resolvedActiveTabId,
     isScrollable: shouldScrollTabs,
   });
 
@@ -126,21 +130,21 @@ export const TabList = ({
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
-    return hiddenTabs.some((tab) => tab.id === activeTabId);
-  }, [hasHiddenTabs, hiddenTabs, activeTabId]);
+    return hiddenTabs.some((tab) => tab.id === resolvedActiveTabId);
+  }, [hasHiddenTabs, hiddenTabs, resolvedActiveTabId]);
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
       onClickTab?.(tabId);
 
-      if (tabId === activeTabId) {
+      if (tabId === resolvedActiveTabId) {
         return;
       }
 
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [activeTabId, setActiveTabId, onChangeTab, onClickTab],
+    [resolvedActiveTabId, setActiveTabId, onChangeTab, onClickTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
@@ -191,7 +195,7 @@ export const TabList = ({
         {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements
             visibleTabs={visibleTabs}
-            activeTabId={activeTabId}
+            activeTabId={resolvedActiveTabId}
             loading={loading}
             onTabWidthChange={onTabWidthChange}
             onMoreButtonWidthChange={onMoreButtonWidthChange}
@@ -212,7 +216,7 @@ export const TabList = ({
                     key={tab.id}
                     tab={tab}
                     mode={behaveAsLinks ? 'link' : 'tab'}
-                    active={tab.id === activeTabId}
+                    active={tab.id === resolvedActiveTabId}
                     disabled={tab.disabled ?? loading}
                     onSelect={handleTabSelect}
                   />
@@ -228,7 +232,7 @@ export const TabList = ({
                       isActiveTabHidden,
                     }}
                     hiddenTabs={hiddenTabs}
-                    activeTabId={activeTabId || ''}
+                    activeTabId={resolvedActiveTabId || ''}
                     onTabSelect={handleTabSelectFromDropdown}
                     loading={loading}
                   />

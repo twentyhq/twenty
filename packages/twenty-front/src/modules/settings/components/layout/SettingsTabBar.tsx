@@ -3,7 +3,11 @@ import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 
 type SettingsTabBarProps = Pick<
   TabListProps,
-  'aria-label' | 'behaveAsLinks' | 'componentInstanceId' | 'tabs'
+  | 'aria-label'
+  | 'behaveAsLinks'
+  | 'componentInstanceId'
+  | 'tabs'
+  | 'selectedTabId'
 >;
 
 export const SettingsTabBar = ({
@@ -11,6 +15,7 @@ export const SettingsTabBar = ({
   behaveAsLinks,
   tabs,
   componentInstanceId,
+  selectedTabId,
 }: SettingsTabBarProps) => {
   return (
     <TabList
@@ -18,6 +23,7 @@ export const SettingsTabBar = ({
       behaveAsLinks={behaveAsLinks}
       tabs={tabs}
       componentInstanceId={componentInstanceId}
+      selectedTabId={selectedTabId}
       centerTabs
     />
   );

@@ -10,7 +10,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -123,10 +122,10 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
       : []),
   ];
   const tabComponentInstanceId = `app-preferences-${builtInAppId}`;
-  const activeTabId = useSettingsActiveTabId(
-    tabComponentInstanceId,
-    tabs.map((tab) => tab.id),
-  );
+  const requestedTabId = location.hash.replace('#', '');
+  const activeTabId = tabs.some((tab) => tab.id === requestedTabId)
+    ? requestedTabId
+    : 'general';
   const preferenceChannels =
     activeTabId === 'messaging' ? messageChannels : calendarChannels;
   const selectedPreferenceChannel =
@@ -185,6 +184,7 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
             aria-label={t`App preferences tabs`}
             componentInstanceId={tabComponentInstanceId}
             tabs={tabs}
+            selectedTabId={activeTabId}
           />
           {activeTabId !== 'general' &&
             isDefined(selectedPreferenceChannel) && (

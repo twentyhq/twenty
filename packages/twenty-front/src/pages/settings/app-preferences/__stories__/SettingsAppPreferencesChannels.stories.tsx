@@ -1,7 +1,14 @@
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { type ReactNode } from 'react';
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   MessageChannelContactAutoCreationPolicy,
@@ -21,6 +28,7 @@ import {
   MOCKED_PAUSED_GOOGLE_ACCOUNT,
 } from '~/pages/settings/accounts/__stories__/mockedConnectedAccounts';
 import { SettingsAppPreferencesBuiltInApplication } from '~/pages/settings/app-preferences/SettingsAppPreferencesBuiltInApplication';
+import { SettingsAppPreferences } from '~/pages/settings/app-preferences/SettingsAppPreferences';
 import {
   calendarChannelUpdates,
   getAppPreferencesChannelMocks,
@@ -95,18 +103,23 @@ const googleCalendarMocks = getAppPreferencesChannelMocks({
   ],
 });
 
-const ChannelsWithBackNavigation = () => {
+type ChannelsWithHistoryNavigationProps = { children?: ReactNode };
+
+const ChannelsWithHistoryNavigation = ({
+  children,
+}: ChannelsWithHistoryNavigationProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   return (
     <>
       <button onClick={() => navigate(-1)}>Back</button>
+      <button onClick={() => navigate(1)}>Forward</button>
       <output aria-label="Current preferences URL">
         {location.pathname}
         {location.search}
         {location.hash}
       </output>
-      <SettingsAppPreferencesBuiltInApplication />
+      {children ?? <SettingsAppPreferencesBuiltInApplication />}
     </>
   );
 };
@@ -344,7 +357,7 @@ export const GoogleCalendarPreferences: Story = {
 };
 
 export const AccountMenuAndBackNavigation: Story = {
-  render: () => <ChannelsWithBackNavigation />,
+  render: () => <ChannelsWithHistoryNavigation />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -427,6 +440,88 @@ export const AccountMenuAndBackNavigation: Story = {
         ([channelId]) => channelId === 'second-google-message-channel',
       ),
     ).toBe(true);
+  },
+};
+
+export const BareUrlTabHistoryAndRevisit: Story = {
+  args: { routePath: '/settings/*' },
+  render: () => (
+    <ChannelsWithHistoryNavigation>
+      <Routes>
+        <Route path="app-preferences" element={<SettingsAppPreferences />} />
+        <Route
+          path="app-preferences/built-in/:builtInAppId"
+          element={<SettingsAppPreferencesBuiltInApplication />}
+        />
+        <Route
+          path="*"
+          element={
+            <Navigate to="/settings/app-preferences/built-in/gmail" replace />
+          }
+        />
+      </Routes>
+    </ChannelsWithHistoryNavigation>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const preferencesUrl = await canvas.findByRole('status', {
+      name: 'Current preferences URL',
+    });
+
+    await expect(await canvas.findByText('Blocklist')).toBeVisible();
+    await expect(preferencesUrl).toHaveTextContent(
+      /^\/settings\/app-preferences\/built-in\/gmail$/,
+    );
+    await expect(canvas.getByRole('link', { name: 'General' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Messaging' }));
+    await expect(await canvas.findByText('Import')).toBeVisible();
+    await expect(
+      canvas.getByRole('link', { name: 'Messaging' }),
+    ).toHaveAttribute('aria-current', 'page');
+    await expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Back' }));
+    await expect(await canvas.findByText('Blocklist')).toBeVisible();
+    await expect(preferencesUrl).toHaveTextContent(
+      /^\/settings\/app-preferences\/built-in\/gmail$/,
+    );
+    await expect(canvas.getByRole('link', { name: 'General' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(
+      canvas.getByRole('link', { name: 'Messaging' }),
+    ).not.toHaveAttribute('aria-current');
+    await expect(canvas.queryByText('Import')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Forward' }));
+    await expect(await canvas.findByText('Import')).toBeVisible();
+    await expect(preferencesUrl).toHaveTextContent(
+      '/settings/app-preferences/built-in/gmail#messaging',
+    );
+    await expect(
+      canvas.getByRole('link', { name: 'Messaging' }),
+    ).toHaveAttribute('aria-current', 'page');
+    await expect(
+      canvas.getByRole('link', { name: 'General' }),
+    ).not.toHaveAttribute('aria-current');
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Apps' }));
+    await canvas.findByText('Apps preferences');
+    await userEvent.click(canvas.getByRole('link', { name: 'Gmail' }));
+    await expect(await canvas.findByText('Blocklist')).toBeVisible();
+    await expect(preferencesUrl).toHaveTextContent(
+      /^\/settings\/app-preferences\/built-in\/gmail$/,
+    );
+    await expect(canvas.getByRole('link', { name: 'General' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(canvas.queryByText('Import')).not.toBeInTheDocument();
   },
 };
 
