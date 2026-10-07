@@ -1,8 +1,12 @@
 import { createElement, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
+
+const OVERFLOW_ROW_STYLE = { width: 160 };
 
 const ListItemExample = () => {
   const [selected, setSelected] = useState(false);
@@ -27,11 +31,21 @@ const ListItemExample = () => {
         }
         hasSubmenu
         onClick={() => setOpened(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setOpened(false);
+          }
+        }}
       >
         Hidden fields
       </ListItem>
-      <p>Fields: {opened ? 'open' : 'closed'}</p>
-      <p role="status">Digest: {selected ? 'enabled' : 'disabled'}</p>
+      <ThemeProvider colorScheme="light" applyToRoot={false}>
+        <ListItem style={OVERFLOW_ROW_STYLE}>
+          A long workspace preference that overflows its row
+        </ListItem>
+      </ThemeProvider>
+      <Text>Fields: {opened ? 'open' : 'closed'}</Text>
+      <Text role="status">Digest: {selected ? 'enabled' : 'disabled'}</Text>
     </TwentyUiGalleryCard>
   );
 };

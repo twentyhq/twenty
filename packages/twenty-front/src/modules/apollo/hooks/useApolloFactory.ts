@@ -2,7 +2,7 @@ import { InMemoryCache } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { ApolloFactory, type Options } from '@/apollo/services/ApolloFactory';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';

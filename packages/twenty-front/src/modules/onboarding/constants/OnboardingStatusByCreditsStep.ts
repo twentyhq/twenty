@@ -6,7 +6,6 @@ export const ONBOARDING_STATUS_BY_CREDITS_STEP: Record<
   OnboardingStatus
 > = {
   importContacts: OnboardingStatus.SYNC_EMAIL,
-  installApps: OnboardingStatus.APPS_INSTALLATION,
   createProfile: OnboardingStatus.PROFILE_CREATION,
   inviteTeam: OnboardingStatus.INVITE_TEAM,
   upgradeTrial: OnboardingStatus.PLAN_REQUIRED,

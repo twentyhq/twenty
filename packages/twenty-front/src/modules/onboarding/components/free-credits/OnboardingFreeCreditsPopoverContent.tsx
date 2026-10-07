@@ -8,7 +8,6 @@ import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import {
-  IconApps,
   IconAt,
   IconCoins,
   type IconComponent,
@@ -23,7 +22,7 @@ import {
   IconWand,
 } from 'twenty-ui/icon';
 import { MetricRow } from 'twenty-ui/components/data-display';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContent = styled.div`
@@ -76,7 +75,6 @@ export const OnboardingFreeCreditsPopoverContent = ({
     { Icon: IconComponent; label: string }
   > = {
     importContacts: { Icon: IconAt, label: t`Import contacts` },
-    installApps: { Icon: IconApps, label: t`Install apps` },
     createProfile: { Icon: IconUserCircle, label: t`Create profile` },
     inviteTeam: { Icon: IconUserPlus, label: t`Invite your team` },
     upgradeTrial: { Icon: IconCreditCard, label: t`Upgrade your trial` },
@@ -114,7 +112,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
       </StyledSection>
       {isNonEmptyArray(earnedCreditsByStep) && (
         <>
-          <HorizontalSeparator noMargin />
+          <Separator />
           <StyledSection>
             <StyledSectionTitle>{t`Breakdown`}</StyledSectionTitle>
             {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => (
@@ -133,7 +131,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           </StyledSection>
         </>
       )}
-      <HorizontalSeparator noMargin />
+      <Separator />
       <StyledSection>
         <StyledSectionTitle>
           {earnedCredits > 0
@@ -165,7 +163,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           {t`Shared inbox emails`}
         </MetricRow>
       </StyledSection>
-      <HorizontalSeparator noMargin />
+      <Separator />
       <StyledFooter>
         <IconInfoCircle size={theme.icon.size.sm} />
         {t`Stacks on top of your plan and never expires`}

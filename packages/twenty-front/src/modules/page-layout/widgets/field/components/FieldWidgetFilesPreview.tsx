@@ -1,4 +1,4 @@
-import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/constants/PreviewableExtensions';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';

@@ -14,7 +14,6 @@ import {
   type RowAccessEvaluationContext,
   type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
-import { resolveRecordShareFeatureFlags } from 'src/engine/core-modules/record-share/utils/resolve-record-share-feature-flags.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -241,9 +240,9 @@ describe('evaluateRowAccessPolicy', () => {
         environment: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-          ...resolveRecordShareFeatureFlags({
+          featureFlagsMap: {
             [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: false,
-          }),
+          },
         },
         tableAlias: 'company',
         flatObjectMetadata: privateObject,

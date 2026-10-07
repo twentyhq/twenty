@@ -152,36 +152,12 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should install apps after syncing emails', () => {
+  it('should create profile after syncing emails', () => {
     const {
       nextOnboardingStatus,
       isWelcomeAnimationVisible,
       shouldOpenAiChatAfterOnboarding,
     } = renderHooks(OnboardingStatus.SYNC_EMAIL);
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.APPS_INSTALLATION);
-    expect(isWelcomeAnimationVisible).toBe(false);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
-  it('should create profile after syncing emails when more than 1 workspaceMember exist', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.SYNC_EMAIL, {
-      withOneWorkspaceMember: false,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
-    expect(isWelcomeAnimationVisible).toBe(false);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
-  it('should create profile after installing apps', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.APPS_INSTALLATION);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
     expect(isWelcomeAnimationVisible).toBe(false);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);

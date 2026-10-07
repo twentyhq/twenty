@@ -12,8 +12,9 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpWorkspaceScopeForm = () => {
@@ -56,7 +57,7 @@ export const SignInUpWorkspaceScopeForm = () => {
           providers.microsoft ||
           providers.sso.length > 0) &&
         providers.password ? (
-          <HorizontalSeparator />
+          <Separator style={{ marginBlock: themeCssVariables.spacing[3] }} />
         ) : null}
         {providers.password && (
           // oxlint-disable-next-line react/jsx-props-no-spreading

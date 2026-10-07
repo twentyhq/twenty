@@ -537,7 +537,7 @@
                       {
                         "group": "Accessibility",
                         "pages": [
-                          "ui/primitives/accessibility/visibility-hidden"
+                          "ui/primitives/accessibility/visually-hidden"
                         ]
                       },
                       {
@@ -583,9 +583,9 @@
                         "group": "Layout",
                         "pages": [
                           "ui/primitives/layout/collapsible",
-                          "ui/primitives/layout/horizontal-separator",
+                          "ui/primitives/layout/separator",
                           "ui/primitives/layout/resize-handle",
-                          "ui/primitives/layout/text-direction-provider"
+                          "ui/primitives/layout/direction-provider"
                         ]
                       },
                       {

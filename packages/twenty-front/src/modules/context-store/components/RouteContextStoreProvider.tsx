@@ -64,11 +64,11 @@ export const RouteContextStoreProvider = () => {
     AppPath.WorkflowCoreShowPage,
   );
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
-  // A chat on screen, full page or in the inbox, is the record page of the chat
+  // The chat page and the whole inbox act on chats: the chat on screen, or
+  // the chats selected in the inbox list
   const isAiChatPage =
     isMatchingLocation(location, AppPath.AiChat) ||
-    (isMatchingLocation(location, AppPath.AiChatInbox) &&
-      isDefined(routeParams?.threadId));
+    isMatchingLocation(location, AppPath.AiChatInbox);
   const isRecordShowPage =
     isCoreWorkflowShowPage ||
     isAiChatPage ||
