@@ -146,10 +146,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
           {!showVettedOnly && nonVettedApplications.length > 0 && (
             <StyledNotVettedContainer>
-              <InlineBanner
-                status="warning"
-                color="red"
-              >{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
+              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
                 {nonVettedApplications.map((application) => (
                   <SettingsAvailableApplicationCard

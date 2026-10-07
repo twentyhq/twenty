@@ -358,7 +358,6 @@ export const SettingsApplicationDetails = () => {
           {isApplicationStopped && (
             <InlineBanner
               status="warning"
-              color="red"
               icon={
                 <IconAlertTriangle
                   size={themeCssVariables.icon.size.md}
