@@ -4751,6 +4751,7 @@ input UpdatePageLayoutWidgetInput {
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
+  isActive: Boolean
   objectMetadataId: UUID
   pageLayoutTabId: UUID
   position: JSON
