@@ -1,3 +1,4 @@
+import { isInternalAppPath } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -25,13 +26,14 @@ export const NavigationMenuItemLinkDisplay = ({
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
 
-  const defaultRightOptions = !isLayoutCustomizationModeEnabled && (
-    <IconArrowUpRight
-      size={theme.icon.size.sm}
-      stroke={theme.icon.stroke.md}
-      color={themeCssVariables.font.color.light}
-    />
-  );
+  const defaultRightOptions = !isLayoutCustomizationModeEnabled &&
+    !isInternalAppPath(computedLink) && (
+      <IconArrowUpRight
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.md}
+        color={themeCssVariables.font.color.light}
+      />
+    );
 
   return (
     <NavigationDrawerItem
