@@ -9,7 +9,6 @@ import { FilesFieldResolver } from 'src/engine/core-modules/file/files-field/res
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -17,7 +16,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      WorkspaceEntity,
       ApplicationEntity,
       FieldMetadataEntity,
       FileEntity,

@@ -5,7 +5,6 @@ import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -32,7 +31,7 @@ import { UserService } from './services/user.service';
     FileModule,
     WorkspaceModule,
     OnboardingModule,
-    TypeOrmModule.forFeature([KeyValuePairEntity, UserWorkspaceEntity]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserVarsModule,
     UserWorkspaceModule,
     UserRoleModule,
