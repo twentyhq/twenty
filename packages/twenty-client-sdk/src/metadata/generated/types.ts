@@ -12510,6 +12510,9 @@ export default {
             "configuration": [
                 285
             ],
+            "isActive": [
+                4
+            ],
             "objectMetadataId": [
                 477
             ],

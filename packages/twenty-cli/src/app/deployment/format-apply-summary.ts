@@ -5,7 +5,21 @@ import { formatAppDuration } from '@/app/format-app-duration';
 import { type AppPlanSummary } from '@/app/deployment/types/app-plan.type';
 import { type AppUploadProgress } from '@/app/deployment/types/app-upload-progress.type';
 import { formatDataValue } from '@/data/format-data-value';
-import { dimText, formatSuccessLine } from '@/output/style';
+import { colorText, dimText, formatSuccessLine } from '@/output/style';
+
+const formatChangeCount = ({
+  count,
+  label,
+  color,
+}: {
+  count: number;
+  label: string;
+  color: 'green' | 'yellow' | 'red';
+}) => {
+  const text = `${count} ${label}`;
+
+  return count === 0 ? dimText(text) : colorText(color, text);
+};
 
 export const formatApplySummary = ({
   applicationName,
@@ -25,17 +39,31 @@ export const formatApplySummary = ({
   durationMilliseconds: number;
 }) => {
   const changes = isDefined(summary)
-    ? `${summary.create} added · ${summary.update} changed · ${summary.delete} deleted`
-    : 'changes not reported';
+    ? [
+        formatChangeCount({
+          count: summary.create,
+          label: 'added',
+          color: 'green',
+        }),
+        formatChangeCount({
+          count: summary.update,
+          label: 'changed',
+          color: 'yellow',
+        }),
+        formatChangeCount({
+          count: summary.delete,
+          label: 'deleted',
+          color: 'red',
+        }),
+      ].join(dimText(' · '))
+    : dimText('changes not reported');
   const fileLabel = upload.fileCount === 1 ? 'file' : 'files';
 
   return [
     formatSuccessLine(
       `Applied ${formatDataValue(applicationName)} to ${apiUrl} ${dimText(`in ${formatAppDuration(durationMilliseconds)}`)}`,
     ),
-    dimText(
-      `  ${changes} · ${upload.fileCount} ${fileLabel} uploaded (${formatBytes(upload.byteCount)})`,
-    ),
+    `  ${changes}${dimText(` · ${upload.fileCount} ${fileLabel} uploaded (${formatBytes(upload.byteCount)})`)}`,
     isRegistrationCreated
       ? dimText('  Registered the app and installed it in this workspace.')
       : '',
