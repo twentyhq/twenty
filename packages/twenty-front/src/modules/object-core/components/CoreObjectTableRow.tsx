@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledCoreObjectTableBody = styled(TableBody)`
@@ -21,6 +22,10 @@ const StyledCoreObjectTableHeaderRow = styled(TableRow)`
     color: ${themeCssVariables.font.color.secondary};
     font-size: ${themeCssVariables.font.size.sm};
     height: ${themeCssVariables.spacing[10]};
+  }
+
+  > [data-table-header] > ${TableHeaderText} {
+    padding-bottom: 0;
   }
 `;
 

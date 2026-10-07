@@ -12,6 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -113,12 +114,20 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
             tableId={tableId}
             initialSort={{ fieldName: 'label', direction: 'asc' }}
           />
-          <TableHeader>{t`Data type`}</TableHeader>
+          <TableHeader>
+            <TableHeaderText>{t`Data type`}</TableHeaderText>
+          </TableHeader>
           <>
             {shouldShowEmptyTableHeader && <TableHeader />}
-            {shouldShowSeeTableHeader && <TableHeader>{t`See`}</TableHeader>}
+            {shouldShowSeeTableHeader && (
+              <TableHeader>
+                <TableHeaderText>{t`See`}</TableHeaderText>
+              </TableHeader>
+            )}
             {shouldShowUpdateTableHeader && (
-              <TableHeader>{t`Edit`}</TableHeader>
+              <TableHeader>
+                <TableHeaderText>{t`Edit`}</TableHeaderText>
+              </TableHeader>
             )}
           </>
         </TableRow>

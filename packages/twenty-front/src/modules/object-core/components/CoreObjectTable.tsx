@@ -15,6 +15,7 @@ import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableH
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 
@@ -94,7 +95,7 @@ export const CoreObjectTable = <TItem,>({
           ) : (
             <TableHeader key={column.fieldName} align={column.align}>
               <column.FieldIcon size={14} />
-              {t(column.fieldLabel)}
+              <TableHeaderText>{t(column.fieldLabel)}</TableHeaderText>
             </TableHeader>
           ),
         )}
