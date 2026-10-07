@@ -35,7 +35,6 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
     { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
 
