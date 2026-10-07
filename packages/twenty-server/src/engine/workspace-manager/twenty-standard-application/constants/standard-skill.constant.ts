@@ -47,6 +47,9 @@ export const STANDARD_SKILL = {
   enrich: {
     universalIdentifier: '20202020-2f85-4a6c-91b3-8e7d0c2b5f49',
   },
+  'find-prospects': {
+    universalIdentifier: '20202020-b5e0-4a44-9e8d-c03c3614fbff',
+  },
 } as const satisfies Record<
   string,
   {
