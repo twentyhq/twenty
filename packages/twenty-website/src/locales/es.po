@@ -3816,6 +3816,11 @@ msgstr "Alemania 🇩🇪"
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
 msgstr "Obtén la certificación como socio de Twenty: una insignia verificada, un perfil en el directorio que tus clientes pueden consultar y resúmenes de clientes adecuados para los mejores socios."
 
+#. js-lingui-id: zn+MlF
+#: src/platform/routing/static-website-routes.ts
+msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
+msgstr ""
+
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
@@ -7416,8 +7421,14 @@ msgstr "Súper socio"
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
+#: src/app/[locale]/(site)/support/page.tsx
 msgid "Support"
 msgstr "Soporte"
+
+#. js-lingui-id: RgtAtw
+#: src/platform/routing/static-website-routes.ts
+msgid "Support | Twenty"
+msgstr ""
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts
