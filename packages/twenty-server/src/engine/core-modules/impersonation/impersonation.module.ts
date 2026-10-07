@@ -23,6 +23,5 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     UserSessionModule,
   ],
   providers: [ImpersonationService, ImpersonationResolver],
-  exports: [ImpersonationService],
 })
 export class ImpersonationModule {}

@@ -3,8 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
-import { isDefined } from 'twenty-ui/utilities';
 import { type AvatarOrIconProps } from './types/AvatarOrIconProps';
+import { isDefined } from 'twenty-shared/utils';
 
 const styles = {
   iconWithBackgroundContainer: css`

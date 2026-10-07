@@ -2268,6 +2268,7 @@ export interface Mutation {
     updateMessageChannel: MessageChannel
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
+    updateMyUserApplicationVariable: Scalars['Boolean']
     updateNavigationMenuItem: NavigationMenuItem
     updateOneAgent: Agent
     updateOneApplicationVariable: Scalars['Boolean']
@@ -2858,6 +2859,7 @@ export interface Query {
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
     myMessageFolders: MessageFolder[]
+    myUserApplicationVariables: WorkspaceMemberApplicationVariables[]
     navigationMenuItem?: NavigationMenuItem
     navigationMenuItems: NavigationMenuItem[]
     object: Object
@@ -3487,6 +3489,19 @@ export interface User {
     __typename: 'User'
 }
 
+export interface UserApplicationVariableValue {
+    description: Scalars['String']
+    isDeprecated: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isSecret: Scalars['Boolean']
+    key: Scalars['String']
+    label: Scalars['String']
+    options?: Scalars['JSON']
+    type: Scalars['String']
+    value: Scalars['String']
+    __typename: 'UserApplicationVariableValue'
+}
+
 export interface UserSession {
     authProvider: Scalars['String']
     createdAt: Scalars['DateTime']
@@ -3874,6 +3889,13 @@ export interface WorkspaceMember {
     userId: Scalars['UUID']
     userWorkspaceId?: Scalars['UUID']
     __typename: 'WorkspaceMember'
+}
+
+export interface WorkspaceMemberApplicationVariables {
+    userWorkspaceId: Scalars['UUID']
+    variables: UserApplicationVariableValue[]
+    workspaceMemberId: Scalars['UUID']
+    __typename: 'WorkspaceMemberApplicationVariables'
 }
 
 
@@ -6449,6 +6471,7 @@ export interface MutationGenqlSelection{
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
+    updateMyUserApplicationVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     updateOneApplicationVariable?: { __args: {applicationId?: (Scalars['UUID'] | null), key: Scalars['String'], value: Scalars['String']} }
@@ -7080,6 +7103,7 @@ export interface QueryGenqlSelection{
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
+    myUserApplicationVariables?: WorkspaceMemberApplicationVariablesGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     object?: (ObjectGenqlSelection & { __args: {
@@ -8011,6 +8035,20 @@ export interface UserGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UserApplicationVariableValueGenqlSelection{
+    description?: boolean | number
+    isDeprecated?: boolean | number
+    isRequired?: boolean | number
+    isSecret?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    options?: boolean | number
+    type?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UserSessionGenqlSelection{
     authProvider?: boolean | number
     createdAt?: boolean | number
@@ -8430,6 +8468,14 @@ export interface WorkspaceMemberGenqlSelection{
     userEmail?: boolean | number
     userId?: boolean | number
     userWorkspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceMemberApplicationVariablesGenqlSelection{
+    userWorkspaceId?: boolean | number
+    variables?: UserApplicationVariableValueGenqlSelection
+    workspaceMemberId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10791,6 +10837,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const UserApplicationVariableValue_possibleTypes: string[] = ['UserApplicationVariableValue']
+    export const isUserApplicationVariableValue = (obj?: { __typename?: any } | null): obj is UserApplicationVariableValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserApplicationVariableValue"')
+      return UserApplicationVariableValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UserSession_possibleTypes: string[] = ['UserSession']
     export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
@@ -11011,6 +11065,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspaceMember = (obj?: { __typename?: any } | null): obj is WorkspaceMember => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMember"')
       return WorkspaceMember_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceMemberApplicationVariables_possibleTypes: string[] = ['WorkspaceMemberApplicationVariables']
+    export const isWorkspaceMemberApplicationVariables = (obj?: { __typename?: any } | null): obj is WorkspaceMemberApplicationVariables => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMemberApplicationVariables"')
+      return WorkspaceMemberApplicationVariables_possibleTypes.includes(obj.__typename)
     }
     
 

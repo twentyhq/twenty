@@ -7,7 +7,7 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type SelectInputProps = {
   onOptionSelected: (selectedOption: SelectOption) => void;

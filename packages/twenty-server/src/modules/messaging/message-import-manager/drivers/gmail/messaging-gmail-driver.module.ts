@@ -16,11 +16,6 @@ import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-i
     GmailMessageListFetchErrorHandler,
     GmailMessagesImportErrorHandler,
   ],
-  exports: [
-    GmailGetMessagesService,
-    GmailGetMessageListService,
-    GmailMessageListFetchErrorHandler,
-    GmailMessagesImportErrorHandler,
-  ],
+  exports: [GmailGetMessagesService, GmailGetMessageListService],
 })
 export class MessagingGmailDriverModule {}

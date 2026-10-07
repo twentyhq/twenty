@@ -109,7 +109,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingOngoingStaleCronCommand,
     MessagingRelaunchFailedMessageChannelsCronCommand,
     MessagingProcessGroupEmailActionsService,
-    InboundEmailImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
     MessagingMessagesImportService,
     MessagingMessageListFetchService,

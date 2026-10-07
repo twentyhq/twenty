@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -37,8 +39,9 @@ jest.mock('@/side-panel/components/SidePanelWidthEffect', () => ({
   SidePanelWidthEffect: () => null,
 }));
 
-jest.mock('@/ui/layout/resizable-panel/components/ResizablePanelGap', () => ({
-  ResizablePanelGap: () => null,
+jest.mock('twenty-ui/primitives/layout', () => ({
+  ...jest.requireActual('twenty-ui/primitives/layout'),
+  ResizeHandle: () => null,
 }));
 
 jest.mock(
@@ -56,7 +59,9 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  <I18nProvider i18n={i18n}>
+    <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+  </I18nProvider>
 );
 
 const startHandoffShrink = () => {

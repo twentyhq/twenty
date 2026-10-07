@@ -4,6 +4,5 @@ import { WorkspaceFlatConnectionProviderMapCacheService } from 'src/engine/metad
 
 @Module({
   providers: [WorkspaceFlatConnectionProviderMapCacheService],
-  exports: [WorkspaceFlatConnectionProviderMapCacheService],
 })
 export class FlatConnectionProviderModule {}

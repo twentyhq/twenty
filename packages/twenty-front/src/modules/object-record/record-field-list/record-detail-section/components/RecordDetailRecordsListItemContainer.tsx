@@ -25,7 +25,8 @@ const StyledListItem = styled.div<{
       calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   }
 
-  &:hover .displayOnHover {
+  &:hover .displayOnHover,
+  &:focus-within .displayOnHover {
     opacity: 1;
     pointer-events: auto;
   }
