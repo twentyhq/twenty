@@ -17,6 +17,7 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
