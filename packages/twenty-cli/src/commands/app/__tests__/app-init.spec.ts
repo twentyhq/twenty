@@ -23,6 +23,7 @@ import {
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
+import { CLI_VERSION } from '@/constants/cli-version.constant';
 
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: vi.fn(),
@@ -163,6 +164,25 @@ describe('app init', () => {
       'run-twenty.ts',
       'schema.integration-test.ts',
     ]);
+  });
+
+  it('installs the generating CLI version in CI before running integration tests', async () => {
+    const result = await run(['my-app']);
+    const workflow = await readFile(
+      join(workDirectory, 'my-app', '.github', 'workflows', 'ci.yml'),
+      'utf8',
+    );
+    const installCommand = `run: npm install -g twenty@${CLI_VERSION}`;
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(workflow).toContain(installCommand);
+    expect(workflow).not.toContain('TO-BE-GENERATED');
+    expect(workflow.indexOf(installCommand)).toBeGreaterThan(
+      workflow.indexOf('uses: actions/setup-node@'),
+    );
+    expect(workflow.indexOf(installCommand)).toBeLessThan(
+      workflow.indexOf('run: yarn test\n'),
+    );
   });
 
   it('returns the app, its pins and the next steps as JSON, without a login step when a workspace is set', async () => {
