@@ -195,7 +195,7 @@ describe('workflow deletion cleanup', () => {
       parentStepId,
     }: {
       workflowVersionId: string;
-      stepType: 'CODE' | 'FORM' | 'DELAY';
+      stepType: 'CODE' | 'FORM';
       parentStepId: string;
     }): Promise<WorkflowVersionStep> => {
       await graphql(
@@ -520,12 +520,12 @@ describe('workflow deletion cleanup', () => {
     }, 120000);
 
     it('deletes runs through the persisted cleanup when deferred migration actions are enabled', async () => {
-      const delayedWorkflow = await createWorkspaceWorkflow(
+      const deferredWorkflow = await createWorkspaceWorkflow(
         `${PREFIX} deferred cleanup`,
       );
-      const delayStep = await createStep({
-        workflowVersionId: delayedWorkflow.workflowVersionId,
-        stepType: 'DELAY',
+      const deferredFormStep = await createStep({
+        workflowVersionId: deferredWorkflow.workflowVersionId,
+        stepType: 'FORM',
         parentStepId: 'trigger',
       });
 
@@ -539,28 +539,33 @@ describe('workflow deletion cleanup', () => {
         `,
         {
           input: {
-            workflowVersionId: delayedWorkflow.workflowVersionId,
+            workflowVersionId: deferredWorkflow.workflowVersionId,
             step: {
-              ...delayStep,
+              ...deferredFormStep,
               settings: {
-                ...delayStep.settings,
-                input: {
-                  delayType: 'DURATION',
-                  duration: { days: 0, hours: 1, minutes: 0, seconds: 0 },
-                },
+                ...deferredFormStep.settings,
+                input: [
+                  {
+                    id: randomUUID(),
+                    name: 'note',
+                    label: 'Note',
+                    type: 'TEXT',
+                  },
+                ],
               },
             },
           },
         },
       );
 
-      const delayedRunId = await runWorkflowVersion({
-        workflowVersionId: delayedWorkflow.workflowVersionId,
+      const deferredRunId = await runWorkflowVersion({
+        workflowVersionId: deferredWorkflow.workflowVersionId,
       });
 
       await waitForTestWorkflowRun(
-        delayedRunId,
-        ({ state }) => state?.stepInfos?.[delayStep.id]?.status === 'PENDING',
+        deferredRunId,
+        ({ state }) =>
+          state?.stepInfos?.[deferredFormStep.id]?.status === 'PENDING',
       );
 
       await updateFeatureFlag({
@@ -579,12 +584,12 @@ describe('workflow deletion cleanup', () => {
               }
             }
           `,
-          { input: { coreWorkflowIds: [delayedWorkflow.coreWorkflowId] } },
+          { input: { coreWorkflowIds: [deferredWorkflow.coreWorkflowId] } },
         );
 
         await expectEventually(
           async () => {
-            expect(await countTestWorkflowRuns([delayedRunId])).toBe(0);
+            expect(await countTestWorkflowRuns([deferredRunId])).toBe(0);
             expect(
               await countRows(
                 `core."deferredWorkspaceMigrationAction" WHERE "workspaceId" = $1 AND name = $2`,
@@ -603,7 +608,7 @@ describe('workflow deletion cleanup', () => {
         });
         await workflowGraphqlRequest(
           'mutation Destroy($id: ID!) { destroyWorkflow(id: $id) { id } }',
-          { id: delayedWorkflow.workflowId },
+          { id: deferredWorkflow.workflowId },
         );
       }
     }, 120000);
