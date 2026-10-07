@@ -4453,6 +4453,9 @@ export default {
             "frontDomain": [
                 1
             ],
+            "serverUrl": [
+                1
+            ],
             "publicFunctionDomain": [
                 1
             ],

@@ -2290,6 +2290,7 @@ type ClientConfig {
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
   frontDomain: String!
+  serverUrl: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
   support: Support!
