@@ -3312,6 +3312,7 @@ export type Mutation = {
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
   updateMessageFolders: Array<MessageFolder>;
+  updateMyUserApplicationVariable: Scalars['Boolean']['output'];
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean']['output'];
@@ -4460,6 +4461,13 @@ export type MutationUpdateMessageFoldersArgs = {
 };
 
 
+export type MutationUpdateMyUserApplicationVariableArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateNavigationMenuItemArgs = {
   input: UpdateOneNavigationMenuItemInput;
 };
@@ -5370,6 +5378,7 @@ export type Query = {
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
   myMessageFolders: Array<MessageFolder>;
+  myUserApplicationVariables: Array<WorkspaceMemberApplicationVariables>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
@@ -7416,6 +7425,19 @@ export type User = {
   workspaces: Array<UserWorkspace>;
 };
 
+export type UserApplicationVariableValue = {
+  __typename?: 'UserApplicationVariableValue';
+  description: Scalars['String']['output'];
+  isDeprecated: Scalars['Boolean']['output'];
+  isRequired: Scalars['Boolean']['output'];
+  isSecret: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  type: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
 export type UserSession = {
   __typename?: 'UserSession';
   authProvider: Scalars['String']['output'];
@@ -7926,6 +7948,13 @@ export type WorkspaceMember = {
   userEmail: Scalars['String']['output'];
   userId: Scalars['UUID']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type WorkspaceMemberApplicationVariables = {
+  __typename?: 'WorkspaceMemberApplicationVariables';
+  userWorkspaceId: Scalars['UUID']['output'];
+  variables: Array<UserApplicationVariableValue>;
+  workspaceMemberId: Scalars['UUID']['output'];
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
