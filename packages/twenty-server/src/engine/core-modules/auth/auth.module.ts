@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -42,19 +41,16 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceSsoModule } from 'src/engine/core-modules/sso/sso.module';
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
@@ -68,7 +64,6 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
@@ -94,13 +89,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       WorkspaceEntity,
       UserEntity,
       AppTokenEntity,
-      ApiKeyEntity,
-      FeatureFlagEntity,
       WorkspaceSsoIdentityProviderEntity,
-      KeyValuePairEntity,
       UserWorkspaceEntity,
-      TwoFactorAuthenticationMethodEntity,
-      ObjectMetadataEntity,
       ConnectedAccountEntity,
       MessageChannelEntity,
       CalendarChannelEntity,

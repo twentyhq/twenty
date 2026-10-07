@@ -31,7 +31,6 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -44,7 +43,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentChatThreadModule,
     AgentHistoryModule,
     AiBillingModule,
-    AiModelsModule,
     AiAgentModule,
     AiAgentRoleModule,
     ApplicationLookupModule,
