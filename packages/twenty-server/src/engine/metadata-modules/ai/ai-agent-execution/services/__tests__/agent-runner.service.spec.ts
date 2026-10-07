@@ -180,14 +180,8 @@ describe('AgentRunnerService', () => {
         spec: { ...RUN_INPUT.spec, capabilities: { canAskHumans } },
       });
 
-      const [{ pausingTools, canProposeToolCalls }] =
-        agentAsyncExecutorService.executeAgent.mock.calls[0];
-
-      expect(canProposeToolCalls).toBe(canAskHumans);
-      expect(Object.keys(pausingTools)).toEqual(
-        canAskHumans
-          ? expect.arrayContaining(['ask_question', 'request_form'])
-          : expect.not.arrayContaining(['ask_question', 'request_form']),
+      expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+        expect.objectContaining({ canAskHumans }),
       );
     },
   );
