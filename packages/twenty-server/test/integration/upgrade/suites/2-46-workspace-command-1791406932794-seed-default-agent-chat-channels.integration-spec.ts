@@ -1,6 +1,6 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type SeedDefaultAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791387425039-seed-default-agent-chat-channels.command';
+import { type SeedDefaultAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791406932794-seed-default-agent-chat-channels.command';
 import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-default-channel-id.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';

@@ -44,7 +44,7 @@ const INDEX_UNIVERSAL_IDENTIFIERS = [
   ),
 ];
 
-@RegisteredWorkspaceCommand('2.46.0', 1791386511131)
+@RegisteredWorkspaceCommand('2.46.0', 1791405449480)
 @Command({
   name: 'upgrade:2-46:add-agent-chat-channels',
   description:

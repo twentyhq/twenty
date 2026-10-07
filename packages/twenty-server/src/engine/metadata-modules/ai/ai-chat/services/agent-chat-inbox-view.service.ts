@@ -55,6 +55,24 @@ const CHANNEL_STATUS_PREDICATES: Record<AgentChatChannelThreadStatus, string> =
     [AgentChatChannelThreadStatus.DONE]: IS_DONE_IN_CHANNEL,
   };
 
+// Chats without activity sort last, so a cursor on one only moves through
+// the other chats without activity
+const buildInboxViewCursorFilter = (
+  cursor: ReturnType<typeof decodeAgentChatInboxViewCursor> | null,
+): string => {
+  if (!isDefined(cursor)) {
+    return '';
+  }
+
+  if (!isDefined(cursor.lastActivityAt)) {
+    return `AND thread."lastActivityAt" IS NULL AND thread.id < :inboxViewCursorId::uuid`;
+  }
+
+  return `AND (thread."lastActivityAt" < :inboxViewCursorLastActivityAt::timestamptz
+    OR (thread."lastActivityAt" = :inboxViewCursorLastActivityAt::timestamptz AND thread.id < :inboxViewCursorId::uuid)
+    OR thread."lastActivityAt" IS NULL)`;
+};
+
 // Lists and counts are worked out here rather than on the client, which
 // cannot load every chat of every public channel to sort them. Only chats the
 // member can read are considered, through the same row level permissions as
@@ -89,13 +107,7 @@ export class AgentChatInboxViewService {
 
     const viewFilter = await this.buildViewFilter({ ...args, view });
 
-    const cursorFilter = isDefined(cursor)
-      ? isDefined(cursor.lastActivityAt)
-        ? `AND (thread."lastActivityAt" < :inboxViewCursorLastActivityAt::timestamptz
-             OR (thread."lastActivityAt" = :inboxViewCursorLastActivityAt::timestamptz AND thread.id < :inboxViewCursorId::uuid)
-             OR thread."lastActivityAt" IS NULL)`
-        : `AND thread."lastActivityAt" IS NULL AND thread.id < :inboxViewCursorId::uuid`
-      : '';
+    const cursorFilter = buildInboxViewCursorFilter(cursor);
 
     const rows = await this.queryReadableThreads<{
       id: string;

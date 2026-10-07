@@ -154,7 +154,7 @@ const deleteDefaultChannels = async ({
   return deletedCount;
 };
 
-@RegisteredWorkspaceCommand('2.46.0', 1791387425039)
+@RegisteredWorkspaceCommand('2.46.0', 1791406932794)
 @Command({
   name: 'upgrade:2-46:seed-default-agent-chat-channels',
   description:
