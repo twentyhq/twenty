@@ -8,6 +8,28 @@ The Twenty API accepts **500 requests per minute per application registration**,
 
 - **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour.
 
+```ts src/logic-functions/enqueue-nightly-sweep.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const NIGHTLY_SWEEP = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const SPREAD_WINDOW_MS = 60 * 60 * 1000;
+
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'enqueue-nightly-sweep',
+  timeoutSeconds: 30,
+  cronTriggerSettings: { pattern: '0 3 * * *' },
+  handler: async () => {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
+      jobs: [{ payload: {} }],
+      delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
+    });
+  },
+});
+```
+
 ```text
    pattern "0 3 * * *"                  the server, every minute
                                                   │
