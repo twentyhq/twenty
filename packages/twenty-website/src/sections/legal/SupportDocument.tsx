@@ -14,7 +14,7 @@ export function SupportDocument() {
       <p>
         You don&rsquo;t need a Twenty account to contact us. Email{' '}
         <a href="mailto:contact@twenty.com">contact@twenty.com</a> and
-        we&rsquo;ll get back to you. We aim to respond within two business days.
+        we&rsquo;ll get back to you.
       </p>
 
       <h3>Twenty Cloud</h3>
