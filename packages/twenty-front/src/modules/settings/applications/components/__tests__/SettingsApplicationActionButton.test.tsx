@@ -57,12 +57,13 @@ describe('SettingsApplicationActionButton', () => {
     expect(onInstall).toHaveBeenCalledTimes(1);
   });
 
-  it('disables the button while installing', () => {
+  it('disables the button and communicates a busy state while installing', () => {
     renderActionButton({ isInstalling: true });
 
-    expect(
-      screen.getByRole('button', { name: /^Installing\b/ }),
-    ).toBeDisabled();
+    const button = screen.getByRole('button', { name: /^Installing\b/ });
+
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
   });
 
   it('shows the installation progress in the label while installing', () => {

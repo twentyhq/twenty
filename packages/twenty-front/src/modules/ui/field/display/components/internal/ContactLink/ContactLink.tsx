@@ -1,8 +1,7 @@
 import { css } from '@linaria/core';
 import * as React from 'react';
 
-import { getSafeUrl } from 'twenty-ui/utilities';
-
+import { getSafeUrl } from 'twenty-shared/utils';
 const styles = {
   root: css`
     & {

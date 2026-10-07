@@ -13,6 +13,5 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
   ],
   providers: [MetadataTranslationService, MetadataTranslationResolver],
-  exports: [MetadataTranslationService],
 })
 export class MetadataTranslationModule {}

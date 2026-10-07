@@ -39,6 +39,5 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     ApplicationConnectionsResolver,
   ],
   controllers: [ApplicationConnectionsController],
-  exports: [ApplicationConnectionsListService],
 })
 export class ApplicationConnectionsModule {}

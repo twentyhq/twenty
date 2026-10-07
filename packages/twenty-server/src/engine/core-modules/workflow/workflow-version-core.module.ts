@@ -32,10 +32,6 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
     WorkflowVersionCoreSyncService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
-  exports: [
-    TypeOrmModule,
-    WorkspaceWorkflowAutomatedTriggerMapCacheService,
-    WorkflowVersionCoreSyncService,
-  ],
+  exports: [TypeOrmModule, WorkflowVersionCoreSyncService],
 })
 export class WorkflowVersionCoreModule {}

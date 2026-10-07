@@ -15,7 +15,6 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
@@ -75,9 +74,9 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
         <>
           <Button
             startIcon={<IconDownload />}
-            endIcon={isInstalling ? <Loader /> : undefined}
             onClick={requestInstall}
-            disabled={isInstalling}
+            loading={isInstalling}
+            loadingPosition="end"
             variant="outline"
           >
             {isInstalling
