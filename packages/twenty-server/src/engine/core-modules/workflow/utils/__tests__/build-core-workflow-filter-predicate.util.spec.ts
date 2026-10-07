@@ -5,9 +5,9 @@ import {
   CoreWorkflowFilterOperand,
   type CoreWorkflowFilterRuleInput,
 } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
-import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 
 const FIRST_PARAMETER_INDEX = 2;
 

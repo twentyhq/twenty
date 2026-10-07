@@ -1,3 +1,4 @@
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
@@ -27,7 +28,6 @@ import {
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
