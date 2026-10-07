@@ -5,25 +5,12 @@ inspect metadata and records, send API requests, and develop applications.
 
 ## Install
 
-The CLI needs Node.js 24.5 or later. If `twenty-sdk` is installed globally,
-uninstall it first. Both packages provide a `twenty` command: installing this
-CLI afterwards takes over the SDK's command, and installing the SDK after this
-CLI fails with `EEXIST`.
-
-```bash
-npm uninstall -g twenty-sdk
-```
-
-Then install the CLI:
+The CLI needs Node.js 24.5 or later.
 
 ```bash
 npm install -g twenty
 twenty --version
 ```
-
-Inside an app project, `yarn twenty` still runs the commands of the app's own
-`twenty-sdk`, while `twenty` runs this CLI. `twenty doctor --offline` shows which
-package owns the `twenty` executable that comes first on PATH.
 
 ## Get started
 
@@ -39,8 +26,7 @@ Replace the example URL with your workspace's address. `--use` makes this
 connection the default, even when another saved connection already is one.
 Workspace commands do not require an application project. Use `--remote <name>`
 to select another saved connection and `--json` for a structured result. Saved
-connections live in `~/.twenty/config.json`, the file the SDK's `yarn twenty`
-commands also use.
+connections live in `~/.twenty/config.json`.
 
 Browser sign-in is supported on Twenty 2.42 and later. On older servers, sign in
 with an [API key](docs/commands.md#connections-and-authentication) instead.
