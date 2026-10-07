@@ -3,11 +3,13 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
+import { backfillAgentChatThreadInboxState } from 'src/database/commands/upgrade-version-command/2-46/utils/backfill-agent-chat-thread-inbox-state.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -93,6 +95,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly storage: AgentHistoryUpgradeStorageService,
   ) {
     super(workspaceIteratorService);
   }
@@ -186,6 +189,31 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
 
     if (options.dryRun ?? false) {
       return;
+    }
+
+    // The assignee opens the runtime's 2.46 chat fence. Until then chats were
+    // written to and created without inbox state, so the inbox backfill runs
+    // again for them first
+    const threadObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+    const participantObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ];
+
+    if (
+      fieldsToCreate.length > 0 &&
+      isDefined(threadObject) &&
+      isDefined(participantObject)
+    ) {
+      await backfillAgentChatThreadInboxState({
+        storage: this.storage,
+        workspaceId,
+        threadObjectMetadataId: threadObject.id,
+        participantObjectMetadataId: participantObject.id,
+      });
     }
 
     const result =
