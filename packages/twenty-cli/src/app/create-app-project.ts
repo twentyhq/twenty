@@ -1,7 +1,6 @@
 import { constants } from 'node:fs';
 import {
   copyFile,
-  cp,
   mkdir,
   mkdtemp,
   readdir,
@@ -11,16 +10,12 @@ import {
   rmdir,
   stat,
   unlink,
-  writeFile,
 } from 'node:fs/promises';
 import { basename, dirname, join, relative } from 'node:path';
 
-import { TEMPLATE_PACKAGE_VERSION } from '@create-twenty-app/constants/template-package-version';
-import { copyBaseApplicationProject } from '@create-twenty-app/utils/app-template';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
-import { getAppTemplateOverlayDirectory } from '@/app/get-app-template-overlay-directory';
+import { renderAppTemplate } from '@/app/render-app-template';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { hasErrorCode } from '@/utils/has-error-code';
@@ -160,29 +155,13 @@ export const createAppProject = async ({
   );
 
   try {
-    await copyBaseApplicationProject({
+    await renderAppTemplate({
       appName,
       appDisplayName,
       appDescription,
       appDirectory: stagingDirectory,
-      templateDirectory: getAppTemplateDirectory(),
     });
     signal.throwIfAborted();
-
-    const packageJsonPath = join(stagingDirectory, 'package.json');
-    const packageJson: { engines: Record<string, string> } = JSON.parse(
-      await readFile(packageJsonPath, 'utf8'),
-    );
-
-    packageJson.engines = {
-      ...packageJson.engines,
-      twenty: `>=${TEMPLATE_PACKAGE_VERSION}`,
-    };
-
-    await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    await cp(getAppTemplateOverlayDirectory(), stagingDirectory, {
-      recursive: true,
-    });
 
     const unrenderedFiles = await findUnrenderedFiles(stagingDirectory);
 

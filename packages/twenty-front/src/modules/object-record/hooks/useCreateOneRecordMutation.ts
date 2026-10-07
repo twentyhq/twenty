@@ -5,7 +5,7 @@ import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generat
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateOneRecordMutation = ({
   objectNameSingular,
@@ -22,7 +22,7 @@ export const useCreateOneRecordMutation = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return { createOneRecordMutation: EMPTY_MUTATION };
   }
 

@@ -1,4 +1,3 @@
-import { convertToLabel } from '@create-twenty-app/utils/convert-to-label';
 import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import {
   FieldMetadataType,
@@ -7,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { convertToLabel } from '@/app/convert-to-label';
 import { APP_ADD_ENTITIES } from '@/app/add/constants/app-add-entities.constant';
 import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
