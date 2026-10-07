@@ -23,7 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -231,12 +231,11 @@ export const AiChatMessage = ({
   return (
     <>
       {firstUnreadMessageId === messageId && (
-        <HorizontalSeparator
-          text={t`New`}
+        <LabeledDivider
           textPosition="end"
           color={themeCssVariables.tag.text.red}
           noMargin
-        />
+        >{t`New`}</LabeledDivider>
       )}
       <StyledMessageBubble isUser={isUser}>
         {isUser && isDefined(senderId) && (

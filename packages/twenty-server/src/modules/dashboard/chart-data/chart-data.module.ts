@@ -23,6 +23,5 @@ import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/p
     BarChartDataService,
     BarChartDataResolver,
   ],
-  exports: [PieChartDataService, LineChartDataService, BarChartDataService],
 })
 export class ChartDataModule {}

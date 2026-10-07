@@ -30,6 +30,7 @@ describe('runAgent', () => {
       result: { response: 'done' },
       error: null,
       success: true,
+      isWaiting: false,
       threadId: null,
     };
 
@@ -78,6 +79,7 @@ describe('runAgent', () => {
               result: { response: 'done' },
               error: null,
               success: true,
+              isWaiting: false,
               threadId: 'thread-id',
             },
           },
@@ -112,6 +114,7 @@ describe('runAgent', () => {
       result: { response: 'done' },
       error: null,
       success: true,
+      isWaiting: false,
     };
 
     fetchSpy.mockResolvedValue(

@@ -116,6 +116,7 @@
       "Section": "components/layout/Section/Section"
     },
     "types": {
+      "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"
@@ -207,6 +208,7 @@
       "IconBadge2k": "icon/components/TablerIcons",
       "IconBaselineDensitySmall": "icon/components/TablerIcons",
       "IconBell": "icon/components/TablerIcons",
+      "IconBellOff": "icon/components/TablerIcons",
       "IconBlockquote": "icon/components/TablerIcons",
       "IconBold": "icon/components/TablerIcons",
       "IconBolt": "icon/components/TablerIcons",
@@ -700,9 +702,11 @@
     "reExports": [],
     "values": {
       "handleClickableElementKeyDown": "primitives/accessibility/utils/handleClickableElementKeyDown",
-      "VisibilityHidden": "primitives/accessibility/components/VisibilityHidden"
+      "VisuallyHidden": "primitives/accessibility/components/VisuallyHidden"
     },
-    "types": {}
+    "types": {
+      "VisuallyHiddenProps": "primitives/accessibility/types/VisuallyHiddenProps"
+    }
   },
   "primitives/data-display": {
     "reExports": [],
@@ -815,16 +819,17 @@
     "reExports": [],
     "values": {
       "Collapsible": "primitives/layout/Collapsible/Collapsible",
-      "HorizontalSeparator": "primitives/layout/HorizontalSeparator/HorizontalSeparator",
+      "DirectionProvider": "primitives/layout/DirectionProvider/DirectionProvider",
       "ResizeHandle": "primitives/layout/ResizeHandle/ResizeHandle",
-      "DirectionProvider": "primitives/layout/DirectionProvider/DirectionProvider"
+      "Separator": "primitives/layout/Separator/Separator"
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
       "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
       "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
+      "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps",
       "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
-      "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps"
+      "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"
     }
   },
   "primitives/navigation": {

@@ -44,11 +44,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceCacheModule,
     MetricsModule,
   ],
-  exports: [
-    ApplicationService,
-    ApplicationStopModule,
-    WorkspaceFlatApplicationMapCacheService,
-  ],
+  exports: [ApplicationService, ApplicationStopModule],
   providers: [
     ApplicationResolver,
     ApplicationService,
