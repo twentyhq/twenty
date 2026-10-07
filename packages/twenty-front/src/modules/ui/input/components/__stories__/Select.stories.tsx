@@ -56,7 +56,62 @@ export const Open: Story = {
 };
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: { disabled: true, onChange: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByText('Option A'));
+
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await expect(args.onChange).not.toHaveBeenCalled();
+  },
+};
+
+export const SingleOptionWithAccessibleLabel: Story = {
+  args: {
+    'aria-label': 'Account',
+    options: [{ value: 'a', label: 'Option A' }],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const control = canvas.getByRole('button', { name: 'Account' });
+
+    await expect(control).toHaveAttribute('aria-disabled', 'true');
+    await expect(control).toHaveTextContent('Option A');
+    await userEvent.click(control);
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await expect(args.onChange).not.toHaveBeenCalled();
+  },
+};
+
+export const DisabledWithReferencedLabel: Story = {
+  args: {
+    'aria-labelledby': 'select-preference-label',
+    disabled: true,
+    onChange: fn(),
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <span id="select-preference-label">Display preference</span>
+        <Story />
+      </>
+    ),
+  ],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const control = canvas.getByRole('button', { name: 'Display preference' });
+
+    await expect(control).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(control);
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await expect(args.onChange).not.toHaveBeenCalled();
+  },
 };
 
 export const WithSearch: Story = {

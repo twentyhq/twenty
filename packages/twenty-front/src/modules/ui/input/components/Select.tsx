@@ -108,6 +108,8 @@ export const Select = <TValue extends SelectValue>({
       !isDefined(pinnedOption) &&
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
+  const hasAccessibleLabel =
+    isNonEmptyString(ariaLabel) || isNonEmptyString(ariaLabelledBy);
 
   const shouldShowPinnedOption =
     isDefined(pinnedOption) &&
@@ -154,8 +156,8 @@ export const Select = <TValue extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <div
-          role="button"
-          aria-disabled
+          role={hasAccessibleLabel ? 'button' : undefined}
+          aria-disabled={hasAccessibleLabel ? true : undefined}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
         >
