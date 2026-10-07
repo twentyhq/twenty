@@ -4,9 +4,9 @@ description: How to develop an app that works and scales well across many worksp
 icon: "gauge-high"
 ---
 
-## Application API rate limit
+The Twenty API accepts **500 requests per minute per application registration**, shared by every workspace that installed the app. Requests beyond that are refused with a `429`. Each practice below keeps an app inside that budget as its number of installs grows.
 
-The Twenty API accepts **500 requests per minute per application registration**, shared by every workspace that installed the app. Requests beyond that are refused with a `429`. A cron trigger starts in every workspace at the same minute, so every install draws on this budget at once:
+- **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour.
 
 ```text
    pattern "0 3 * * *"                  the server, every minute
@@ -22,12 +22,14 @@ The Twenty API accepts **500 requests per minute per application registration**,
                                    N × calls  →  429
 ```
 
-## How to deal with it
+- **Batch database event triggers.** A bulk write such as a mailbox sync emits one event per record, thousands within seconds, and one run per event means one request per record. Set `batchMode: true`, declare `updatedFields`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
 
-- **Batch database event triggers.** Set `batchMode: true`, declare `updatedFields`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
-- **One request per batch, not per record.** Read with `in` filters, write with `createMany` and `upsert: true` or `updateMany`.
-- **Collapse bursts into one delayed job.** Enqueue with `delayMs` and a deterministic `jobId` that includes a time window; the queue ignores an id it already holds. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
-- **Spread sweep crons with a random delay.** The cron handler only enqueues the job, with a random `delayMs` over a large window such as one hour, so the sweeps of all installs spread out instead of hitting the limit together.
-- **Pace fan-outs with `delayMs`.** Group jobs into slots per minute and delay the next page by the slots used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
-- **Retry a `429` with backoff**, or re-enqueue with a delay instead of waiting inside the run.
-- **Cache what does not change** in the [key-value store](/developers/extend/apps/logic/key-value-store).
+- **Make one request per batch, not per record.** The limit counts requests, not records: a `createMany` with `upsert: true` carrying 200 records is one request, 200 single updates are 200. Read with `in` filters and write with `createMany` or `updateMany`.
+
+- **Collapse bursts into one delayed job.** When events reveal work larger than the event itself, enqueuing it once per event multiplies it by the size of the burst. Enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window; the queue ignores an id it already holds. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
+
+- **Pace fan-outs with `delayMs`.** Jobs enqueued without a delay all become eligible at once and spend the budget in the same minute. Group them into slots per minute and delay the next page by the slots used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
+
+- **Retry a `429` with backoff, or re-enqueue with a delay.** The client SDK throws on any non-2xx response, and a run that waits inside spends its own timeout. Retry with exponential backoff and a cap on attempts, or hand the work back to the queue with a delay.
+
+- **Cache what does not change.** A lookup on every event costs a request for a value fixed at connection time, such as an identity or a team id. Store it in the [key-value store](/developers/extend/apps/logic/key-value-store) when the connection is registered.
