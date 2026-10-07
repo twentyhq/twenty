@@ -21,7 +21,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const useCoreObjectsCommands = () => {
   const { t } = useLingui();

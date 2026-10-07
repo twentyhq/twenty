@@ -32,7 +32,7 @@ import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '@/settings/data-model/object-details/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};

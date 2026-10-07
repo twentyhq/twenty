@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +20,8 @@ import {
 
 @Injectable()
 export class AgentChatThreadService {
+  private readonly logger = new Logger(AgentChatThreadService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -156,6 +158,33 @@ export class AgentChatThreadService {
     });
 
     return participantMemberIds;
+  }
+
+  // The message is already sent, so a mention that cannot be applied leaves the
+  // member out rather than failing the send
+  async addMentionedParticipants({
+    mentionedWorkspaceMemberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    mentionedWorkspaceMemberIds: string[];
+  }): Promise<string[]> {
+    if (mentionedWorkspaceMemberIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await this.addParticipants({
+        ...args,
+        participantWorkspaceMemberIds: mentionedWorkspaceMemberIds,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Could not add the members mentioned in chat ${args.threadId} of workspace ${args.workspaceId}`,
+        error,
+      );
+
+      return [];
+    }
   }
 
   // Activity no member wrote, such as an agent turn or an application's

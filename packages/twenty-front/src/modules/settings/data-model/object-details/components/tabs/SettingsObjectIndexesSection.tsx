@@ -25,7 +25,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsObjectIndexTable } from '@/settings/data-model/object-details/components/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types/SettingsObjectIndexesTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

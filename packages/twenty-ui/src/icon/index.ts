@@ -88,6 +88,7 @@ export {
   IconBadge2k,
   IconBaselineDensitySmall,
   IconBell,
+  IconBellOff,
   IconBlockquote,
   IconBold,
   IconBolt,

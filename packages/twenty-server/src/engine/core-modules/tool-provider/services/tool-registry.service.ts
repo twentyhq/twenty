@@ -401,13 +401,36 @@ export class ToolRegistryService {
     );
   }
 
-  // MCP and the workflow agent need full schemas.
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
     const { categories, excludeTools, compactOutput, spillLargeOutput } =
       options;
+
+    const descriptors = await this.getDescriptorsByCategories(context, {
+      categories,
+      excludeTools,
+    });
+
+    const toolSet = this.hydrateToolSet(descriptors, context, {
+      compactOutput,
+      spillLargeOutput,
+    });
+
+    this.logger.log(
+      `Generated ${Object.keys(toolSet).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
+    );
+
+    return toolSet;
+  }
+
+  // MCP and the workflow agent need full schemas.
+  async getDescriptorsByCategories(
+    context: ToolProviderContext,
+    options: Pick<ToolRetrievalOptions, 'categories' | 'excludeTools'> = {},
+  ): Promise<ToolDescriptor[]> {
+    const { categories, excludeTools } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -438,16 +461,7 @@ export class ToolRegistryService {
       );
     }
 
-    const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
-      compactOutput,
-      spillLargeOutput,
-    });
-
-    this.logger.log(
-      `Generated ${Object.keys(toolSet).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
-    );
-
-    return toolSet;
+    return filteredDescriptors;
   }
 
   private generateProviderDescriptors(
