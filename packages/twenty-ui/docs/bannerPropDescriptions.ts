@@ -11,7 +11,7 @@ export const BANNER_PROP_DESCRIPTIONS = {
     'Palette override: gray, blue, green, orange or red. When omitted, status selects the corresponding palette.',
   icon: 'Optional leading ReactNode. The caller supplies decorative or accessible icon semantics.',
   action:
-    'Optional trailing ReactNode, such as buttons, links or multiple controls.',
+    'Optional trailing ReactNode. Banner.Action supplies a small outline action that inherits the resolved banner color; arbitrary controls are also accepted.',
   className: 'Class merged onto the root div or composed element.',
   style: 'Inline styles applied to the root div or composed element.',
   ref: 'Ref to the root div, or to the DOM element supplied through render.',

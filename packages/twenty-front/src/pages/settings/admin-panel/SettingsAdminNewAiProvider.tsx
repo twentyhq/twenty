@@ -1,4 +1,3 @@
-import { Button } from 'twenty-ui/primitives/input';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
@@ -276,17 +275,14 @@ export const SettingsAdminNewAiProvider = () => {
               layout="compact"
               status="error"
               action={
-                <Button
-                  size="sm"
-                  variant="outline"
-                  color="danger"
+                <InlineBanner.Action
                   href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
                   render={
                     <Link
                       to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
                     />
                   }
-                >{t`Activate`}</Button>
+                >{t`Activate`}</InlineBanner.Action>
               }
             >
               {customAiProviderGateDescription}

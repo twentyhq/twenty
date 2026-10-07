@@ -738,6 +738,7 @@
       "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
     },
     "types": {
+      "BannerActionProps": "primitives/feedback/Banner/types/BannerActionProps",
       "BannerColor": "primitives/feedback/Banner/types/BannerColor",
       "BannerProps": "primitives/feedback/Banner/types/BannerProps",
       "BannerState": "primitives/feedback/Banner/types/BannerState",

@@ -1,6 +1,5 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
-import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -15,15 +14,16 @@ import {
   type BannerStatus,
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   min-width: 0;
 `;
 
-const INVERTED_ICON_BUTTON_CLASS_NAME = css`
-  color: ${themeCssVariables.font.color.inverted} !important;
+const BANNER_ICON_BUTTON_CLASS_NAME = css`
+  &[data-variant='ghost'] {
+    color: inherit;
+  }
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
@@ -64,12 +64,6 @@ export const InformationBanner = ({
     componentInstanceId,
   );
 
-  const isSolid = variant === 'solid';
-  const buttonColor =
-    color === 'red' || (!isDefined(color) && status === 'error')
-      ? 'danger'
-      : 'accent';
-
   return (
     <InformationBannerComponentInstanceContext.Provider
       value={{
@@ -78,7 +72,7 @@ export const InformationBanner = ({
     >
       {informationBannerIsOpen && (
         <Banner color={color} status={status} variant={variant}>
-          <StyledContent hasCloseButton={!!onClose}>
+          <StyledContent hasCloseButton={isDefined(onClose)}>
             <StyledText>
               <OverflowingTextWithTooltip
                 isFocusable
@@ -87,41 +81,26 @@ export const InformationBanner = ({
               />
             </StyledText>
             {buttonTitle && buttonOnClick && (
-              <Button
-                className={isSolid ? BUTTON_INVERTED_CLASS_NAME : undefined}
+              <Banner.Action
                 startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
-                size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
-                variant="outline"
-                color={isSolid ? 'neutral' : buttonColor}
               >
                 {buttonTitle}
-              </Button>
+              </Banner.Action>
             )}
           </StyledContent>
-          {onClose &&
-            (isSolid ? (
-              <IconButton
-                className={INVERTED_ICON_BUTTON_CLASS_NAME}
-                size="sm"
-                variant="ghost"
-                onClick={onClose}
-                aria-label={t`Close banner`}
-              >
-                <IconX />
-              </IconButton>
-            ) : (
-              <IconButton
-                size="sm"
-                variant="ghost"
-                color={buttonColor}
-                onClick={onClose}
-                aria-label={t`Close banner`}
-              >
-                <IconX />
-              </IconButton>
-            ))}
+          {isDefined(onClose) && (
+            <IconButton
+              className={BANNER_ICON_BUTTON_CLASS_NAME}
+              size="sm"
+              variant="ghost"
+              onClick={onClose}
+              aria-label={t`Close banner`}
+            >
+              <IconX />
+            </IconButton>
+          )}
         </Banner>
       )}
     </InformationBannerComponentInstanceContext.Provider>

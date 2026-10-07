@@ -56,21 +56,10 @@ export const Default: Story = {
     <Banner {...args}>
       <div className={styles.bannerContent}>
         Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
-        <Button
-          size="sm"
-          variant="outline"
-          color={args.variant === 'solid' ? 'neutral' : 'accent'}
-          className={
-            args.variant === 'solid' ? styles.invertedButton : undefined
-          }
-        >
-          Reconnect
-        </Button>
+        <Banner.Action>Reconnect</Banner.Action>
       </div>
       <Button
-        className={
-          args.variant === 'solid' ? styles.invertedIconButton : undefined
-        }
+        className={styles.closeButton}
         size="sm"
         variant="ghost"
         aria-label="Close"
@@ -82,7 +71,11 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Banner> = {
-  args: { children: 'Your account needs attention.' },
+  args: {
+    children: 'Your account needs attention.',
+    role: 'status',
+    action: <Banner.Action>Review details</Banner.Action>,
+  },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
@@ -108,6 +101,19 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
     },
   },
   decorators: [CatalogDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const banner of canvas.getAllByRole('status')) {
+      const action = within(banner).getByRole('button', {
+        name: 'Review details',
+      });
+
+      await expect(getComputedStyle(action).color).toBe(
+        getComputedStyle(banner).color,
+      );
+    }
+  },
 };
 
 export const IndependentAppearance: Story = {
@@ -117,11 +123,7 @@ export const IndependentAppearance: Story = {
     variant: 'soft',
     children: 'Sync could not finish.',
     icon: <IconInfoCircle aria-hidden="true" />,
-    action: (
-      <Button size="sm" variant="outline" color="accent">
-        Retry sync
-      </Button>
-    ),
+    action: <Banner.Action>Retry sync</Banner.Action>,
     role: 'status',
     'aria-live': 'polite',
     'aria-label': 'Sync result',
@@ -140,8 +142,11 @@ export const IndependentAppearance: Story = {
     await expect(banner).toHaveAttribute('aria-live', 'polite');
     await expect(banner).toHaveClass('custom-banner');
     await expect(banner).toHaveStyle({ marginTop: '7px' });
-    await expect(
-      canvas.getByRole('button', { name: 'Retry sync' }),
-    ).toBeVisible();
+    const action = canvas.getByRole('button', { name: 'Retry sync' });
+
+    await expect(action).toBeVisible();
+    await expect(getComputedStyle(action).color).toBe(
+      getComputedStyle(banner).color,
+    );
   },
 };

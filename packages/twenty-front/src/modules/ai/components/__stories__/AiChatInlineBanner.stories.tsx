@@ -1,4 +1,4 @@
-import { Button } from 'twenty-ui/primitives/input';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { IconExternalLink } from 'twenty-ui/icon';
@@ -26,14 +26,9 @@ export const NoEnabledModels: Story = {
   args: {
     children: 'No AI models are enabled.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="danger"
-        onClick={onConfigureModels}
-      >
+      <InlineBanner.Action onClick={onConfigureModels}>
         Configure models
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -65,9 +60,7 @@ export const UsageLimit: Story = {
   args: {
     children: 'You’ve reached your AI usage limit.',
     action: (
-      <Button size="sm" variant="outline" color="danger" onClick={onUpgrade}>
-        Upgrade
-      </Button>
+      <InlineBanner.Action onClick={onUpgrade}>Upgrade</InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -89,15 +82,9 @@ export const UsageLimitLoading: Story = {
   args: {
     children: 'You’ve reached your AI usage limit.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="danger"
-        onClick={onUpgrade}
-        disabled
-      >
+      <InlineBanner.Action onClick={onUpgrade} disabled>
         Upgrade
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -130,15 +117,12 @@ export const ApiKeyNotConfigured: Story = {
   args: {
     children: 'Add an API key to enable AI.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="danger"
+      <InlineBanner.Action
         startIcon={<IconExternalLink />}
         onClick={onViewDocs}
       >
         View Docs
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {

@@ -1,4 +1,3 @@
-import { Button } from 'twenty-ui/primitives/input';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
@@ -27,10 +26,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
         <InlineBanner
           status="error"
           action={
-            <Button
-              size="sm"
-              variant="outline"
-              color="danger"
+            <InlineBanner.Action
               href={`${location.pathname}${location.search}#config`}
               render={
                 <Link
@@ -38,7 +34,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
                   state={location.state}
                 />
               }
-            >{t`Configure`}</Button>
+            >{t`Configure`}</InlineBanner.Action>
           }
         >{t`This app is not fully configured. Users won't be able to install it until all required server variables are set, and — for apps exposing a server route — until the app is claimed and installed on its owner workspace.`}</InlineBanner>
       )}

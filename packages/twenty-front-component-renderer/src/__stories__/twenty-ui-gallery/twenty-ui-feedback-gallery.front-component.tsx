@@ -1,4 +1,3 @@
-import { Button } from 'twenty-ui/primitives/input';
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
@@ -46,14 +45,9 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
       <InlineBanner
         layout="compact"
         action={
-          <Button
-            size="sm"
-            variant="outline"
-            color="accent"
-            href={'#connection-settings'}
-          >
+          <InlineBanner.Action href={'#connection-settings'}>
             {'Connection settings'}
-          </Button>
+          </InlineBanner.Action>
         }
       >
         {'Connect your account to keep your contacts in sync.'}

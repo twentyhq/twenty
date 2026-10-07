@@ -23,6 +23,10 @@ export const inlineBannerTest: TwentyUiGalleryPlayFunction = async ({
   await expect(banner).toHaveStyle({ marginTop: '7px' });
   const button = canvas.getByRole('button', { name: 'Retry sync' });
 
+  await expect(getComputedStyle(button).color).toBe(
+    getComputedStyle(banner).color,
+  );
+
   await userEvent.click(button);
   await expect(await canvas.findByText('Retry count: 1')).toBeVisible();
   await expect(button).toHaveFocus();

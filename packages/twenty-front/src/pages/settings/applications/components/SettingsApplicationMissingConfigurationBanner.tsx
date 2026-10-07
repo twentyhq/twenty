@@ -1,5 +1,4 @@
 import { themeCssVariables } from 'twenty-ui/theme';
-import { Button } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertCircle } from 'twenty-ui/icon';
@@ -29,12 +28,9 @@ export const SettingsApplicationMissingConfigurationBanner = ({
         />
       }
       action={
-        <Button
-          size="sm"
-          variant="outline"
-          color="danger"
+        <InlineBanner.Action
           onClick={onConfigure}
-        >{t`Configure`}</Button>
+        >{t`Configure`}</InlineBanner.Action>
       }
     >{t`Missing configuration: ${missingLabels}`}</InlineBanner>
   );

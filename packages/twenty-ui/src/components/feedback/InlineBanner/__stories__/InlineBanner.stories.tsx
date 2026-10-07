@@ -1,4 +1,3 @@
-import { Button } from '@ui/primitives/input/Button/Button';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -34,9 +33,9 @@ export const Default: Story = {
     status: 'error',
     children: NO_AI_MODELS_MESSAGE,
     action: (
-      <Button size="sm" variant="outline" color="danger" onClick={onAction}>
+      <InlineBanner.Action onClick={onAction}>
         {'Configure models'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
 };
@@ -71,15 +70,9 @@ export const DisabledAction: Story = {
     status: 'error',
     children: 'You’ve reached your AI usage limit.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="danger"
-        onClick={onAction}
-        disabled={true}
-      >
+      <InlineBanner.Action onClick={onAction} disabled={true}>
         {'Upgrade'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -104,15 +97,9 @@ export const DocumentationAction: Story = {
     status: 'error',
     children: 'Add an API key to enable AI.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="danger"
-        onClick={onAction}
-        startIcon={<IconExternalLink />}
-      >
+      <InlineBanner.Action onClick={onAction} startIcon={<IconExternalLink />}>
         {'View Docs'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
 };
@@ -122,9 +109,9 @@ export const Narrow: Story = {
     status: 'error',
     children: NO_AI_MODELS_MESSAGE,
     action: (
-      <Button size="sm" variant="outline" color="danger" onClick={onAction}>
+      <InlineBanner.Action onClick={onAction}>
         {'Configure models'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   parameters: { container: { width: 320 } },
@@ -135,9 +122,9 @@ export const Embedded: Story = {
     status: 'error',
     children: NO_AI_MODELS_MESSAGE,
     action: (
-      <Button size="sm" variant="outline" color="danger" onClick={onAction}>
+      <InlineBanner.Action onClick={onAction}>
         {'Configure models'}
-      </Button>
+      </InlineBanner.Action>
     ),
     embedded: true,
   },
@@ -148,9 +135,9 @@ export const TruncatedMessage: Story = {
     status: 'info',
     children: MAILBOX_SYNC_LOST_MESSAGE,
     action: (
-      <Button size="sm" variant="outline" color="accent" onClick={onAction}>
+      <InlineBanner.Action onClick={onAction}>
         {'Reconnect'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   parameters: { container: { width: 320 } },
@@ -211,14 +198,9 @@ export const CompactLink: Story = {
     layout: 'compact',
     children: 'Connect your account to keep your contacts in sync.',
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="accent"
-        href={'#connection-settings'}
-      >
+      <InlineBanner.Action href={'#connection-settings'}>
         {'Connection settings'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
 };
@@ -267,10 +249,7 @@ export const CustomLink: Story = {
   args: {
     ...CompactLink.args,
     action: (
-      <Button
-        size="sm"
-        variant="outline"
-        color="accent"
+      <InlineBanner.Action
         href={'https://twenty.com'}
         target={'_blank'}
         rel={'noopener noreferrer'}
@@ -280,7 +259,7 @@ export const CustomLink: Story = {
         onClick={onLinkAction}
       >
         {'Connection settings'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -300,17 +279,24 @@ export const CustomLink: Story = {
 export const CompactAction: Story = {
   args: {
     layout: 'compact',
-    status: 'error',
+    status: 'warning',
+    variant: 'solid',
+    color: 'blue',
+    role: 'status',
     children: 'Your connection needs attention.',
     action: (
-      <Button size="sm" variant="outline" color="danger" onClick={onAction}>
+      <InlineBanner.Action onClick={onAction}>
         {'Reconnect'}
-      </Button>
+      </InlineBanner.Action>
     ),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole('button', { name: 'Reconnect' });
+
+    await expect(getComputedStyle(button).color).toBe(
+      getComputedStyle(canvas.getByRole('status')).color,
+    );
 
     await userEvent.tab();
     await expect(button).toHaveFocus();

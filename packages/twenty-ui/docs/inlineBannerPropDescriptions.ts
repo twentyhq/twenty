@@ -16,7 +16,7 @@ export const INLINE_BANNER_PROP_DESCRIPTIONS = {
     'Removes the standard bottom margin. Compact layouts have no bottom margin.',
   icon: 'Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it.',
   action:
-    'Optional trailing ReactNode. Compose Button, links or multiple controls with their complete public APIs.',
+    'Optional trailing ReactNode. InlineBanner.Action supplies the shared banner action preset and inherits the resolved banner color; arbitrary controls are also accepted.',
   className: 'Class merged onto the root div or composed element.',
   style: 'Inline styles applied to the root div or composed element.',
   ref: 'Ref to the root div, or to the DOM element supplied through render.',

@@ -8,6 +8,7 @@
  */
 
 export { Banner } from './Banner/Banner';
+export type { BannerActionProps } from './Banner/types/BannerActionProps';
 export type { BannerColor } from './Banner/types/BannerColor';
 export type { BannerProps } from './Banner/types/BannerProps';
 export type { BannerState } from './Banner/types/BannerState';

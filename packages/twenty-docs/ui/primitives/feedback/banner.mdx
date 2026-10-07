@@ -14,7 +14,6 @@ Defaults are `status="info"` and `variant="solid"`. The default status palettes 
 
 ```tsx
 import { Banner } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { IconInfoCircle } from 'twenty-ui/icon';
 
 export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
@@ -23,12 +22,14 @@ export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
     variant="soft"
     color="blue"
     icon={<IconInfoCircle aria-hidden="true" />}
-    action={<Button size="sm" onClick={onRetry}>Retry sync</Button>}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
   >
     Contact sync could not finish.
   </Banner>
 );
 ```
+
+`Banner.Action` provides a small outline button that inherits the banner’s displayed color, including explicit palette overrides and solid appearances. It supports Button interactions, links, refs and custom rendering. The `action` slot also accepts arbitrary controls.
 
 The root target is a `div`. Native attributes, event handlers, `className`, `style` and `ref` apply to that root. `render` accepts a Base UI element or callback; the callback receives native props and ref plus resolved `status`, `variant` and `color` state. Preserve the supplied props and ref when composing another element.
 

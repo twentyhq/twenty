@@ -1,4 +1,3 @@
-import { Button } from 'twenty-ui/primitives/input';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
@@ -267,17 +266,14 @@ export const SettingsDataModelObjectAboutForm = ({
               <InlineBanner
                 status="info"
                 action={
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    color="accent"
+                  <InlineBanner.Action
                     onClick={() =>
                       navigateSettings(SettingsPath.ObjectDetail, {
                         objectNamePlural:
                           conflictingObjectMetadataItem.namePlural,
                       })
                     }
-                  >{t`Open`}</Button>
+                  >{t`Open`}</InlineBanner.Action>
                 }
               >{t`An object with this name already exists`}</InlineBanner>
             )}

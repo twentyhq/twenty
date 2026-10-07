@@ -32,14 +32,11 @@ const InlineBannerExample = () => {
           if (isDefined(element)) element.dataset.refTag = element.tagName;
         }}
         action={
-          <Button
-            size="sm"
-            variant="outline"
-            color="danger"
+          <InlineBanner.Action
             onClick={() => setRetryCount((count) => count + 1)}
           >
             {'Retry sync'}
-          </Button>
+          </InlineBanner.Action>
         }
       >
         {'Contact sync could not finish. Retry to reconnect your account.'}
@@ -48,10 +45,7 @@ const InlineBannerExample = () => {
       <InlineBanner
         layout="compact"
         action={
-          <Button
-            size="sm"
-            variant="outline"
-            color="accent"
+          <InlineBanner.Action
             href={'https://twenty.com'}
             target={'_blank'}
             rel={'noopener noreferrer'}
@@ -63,7 +57,7 @@ const InlineBannerExample = () => {
             }
           >
             {'Connection settings'}
-          </Button>
+          </InlineBanner.Action>
         }
       >
         {'Connect your account to keep your contacts in sync.'}

@@ -573,7 +573,7 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional trailing ReactNode, such as buttons, links or multiple controls."
+        "description": "Optional trailing ReactNode. Banner.Action supplies a small outline action that inherits the resolved banner color; arbitrary controls are also accepted."
       },
       {
         "name": "children",
@@ -637,6 +637,97 @@
         "required": false,
         "defaultValue": "solid",
         "description": "Solid or soft appearance. Defaults to solid, independently of status."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation while preserving the button width."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -9793,7 +9884,7 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional trailing ReactNode. Compose Button, links or multiple controls with their complete public APIs."
+        "description": "Optional trailing ReactNode. InlineBanner.Action supplies the shared banner action preset and inherits the resolved banner color; arbitrary controls are also accepted."
       },
       {
         "name": "children",
@@ -9871,6 +9962,97 @@
         "required": false,
         "defaultValue": "soft",
         "description": "Solid or soft appearance, independently of status and layout. Defaults to soft."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation while preserving the button width."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },

@@ -1,4 +1,4 @@
-import { Button } from 'twenty-ui/primitives/input';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
@@ -73,10 +73,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
       <AiChatInlineBanner
         action={
           isDefined(buttonTitle) && isDefined(handleButtonClick) ? (
-            <Button
-              size="sm"
-              variant="outline"
-              color="danger"
+            <InlineBanner.Action
               onClick={handleButtonClick}
               disabled={
                 (isTrialing && isEndTrialLoading) ||
@@ -84,7 +81,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
               }
             >
               {buttonTitle}
-            </Button>
+            </InlineBanner.Action>
           ) : undefined
         }
       >
