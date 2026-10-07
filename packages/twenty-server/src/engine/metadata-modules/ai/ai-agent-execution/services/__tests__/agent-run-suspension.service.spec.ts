@@ -30,7 +30,6 @@ const buildService = () => {
     { findOne: jest.fn().mockResolvedValue(null) } as never,
     { query: jest.fn().mockResolvedValue(undefined) } as never,
     {} as never,
-    {} as never,
     { cancel: jest.fn().mockResolvedValue(undefined) } as never,
     { getHandlerOrThrow: () => ({ onOutcome }) } as never,
     messageQueueService as never,
