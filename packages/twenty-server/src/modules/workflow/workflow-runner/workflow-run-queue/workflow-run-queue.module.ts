@@ -43,13 +43,8 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
   ],
   exports: [
     WorkflowThrottlingWorkspaceService,
-    WorkflowRunEnqueueJob,
-    WorkflowRunEnqueueCronJob,
     WorkflowRunEnqueueCronCommand,
-    WorkflowHandleStaledRunsCronJob,
     WorkflowHandleStaledRunsCronCommand,
-    WorkflowHandleStaledRunsCommand,
-    WorkflowCleanWorkflowRunsCronJob,
     WorkflowCleanWorkflowRunsCronCommand,
   ],
 })

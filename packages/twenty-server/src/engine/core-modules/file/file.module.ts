@@ -34,9 +34,7 @@ import { FileService } from './services/file.service';
   exports: [
     FileService,
     FileUrlModule,
-    FilesFieldModule,
     FileCorePictureModule,
-    FileEmailAttachmentModule,
     FileUploadModule,
   ],
 })

@@ -19,6 +19,5 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MessageFolderResolver,
     provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
-  exports: [MessageFolderMetadataService],
 })
 export class MessageFolderMetadataModule {}
