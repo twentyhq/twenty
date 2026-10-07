@@ -18,6 +18,9 @@ export default meta;
 
 type Story = StoryObj<typeof Skeleton>;
 
+const isMotionEnabled = () =>
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 export const Default: Story = {
   play: async ({ canvas }) => {
     const placeholder = canvas.getByTestId('placeholder');
@@ -25,9 +28,10 @@ export const Default: Story = {
     await expect(placeholder).toBeVisible();
     await expect(placeholder).toHaveAttribute('aria-hidden', 'true');
     await expect(placeholder).toHaveStyle({ width: '240px', height: '16px' });
-    await expect(
-      getComputedStyle(placeholder, '::after').animationName,
-    ).not.toBe('none');
+    const isAnimating =
+      getComputedStyle(placeholder, '::after').animationName !== 'none';
+
+    await expect(isAnimating).toBe(isMotionEnabled());
   },
 };
 
@@ -74,10 +78,17 @@ export const Dark: Story = {
 export const RightToLeft: Story = {
   args: { dir: 'rtl' },
   play: async ({ canvas }) => {
-    await expect(
-      getComputedStyle(canvas.getByTestId('placeholder'), '::after')
-        .animationDirection,
-    ).toBe('reverse');
+    const highlight = getComputedStyle(
+      canvas.getByTestId('placeholder'),
+      '::after',
+    );
+
+    if (!isMotionEnabled()) {
+      await expect(highlight.animationName).toBe('none');
+      return;
+    }
+
+    await expect(highlight.animationDirection).toBe('reverse');
   },
 };
 
