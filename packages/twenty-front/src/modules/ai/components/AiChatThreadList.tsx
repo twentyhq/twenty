@@ -11,14 +11,19 @@ const StyledGroupTitle = styled.div`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[1]};
 `;
 
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
   selectedThreadIds?: string[];
+  checkedThreadIds?: string[];
   onThreadClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onThreadCheckboxClick?: (
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
@@ -32,18 +37,23 @@ type AiChatThreadListProps = {
 export const AiChatThreadList = ({
   threads,
   selectedThreadIds = [],
+  checkedThreadIds = [],
   onThreadClick,
+  onThreadCheckboxClick,
   onThreadContextMenu,
   onDetachThread,
 }: AiChatThreadListProps) => {
   const selectedThreadIdSet = new Set(selectedThreadIds);
+  const checkedThreadIdSet = new Set(checkedThreadIds);
 
   const renderThread = (thread: AgentChatThreadRecord) => (
     <AiChatThreadListItem
       key={thread.id}
       thread={thread}
       isSelected={selectedThreadIdSet.has(thread.id)}
+      isChecked={checkedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
+      onCheckboxClick={onThreadCheckboxClick}
       onContextMenu={onThreadContextMenu}
       onDetach={
         isDefined(onDetachThread) ? () => onDetachThread(thread.id) : undefined

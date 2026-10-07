@@ -4,14 +4,12 @@ import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 
-type RunInput = Extract<AgentRunnerRunInput, { turn: unknown }>;
-
 const CREATED_BY = {
   source: 'WORKFLOW',
   name: 'New deals',
   workspaceMemberId: null,
   context: {},
-} as Awaited<ReturnType<RunInput['turn']['resolveCreatedBy']>>;
+} as Awaited<ReturnType<AgentRunnerRunInput['resolveCreatedBy']>>;
 
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
@@ -45,22 +43,36 @@ const buildExecution = (
   ...overrides,
 });
 
-const RUN_INPUT: RunInput = {
+const RUN_INPUT: AgentRunnerRunInput = {
   workspaceId: 'workspace-id',
   conversation: { threadId: 'thread-id', isCreated: false },
-  turn: {
+  caller: {
+    type: 'WORKFLOW_STEP',
+    ref: { workflowRunId: 'run', stepId: 'step' },
+  },
+  spec: {
+    agentId: null,
     title: 'Draft the quote',
+    baseSystemPrompt: 'base prompt',
+    instructions: null,
+    capabilities: {
+      canAskHumans: false,
+      canProposeToolCalls: false,
+    },
+  },
+  agent: null,
+  prompt: {
+    messages: MESSAGES,
     senderUserWorkspaceId: 'user-workspace-id',
     senderApplicationId: null,
-    messages: MESSAGES,
-    resolveCreatedBy: async () => CREATED_BY,
   },
-  execution: {
-    agent: null,
-    messages: MESSAGES,
-    baseSystemPrompt: 'base prompt',
-    workspaceId: 'workspace-id',
+  executionContext: {
+    authContext: {} as never,
+    userWorkspaceId: 'user-workspace-id',
+    rolePermissionConfig: { intersectionOf: [] },
+    conversationActor: { type: 'application', applicationId: 'app-id' },
   },
+  resolveCreatedBy: async () => CREATED_BY,
 };
 
 const buildService = (execution = buildExecution()) => {
@@ -83,7 +95,10 @@ const buildService = (execution = buildExecution()) => {
     agentAsyncExecutorService as never,
     agentRunConversationService as never,
     conversationReaderService as never,
-    {} as never,
+    {
+      findOne: jest.fn().mockResolvedValue(null),
+      closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
+    } as never,
     {} as never,
     {} as never,
     {} as never,
@@ -106,10 +121,7 @@ describe('AgentRunnerService', () => {
       conversationReaderService,
     } = buildService();
 
-    const { threadId, outcome, summary } = await service.run({
-      ...RUN_INPUT,
-      conversationActor: { type: 'application', applicationId: 'app-id' },
-    });
+    const { threadId, outcome, summary } = await service.run(RUN_INPUT);
 
     expect(threadId).toBe('thread-id');
     expect(outcome).toEqual({
@@ -138,15 +150,19 @@ describe('AgentRunnerService', () => {
       createdBy: CREATED_BY,
       messages: MESSAGES,
     });
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith({
-      ...RUN_INPUT.execution,
-      priorMessages: PRIOR_MESSAGES,
-    });
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: MESSAGES,
+        baseSystemPrompt: expect.stringMatching(
+          /^base prompt\n\n.*wait_for_event/,
+        ),
+        priorMessages: PRIOR_MESSAGES,
+      }),
+    );
     expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
       expect.objectContaining({
         turnId: 'turn-id',
         title: 'Draft the quote',
-        isAwaitedByCaller: false,
       }),
     );
   });
@@ -184,7 +200,7 @@ describe('AgentRunnerService', () => {
     ],
   ])(
     'still runs the agent when %s',
-    async (_, turnOverrides, conversationOverrides) => {
+    async (_, inputOverrides, conversationOverrides) => {
       const {
         service,
         agentAsyncExecutorService,
@@ -195,7 +211,7 @@ describe('AgentRunnerService', () => {
 
       const { outcome } = await service.run({
         ...RUN_INPUT,
-        turn: { ...RUN_INPUT.turn, ...turnOverrides },
+        ...inputOverrides,
       });
 
       expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();

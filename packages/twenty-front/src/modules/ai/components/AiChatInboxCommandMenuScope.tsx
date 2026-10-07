@@ -22,7 +22,9 @@ export const AiChatInboxCommandMenuScope = ({
     <CommandMenuComponentInstanceContext.Provider
       value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
     >
-      <AiChatInboxSelectionToContextStoreEffect />
+      <AiChatInboxSelectionToContextStoreEffect
+        contextStoreInstanceId={AI_CHAT_INBOX_INSTANCE_ID}
+      />
       <CommandMenuContextProvider
         displayType="dropdownItem"
         containerType={CommandMenuItemContainerType.IndexPageDropdown}
