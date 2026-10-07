@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,20 +35,23 @@ export const CoreAgentDetailSkeletonLoader = () => {
       <StyledFormSection>
         <StyledIconNameRow>
           <StyledIconContainer>
-            <Skeleton width={32} height={32} />
+            <Skeleton
+              width={SKELETON_HEIGHT_SIZES.l}
+              height={SKELETON_HEIGHT_SIZES.l}
+            />
           </StyledIconContainer>
           <StyledNameContainer>
-            <Skeleton height={32} width="100%" />
+            <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
           </StyledNameContainer>
         </StyledIconNameRow>
 
-        <Skeleton height={32} width="100%" />
+        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton height={32} width="100%" />
+        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton height={32} width="100%" />
+        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton height={32} width="100%" />
+        <Skeleton height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
         <Skeleton height={120} width="100%" />
       </StyledFormSection>

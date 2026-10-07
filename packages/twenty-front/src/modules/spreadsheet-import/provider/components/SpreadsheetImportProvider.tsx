@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
@@ -15,7 +15,7 @@ const SpreadsheetImport = React.lazy(() =>
 );
 
 const LoadingSkeleton = () => {
-  return <Skeleton height={16} />;
+  return <Skeleton height={SKELETON_HEIGHT_SIZES.s} />;
 };
 
 type SpreadsheetImportProviderProps = React.PropsWithChildren;

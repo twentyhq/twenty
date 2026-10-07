@@ -1,6 +1,6 @@
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 export const SettingsSkeletonLoader = () => {
   return (
@@ -9,10 +9,12 @@ export const SettingsSkeletonLoader = () => {
         <PageCardHeader
           links={[
             {
-              children: <Skeleton width={64} height={16} />,
+              children: (
+                <Skeleton width={64} height={SKELETON_HEIGHT_SIZES.s} />
+              ),
             },
           ]}
-          title={<Skeleton width={120} height={16} />}
+          title={<Skeleton width={120} height={SKELETON_HEIGHT_SIZES.s} />}
         />
       }
       showInformationBanner={false}

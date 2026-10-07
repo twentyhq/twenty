@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
@@ -61,8 +61,16 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
           skeletonItems.map(({ id }) => (
             <RecordCardBodyContainer key={id}>
               <StyledSkeletonIconAndText>
-                <Skeleton animated={false} width={16} height={16} />
-                <Skeleton animated={false} width={151} height={16} />
+                <Skeleton
+                  animated={false}
+                  width={16}
+                  height={SKELETON_HEIGHT_SIZES.s}
+                />
+                <Skeleton
+                  animated={false}
+                  width={151}
+                  height={SKELETON_HEIGHT_SIZES.s}
+                />
               </StyledSkeletonIconAndText>
             </RecordCardBodyContainer>
           ))}

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
@@ -38,10 +38,10 @@ export const SettingsMessageFoldersSkeletonLoader = () => {
       {SKELETON_ROWS.map((row, index) => (
         <StyledSkeletonRow key={index}>
           <StyledSkeletonFolderInfo>
-            <Skeleton width={20} height={16} />
-            <Skeleton width={row.width} height={16} />
+            <Skeleton width={20} height={SKELETON_HEIGHT_SIZES.s} />
+            <Skeleton width={row.width} height={SKELETON_HEIGHT_SIZES.s} />
           </StyledSkeletonFolderInfo>
-          <Skeleton width={16} height={16} />
+          <Skeleton width={16} height={SKELETON_HEIGHT_SIZES.s} />
         </StyledSkeletonRow>
       ))}
     </StyledSkeletonContainer>

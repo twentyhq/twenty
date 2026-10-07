@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -62,7 +62,7 @@ export const LeftPanelSkeletonLoader = () => {
         <StyledSkeletonTitleContainer>
           <Skeleton
             width={96}
-            height={16}
+            height={SKELETON_HEIGHT_SIZES.s}
             baseColor={themeCssVariables.background.quaternary}
           />
         </StyledSkeletonTitleContainer>

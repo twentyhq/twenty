@@ -26,7 +26,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -222,7 +222,7 @@ export const PasswordReset = () => {
             {!email ? (
               Array.from({ length: 2 }, (_, index) => (
                 <Skeleton
-                  height={24}
+                  height={SKELETON_HEIGHT_SIZES.m}
                   key={index}
                   style={{
                     marginBottom: themeCssVariables.spacing[2],

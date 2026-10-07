@@ -1,6 +1,6 @@
 import { type CSSWidth } from '@/ui/types/CSSWidth';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 const StyledDropdownMenuSkeletonContainer = styled.div`
   --horizontal-padding: ${themeCssVariables.spacing[1]};
@@ -28,7 +28,7 @@ export const DropdownMenuSkeletonItem = ({
   return (
     <StyledDropdownMenuSkeletonContainer>
       <Skeleton
-        height={16}
+        height={SKELETON_HEIGHT_SIZES.s}
         style={{ lineHeight: 0 }}
         width={width}
         baseColor={themeCssVariables.background.quaternary}

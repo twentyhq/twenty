@@ -14,7 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -269,10 +269,10 @@ export const DateTimePicker = ({
           <Suspense
             fallback={
               <StyledDatePickerFallback>
-                <Skeleton width={200} height={24} />
-                <Skeleton width={240} height={32} />
-                <Skeleton width={220} height={24} />
-                <Skeleton width={180} height={16} />
+                <Skeleton width={200} height={SKELETON_HEIGHT_SIZES.m} />
+                <Skeleton width={240} height={SKELETON_HEIGHT_SIZES.l} />
+                <Skeleton width={220} height={SKELETON_HEIGHT_SIZES.m} />
+                <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
               </StyledDatePickerFallback>
             }
           >

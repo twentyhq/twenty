@@ -1,3 +1,4 @@
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -27,7 +28,7 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 const BOARD_CARD_HEADER_HEIGHT = 32 + 8 + 4;
 
 // Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
-const BOARD_CARD_FIELD_ROW_HEIGHT = 16 + 8 + 2;
+const BOARD_CARD_FIELD_ROW_HEIGHT = SKELETON_HEIGHT_SIZES.s + 8 + 2;
 
 // StyledBodyContainer padding (4+4) + card border (2×1px) + StyledSkeletonCardContainer margin-bottom spacing(2)
 const BOARD_CARD_CHROME_HEIGHT = 8 + 2 + 8;

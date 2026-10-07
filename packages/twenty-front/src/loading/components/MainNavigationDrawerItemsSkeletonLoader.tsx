@@ -1,6 +1,6 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 const StyledSkeletonContainer = styled.div`
   align-items: flex-start;
@@ -24,9 +24,13 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
 }) => {
   return (
     <StyledSkeletonContainer>
-      {title && <Skeleton width={48} height={13} />}
+      {title && <Skeleton width={48} height={SKELETON_HEIGHT_SIZES.xs} />}
       {Array.from({ length }).map((_, index) => (
-        <Skeleton key={index} className={fillSkeletonContainer} height={16} />
+        <Skeleton
+          key={index}
+          className={fillSkeletonContainer}
+          height={SKELETON_HEIGHT_SIZES.s}
+        />
       ))}
     </StyledSkeletonContainer>
   );

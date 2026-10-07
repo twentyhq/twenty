@@ -5,7 +5,7 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/com
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { styled } from '@linaria/react';
 import { Suspense } from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
@@ -19,9 +19,9 @@ const StyledLoadingSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledLoadingSkeletonContainer>
-      <Skeleton height={24} />
-      <Skeleton height={24} />
-      <Skeleton height={24} />
+      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
+      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
+      <Skeleton height={SKELETON_HEIGHT_SIZES.m} />
     </StyledLoadingSkeletonContainer>
   );
 };

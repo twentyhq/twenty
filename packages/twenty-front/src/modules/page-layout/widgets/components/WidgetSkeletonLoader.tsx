@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
 export const WidgetSkeletonLoader = () => {
   return (
     <StyledContainer>
-      <Skeleton width={120} height={24} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.m} />
     </StyledContainer>
   );
 };

@@ -1,7 +1,7 @@
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitleSkeleton = styled.div`
@@ -32,24 +32,24 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
       <StyledTitleSkeleton>
         <Skeleton
           width={72}
-          height={13}
+          height={SKELETON_HEIGHT_SIZES.xs}
           highlightColor={themeCssVariables.background.transparent.light}
         />
       </StyledTitleSkeleton>
       <StyledRowsContainer>
         <Skeleton
           className={fillSkeletonContainer}
-          height={16}
+          height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <Skeleton
           className={fillSkeletonContainer}
-          height={16}
+          height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <Skeleton
           className={fillSkeletonContainer}
-          height={16}
+          height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
       </StyledRowsContainer>

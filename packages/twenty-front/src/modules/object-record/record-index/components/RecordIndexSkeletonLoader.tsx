@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
@@ -18,8 +18,8 @@ export const RecordIndexSkeletonLoader = () => (
   <PageContentSkeletonLoader
     secondaryBar={
       <StyledSecondaryBar>
-        <Skeleton width={120} height={16} />
-        <Skeleton width={180} height={16} />
+        <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.s} />
+        <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
       </StyledSecondaryBar>
     }
   />

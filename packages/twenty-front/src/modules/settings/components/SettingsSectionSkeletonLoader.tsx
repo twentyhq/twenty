@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsSectionSkeletonLoaderProps = {
@@ -19,7 +19,7 @@ export const SettingsSectionSkeletonLoader = ({
   return (
     <StyledRows>
       {Array.from({ length: rowCount }, (_, index) => (
-        <Skeleton key={index} height={32} />
+        <Skeleton key={index} height={SKELETON_HEIGHT_SIZES.l} />
       ))}
     </StyledRows>
   );

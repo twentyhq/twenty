@@ -739,7 +739,8 @@
       "Loader": "primitives/feedback/Loader/Loader",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
       "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
-      "Skeleton": "primitives/feedback/Skeleton/Skeleton"
+      "Skeleton": "primitives/feedback/Skeleton/Skeleton",
+      "SKELETON_HEIGHT_SIZES": "primitives/feedback/Skeleton/constants/SKELETON_HEIGHT_SIZES"
     },
     "types": {
       "BannerColor": "primitives/feedback/Banner/Banner",

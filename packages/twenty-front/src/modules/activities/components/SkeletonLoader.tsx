@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
@@ -41,7 +41,7 @@ export const SkeletonLoader = ({
 
   return (
     <StyledSkeletonContainer>
-      <Skeleton width={440} height={16} />
+      <Skeleton width={440} height={SKELETON_HEIGHT_SIZES.s} />
       {withSubSections &&
         skeletonItems.map(({ id }, index) => (
           <StyledSkeletonSubSection key={id}>
@@ -55,9 +55,11 @@ export const SkeletonLoader = ({
               }
             />
             <StyledSkeletonSubSectionContent>
-              <Skeleton width={400} height={24} />
-              <Skeleton width={400} height={24} />
-              {index === 1 && <Skeleton width={400} height={24} />}
+              <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
+              <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
+              {index === 1 && (
+                <Skeleton width={400} height={SKELETON_HEIGHT_SIZES.m} />
+              )}
             </StyledSkeletonSubSectionContent>
           </StyledSkeletonSubSection>
         ))}

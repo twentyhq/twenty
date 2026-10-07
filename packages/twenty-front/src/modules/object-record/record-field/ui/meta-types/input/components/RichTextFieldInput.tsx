@@ -8,7 +8,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
@@ -58,7 +58,10 @@ const StyledCollapseButton = styled.div`
 
 const LoadingSkeleton = () => {
   return (
-    <Skeleton height={16} borderRadius={themeCssVariables.border.radius.md} />
+    <Skeleton
+      height={SKELETON_HEIGHT_SIZES.s}
+      borderRadius={themeCssVariables.border.radius.md}
+    />
   );
 };
 

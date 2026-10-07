@@ -5,7 +5,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { isUndefined } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -42,7 +42,10 @@ const StyledSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledSkeletonContainer>
-      <Skeleton height={16} borderRadius={themeCssVariables.border.radius.md} />
+      <Skeleton
+        height={SKELETON_HEIGHT_SIZES.s}
+        borderRadius={themeCssVariables.border.radius.md}
+      />
     </StyledSkeletonContainer>
   );
 };

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -144,28 +144,28 @@ export const DatePickerWithoutCalendar = ({
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
-                height={32}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
-                height={32}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
-                height={32}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
               <Skeleton
                 width={
                   DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
                 }
-                height={32}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
             </StyledDatePickerFallback>

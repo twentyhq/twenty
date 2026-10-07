@@ -2,7 +2,7 @@ import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-pag
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -28,7 +28,7 @@ const StyledContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  return <Skeleton height={16} />;
+  return <Skeleton height={SKELETON_HEIGHT_SIZES.s} />;
 };
 
 const isActivityObject = (
