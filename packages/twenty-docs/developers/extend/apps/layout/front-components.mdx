@@ -980,7 +980,7 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 
 `element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
-Body portals can extend up to 200px beyond each edge of your component, including outside a widget's scroll frame. Larger overlays are clipped to this area, so give long menus their own scrolling container. Native top-layer APIs such as `showModal()`, `showPopover()` and `requestFullscreen()` are blocked.
+Body portals can extend up to 200px beyond each edge of your component, including outside a widget's scroll frame. `window.visualViewport` reports this area, so Floating UI popups (twenty-ui, Base UI, Radix) flip and size themselves to fit it. Larger overlays are clipped to this area, so give long menus their own scrolling container. `position: fixed` resolves against your component's box, so anchor popups with absolute positioning, the Floating UI default. Native top-layer APIs such as `showModal()`, `showPopover()` and `requestFullscreen()` are blocked.
 
 ### Events
 

@@ -3,8 +3,41 @@ import { isDefined } from 'twenty-shared/utils';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
+
+const MAXIMUM_MENU_TRIGGER_GAP = 16;
+
+const expectMenuAttachedToTriggerWithinPortalArea = ({
+  menu,
+  menuTrigger,
+  ownerRoot,
+}: {
+  menu: Element;
+  menuTrigger: Element;
+  ownerRoot: Element;
+}) => {
+  const menuRectangle = menu.getBoundingClientRect();
+  const menuTriggerRectangle = menuTrigger.getBoundingClientRect();
+  const ownerRectangle = ownerRoot.getBoundingClientRect();
+  const menuTriggerGap = Math.max(
+    menuRectangle.top - menuTriggerRectangle.bottom,
+    menuTriggerRectangle.top - menuRectangle.bottom,
+  );
+
+  expect(menuTriggerGap).toBeGreaterThanOrEqual(0);
+  expect(menuTriggerGap).toBeLessThanOrEqual(MAXIMUM_MENU_TRIGGER_GAP);
+  expect(menuRectangle.left).toBeLessThan(menuTriggerRectangle.right);
+  expect(menuRectangle.right).toBeGreaterThan(menuTriggerRectangle.left);
+  expect(menuRectangle.top).toBeGreaterThanOrEqual(
+    ownerRectangle.top - FRONT_COMPONENT_PORTAL_MARGIN,
+  );
+  expect(menuRectangle.bottom).toBeLessThanOrEqual(
+    ownerRectangle.bottom + FRONT_COMPONENT_PORTAL_MARGIN,
+  );
+};
 
 export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -27,18 +60,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   expect(portalAction.getBoundingClientRect().top).toBeGreaterThanOrEqual(
     ownerRoot.getBoundingClientRect().bottom,
   );
-  const expectPortalReceivesPointer = () => {
-    const portalRectangle = portalAction.getBoundingClientRect();
-    expect(
-      portalAction.contains(
-        hostDocument.elementFromPoint(
-          portalRectangle.left + portalRectangle.width / 2,
-          portalRectangle.top + portalRectangle.height / 2,
-        ),
-      ),
-    ).toBe(true);
-  };
-  expectPortalReceivesPointer();
+  expectElementToReceivePointer(portalAction);
 
   const scrollFrame = canvas.getByRole('region', {
     name: 'Widget scroll frame',
@@ -50,7 +72,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
       ownerRoot.getBoundingClientRect().bottom,
       0,
     );
-    expectPortalReceivesPointer();
+    expectElementToReceivePointer(portalAction);
   });
 
   const rootStyle = hostDocument.documentElement.style;
@@ -65,7 +87,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
         ownerRoot.getBoundingClientRect().bottom,
         0,
       );
-      expectPortalReceivesPointer();
+      expectElementToReceivePointer(portalAction);
     });
   } finally {
     rootStyle.setProperty('zoom', previousZoom);
@@ -90,18 +112,38 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
     expect(canvas.queryByRole('button', { name: 'Portal action' })).toBeNull(),
   );
 
-  const hostAction = canvas.getByRole('button', { name: 'Host action' });
-  const hostRectangle = hostAction.getBoundingClientRect();
-  const hostCenter = {
-    x: hostRectangle.left + hostRectangle.width / 2,
-    y: hostRectangle.top + hostRectangle.height / 2,
-  };
-  expect(
-    hostAction.contains(
-      hostDocument.elementFromPoint(hostCenter.x, hostCenter.y),
-    ),
-  ).toBe(true);
+  const menuTrigger = canvas.getByRole('button', { name: 'Open menu' });
+  await userEvent.click(menuTrigger);
+  const firstMenuItem = await canvas.findByRole('menuitem', {
+    name: 'Menu item 1',
+  });
+  await waitFor(() => {
+    expectElementToReceivePointer(firstMenuItem);
+    expectMenuAttachedToTriggerWithinPortalArea({
+      menu: canvas.getByRole('menu'),
+      menuTrigger,
+      ownerRoot,
+    });
+  });
+  const lastMenuItem = canvas.getByRole('menuitem', { name: 'Menu item 16' });
+  lastMenuItem.scrollIntoView({ block: 'nearest' });
+  await waitFor(() => expectElementToReceivePointer(lastMenuItem));
+  await userEvent.click(lastMenuItem);
+  await waitFor(() =>
+    expect(
+      canvas.getByRole('status', { name: 'Menu selection' }),
+    ).toHaveTextContent('Menu selection: Menu item 16'),
+  );
+  await waitFor(() => expect(canvas.queryByRole('menu')).toBeNull());
 
+  const hostAction = canvas.getByRole('button', { name: 'Host action' });
+  expectElementToReceivePointer(hostAction);
+
+  const hostScrollingElement = hostDocument.documentElement;
+  const hostScrollSizeBeforeOversizedPortal = {
+    width: hostScrollingElement.scrollWidth,
+    height: hostScrollingElement.scrollHeight,
+  };
   await userEvent.click(
     canvas.getByRole('button', { name: 'Fill portal area' }),
   );
@@ -109,6 +151,12 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Oversized portal',
   });
   expect(oversizedPortal.getBoundingClientRect().width).toBe(4000);
+  expect(hostScrollingElement.scrollWidth).toBe(
+    hostScrollSizeBeforeOversizedPortal.width,
+  );
+  expect(hostScrollingElement.scrollHeight).toBe(
+    hostScrollSizeBeforeOversizedPortal.height,
+  );
   const ownerRectangle = ownerRoot.getBoundingClientRect();
   expect(
     oversizedPortal.contains(
@@ -118,11 +166,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
       ),
     ),
   ).toBe(true);
-  expect(
-    hostAction.contains(
-      hostDocument.elementFromPoint(hostCenter.x, hostCenter.y),
-    ),
-  ).toBe(true);
+  expectElementToReceivePointer(hostAction);
   await userEvent.click(hostAction);
   expect(
     canvas.getByRole('status', { name: 'Host actions' }),

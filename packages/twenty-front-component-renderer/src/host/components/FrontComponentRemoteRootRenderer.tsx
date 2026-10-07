@@ -9,6 +9,7 @@ import { type CSSProperties, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentPortalContainerContext } from '@/host/contexts/FrontComponentPortalContainerContext';
@@ -22,6 +23,7 @@ const PORTAL_LAYER_STYLE: CSSProperties = {
   position: 'fixed',
   zIndex: PORTAL_LAYER_Z_INDEX,
   pointerEvents: 'none',
+  clipPath: `inset(calc(-${FRONT_COMPONENT_PORTAL_MARGIN}px / var(--t-zoom, 1)))`,
 };
 
 const PORTAL_CONTENT_STYLE: CSSProperties = {

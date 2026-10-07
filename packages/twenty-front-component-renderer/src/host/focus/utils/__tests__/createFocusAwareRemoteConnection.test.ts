@@ -1,35 +1,67 @@
 import { createFocusAwareRemoteConnection } from '../createFocusAwareRemoteConnection';
 
-describe('createFocusAwareRemoteConnection', () => {
-  it('blocks browser top-layer methods while preserving ordinary calls', () => {
-    const connection = { mutate: jest.fn(), call: jest.fn() };
-    const hostFocusController = {
-      callFocusMethod: jest.fn(),
-      retryPendingFocus: jest.fn(),
-      reset: jest.fn(),
-    };
-    const remoteConnection = createFocusAwareRemoteConnection({
+const createConnectionUnderTest = () => {
+  const connection = { mutate: jest.fn() };
+  const hostFocusController = {
+    callFocusMethod: jest.fn(),
+    retryPendingFocus: jest.fn(),
+    reset: jest.fn(),
+  };
+
+  return {
+    connection,
+    hostFocusController,
+    remoteConnection: createFocusAwareRemoteConnection({
       connection,
       hostFocusController,
+    }),
+  };
+};
+
+describe('createFocusAwareRemoteConnection', () => {
+  it('routes focus and blur to the host focus controller', () => {
+    const { hostFocusController, remoteConnection } =
+      createConnectionUnderTest();
+
+    remoteConnection.call('portal', 'focus', { preventScroll: true });
+    remoteConnection.call('portal', 'blur');
+
+    expect(hostFocusController.callFocusMethod).toHaveBeenNthCalledWith(1, {
+      remoteElementId: 'portal',
+      methodName: 'focus',
+      options: { preventScroll: true },
     });
+    expect(hostFocusController.callFocusMethod).toHaveBeenNthCalledWith(2, {
+      remoteElementId: 'portal',
+      methodName: 'blur',
+      options: undefined,
+    });
+  });
+
+  it('rejects every other host element method, including top-layer ones', () => {
+    const { hostFocusController, remoteConnection } =
+      createConnectionUnderTest();
 
     for (const methodName of [
       'showModal',
       'showPopover',
       'togglePopover',
       'requestFullscreen',
+      'webkitRequestFullscreen',
+      'scrollIntoView',
     ]) {
-      remoteConnection.call('portal', methodName);
+      expect(() => remoteConnection.call('portal', methodName)).toThrow(
+        `Front components cannot call ${methodName}() on host elements`,
+      );
     }
-    expect(connection.call).not.toHaveBeenCalled();
+    expect(hostFocusController.callFocusMethod).not.toHaveBeenCalled();
+  });
 
-    remoteConnection.call('portal', 'focus', { preventScroll: true });
-    expect(hostFocusController.callFocusMethod).toHaveBeenCalledWith({
-      remoteElementId: 'portal',
-      methodName: 'focus',
-      options: { preventScroll: true },
-    });
-    remoteConnection.call('portal', 'scrollIntoView');
-    expect(connection.call).toHaveBeenCalledWith('portal', 'scrollIntoView');
+  it('forwards mutations to the receiver connection', () => {
+    const { connection, remoteConnection } = createConnectionUnderTest();
+
+    remoteConnection.mutate([]);
+
+    expect(connection.mutate).toHaveBeenCalledWith([]);
   });
 });

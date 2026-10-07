@@ -1,4 +1,4 @@
-import { MUTATION_TYPE_UPDATE_PROPERTY, ROOT_ID } from '@remote-dom/core';
+import { ROOT_ID } from '@remote-dom/core';
 import {
   BatchingRemoteConnection,
   connectRemoteNode,
@@ -10,23 +10,14 @@ import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTa
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
+import { createConnectionIgnoringRootPropertyUpdates } from '@/remote/worker/rendering/utils/createConnectionIgnoringRootPropertyUpdates';
 
 export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,
 ): Element => {
-  const batchedConnection = new BatchingRemoteConnection({
-    call: connection.call,
-    mutate: (records) =>
-      connection.mutate(
-        records.filter(([mutationType, remoteNodeId]) => {
-          const isRootPropertyUpdate =
-            mutationType === MUTATION_TYPE_UPDATE_PROPERTY &&
-            remoteNodeId === ROOT_ID;
-
-          return !isRootPropertyUpdate;
-        }),
-      ),
-  });
+  const batchedConnection = new BatchingRemoteConnection(
+    createConnectionIgnoringRootPropertyUpdates(connection),
+  );
   const remoteRoot = document.body;
   const renderContainer = document.createElement(REMOTE_RENDER_CONTAINER_TAG);
 

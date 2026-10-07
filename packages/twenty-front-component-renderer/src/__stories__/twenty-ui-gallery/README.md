@@ -14,8 +14,8 @@ known-failure scenarios that assert sandbox errors declare the patterns they
 require.
 `createGalleryRenderTest` checks the exact set of expected failed components.
 `createOverlayOpenTest` checks that a trigger opens its overlay and waits for
-visible popup content. `createDropdownOpenTest` applies it to
-the Dropdown-based popups.
+popup content that is visible and receives the pointer at its center.
+`createDropdownOpenTest` applies it to the Dropdown-based popups.
 `expectSandboxErrors` requires each listed known error and rejects any other
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
@@ -38,7 +38,7 @@ effect within the interaction timeout.
 | `twenty-ui-dialog`               | Dialog                                                                                                                              |
 | `twenty-ui-menu`                 | Menu                                                                                                                                |
 | `twenty-ui-select`               | Select                                                                                                                              |
-| `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow and confinement                                                                     |
+| `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                     |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
 | `twenty-ui-toast`                | Toast                                                                                                                               |
 | `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
@@ -69,12 +69,15 @@ run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
 Body portals render in a host layer outside widget scroll frames, with a
-200px margin around its box. Oversized fixed content is clipped for painting
-and pointer interaction. Browser top-layer promotion through modal dialogs,
-popovers and fullscreen is blocked to preserve those bounds. Dropdown stories
-cover page navigation, selection, closing and reopening in React and Preact.
-The portal fixture also verifies nearby overflow, callbacks, removal, and a
-host control that stays usable outside the allowed area.
+200px margin around its box. The worker's `window.visualViewport` reports this
+area, so Floating UI popups flip and size themselves to fit it. Oversized fixed
+content is clipped for painting and pointer interaction. Browser top-layer
+promotion through modal dialogs, popovers and fullscreen is blocked to preserve
+those bounds. Dropdown stories cover page navigation, selection, closing and
+reopening in React and Preact. The portal fixture also verifies nearby
+overflow, a tall menu that stays attached to its trigger and scrolls within the
+area, callbacks, removal, an unchanged page scroll size, and a host control
+that stays usable outside the allowed area.
 
 ## Known sandbox limitations
 
@@ -90,7 +93,8 @@ expected-to-fail by the runner.
 | --- | --- |
 | NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet. |
+| Popover, Dialog, AlertDialog, Menu, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and content that is visible and receives the pointer; search, selection, dismissal and focus restoration are not covered yet. |
+| Fixed-position popups | `position: fixed` resolves against the component box, as inside an iframe, while the worker positions popups in page coordinates. Popups anchored with fixed positioning, such as the `MenuPicker` tooltip (`positionMethod="fixed"`), render offset by the component's position; absolute positioning, the Base UI default, works. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 

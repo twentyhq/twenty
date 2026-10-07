@@ -138,7 +138,7 @@ describe('forwarding focus methods to the host', () => {
 
     expect(document.activeElement).toBe(firstHostButton);
     expect(() => connection.call(remoteId(firstItem), 'click')).toThrow(
-      'does not implement the click() method',
+      'Front components cannot call click() on host elements',
     );
 
     act(() => secondItem.focus({ preventScroll: true }));

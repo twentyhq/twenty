@@ -1,36 +1,28 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
+import { CustomError } from 'twenty-shared/utils';
 
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
-
-const PORTAL_ESCAPE_METHODS = new Set([
-  'showModal',
-  'showPopover',
-  'togglePopover',
-  'requestFullscreen',
-]);
 
 export const createFocusAwareRemoteConnection = ({
   connection,
   hostFocusController,
 }: {
-  connection: RemoteConnection;
+  connection: Pick<RemoteConnection, 'mutate'>;
   hostFocusController: HostFocusController;
 }): RemoteConnection => ({
   mutate: connection.mutate,
   call: (remoteElementId, methodName, ...methodArguments) => {
-    if (PORTAL_ESCAPE_METHODS.has(methodName)) {
-      return;
+    if (methodName !== 'focus' && methodName !== 'blur') {
+      throw new CustomError(
+        `Front components cannot call ${methodName}() on host elements`,
+        'FRONT_COMPONENT_HOST_METHOD_NOT_ALLOWED',
+      );
     }
 
-    if (methodName === 'focus' || methodName === 'blur') {
-      hostFocusController.callFocusMethod({
-        remoteElementId,
-        methodName,
-        options: methodArguments[0] as FocusOptions | undefined,
-      });
-      return;
-    }
-
-    return connection.call(remoteElementId, methodName, ...methodArguments);
+    hostFocusController.callFocusMethod({
+      remoteElementId,
+      methodName,
+      options: methodArguments[0] as FocusOptions | undefined,
+    });
   },
 });

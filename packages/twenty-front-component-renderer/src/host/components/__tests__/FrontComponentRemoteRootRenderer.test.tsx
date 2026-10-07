@@ -11,10 +11,11 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react';
 
+import { FrontComponentPortalContainerContext } from '@/host/contexts/FrontComponentPortalContainerContext';
 import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapper';
 import { FrontComponentRemoteRootRenderer } from '../FrontComponentRemoteRootRenderer';
 
@@ -41,6 +42,31 @@ const createButton = ({
   eventListeners: { click: onClick },
   children: [{ id: `${id}-text`, type: NODE_TYPE_TEXT, data: name }],
 });
+
+const createReceiverWithTriggerAndPopup = () => {
+  const receiver = new RemoteReceiver();
+  receiver.connection.mutate([
+    [
+      MUTATION_TYPE_INSERT_CHILD,
+      ROOT_ID,
+      {
+        id: 'content',
+        type: NODE_TYPE_ELEMENT,
+        element: 'remote-fragment',
+        children: [createButton({ id: 'trigger', name: 'Trigger' })],
+      },
+      0,
+    ],
+    [
+      MUTATION_TYPE_INSERT_CHILD,
+      ROOT_ID,
+      createButton({ id: 'portal', name: 'Popup' }),
+      1,
+    ],
+  ]);
+
+  return receiver;
+};
 
 describe('FrontComponentRemoteRootRenderer', () => {
   it('renders and removes body portal content with working callbacks', async () => {
@@ -72,27 +98,8 @@ describe('FrontComponentRemoteRootRenderer', () => {
     expect(screen.queryByRole('button', { name: 'Portal action' })).toBeNull();
   });
 
-  it('keeps the normal render fragment separate from the portal layer', () => {
-    const receiver = new RemoteReceiver();
-    receiver.connection.mutate([
-      [
-        MUTATION_TYPE_INSERT_CHILD,
-        ROOT_ID,
-        {
-          id: 'content',
-          type: NODE_TYPE_ELEMENT,
-          element: 'remote-fragment',
-          children: [createButton({ id: 'trigger', name: 'Trigger' })],
-        },
-        0,
-      ],
-      [
-        MUTATION_TYPE_INSERT_CHILD,
-        ROOT_ID,
-        createButton({ id: 'portal', name: 'Popup' }),
-        1,
-      ],
-    ]);
+  it('renders component content in place and body portals outside the component', () => {
+    const receiver = createReceiverWithTriggerAndPopup();
     const { container } = render(
       <FrontComponentRemoteRootRenderer
         receiver={receiver}
@@ -100,12 +107,36 @@ describe('FrontComponentRemoteRootRenderer', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Trigger' }).parentElement).toBe(
-      container,
-    );
     expect(
-      screen.getByRole('button', { name: 'Popup' }).parentElement,
-    ).not.toBe(container);
+      within(container).getByRole('button', { name: 'Trigger' }),
+    ).toBeDefined();
+    expect(
+      within(container).queryByRole('button', { name: 'Popup' }),
+    ).toBeNull();
+    expect(screen.getByRole('button', { name: 'Popup' })).toBeDefined();
+  });
+
+  it('renders body portals into the provided portal container', () => {
+    const receiver = createReceiverWithTriggerAndPopup();
+    const portalContainer = document.createElement('div');
+    document.body.append(portalContainer);
+
+    render(
+      <FrontComponentPortalContainerContext.Provider value={portalContainer}>
+        <FrontComponentRemoteRootRenderer
+          receiver={receiver}
+          components={components}
+        />
+      </FrontComponentPortalContainerContext.Provider>,
+    );
+
+    expect(
+      within(portalContainer).getByRole('button', { name: 'Popup' }),
+    ).toBeDefined();
+    expect(
+      within(portalContainer).queryByRole('button', { name: 'Trigger' }),
+    ).toBeNull();
+    portalContainer.remove();
   });
 
   it('does not remove a second receiver portal with the same remote ID', () => {
