@@ -1,4 +1,5 @@
 import { computeViewFieldPositionsAlignedToStandard } from 'src/database/commands/upgrade-version-command/2-25/utils/compute-view-field-positions-aligned-to-standard.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const STANDARD = {
   name: 0,
@@ -98,7 +99,11 @@ describe('computeViewFieldPositionsAlignedToStandard', () => {
       const namePosition = STANDARD.name;
 
       finalPositions.forEach((position, index) => {
-        if (existingViewFields[index].universalIdentifier === 'name') {
+        const existingViewField = existingViewFields[index];
+
+        jestExpectToBeDefined(existingViewField);
+
+        if (existingViewField.universalIdentifier === 'name') {
           return;
         }
 

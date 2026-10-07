@@ -6,7 +6,7 @@ import {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import {
@@ -332,6 +332,8 @@ const selectSystemFieldsView = ({
   }
 
   if (candidates.length === 1) {
+    assertIsDefinedOrThrow(candidates[0]);
+
     return { status: 'selected', viewId: candidates[0].fieldsView.flatView.id };
   }
 

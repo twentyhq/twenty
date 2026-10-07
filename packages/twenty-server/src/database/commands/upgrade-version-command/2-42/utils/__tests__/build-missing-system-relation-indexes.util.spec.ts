@@ -24,6 +24,7 @@ import {
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const STANDARD_APP_UID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APP_UID = '20202020-0000-4000-8000-000000000002';
@@ -37,7 +38,12 @@ type TargetLegSpecification = {
   indexedAtPosition?: 0 | 1;
 };
 
-const addAll = <TFlatEntity extends FlatObjectMetadata | FlatFieldMetadata | FlatIndexMetadata>(
+const addAll = <
+  TFlatEntity extends
+    | FlatObjectMetadata
+    | FlatFieldMetadata
+    | FlatIndexMetadata,
+>(
   flatEntities: TFlatEntity[],
 ): FlatEntityMaps<TFlatEntity> =>
   flatEntities.reduce<FlatEntityMaps<TFlatEntity>>(
@@ -177,7 +183,10 @@ describe('buildMissingSystemRelationIndexes', () => {
       ['taskTarget', 'targetSalesActionItemId'],
     ]);
 
-    const [{ universalFlatIndexMetadata }] = missingIndexes;
+    const [firstMissingIndex] = missingIndexes;
+    jestExpectToBeDefined(firstMissingIndex);
+
+    const { universalFlatIndexMetadata } = firstMissingIndex;
 
     expect(universalFlatIndexMetadata.applicationUniversalIdentifier).toBe(
       CUSTOM_APP_UID,

@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
 
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -143,7 +143,11 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
           return;
         }
 
-        const { flatLogicFunction } = batch[batchIndex];
+        const batchEntry = batch[batchIndex];
+
+        assertIsDefinedOrThrow(batchEntry);
+
+        const { flatLogicFunction } = batchEntry;
 
         failedLogicFunctionIds.push(flatLogicFunction.id);
 

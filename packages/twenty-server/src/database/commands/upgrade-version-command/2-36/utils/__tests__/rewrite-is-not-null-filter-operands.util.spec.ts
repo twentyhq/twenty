@@ -18,7 +18,9 @@ describe('rewriteIsNotNullFilterOperands', () => {
     const { value, changed } = rewriteIsNotNullFilterOperands(steps);
 
     expect(changed).toBe(true);
-    expect(value[0].settings.input.stepFilters[0].operand).toBe('IS_NOT_EMPTY');
+    expect(value[0]?.settings.input.stepFilters[0]?.operand).toBe(
+      'IS_NOT_EMPTY',
+    );
   });
 
   it('rewrites the deprecated isNotNull operand to IS_NOT_EMPTY', () => {
@@ -27,7 +29,7 @@ describe('rewriteIsNotNullFilterOperands', () => {
     });
 
     expect(changed).toBe(true);
-    expect(value.stepFilters[0].operand).toBe('IS_NOT_EMPTY');
+    expect(value.stepFilters[0]?.operand).toBe('IS_NOT_EMPTY');
   });
 
   it('rewrites operands in trigger filter settings', () => {
@@ -45,7 +47,7 @@ describe('rewriteIsNotNullFilterOperands', () => {
     const { value, changed } = rewriteIsNotNullFilterOperands(trigger);
 
     expect(changed).toBe(true);
-    expect(value.settings.filter.stepFilters[0].operand).toBe('IS_NOT_EMPTY');
+    expect(value.settings.filter.stepFilters[0]?.operand).toBe('IS_NOT_EMPTY');
   });
 
   it('leaves other operands untouched', () => {
@@ -66,7 +68,7 @@ describe('rewriteIsNotNullFilterOperands', () => {
     });
 
     expect(changed).toBe(false);
-    expect(value.stepFilters[0].value).toBe('IS_NOT_NULL');
+    expect(value.stepFilters[0]?.value).toBe('IS_NOT_NULL');
   });
 
   it('is idempotent', () => {

@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 type ViewFieldPosition = {
   universalIdentifier: string;
   position: number;
@@ -25,8 +27,12 @@ export const splitViewFieldPositionUpdates = <T extends ViewFieldPosition>(
     ({ position }) => position === lowestPosition,
   );
 
+  const positionUpdate = positionUpdates[lowestIndex];
+
+  assertIsDefinedOrThrow(positionUpdate);
+
   return {
     others: positionUpdates.filter((_, index) => index !== lowestIndex),
-    lowest: [positionUpdates[lowestIndex]],
+    lowest: [positionUpdate],
   };
 };

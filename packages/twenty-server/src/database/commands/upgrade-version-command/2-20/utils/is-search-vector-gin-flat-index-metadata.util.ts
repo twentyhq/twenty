@@ -1,8 +1,5 @@
-import {
-  FieldMetadataType,
-  IndexType,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, IndexType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -26,6 +23,8 @@ export const isSearchVectorGinFlatIndexMetadata = ({
   if (flatIndexMetadata.flatIndexFieldMetadatas.length !== 1) {
     return false;
   }
+
+  assertIsDefinedOrThrow(flatIndexMetadata.flatIndexFieldMetadatas[0]);
 
   const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityMaps: flatFieldMetadataMaps,

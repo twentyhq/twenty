@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { legacyDecryptVersionedWithFallback } from 'src/database/commands/upgrade-version-command/2-5/utils/legacy-decrypt-versioned-with-fallback.util';
@@ -38,9 +38,7 @@ const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
   LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
 
 @RegisteredInstanceCommand('2.5.0', 1798000005000, { type: 'slow' })
-export class EncryptApplicationVariableSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstanceCommand {
   private readonly logger = new Logger(
     EncryptApplicationVariableSlowInstanceCommand.name,
   );
@@ -123,7 +121,11 @@ export class EncryptApplicationVariableSlowInstanceCommand
         );
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
   }
 

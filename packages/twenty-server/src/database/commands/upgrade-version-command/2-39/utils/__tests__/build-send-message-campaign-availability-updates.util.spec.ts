@@ -33,10 +33,10 @@ describe('buildSendMessageCampaignAvailabilityUpdates', () => {
     });
 
     expect(updates).toHaveLength(1);
-    expect(updates[0].conditionalAvailabilityExpression).toBe(
+    expect(updates[0]?.conditionalAvailabilityExpression).toBe(
       conditionalAvailabilityExpression,
     );
-    expect(updates[0].updatedAt).toBe(NOW);
+    expect(updates[0]?.updatedAt).toBe(NOW);
   });
 
   it('leaves a command a workspace has customised alone', () => {

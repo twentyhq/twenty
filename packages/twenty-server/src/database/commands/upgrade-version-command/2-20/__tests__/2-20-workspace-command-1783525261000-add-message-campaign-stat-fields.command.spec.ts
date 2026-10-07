@@ -6,6 +6,7 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -33,7 +34,10 @@ const CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER =
 const CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIER_BY_NAME: Record<string, string> =
   Object.fromEntries(
     Object.entries(CAMPAIGN.fields).map(
-      ([fieldName, { universalIdentifier }]) => [fieldName, universalIdentifier],
+      ([fieldName, { universalIdentifier }]) => [
+        fieldName,
+        universalIdentifier,
+      ],
     ),
   );
 
@@ -43,18 +47,24 @@ const CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIER_BY_NAME: Record<string, string> =
 // identifier here.
 const CAMPAIGN_VIEW_FIELDS = Object.entries(
   CAMPAIGN.views.allMessageCampaigns.viewFields,
-).map(([fieldName, { universalIdentifier }]) => ({
-  universalIdentifier,
-  fieldUniversalIdentifier: CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIER_BY_NAME[
-    fieldName
-  ],
-}));
+).map(([fieldName, { universalIdentifier }]) => {
+  const campaignFieldUniversalIdentifier =
+    CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIER_BY_NAME[fieldName];
+
+  jestExpectToBeDefined(campaignFieldUniversalIdentifier);
+
+  return {
+    universalIdentifier,
+    fieldUniversalIdentifier: campaignFieldUniversalIdentifier,
+  };
+});
 
 const CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = CAMPAIGN_VIEW_FIELDS.map(
   ({ universalIdentifier }) => universalIdentifier,
 );
 
-const NAME_FIELD_UNIVERSAL_IDENTIFIER = CAMPAIGN.fields.name.universalIdentifier;
+const NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  CAMPAIGN.fields.name.universalIdentifier;
 const NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   CAMPAIGN.views.allMessageCampaigns.viewFields.name.universalIdentifier;
 

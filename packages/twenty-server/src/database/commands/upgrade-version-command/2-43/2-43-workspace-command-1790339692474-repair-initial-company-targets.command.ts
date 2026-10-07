@@ -68,6 +68,10 @@ export class RepairInitialCompanyTargetsCommand extends ProvisionedWorkspaceComm
           query.countSql,
         );
 
+        if (!isDefined(result)) {
+          throw new Error(`Count query returned no row for ${query.label}`);
+        }
+
         this.logger.log(
           `[DRY RUN] Would create ${result.count} ${query.label} for workspace ${workspaceId}`,
         );
@@ -82,6 +86,10 @@ export class RepairInitialCompanyTargetsCommand extends ProvisionedWorkspaceComm
         const [result] = await dataSource.query<
           Array<{ candidateCount: number; insertedCount: number }>
         >(query.insertSql);
+
+        if (!isDefined(result)) {
+          throw new Error(`Repair query returned no row for ${query.label}`);
+        }
 
         candidateCount = result.candidateCount;
         insertedCount += result.insertedCount;

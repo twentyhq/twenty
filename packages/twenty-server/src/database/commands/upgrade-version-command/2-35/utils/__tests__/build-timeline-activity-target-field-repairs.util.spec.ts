@@ -3,6 +3,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { buildTimelineActivityTargetFieldRepairs } from 'src/database/commands/upgrade-version-command/2-35/utils/build-timeline-activity-target-field-repairs.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TIMELINE_ACTIVITY_OBJECT_ID = 'timeline-activity-object-id';
 const TARGET_MORPH_ID =
@@ -162,6 +163,8 @@ const renameChain: BuildArgs = {
 
 describe('buildTimelineActivityTargetFieldRepairs', () => {
   it('renames a stale field, its join column and its system label', () => {
+    jestExpectToBeDefined(staleField.fields[0]);
+
     const { flatFieldMetadatasToUpdate, unrepairableTargetFields } =
       buildTimelineActivityTargetFieldRepairs(
         buildArgs({
@@ -184,6 +187,8 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
   });
 
   it('leaves a curated label untouched when the field is not a system side effect', () => {
+    jestExpectToBeDefined(staleField.fields[0]);
+
     const { flatFieldMetadatasToUpdate } =
       buildTimelineActivityTargetFieldRepairs(
         buildArgs({
@@ -198,7 +203,7 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
         }),
       );
 
-    expect(flatFieldMetadatasToUpdate[0].label).toBe('Curated');
+    expect(flatFieldMetadatasToUpdate[0]?.label).toBe('Curated');
   });
 
   it('does nothing when every target field already matches its object name', () => {
@@ -281,9 +286,11 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
       );
 
     expect(flatIndexMetadatasToUpdate).toHaveLength(1);
-    expect(flatIndexMetadatasToUpdate[0].universalIdentifier).toBe(
+    expect(flatIndexMetadatasToUpdate[0]?.universalIdentifier).toBe(
       'index-uid-shared',
     );
+    jestExpectToBeDefined(flatIndexMetadatasToUpdate[0]);
+
     expect(flatIndexMetadatasToUpdate[0].name).not.toBe('IDX_STALE_shared');
   });
 
@@ -313,7 +320,7 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
       );
 
     expect(flatFieldMetadatasToUpdate).toEqual([]);
-    expect(unrepairableTargetFields[0].reason).toContain(
+    expect(unrepairableTargetFields[0]?.reason).toContain(
       'already exists while metadata still names it',
     );
   });
@@ -327,7 +334,7 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
         }),
       );
 
-    expect(unrepairableTargetFields[0].reason).toContain('both exist');
+    expect(unrepairableTargetFields[0]?.reason).toContain('both exist');
   });
 
   it('refuses to repair when neither column exists', () => {
@@ -336,10 +343,12 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
         buildArgs({ ...staleField, columnNames: [] }),
       );
 
-    expect(unrepairableTargetFields[0].reason).toContain('neither column');
+    expect(unrepairableTargetFields[0]?.reason).toContain('neither column');
   });
 
   it('ignores morph fields outside the timeline target morph', () => {
+    jestExpectToBeDefined(staleField.fields[0]);
+
     const result = buildTimelineActivityTargetFieldRepairs(
       buildArgs({
         ...staleField,
@@ -352,6 +361,8 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
   });
 
   it('ignores the one to many leg of the morph relation', () => {
+    jestExpectToBeDefined(staleField.fields[0]);
+
     const result = buildTimelineActivityTargetFieldRepairs(
       buildArgs({
         ...staleField,

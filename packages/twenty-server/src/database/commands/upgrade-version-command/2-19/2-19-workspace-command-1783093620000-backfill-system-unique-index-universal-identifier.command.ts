@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -64,10 +64,14 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends Provisi
             isSystemUniqueFlatIndexMetadata(flatIndexMetadata) &&
             flatIndexMetadata.flatIndexFieldMetadatas.length === 1,
         )
-        .map((flatIndexMetadata): [string, typeof flatIndexMetadata] => [
-          flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
-          flatIndexMetadata,
-        ]),
+        .map((flatIndexMetadata): [string, typeof flatIndexMetadata] => {
+          assertIsDefinedOrThrow(flatIndexMetadata.flatIndexFieldMetadatas[0]);
+
+          return [
+            flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
+            flatIndexMetadata,
+          ];
+        }),
     );
 
     const indexesToBackfill = Object.values(

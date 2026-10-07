@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 as uuidv4 } from 'uuid';
@@ -145,6 +145,8 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends Provisi
 
       return;
     }
+
+    assertIsDefinedOrThrow(candidates[0]);
 
     const existingColumnKeys = await this.getExistingColumnKeys({
       dataSource,

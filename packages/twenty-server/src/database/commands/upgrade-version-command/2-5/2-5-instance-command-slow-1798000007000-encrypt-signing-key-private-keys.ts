@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { legacyDecryptVersionedWithFallback } from 'src/database/commands/upgrade-version-command/2-5/utils/legacy-decrypt-versioned-with-fallback.util';
@@ -77,7 +77,11 @@ export class EncryptSigningKeyPrivateKeysSlowInstanceCommand implements SlowInst
         );
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
   }
 

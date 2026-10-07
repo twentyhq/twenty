@@ -126,7 +126,7 @@ const buildArgs = ({
       registerField({
         fieldId,
         objectMetadataId: `object-${holderNameSingular}`,
-        name: `target${source.nameSingular[0].toUpperCase()}${source.nameSingular.slice(1)}`,
+        name: `target${source.nameSingular[0]?.toUpperCase()}${source.nameSingular.slice(1)}`,
         type: FieldMetadataType.MORPH_RELATION,
         morphId:
           STANDARD_OBJECTS[holderNameSingular].morphIds.targetMorphId.morphId,
@@ -248,10 +248,10 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
 
     expect(result.unprovisionableSystemRelations).toEqual([]);
     expect(result.candidates).toHaveLength(1);
-    expect(result.candidates[0].sourceFlatObjectMetadata.nameSingular).toBe(
+    expect(result.candidates[0]?.sourceFlatObjectMetadata.nameSingular).toBe(
       'phoneNumber2',
     );
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'timelineActivity',
       'attachment',
       'noteTarget',
@@ -319,7 +319,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
         reason: expect.stringContaining('forward relation'),
       },
     ]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'noteTarget',
       'taskTarget',
     ]);
@@ -339,7 +339,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
     );
 
     expect(result.unprovisionableSystemRelations).toEqual([]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'timelineActivity',
       'attachment',
       'noteTarget',
@@ -363,7 +363,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
     );
 
     expect(result.unprovisionableSystemRelations).toEqual([]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'timelineActivity',
       'attachment',
       'noteTarget',
@@ -386,7 +386,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
         reason: expect.stringContaining('already exists on timelineActivity'),
       },
     ]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'attachment',
       'noteTarget',
       'taskTarget',
@@ -413,7 +413,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
         reason: expect.stringContaining('already exists on phoneNumber2'),
       },
     ]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'timelineActivity',
       'noteTarget',
       'taskTarget',
@@ -439,7 +439,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
         ),
       },
     ]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'attachment',
       'noteTarget',
       'taskTarget',
@@ -473,7 +473,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
         reason: expect.stringContaining('partial pair'),
       },
     ]);
-    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+    expect(result.candidates[0]?.missingHolderNameSingulars).toEqual([
       'attachment',
       'noteTarget',
       'taskTarget',

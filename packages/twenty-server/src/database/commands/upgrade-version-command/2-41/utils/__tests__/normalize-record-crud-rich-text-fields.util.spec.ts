@@ -26,22 +26,23 @@ describe('normalizeRecordCrudRichTextFieldsInSteps', () => {
         ),
       ];
 
-    const { value, hasChanged, isRecordCrudRichTextCandidate } =
-      normalizeRecordCrudRichTextFieldsInSteps({
-        steps,
-        richTextFieldNamesByObjectName,
-      });
+      const { value, hasChanged, isRecordCrudRichTextCandidate } =
+        normalizeRecordCrudRichTextFieldsInSteps({
+          steps,
+          richTextFieldNamesByObjectName,
+        });
 
-    expect(hasChanged).toBe(true);
-    expect(isRecordCrudRichTextCandidate).toBe(true);
-    expect(value[0].settings.input.objectRecord).toEqual({
-      name: 'Amina',
-      relationshipSummary: {
-        blocknote: null,
-        markdown: 'Latest donation: {{trigger.body.amount}}',
-      },
-    });
-  });
+      expect(hasChanged).toBe(true);
+      expect(isRecordCrudRichTextCandidate).toBe(true);
+      expect(value[0]?.settings.input.objectRecord).toEqual({
+        name: 'Amina',
+        relationshipSummary: {
+          blocknote: null,
+          markdown: 'Latest donation: {{trigger.body.amount}}',
+        },
+      });
+    },
+  );
 
   it('leaves an already-object rich text value untouched but flags it as a candidate', () => {
     const steps = [

@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -123,10 +123,16 @@ export class AddCallRecordingSummaryAndTranscriptTabsCommand extends Provisioned
     });
 
     const pageLayoutTabsToCreate = standardPageLayoutTabsToCreate.map(
-      (pageLayoutTab, index) => ({
-        ...pageLayoutTab,
-        position: appendedTabPositions[index],
-      }),
+      (pageLayoutTab, index) => {
+        const appendedTabPosition = appendedTabPositions[index];
+
+        assertIsDefinedOrThrow(appendedTabPosition);
+
+        return {
+          ...pageLayoutTab,
+          position: appendedTabPosition,
+        };
+      },
     );
 
     const pageLayoutWidgetsToCreate =

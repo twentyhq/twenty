@@ -11,6 +11,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const STANDARD_APP_UID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APP_UID = '20202020-0000-4000-8000-000000000002';
@@ -88,6 +89,8 @@ const buildArgs = ({
     const sourceFieldIds: string[] = [];
 
     if (source.hasReverseField) {
+      jestExpectToBeDefined(source.nameSingular[0]);
+
       targetFieldIds.push(
         registerField({
           id: `field-target-${source.key}`,

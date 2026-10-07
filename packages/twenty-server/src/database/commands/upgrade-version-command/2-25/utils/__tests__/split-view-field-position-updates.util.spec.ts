@@ -1,4 +1,5 @@
 import { splitViewFieldPositionUpdates } from 'src/database/commands/upgrade-version-command/2-25/utils/split-view-field-position-updates.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('splitViewFieldPositionUpdates', () => {
   it('should hold back the column that ends up lowest', () => {
@@ -61,7 +62,11 @@ describe('splitViewFieldPositionUpdates', () => {
     ]);
 
     others.forEach(({ position }) => {
-      expect(position).toBeGreaterThan(lowest[0].position);
+      const lowestPosition = lowest[0]?.position;
+
+      jestExpectToBeDefined(lowestPosition);
+
+      expect(position).toBeGreaterThan(lowestPosition);
     });
   });
 });

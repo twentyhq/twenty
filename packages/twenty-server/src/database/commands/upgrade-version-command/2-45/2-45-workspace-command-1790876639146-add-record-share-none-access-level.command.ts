@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -158,6 +158,8 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
     if (restrictions.length === 0) {
       return;
     }
+
+    assertIsDefinedOrThrow(restrictions[0]);
 
     const columns = Object.keys(restrictions[0])
       .map(escapeIdentifier)

@@ -40,7 +40,7 @@ describe('ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand', () => {
     );
 
     expect(queries).toHaveLength(1);
-    expect(queries[0].sql).toContain('pg_tables');
+    expect(queries[0]?.sql).toContain('pg_tables');
   });
 
   it('only clears deadlines the old model stamped', async () => {

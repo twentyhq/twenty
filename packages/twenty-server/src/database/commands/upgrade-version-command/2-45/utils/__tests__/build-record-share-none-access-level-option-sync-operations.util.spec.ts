@@ -13,6 +13,7 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const NOW = '2026-10-01T12:00:00.000Z';
 const ACCESS_LEVEL_FIELD_UNIVERSAL_IDENTIFIER =
@@ -80,7 +81,7 @@ describe('buildRecordShareNoneAccessLevelOptionSyncOperations', () => {
         direction: 'up',
       });
 
-    expect(flatEntityToUpdate[0].defaultValue).toBe(
+    expect(flatEntityToUpdate[0]?.defaultValue).toBe(
       RECORD_SHARE_ACCESS_LEVEL_DEFAULT_VALUE,
     );
   });
@@ -94,6 +95,8 @@ describe('buildRecordShareNoneAccessLevelOptionSyncOperations', () => {
       });
 
     expect(flatEntityToUpdate).toHaveLength(1);
+    jestExpectToBeDefined(flatEntityToUpdate[0]);
+
     expect(getOptions(flatEntityToUpdate[0]).map(({ value }) => value)).toEqual(
       [
         RecordShareAccessLevel.READ,
@@ -124,6 +127,8 @@ describe('buildRecordShareNoneAccessLevelOptionSyncOperations', () => {
       });
 
     expect(flatEntityToUpdate).toHaveLength(1);
+    jestExpectToBeDefined(flatEntityToUpdate[0]);
+
     expect(
       getOptions(flatEntityToUpdate[0]).map(({ value }) => value),
     ).not.toContain(RecordShareAccessLevel.NONE);
