@@ -1,4 +1,4 @@
-import { PROVIDER_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
+import { PROVIDER_ICON_CONFIG } from '@/ai/constants/ProviderIconConfig';
 
 export type KnownProviderId = keyof typeof PROVIDER_ICON_CONFIG;
 

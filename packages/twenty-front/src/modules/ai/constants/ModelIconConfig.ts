@@ -8,7 +8,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 
-import { ModelFamily } from '~/generated-admin/graphql';
+import { ModelFamily } from '~/generated-metadata/graphql';
 
 export type ModelIconConfigKey = ModelFamily | 'FALLBACK';
 

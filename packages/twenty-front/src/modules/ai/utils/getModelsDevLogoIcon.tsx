@@ -1,6 +1,6 @@
 import { type IconComponent, type IconComponentProps } from 'twenty-ui/icon';
 
-import { ModelsDevProviderLogo } from '@/settings/admin-panel/ai/components/ModelsDevProviderLogo';
+import { ModelsDevProviderLogo } from '@/ai/components/ModelsDevProviderLogo';
 
 const MODELS_DEV_LOGO_BASE = 'https://models.dev/logos';
 

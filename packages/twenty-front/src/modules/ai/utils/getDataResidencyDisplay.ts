@@ -1,5 +1,5 @@
 import { isDataResidency } from 'twenty-shared/ai';
-import { DATA_RESIDENCY_CONFIG } from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
+import { DATA_RESIDENCY_CONFIG } from '@/ai/constants/DataResidencyConfig';
 
 export const getDataResidencyDisplay = (residency: string): string => {
   if (isDataResidency(residency)) {
