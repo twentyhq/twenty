@@ -10,6 +10,7 @@ import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { type NavigationDrawerItemModifier } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemModifier';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemIndentationLevel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -33,7 +34,10 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -70,6 +74,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
 
   return [
     {
@@ -86,10 +93,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconColorSwatch,
         },
         {
-          label: t`Accounts`,
-          path: SettingsPath.Accounts,
-          Icon: IconAt,
-          isHidden: !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+          label: isAppPreferencesEnabled ? t`App preferences` : t`Accounts`,
+          path: isAppPreferencesEnabled
+            ? SettingsPath.AppPreferences
+            : SettingsPath.Accounts,
+          Icon: isAppPreferencesEnabled ? IconApps : IconAt,
+          isHidden:
+            !isAppPreferencesEnabled &&
+            !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
           subItems: [
             {
               label: t`Emails`,

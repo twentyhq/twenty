@@ -15,6 +15,7 @@ import {
   type WorkspaceRouteObject,
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+import { SettingsAppPreferencesRouteGuard } from '@/settings/app-preferences/components/SettingsAppPreferencesRouteGuard';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
@@ -413,6 +414,18 @@ const SettingsAccounts = lazy(() =>
   })),
 );
 
+const SettingsAppPreferences = lazy(() =>
+  import('~/pages/settings/app-preferences/SettingsAppPreferences').then(
+    (module) => ({ default: module.SettingsAppPreferences }),
+  ),
+);
+
+const SettingsAppPreferencesBuiltInApplication = lazy(() =>
+  import('~/pages/settings/app-preferences/SettingsAppPreferencesBuiltInApplication').then(
+    (module) => ({ default: module.SettingsAppPreferencesBuiltInApplication }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -746,6 +759,24 @@ const createSettingsRouteElements = ({
       element={<SettingsTwoFactorAuthenticationMethod />}
     />
     <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
+    <Route element={<SettingsAppPreferencesRouteGuard />}>
+      <Route
+        path={SettingsPath.AppPreferences}
+        element={<SettingsAppPreferences />}
+      />
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.AppPreferencesBuiltInApplication}
+          element={<SettingsAppPreferencesBuiltInApplication />}
+        />
+      </Route>
+    </Route>
     <Route
       element={
         <SettingsProtectedRouteWrapper

@@ -6,12 +6,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
+  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import {
   jotaiStore,
@@ -23,6 +25,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({
   [SOURCE_LOCALE]: messages,
@@ -190,5 +193,45 @@ describe('useSettingsNavigationItems', () => {
         .filter((item) => item.path !== SettingsPath.Accounts)
         .every((item) => !item.isHidden),
     ).toBe(true);
+  });
+
+  it('shows App preferences to a member without connected-account permission when enabled', () => {
+    setPermissionFlags([]);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
+      ],
+    });
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+    const appPreferencesItem = result.current
+      .find((section) => section.label === 'User')
+      ?.items.find((item) => item.label === 'App preferences');
+
+    expect(appPreferencesItem?.path).toBe(SettingsPath.AppPreferences);
+    expect(appPreferencesItem?.isHidden).toBe(false);
+    expect(appPreferencesItem?.subItems?.every((item) => item.isHidden)).toBe(
+      true,
+    );
+  });
+
+  it('keeps the Accounts entry and legacy email/calendar paths when the flag is off', () => {
+    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+    const accountsItem = result.current
+      .find((section) => section.label === 'User')
+      ?.items.find((item) => item.label === 'Accounts');
+
+    expect(accountsItem?.path).toBe(SettingsPath.Accounts);
+    expect(accountsItem?.isHidden).toBe(false);
+    expect(accountsItem?.subItems?.map((item) => item.path)).toEqual([
+      SettingsPath.AccountsEmails,
+      SettingsPath.AccountsCalendars,
+    ]);
   });
 });
