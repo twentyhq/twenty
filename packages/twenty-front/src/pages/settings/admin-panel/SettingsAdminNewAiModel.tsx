@@ -344,19 +344,21 @@ export const SettingsAdminNewAiModel = () => {
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
             <InlineBanner
-              variant="compact"
-              color="danger"
-              message={customAiProviderGateDescription}
-              button={{
-                title: t`Activate`,
-                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
-                render: (
-                  <Link
-                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-                  />
-                ),
-              }}
-            />
+              layout="compact"
+              status="error"
+              action={
+                <InlineBanner.Action
+                  href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  render={
+                    <Link
+                      to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                    />
+                  }
+                >{t`Activate`}</InlineBanner.Action>
+              }
+            >
+              {customAiProviderGateDescription}
+            </InlineBanner>
           )}
 
           <Section.Root>
