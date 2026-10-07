@@ -127,31 +127,24 @@ const readField = (record: unknown, fieldName: string): unknown =>
 
 const evaluateCondition = (
   record: unknown,
-  condition: DatabaseEventTriggerRecordCondition,
+  condition: Record<string, unknown>,
 ): ConditionOutcome =>
   allOf(
     Object.entries(condition).map(([key, value]): ConditionOutcome => {
       if (key === 'and') {
         return Array.isArray(value)
-          ? allOf(value.map((child) => evaluateCondition(record, child)))
+          ? allOf(value.map((child) => evaluateChild(record, child)))
           : false;
       }
 
       if (key === 'or') {
         return Array.isArray(value)
-          ? anyOf(value.map((child) => evaluateCondition(record, child)))
+          ? anyOf(value.map((child) => evaluateChild(record, child)))
           : false;
       }
 
       if (key === 'not') {
-        return isPlainObject(value)
-          ? negate(
-              evaluateCondition(
-                record,
-                value as DatabaseEventTriggerRecordCondition,
-              ),
-            )
-          : false;
+        return negate(evaluateChild(record, value));
       }
 
       const fieldValue = readField(record, key);
@@ -160,16 +153,17 @@ const evaluateCondition = (
         return evaluateOperand(fieldValue, value);
       }
 
-      return isPlainObject(value)
-        ? evaluateCondition(
-            fieldValue,
-            value as DatabaseEventTriggerRecordCondition,
-          )
-        : false;
+      return evaluateChild(fieldValue, value);
     }),
   );
 
-export const evaluateDatabaseEventTriggerRecordCondition = (
-  record: unknown,
-  condition: DatabaseEventTriggerRecordCondition,
-): boolean => evaluateCondition(record, condition) === true;
+const evaluateChild = (record: unknown, child: unknown): ConditionOutcome =>
+  isPlainObject(child) ? evaluateCondition(record, child) : false;
+
+export const evaluateDatabaseEventTriggerRecordCondition = ({
+  record,
+  condition,
+}: {
+  record: unknown;
+  condition: DatabaseEventTriggerRecordCondition;
+}): boolean => evaluateCondition(record, condition) === true;

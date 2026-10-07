@@ -5,7 +5,9 @@ import type { DatabaseEventActor } from 'twenty-shared/database-events';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export const buildDatabaseEventActorFromAuthContext = (
-  authContext: RawAuthContext | undefined,
+  authContext:
+    | Pick<RawAuthContext, 'user' | 'apiKey' | 'application'>
+    | undefined,
 ): DatabaseEventActor => {
   if (isDefined(authContext?.user)) {
     return { type: 'user' };

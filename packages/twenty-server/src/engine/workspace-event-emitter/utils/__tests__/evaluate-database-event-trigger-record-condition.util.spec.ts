@@ -86,46 +86,61 @@ const cases: [string, DatabaseEventTriggerRecordCondition, boolean][] = [
 
 describe('evaluateDatabaseEventTriggerRecordCondition', () => {
   it.each(cases)('%s', (_label, condition, expected) => {
-    expect(evaluateDatabaseEventTriggerRecordCondition(record, condition)).toBe(
-      expected,
-    );
+    expect(
+      evaluateDatabaseEventTriggerRecordCondition({ record, condition }),
+    ).toBe(expected);
   });
 
   it('combines and, or and not', () => {
     expect(
-      evaluateDatabaseEventTriggerRecordCondition(record, {
-        and: [
-          { personId: { is: 'NOT_NULL' } },
-          { or: [{ role: { eq: 'TO' } }, { role: { eq: 'FROM' } }] },
-          { not: { workspaceMemberId: { is: 'NOT_NULL' } } },
-        ],
+      evaluateDatabaseEventTriggerRecordCondition({
+        record,
+        condition: {
+          and: [
+            { personId: { is: 'NOT_NULL' } },
+            { or: [{ role: { eq: 'TO' } }, { role: { eq: 'FROM' } }] },
+            { not: { workspaceMemberId: { is: 'NOT_NULL' } } },
+          ],
+        },
       }),
     ).toBe(true);
     expect(
-      evaluateDatabaseEventTriggerRecordCondition(record, {
-        and: [{ personId: { is: 'NOT_NULL' } }, { role: { eq: 'TO' } }],
+      evaluateDatabaseEventTriggerRecordCondition({
+        record,
+        condition: {
+          and: [{ personId: { is: 'NOT_NULL' } }, { role: { eq: 'TO' } }],
+        },
       }),
     ).toBe(false);
   });
 
   it('treats sibling field conditions as an implicit and', () => {
     expect(
-      evaluateDatabaseEventTriggerRecordCondition(record, {
-        personId: { is: 'NOT_NULL' },
-        role: { eq: 'TO' },
+      evaluateDatabaseEventTriggerRecordCondition({
+        record,
+        condition: {
+          personId: { is: 'NOT_NULL' },
+          role: { eq: 'TO' },
+        },
       }),
     ).toBe(false);
   });
 
   it('rejects a record that is not an object', () => {
     expect(
-      evaluateDatabaseEventTriggerRecordCondition(undefined, {
-        personId: { is: 'NOT_NULL' },
+      evaluateDatabaseEventTriggerRecordCondition({
+        record: undefined,
+        condition: {
+          personId: { is: 'NOT_NULL' },
+        },
       }),
     ).toBe(false);
     expect(
-      evaluateDatabaseEventTriggerRecordCondition(undefined, {
-        personId: { is: 'NULL' },
+      evaluateDatabaseEventTriggerRecordCondition({
+        record: undefined,
+        condition: {
+          personId: { is: 'NULL' },
+        },
       }),
     ).toBe(true);
   });

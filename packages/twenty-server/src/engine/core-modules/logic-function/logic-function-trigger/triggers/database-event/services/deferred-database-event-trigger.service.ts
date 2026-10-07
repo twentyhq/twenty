@@ -23,6 +23,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceSignalService } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
@@ -120,8 +122,12 @@ export class DeferredDatabaseEventTriggerService {
       ),
     });
 
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
     const jobs: { data: LogicFunctionTriggerJobData }[] = [];
     const settledLogicFunctionIds: string[] = [];
+    const retainedLogicFunctionIds = new Set<string>();
 
     for (const logicFunction of logicFunctions) {
       const triggerSettings = logicFunction.databaseEventTriggerSettings;
@@ -142,6 +148,10 @@ export class DeferredDatabaseEventTriggerService {
           logicFunctionId: logicFunction.id,
           droppedEventCount: 0,
         });
+
+        if (evaluation.mismatchedSignal === signal) {
+          retainedLogicFunctionIds.add(logicFunction.id);
+        }
         continue;
       }
 
@@ -150,12 +160,11 @@ export class DeferredDatabaseEventTriggerService {
       const { objectSingularName } = parseEventNameOrThrow(
         triggerSettings.eventName,
       );
-      const objectMetadata = Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      ).find(
-        (flatObjectMetadata) =>
-          flatObjectMetadata?.nameSingular === objectSingularName,
-      );
+      const objectMetadata =
+        findFlatEntityByIdInFlatEntityMaps<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          flatEntityId: idByNameSingular[objectSingularName],
+        });
 
       if (!isDefined(objectMetadata)) {
         this.logger.warn(
@@ -210,7 +219,12 @@ export class DeferredDatabaseEventTriggerService {
       );
     }
 
-    await this.cacheStorage.setRemove(deferredSetKey, logicFunctionIds);
+    await this.cacheStorage.setRemove(
+      deferredSetKey,
+      logicFunctionIds.filter(
+        (logicFunctionId) => !retainedLogicFunctionIds.has(logicFunctionId),
+      ),
+    );
 
     if (settledLogicFunctionIds.length > 0) {
       await this.cacheStorage.mdel(

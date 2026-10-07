@@ -548,7 +548,7 @@ All keys are optional and combine with AND:
 | `signals` | Once per batch | Workspace-level booleans published by the engine, keyed by name with the expected value. `messaging.import` and `calendar.import` are set while any mailbox or calendar of the workspace is syncing; `messaging.initialImport` and `calendar.initialImport` only while a newly connected one runs its first import. |
 | `onMismatch` | | What happens when a `signals` condition fails: `'drop'` (default) ignores the events, `'deferUntilMatch'` holds the function back and delivers one catch-up call once the signal reaches the expected state. `actor` and `record` mismatches always drop. |
 
-The types are exported from `twenty-sdk/define` as `DatabaseEventTriggerConditions`, `DatabaseEventTriggerRecordCondition`, `DatabaseEventTriggerOnMismatch` and `WorkspaceSignalName`, with the signal names in `WORKSPACE_SIGNAL_NAMES`.
+The types are exported from `twenty-sdk/define` as `DatabaseEventTriggerConditions`, `DatabaseEventTriggerRecordCondition`, `DatabaseEventTriggerRecordConditionOperand`, `DatabaseEventTriggerOnMismatch`, `DatabaseEventActorType` and `WorkspaceSignalName`, with the signal names in `WORKSPACE_SIGNAL_NAMES`.
 
 Validation happens when the app is synced and in `defineLogicFunction`: `record` allows at most 3 nesting levels and 20 field conditions, needs a concrete object in `eventName` rather than a `*` wildcard, and `deferUntilMatch` needs both `signals` and a concrete object. Field names are checked for shape, not against the object's fields.
 

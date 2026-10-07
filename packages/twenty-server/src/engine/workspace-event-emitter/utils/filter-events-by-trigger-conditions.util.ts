@@ -54,9 +54,9 @@ export const filterEventsByTriggerConditions = <
   const { action } = parseEventNameOrThrow(eventName);
 
   return events.filter((event) =>
-    evaluateDatabaseEventTriggerRecordCondition(
-      pickRecordForCondition(event, action),
-      recordCondition,
-    ),
+    evaluateDatabaseEventTriggerRecordCondition({
+      record: pickRecordForCondition(event, action),
+      condition: recordCondition,
+    }),
   );
 };

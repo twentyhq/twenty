@@ -1,4 +1,7 @@
-import { type WorkspaceSignalName } from 'twenty-shared/application';
+import {
+  isWorkspaceSignalName,
+  type WorkspaceSignalName,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceSignalStates } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
@@ -18,13 +21,12 @@ export const evaluateDatabaseEventTriggerSignalConditions = ({
     return { matches: true };
   }
 
-  for (const [signalName, expected] of Object.entries(signalConditions) as [
-    WorkspaceSignalName,
-    boolean,
-  ][]) {
+  for (const signalName of Object.keys(signalConditions).filter(
+    isWorkspaceSignalName,
+  )) {
     const isSet = isDefined(signalStates[signalName]);
 
-    if (isSet !== expected) {
+    if (isSet !== signalConditions[signalName]) {
       return { matches: false, mismatchedSignal: signalName };
     }
   }
@@ -41,9 +43,8 @@ export const collectSignalNamesFromConditions = (
   ...new Set(
     signalConditionsList
       .filter(isDefined)
-      .flatMap(
-        (signalConditions) =>
-          Object.keys(signalConditions) as WorkspaceSignalName[],
+      .flatMap((signalConditions) =>
+        Object.keys(signalConditions).filter(isWorkspaceSignalName),
       ),
   ),
 ];

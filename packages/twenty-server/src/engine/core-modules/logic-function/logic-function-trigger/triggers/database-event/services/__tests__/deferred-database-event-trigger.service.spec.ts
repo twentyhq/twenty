@@ -250,6 +250,30 @@ describe('DeferredDatabaseEventTriggerService', () => {
       expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
     });
 
+    it('keeps a function whose condition on the flushed signal still fails', async () => {
+      cacheStorage.setMembers.mockResolvedValue([LOGIC_FUNCTION_ID]);
+      workspaceSignalService.read.mockResolvedValue({
+        'messaging.initialImport': { since: '2026-10-06T09:30:00.000Z' },
+      });
+
+      await service.flush({
+        workspaceId: WORKSPACE_ID,
+        signal: 'messaging.initialImport',
+      });
+
+      expect(cacheStorage.setAdd).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:messaging.initialImport`,
+        [LOGIC_FUNCTION_ID],
+        DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
+      );
+      expect(cacheStorage.setRemove).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:messaging.initialImport`,
+        [],
+      );
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+      expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+    });
+
     it('forgets functions that no longer exist', async () => {
       cacheStorage.setMembers.mockResolvedValue([OTHER_LOGIC_FUNCTION_ID]);
 
