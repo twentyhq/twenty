@@ -32,20 +32,23 @@ const SUBSCRIPTION_COMMAND_MENU_ITEM_NAMES = [
   'unsubscribeFromAiChat',
 ] as const;
 
-const getAvailableSubscriptionCommands = (...subscriptions: boolean[]) =>
+const getAvailableSubscriptionCommands = (
+  ...subscriptions: (boolean | 'assignedToMe')[]
+) =>
   SUBSCRIPTION_COMMAND_MENU_ITEM_NAMES.filter((name) =>
     evaluateConditionalAvailabilityExpression(
       STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
       {
         numberOfSelectedRecords: subscriptions.length,
         permissionFlags: { AI: true },
-        selectedRecords: subscriptions.map((isSubscribed, index) => ({
+        selectedRecords: subscriptions.map((subscription, index) => ({
           id: `thread-${index}`,
           deletedAt: null,
           inboxStatus: {
             scope: 'INBOX',
             isUnread: false,
-            isSubscribed,
+            isSubscribed: subscription !== false,
+            isAssignedToMe: subscription === 'assignedToMe',
             event: null,
           },
         })),
@@ -99,5 +102,9 @@ describe('AI chat inbox command menu items', () => {
 
   it('offers neither on a mix of followed and unfollowed chats', () => {
     expect(getAvailableSubscriptionCommands(true, false)).toEqual([]);
+  });
+
+  it('keeps the assignee subscribed', () => {
+    expect(getAvailableSubscriptionCommands(true, 'assignedToMe')).toEqual([]);
   });
 });
