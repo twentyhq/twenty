@@ -1,32 +1,25 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 
 const ABSENT = '-';
+const DEFAULT_IDENTITY = 'default';
 
 export const buildQuotaCounterKey = ({
   workspaceId,
-  resourceType,
-  operationType,
-  spenderType,
-  spenderId,
-  unit,
-  periodUnit,
-  periodStart,
-  limitValue,
+  counter,
 }: {
   workspaceId: string;
-  resourceType: UsageResourceType;
-  operationType: UsageOperationType;
-  spenderType: SpenderType;
-  spenderId?: string | null;
-  unit: UsageUnit;
-  periodUnit: PeriodUnit;
-  periodStart: Date;
-  limitValue: number;
+  counter: Pick<
+    LimitQuotaCounter,
+    | 'usageLimitId'
+    | 'resourceType'
+    | 'operationType'
+    | 'spenderType'
+    | 'spenderId'
+    | 'unit'
+    | 'periodUnit'
+    | 'periodStart'
+  >;
 }): string =>
-  `{${workspaceId}}:quota:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${unit}:${periodUnit}:${periodStart.getTime()}:${limitValue}`;
+  `{${workspaceId}}:quota-consumed:${counter.usageLimitId ?? DEFAULT_IDENTITY}:${counter.resourceType}:${counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}:${counter.periodUnit}:${counter.periodStart.getTime()}`;

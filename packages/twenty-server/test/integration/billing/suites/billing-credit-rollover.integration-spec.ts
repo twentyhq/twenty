@@ -214,37 +214,29 @@ describe('Billing credit rollover (integration)', () => {
       await refreshCurrentBillingSubscription(workspaceId);
     });
 
-    it.failing(
-      'keeps in-flight usage of the opened period through the transition',
-      async () => {
-        const consumedBeforeMicro =
-          await readAllowanceConsumedMicro(workspaceId);
+    it('keeps in-flight usage of the opened period through the transition', async () => {
+      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-        await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
-        await postInvoiceFinalized().expect(200);
+      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+      await postInvoiceFinalized().expect(200);
 
-        expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
-          consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
-        );
-      },
-    );
+      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+      );
+    });
 
-    it.failing(
-      'keeps in-flight usage when a successful delivery is repeated',
-      async () => {
-        await postInvoiceFinalized().expect(200);
+    it('keeps in-flight usage when a successful delivery is repeated', async () => {
+      await postInvoiceFinalized().expect(200);
 
-        const consumedBeforeMicro =
-          await readAllowanceConsumedMicro(workspaceId);
+      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-        await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
-        await postInvoiceFinalized().expect(200);
+      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+      await postInvoiceFinalized().expect(200);
 
-        expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
-          consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
-        );
-      },
-    );
+      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+      );
+    });
   });
 
   // A 31st anchor runs Jan 31 to Feb 28; once advanced, calendar arithmetic clamps Feb 28 back to Jan 28 and swallows three days

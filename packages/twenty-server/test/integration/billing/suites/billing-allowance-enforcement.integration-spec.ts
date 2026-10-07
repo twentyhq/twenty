@@ -320,25 +320,22 @@ describe('Credit allowance enforcement (integration)', () => {
     expect(await readAllowanceConsumedMicro(workspaceId)).toBe(900);
   });
 
-  it.failing(
-    'keeps in-flight usage when a grant lifts the refusal',
-    async () => {
-      const grantMicro = INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+  it('keeps in-flight usage when a grant lifts the refusal', async () => {
+    const grantMicro = INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
 
-      await recordAiUsage(ALLOWANCE_MICRO - IN_FLIGHT_CREDITS_MICRO);
-      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+    await recordAiUsage(ALLOWANCE_MICRO - IN_FLIGHT_CREDITS_MICRO);
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
-      expect(await findAllowanceRefusal()).toMatchObject({
-        exhaustedKind: 'allowance',
-      });
+    expect(await findAllowanceRefusal()).toMatchObject({
+      exhaustedKind: 'allowance',
+    });
 
-      await grantCredits(1);
+    await grantCredits(1);
 
-      expect(await findAllowanceRefusal(grantMicro)).toBeNull();
-      expect(await findAllowanceRefusal(grantMicro + 1)).toMatchObject({
-        exhaustedKind: 'allowance',
-        limitValue: ALLOWANCE_MICRO + grantMicro,
-      });
-    },
-  );
+    expect(await findAllowanceRefusal(grantMicro)).toBeNull();
+    expect(await findAllowanceRefusal(grantMicro + 1)).toMatchObject({
+      exhaustedKind: 'allowance',
+      limitValue: ALLOWANCE_MICRO + grantMicro,
+    });
+  });
 });

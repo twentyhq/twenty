@@ -21,6 +21,7 @@ const counterSpecificity = (counter: LimitQuotaCounter): number =>
 
 export const buildQuotaCounters = ({
   limits,
+  enforceableLimits,
   quotaLimitDefaults,
   usageSpenders,
   workspaceId,
@@ -28,6 +29,7 @@ export const buildQuotaCounters = ({
   periodByUnit,
 }: {
   limits: FlatQuotaLimit[];
+  enforceableLimits: FlatQuotaLimit[];
   quotaLimitDefaults: QuotaLimitDefault[];
   usageSpenders: UsageSpenders;
   workspaceId: string;
@@ -35,6 +37,10 @@ export const buildQuotaCounters = ({
   periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
 }): LimitQuotaCounter[] => {
   const spenders = buildSpendersFromUsageSpenders(usageSpenders);
+
+  const enforceableLimitIds = new Set(
+    enforceableLimits.map((limit) => limit.id),
+  );
 
   const limitCounters = spenders.flatMap((spender) =>
     findLimitsForSpender({ limits, spender, operationType }).flatMap(
@@ -45,7 +51,14 @@ export const buildQuotaCounters = ({
           return [];
         }
 
-        return [buildLimitQuotaCounter({ workspaceId, limit, period })];
+        return [
+          buildLimitQuotaCounter({
+            workspaceId,
+            limit,
+            period,
+            isEnforced: enforceableLimitIds.has(limit.id),
+          }),
+        ];
       },
     ),
   );
@@ -56,20 +69,28 @@ export const buildQuotaCounters = ({
     .filter(
       (quotaLimitDefault) =>
         quotaLimitDefault.operationType === operationType &&
-        spenderTypes.has(quotaLimitDefault.spenderType) &&
-        !limits.some((limit) =>
-          doesUsageLimitRowSuppressDefault({
-            scope: limit,
-            usageLimitDefault: quotaLimitDefault,
-          }),
-        ),
+        spenderTypes.has(quotaLimitDefault.spenderType),
     )
     .flatMap((quotaLimitDefault) => {
       const period = periodByUnit[quotaLimitDefault.periodUnit];
 
-      return isDefined(period)
-        ? [buildQuotaDefaultCounter({ workspaceId, quotaLimitDefault, period })]
-        : [];
+      if (!isDefined(period)) {
+        return [];
+      }
+
+      return [
+        buildQuotaDefaultCounter({
+          workspaceId,
+          quotaLimitDefault,
+          period,
+          isEnforced: !enforceableLimits.some((limit) =>
+            doesUsageLimitRowSuppressDefault({
+              scope: limit,
+              usageLimitDefault: quotaLimitDefault,
+            }),
+          ),
+        }),
+      ];
     });
 
   return [...limitCounters, ...defaultCounters].sort(
