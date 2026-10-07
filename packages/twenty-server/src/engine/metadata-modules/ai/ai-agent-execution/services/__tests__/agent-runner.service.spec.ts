@@ -58,7 +58,6 @@ const RUN_INPUT: AgentRunnerRunInput = {
     instructions: null,
     capabilities: {
       canAskHumans: false,
-      canProposeToolCalls: false,
     },
   },
   agent: null,
