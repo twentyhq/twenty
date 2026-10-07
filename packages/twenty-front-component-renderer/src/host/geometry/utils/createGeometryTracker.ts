@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
+import { GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS } from '@/host/geometry/constants/GeometryIdlePortalCheckIntervalMs';
 import { GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES } from '@/host/geometry/constants/GeometryUnregisteredObservationExpiryFrames';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/geometry/types/PushGeometryUpdates';
@@ -27,6 +28,7 @@ export const createGeometryTracker = (): GeometryTracker => {
   let pushGeometryUpdates: PushGeometryUpdates | null = null;
   let lastViewportSnapshot: ViewportGeometrySnapshot | null = null;
   let animationFrameHandle: number | null = null;
+  let idlePortalCheckTimeout: ReturnType<typeof setTimeout> | null = null;
   let idleFrameCount = 0;
 
   const scheduleAnimationFrame = (): void => {
@@ -38,6 +40,26 @@ export const createGeometryTracker = (): GeometryTracker => {
       animationFrameHandle = null;
       runFrame();
     });
+  };
+
+  const scheduleIdlePortalCheck = (): void => {
+    if (isDefined(idlePortalCheckTimeout)) {
+      return;
+    }
+
+    idlePortalCheckTimeout = setTimeout(() => {
+      idlePortalCheckTimeout = null;
+      scheduleAnimationFrame();
+    }, GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
+  };
+
+  const cancelIdlePortalCheck = (): void => {
+    if (!isDefined(idlePortalCheckTimeout)) {
+      return;
+    }
+
+    clearTimeout(idlePortalCheckTimeout);
+    idlePortalCheckTimeout = null;
   };
 
   const wake = (): void => {
@@ -148,11 +170,13 @@ export const createGeometryTracker = (): GeometryTracker => {
       idleFrameCount += 1;
     }
 
-    if (
-      isDefined(portalLayer) ||
-      idleFrameCount < GEOMETRY_IDLE_FRAME_THRESHOLD
-    ) {
+    if (idleFrameCount < GEOMETRY_IDLE_FRAME_THRESHOLD) {
       scheduleAnimationFrame();
+      return;
+    }
+
+    if (isDefined(portalLayer)) {
+      scheduleIdlePortalCheck();
     }
   };
 
@@ -248,6 +272,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     portalLayer = element;
 
     if (!isDefined(portalLayer)) {
+      cancelIdlePortalCheck();
       return;
     }
 
@@ -283,6 +308,7 @@ export const createGeometryTracker = (): GeometryTracker => {
       animationFrameHandle = null;
     }
 
+    cancelIdlePortalCheck();
     wakeSources.detachAllSources();
 
     observedRemoteElementIds.clear();

@@ -9,6 +9,7 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 
 const MAXIMUM_MENU_TRIGGER_GAP = 16;
+const GEOMETRY_TRACKER_IDLE_DELAY_MS = 500;
 
 const expectMenuAttachedToTriggerWithinPortalArea = ({
   menu,
@@ -99,6 +100,24 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
       ownerRoot.getBoundingClientRect().bottom,
       0,
     );
+  });
+
+  await new Promise((resolve) =>
+    setTimeout(resolve, GEOMETRY_TRACKER_IDLE_DELAY_MS),
+  );
+  const ownerTopBeforeShift = ownerRoot.getBoundingClientRect().top;
+  await userEvent.click(canvas.getByRole('button', { name: 'Shift widget' }));
+  await waitFor(() =>
+    expect(ownerRoot.getBoundingClientRect().top).toBeGreaterThan(
+      ownerTopBeforeShift,
+    ),
+  );
+  await waitFor(() => {
+    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
+      ownerRoot.getBoundingClientRect().bottom,
+      0,
+    );
+    expectElementToReceivePointer(portalAction);
   });
 
   await userEvent.click(portalAction);

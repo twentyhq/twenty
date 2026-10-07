@@ -1,6 +1,7 @@
 import { setupGeometryGlobals } from '@/testing/setupGeometryGlobals';
 
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
+import { GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS } from '@/host/geometry/constants/GeometryIdlePortalCheckIntervalMs';
 import { createGeometryTracker } from '../createGeometryTracker';
 
 const geometryGlobals = setupGeometryGlobals();
@@ -35,6 +36,7 @@ describe('createGeometryTracker', () => {
       tracker.reset();
     }
     armedTrackers.length = 0;
+    jest.useRealTimers();
   });
 
   it('should not schedule a frame when created', () => {
@@ -43,7 +45,10 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
-  it('keeps an open portal aligned through movement and stops tracking after it closes', () => {
+  it('keeps an idle open portal in sync with its owner on a slow check instead of every frame, and stops after it closes', () => {
+    jest.useFakeTimers({
+      doNotFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
     const tracker = createGeometryTracker();
     armedTrackers.push(tracker);
     const root = geometryGlobals.createStubNode({
@@ -58,16 +63,23 @@ describe('createGeometryTracker', () => {
     tracker.setPushGeometryUpdates(jest.fn());
 
     flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
     root.setGeometry({ x: 40, y: 50, width: 360, height: 220 });
+    root.node.style.pointerEvents = 'none';
+    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
     geometryGlobals.flushAnimationFrame();
 
     expect(portalLayer.style.left).toBe('calc(40px / var(--t-zoom, 1))');
     expect(portalLayer.style.top).toBe('calc(50px / var(--t-zoom, 1))');
     expect(portalLayer.style.width).toBe('calc(360px / var(--t-zoom, 1))');
     expect(portalLayer.style.height).toBe('calc(220px / var(--t-zoom, 1))');
+    expect(portalLayer.inert).toBe(true);
 
     tracker.setPortalLayer(null);
     flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
 
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
