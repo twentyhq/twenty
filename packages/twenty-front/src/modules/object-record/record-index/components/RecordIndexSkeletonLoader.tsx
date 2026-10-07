@@ -1,8 +1,8 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
 import Skeleton from 'react-loading-skeleton';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const StyledSecondaryBar = styled.div`
   align-items: center;

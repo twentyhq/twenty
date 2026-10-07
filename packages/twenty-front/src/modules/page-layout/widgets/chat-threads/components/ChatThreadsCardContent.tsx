@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';

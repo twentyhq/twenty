@@ -1,4 +1,4 @@
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { AttachmentUploadTrigger } from '@/activities/files/components/AttachmentUploadTrigger';
 import { DropZone } from '@/activities/files/components/DropZone';

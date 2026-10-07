@@ -10,13 +10,15 @@ import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 
 jest.mock('@/navigation/hooks/useActiveNavigationDrawerMode');
-jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
+jest.mock(
+  '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded',
+);
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 

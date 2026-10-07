@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const StyledSkeletonIconAndText = styled.div`
   display: flex;

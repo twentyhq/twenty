@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
+import { isResizablePanelDraggingState } from '@/ui/layout/resizable-panel/states/isResizablePanelDraggingState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
@@ -19,11 +19,11 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
+  header?: ReactNode;
 };
 
 const StyledAnimatedContainer = styled.div<{
@@ -81,6 +81,7 @@ const StyledContent = styled.div`
 export const NavigationDrawer = ({
   children,
   className,
+  header,
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
@@ -94,26 +95,26 @@ export const NavigationDrawer = ({
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setTableWidthResizeIsActive = useSetAtomState(
-    tableWidthResizeIsActiveState,
+  const setIsResizablePanelDragging = useSetAtomState(
+    isResizablePanelDraggingState,
   );
 
   const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    setIsResizablePanelDragging(false);
   };
 
   const handleResizeStart = (_size: number) => {
     setIsResizing(true);
-    setTableWidthResizeIsActive(false);
+    setIsResizablePanelDragging(true);
   };
 
   return (
@@ -126,7 +127,7 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          <NavigationDrawerHeader />
+          {header}
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 

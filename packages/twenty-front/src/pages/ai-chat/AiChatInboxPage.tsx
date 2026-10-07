@@ -10,7 +10,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';

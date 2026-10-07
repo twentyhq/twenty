@@ -2,7 +2,7 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { UpsertRecordsInStoreEffect } from '@/object-record/record-store/components/UpsertRecordsInStoreEffect';
@@ -11,7 +11,6 @@ import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetConten
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
-
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMainContainer = styled(StyledWidgetScrollContainer)`

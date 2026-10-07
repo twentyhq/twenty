@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
   StyledMarkdownContainer,
   StyledSkeletonContainer,
@@ -10,6 +9,7 @@ import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferenc
 import { memo, Suspense, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from 'twenty-ui/theme';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 export const MarkdownLoadingSkeleton = () => {
   const theme = useTheme();

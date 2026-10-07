@@ -1,4 +1,4 @@
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';

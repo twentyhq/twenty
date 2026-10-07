@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -40,6 +39,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const passwordLengthMessage = msg`Password must be between 8 and 50 characters`;
 

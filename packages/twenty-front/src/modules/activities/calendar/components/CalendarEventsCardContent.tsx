@@ -2,7 +2,7 @@ import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMont
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';

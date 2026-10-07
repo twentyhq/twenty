@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
@@ -10,6 +9,7 @@ import { styled } from '@linaria/react';
 import { Suspense, useId } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;

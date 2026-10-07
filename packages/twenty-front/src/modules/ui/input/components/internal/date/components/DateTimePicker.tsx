@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
@@ -28,6 +27,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { Temporal } from 'temporal-polyfill';
 
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
