@@ -1,7 +1,7 @@
+import { isCompositePropertySupportedInGroupBy } from 'twenty-shared/utils';
 import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
 
 import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
-import { isCompositePropertySupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-property-supported-in-group-by.util';
 
 const buildCompositeProperty = (
   type: FieldMetadataType,
