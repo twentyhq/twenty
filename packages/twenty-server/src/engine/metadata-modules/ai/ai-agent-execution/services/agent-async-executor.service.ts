@@ -66,6 +66,7 @@ import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -85,9 +86,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
   success: false,
@@ -138,25 +136,10 @@ export class AgentAsyncExecutorService {
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+    private readonly aiAgentRoleService: AiAgentRoleService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
-
-  private async getAgentRoleId(
-    agentId: string,
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
-      where: {
-        agentId,
-      },
-      select: ['roleId'],
-    });
-
-    return roleTarget?.roleId;
-  }
 
   private resolveUserIdentity(authContext?: WorkspaceAuthContext): {
     userId?: string;
@@ -416,10 +399,10 @@ export class AgentAsyncExecutorService {
       });
 
       if (agent) {
-        const agentRoleId = await this.getAgentRoleId(
-          agent.id,
-          agent.workspaceId,
-        );
+        const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
+          workspaceId: agent.workspaceId,
+          agentId: agent.id,
+        });
 
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearch: agent.modelConfiguration?.webSearch?.enabled === true,

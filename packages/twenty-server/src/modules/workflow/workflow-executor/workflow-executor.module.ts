@@ -2,11 +2,9 @@ import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-co
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
-import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent-action.module';
 import { ClassifyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify-action.module';
@@ -31,7 +29,6 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
 @Module({
   imports: [
     WorkflowCoreModule,
-    WorkflowCommonModule,
     WorkflowRunModule,
     CodeActionModule,
     LogicFunctionActionModule,
@@ -40,7 +37,6 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
     RecordCRUDActionModule,
     FormActionModule,
     BillingModule,
-    WorkspaceCacheModule,
     FilterActionModule,
     IfElseActionModule,
     IteratorActionModule,

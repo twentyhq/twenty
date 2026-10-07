@@ -1,4 +1,4 @@
-import { splitFullName } from '~/utils/format/spiltFullName';
+import { splitFullName } from '~/utils/format/splitFullName';
 
 describe('splitFullName', () => {
   it('should split a full name with two parts', () => {
