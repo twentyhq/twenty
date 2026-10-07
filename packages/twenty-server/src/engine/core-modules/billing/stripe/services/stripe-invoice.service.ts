@@ -137,10 +137,10 @@ export class StripeInvoiceService {
     });
 
     if (finalizedInvoice.status === 'paid') {
-      return toOneOffInvoicePayment(
-        finalizedInvoice,
-        BillingInvoicePaymentStatus.PAID,
-      );
+      return toOneOffInvoicePayment({
+        invoice: finalizedInvoice,
+        status: BillingInvoicePaymentStatus.PAID,
+      });
     }
 
     try {
@@ -150,19 +150,19 @@ export class StripeInvoiceService {
         { idempotencyKey: `${idempotencyKey}-pay` },
       );
 
-      return toOneOffInvoicePayment(
-        paidInvoice,
-        paidInvoice.status === 'paid'
-          ? BillingInvoicePaymentStatus.PAID
-          : BillingInvoicePaymentStatus.PROCESSING,
-      );
+      return toOneOffInvoicePayment({
+        invoice: paidInvoice,
+        status:
+          paidInvoice.status === 'paid'
+            ? BillingInvoicePaymentStatus.PAID
+            : BillingInvoicePaymentStatus.PROCESSING,
+      });
     } catch (payError) {
-      // The open invoice stays payable on its hosted page, where the customer can pass 3DS
       if (isInvoicePaymentActionRequiredError(payError)) {
-        return toOneOffInvoicePayment(
-          finalizedInvoice,
-          BillingInvoicePaymentStatus.REQUIRES_ACTION,
-        );
+        return toOneOffInvoicePayment({
+          invoice: finalizedInvoice,
+          status: BillingInvoicePaymentStatus.REQUIRES_ACTION,
+        });
       }
 
       await this.settleFailedInvoiceOrThrow({
@@ -170,10 +170,10 @@ export class StripeInvoiceService {
         payError,
       });
 
-      return toOneOffInvoicePayment(
-        finalizedInvoice,
-        BillingInvoicePaymentStatus.PAID,
-      );
+      return toOneOffInvoicePayment({
+        invoice: finalizedInvoice,
+        status: BillingInvoicePaymentStatus.PAID,
+      });
     }
   }
 
@@ -306,10 +306,13 @@ export class StripeInvoiceService {
   }
 }
 
-const toOneOffInvoicePayment = (
-  invoice: Stripe.Invoice,
-  status: BillingInvoicePaymentStatus,
-): OneOffInvoicePayment => ({
+const toOneOffInvoicePayment = ({
+  invoice,
+  status,
+}: {
+  invoice: Stripe.Invoice;
+  status: BillingInvoicePaymentStatus;
+}): OneOffInvoicePayment => ({
   status,
   stripeInvoiceId: invoice.id,
   stripeInvoiceNumber: invoice.number,

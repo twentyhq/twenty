@@ -566,7 +566,6 @@ export class BillingResolver {
     return this.billingCreditOneTimeTopUpService.getOffers(workspace.id);
   }
 
-  // Charges the saved card, so only a signed-in member acting for themselves may call it
   @Mutation(() => BillingCreditTopUpDTO)
   @UseGuards(
     AuthPrincipalGuard({

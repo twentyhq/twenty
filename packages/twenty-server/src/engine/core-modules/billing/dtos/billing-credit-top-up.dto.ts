@@ -2,11 +2,11 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
 
 @ObjectType('BillingCreditTopUp')
-export class BillingCreditTopUpDTO {
+export class BillingCreditTopUpDTO extends BillingUpdateDTO {
   @Field(() => BillingInvoicePaymentStatus)
   status: BillingInvoicePaymentStatus;
 
@@ -16,14 +16,4 @@ export class BillingCreditTopUpDTO {
     nullable: true,
   })
   hostedInvoiceUrl: string | null;
-
-  @Field(() => BillingSubscriptionEntity, {
-    description: 'Current billing subscription',
-  })
-  currentBillingSubscription: BillingSubscriptionEntity;
-
-  @Field(() => [BillingSubscriptionEntity], {
-    description: 'All billing subscriptions',
-  })
-  billingSubscriptions: BillingSubscriptionEntity[];
 }

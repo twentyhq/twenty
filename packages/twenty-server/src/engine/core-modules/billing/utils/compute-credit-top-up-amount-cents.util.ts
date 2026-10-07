@@ -1,17 +1,16 @@
 /* @license Enterprise */
 
-// BigInt because credits times cents passes 2^53 on large packs; rounded up so a top-up never undercharges
+import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+
 export const computeCreditTopUpAmountCents = ({
   creditAmountMicro,
-  unitAmountCents,
-  priceCreditAmountMicro,
+  price,
 }: {
   creditAmountMicro: number;
-  unitAmountCents: number;
-  priceCreditAmountMicro: number;
+  price: Pick<BillingPriceEntity, 'unitAmount' | 'metadata'>;
 }): number => {
-  const amount = BigInt(creditAmountMicro) * BigInt(unitAmountCents);
-  const divisor = BigInt(priceCreditAmountMicro);
+  const amount = BigInt(creditAmountMicro) * BigInt(Number(price.unitAmount));
+  const divisor = BigInt(Number(price.metadata?.credit_amount));
 
   return Number((amount + divisor - BigInt(1)) / divisor);
 };

@@ -8,7 +8,6 @@ import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is
 const getCentsPerMicroCredit = (price: BillingPriceEntity): number =>
   Number(price.unitAmount) / Number(price.metadata?.credit_amount);
 
-// The cheapest paid tier, not the current one: the free tier costs nothing and old prices count credits in another unit
 export const findCreditTopUpPrice = (
   subscription: Pick<
     BillingSubscriptionEntity,
