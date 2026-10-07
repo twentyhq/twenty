@@ -361,8 +361,6 @@ export class CalendarChannelSyncStatusService {
     await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
   }
 
-  // Signals let app triggers hold off while a calendar imports. The first
-  // sync of a channel is the one that floods, so it gets its own signal.
   private async refreshImportSignals(
     calendarChannelIds: string[],
     workspaceId: string,

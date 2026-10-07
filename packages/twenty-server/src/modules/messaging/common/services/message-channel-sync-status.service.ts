@@ -412,8 +412,6 @@ export class MessageChannelSyncStatusService {
     await this.clearImportSignalsOnceNoChannelIsOngoing(workspaceId);
   }
 
-  // Signals let app triggers hold off while a mailbox imports. The first
-  // sync of a channel is the one that floods, so it gets its own signal.
   private async refreshImportSignals(
     messageChannelIds: string[],
     workspaceId: string,

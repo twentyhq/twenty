@@ -32,7 +32,6 @@ const isNullish = (value: unknown): boolean =>
 const isComparable = (value: unknown): value is string | number =>
   typeof value === 'string' || typeof value === 'number';
 
-// SQL LIKE semantics: % matches any run, _ matches one character.
 const likeToRegExp = (pattern: string, caseInsensitive: boolean): RegExp => {
   const escaped = pattern
     .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -98,9 +97,6 @@ const evaluateOperand = (
 const readField = (record: unknown, fieldName: string): unknown =>
   isPlainObject(record) ? record[fieldName] : undefined;
 
-// Mirrors the records API filter grammar on an in-memory record. A field the
-// record does not carry reads as null, so `is: NULL` matches it and every
-// other operator rejects it.
 export const evaluateDatabaseEventTriggerRecordCondition = (
   record: unknown,
   condition: DatabaseEventTriggerRecordCondition,

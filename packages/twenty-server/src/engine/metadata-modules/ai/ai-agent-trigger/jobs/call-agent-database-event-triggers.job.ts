@@ -124,8 +124,6 @@ export class CallAgentDatabaseEventTriggersJob {
         )
         .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
 
-      // Agents honour actor and record conditions; signal deferral is a
-      // logic function concern
       const eventsToRunOn = selectEventsForDatabaseEventTrigger({
         events: admittedEvents,
         eventName,

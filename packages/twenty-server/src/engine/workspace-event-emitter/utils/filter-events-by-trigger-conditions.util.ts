@@ -9,7 +9,6 @@ import type { DatabaseEventTriggerConditions } from 'twenty-shared/application';
 import { evaluateDatabaseEventTriggerRecordCondition } from 'src/engine/workspace-event-emitter/utils/evaluate-database-event-trigger-record-condition.util';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
-// Deleted and destroyed events only carry the record as it was.
 const pickRecordForCondition = (
   event: ObjectRecordEvent,
   action: string,
@@ -22,8 +21,6 @@ const pickRecordForCondition = (
   return action === 'deleted' || action === 'destroyed' ? before : after;
 };
 
-// Record and actor conditions: a mismatch always drops the event. Signal
-// conditions are evaluated per batch by the caller, which may defer instead.
 export const filterEventsByTriggerConditions = <
   TEvent extends ObjectRecordEvent,
 >({

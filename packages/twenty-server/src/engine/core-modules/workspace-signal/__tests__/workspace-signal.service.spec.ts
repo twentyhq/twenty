@@ -2,7 +2,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { WORKSPACE_SIGNAL_CLEARED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-cleared-event.constant';
+import { WORKSPACE_SIGNAL_CHANGED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-changed-event.constant';
 import { WORKSPACE_SIGNAL_DEFAULT_TTL_MS } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-default-ttl-ms.constant';
 import { WorkspaceSignalService } from 'src/engine/core-modules/workspace-signal/services/workspace-signal.service';
 
@@ -41,7 +41,7 @@ describe('WorkspaceSignalService', () => {
     service = module.get(WorkspaceSignalService);
   });
 
-  it('sets a signal with its start time and the default ttl', async () => {
+  it('sets a signal with its start time and announces the transition', async () => {
     await service.set({ workspaceId: WORKSPACE_ID, name: 'messaging.import' });
 
     expect(cacheStorage.setIfAbsent).toHaveBeenCalledWith(
@@ -50,9 +50,13 @@ describe('WorkspaceSignalService', () => {
       WORKSPACE_SIGNAL_DEFAULT_TTL_MS,
     );
     expect(cacheStorage.expire).not.toHaveBeenCalled();
+    expect(eventEmitter.emit).toHaveBeenCalledWith(
+      WORKSPACE_SIGNAL_CHANGED_EVENT,
+      { workspaceId: WORKSPACE_ID, name: 'messaging.import', isSet: true },
+    );
   });
 
-  it('only refreshes the ttl of a signal that is already set', async () => {
+  it('only refreshes the ttl of a signal that is already set, without announcing', async () => {
     cacheStorage.setIfAbsent.mockResolvedValue(false);
 
     await service.set({
@@ -65,11 +69,10 @@ describe('WorkspaceSignalService', () => {
       `${WORKSPACE_ID}:messaging.import`,
       1000,
     );
+    expect(eventEmitter.emit).not.toHaveBeenCalled();
   });
 
-  it('clears a set signal and announces it with its start time', async () => {
-    cacheStorage.get.mockResolvedValue({ since: '2026-10-06T09:00:00.000Z' });
-
+  it('clears a signal and announces the transition', async () => {
     await service.clear({
       workspaceId: WORKSPACE_ID,
       name: 'messaging.initialImport',
@@ -79,23 +82,13 @@ describe('WorkspaceSignalService', () => {
       `${WORKSPACE_ID}:messaging.initialImport`,
     );
     expect(eventEmitter.emit).toHaveBeenCalledWith(
-      WORKSPACE_SIGNAL_CLEARED_EVENT,
+      WORKSPACE_SIGNAL_CHANGED_EVENT,
       {
         workspaceId: WORKSPACE_ID,
         name: 'messaging.initialImport',
-        since: '2026-10-06T09:00:00.000Z',
+        isSet: false,
       },
     );
-  });
-
-  it('stays silent when clearing a signal that is not set', async () => {
-    await service.clear({
-      workspaceId: WORKSPACE_ID,
-      name: 'messaging.initialImport',
-    });
-
-    expect(cacheStorage.del).not.toHaveBeenCalled();
-    expect(eventEmitter.emit).not.toHaveBeenCalled();
   });
 
   it('reads only the signals that are set', async () => {

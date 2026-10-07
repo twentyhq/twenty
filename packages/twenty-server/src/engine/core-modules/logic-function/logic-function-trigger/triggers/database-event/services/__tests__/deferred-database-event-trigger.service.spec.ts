@@ -56,7 +56,7 @@ describe('DeferredDatabaseEventTriggerService', () => {
       incrBy: jest.fn().mockResolvedValue(1),
       expire: jest.fn().mockResolvedValue(true),
       setMembers: jest.fn().mockResolvedValue([]),
-      del: jest.fn().mockResolvedValue(undefined),
+      setRemove: jest.fn().mockResolvedValue(1),
       get: jest.fn().mockResolvedValue(undefined),
       mdel: jest.fn().mockResolvedValue(undefined),
     };
@@ -151,9 +151,7 @@ describe('DeferredDatabaseEventTriggerService', () => {
         signal: 'messaging.initialImport',
       });
 
-      expect(cacheStorage.del).toHaveBeenCalledWith(
-        `${WORKSPACE_ID}:messaging.initialImport`,
-      );
+      expect(cacheStorage.setRemove).not.toHaveBeenCalled();
       expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
     });
 
@@ -168,6 +166,10 @@ describe('DeferredDatabaseEventTriggerService', () => {
         signal: 'messaging.initialImport',
       });
 
+      expect(cacheStorage.setRemove).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:messaging.initialImport`,
+        [LOGIC_FUNCTION_ID],
+      );
       expect(cacheStorage.mdel).toHaveBeenCalledWith([
         `${WORKSPACE_ID}:${LOGIC_FUNCTION_ID}:since`,
         `${WORKSPACE_ID}:${LOGIC_FUNCTION_ID}:dropped`,
@@ -199,6 +201,21 @@ describe('DeferredDatabaseEventTriggerService', () => {
       );
     });
 
+    it('keeps the deferred state when the catch-up cannot be enqueued', async () => {
+      cacheStorage.setMembers.mockResolvedValue([LOGIC_FUNCTION_ID]);
+      messageQueueService.bulkAdd.mockRejectedValue(new Error('queue down'));
+
+      await expect(
+        service.flush({
+          workspaceId: WORKSPACE_ID,
+          signal: 'messaging.initialImport',
+        }),
+      ).rejects.toThrow('queue down');
+
+      expect(cacheStorage.setRemove).not.toHaveBeenCalled();
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+
     it('keeps waiting on a function whose other signal condition still fails', async () => {
       flatLogicFunctions[0].databaseEventTriggerSettings = {
         eventName: 'messageParticipant.updated',
@@ -225,11 +242,15 @@ describe('DeferredDatabaseEventTriggerService', () => {
         [LOGIC_FUNCTION_ID],
         DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
       );
+      expect(cacheStorage.setRemove).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:messaging.initialImport`,
+        [LOGIC_FUNCTION_ID],
+      );
       expect(cacheStorage.mdel).not.toHaveBeenCalled();
       expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
     });
 
-    it('skips functions that no longer exist', async () => {
+    it('forgets functions that no longer exist', async () => {
       cacheStorage.setMembers.mockResolvedValue([OTHER_LOGIC_FUNCTION_ID]);
 
       await service.flush({
@@ -238,6 +259,10 @@ describe('DeferredDatabaseEventTriggerService', () => {
       });
 
       expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+      expect(cacheStorage.setRemove).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:messaging.initialImport`,
+        [OTHER_LOGIC_FUNCTION_ID],
+      );
     });
   });
 });

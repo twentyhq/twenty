@@ -40,8 +40,6 @@ export type DatabaseEventTriggerRecordConditionOperand = {
   startsWith?: string;
 };
 
-// Same grammar as a records API filter: field names map to an operand, or to a
-// nested condition for composite fields; and, or and not combine conditions.
 export type DatabaseEventTriggerRecordCondition = {
   and?: DatabaseEventTriggerRecordCondition[];
   or?: DatabaseEventTriggerRecordCondition[];
@@ -57,14 +55,9 @@ export type DatabaseEventTriggerRecordCondition = {
 export type DatabaseEventTriggerOnMismatch = 'drop' | 'deferUntilMatch';
 
 export type DatabaseEventTriggerConditions = {
-  // Who performed the write. A batch carries one actor, so one check per batch.
   actor?: DatabaseEventActorType[];
-  // Evaluated per event on the record after the write, before it for deleted
-  // and destroyed events.
   record?: DatabaseEventTriggerRecordCondition;
-  // Evaluated per batch against the workspace signals current at delivery.
   signals?: Partial<Record<WorkspaceSignalName, boolean>>;
-  // Applies to signal mismatches only; record and actor mismatches always drop.
   onMismatch?: DatabaseEventTriggerOnMismatch;
 };
 

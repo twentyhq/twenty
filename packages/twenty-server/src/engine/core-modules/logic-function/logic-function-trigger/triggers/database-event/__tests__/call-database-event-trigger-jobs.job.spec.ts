@@ -469,6 +469,22 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       });
     });
 
+    it('does not defer a function that would have received no event', async () => {
+      withSignalConditions('deferUntilMatch');
+      workspaceSignalService.read.mockResolvedValue({
+        'messaging.initialImport': { since: '2026-10-06T09:00:00.000Z' },
+      });
+
+      await job.handle(
+        buildBatch([
+          buildEvent('record-1', { name: 'Old', salary: 10 }, ['salary']),
+        ]),
+      );
+
+      expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+      expect(deferredDatabaseEventTriggerService.defer).not.toHaveBeenCalled();
+    });
+
     it('does not read signals for functions without signal conditions', async () => {
       await job.handle(
         buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),

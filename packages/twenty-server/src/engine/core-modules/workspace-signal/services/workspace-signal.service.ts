@@ -7,9 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { WORKSPACE_SIGNAL_CLEARED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-cleared-event.constant';
+import { WORKSPACE_SIGNAL_CHANGED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-changed-event.constant';
 import { WORKSPACE_SIGNAL_DEFAULT_TTL_MS } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-default-ttl-ms.constant';
-import { type WorkspaceSignalClearedEvent } from 'src/engine/core-modules/workspace-signal/types/workspace-signal-cleared-event.type';
+import { type WorkspaceSignalChangedEvent } from 'src/engine/core-modules/workspace-signal/types/workspace-signal-changed-event.type';
 import { type WorkspaceSignalState } from 'src/engine/core-modules/workspace-signal/types/workspace-signal-state.type';
 
 export type WorkspaceSignalStates = Partial<
@@ -24,8 +24,6 @@ export class WorkspaceSignalService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  // Keeps the first `since` while the signal stays set, so a signal refreshed
-  // on every stage change still tells when the whole episode began.
   async set({
     workspaceId,
     name,
@@ -42,7 +40,11 @@ export class WorkspaceSignalService {
 
     if (!wasAbsent) {
       await this.cacheStorage.expire(key, ttlMs);
+
+      return;
     }
+
+    this.emitChanged({ workspaceId, name, isSet: true });
   }
 
   async clear({
@@ -52,22 +54,9 @@ export class WorkspaceSignalService {
     workspaceId: string;
     name: WorkspaceSignalName;
   }): Promise<void> {
-    const key = this.buildKey({ workspaceId, name });
-    const state = await this.cacheStorage.get<WorkspaceSignalState>(key);
+    await this.cacheStorage.del(this.buildKey({ workspaceId, name }));
 
-    if (!isDefined(state)) {
-      return;
-    }
-
-    await this.cacheStorage.del(key);
-
-    const clearedEvent: WorkspaceSignalClearedEvent = {
-      workspaceId,
-      name,
-      since: state.since,
-    };
-
-    this.eventEmitter.emit(WORKSPACE_SIGNAL_CLEARED_EVENT, clearedEvent);
+    this.emitChanged({ workspaceId, name, isSet: false });
   }
 
   async read({
@@ -92,6 +81,10 @@ export class WorkspaceSignalService {
         return isDefined(state) ? [[name, state]] : [];
       }),
     );
+  }
+
+  private emitChanged(changedEvent: WorkspaceSignalChangedEvent): void {
+    this.eventEmitter.emit(WORKSPACE_SIGNAL_CHANGED_EVENT, changedEvent);
   }
 
   private buildKey({

@@ -7,8 +7,6 @@ export type SignalConditionsEvaluation =
   | { matches: true }
   | { matches: false; mismatchedSignal: WorkspaceSignalName };
 
-// A signal reads as set when it has a state, and as unset otherwise. The first
-// mismatch names the signal a deferral waits on.
 export const evaluateDatabaseEventTriggerSignalConditions = ({
   signalConditions,
   signalStates,

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { DeferredDatabaseEventTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/services/deferred-database-event-trigger.service';
-import { WORKSPACE_SIGNAL_CLEARED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-cleared-event.constant';
-import { type WorkspaceSignalClearedEvent } from 'src/engine/core-modules/workspace-signal/types/workspace-signal-cleared-event.type';
+import { WORKSPACE_SIGNAL_CHANGED_EVENT } from 'src/engine/core-modules/workspace-signal/constants/workspace-signal-changed-event.constant';
+import { type WorkspaceSignalChangedEvent } from 'src/engine/core-modules/workspace-signal/types/workspace-signal-changed-event.type';
 
 @Injectable()
 export class DeferredDatabaseEventTriggerListener {
@@ -15,11 +15,11 @@ export class DeferredDatabaseEventTriggerListener {
     private readonly deferredDatabaseEventTriggerService: DeferredDatabaseEventTriggerService,
   ) {}
 
-  @OnEvent(WORKSPACE_SIGNAL_CLEARED_EVENT)
-  async handleWorkspaceSignalCleared({
+  @OnEvent(WORKSPACE_SIGNAL_CHANGED_EVENT)
+  async handleWorkspaceSignalChanged({
     workspaceId,
     name,
-  }: WorkspaceSignalClearedEvent): Promise<void> {
+  }: WorkspaceSignalChangedEvent): Promise<void> {
     try {
       await this.deferredDatabaseEventTriggerService.flush({
         workspaceId,

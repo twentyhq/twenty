@@ -26,10 +26,6 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
-// Events are not kept: a deferred function is only noted, with when it first
-// missed a batch and how many events it missed, and told so once its signal
-// clears. Buffering the events would recreate at flush time the burst the
-// deferral exists to avoid.
 @Injectable()
 export class DeferredDatabaseEventTriggerService {
   private readonly logger = new Logger(
@@ -90,8 +86,6 @@ export class DeferredDatabaseEventTriggerService {
     const deferredSetKey = this.buildDeferredSetKey({ workspaceId, signal });
     const logicFunctionIds = await this.cacheStorage.setMembers(deferredSetKey);
 
-    await this.cacheStorage.del(deferredSetKey);
-
     if (logicFunctionIds.length === 0) {
       return;
     }
@@ -127,6 +121,7 @@ export class DeferredDatabaseEventTriggerService {
     });
 
     const jobs: { data: LogicFunctionTriggerJobData }[] = [];
+    const settledLogicFunctionIds: string[] = [];
 
     for (const logicFunction of logicFunctions) {
       const triggerSettings = logicFunction.databaseEventTriggerSettings;
@@ -140,8 +135,6 @@ export class DeferredDatabaseEventTriggerService {
         signalStates,
       });
 
-      // Another signal still holds the function back: it keeps waiting, with
-      // the window it already missed.
       if (!evaluation.matches) {
         await this.defer({
           workspaceId,
@@ -151,6 +144,8 @@ export class DeferredDatabaseEventTriggerService {
         });
         continue;
       }
+
+      settledLogicFunctionIds.push(logicFunction.id);
 
       const { objectSingularName } = parseEventNameOrThrow(
         triggerSettings.eventName,
@@ -162,21 +157,6 @@ export class DeferredDatabaseEventTriggerService {
           flatObjectMetadata?.nameSingular === objectSingularName,
       );
 
-      const sinceKey = this.buildSinceKey({
-        workspaceId,
-        logicFunctionId: logicFunction.id,
-      });
-      const droppedKey = this.buildDroppedKey({
-        workspaceId,
-        logicFunctionId: logicFunction.id,
-      });
-      const [since, droppedEventCount] = await Promise.all([
-        this.cacheStorage.get<string>(sinceKey),
-        this.cacheStorage.get<number>(droppedKey),
-      ]);
-
-      await this.cacheStorage.mdel([sinceKey, droppedKey]);
-
       if (!isDefined(objectMetadata)) {
         this.logger.warn(
           `Skipping catch-up of function ${logicFunction.id} (workspace ${workspaceId}): object ${objectSingularName} not found`,
@@ -184,8 +164,21 @@ export class DeferredDatabaseEventTriggerService {
         continue;
       }
 
-      // Shaped as a DatabaseEventBatchPayload with no events and the
-      // deferred marker set
+      const [since, droppedEventCount] = await Promise.all([
+        this.cacheStorage.get<string>(
+          this.buildSinceKey({
+            workspaceId,
+            logicFunctionId: logicFunction.id,
+          }),
+        ),
+        this.cacheStorage.get<number>(
+          this.buildDroppedKey({
+            workspaceId,
+            logicFunctionId: logicFunction.id,
+          }),
+        ),
+      ]);
+
       jobs.push({
         data: {
           logicFunctionId: logicFunction.id,
@@ -205,19 +198,28 @@ export class DeferredDatabaseEventTriggerService {
       });
     }
 
-    if (jobs.length === 0) {
-      return;
+    if (jobs.length > 0) {
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        jobs,
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          delay: DEFERRED_DATABASE_EVENT_TRIGGER_FLUSH_DELAY_MS,
+        },
+      );
     }
 
-    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      jobs,
-      {
-        retryLimit: 3,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        delay: DEFERRED_DATABASE_EVENT_TRIGGER_FLUSH_DELAY_MS,
-      },
-    );
+    await this.cacheStorage.setRemove(deferredSetKey, logicFunctionIds);
+
+    if (settledLogicFunctionIds.length > 0) {
+      await this.cacheStorage.mdel(
+        settledLogicFunctionIds.flatMap((logicFunctionId) => [
+          this.buildSinceKey({ workspaceId, logicFunctionId }),
+          this.buildDroppedKey({ workspaceId, logicFunctionId }),
+        ]),
+      );
+    }
   }
 
   private buildDeferredSetKey({

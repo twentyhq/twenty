@@ -44,13 +44,9 @@ type DatabaseEventMetadata = {
   name: string;
   workspaceId: string;
   objectMetadata: SimplifiedFlatObjectMetadata;
-  // Absent on events emitted before the actor was recorded.
   actor?: DatabaseEventActor;
 };
 
-// Set on the single catch-up delivery a trigger with onMismatch
-// 'deferUntilMatch' receives once its signal clears. The events it missed are
-// not replayed: the handler re-reads whatever changed since `since`.
 export type DeferredDatabaseEventBatch = {
   signal: WorkspaceSignalName;
   since: string;

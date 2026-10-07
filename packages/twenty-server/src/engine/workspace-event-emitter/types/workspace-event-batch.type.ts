@@ -6,7 +6,6 @@ export type WorkspaceEventBatch<WorkspaceEvent> = {
   name: string;
   workspaceId: string;
   objectMetadata: FlatObjectMetadata;
-  // Absent on batches emitted outside the ORM, which carry no auth context.
   actor?: DatabaseEventActor;
   events: WorkspaceEvent[];
 };

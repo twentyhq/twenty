@@ -100,7 +100,6 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    // Signals are workspace state, read once for every function of the batch
     const signalStates = await this.readSignalStates({
       workspaceId: workspaceEventBatch.workspaceId,
       logicFunctions: logicFunctionsToTrigger,
@@ -239,9 +238,6 @@ export class CallDatabaseEventTriggerJobsJob {
     });
   }
 
-  // A function whose signal condition fails receives nothing from this batch.
-  // With deferUntilMatch it is noted, so it gets one catch-up delivery once
-  // the signal clears, told how many events it missed.
   private async dropOrDeferOnSignalMismatch<
     TLogicFunction extends Pick<
       LogicFunctionEntity,
@@ -280,6 +276,10 @@ export class CallDatabaseEventTriggerJobsJob {
         actor: workspaceEventBatch.actor,
         triggerSettings: logicFunction.databaseEventTriggerSettings,
       }).length;
+
+      if (droppedEventCount === 0) {
+        continue;
+      }
 
       await this.deferredDatabaseEventTriggerService.defer({
         workspaceId: workspaceEventBatch.workspaceId,

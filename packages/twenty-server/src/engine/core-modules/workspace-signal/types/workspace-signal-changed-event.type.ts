@@ -1,7 +1,7 @@
 import { type WorkspaceSignalName } from 'twenty-shared/application';
 
-export type WorkspaceSignalClearedEvent = {
+export type WorkspaceSignalChangedEvent = {
   workspaceId: string;
   name: WorkspaceSignalName;
-  since: string;
+  isSet: boolean;
 };

@@ -126,8 +126,6 @@ const validateRecordCondition = (
     const operatorKeys = keys.filter(isOperatorKey);
 
     if (operatorKeys.length === 0) {
-      // A nested condition only holds objects: a scalar under an unknown key
-      // is an operator the grammar does not have.
       const unknownOperator = Object.entries(value).find(
         ([, childValue]) => !isPlainObject(childValue),
       )?.[0];
