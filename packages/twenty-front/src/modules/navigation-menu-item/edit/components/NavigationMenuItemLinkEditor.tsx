@@ -9,7 +9,7 @@ import { isDefined, isSafeInternalPath, isValidUrl } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
-import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 const StyledError = styled.div`

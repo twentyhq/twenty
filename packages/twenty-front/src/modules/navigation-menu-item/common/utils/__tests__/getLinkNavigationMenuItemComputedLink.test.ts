@@ -1,4 +1,4 @@
-import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 
 describe('getLinkNavigationMenuItemComputedLink', () => {
   it('keeps absolute URLs', () => {
