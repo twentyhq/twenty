@@ -4,7 +4,6 @@ import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCaptcha = () => {
   const captcha = useAtomStateValue(captchaState);
@@ -21,7 +20,7 @@ export const useCaptcha = () => {
 
   return {
     isCaptchaScriptLoaded,
-    isCaptchaConfigured: !isUndefinedOrNull(captcha),
+    isCaptchaConfigured: isDefined(captcha),
     isCaptchaReady,
   };
 };

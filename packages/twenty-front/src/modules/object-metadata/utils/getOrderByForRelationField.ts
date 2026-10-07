@@ -7,8 +7,6 @@ import {
 } from 'twenty-shared/types';
 import { getOrderByForRelationField as computeRelationOrderBy } from 'twenty-shared/utils';
 
-export { getOrderByForFieldMetadataType } from 'twenty-shared/utils';
-
 export const getOrderByForRelationField = ({
   field,
   relatedObjectMetadataItem,
