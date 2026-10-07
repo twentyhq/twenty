@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { normalizeSearchText } from './normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type FilterBySearchQueryParams<T> = {
   items: T[];

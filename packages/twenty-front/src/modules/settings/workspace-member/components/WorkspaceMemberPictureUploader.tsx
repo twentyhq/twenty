@@ -12,7 +12,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberPictureUploaderProps = {
   workspaceMemberId: string;
@@ -51,7 +50,7 @@ export const WorkspaceMemberPictureUploader = ({
   const canEdit = isEditingSelf ? canEditProfilePicture : !disabled;
 
   const handleUpload = async (file: File) => {
-    if (isUndefinedOrNull(file) || !canEdit) {
+    if (!isDefined(file) || !canEdit) {
       return;
     }
 

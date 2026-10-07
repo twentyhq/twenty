@@ -34,6 +34,7 @@ import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
@@ -63,10 +64,6 @@ export const SettingsAdminWorkspaceContent = ({
     timeFormat,
     localeCatalog: localeCatalog,
   });
-
-  const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
-    return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
-  };
 
   const upgradeHealthStatusBadge = getUpgradeHealthStatusBadge(
     workspaceUpgradeStatus?.health,
