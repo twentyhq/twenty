@@ -128,6 +128,14 @@ type AgentRun {
   toolNames: [String!]!
 }
 
+type AgentRunState {
+  error: String
+  id: UUID!
+  result: JSON
+  status: String!
+  threadId: UUID!
+}
+
 enum AgentTurnStatus {
   CANCELLED
   COMPLETED
@@ -3710,6 +3718,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  agentRun(id: UUID!): AgentRunState!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -4141,10 +4150,11 @@ enum RunAgentMessageRole {
 
 type RunAgentResult {
   error: String
-  isWaiting: Boolean!
   result: JSON
+  runId: UUID!
+  status: String!
   success: Boolean!
-  threadId: UUID
+  threadId: UUID!
 }
 
 input RunAgentThreadInput {
