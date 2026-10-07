@@ -548,7 +548,7 @@
                 {
                   "key": "uiAccessibility",
                   "label": "Accessibility",
-                  "pages": ["ui/primitives/accessibility/visibility-hidden"]
+                  "pages": ["ui/primitives/accessibility/visually-hidden"]
                 },
                 {
                   "key": "uiDataDisplay",
@@ -568,7 +568,8 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
-                    "ui/primitives/feedback/progress-bar"
+                    "ui/primitives/feedback/progress-bar",
+                    "ui/primitives/feedback/progress-ring"
                   ]
                 },
                 {
@@ -580,6 +581,7 @@
                     "ui/primitives/input/field",
                     "ui/primitives/input/input",
                     "ui/primitives/input/input-group",
+                    "ui/primitives/input/number-stepper",
                     "ui/primitives/input/textarea",
                     "ui/primitives/input/checkbox",
                     "ui/primitives/input/radio",
@@ -595,18 +597,18 @@
                   "label": "Layout",
                   "pages": [
                     "ui/primitives/layout/collapsible",
-                    "ui/primitives/layout/horizontal-separator",
+                    "ui/primitives/layout/separator",
                     "ui/primitives/layout/resize-handle",
-                    "ui/primitives/layout/text-direction-provider"
+                    "ui/primitives/layout/direction-provider"
                   ]
                 },
                 {
                   "key": "uiNavigation",
                   "label": "Navigation",
                   "pages": [
+                    "ui/primitives/navigation/breadcrumb",
                     "ui/primitives/navigation/list-item",
-                    "ui/primitives/navigation/tabs",
-                    "ui/primitives/navigation/click-to-action-link"
+                    "ui/primitives/navigation/tabs"
                   ]
                 },
                 {
@@ -627,6 +629,7 @@
                   "pages": [
                     "ui/primitives/typography/heading",
                     "ui/primitives/typography/text",
+                    "ui/primitives/typography/shortcut",
                     "ui/primitives/typography/overflowing-text-with-tooltip"
                   ]
                 }
@@ -637,32 +640,71 @@
               "label": "Components",
               "pages": [
                 "ui/components/overview",
-                "ui/components/input/main-button",
-                "ui/components/input/light-button",
-                "ui/components/input/icon-button",
-                "ui/components/input/light-icon-button",
-                "ui/components/section",
-                "ui/components/settings-row",
-                "ui/components/dropdown",
-                "ui/components/tab-button",
-                "ui/components/code-editor",
-                "ui/components/toast",
-                "ui/components/animated-icon-crossfade",
-                "ui/components/avatar-group",
-                "ui/components/callout",
-                "ui/components/card-picker",
-                "ui/components/color-scheme-picker",
-                "ui/components/command-block",
-                "ui/components/info",
-                "ui/components/inline-banner",
-                "ui/components/json-tree",
-                "ui/components/menu-items",
-                "ui/components/menu-picker",
-                "ui/components/navigation-bar",
-                "ui/components/notification-counter",
-                "ui/components/rounded-link",
-                "ui/components/search-input",
-                "ui/components/tinted-icon-tile"
+                {
+                  "key": "uiComponentsDataDisplay",
+                  "label": "Data display",
+                  "pages": [
+                    "ui/components/data-display/avatar-group",
+                    "ui/components/data-display/command-block",
+                    "ui/components/data-display/json-tree",
+                    "ui/components/data-display/metric-row",
+                    "ui/components/data-display/notification-counter",
+                    "ui/components/data-display/tinted-icon-tile"
+                  ]
+                },
+                {
+                  "key": "uiComponentsFeedback",
+                  "label": "Feedback",
+                  "pages": [
+                    "ui/components/feedback/callout",
+                    "ui/components/feedback/inline-banner",
+                    "ui/components/feedback/toast"
+                  ]
+                },
+                {
+                  "key": "uiComponentsInput",
+                  "label": "Input",
+                  "pages": [
+                    "ui/components/input/main-button",
+                    "ui/components/input/light-button",
+                    "ui/components/input/icon-button",
+                    "ui/components/input/light-icon-button",
+                    "ui/components/input/country-select",
+                    "ui/components/input/currency-picker",
+                    "ui/components/input/phone-country-picker",
+                    "ui/components/input/image-input",
+                    "ui/components/input/search-input"
+                  ]
+                },
+                {
+                  "key": "uiComponentsLayout",
+                  "label": "Layout",
+                  "pages": [
+                    "ui/components/layout/section",
+                    "ui/components/layout/overflowing-list",
+                    "ui/components/layout/animated-icon-crossfade"
+                  ]
+                },
+                {
+                  "key": "uiComponentsNavigation",
+                  "label": "Navigation",
+                  "pages": [
+                    "ui/components/navigation/dropdown",
+                    "ui/components/navigation/menu-items",
+                    "ui/components/navigation/menu-picker",
+                    "ui/components/navigation/tab-button"
+                  ]
+                },
+                {
+                  "key": "uiComponentsSettings",
+                  "label": "Settings",
+                  "pages": ["ui/components/settings/settings-row"]
+                },
+                {
+                  "key": "uiComponentsCodeEditor",
+                  "label": "Code editor",
+                  "pages": ["ui/components/code-editor/code-editor"]
+                }
               ]
             }
           ]

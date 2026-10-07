@@ -6,13 +6,10 @@ import { useResetPageLayoutTabToDefault } from '@/page-layout/hooks/useResetPage
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { useUnpinTab } from '@/page-layout/hooks/useUnpinTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { isPageLayoutTabHiddenByFeatureFlags } from '@/page-layout/utils/isPageLayoutTabHiddenByFeatureFlags';
-import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
@@ -22,7 +19,6 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,11 +41,6 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
-
-  const pageLayoutPersisted = useAtomComponentStateValue(
-    pageLayoutPersistedComponentState,
     pageLayoutId,
   );
 
@@ -88,23 +79,9 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     return null;
   }
 
-  const featureFlags = getWorkspaceFeatureFlagsMap(
-    currentWorkspace?.featureFlags,
-  );
-
-  // Deleting a tab only deactivates it in the draft and feature flags can hide
-  // one, while the placement actions have to line up with the tabs the layout
-  // actually renders.
+  // Deleted tabs are only deactivated in the draft, so placement must follow the active ones
   const tabsSorted = sortTabsByPosition(
-    pageLayoutDraft.tabs.filter(
-      (draftTab) =>
-        draftTab.isActive &&
-        !isPageLayoutTabHiddenByFeatureFlags({
-          tabId: draftTab.id,
-          persistedTabs: pageLayoutPersisted?.tabs,
-          featureFlags,
-        }),
-    ),
+    pageLayoutDraft.tabs.filter((draftTab) => draftTab.isActive),
   );
   const currentIndex = tabsSorted.findIndex(
     (tabItem) => tabItem.id === pageLayoutTabSettingsOpenTabId,
@@ -144,19 +121,15 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     navigate(`#${tab.id}`);
   };
 
-  const renderedWidgets = tab.widgets.filter(
-    (widget) =>
-      widget.isActive &&
-      isWidgetEnabledByFeatureFlags({ widget, featureFlags }),
-  );
+  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
-  const isSingleWidgetTab = getIsSingleWidgetTab({ tab, featureFlags });
+  const isSingleWidgetTab = getIsSingleWidgetTab({ tab });
 
   if (isSingleWidgetTab) {
     return (
       <SingleWidgetTabSettingsContent
         pageLayoutId={pageLayoutId}
-        singleWidget={renderedWidgets.at(0)!}
+        singleWidget={activeWidgets.at(0)!}
         canSetAsPinned={canSetAsPinned}
         canUnpin={canUnpin}
         canMoveLeft={canMoveLeft}

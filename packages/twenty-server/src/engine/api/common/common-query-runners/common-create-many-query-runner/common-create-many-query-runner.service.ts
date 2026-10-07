@@ -46,8 +46,11 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -76,11 +79,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
+    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
     const isGatedThroughRecordShares =
-      this.isGatedThroughRecordShares(queryRunnerContext);
+      sharingMode === RecordSharingMode.PRIVATE ||
+      sharingMode === RecordSharingMode.INHERITED;
 
-    // An inherited record is reachable through its parent, so shareWith stays
-    // optional there and is checked only when given
+    // An inherited record is reachable through its parent, so shareWith is optional there
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
@@ -90,7 +94,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
-      (isGatedThroughRecordShares ||
+      (isDefined(
+        resolveShareWithToWrite({ sharingMode, shareWith: args.shareWith }),
+      ) ||
         containsNestedRelationCreate(
           args.data,
           getNestedRelationFieldNames({
@@ -607,30 +613,33 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
+    const objectSharing = resolveObjectSharing(queryRunnerContext);
+    const shareWithToWrite = resolveShareWithToWrite({
+      sharingMode: objectSharing.sharingMode,
+      shareWith,
+    });
 
-    if (!this.isGatedThroughRecordShares(queryRunnerContext)) {
+    if (!isDefined(shareWithToWrite)) {
       return;
+    }
+
+    if (!isDefined(transactionScope)) {
+      throw new CommonQueryRunnerException(
+        'Record shares of created records must be written in their transaction',
+        CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
     }
 
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
-      objectMetadataId: flatObjectMetadata.id,
+      flatObjectMetadata,
+      objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      shareWith,
+      shareWith: shareWithToWrite,
       transactionScope,
     });
-  }
-
-  private isGatedThroughRecordShares(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): boolean {
-    return (
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.PRIVATE ||
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.INHERITED
-    );
   }
 
   private resolveNestedRelationsForCreate({

@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatSuggestedPromptsContext } from '@/ai/types/AiChatSuggestedPromptsContext';
@@ -13,8 +14,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
-// The reactive counterpart of useGetBrowsingContext, which reads the store
-// imperatively at send time and so cannot drive what the chat renders.
+// Reactive counterpart of useGetBrowsingContext, which reads the store only at send time.
 export const useAiChatSuggestedPromptsContext =
   (): AiChatSuggestedPromptsContext | null => {
     const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -52,7 +52,12 @@ export const useAiChatSuggestedPromptsContext =
       viewType: contextStoreCurrentViewType,
     });
 
-    if (!isDefined(objectMetadataItem) || !isDefined(browsingContextType)) {
+    // The chat page is the chat's own record page, not what the user is asking about.
+    if (
+      !isDefined(objectMetadataItem) ||
+      !isDefined(browsingContextType) ||
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+    ) {
       return null;
     }
 

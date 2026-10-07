@@ -8,7 +8,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Info, Section } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -77,9 +78,10 @@ export const SettingsApplicationConnectionsSection = ({
               }
             />
             {isOAuth && !isClientCredentialsConfigured && (
-              <Info
-                accent="danger"
-                text={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
+              <InlineBanner
+                variant="compact"
+                color="danger"
+                message={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
               />
             )}
             {providerConnections.length > 0 && (

@@ -120,6 +120,12 @@ export const CommandMenuContextProviderContent = ({
       )
       .filter(
         (item) =>
+          !isCore ||
+          item.engineComponentKey !==
+            EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
+      )
+      .filter(
+        (item) =>
           item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
@@ -156,6 +162,7 @@ export const CommandMenuContextProviderContent = ({
     commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
+    isCore,
     isCoreWorkflow,
     commandMenuItems,
     commandMenuItemsDraft,

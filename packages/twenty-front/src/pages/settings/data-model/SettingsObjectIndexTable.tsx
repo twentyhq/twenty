@@ -9,7 +9,7 @@ import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconSquareKey, IconTrash } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';

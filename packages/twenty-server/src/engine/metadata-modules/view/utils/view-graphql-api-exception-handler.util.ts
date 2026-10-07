@@ -60,6 +60,10 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
         });
       case ViewExceptionCode.VIEW_WIDGET_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewExceptionCode.INTERNAL_SERVER_ERROR:
+        throw new InternalServerError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       default: {
         return assertUnreachable(error.code);
       }

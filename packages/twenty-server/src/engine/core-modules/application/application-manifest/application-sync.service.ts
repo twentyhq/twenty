@@ -7,6 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
+import {
+  APPLICATION_UNINSTALL_STEPS,
+  type ApplicationUninstallStep,
+} from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
+import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
+import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
@@ -20,6 +26,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -45,6 +52,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -76,8 +84,7 @@ export class ApplicationSyncService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
-    // Server variables are written to the registration after this sync, so
-    // reserved names are checked here to fail before the workspace changes
+    // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);
 
@@ -118,10 +125,7 @@ export class ApplicationSyncService {
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
-      // Translation sync runs after the metadata migration is already applied
-      // and is non-critical to the application itself, so a failure here must
-      // never abort an otherwise successful install/sync. It is idempotent and
-      // self-heals on the next sync.
+      // Non-critical and self-healing on next sync, so a failure must not abort the install
       try {
         await this.applicationTranslationSyncService.syncFromManifest({
           applicationRegistrationId:
@@ -150,7 +154,7 @@ export class ApplicationSyncService {
     manifest: Manifest;
   }): Promise<FlatApplication> {
     const installedApplication =
-      await this.applicationService.findByUniversalIdentifier({
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
       });
@@ -212,10 +216,7 @@ export class ApplicationSyncService {
     };
   }
 
-  // Registers the application + only the pre-install logic function in
-  // workspace metadata so the pre-install hook can resolve and execute it
-  // before the main synchronizeFromManifest runs the full migrations.
-  // No-op when the manifest does not declare a pre-install logic function.
+  // Lets the pre-install hook resolve its logic function before the full migrations run
   public async preInstallSynchronizeFromManifest({
     workspaceId,
     manifest,
@@ -368,10 +369,14 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
+    progressReporter = createApplicationLifecycleProgressReporter({
+      steps: APPLICATION_UNINSTALL_STEPS,
+    }),
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
+    progressReporter?: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
@@ -391,6 +396,7 @@ export class ApplicationSyncService {
       workspaceId,
       applicationUniversalIdentifier,
       shouldRunUninstallHook,
+      progressReporter,
     });
   }
 
@@ -399,11 +405,13 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook,
+    progressReporter,
   }: {
     application: ApplicationEntity;
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook: boolean;
+    progressReporter: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
@@ -411,6 +419,8 @@ export class ApplicationSyncService {
         workspaceId,
       });
     }
+
+    await progressReporter.reportStepCompleted('UNINSTALL_HOOK');
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,
@@ -429,9 +439,8 @@ export class ApplicationSyncService {
       },
     );
 
-    // Uninstall also removes engine-owned and workspace-local metadata that
-    // manifest omission intentionally preserves. Expand these explicit deletions
-    // so dependents owned by other applications are cleaned up too.
+    // Unlike manifest omission, uninstall also removes engine-owned and workspace-local metadata, so expand the deletions
+    // to dependents owned by other applications
     const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
       Object.fromEntries(
         Object.values(ALL_METADATA_NAME).map((metadataName) => [
@@ -446,6 +455,8 @@ export class ApplicationSyncService {
           },
         ]),
       );
+
+    await progressReporter.reportStepCompleted('COMPUTE_METADATA_TO_DELETE');
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
@@ -464,15 +475,21 @@ export class ApplicationSyncService {
       );
     }
 
+    await progressReporter.reportStepCompleted('RUN_WORKSPACE_MIGRATION');
+
     await this.applicationService.delete(
       applicationUniversalIdentifier,
       workspaceId,
     );
 
+    await progressReporter.reportStepCompleted('DELETE_APPLICATION');
+
     await this.cleanupApplicationRuntimeResources({
       workspaceId,
       applicationUniversalIdentifier,
     });
+
+    await progressReporter.reportStepCompleted('CLEANUP_RUNTIME_RESOURCES');
 
     return validateAndBuildResult.workspaceMigration;
   }

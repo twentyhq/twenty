@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -150,7 +151,7 @@ export const SidePanelPageLayoutInfoContent = ({
         onChange={handleIconChange}
         className={iconPickerContainerStyles}
         clickableComponent={
-          <StyledClickableIconWrapper>
+          <StyledClickableIconWrapper aria-label={t`Choose icon`}>
             {renderedIcon}
           </StyledClickableIconWrapper>
         }

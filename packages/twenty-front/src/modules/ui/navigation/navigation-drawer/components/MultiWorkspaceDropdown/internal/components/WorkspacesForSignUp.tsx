@@ -1,6 +1,5 @@
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useLingui } from '@lingui/react/macro';
-import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useFilteredAvailableWorkspaces } from '@/ui/navigation/navigation-drawer/hooks/useFilteredAvailableWorkspaces';
 import { AvailableWorkspaceItem } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
@@ -20,20 +19,17 @@ export const WorkspacesForSignUp = ({
   const { searchAvailableWorkspaces } = useFilteredAvailableWorkspaces();
 
   return (
-    <>
-      <StyledDropdownMenuSubheader>{t`Invitations`}</StyledDropdownMenuSubheader>
-      <DropdownMenuItemsContainer scrollable={false}>
-        {searchAvailableWorkspaces(
-          searchValue,
-          availableWorkspaces.availableWorkspacesForSignUp,
-        ).map((availableWorkspace) => (
-          <AvailableWorkspaceItem
-            key={availableWorkspace.id}
-            availableWorkspace={availableWorkspace}
-            isSelected={currentWorkspace?.id === availableWorkspace.id}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
-    </>
+    <Dropdown.Section label={t`Invitations`}>
+      {searchAvailableWorkspaces(
+        searchValue,
+        availableWorkspaces.availableWorkspacesForSignUp,
+      ).map((availableWorkspace) => (
+        <AvailableWorkspaceItem
+          key={availableWorkspace.id}
+          availableWorkspace={availableWorkspace}
+          isSelected={currentWorkspace?.id === availableWorkspace.id}
+        />
+      ))}
+    </Dropdown.Section>
   );
 };

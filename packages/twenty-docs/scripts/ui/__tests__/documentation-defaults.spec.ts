@@ -8,7 +8,7 @@ describe('documentation defaults', () => {
   it('documents render-dependent native button defaults on dropdown parts', () => {
     const reference = readFileSync(
       new URL(
-        '../../../snippets/ui/generated/components/dropdown.mdx',
+        '../../../snippets/ui/generated/components/navigation/dropdown.mdx',
         import.meta.url,
       ),
       'utf8',

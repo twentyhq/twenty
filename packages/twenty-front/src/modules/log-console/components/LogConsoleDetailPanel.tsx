@@ -4,12 +4,9 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconButton,
-  JsonTree,
-  LightButton,
-  Section,
-} from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
+import { IconButton, LightButton } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconCopy,
   IconId,

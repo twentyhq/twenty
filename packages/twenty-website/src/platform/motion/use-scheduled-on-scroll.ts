@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 
 import { createAnimationFrameLoop } from './animation-frame-loop';
 
-// Runs the callback on scroll/resize, batched to one call per animation
-// frame regardless of event rate.
 export function useScheduledOnScroll(
   callback: () => void,
   options: { enabled?: boolean } = {},

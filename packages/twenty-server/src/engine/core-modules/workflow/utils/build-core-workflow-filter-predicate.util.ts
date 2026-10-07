@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import {
   CoreWorkflowFilterFieldKey,
   type CoreWorkflowFilterInput,
@@ -22,7 +23,6 @@ import {
   buildCoreWorkflowHasAnyOfStatusesPredicate,
   CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-status-predicate.util';
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 const NAME_COLUMN = 'c.name';
 const UPDATED_AT_COLUMN = 'c."updatedAt"';

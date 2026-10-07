@@ -37,8 +37,6 @@ export class ClientConfigService {
     private maintenanceModeService: MaintenanceModeService,
   ) {}
 
-  // A variant carries only the reading taken at its own effort, so until the
-  // sync measures it the base model's reading is shown, flagged as such.
   private resolveBenchmark(modelConfig: AiModelConfig | undefined): {
     benchmark?: AiModelBenchmark;
     isInherited: boolean;
@@ -158,8 +156,6 @@ export class ClientConfigService {
           isDeprecated: modelConfig.isDeprecated,
         }));
 
-    // A tier with no model is left out; the client shows its "configure a
-    // provider" state from the empty list rather than an error.
     const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
       const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
 
@@ -245,11 +241,6 @@ export class ClientConfigService {
             inviteTeamCreditsRewardPerUser: toDisplayCredits(
               this.twentyConfigService.get(
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-              ),
-            ),
-            installAppsCreditsReward: toDisplayCredits(
-              this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
               ),
             ),
             createProfileCreditsReward: toDisplayCredits(

@@ -19,6 +19,9 @@ export type ThemeType = {
       sm: {
         width: string;
       };
+      compact: {
+        width: string;
+      };
       md: {
         width: string;
       };

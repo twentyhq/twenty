@@ -41,9 +41,7 @@ const findTabDropTargetIdAtPoint = (
   return null;
 };
 
-// Bridges react-grid-layout drags to the tab strip: grid drags never enter
-// dnd-kit, so hovering and dropping on tab buttons is resolved by hit-testing
-// the pointer against the tab drop targets.
+// Grid drags never enter dnd-kit, so tab hover and drop are resolved by pointer hit-testing.
 export const usePageLayoutGridCrossTabDrop = ({ tabId }: { tabId: string }) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,

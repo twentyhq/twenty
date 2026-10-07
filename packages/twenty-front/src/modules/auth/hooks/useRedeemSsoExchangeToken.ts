@@ -5,7 +5,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 
 export const useRedeemSsoExchangeToken = () => {
@@ -20,8 +20,7 @@ export const useRedeemSsoExchangeToken = () => {
 
   const redeemSsoExchangeToken = useCallback(
     async (ssoExchangeToken: string) => {
-      // Keeps PageChangeEffect from consuming returnToPath while the server
-      // swaps the session cookie
+      // Keeps PageChangeEffect from consuming returnToPath while the server swaps the session cookie
       setIsAppEffectRedirectEnabled(false);
 
       try {

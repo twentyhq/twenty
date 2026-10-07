@@ -23,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -230,7 +230,7 @@ export const WorkflowEditActionUpsertRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
@@ -253,7 +253,7 @@ export const WorkflowEditActionUpsertRecord = ({
             />
           )}
 
-        <HorizontalSeparator noMargin />
+        <Separator />
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
           const isIdField = fieldDefinition.metadata.fieldName === 'id';

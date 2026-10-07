@@ -19,7 +19,6 @@ const idleTimeoutMs = 300_000;
 // The resolver keeps the sandbox alive for the larger of the two.
 const aliveTimeoutMs = 600_000;
 
-// Sandbox.list() returns a paginator; emit the tagged sandboxes as a single page.
 const paginatorOf = (items: ListedSandbox[]) => {
   let fetched = false;
 
@@ -198,8 +197,7 @@ describe('getOrCreateSessionSandbox', () => {
   it('never reuses a sandbox whose metadata does not exactly match the session', async () => {
     const created = buildFakeSandbox();
     const { api, mock } = buildSandboxApi({
-      // A sandbox from a different session/tenant that a loose server-side match
-      // could surface — it must be ignored, never connected to or reaped.
+      // Another session's sandbox surfaced by a loose server-side match must be ignored.
       list: jest.fn(() =>
         paginatorOf([listedSandbox('sbx-foreign', 'workspace-2:thread-9')]),
       ),

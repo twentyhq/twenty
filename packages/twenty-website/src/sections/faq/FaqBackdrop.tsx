@@ -9,7 +9,6 @@ import { mediaUp } from '@/tokens';
 
 import { FAQ_BACKDROP } from './faq-backdrop-config';
 
-// The authored shell: clipped to the section's right edge, faded, lifted.
 const BackdropShell = styled.div`
   bottom: 0;
   display: block;

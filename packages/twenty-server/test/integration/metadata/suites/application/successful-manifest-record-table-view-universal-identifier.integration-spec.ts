@@ -8,6 +8,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -57,7 +58,7 @@ const buildManifestWithRecordTableDashboard = () =>
               {
                 universalIdentifier: TEST_WIDGET_ID,
                 title: 'RT test table',
-                type: 'RECORD_TABLE',
+                type: WidgetType.RECORD_TABLE,
                 objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
                 position: {
                   layoutMode: PageLayoutTabLayoutMode.GRID,

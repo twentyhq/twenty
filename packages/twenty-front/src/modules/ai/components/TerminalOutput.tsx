@@ -2,7 +2,7 @@ import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily'
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

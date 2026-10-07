@@ -10,7 +10,8 @@ import { Callout } from '@ui/components/feedback/Callout/Callout';
 import { type CalloutVariant } from '@ui/components/feedback/Callout/types/CalloutVariant';
 
 const meta: Meta<typeof Callout> = {
-  title: 'UI/Feedback/Callout',
+  id: 'ui-feedback-callout',
+  title: 'UI/Components/Feedback/Callout',
   component: Callout,
 };
 

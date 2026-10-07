@@ -2,7 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
 import { useId, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconAddressBook,
   IconBook,
@@ -72,14 +73,14 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
               </Dropdown.ActionItem>
               <Dropdown.ActionItem
                 startIcon={<IconAddressBook />}
-                hotkeys={['@']}
+                shortcut={['@']}
                 page={AI_CHAT_ADD_MENU_PAGE.RECORDS}
               >
                 {t`Records`}
               </Dropdown.ActionItem>
               <Dropdown.ActionItem
                 startIcon={<IconBook />}
-                hotkeys={['/']}
+                shortcut={['/']}
                 page={AI_CHAT_ADD_MENU_PAGE.SKILLS}
               >
                 {t`Skills`}

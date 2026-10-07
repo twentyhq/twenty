@@ -38,6 +38,24 @@ const DismissibleRecordActions = ({
   );
 };
 
+const RecordDetailsPanel = ({
+  onInteractOutside,
+  onOutsideClick,
+}: DismissibleRecordActionsProps) => {
+  return (
+    <>
+      <Button>Before</Button>
+      <Dropdown.Root type="panel" onInteractOutside={onInteractOutside}>
+        <Dropdown.Trigger>Record details</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record details" initialFocus={false}>
+          Last updated today
+        </Dropdown.Content>
+      </Dropdown.Root>
+      <Button onClick={onOutsideClick}>Outside</Button>
+    </>
+  );
+};
+
 const preventDismiss = (event: DropdownDismissEvent) => {
   event.preventDefault();
 };
@@ -59,8 +77,42 @@ const openRecordActions = async (canvasElement: HTMLElement) => {
   return trigger;
 };
 
+const swipeFromElement = (element: Element) => {
+  const bounds = element.getBoundingClientRect();
+  const startX = bounds.left + bounds.width / 2;
+  const startY = bounds.top + bounds.height / 2;
+  const dispatchTouch = (
+    type: 'touchstart' | 'touchmove' | 'touchend',
+    clientX: number,
+  ) => {
+    const touch = new Touch({
+      identifier: 1,
+      target: element,
+      clientX,
+      clientY: startY,
+    });
+    const activeTouches = type === 'touchend' ? [] : [touch];
+
+    element.dispatchEvent(
+      new TouchEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        touches: activeTouches,
+        targetTouches: activeTouches,
+        changedTouches: [touch],
+      }),
+    );
+  };
+
+  dispatchTouch('touchstart', startX);
+  dispatchTouch('touchmove', startX + 40);
+  dispatchTouch('touchend', startX + 40);
+};
+
 const meta: Meta<typeof DismissibleRecordActions> = {
-  title: 'UI/Components/Dropdown/Interactions/Dismissal',
+  id: 'ui-components-dropdown-interactions-dismissal',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Dismissal',
   component: DismissibleRecordActions,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
@@ -112,16 +164,56 @@ export const InteractOutside: Story = {
     });
 
     await openRecordActions(canvasElement);
-    await userEvent.click(outside);
-
-    expect(args.onInteractOutside).toHaveBeenCalledOnce();
-    expect(args.onInteractOutside).toHaveBeenCalledWith(
-      expect.objectContaining({ target: outside }),
+    const handleDocumentClick = fn();
+    canvasElement.ownerDocument.addEventListener(
+      'click',
+      handleDocumentClick,
+      true,
     );
+
+    try {
+      await userEvent.click(outside);
+
+      expect(args.onInteractOutside).toHaveBeenCalledOnce();
+      expect(args.onInteractOutside).toHaveBeenCalledWith(
+        expect.objectContaining({ target: outside }),
+      );
+      await waitFor(() =>
+        expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+      );
+      expect(args.onOutsideClick).not.toHaveBeenCalled();
+      expect(handleDocumentClick).not.toHaveBeenCalled();
+
+      await userEvent.click(outside);
+
+      expect(args.onOutsideClick).toHaveBeenCalledOnce();
+      expect(handleDocumentClick).toHaveBeenCalledOnce();
+    } finally {
+      canvasElement.ownerDocument.removeEventListener(
+        'click',
+        handleDocumentClick,
+        true,
+      );
+    }
+  },
+};
+
+export const SwipeOutside: Story = {
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const outside = within(canvasElement).getByRole('button', {
+      name: 'Outside',
+    });
+
+    await openRecordActions(canvasElement);
+    swipeFromElement(outside);
+
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
-    expect(args.onOutsideClick).not.toHaveBeenCalled();
+    expect(args.onInteractOutside).toHaveBeenCalledWith(
+      expect.objectContaining({ target: outside, type: 'touchmove' }),
+    );
   },
 };
 
@@ -164,5 +256,33 @@ export const TabAway: Story = {
     expect(args.onInteractOutside).toHaveBeenCalledWith(
       expect.objectContaining({ target: null }),
     );
+  },
+};
+
+export const ShiftTabAwayKeepsNextClick: Story = {
+  render: (args) => <RecordDetailsPanel {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Record details' });
+
+    await userEvent.click(trigger);
+    await waitFor(() =>
+      expect(
+        body.getByRole('dialog', { name: 'Record details' }),
+      ).toBeVisible(),
+    );
+    expect(trigger).toHaveFocus();
+
+    await userEvent.tab({ shift: true });
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(args.onInteractOutside).toHaveBeenCalled();
+
+    canvas.getByRole('button', { name: 'Outside' }).click();
+
+    expect(args.onOutsideClick).toHaveBeenCalledOnce();
   },
 };

@@ -10,12 +10,11 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
-import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
 export class AgentChatThreadLifecycleService {
@@ -26,27 +25,9 @@ export class AgentChatThreadLifecycleService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
-
-  async cancelActiveStreamIfAny({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread) || !isNonEmptyString(thread.activeStreamId)) {
-      return;
-    }
-
-    await this.cancelStream({ threadId, streamId: thread.activeStreamId });
-  }
 
   async cancelStream({
     threadId,
@@ -78,9 +59,8 @@ export class AgentChatThreadLifecycleService {
       );
   }
 
-  // Archiving sets archivedAt rather than soft deleting, so it reaches the
-  // update hooks, which only know which rows they touched
-  async stopArchivedThreads({
+  // awaited so the stream stops before the soft delete responds
+  async stopDeletedThreads({
     workspaceId,
     threadIds,
   }: {
@@ -91,36 +71,21 @@ export class AgentChatThreadLifecycleService {
       return;
     }
 
-    const archivedThreads = await this.threadRepository.find(workspaceId, {
-      where: { id: In(threadIds), archivedAt: Not(IsNull()) },
+    const deletedThreads = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds), deletedAt: Not(IsNull()) },
     });
 
-    for (const archivedThread of archivedThreads) {
-      await this.stopStreamIfAny({ workspaceId, thread: archivedThread });
+    for (const deletedThread of deletedThreads) {
+      await this.stopStreamIfAny({ workspaceId, thread: deletedThread });
 
       this.releaseThreadSandboxBestEffort({
         workspaceId,
-        threadId: archivedThread.id,
+        threadId: deletedThread.id,
       });
     }
   }
 
-  // Sharing grants stay, as for any destroyed record, so that the destroy
-  // event still reaches the thread's audience
-  releaseDestroyedThreadSandboxes({
-    workspaceId,
-    threadIds,
-  }: {
-    workspaceId: string;
-    threadIds: string[];
-  }): void {
-    for (const threadId of threadIds) {
-      this.releaseThreadSandboxBestEffort({ workspaceId, threadId });
-    }
-  }
-
-  // The owner field is not writable through the record API. Owned and
-  // workflow-run threads are skipped so an upsert cannot reassign them
+  // owned threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,
@@ -133,20 +98,7 @@ export class AgentChatThreadLifecycleService {
     }
 
     const workspaceId = authContext.workspace.id;
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    const writesLegacyOwner = await hasLegacyChatThreadOwnerField(
-      workspaceId,
-      this.workspaceCacheService,
-    );
-    const unassignedThreadCriteria = {
-      workspaceMemberId: IsNull(),
-      ...(hasWorkflowRunThreadFields(flatFieldMetadataMaps)
-        ? { workflowRunId: IsNull() }
-        : {}),
-    };
+    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
 
     const threadsBefore = await this.threadRepository.find(workspaceId, {
       where: { id: In(threadIds), ...unassignedThreadCriteria },
@@ -165,9 +117,7 @@ export class AgentChatThreadLifecycleService {
         },
         {
           workspaceMemberId: authContext.workspaceMemberId,
-          ...(writesLegacyOwner
-            ? { userWorkspaceId: authContext.userWorkspaceId }
-            : {}),
+          userWorkspaceId: authContext.userWorkspaceId,
         },
       );
 
@@ -196,7 +146,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  private async stopStreamIfAny({
+  async stopStreamIfAny({
     workspaceId,
     thread,
   }: {
@@ -212,13 +162,14 @@ export class AgentChatThreadLifecycleService {
       streamId: thread.activeStreamId,
     });
 
-    const { affected } = await this.threadRepository.update(
+    const isReleased = await this.turnRecorderService.releaseStreamClaim({
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null },
-    );
+      threadId: thread.id,
+      streamId: thread.activeStreamId,
+      endRunningTurn: { status: AgentTurnStatus.CANCELLED },
+    });
 
-    if (affected > 0) {
+    if (isReleased) {
       await this.threadRecordEventService.emitThreadUpdated({
         workspaceId,
         threadBefore: thread,

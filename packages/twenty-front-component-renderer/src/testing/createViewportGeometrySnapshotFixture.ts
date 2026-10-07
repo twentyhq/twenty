@@ -1,3 +1,4 @@
+import { DEFAULT_INPUT_MEDIA_FEATURES } from '@/constants/DefaultInputMediaFeatures';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export const createViewportGeometrySnapshotFixture = (
@@ -14,5 +15,6 @@ export const createViewportGeometrySnapshotFixture = (
   rootContainerHeight: 0,
   rootContainerClientWidth: 0,
   rootContainerClientHeight: 0,
+  ...DEFAULT_INPUT_MEDIA_FEATURES,
   ...overrides,
 });

@@ -1,53 +1,31 @@
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useState } from 'react';
-import { IconChevronLeft } from 'twenty-ui/icon';
-
-import { WorkspacesForSignIn } from './components/WorkspacesForSignIn';
-import { WorkspacesForSignUp } from './components/WorkspacesForSignUp';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { WorkspacesForSignIn } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn';
+import { WorkspacesForSignUp } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const { t } = useLingui();
-
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-
-  const setMultiWorkspaceDropdown = useSetAtomState(
-    multiWorkspaceDropdownState,
-  );
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdown('default')}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {t`Other workspaces`}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Back>{t`Other workspaces`}</Dropdown.Back>
+      <Dropdown.Search
         placeholder={t`Search`}
-        autoFocus
-        onChange={(event) => {
-          setSearchValue(event.target.value);
-        }}
+        aria-label={t`Search`}
+        value={searchValue}
+        onValueChange={setSearchValue}
       />
-      <DropdownMenuSeparator />
+      <Dropdown.Separator />
       <WorkspacesForSignIn searchValue={searchValue} />
-      {availableWorkspaces.availableWorkspacesForSignUp.length > 0 && (
+      {isNonEmptyArray(availableWorkspaces.availableWorkspacesForSignUp) && (
         <WorkspacesForSignUp searchValue={searchValue} />
       )}
-    </LegacyDropdownContent>
+    </>
   );
 };

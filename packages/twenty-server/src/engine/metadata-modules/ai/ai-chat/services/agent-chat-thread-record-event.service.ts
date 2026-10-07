@@ -1,24 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ObjectRecordCreateEvent,
-  ObjectRecordDestroyEvent,
+  ObjectRecordRestoreEvent,
 } from 'twenty-shared/database-events';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { buildAgentChatThreadUpdateEvent } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-update-event.util';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// Chat history writes skip record events, so record subscribers only hear of
-// them from here
+// chat history writes skip record events, so subscribers only hear of them from here
 @Injectable()
 export class AgentChatThreadRecordEventService {
+  private readonly logger = new Logger(AgentChatThreadRecordEventService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -34,14 +36,14 @@ export class AgentChatThreadRecordEventService {
     threadId: string;
   }): Promise<void> {
     const thread = await this.findThread({ workspaceId, threadId });
-    const metadata = await this.findThreadMetadata(workspaceId);
+    const { objectMetadata } = await this.findThreadMetadata(workspaceId);
 
-    if (!isDefined(thread) || !isDefined(metadata)) {
+    if (!isDefined(thread) || !isDefined(objectMetadata)) {
       return;
     }
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
+      objectMetadataNameSingular: objectMetadata.nameSingular,
       action: DatabaseEventAction.CREATED,
       events: [
         Object.assign(
@@ -49,7 +51,7 @@ export class AgentChatThreadRecordEventService {
           { recordId: thread.id, properties: { after: thread } },
         ),
       ],
-      objectMetadata: metadata.objectMetadata,
+      objectMetadata,
       workspaceId,
     });
   }
@@ -58,25 +60,28 @@ export class AgentChatThreadRecordEventService {
     workspaceId,
     threadBefore,
     threadAfter,
+    action = DatabaseEventAction.UPDATED,
   }: {
     workspaceId: string;
     threadBefore: AgentChatThreadWorkspaceEntity;
     threadAfter?: AgentChatThreadWorkspaceEntity;
+    action?: DatabaseEventAction.UPDATED | DatabaseEventAction.RESTORED;
   }): Promise<void> {
     const storedThreadAfter =
       threadAfter ??
       (await this.findThread({ workspaceId, threadId: threadBefore.id }));
-    const metadata = await this.findThreadMetadata(workspaceId);
+    const { objectMetadata, flatFieldMetadataMaps } =
+      await this.findThreadMetadata(workspaceId);
 
-    if (!isDefined(storedThreadAfter) || !isDefined(metadata)) {
+    if (!isDefined(storedThreadAfter) || !isDefined(objectMetadata)) {
       return;
     }
 
     const event = buildAgentChatThreadUpdateEvent({
       threadBefore,
       threadAfter: storedThreadAfter,
-      objectMetadata: metadata.objectMetadata,
-      flatFieldMetadataMaps: metadata.flatFieldMetadataMaps,
+      objectMetadata,
+      flatFieldMetadataMaps,
     });
 
     if (!isDefined(event)) {
@@ -84,39 +89,46 @@ export class AgentChatThreadRecordEventService {
     }
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
-      action: DatabaseEventAction.UPDATED,
-      events: [event],
-      objectMetadata: metadata.objectMetadata,
+      objectMetadataNameSingular: objectMetadata.nameSingular,
+      action,
+      events: [
+        action === DatabaseEventAction.RESTORED
+          ? Object.assign(new ObjectRecordRestoreEvent(), event)
+          : event,
+      ],
+      objectMetadata,
       workspaceId,
     });
   }
 
-  async emitThreadDestroyed({
+  // Chat lists show which chats wait on an answer. The marker is already
+  // cleared, so a lost event must not fail the caller
+  async emitPendingQuestionCleared({
     workspaceId,
-    threadBefore,
+    threadId,
+    messageId,
   }: {
     workspaceId: string;
-    threadBefore: AgentChatThreadWorkspaceEntity;
+    threadId: string;
+    messageId: string;
   }): Promise<void> {
-    const metadata = await this.findThreadMetadata(workspaceId);
+    try {
+      const thread = await this.findThread({ workspaceId, threadId });
 
-    if (!isDefined(metadata)) {
-      return;
+      if (!isDefined(thread)) {
+        return;
+      }
+
+      await this.emitThreadUpdated({
+        workspaceId,
+        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
+        threadAfter: thread,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
     }
-
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
-      action: DatabaseEventAction.DESTROYED,
-      events: [
-        Object.assign(
-          new ObjectRecordDestroyEvent<AgentChatThreadWorkspaceEntity>(),
-          { recordId: threadBefore.id, properties: { before: threadBefore } },
-        ),
-      ],
-      objectMetadata: metadata.objectMetadata,
-      workspaceId,
-    });
   }
 
   private findThread({
@@ -138,13 +150,12 @@ export class AgentChatThreadRecordEventService {
         'flatFieldMetadataMaps',
       ]);
 
-    const objectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ];
-
-    return isDefined(objectMetadata)
-      ? { objectMetadata, flatFieldMetadataMaps }
-      : undefined;
+    return {
+      objectMetadata: findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThread',
+      ),
+      flatFieldMetadataMaps,
+    };
   }
 }

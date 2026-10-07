@@ -1,3 +1,7 @@
+import { WorkflowVersionOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/services/workflow-version-on-update-side-effect-handler.service';
+import { WorkflowVersionOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/services/workflow-version-on-create-side-effect-handler.service';
+import { WorkflowVersionOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/services/workflow-version-on-delete-side-effect-handler.service';
+import { WorkflowVersionDependenciesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow-version/services/workflow-version-dependencies-on-delete-side-effect-handler.service';
 import { Module } from '@nestjs/common';
 
 import { FieldSearchFieldMetadataOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-create-side-effect-handler.service';
@@ -12,6 +16,8 @@ import { FieldSystemViewFieldsOnDeleteSideEffectHandlerService } from 'src/engin
 import { FieldUniqueBackingIndexOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-create-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-delete-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-update-side-effect-handler.service';
+import { FieldValidationRulesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-validation-rules-on-delete-side-effect-handler.service';
+import { FieldValidationRulesOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-validation-rules-on-update-side-effect-handler.service';
 import { ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service';
 import { ObjectIndexViewOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-on-create-side-effect-handler.service';
 import { ObjectNavigationCommandOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-create-side-effect-handler.service';
@@ -25,9 +31,14 @@ import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/m
 import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
 import { ObjectSystemRelationsOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
+import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-validation-rules-on-delete-side-effect-handler.service';
 
 @Module({
   providers: [
+    WorkflowVersionOnUpdateSideEffectHandlerService,
+    WorkflowVersionOnCreateSideEffectHandlerService,
+    WorkflowVersionOnDeleteSideEffectHandlerService,
+    WorkflowVersionDependenciesOnDeleteSideEffectHandlerService,
     FieldUniqueBackingIndexOnCreateSideEffectHandlerService,
     FieldUniqueBackingIndexOnUpdateSideEffectHandlerService,
     FieldUniqueBackingIndexOnDeleteSideEffectHandlerService,
@@ -40,6 +51,8 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     FieldRecordFormWidgetOnDeleteSideEffectHandlerService,
     FieldRecordFormWidgetOnUpdateSideEffectHandlerService,
     FieldSystemViewFieldsOnDeleteSideEffectHandlerService,
+    FieldValidationRulesOnUpdateSideEffectHandlerService,
+    FieldValidationRulesOnDeleteSideEffectHandlerService,
     ObjectSystemFieldsOnCreateSideEffectHandlerService,
     ObjectIndexViewOnCreateSideEffectHandlerService,
     ObjectRecordPageOnCreateSideEffectHandlerService,
@@ -53,6 +66,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectSystemSideEffectsOnDeleteSideEffectHandlerService,
+    ObjectValidationRulesOnDeleteSideEffectHandlerService,
   ],
 })
 export class MetadataSideEffectHandlersModule {}

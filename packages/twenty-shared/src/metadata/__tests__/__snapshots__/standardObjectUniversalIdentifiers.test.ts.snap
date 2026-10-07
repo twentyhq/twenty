@@ -28,14 +28,23 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
-      "inputAsks": {
-        "universalIdentifier": "0c2444ed-7f90-4984-9f56-a3fe16fa6296",
+      "lastActivityAt": {
+        "universalIdentifier": "b3847509-8e98-4038-88de-dd891767d6fc",
+      },
+      "lastMessageSenderWorkspaceMemberId": {
+        "universalIdentifier": "5c3611a7-7324-472e-9b43-4c7779e5e7cf",
+      },
+      "lastMessageText": {
+        "universalIdentifier": "1c16eaef-172b-4778-b14b-f302bc6021e4",
       },
       "lastStreamError": {
         "universalIdentifier": "2e389238-ba5c-4951-83d4-b14f94592c5c",
       },
       "messages": {
         "universalIdentifier": "5c851a60-e5d9-4b1e-9926-c2eab6fc9e62",
+      },
+      "participants": {
+        "universalIdentifier": "2ede85e4-216b-4308-8556-b045971414e7",
       },
       "pendingQuestionMessageId": {
         "universalIdentifier": "51a9b421-7d90-4a59-9712-036ea9721e65",
@@ -73,25 +82,68 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "userWorkspaceId": {
         "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
       },
-      "workflowRun": {
-        "universalIdentifier": "2187f4c6-bff3-4b80-8585-c82965faf79b",
-      },
       "workspaceMember": {
         "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
+      },
+      "writerWorkspaceMemberIds": {
+        "universalIdentifier": "c8fe2406-ad9c-4274-aeb5-9beb74d4b353",
       },
     },
     "indexes": {
       "ownerIndex": {
         "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
       },
-      "workflowRunIndex": {
-        "universalIdentifier": "cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b",
-      },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+  },
+  "agentChatThreadParticipant": {
+    "fields": {
+      "archivedAt": {
+        "universalIdentifier": "ee092c9d-f27e-4fbc-8dad-9ec950936216",
+      },
+      "createdAt": {
+        "universalIdentifier": "bae81265-78ca-52fa-b75f-7eda44811ab1",
+      },
+      "deletedAt": {
+        "universalIdentifier": "554805df-af06-5089-bf93-f0a7c8ae9b51",
+      },
+      "id": {
+        "universalIdentifier": "13ba446f-db00-5635-888e-c2b11299e34b",
+      },
+      "isSubscribed": {
+        "universalIdentifier": "146b1d5e-6603-4493-944b-c3bd2817569b",
+      },
+      "lastMentionedAt": {
+        "universalIdentifier": "52a54602-633f-496a-966a-9a70437fa887",
+      },
+      "lastReadAt": {
+        "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
+      },
+      "snoozedUntil": {
+        "universalIdentifier": "65bc5785-877d-4363-b65c-95175ba20fd0",
+      },
+      "thread": {
+        "universalIdentifier": "7d0282a5-11ce-4da8-a165-30909ffdf383",
+      },
+      "updatedAt": {
+        "universalIdentifier": "8e7c3d7e-dfee-565a-8f43-271ca4c24579",
+      },
+      "workspaceMember": {
+        "universalIdentifier": "4345764d-878b-4a3a-b1c9-822378f868e6",
+      },
+    },
+    "indexes": {
+      "threadWorkspaceMemberUniqueIndex": {
+        "universalIdentifier": "e5bbe244-cf74-49a3-938a-e6fff7a8710b",
+      },
+      "workspaceMemberIndex": {
+        "universalIdentifier": "73d8bb5d-18eb-47bb-89e6-12d8f89aecf6",
+      },
+    },
+    "universalIdentifier": "a043622a-48ef-426f-b55d-3fdcf4ae52f2",
   },
   "agentChatThreadTarget": {
     "fields": {
@@ -314,20 +366,53 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "agentId": {
         "universalIdentifier": "4ac55a9a-95e8-4fd9-8c03-47ee3b618ae7",
       },
+      "cacheCreationTokens": {
+        "universalIdentifier": "4d9feae2-2a80-43b2-965d-8ad40f129503",
+      },
+      "cacheReadTokens": {
+        "universalIdentifier": "c2bcbbf5-81ce-4679-8f08-f6a3cc00569c",
+      },
       "createdAt": {
         "universalIdentifier": "46926fcc-4c5b-5826-a6ca-1eb419bdf42e",
+      },
+      "createdBy": {
+        "universalIdentifier": "c3d5e8a2-fde8-452d-a74d-04436aaf17bc",
       },
       "deletedAt": {
         "universalIdentifier": "daf50675-315c-51af-95a1-e05dd59989ce",
       },
-      "evaluations": {
-        "universalIdentifier": "282b4815-9c5e-4897-8f9a-a4587af6b0e2",
+      "endedAt": {
+        "universalIdentifier": "2b13f528-738b-402c-a033-7bbb0cce73a4",
+      },
+      "error": {
+        "universalIdentifier": "b0ed90f6-5953-4c85-aff8-407a28ec8cc7",
       },
       "id": {
         "universalIdentifier": "6dd07216-fc15-54d1-ba30-2748dcf55720",
       },
+      "inputCredits": {
+        "universalIdentifier": "740456a7-c0be-4bc9-8429-52dc3e3a3707",
+      },
+      "inputTokens": {
+        "universalIdentifier": "0e419986-4255-4858-b252-e6a161d55f58",
+      },
       "messages": {
         "universalIdentifier": "737c3559-ea1a-4269-aea4-e672b17afbb1",
+      },
+      "modelId": {
+        "universalIdentifier": "b1e1c27b-03dc-40b1-8052-4474c15b8233",
+      },
+      "outputCredits": {
+        "universalIdentifier": "1ca5da82-b797-43a8-a2ee-d1a062a24ca5",
+      },
+      "outputTokens": {
+        "universalIdentifier": "3e7f5fb8-f9cf-45b2-b1a7-b36c1e8ff2fd",
+      },
+      "startedAt": {
+        "universalIdentifier": "578977d7-b0d9-48d1-83f7-29ad6215a6f0",
+      },
+      "status": {
+        "universalIdentifier": "c17a4d49-f4f5-40e2-b084-11c5c4bae431",
       },
       "thread": {
         "universalIdentifier": "4e9b4f1f-c1bb-42d0-bb38-eb2b2f830e64",
@@ -345,37 +430,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "63697477-8606-415e-86cb-be078d7fcf7e",
-  },
-  "agentTurnEvaluation": {
-    "fields": {
-      "comment": {
-        "universalIdentifier": "f5531d3b-c8f5-4d92-bf72-d5fd8e2697b0",
-      },
-      "createdAt": {
-        "universalIdentifier": "a0e7e222-4d22-59b2-9d4a-108193e3e3ab",
-      },
-      "deletedAt": {
-        "universalIdentifier": "128e9ba5-d735-5f2c-8a86-437af196f4c5",
-      },
-      "id": {
-        "universalIdentifier": "f100558f-f1cd-5e5e-a3c6-c214227f2850",
-      },
-      "score": {
-        "universalIdentifier": "a4313259-d43b-4d10-abf5-2426e152c10b",
-      },
-      "turn": {
-        "universalIdentifier": "c67ddcf0-2812-476a-87dc-cf8a683805aa",
-      },
-      "updatedAt": {
-        "universalIdentifier": "6cd30693-18b4-509b-9418-a185f98d0c03",
-      },
-    },
-    "indexes": {
-      "turnIndex": {
-        "universalIdentifier": "f85d8283-84ae-4343-8328-8c4e21c5b984",
-      },
-    },
-    "universalIdentifier": "73741409-7835-426f-8425-9de13af22302",
   },
   "attachment": {
     "fields": {
@@ -1516,98 +1570,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "updatedAt": {
             "universalIdentifier": "d37846b6-01a9-54f9-ab44-43a39375974d",
-          },
-        },
-      },
-    },
-  },
-  "inputAsk": {
-    "fields": {
-      "answeredAt": {
-        "universalIdentifier": "618f303d-123b-480f-9d40-64fcb0db2e01",
-      },
-      "assignee": {
-        "universalIdentifier": "410fabce-972b-40d3-8b11-3c0807ecab90",
-      },
-      "createdAt": {
-        "universalIdentifier": "f0a4adf8-233b-5cfe-855b-25102b196115",
-      },
-      "createdBy": {
-        "universalIdentifier": "1dc3c6fb-1f79-508d-9371-e4b3c43436a5",
-      },
-      "deletedAt": {
-        "universalIdentifier": "32027c67-cdff-5425-873d-b2346e4d9af0",
-      },
-      "form": {
-        "universalIdentifier": "b25c6916-71bc-435e-a547-ecb384083902",
-      },
-      "id": {
-        "universalIdentifier": "3e4b9815-e24e-5548-be38-b82d39e190bd",
-      },
-      "name": {
-        "universalIdentifier": "f8d3b0ed-f134-420a-9194-ca0f96345642",
-      },
-      "position": {
-        "universalIdentifier": "b7e7866d-da15-5753-9bde-43d025a38a86",
-      },
-      "response": {
-        "universalIdentifier": "04906a36-ec59-4d3f-8da9-7ef6696ed326",
-      },
-      "searchVector": {
-        "universalIdentifier": "3eed9577-932b-5c7a-bde5-99ab561f8745",
-      },
-      "status": {
-        "universalIdentifier": "919f0339-ee8e-4197-8b6a-b57bbd31035b",
-      },
-      "stepId": {
-        "universalIdentifier": "334c8abb-6ebe-4e08-a746-0098425ef421",
-      },
-      "thread": {
-        "universalIdentifier": "21ee043a-d3d6-4545-8771-34aca316aeea",
-      },
-      "toolCallId": {
-        "universalIdentifier": "f353edad-fe7e-4efc-ab0d-e21a0ee16262",
-      },
-      "updatedAt": {
-        "universalIdentifier": "168d4eef-366c-59a4-b22a-3b3e2c2fc272",
-      },
-      "updatedBy": {
-        "universalIdentifier": "ca3e2f7a-6c4c-5fbc-b8ed-e3cf6ddabfe7",
-      },
-      "workflowRun": {
-        "universalIdentifier": "cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80",
-      },
-    },
-    "indexes": {
-      "assigneeStatusIndex": {
-        "universalIdentifier": "255cba21-0107-4c31-b497-9c4081114da8",
-      },
-      "threadToolCallUniqueIndex": {
-        "universalIdentifier": "6a0ac44d-84f3-4bfa-8939-ce3d82f0d043",
-      },
-      "workflowRunStatusIndex": {
-        "universalIdentifier": "77615052-0e81-4210-b259-37a9e939bb41",
-      },
-      "workflowRunStepUniqueIndex": {
-        "universalIdentifier": "c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41",
-      },
-    },
-    "universalIdentifier": "c9069340-a894-4f33-9da3-3b9631d3144c",
-    "views": {
-      "allInputAsks": {
-        "universalIdentifier": "f6b9409d-bb52-5ce9-96a1-0d999d446d1d",
-        "viewFields": {
-          "assignee": {
-            "universalIdentifier": "caf0c3da-7e07-5635-a5e7-06b5b6015ea7",
-          },
-          "createdAt": {
-            "universalIdentifier": "f1f8cced-7d32-5fc7-9ed5-faa9440ce25d",
-          },
-          "name": {
-            "universalIdentifier": "07d46858-2d00-59fd-ba96-45dffced339b",
-          },
-          "status": {
-            "universalIdentifier": "028d2903-6f4d-59fe-9766-6b0f90aaf9b4",
           },
         },
       },
@@ -3905,9 +3867,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workflowRun": {
     "fields": {
-      "agentChatThreads": {
-        "universalIdentifier": "c664a2e7-ef64-4597-9cdf-ded3eae85ae4",
-      },
       "coreWorkflowId": {
         "universalIdentifier": "e07d8ac0-6b6e-4685-81fa-50d82ae7f880",
       },
@@ -3931,9 +3890,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "id": {
         "universalIdentifier": "e8f6e894-4003-5cb1-a1c1-7ed5b3e4200c",
-      },
-      "inputAsks": {
-        "universalIdentifier": "f3b2f310-9aa4-40da-82bb-3388d26e7cde",
       },
       "name": {
         "universalIdentifier": "20202020-b840-4253-aef9-4e5013694587",
@@ -4181,6 +4137,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "accountOwnerForCompanies": {
         "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
       },
+      "agentChatThreadParticipants": {
+        "universalIdentifier": "d1de909f-a0eb-4e94-8903-abec012864c9",
+      },
       "agentChatThreads": {
         "universalIdentifier": "fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1",
       },
@@ -4219,9 +4178,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "id": {
         "universalIdentifier": "d77dff76-dcfd-52a3-b352-832898b28b9d",
-      },
-      "inputAsks": {
-        "universalIdentifier": "552a26c5-21fd-4e3a-ad0d-2f561c96b7d4",
       },
       "jobTitle": {
         "universalIdentifier": "20202020-4dd4-4619-826e-08f6c06b374d",

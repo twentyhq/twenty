@@ -91,7 +91,6 @@ export class SsoAuthController {
     NoPermissionGuard,
   )
   async oidcAuth() {
-    // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
     return;
   }
 
@@ -103,7 +102,6 @@ export class SsoAuthController {
     NoPermissionGuard,
   )
   async samlAuth() {
-    // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow
     return;
   }
 

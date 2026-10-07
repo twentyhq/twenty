@@ -11,14 +11,11 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-// Single source of truth for which tabs render and which one is pinned, so
-// every consumer derives them from the same filtered tab set.
 export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
   const { targetRecordIdentifier } = useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-  const { currentPageLayout, pageLayoutPersisted } =
-    useCurrentPageLayoutOrThrow();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
@@ -32,13 +29,11 @@ export const usePageLayoutRenderableTabs = () => {
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
-    persistedTabs: pageLayoutPersisted?.tabs,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
   });
 
-  // Edit mode keeps every tab visible (like getTabsWithVisibleWidgets) so a
-  // widget the object does not support can still be reached and removed.
+  // Edit mode keeps every tab visible so unsupported widgets can still be removed.
   const renderableTabs = isPageLayoutInEditMode
     ? tabsWithVisibleWidgets
     : getTabsRenderableForTargetObject({

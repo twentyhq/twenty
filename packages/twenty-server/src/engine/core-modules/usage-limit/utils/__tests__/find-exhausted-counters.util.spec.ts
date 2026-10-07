@@ -3,6 +3,7 @@ import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/type
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const PERIOD_START = new Date('2026-08-01T00:00:00.000Z');
 const PERIOD_END = new Date('2026-09-01T00:00:00.000Z');
@@ -10,17 +11,20 @@ const PERIOD_END = new Date('2026-09-01T00:00:00.000Z');
 const buildAllowanceCounter = (key: string): AllowanceQuotaCounter => ({
   kind: 'allowance',
   key,
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
 });
 
-const buildLimitCounter = (key: string): LimitQuotaCounter => ({
+const buildLimitCounter = (
+  key: string,
+  overrides: Partial<LimitQuotaCounter> = {},
+): LimitQuotaCounter => ({
   kind: 'limit',
   isDefault: false,
   key,
   limitValue: 1_000,
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   periodUnit: 'month',
@@ -28,6 +32,7 @@ const buildLimitCounter = (key: string): LimitQuotaCounter => ({
   periodEnd: PERIOD_END,
   spenderType: 'workspace',
   spenderId: null,
+  ...overrides,
 });
 
 describe('findExhaustedCounters', () => {
@@ -91,7 +96,7 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildLimitCounter('first')],
         remainings: [100],
-        cost: { creditsUsedMicro: 101, quantity: 0 },
+        cost: { [UsageUnit.CREDIT]: 101, [UsageUnit.TOKEN]: 0 },
       }),
     ).toMatchObject([{ key: 'first' }]);
   });
@@ -101,17 +106,27 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildLimitCounter('first')],
         remainings: [100],
-        cost: { creditsUsedMicro: 100, quantity: 0 },
+        cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.TOKEN]: 0 },
       }),
     ).toEqual([]);
   });
 
-  it('charges a limit only for the meter it counts', () => {
+  it('charges a limit only for the unit it counts', () => {
     expect(
       findExhaustedCounters({
         counters: [buildLimitCounter('first')],
         remainings: [10],
-        cost: { creditsUsedMicro: 0, quantity: 500 },
+        cost: { [UsageUnit.CREDIT]: 0, [UsageUnit.TOKEN]: 500 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('counts a unit missing from the cost as zero', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first', { unit: UsageUnit.TOKEN })],
+        remainings: [10],
+        cost: { [UsageUnit.CREDIT]: 5_000 },
       }),
     ).toEqual([]);
   });
@@ -121,7 +136,7 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildLimitCounter('first')],
         remainings: [0],
-        cost: { creditsUsedMicro: 0, quantity: 0 },
+        cost: { [UsageUnit.CREDIT]: 0, [UsageUnit.TOKEN]: 0 },
       }),
     ).toMatchObject([{ key: 'first' }]);
   });
@@ -131,7 +146,7 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildAllowanceCounter('allowance')],
         remainings: [10],
-        cost: { creditsUsedMicro: 5_000, quantity: 100 },
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
       }),
     ).toMatchObject([{ key: 'allowance' }]);
   });
@@ -141,7 +156,7 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildAllowanceCounter('allowance')],
         remainings: [5_000],
-        cost: { creditsUsedMicro: 5_000, quantity: 100 },
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
       }),
     ).toEqual([]);
   });
@@ -151,7 +166,7 @@ describe('findExhaustedCounters', () => {
       findExhaustedCounters({
         counters: [buildAllowanceCounter('allowance')],
         remainings: [0],
-        cost: { creditsUsedMicro: 5_000, quantity: 100 },
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
       }),
     ).toMatchObject([{ key: 'allowance' }]);
   });

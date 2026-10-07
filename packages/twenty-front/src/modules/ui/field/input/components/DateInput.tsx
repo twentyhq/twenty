@@ -2,14 +2,9 @@ import { useCallback, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-shared/types';
 
 export type DateInputProps = {
   instanceId: string;
@@ -60,20 +55,11 @@ export const DateInput = ({
     onSubmit?.(newDate);
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-
   const handleEnter = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-
     onEnter(internalValue);
   };
 
   const handleEscape = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-
     onEscape(internalValue);
   };
 
@@ -82,19 +68,10 @@ export const DateInput = ({
       const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId === instanceId) {
-        closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-        closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
         onClickOutside(event, internalValue);
       }
     },
-    [
-      instanceId,
-      closeDropdownYearSelect,
-      closeDropdownMonthSelect,
-      onClickOutside,
-      internalValue,
-      store,
-    ],
+    [instanceId, onClickOutside, internalValue, store],
   );
 
   useRegisterInputEvents({
