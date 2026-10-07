@@ -12,6 +12,7 @@ const RUN_AGENT_MUTATION = `
       result
       error
       success
+      isWaiting
       threadId
     }
   }

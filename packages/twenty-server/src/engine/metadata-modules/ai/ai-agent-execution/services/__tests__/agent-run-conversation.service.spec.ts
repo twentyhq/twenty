@@ -272,22 +272,4 @@ describe('AgentRunConversationService', () => {
 
     expect(threadService.recordThreadActivity).not.toHaveBeenCalled();
   });
-
-  it('marks the calls it leaves pending as awaited by a caller', async () => {
-    const { service, conversationWriterService, threadService } =
-      buildService();
-
-    await service.closeTurn({
-      ...turn,
-      title: 'Draft the quote',
-      agentId: null,
-      execution,
-      isAwaitedByCaller: true,
-    });
-
-    expect(conversationWriterService.insertExecutionReply).toHaveBeenCalledWith(
-      expect.objectContaining({ isAwaitedByCaller: true }),
-    );
-    expect(threadService.recordThreadActivity).not.toHaveBeenCalled();
-  });
 });

@@ -42,5 +42,7 @@ export type RunAgentResult = {
   result: object | null;
   error: string | null;
   success: boolean;
+  // the agent paused on a wait and goes on by itself; its reply lands in the thread
+  isWaiting: boolean;
   threadId: string | null;
 };

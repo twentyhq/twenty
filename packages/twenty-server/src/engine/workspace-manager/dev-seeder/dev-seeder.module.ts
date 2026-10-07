@@ -4,14 +4,11 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -55,7 +52,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FieldMetadataModule,
     WorkspaceDataSourceModule,
     WorkspaceCacheStorageModule,
-    TypeORMModule,
     RoleModule,
     RolePermissionFlagModule,
     RoleTargetModule,
@@ -63,8 +59,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     ApiKeyModule,
     ApplicationModule,
     ApplicationRegistrationModule,
-    FeatureFlagModule,
-    FileStorageModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       ObjectMetadataEntity,

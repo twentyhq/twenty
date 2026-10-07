@@ -14,14 +14,9 @@ import { ApplicationHealthModule } from 'src/engine/core-modules/application/app
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
-import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -35,11 +30,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
-    ApplicationVariableEntityModule,
-    FeatureFlagModule,
-    FileStorageModule,
-    LogicFunctionExecutorModule,
-    PermissionsModule,
     SecretEncryptionModule,
     SdkClientModule,
     WorkspaceCacheModule,

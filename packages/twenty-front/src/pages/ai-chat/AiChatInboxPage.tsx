@@ -5,9 +5,7 @@ import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconChevronLeft, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
@@ -17,16 +15,11 @@ import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThrea
 import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
+import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
@@ -79,10 +72,8 @@ const StyledThreadList = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
   min-height: 0;
   overflow: auto;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const AiChatInboxPageContent = () => {
@@ -92,26 +83,12 @@ const AiChatInboxPageContent = () => {
   const { threadId } = useParams();
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const theme = useTheme();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
-  );
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
-  );
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
-    ({ id }) => id === agentChatShownChannelView?.channelId,
   );
   const agentChatChannelThreadList = useAtomStateValue(
     agentChatChannelThreadListState,
   );
-  const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
-  const HeaderIcon = isDefined(agentChatShownChannelView)
-    ? ChannelIcon
-    : AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
-  const headerTitle = isDefined(agentChatShownChannelView)
-    ? (channel?.name ?? '')
-    : t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus]);
   const { threads, loading: isThreadListLoading } = useChatThreads(
     isDefined(agentChatShownChannelView)
       ? agentChatChannelVisibleThreadsSelector
@@ -122,9 +99,6 @@ const AiChatInboxPageContent = () => {
     (isDefined(agentChatShownChannelView) &&
       agentChatChannelThreadList?.viewKey !==
         getAgentChatChannelViewKey(agentChatShownChannelView));
-  const { switchToNewChat } = useSwitchToNewAiChat({
-    shouldOpenInFullPage: true,
-  });
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -162,14 +136,15 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
-  const isSelectionShown =
-    selectedRecordIds.length > 1 ||
-    (selectedRecordIds.length === 1 &&
-      selectedRecordIds[0] !== selectedThreadId);
-  const openThreadIds = isDefined(selectedThreadId) ? [selectedThreadId] : [];
-  const highlightedThreadIds = isSelectionShown
-    ? selectedRecordIds
-    : openThreadIds;
+  const handleThreadCheckboxClick = (
+    { id }: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) =>
+    toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
+
+  const isSelectionShown = selectedRecordIds.length > 0;
+  const openThreadIds =
+    isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
 
   // A phone has room for the list or the chat, not both
   const isListShown = !isMobile || !isDefined(selectedThreadId);
@@ -191,25 +166,8 @@ const AiChatInboxPageContent = () => {
             <PageCardLayout
               showInformationBanner={isMobile}
               header={
-                <PageCardHeader
-                  icon={<HeaderIcon size={theme.icon.size.md} />}
-                  title={headerTitle}
-                  actionButton={
-                    <Button
-                      size="sm"
-                      variant="solid"
-                      color="accent"
-                      startIcon={<IconPlus />}
-                      onClick={() =>
-                        switchToNewChat({
-                          channelId:
-                            agentChatShownChannelView?.channelId ?? null,
-                        })
-                      }
-                    >
-                      {t`New chat`}
-                    </Button>
-                  }
+                <AiChatInboxListHeader
+                  selectedThreadCount={selectedRecordIds.length}
                 />
               }
             >
@@ -238,8 +196,12 @@ const AiChatInboxPageContent = () => {
                     ) : (
                       <AiChatInboxThreadList
                         threads={threads}
-                        selectedThreadIds={highlightedThreadIds}
+                        selectedThreadIds={openThreadIds}
+                        checkedThreadIds={selectedRecordIds}
                         onThreadClick={handleThreadClick}
+                        onThreadCheckboxClick={
+                          isMobile ? undefined : handleThreadCheckboxClick
+                        }
                       />
                     )}
                     {isDefined(agentChatShownChannelView) ? (
@@ -258,7 +220,13 @@ const AiChatInboxPageContent = () => {
             </PageCardLayout>
           </StyledListPane>
         )}
-        {isThreadShown && isSelectionShown && <AiChatInboxSelectionPane />}
+        {isThreadShown && isSelectionShown && (
+          <AiChatInboxSelectionPane
+            selectedThreads={threads.filter(({ id }) =>
+              selectedRecordIds.includes(id),
+            )}
+          />
+        )}
       </AiChatInboxCommandMenuScope>
       {isThreadShown &&
         !isSelectionShown &&

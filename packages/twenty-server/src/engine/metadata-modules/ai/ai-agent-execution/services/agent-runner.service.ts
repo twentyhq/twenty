@@ -8,6 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { AGENT_RUN_MAX_CONTINUATIONS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-max-continuations.const';
 import { AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
@@ -38,13 +39,9 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-type AgentRunnerTurnInput = Extract<AgentRunnerRunInput, { turn: unknown }>;
-
-type AgentRunnerCallerInput = Extract<AgentRunnerRunInput, { caller: unknown }>;
-
-// Runs an agent turn and records it in its conversation. A run a caller waits on that pauses on an
-// answer or a wait is suspended: the engine continues it on its own, through this same runner,
-// and hands the outcome to the caller's handler
+// Runs an agent turn and records it in its conversation. A run that pauses on an answer or a wait
+// is suspended: the engine continues it on its own, through this same runner, and hands the
+// outcome to its caller's handler
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
@@ -188,32 +185,37 @@ export class AgentRunnerService {
     const {
       workspaceId,
       conversation: { threadId, isCreated },
-      conversationActor,
+      caller,
+      spec,
+      agent,
+      prompt,
+      executionContext,
+      resolveCreatedBy,
     } = input;
-    const { turn, execution } =
-      'caller' in input ? this.buildCallerTurn(input) : input;
-    const callerRun =
-      'caller' in input ? { caller: input.caller, spec: input.spec } : null;
+
+    if (!isCreated && !isDefined(suspension)) {
+      await this.assertConversationNotSuspended({ workspaceId, threadId });
+    }
 
     const priorMessages = isCreated
       ? []
       : await this.conversationReaderService.loadMessages({
           workspaceId,
           threadId,
-          actor: conversationActor,
+          actor: executionContext.conversationActor,
         });
-    const agentId = execution.agent?.id ?? null;
+    const agentId = agent?.id ?? null;
 
     const turnId = await this.recordConversation(threadId, async () =>
       this.agentRunConversationService.openTurn({
         workspaceId,
         threadId,
-        title: turn.title,
+        title: spec.title,
         agentId,
-        senderUserWorkspaceId: turn.senderUserWorkspaceId,
-        senderApplicationId: turn.senderApplicationId,
-        createdBy: await turn.resolveCreatedBy(),
-        messages: turn.messages,
+        senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
+        senderApplicationId: prompt?.senderApplicationId ?? null,
+        createdBy: await resolveCreatedBy(),
+        messages: prompt?.messages ?? [],
       }),
     );
 
@@ -224,7 +226,7 @@ export class AgentRunnerService {
     try {
       executionResult = await withDedicatedAiTrace(() =>
         this.agentAsyncExecutorService.executeAgent({
-          ...execution,
+          ...this.buildExecution(input),
           priorMessages,
         }),
       );
@@ -251,10 +253,9 @@ export class AgentRunnerService {
             workspaceId,
             threadId,
             turnId,
-            title: turn.title,
+            title: spec.title,
             agentId,
             execution: executionResult,
-            isAwaitedByCaller: isDefined(callerRun),
           }),
         )
       : null;
@@ -273,7 +274,8 @@ export class AgentRunnerService {
       outcome: await this.settleTurn({
         workspaceId,
         threadId,
-        callerRun,
+        caller,
+        spec,
         execution: executionResult,
         isRecorded: isDefined(closedTurn),
         isAwaitingAnswer: closedTurn?.isAwaitingAnswer ?? false,
@@ -283,10 +285,32 @@ export class AgentRunnerService {
     };
   }
 
+  // a new message must not slip in while a run waits in the conversation: the run would read it on continuing
+  private async assertConversationNotSuspended({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const suspension = await this.agentRunSuspensionService.findOne({
+      workspaceId,
+      where: { threadId },
+    });
+
+    if (isDefined(suspension)) {
+      throw new AiException(
+        'The conversation is waiting on an earlier run; send the next message once it has finished',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
+  }
+
   private async settleTurn({
     workspaceId,
     threadId,
-    callerRun,
+    caller,
+    spec,
     execution,
     isRecorded,
     isAwaitingAnswer,
@@ -295,7 +319,8 @@ export class AgentRunnerService {
   }: {
     workspaceId: string;
     threadId: string;
-    callerRun: { caller: AgentRunCaller; spec: AgentRunSpec } | null;
+    caller: AgentRunCaller;
+    spec: AgentRunSpec;
     execution: AgentExecutionResult;
     isRecorded: boolean;
     isAwaitingAnswer: boolean;
@@ -309,17 +334,21 @@ export class AgentRunnerService {
     const wait = findAgentRunWait(
       execution.steps[execution.steps.length - 1]?.toolResults ?? [],
     );
+    const hasPausedTooOften =
+      isDefined(suspension) &&
+      suspension.resumeCount + 1 >= AGENT_RUN_MAX_CONTINUATIONS;
 
     // continuing reads the conversation, so a pause it does not hold could never be continued
     const suspensionId =
       !execution.hasNoMoreAvailableCredits &&
-      isDefined(callerRun) &&
+      !hasPausedTooOften &&
       isRecorded &&
       (isAwaitingAnswer || isDefined(wait))
         ? await this.keepSuspended({
             workspaceId,
             threadId,
-            callerRun,
+            caller,
+            spec,
             summary,
             suspension,
           })
@@ -327,7 +356,7 @@ export class AgentRunnerService {
 
     if (!isDefined(suspensionId)) {
       // a pause the run could not keep leaves nothing to answer
-      if (isDefined(callerRun) && !isDefined(suspension)) {
+      if (!isDefined(suspension)) {
         await this.agentRunSuspensionService.closeAwaitedCalls({
           workspaceId,
           threadId,
@@ -338,6 +367,13 @@ export class AgentRunnerService {
         return {
           status: 'FAILED',
           error: 'Agent stopped: no more available credits.',
+        };
+      }
+
+      if (hasPausedTooOften) {
+        return {
+          status: 'FAILED',
+          error: `Agent stopped: it paused more than ${AGENT_RUN_MAX_CONTINUATIONS} times in one run.`,
         };
       }
 
@@ -370,13 +406,15 @@ export class AgentRunnerService {
   private async keepSuspended({
     workspaceId,
     threadId,
-    callerRun: { caller, spec },
+    caller,
+    spec,
     summary,
     suspension,
   }: {
     workspaceId: string;
     threadId: string;
-    callerRun: { caller: AgentRunCaller; spec: AgentRunSpec };
+    caller: AgentRunCaller;
+    spec: AgentRunSpec;
     summary: AgentRunSummary;
     suspension: AgentRunSuspensionEntity | null;
   }): Promise<string | null> {
@@ -412,56 +450,49 @@ export class AgentRunnerService {
   }
 
   // The toolset and prompt come from the spec alone, so a continued run gets those it paused with
-  private buildCallerTurn({
+  private buildExecution({
     workspaceId,
     spec,
     agent,
     prompt,
     executionContext,
-    resolveCreatedBy,
-  }: AgentRunnerCallerInput): Pick<AgentRunnerTurnInput, 'turn' | 'execution'> {
-    const messages = isDefined(prompt)
-      ? [{ role: 'user' as const, content: prompt }]
-      : [];
-    const { canAskHumans, canProposeToolCalls, canWait } = spec.capabilities;
+  }: AgentRunnerRunInput): Omit<
+    Parameters<AgentAsyncExecutorService['executeAgent']>[0],
+    'priorMessages'
+  > {
+    const { canAskHumans, canProposeToolCalls } = spec.capabilities;
 
     return {
-      turn: {
-        title: spec.title,
-        senderUserWorkspaceId: executionContext.userWorkspaceId,
-        senderApplicationId: null,
-        messages,
-        resolveCreatedBy,
+      agent,
+      messages: prompt?.messages ?? [],
+      // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
+      // the engine's, so it explains them; the caller's own instructions come last
+      baseSystemPrompt: [
+        spec.baseSystemPrompt,
+        AGENT_WAIT_PROMPT,
+        ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
+      ].join('\n\n'),
+      pausingTools: {
+        ...createAgentWaitTools(),
+        ...(canAskHumans
+          ? {
+              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
+                isWorkspaceSetupThread: false,
+              }),
+              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+            }
+          : {}),
       },
-      execution: {
-        agent,
-        messages,
-        // the wait tools are the engine's, so it explains them; the caller's own instructions come last
-        baseSystemPrompt: [
-          spec.baseSystemPrompt,
-          ...(canWait ? [AGENT_WAIT_PROMPT] : []),
-          ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
-        ].join('\n\n'),
-        pausingTools: {
-          ...(canWait ? createAgentWaitTools() : {}),
-          ...(canAskHumans
-            ? {
-                [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                  isWorkspaceSetupThread: false,
-                }),
-                [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-              }
-            : {}),
-        },
-        canProposeToolCalls,
-        actorContext: executionContext.actorContext,
-        authContext: executionContext.authContext,
-        workspaceId,
-        userWorkspaceId: executionContext.userWorkspaceId,
-        additionalRoleRestrictionIds:
-          executionContext.additionalRoleRestrictionIds,
-        additionalExcludedToolNames: spec.additionalExcludedToolNames,
-      },
+      canProposeToolCalls,
+      actorContext: executionContext.actorContext,
+      authContext: executionContext.authContext,
+      workspaceId,
+      userWorkspaceId: executionContext.userWorkspaceId,
+      runAsRoleId: executionContext.runAsRoleId,
+      additionalRoleRestrictionIds:
+        executionContext.additionalRoleRestrictionIds,
+      additionalExcludedToolNames: spec.additionalExcludedToolNames,
+      toolLoadingStrategy: spec.toolLoadingStrategy,
     };
   }
 

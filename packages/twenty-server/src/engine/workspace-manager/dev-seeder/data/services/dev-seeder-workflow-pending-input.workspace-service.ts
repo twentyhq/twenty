@@ -311,7 +311,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             turnId,
             title: workflow.step.name,
             agentId: null,
-            isAwaitedByCaller: true,
             execution: {
               isPaused: true,
               steps: [{ content }],
