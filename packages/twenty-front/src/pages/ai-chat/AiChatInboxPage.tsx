@@ -5,22 +5,17 @@ import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconChevronLeft, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
+import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
@@ -34,7 +29,6 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
@@ -63,10 +57,8 @@ const StyledThreadList = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
   min-height: 0;
   overflow: auto;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const AiChatInboxPageContent = () => {
@@ -76,16 +68,7 @@ const AiChatInboxPageContent = () => {
   const { threadId } = useParams();
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const theme = useTheme();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
-  );
-  const FilterStatusIcon =
-    AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
   const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
-  const { switchToNewChat } = useSwitchToNewAiChat({
-    shouldOpenInFullPage: true,
-  });
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -123,14 +106,15 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
-  const isSelectionShown =
-    selectedRecordIds.length > 1 ||
-    (selectedRecordIds.length === 1 &&
-      selectedRecordIds[0] !== selectedThreadId);
-  const openThreadIds = isDefined(selectedThreadId) ? [selectedThreadId] : [];
-  const highlightedThreadIds = isSelectionShown
-    ? selectedRecordIds
-    : openThreadIds;
+  const handleThreadCheckboxClick = (
+    { id }: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) =>
+    toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
+
+  const isSelectionShown = selectedRecordIds.length > 0;
+  const openThreadIds =
+    isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
 
   // A phone has room for the list or the chat, not both
   const isListShown = !isMobile || !isDefined(selectedThreadId);
@@ -151,24 +135,8 @@ const AiChatInboxPageContent = () => {
             <PageCardLayout
               showInformationBanner={isMobile}
               header={
-                <PageCardHeader
-                  icon={<FilterStatusIcon size={theme.icon.size.md} />}
-                  title={t(
-                    AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
-                      agentChatThreadFilterStatus
-                    ],
-                  )}
-                  actionButton={
-                    <Button
-                      size="sm"
-                      variant="solid"
-                      color="accent"
-                      startIcon={<IconPlus />}
-                      onClick={switchToNewChat}
-                    >
-                      {t`New chat`}
-                    </Button>
-                  }
+                <AiChatInboxListHeader
+                  selectedThreadCount={selectedRecordIds.length}
                 />
               }
             >
@@ -189,8 +157,12 @@ const AiChatInboxPageContent = () => {
                   ) : (
                     <AiChatInboxThreadList
                       threads={threads}
-                      selectedThreadIds={highlightedThreadIds}
+                      selectedThreadIds={openThreadIds}
+                      checkedThreadIds={selectedRecordIds}
                       onThreadClick={handleThreadClick}
+                      onThreadCheckboxClick={
+                        isMobile ? undefined : handleThreadCheckboxClick
+                      }
                     />
                   )}
                   <AgentChatThreadsFetchMoreTrigger />
@@ -204,7 +176,13 @@ const AiChatInboxPageContent = () => {
             </PageCardLayout>
           </StyledListPane>
         )}
-        {isThreadShown && isSelectionShown && <AiChatInboxSelectionPane />}
+        {isThreadShown && isSelectionShown && (
+          <AiChatInboxSelectionPane
+            selectedThreads={threads.filter(({ id }) =>
+              selectedRecordIds.includes(id),
+            )}
+          />
+        )}
       </AiChatInboxCommandMenuScope>
       {isThreadShown &&
         !isSelectionShown &&

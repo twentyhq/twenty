@@ -5,7 +5,7 @@ import {
   CalendarChannelSyncStatus,
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
-import { CalendarChannelVisibility } from '~/generated/graphql';
+import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 export const mockedDropdownConnectedAccount: ConnectedAccount = {
   id: 'connected-account',
