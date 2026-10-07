@@ -12,11 +12,11 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledSection = styled.div`
   display: flex;
@@ -37,10 +37,9 @@ export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatUsage = useAtomComponentFamilyStateValue(
-    agentChatUsageComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
+    threadId: currentAiChatThread,
+  });
   if (!isDefined(agentChatUsage)) {
     return null;
   }
