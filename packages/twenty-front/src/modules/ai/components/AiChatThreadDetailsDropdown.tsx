@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -10,6 +11,7 @@ import {
   IconListSearch,
   IconPencil,
   IconPlus,
+  IconUsers,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -29,7 +31,9 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledEmptyValue = styled.span`
@@ -60,6 +64,12 @@ export const AiChatThreadDetailsDropdown = ({
     threadId,
   );
   const followers = useAgentChatThreadMembers(thread);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const assignee = currentWorkspaceMembers.find(
+    (workspaceMember) => workspaceMember.id === thread?.assigneeId,
+  );
   const { closeDropdown } = useCloseDropdown();
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
@@ -160,6 +170,16 @@ export const AiChatThreadDetailsDropdown = ({
                 )}
               </AiChatThreadDetailsRow>
             )}
+            <AiChatThreadDetailsRow Icon={IconUsers} label={t`Assignee`}>
+              {isDefined(assignee) ? (
+                <RecordChip
+                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+                  record={{ ...assignee, __typename: 'WorkspaceMember' }}
+                />
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </AiChatThreadDetailsRow>
             <AiChatThreadDetailsRow Icon={IconBell} label={t`Following`}>
               {followers.map((workspaceMember) => (
                 <RecordChip

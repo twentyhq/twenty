@@ -52,6 +52,7 @@ import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -142,6 +143,9 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
+    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },
   {
     name: 'Loader',
@@ -149,6 +153,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/loader',
     propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Skeleton',
+    source: 'primitives/feedback/Skeleton/Skeleton.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/skeleton',
+    propDescriptions: SKELETON_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressBar',
@@ -441,7 +452,16 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/tooltip',
-    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Viewport',
+      'Provider',
+    ],
     propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
     propDefaults: { sideOffset: '10' },
     partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
@@ -641,6 +661,16 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/inline-banner',
     propDescriptions: INLINE_BANNER_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'soft',
+      layout: 'standard',
+      embedded: 'false',
+      icon: 'decorative information icon',
+    },
   },
   {
     name: 'ToastProvider',

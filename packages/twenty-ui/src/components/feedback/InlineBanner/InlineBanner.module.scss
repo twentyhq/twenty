@@ -13,10 +13,12 @@
   flex: 1;
   gap: var(--t-spacing-2);
   min-width: 0;
+}
 
-  > svg {
-    flex-shrink: 0;
-  }
+.icon {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
 }
 
 .bannerText {
@@ -40,14 +42,14 @@
   .bannerContent {
     flex: initial;
   }
-}
 
-.compactBlue {
-  background: var(--t-color-blue5);
-  color: var(--t-color-blue10);
-}
+  &[data-variant='soft'][data-color='blue'] {
+    background: var(--t-color-blue5);
+    color: var(--t-color-blue10);
+  }
 
-.compactDanger {
-  background: var(--t-color-red3);
-  color: var(--t-color-red);
+  &[data-variant='soft'][data-color='red'] {
+    background: var(--t-color-red3);
+    color: var(--t-color-red);
+  }
 }

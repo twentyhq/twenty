@@ -34,6 +34,7 @@ export const ConfirmationDialog = ({
   dialogId,
   title,
   loading,
+  isConfirmButtonDisabled = false,
   subtitle,
   onConfirmClick,
   onClose,
@@ -51,8 +52,9 @@ export const ConfirmationDialog = ({
     useState<string>('');
 
   const isValidValue =
-    !isNonEmptyString(confirmationValue) ||
-    inputConfirmationValue === confirmationValue;
+    !isConfirmButtonDisabled &&
+    (!isNonEmptyString(confirmationValue) ||
+      inputConfirmationValue === confirmationValue);
 
   const { closeDialog } = useDialog();
 

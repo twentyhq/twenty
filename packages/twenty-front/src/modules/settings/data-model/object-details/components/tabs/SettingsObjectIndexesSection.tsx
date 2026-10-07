@@ -23,9 +23,9 @@ import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
-import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { SettingsObjectIndexTable } from '@/settings/data-model/object-details/components/SettingsObjectIndexTable';
+import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types/SettingsObjectIndexesTableItem';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

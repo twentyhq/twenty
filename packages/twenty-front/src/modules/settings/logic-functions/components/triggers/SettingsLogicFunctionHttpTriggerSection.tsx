@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
+import { useGetLogicFunctionHttpUrl } from '@/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const HTTP_METHOD_OPTIONS: Array<{

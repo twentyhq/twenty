@@ -1,3 +1,5 @@
+import { WORKSPACE_SETUP_ALTERNATIVE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-alternative-system-prompt.constant';
+import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { type ReferencedSkill } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 
@@ -21,7 +23,13 @@ const USER_CONTEXT = {
   timezone: 'Europe/Paris',
 };
 
-const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
+const EVEN_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea410';
+const ODD_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
+const buildPrompt = (
+  isWorkspaceSetupThread?: boolean,
+  workspaceId = EVEN_WORKSPACE_ID,
+) =>
   buildFullSystemPrompt({
     toolCatalog: [],
     skillCatalog: [],
@@ -29,6 +37,7 @@ const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
     userWorkspaceId: USER_WORKSPACE_ID,
     workspaceInstructions: WORKSPACE_INSTRUCTIONS_DOCUMENT,
     userContext: USER_CONTEXT,
+    workspaceId,
     isWorkspaceSetupThread,
   });
 
@@ -54,6 +63,7 @@ describe('buildFullSystemPrompt', () => {
       referencedSkills: [REFERENCED_SKILL],
       preloadedTools: [],
       userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceId: EVEN_WORKSPACE_ID,
     });
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
@@ -96,6 +106,15 @@ describe('buildFullSystemPrompt', () => {
     expect(prompt).not.toContain('A <browsing_context> tag may appear');
   });
 
+  it('should pick the setup prompt variant from the workspace id', () => {
+    expect(buildPrompt(true, EVEN_WORKSPACE_ID)).toContain(
+      WORKSPACE_SETUP_SYSTEM_PROMPT,
+    );
+    expect(buildPrompt(true, ODD_WORKSPACE_ID)).toContain(
+      WORKSPACE_SETUP_ALTERNATIVE_SYSTEM_PROMPT,
+    );
+  });
+
   it('should ignore workspace instructions on setup threads', () => {
     const prompt = buildPrompt(true);
 
@@ -112,6 +131,7 @@ describe('buildFullSystemPrompt', () => {
         skillCatalog: [],
         preloadedTools: [],
         userWorkspaceId: USER_WORKSPACE_ID,
+        workspaceId: EVEN_WORKSPACE_ID,
         canAttachConversationToRecords,
       });
 

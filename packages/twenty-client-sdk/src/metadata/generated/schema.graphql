@@ -1834,6 +1834,7 @@ enum EngineComponentKey {
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
   ASK_AI
+  ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
   CANCEL_MESSAGE_CAMPAIGN
   COMPOSE_CAMPAIGN
@@ -2933,6 +2934,7 @@ type Mutation {
   addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
@@ -3061,9 +3063,11 @@ type Mutation {
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!
   generateTransientToken: TransientToken!
+  generateTwoFactorAuthenticationRecoveryCode(otp: String, userId: UUID!): TwoFactorAuthenticationRecoveryCode!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromOTP(captchaToken: String, loginToken: String!, origin: String!, otp: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode(captchaToken: String, loginToken: String!, origin: String!, recoveryCode: String!): TwoFactorAuthenticationRecoveryCodeRedemption!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(captchaToken: String, email: String!, locale: String, origin: String!, password: String!, verifyEmailRedirectPath: String): LoginToken!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
@@ -3096,6 +3100,7 @@ type Mutation {
   revokeAllOtherUserSessions: Int!
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
+  revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
@@ -3849,6 +3854,7 @@ type Query {
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
+  twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   unsubscribeTopics: [UnsubscribeTopic!]!
   usageLimits: [UsageLimit!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
@@ -4464,6 +4470,22 @@ type TwoFactorAuthenticationMethodSummary {
   status: String!
   strategy: String!
   twoFactorAuthenticationMethodId: UUID!
+}
+
+type TwoFactorAuthenticationRecoveryCode {
+  expiresAt: DateTime!
+  recoveryCode: String!
+}
+
+type TwoFactorAuthenticationRecoveryCodeRedemption {
+  provisioningUri: String
+  tokens: AuthTokenPair
+}
+
+type TwoFactorAuthenticationRecoveryStatus {
+  hasVerifiedTwoFactorAuthenticationMethod: Boolean!
+  isAwaitingRecoveryEnrollment: Boolean!
+  pendingRecoveryCodeExpiresAt: DateTime
 }
 
 """A UUID scalar type"""

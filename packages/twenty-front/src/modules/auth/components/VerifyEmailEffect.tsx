@@ -1,4 +1,4 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';

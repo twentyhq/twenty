@@ -198,7 +198,6 @@ export class AgentRunService
           // the call returns before anyone could answer, so the run can wait but not ask
           capabilities: {
             canAskHumans: false,
-            canProposeToolCalls: false,
           },
           toolLoadingStrategy: 'lazy',
         },

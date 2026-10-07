@@ -68,7 +68,7 @@
     "types": {
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
       "CalloutVariant": "components/feedback/Callout/types/CalloutVariant",
-      "InlineBannerButtonProps": "components/feedback/InlineBanner/types/InlineBannerButtonProps",
+      "InlineBannerLayout": "components/feedback/InlineBanner/types/InlineBannerLayout",
       "InlineBannerProps": "components/feedback/InlineBanner/types/InlineBannerProps",
       "ToasterProps": "components/feedback/Toaster/types/ToasterProps",
       "ToastNotification": "components/feedback/Toast/types/ToastNotification",
@@ -632,6 +632,7 @@
       "IconUser": "icon/components/TablerIcons",
       "IconUserCircle": "icon/components/TablerIcons",
       "IconUserCog": "icon/components/TablerIcons",
+      "IconUserOff": "icon/components/TablerIcons",
       "IconUserPin": "icon/components/TablerIcons",
       "IconUserPlus": "icon/components/TablerIcons",
       "IconUsers": "icon/components/TablerIcons",
@@ -739,14 +740,21 @@
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
-      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
+      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
+      "Skeleton": "primitives/feedback/Skeleton/Skeleton",
+      "SKELETON_HEIGHT_SIZES": "primitives/feedback/Skeleton/constants/SKELETON_HEIGHT_SIZES"
     },
     "types": {
-      "BannerColor": "primitives/feedback/Banner/Banner",
-      "BannerVariant": "primitives/feedback/Banner/Banner",
+      "BannerActionProps": "primitives/feedback/Banner/types/BannerActionProps",
+      "BannerColor": "primitives/feedback/Banner/types/BannerColor",
+      "BannerProps": "primitives/feedback/Banner/types/BannerProps",
+      "BannerState": "primitives/feedback/Banner/types/BannerState",
+      "BannerStatus": "primitives/feedback/Banner/types/BannerStatus",
+      "BannerVariant": "primitives/feedback/Banner/types/BannerVariant",
       "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
-      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
+      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps",
+      "SkeletonProps": "primitives/feedback/Skeleton/types/SkeletonProps"
     }
   },
   "primitives/input": {
@@ -778,6 +786,7 @@
       "AutocompleteRootProps": "primitives/input/Autocomplete/types/AutocompleteRootProps",
       "ButtonColor": "primitives/input/Button/types/ButtonColor",
       "ButtonGroupProps": "primitives/input/ButtonGroup/types/ButtonGroupProps",
+      "ButtonLoadingPosition": "primitives/input/Button/types/ButtonLoadingPosition",
       "ButtonProps": "primitives/input/Button/types/ButtonProps",
       "ButtonSize": "primitives/input/Button/types/ButtonSize",
       "ButtonVariant": "primitives/input/Button/types/ButtonVariant",
@@ -909,13 +918,28 @@
       "PopoverTitleProps": "primitives/surfaces/Popover/types/PopoverTitleProps",
       "PopoverTriggerProps": "primitives/surfaces/Popover/types/PopoverTriggerProps",
       "TooltipAlign": "primitives/surfaces/Tooltip/types/TooltipAlign",
-      "TooltipContentProps": "primitives/surfaces/Tooltip/types/TooltipContentProps",
+      "TooltipArrowProps": "primitives/surfaces/Tooltip/types/TooltipArrowProps",
+      "TooltipArrowState": "primitives/surfaces/Tooltip/types/TooltipArrowState",
+      "TooltipHandle": "primitives/surfaces/Tooltip/types/TooltipHandle",
       "TooltipPopupProps": "primitives/surfaces/Tooltip/types/TooltipPopupProps",
+      "TooltipPopupState": "primitives/surfaces/Tooltip/types/TooltipPopupState",
+      "TooltipPortalProps": "primitives/surfaces/Tooltip/types/TooltipPortalProps",
+      "TooltipPortalState": "primitives/surfaces/Tooltip/types/TooltipPortalState",
+      "TooltipPositionerProps": "primitives/surfaces/Tooltip/types/TooltipPositionerProps",
+      "TooltipPositionerState": "primitives/surfaces/Tooltip/types/TooltipPositionerState",
       "TooltipProps": "primitives/surfaces/Tooltip/types/TooltipProps",
       "TooltipProviderProps": "primitives/surfaces/Tooltip/types/TooltipProviderProps",
+      "TooltipProviderState": "primitives/surfaces/Tooltip/types/TooltipProviderState",
+      "TooltipRootActions": "primitives/surfaces/Tooltip/types/TooltipRootActions",
+      "TooltipRootChangeEventDetails": "primitives/surfaces/Tooltip/types/TooltipRootChangeEventDetails",
+      "TooltipRootChangeEventReason": "primitives/surfaces/Tooltip/types/TooltipRootChangeEventReason",
       "TooltipRootProps": "primitives/surfaces/Tooltip/types/TooltipRootProps",
+      "TooltipRootState": "primitives/surfaces/Tooltip/types/TooltipRootState",
       "TooltipSide": "primitives/surfaces/Tooltip/types/TooltipSide",
-      "TooltipTriggerProps": "primitives/surfaces/Tooltip/types/TooltipTriggerProps"
+      "TooltipTriggerProps": "primitives/surfaces/Tooltip/types/TooltipTriggerProps",
+      "TooltipTriggerState": "primitives/surfaces/Tooltip/types/TooltipTriggerState",
+      "TooltipViewportProps": "primitives/surfaces/Tooltip/types/TooltipViewportProps",
+      "TooltipViewportState": "primitives/surfaces/Tooltip/types/TooltipViewportState"
     }
   },
   "primitives/typography": {
