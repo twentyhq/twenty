@@ -3150,6 +3150,7 @@ type Mutation {
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
+  updateMyUserApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   updateOneApplicationVariable(applicationId: UUID, key: String!, value: String!): Boolean!
@@ -3824,6 +3825,7 @@ type Query {
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
+  myUserApplicationVariables: [WorkspaceMemberApplicationVariables!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   navigationMenuItems: [NavigationMenuItem!]!
   object(
@@ -5345,6 +5347,18 @@ type User {
   workspaces: [UserWorkspace!]!
 }
 
+type UserApplicationVariableValue {
+  description: String!
+  isDeprecated: Boolean!
+  isRequired: Boolean!
+  isSecret: Boolean!
+  key: String!
+  label: String!
+  options: JSON
+  type: String!
+  value: String!
+}
+
 type UserSession {
   authProvider: String!
   createdAt: DateTime!
@@ -5824,6 +5838,12 @@ type WorkspaceMember {
   userEmail: String!
   userId: UUID!
   userWorkspaceId: UUID
+}
+
+type WorkspaceMemberApplicationVariables {
+  userWorkspaceId: UUID!
+  variables: [UserApplicationVariableValue!]!
+  workspaceMemberId: UUID!
 }
 
 """Date format as Month first, Day first, Year first or system as default"""

@@ -23,7 +23,6 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
     MicrosoftMessageListFetchErrorHandler,
-    MicrosoftMessagesImportErrorHandler,
   ],
 })
 export class MessagingMicrosoftDriverModule {}

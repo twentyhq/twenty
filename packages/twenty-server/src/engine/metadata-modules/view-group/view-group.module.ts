@@ -25,6 +25,5 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewGroupResolver,
     provideWorkspaceScopedRepository(ViewGroupEntity),
   ],
-  exports: [ViewGroupService],
 })
 export class ViewGroupModule {}
