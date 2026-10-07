@@ -17,6 +17,12 @@ export const buildFilterQueryParams = ({
 }): URLSearchParams => {
   const params = new URLSearchParams();
 
+  // The view URL format names a field and an operand only; a filter that traverses a relation to a target
+  // field cannot be expressed in it, so it is left out of both the group and the root params.
+  const urlExpressibleRecordFilters = recordFilters.filter(
+    (filter) => !isDefined(filter.relationTargetFieldMetadataId),
+  );
+
   const rootGroup = recordFilterGroups.find(
     (group) => !isDefined(group.parentRecordFilterGroupId),
   );
@@ -24,7 +30,7 @@ export const buildFilterQueryParams = ({
   if (isDefined(rootGroup)) {
     const urlFilterGroup = mapRecordFilterGroupToUrlFilterGroup({
       recordFilterGroupId: rootGroup.id,
-      allRecordFilters: recordFilters,
+      allRecordFilters: urlExpressibleRecordFilters,
       allRecordFilterGroups: recordFilterGroups,
       objectMetadataItem,
     });
@@ -58,7 +64,7 @@ export const buildFilterQueryParams = ({
 
   // Parentless filters (merged dashboard filters among them) are ANDed with the group by the records view,
   // the same way computeRecordGqlOperationFilter combines them for the chart.
-  const parentlessFilters = recordFilters.filter(
+  const parentlessFilters = urlExpressibleRecordFilters.filter(
     (filter) => !isDefined(filter.recordFilterGroupId),
   );
 

@@ -277,6 +277,54 @@ describe('SidePanelDashboardFilterDetailSubPage', () => {
     });
   });
 
+  it('hints that a required filter is not applied to any chart while no widget binds it', async () => {
+    const requiredSlot: DashboardFilterSlot = {
+      ...CLOSING_MONTH_SLOT,
+      isRequired: true,
+    };
+
+    const unboundCompanyWidget = buildChartWidget({
+      id: 'company-widget',
+      title: 'Companies',
+      objectMetadataId: companyObjectMetadataItem.id,
+      dashboardFilterBindings: { [CLOSING_MONTH_SLOT.id]: null },
+    });
+
+    await renderDetailSubPage({
+      slots: [requiredSlot],
+      widgets: [unboundCompanyWidget],
+    });
+
+    expect(
+      screen.getByText('This filter is not applied to any chart yet'),
+    ).toBeVisible();
+  });
+
+  it('shows no hint while a required filter is bound to at least one chart', async () => {
+    await renderDetailSubPage({
+      slots: [{ ...CLOSING_MONTH_SLOT, isRequired: true }],
+    });
+
+    expect(
+      screen.queryByText('This filter is not applied to any chart yet'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows no hint for an optional filter without bindings', async () => {
+    const unboundCompanyWidget = buildChartWidget({
+      id: 'company-widget',
+      title: 'Companies',
+      objectMetadataId: companyObjectMetadataItem.id,
+      dashboardFilterBindings: { [CLOSING_MONTH_SLOT.id]: null },
+    });
+
+    await renderDetailSubPage({ widgets: [unboundCompanyWidget] });
+
+    expect(
+      screen.queryByText('This filter is not applied to any chart yet'),
+    ).not.toBeInTheDocument();
+  });
+
   it('toggles the required flag on the slot', async () => {
     await renderDetailSubPage();
 

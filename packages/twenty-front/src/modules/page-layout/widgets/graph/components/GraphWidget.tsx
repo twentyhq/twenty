@@ -1,5 +1,6 @@
 import { useMissingRequiredDashboardFilterSlot } from '@/page-layout/dashboard-filters/hooks/useMissingRequiredDashboardFilterSlot';
 import { useWidgetConfigurationWithDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useWidgetConfigurationWithDashboardFilters';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChartRenderer';
@@ -22,6 +23,8 @@ export const GraphWidget = () => {
   const missingRequiredDashboardFilterSlot =
     useMissingRequiredDashboardFilterSlot(widget);
 
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
   const widgetWithDashboardFilters = useMemo(
     () =>
       configurationWithDashboardFilters === widget.configuration
@@ -31,7 +34,11 @@ export const GraphWidget = () => {
   );
 
   // The renderers own the chart data hooks, so not mounting them is what keeps the query from firing.
-  if (isDefined(missingRequiredDashboardFilterSlot)) {
+  // Editors keep seeing their charts while they configure the filters.
+  if (
+    isDefined(missingRequiredDashboardFilterSlot) &&
+    !isPageLayoutInEditMode
+  ) {
     const slotLabel = missingRequiredDashboardFilterSlot.label;
 
     return (

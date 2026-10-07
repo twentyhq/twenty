@@ -3,6 +3,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
@@ -39,9 +40,7 @@ const BAR_CHART_RENDERER_TEST_ID = 'bar-chart-renderer';
 jest.mock(
   '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChartRenderer',
   () => ({
-    GraphWidgetBarChartRenderer: () => (
-      <div data-testid="bar-chart-renderer" />
-    ),
+    GraphWidgetBarChartRenderer: () => <div data-testid="bar-chart-renderer" />,
   }),
 );
 
@@ -90,10 +89,19 @@ const companyChartWidget = buildDraftPageLayoutWidget({
 
 const renderGraphWidget = async ({
   dashboardFilterValues,
+  isInEditMode = false,
 }: {
   dashboardFilterValues: Record<string, DashboardFilterValue | undefined>;
+  isInEditMode?: boolean;
 }) => {
   resetJotaiStore();
+
+  jotaiStore.set(
+    isDashboardInEditModeComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    }),
+    isInEditMode,
+  );
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
@@ -106,12 +114,7 @@ const renderGraphWidget = async ({
       objectMetadataId: null,
       dashboardFilters: [REQUIRED_SLOT],
       tabs: [
-        makeTab(
-          'tab-1',
-          [companyChartWidget],
-          0,
-          PageLayoutTabLayoutMode.GRID,
-        ),
+        makeTab('tab-1', [companyChartWidget], 0, PageLayoutTabLayoutMode.GRID),
       ],
     } as PageLayout,
   );
@@ -164,6 +167,15 @@ describe('GraphWidget', () => {
     await renderGraphWidget({
       dashboardFilterValues: { [REQUIRED_SLOT.id]: COMPANY_NAME_VALUE },
     });
+
+    expect(screen.getByTestId(BAR_CHART_RENDERER_TEST_ID)).toBeInTheDocument();
+    expect(
+      screen.queryByText('Set the Company name filter to see this chart'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps rendering the chart in edit mode while the required filter is unset', async () => {
+    await renderGraphWidget({ dashboardFilterValues: {}, isInEditMode: true });
 
     expect(screen.getByTestId(BAR_CHART_RENDERER_TEST_ID)).toBeInTheDocument();
     expect(

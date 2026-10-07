@@ -90,11 +90,9 @@ Your selection is kept in the page URL, so reloading the page or sharing the lin
 1. In edit mode, click **Add filter** in the filter bar to open the filters side panel
 2. Add a filter from the dimensions found across your charts, such as a company, a date or a select field
 3. For each chart, pick the field the filter applies to, or choose **Not applied**
-4. Optionally set a **Default** value, applied whenever the dashboard opens, and turn on **Required** so a chart only loads once the filter has a value
+4. Optionally set a **Default value**, applied whenever the dashboard opens, and turn on **Required** so a chart only loads once the filter has a value
 5. Save the dashboard
 
-Clicking a bar or a slice to open the underlying records carries the dashboard filters along with the chart's own filters.
+Date filters with an absolute date or a today-style operand follow each chart's timezone setting, while relative ranges such as "This month" follow the viewer.
 
-<Note>
-Date filters on a dashboard follow the timezone of the user viewing them, like the rest of the dashboard.
-</Note>
+Clicking a bar or a slice to open the underlying records carries the dashboard filters along with the chart's own filters. Charts grouped by a relation do not open a filtered records view.

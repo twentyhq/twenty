@@ -81,44 +81,79 @@ const getDashboardFilterParam = (
     `dashboardFilter[${slotId}][${suffix}]`,
   );
 
+const buildEffectTree = ({
+  ownsRouteLocation,
+  initialEntries,
+  slots,
+  effectKey,
+}: {
+  ownsRouteLocation: boolean;
+  initialEntries: string[];
+  slots: DashboardFilterSlot[];
+  effectKey: string;
+}) => (
+  <MemoryRouter
+    initialEntries={initialEntries}
+    initialIndex={initialEntries.length - 1}
+  >
+    <WorkspaceSurfaceContext.Provider
+      value={{
+        type: ownsRouteLocation ? 'main' : 'side-panel',
+        instanceId: ownsRouteLocation ? 'main' : 'side-panel',
+        ownsRouteLocation,
+      }}
+    >
+      <PageLayoutComponentInstanceContext.Provider
+        value={{ instanceId: PAGE_LAYOUT_INSTANCE_ID }}
+      >
+        <DashboardFilterUrlSyncEffect key={effectKey} slots={slots} />
+        <LocationSpyEffect />
+      </PageLayoutComponentInstanceContext.Provider>
+    </WorkspaceSurfaceContext.Provider>
+  </MemoryRouter>
+);
+
 const renderEffect = ({
   ownsRouteLocation = true,
   initialEntry = INITIAL_ENTRY,
   initialEntries = [initialEntry],
   slots = SLOTS,
+  effectKey = 'dashboard-a',
 }: {
   ownsRouteLocation?: boolean;
   initialEntry?: string;
   initialEntries?: string[];
   slots?: DashboardFilterSlot[];
+  effectKey?: string;
 } = {}) => {
   const store = createStore();
 
-  render(
+  const { rerender } = render(
     <JotaiProvider store={store}>
-      <MemoryRouter
-        initialEntries={initialEntries}
-        initialIndex={initialEntries.length - 1}
-      >
-        <WorkspaceSurfaceContext.Provider
-          value={{
-            type: ownsRouteLocation ? 'main' : 'side-panel',
-            instanceId: ownsRouteLocation ? 'main' : 'side-panel',
-            ownsRouteLocation,
-          }}
-        >
-          <PageLayoutComponentInstanceContext.Provider
-            value={{ instanceId: PAGE_LAYOUT_INSTANCE_ID }}
-          >
-            <DashboardFilterUrlSyncEffect slots={slots} />
-            <LocationSpyEffect />
-          </PageLayoutComponentInstanceContext.Provider>
-        </WorkspaceSurfaceContext.Provider>
-      </MemoryRouter>
+      {buildEffectTree({ ownsRouteLocation, initialEntries, slots, effectKey })}
     </JotaiProvider>,
   );
 
-  return store;
+  const rerenderEffect = ({
+    slots: nextSlots = slots,
+    effectKey: nextEffectKey = effectKey,
+  }: {
+    slots?: DashboardFilterSlot[];
+    effectKey?: string;
+  }) => {
+    rerender(
+      <JotaiProvider store={store}>
+        {buildEffectTree({
+          ownsRouteLocation,
+          initialEntries,
+          slots: nextSlots,
+          effectKey: nextEffectKey,
+        })}
+      </JotaiProvider>,
+    );
+  };
+
+  return { store, rerenderEffect };
 };
 
 const setDashboardFilterValues = (
@@ -137,7 +172,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('seeds the slot values from the URL on mount and keeps the tab hash', async () => {
-    const store = renderEffect();
+    const { store } = renderEffect();
 
     await waitFor(() =>
       expect(store.get(dashboardFilterValuesAtom)).toEqual({
@@ -154,7 +189,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('writes a changed value to the URL without touching the hash or other params', async () => {
-    const store = renderEffect();
+    const { store } = renderEffect();
 
     await waitFor(() =>
       expect(
@@ -182,7 +217,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('removes the dashboard filter params when the value is cleared and keeps other params', async () => {
-    const store = renderEffect();
+    const { store } = renderEffect();
 
     await waitFor(() =>
       expect(
@@ -206,7 +241,9 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('seeds two slots from the URL and keeps the other slot when one is cleared', async () => {
-    const store = renderEffect({ initialEntry: INITIAL_ENTRY_WITH_TWO_SLOTS });
+    const { store } = renderEffect({
+      initialEntry: INITIAL_ENTRY_WITH_TWO_SLOTS,
+    });
 
     await waitFor(() =>
       expect(store.get(dashboardFilterValuesAtom)).toEqual({
@@ -242,7 +279,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('neither reads nor writes the URL from a surface that does not own the route location', async () => {
-    const store = renderEffect({ ownsRouteLocation: false });
+    const { store } = renderEffect({ ownsRouteLocation: false });
 
     await waitFor(() => expect(currentLocation).toBeDefined());
 
@@ -262,7 +299,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('seeds a slot the URL leaves out with its default and writes the default to the URL', async () => {
-    const store = renderEffect({
+    const { store } = renderEffect({
       initialEntry: '/x?viewId=abc#tab-2',
       slots: SLOTS_WITH_DEFAULT,
     });
@@ -287,7 +324,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('lets a URL value win over the slot default', async () => {
-    const store = renderEffect({ slots: SLOTS_WITH_DEFAULT });
+    const { store } = renderEffect({ slots: SLOTS_WITH_DEFAULT });
 
     await waitFor(() =>
       expect(store.get(dashboardFilterValuesAtom)).toEqual({
@@ -302,7 +339,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('keeps the state after its own URL write instead of re-reading the URL', async () => {
-    const store = renderEffect();
+    const { store } = renderEffect();
 
     await waitFor(() =>
       expect(
@@ -322,7 +359,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   it('re-seeds the state from the URL when navigating back to an earlier entry', async () => {
     const previousEntry = `/x?dashboardFilter[${BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID}][operand]=IS_BEFORE&dashboardFilter[${BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID}][value]=2025-06-01#tab-1`;
 
-    const store = renderEffect({
+    const { store } = renderEffect({
       initialEntries: [previousEntry, INITIAL_ENTRY],
     });
 
@@ -354,7 +391,7 @@ describe('DashboardFilterUrlSyncEffect', () => {
   });
 
   it('clears the state when navigating back to an entry without dashboard filter params', async () => {
-    const store = renderEffect({
+    const { store } = renderEffect({
       initialEntries: ['/x?viewId=abc', INITIAL_ENTRY],
     });
 
@@ -378,5 +415,106 @@ describe('DashboardFilterUrlSyncEffect', () => {
     expect(new URLSearchParams(currentLocation?.search).get('viewId')).toBe(
       'abc',
     );
+  });
+
+  it('seeds the defaults again when it is remounted for another dashboard after a slot was cleared', async () => {
+    const { store, rerenderEffect } = renderEffect({
+      initialEntry: '/x?viewId=abc',
+      slots: SLOTS_WITH_DEFAULT,
+    });
+
+    await waitFor(() =>
+      expect(getDashboardFilterParam('value')).toBe('LAST_1_WEEK'),
+    );
+
+    setDashboardFilterValues(store, {});
+
+    await waitFor(() => expect(getDashboardFilterParam('value')).toBeNull());
+
+    rerenderEffect({ effectKey: 'dashboard-b' });
+
+    await waitFor(() =>
+      expect(store.get(dashboardFilterValuesAtom)).toEqual({
+        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'LAST_1_WEEK',
+        },
+      }),
+    );
+  });
+
+  it('seeds only a newly defaulted unset slot when the slots change and leaves set slots alone', async () => {
+    const { store, rerenderEffect } = renderEffect();
+
+    await waitFor(() =>
+      expect(store.get(dashboardFilterValuesAtom)).toEqual({
+        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'THIS_1_MONTH',
+        },
+      }),
+    );
+
+    rerenderEffect({
+      slots: [
+        {
+          ...SLOTS[0],
+          defaultOperand: ViewFilterOperand.IS_RELATIVE,
+          defaultValue: 'LAST_1_WEEK',
+        },
+        {
+          ...SLOTS[1],
+          defaultOperand: ViewFilterOperand.IS,
+          defaultValue: OWNER_ME_VALUE,
+        },
+      ],
+    });
+
+    await waitFor(() =>
+      expect(store.get(dashboardFilterValuesAtom)).toEqual({
+        [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: {
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'THIS_1_MONTH',
+        },
+        [BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID]: {
+          operand: ViewFilterOperand.IS,
+          value: OWNER_ME_VALUE,
+        },
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        getDashboardFilterParam(
+          'value',
+          BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID,
+        ),
+      ).toBe(OWNER_ME_VALUE),
+    );
+    expect(getDashboardFilterParam('value')).toBe('THIS_1_MONTH');
+  });
+
+  it('does not re-seed a cleared slot when the slots change without a new default', async () => {
+    const { store, rerenderEffect } = renderEffect({
+      initialEntry: '/x?viewId=abc',
+      slots: SLOTS_WITH_DEFAULT,
+    });
+
+    await waitFor(() =>
+      expect(getDashboardFilterParam('value')).toBe('LAST_1_WEEK'),
+    );
+
+    setDashboardFilterValues(store, {});
+
+    await waitFor(() => expect(getDashboardFilterParam('value')).toBeNull());
+
+    rerenderEffect({
+      slots: SLOTS_WITH_DEFAULT.map((slot) => ({ ...slot })),
+    });
+
+    await waitFor(() => expect(currentLocation).toBeDefined());
+
+    expect(store.get(dashboardFilterValuesAtom)).toEqual({});
+    expect(getDashboardFilterParam('value')).toBeNull();
   });
 });

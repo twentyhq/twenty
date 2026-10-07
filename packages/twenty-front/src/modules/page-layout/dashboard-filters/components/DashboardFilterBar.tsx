@@ -122,7 +122,12 @@ export const DashboardFilterBar = () => {
 
   return (
     <>
-      {slots.length > 0 && <DashboardFilterUrlSyncEffect slots={slots} />}
+      {slots.length > 0 && (
+        <DashboardFilterUrlSyncEffect
+          key={currentPageLayout.id}
+          slots={slots}
+        />
+      )}
       {(chips.length > 0 || canEditDashboardFilters) && (
         <StyledBar className="page-layout-tab-list-print-hidden">
           {chips.map(

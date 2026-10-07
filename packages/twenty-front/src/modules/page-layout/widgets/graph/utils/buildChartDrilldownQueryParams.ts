@@ -46,6 +46,14 @@ export const buildChartDrilldownQueryParams = ({
       firstDayOfTheWeek,
     });
 
+    // A dashboard filter bound to the group-by field shares the bucket's key; two values under one key would
+    // reach the records view as an array, so the clicked bucket replaces it.
+    primaryFilters.forEach((filter) => {
+      drilldownQueryParams.delete(
+        `filter[${filter.fieldName}][${filter.operand}]`,
+      );
+    });
+
     primaryFilters.forEach((filter) => {
       drilldownQueryParams.append(
         `filter[${filter.fieldName}][${filter.operand}]`,

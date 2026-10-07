@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
@@ -37,7 +36,6 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -225,8 +223,6 @@ const renderWithDashboard = async <THookResult,>({
   useHookUnderTest: () => THookResult;
 }) => {
   resetJotaiStore();
-
-  jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
 
   jotaiStore.set(
     pageLayoutPersistedComponentState.atomFamily({
@@ -419,7 +415,7 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
     expect(result.current).toBe(companyWidget.configuration);
   });
 
-  it('sends the merged configuration in the viewer timezone while the widget keeps its stored one', async () => {
+  it('leaves the widget stored timezone untouched when dashboard filters are merged', async () => {
     const { result } = await renderWithDashboard({
       dashboardFilterValues: DATE_VALUES,
       widgets: [companyWidgetWithStoredTimezone],
@@ -433,20 +429,8 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
       throw new Error('Expected a chart configuration');
     }
 
-    expect(result.current.timezone).toBe(mockedWorkspaceMemberData.timeZone);
+    expect(result.current.timezone).toBe(WIDGET_STORED_TIMEZONE);
     expect(getChartFilter(result.current).recordFilters).toHaveLength(1);
-
-    if (
-      !isWidgetConfigurationOfTypeGraph(
-        companyWidgetWithStoredTimezone.configuration,
-      )
-    ) {
-      throw new Error('Expected a chart configuration');
-    }
-
-    expect(companyWidgetWithStoredTimezone.configuration.timezone).toBe(
-      WIDGET_STORED_TIMEZONE,
-    );
   });
 
   it('keeps the widget stored timezone when no dashboard filter is merged', async () => {

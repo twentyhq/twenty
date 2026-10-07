@@ -26,7 +26,7 @@ export const useWidgetConfigurationWithDashboardFilters = (
 
   // "Me" on a slot bound to a chart's own id has to become that member's id before the UUID filter is built.
   const {
-    filterValueDependencies: { currentWorkspaceMemberId, timeZone },
+    filterValueDependencies: { currentWorkspaceMemberId },
   } = useFilterValueDependencies();
 
   const widgetId = widget.id;
@@ -52,13 +52,12 @@ export const useWidgetConfigurationWithDashboardFilters = (
 
     const existingFilter: ChartFilter = configuration.filter ?? {};
 
-    // Bar, line and pie resolve day-based operands (IS_TODAY, IS <date>) server-side in the stored timezone,
-    // which is the editor's at creation time, while aggregate charts resolve them client-side in the viewer's.
-    // A dashboard filter is the viewer's choice, so the merged copy sent to the server carries the viewer's
-    // timezone; the stored configuration and the draft keep the widget's own.
+    // configuration.timezone is left as stored: bar, line and pie resolve day-based operands (IS_TODAY,
+    // IS <date>) in the chart's stored timezone while relative values embed the viewer's, and a dashboard
+    // filter must not change how a chart buckets dates. Aligning dashboards on the viewer's timezone is a
+    // separate decision.
     return {
       ...configuration,
-      timezone: timeZone,
       filter: {
         ...existingFilter,
         recordFilters: [
@@ -74,6 +73,5 @@ export const useWidgetConfigurationWithDashboardFilters = (
     bindings,
     flattenedFieldMetadataItems,
     currentWorkspaceMemberId,
-    timeZone,
   ]);
 };

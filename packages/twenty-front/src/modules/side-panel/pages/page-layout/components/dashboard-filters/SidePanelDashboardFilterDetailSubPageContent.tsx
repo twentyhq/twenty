@@ -21,15 +21,23 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconExclamationCircle, IconTag, IconTrash } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const DELETE_DASHBOARD_FILTER_DIALOG_ID = 'delete-dashboard-filter-dialog';
+
+const StyledHint = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+`;
 
 type SidePanelDashboardFilterDetailSubPageContentProps = {
   pageLayoutId: string;
@@ -85,6 +93,13 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
           objectMetadataItems,
         })
       : undefined;
+
+  // A required filter only gates the charts it is bound to, so one bound to none blocks nothing.
+  const isRequiredWithoutBinding =
+    slot.isRequired === true &&
+    !graphWidgets.some((widget) =>
+      isDefined(bindingsByWidgetId[widget.id]?.[slot.id]),
+    );
 
   const selectableItemIds = [
     DASHBOARD_FILTER_SETTINGS_SELECTABLE_ITEM_IDS.LABEL,
@@ -164,6 +179,9 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
           </SelectableListItem>
         </SidePanelGroup>
         <SidePanelGroup heading={t`Applies to`}>
+          {isRequiredWithoutBinding && (
+            <StyledHint>{t`This filter is not applied to any chart yet`}</StyledHint>
+          )}
           {graphWidgets.map((widget) => (
             <SelectableListItem
               key={widget.id}

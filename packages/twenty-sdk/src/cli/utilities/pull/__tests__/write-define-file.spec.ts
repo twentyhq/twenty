@@ -349,6 +349,42 @@ describe('writeDefineFile', () => {
     expect(file).toContain('viewUniversalIdentifier: null,');
   });
 
+  it('should write a dashboard filter default operand as a ViewFilterOperand member', () => {
+    const file = writeDefineFile({
+      definer: 'definePageLayout',
+      config: {
+        universalIdentifier: 'page-layout-uid',
+        name: 'Pet dashboard',
+        type: 'DASHBOARD',
+        dashboardFilters: [
+          {
+            id: 'closing-month',
+            label: 'Closing month',
+            filterType: 'DATE',
+            defaultOperand: 'IS_RELATIVE',
+            defaultValue: 'THIS_1_MONTH',
+            isRequired: false,
+          },
+        ],
+        tabs: [],
+      },
+      enumBindings: PAGE_LAYOUT_ENUM_BINDINGS,
+    });
+
+    expect(
+      file.startsWith(
+        'import {\n' +
+          '  definePageLayout,\n' +
+          '  PageLayoutType,\n' +
+          '  ViewFilterOperand,\n' +
+          "} from 'twenty-sdk/define';\n",
+      ),
+    ).toBe(true);
+    expect(file).toContain('defaultOperand: ViewFilterOperand.IS_RELATIVE,');
+    expect(file).toContain("filterType: 'DATE',");
+    expect(file).toContain("defaultValue: 'THIS_1_MONTH',");
+  });
+
   it('should not bind a layout mode that sits on the page layout itself rather than on its tabs', () => {
     const file = writeDefineFile({
       definer: 'definePageLayout',
