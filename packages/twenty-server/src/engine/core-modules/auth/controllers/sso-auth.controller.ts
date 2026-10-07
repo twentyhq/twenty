@@ -233,9 +233,6 @@ export class SsoAuthController {
 
     const existingUser = await this.userService.findUserByEmail(payload.email);
 
-    // The identity provider has already asserted ownership of this email, so a
-    // user created here must not be gated by email verification like Google
-    // and Microsoft sign-ups are not.
     const { userData } = this.authService.formatUserDataPayload(
       { ...payload, isEmailAlreadyVerified: true },
       existingUser,
