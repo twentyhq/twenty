@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { IconArrowRight, IconPlus } from '@ui/icon';
+import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
 import { Pill } from '@ui/primitives/data-display';
 import { Text } from '@ui/primitives/typography';
 import {
@@ -95,6 +95,7 @@ export const Loading: Story = {
     const button = canvas.getByRole('button', { name: 'Create record' });
     const width = button.getBoundingClientRect().width;
     await userEvent.click(button);
+    await expect(canvas.getByText('Create record')).not.toBeVisible();
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toBeDisabled();
     await expect(button.getBoundingClientRect().width).toBe(width);
@@ -102,6 +103,25 @@ export const Loading: Story = {
       canvas.getByRole('button', { name: 'Complete request' }),
     );
     await expect(button).toBeEnabled();
+  },
+};
+export const LoadingAtEnd: Story = {
+  ...Default,
+  args: {
+    children: 'Installing (42%)',
+    startIcon: <IconDownload />,
+    loading: true,
+    loadingPosition: 'end',
+  },
+};
+export const LoadingAtEndInteraction: Story = {
+  ...LoadingAtEnd,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Installing (42%)' });
+    await expect(canvas.getByText('Installing (42%)')).toBeVisible();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
   },
 };
 export const NativeForm: Story = {

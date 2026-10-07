@@ -25,6 +25,5 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   controllers: [AppBillingController],
   providers: [AppBillingService],
-  exports: [AppBillingService],
 })
 export class AppBillingModule {}

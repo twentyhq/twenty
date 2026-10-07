@@ -3,9 +3,10 @@ import {
   AvatarGroup,
   CommandBlock,
   NotificationCounter,
-  TintedIconTile,
 } from 'twenty-ui/components/data-display';
 import { IconStar } from 'twenty-ui/icon';
+
+import { TintedIconTileExample } from './tinted-icon-tile-example';
 import {
   Avatar,
   Chip,
@@ -98,7 +99,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'TintedIconTile',
-    node: <TintedIconTile Icon={IconStar} />,
+    node: <TintedIconTileExample />,
   },
 ];
 

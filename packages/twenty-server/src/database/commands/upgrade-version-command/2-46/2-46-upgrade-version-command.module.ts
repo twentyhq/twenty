@@ -13,7 +13,8 @@ import { AddAgentTurnRunFieldsCommand } from 'src/database/commands/upgrade-vers
 import { BackfillFailedAgentTurnsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227584394-backfill-failed-agent-turns.command';
 import { SuspendPausedAgentStepsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791306663446-suspend-paused-agent-steps.command';
 import { AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
-import { AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791324440418-add-agent-chat-thread-assignee.command';
+import { DeleteOrphanedWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791369613345-delete-orphaned-workflow-runs.command';
+import { AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791385745099-add-agent-chat-thread-assignee.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -38,6 +39,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillFailedAgentTurnsCommand,
     SuspendPausedAgentStepsCommand,
     AddAgentChatThreadSubscriptionsCommand,
+    DeleteOrphanedWorkflowRunsCommand,
     AddAgentChatThreadAssigneeCommand,
   ],
 })
