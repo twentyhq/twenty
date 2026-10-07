@@ -394,7 +394,10 @@ export class AgentRunnerService {
           const { affected } = await this.runRepository.update(
             workspaceId,
             { id: runId, status: isDefined(run) ? 'SUSPENDED' : 'RUNNING' },
-            { status: 'SUSPENDED', summary } as QueryDeepPartialEntity<AgentRunEntity>,
+            {
+              status: 'SUSPENDED',
+              summary,
+            } as QueryDeepPartialEntity<AgentRunEntity>,
           );
 
           return affected !== 0;

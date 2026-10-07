@@ -157,6 +157,15 @@ export type AgentRun = {
   toolNames: Array<Scalars['String']['output']>;
 };
 
+export type AgentRunState = {
+  __typename?: 'AgentRunState';
+  error?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  result?: Maybe<Scalars['JSON']['output']>;
+  status: Scalars['String']['output'];
+  threadId: Scalars['UUID']['output'];
+};
+
 export enum AgentTurnStatus {
   CANCELLED = 'CANCELLED',
   COMPLETED = 'COMPLETED',
@@ -5297,6 +5306,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  agentRun: AgentRunState;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   apiKey?: Maybe<ApiKey>;
@@ -5434,6 +5444,11 @@ export type Query = {
   validationRules: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentRunArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -6223,10 +6238,11 @@ export enum RunAgentMessageRole {
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
-  isWaiting: Scalars['Boolean']['output'];
   result?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
+  status: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
-  threadId?: Maybe<Scalars['UUID']['output']>;
+  threadId: Scalars['UUID']['output'];
 };
 
 export type RunAgentThreadInput = {

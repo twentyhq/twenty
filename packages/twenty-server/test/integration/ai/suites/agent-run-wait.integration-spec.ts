@@ -16,7 +16,7 @@ import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pendi
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { type RunAgentApiService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-api.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
@@ -99,11 +99,11 @@ const mockAgent = (...results: AgentExecutionResult[]) =>
     ),
   );
 
-const findSuspensions = (callerType: string, agentId: string) =>
+const findSuspendedRuns = (callerType: string, agentId: string) =>
   global.testDataSource.query(
-    `SELECT suspension.id, suspension."threadId", wake_up."ownerType" FROM core."agentRunSuspension" suspension
-     LEFT JOIN core."pendingWakeUp" wake_up ON wake_up."ownerId" = suspension.id
-     WHERE suspension.caller->>'type' = $1 AND suspension.caller->'ref'->>'agentId' = $2`,
+    `SELECT run.id, run."threadId", wake_up."ownerType" FROM core."agentRun" run
+     LEFT JOIN core."pendingWakeUp" wake_up ON wake_up."ownerId" = run.id
+     WHERE run.status = 'SUSPENDED' AND run.caller->>'type' = $1 AND run.caller->'ref'->>'agentId' = $2`,
     [callerType, agentId],
   );
 
@@ -182,16 +182,16 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [suspension] = await findSuspensions('AGENT_TRIGGER', agentId);
+    const [suspendedRun] = await findSuspendedRuns('AGENT_TRIGGER', agentId);
 
-    expect(suspension).toMatchObject({ ownerType: 'AGENT_RUN' });
+    expect(suspendedRun).toMatchObject({ ownerType: 'AGENT_RUN' });
 
     // the run reads its conversation when it goes on, so a chat message cannot slip in while it waits
     await expect(
       getAppProviderByClassName<AgentChatStreamingService>(
         'AgentChatStreamingService',
       ).streamAgentChat({
-        thread: { id: suspension.threadId, pendingQuestionMessageId: null },
+        thread: { id: suspendedRun.threadId, pendingQuestionMessageId: null },
         workspace: { id: workspaceId },
         text: 'Any news?',
       } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
@@ -204,7 +204,7 @@ describe('agent runs that wait (integration)', () => {
     ).toEqual(['wait_for_event', 'wait_for_duration']);
 
     await expectEventually(async () => {
-      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+      expect(await findSuspendedRuns('AGENT_TRIGGER', agentId)).toEqual([]);
     });
 
     expect(executeAgent).toHaveBeenCalledTimes(2);
@@ -212,7 +212,7 @@ describe('agent runs that wait (integration)', () => {
     expect(
       JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
     ).toContain('The wait is over.');
-    expect(await findTurnStatuses(suspension.threadId)).toEqual([
+    expect(await findTurnStatuses(suspendedRun.threadId)).toEqual([
       'completed',
       'completed',
     ]);
@@ -274,7 +274,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [{ id: suspensionId, threadId }] = await findSuspensions(
+    const [{ id: runId, threadId }] = await findSuspendedRuns(
       'AGENT_TRIGGER',
       agentId,
     );
@@ -291,14 +291,14 @@ describe('agent runs that wait (integration)', () => {
 
     const [{ id: wakeUpId }] = await global.testDataSource.query(
       `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
-      [suspensionId],
+      [runId],
     );
 
     await getAppProviderByClassName<PendingWakeUpResolverService>(
       'PendingWakeUpResolverService',
     ).resolve({ workspaceId, wakeUpId });
 
-    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+    expect(await findSuspendedRuns('AGENT_TRIGGER', agentId)).toEqual([]);
 
     expect(executeAgent).toHaveBeenCalledTimes(1);
     expect(await findWaitCallStatus(threadId)).toBe('cancelled');
@@ -316,11 +316,12 @@ describe('agent runs that wait (integration)', () => {
       query: gql`
         mutation RunAgent($input: RunAgentInput!) {
           runAgent(input: $input) {
+            runId
+            threadId
+            status
             result
             error
             success
-            isWaiting
-            threadId
           }
         }
       `,
@@ -334,15 +335,41 @@ describe('agent runs that wait (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.runAgent).toEqual({
+      runId: expect.any(String),
+      threadId: expect.any(String),
+      status: 'SUSPENDED',
       result: null,
       error: null,
       success: true,
-      isWaiting: true,
-      threadId: expect.any(String),
     });
 
     await expectEventually(async () => {
-      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
+      expect(await findSuspendedRuns('AGENT_API_RUN', agentId)).toEqual([]);
+    });
+
+    const { runId, threadId } = response.body.data.runAgent;
+    const runResponse = await makeMetadataApiRequest({
+      query: gql`
+        query AgentRun($id: UUID!) {
+          agentRun(id: $id) {
+            id
+            threadId
+            status
+            result
+            error
+          }
+        }
+      `,
+      variables: { id: runId },
+    });
+
+    expect(runResponse.body.errors).toBeUndefined();
+    expect(runResponse.body.data.agentRun).toEqual({
+      id: runId,
+      threadId,
+      status: 'COMPLETED',
+      result: { response: 'Followed up' },
+      error: null,
     });
 
     expect(executeAgent).toHaveBeenCalledTimes(2);
@@ -357,8 +384,8 @@ describe('agent runs that wait (integration)', () => {
       replyingResult,
       replyingResult,
     );
-    const agentRunService =
-      getAppProviderByClassName<AgentRunService>('AgentRunService');
+    const runAgentApiService =
+      getAppProviderByClassName<RunAgentApiService>('RunAgentApiService');
     const workspace = fromWorkspaceEntityToFlat(
       await getCoreRepository<WorkspaceEntity>(WorkspaceEntity).findOneByOrFail(
         { id: workspaceId },
@@ -370,7 +397,7 @@ describe('agent runs that wait (integration)', () => {
       ).findById({ id: agentApplicationId, workspaceId });
     const thread = { key: `lead:${randomUUID()}` };
     const runOnSameThread = (content: string) =>
-      agentRunService.run({
+      runAgentApiService.run({
         workspace,
         requestUserWorkspaceId: null,
         requestWorkspaceMemberId: null,
@@ -384,19 +411,19 @@ describe('agent runs that wait (integration)', () => {
 
     const waiting = await runOnSameThread('Follow up tomorrow');
 
-    expect(waiting).toMatchObject({ success: true, isWaiting: true });
+    expect(waiting).toMatchObject({ success: true, status: 'SUSPENDED' });
 
     await expect(runOnSameThread('Any news?')).rejects.toMatchObject({
       code: AiExceptionCode.THREAD_AWAITING_ANSWER,
     });
 
     await expectEventually(async () => {
-      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
+      expect(await findSuspendedRuns('AGENT_API_RUN', agentId)).toEqual([]);
     });
 
     await expect(runOnSameThread('Any news?')).resolves.toMatchObject({
       success: true,
-      isWaiting: false,
+      status: 'COMPLETED',
       result: { response: 'Followed up' },
       threadId: waiting.threadId,
     });

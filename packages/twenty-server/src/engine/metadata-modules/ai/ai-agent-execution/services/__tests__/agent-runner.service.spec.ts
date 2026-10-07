@@ -89,6 +89,15 @@ const buildService = (execution = buildExecution()) => {
   const conversationReaderService = {
     loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
   };
+  const agentRunService = {
+    assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
+    closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
+    recordOutcome: jest.fn().mockResolvedValue(undefined),
+  };
+  const runRepository = {
+    insert: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue({ affected: 1 }),
+  };
 
   jest.spyOn(Logger.prototype, 'error').mockImplementation();
 
@@ -96,13 +105,10 @@ const buildService = (execution = buildExecution()) => {
     agentAsyncExecutorService as never,
     agentRunConversationService as never,
     conversationReaderService as never,
-    {
-      assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
-      closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
-    } as never,
+    agentRunService as never,
     {} as never,
     {} as never,
-    {} as never,
+    runRepository as never,
     {} as never,
   );
 
@@ -111,6 +117,8 @@ const buildService = (execution = buildExecution()) => {
     agentAsyncExecutorService,
     agentRunConversationService,
     conversationReaderService,
+    agentRunService,
+    runRepository,
   };
 };
 
@@ -226,9 +234,60 @@ describe('AgentRunnerService', () => {
     });
   });
 
+  it('records a run from its start to its outcome', async () => {
+    const { service, agentRunService, runRepository } = buildService();
+
+    const { runId, summary } = await service.run({
+      ...RUN_INPUT,
+      runId: 'run-id',
+    });
+
+    expect(runId).toBe('run-id');
+    expect(runRepository.insert).toHaveBeenCalledWith('workspace-id', {
+      id: 'run-id',
+      threadId: 'thread-id',
+      caller: RUN_INPUT.caller,
+      runSpec: RUN_INPUT.spec,
+      status: 'RUNNING',
+    });
+    expect(agentRunService.recordOutcome).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      runId: 'run-id',
+      outcome: { status: 'COMPLETED', result: { answer: 'done' } },
+      summary,
+    });
+  });
+
+  it('suspends a run that pauses on a question, keeping its conversation', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunService,
+      runRepository,
+    } = buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+
+    const { runId, outcome, summary } = await service.run(RUN_INPUT);
+
+    expect(outcome).toEqual({ status: 'SUSPENDED' });
+    expect(runRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: runId, status: 'RUNNING' },
+      { status: 'SUSPENDED', summary },
+    );
+    expect(agentRunService.recordOutcome).not.toHaveBeenCalled();
+  });
+
   it('fails the turn of a run that throws', async () => {
-    const { service, agentAsyncExecutorService, agentRunConversationService } =
-      buildService();
+    const {
+      service,
+      agentAsyncExecutorService,
+      agentRunConversationService,
+      agentRunService,
+    } = buildService();
     const error = new Error('provider down');
 
     agentAsyncExecutorService.executeAgent.mockRejectedValue(error);
@@ -240,6 +299,11 @@ describe('AgentRunnerService', () => {
       error,
     });
     expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
+    expect(agentRunService.recordOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'provider down' },
+      }),
+    );
   });
 
   it('fails a run that ran out of credits', async () => {

@@ -1587,7 +1587,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(
         await global.testDataSource.query(
-          `SELECT "ownerType", "ownerKey" FROM core."pendingWakeUp" WHERE "ownerId" = (SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1)`,
+          `SELECT "ownerType", "ownerKey" FROM core."pendingWakeUp" WHERE "ownerId" = (SELECT id FROM core."agentRun" WHERE "threadId" = $1 AND status = 'SUSPENDED')`,
           [threadId],
         ),
       ).toEqual([{ ownerType: 'AGENT_RUN', ownerKey: 'wait-1' }]);
@@ -1605,10 +1605,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ).toContain('The wait is over.');
       expect(
         await global.testDataSource.query(
-          `SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+          `SELECT status, outcome FROM core."agentRun" WHERE "threadId" = $1`,
           [threadId],
         ),
-      ).toEqual([]);
+      ).toEqual([
+        {
+          status: 'COMPLETED',
+          outcome: { result: { response: 'Quote sent' } },
+        },
+      ]);
     });
 
     it('continues an agent step paused on a question by 2.45 once the upgrade suspends it', async () => {
@@ -1617,7 +1622,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       // the shape a step paused by 2.45 left behind
       await global.testDataSource.query(
-        `DELETE FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+        `DELETE FROM core."agentRun" WHERE "threadId" = $1`,
         [threadId],
       );
       await global.testDataSource.query(
@@ -1777,7 +1782,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(continueJobData).toMatchObject({
         workspaceId,
-        suspensionId: expect.any(String),
+        runId: expect.any(String),
         resumeCount: 0,
       });
 

@@ -9,11 +9,12 @@ import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-requ
 const RUN_AGENT_MUTATION = `
   mutation RunAgent($input: RunAgentInput!) {
     runAgent(input: $input) {
+      runId
+      threadId
+      status
       result
       error
       success
-      isWaiting
-      threadId
     }
   }
 `;

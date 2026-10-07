@@ -171,11 +171,10 @@ export class ToolCallAnswerService {
       }
 
       if (isAwaitedByCaller) {
-        const waitingState =
-          await this.agentRunService.findWaitingRun({
-            workspaceId,
-            threadId,
-          });
+        const waitingState = await this.agentRunService.findWaitingRun({
+          workspaceId,
+          threadId,
+        });
 
         if (waitingState.status === 'NOT_READY') {
           throw new AiException(

@@ -116,12 +116,9 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {
-      const { service, agentRunService, updateWorkflowRun } =
-        buildService();
+      const { service, agentRunService, updateWorkflowRun } = buildService();
 
-      agentRunService.releaseForCaller.mockRejectedValue(
-        new Error('db down'),
-      );
+      agentRunService.releaseForCaller.mockRejectedValue(new Error('db down'));
 
       await endRun(service);
 

@@ -65,8 +65,14 @@ export type {
 } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 
+export { getAgentRun } from '@/sdk/logic-function/agents/get-agent-run';
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
-export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+export type {
+  AgentRunState,
+  AgentRunStatus,
+  RunAgentInput,
+  RunAgentResult,
+} from 'twenty-shared/application';
 
 export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';

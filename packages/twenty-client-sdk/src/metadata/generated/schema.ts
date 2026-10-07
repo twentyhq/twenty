@@ -133,6 +133,15 @@ export interface AgentRun {
     __typename: 'AgentRun'
 }
 
+export interface AgentRunState {
+    error?: Scalars['String']
+    id: Scalars['UUID']
+    result?: Scalars['JSON']
+    status: Scalars['String']
+    threadId: Scalars['UUID']
+    __typename: 'AgentRunState'
+}
+
 export type AgentTurnStatus = 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'RUNNING' | 'WAITING_FOR_INPUT'
 
 export interface AggregateChartConfiguration {
@@ -2683,6 +2692,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    agentRun: AgentRunState
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     apiKey?: ApiKey
@@ -3004,10 +3014,11 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 
 export interface RunAgentResult {
     error?: Scalars['String']
-    isWaiting: Scalars['Boolean']
     result?: Scalars['JSON']
+    runId: Scalars['UUID']
+    status: Scalars['String']
     success: Scalars['Boolean']
-    threadId?: Scalars['UUID']
+    threadId: Scalars['UUID']
     __typename: 'RunAgentResult'
 }
 
@@ -4026,6 +4037,16 @@ export interface AgentRunGenqlSelection{
     threadId?: boolean | number
     threadTitle?: boolean | number
     toolNames?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunStateGenqlSelection{
+    error?: boolean | number
+    id?: boolean | number
+    result?: boolean | number
+    status?: boolean | number
+    threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6876,6 +6897,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    agentRun?: (AgentRunStateGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -7227,8 +7249,9 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
-    isWaiting?: boolean | number
     result?: boolean | number
+    runId?: boolean | number
+    status?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
     __typename?: boolean | number
@@ -8473,6 +8496,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
       return AgentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunState_possibleTypes: string[] = ['AgentRunState']
+    export const isAgentRunState = (obj?: { __typename?: any } | null): obj is AgentRunState => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunState"')
+      return AgentRunState_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -53,7 +53,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     turnId: randomUUID(),
     messageId: randomUUID(),
   };
-  const suspensionId = randomUUID();
+  const runId = randomUUID();
   const seededThreads = [chatThread, suspendedThread, stillWaitingThread];
 
   const runCommand = () =>
@@ -136,10 +136,10 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
       [randomUUID(), stillWaitingThread.messageId, randomUUID()],
     );
     await global.testDataSource.query(
-      `INSERT INTO "core"."agentRunSuspension" (id, "workspaceId", "threadId", caller, "runSpec", "resumeCount")
-       VALUES ($1, $2, $3, $4::jsonb, '{}'::jsonb, 2)`,
+      `INSERT INTO "core"."agentRun" (id, "workspaceId", "threadId", caller, "runSpec", status, "resumeCount")
+       VALUES ($1, $2, $3, $4::jsonb, '{}'::jsonb, 'SUSPENDED', 2)`,
       [
-        suspensionId,
+        runId,
         SEED_APPLE_WORKSPACE_ID,
         suspendedThread.threadId,
         JSON.stringify({
@@ -154,8 +154,8 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     addJob.mockRestore();
 
     await global.testDataSource.query(
-      `DELETE FROM "core"."agentRunSuspension" WHERE id = $1`,
-      [suspensionId],
+      `DELETE FROM "core"."agentRun" WHERE id = $1`,
+      [runId],
     );
 
     for (const { threadId } of seededThreads) {
@@ -206,7 +206,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     expect(addJob).toHaveBeenCalledTimes(1);
     expect(addJob).toHaveBeenCalledWith('ContinueAgentRunJob', {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      suspensionId,
+      runId,
       resumeCount: 2,
     });
   });
@@ -219,7 +219,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     expect(addJob).toHaveBeenCalledTimes(1);
     expect(addJob).toHaveBeenCalledWith('ContinueAgentRunJob', {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      suspensionId,
+      runId,
       resumeCount: 2,
     });
     expect(await readThread(chatThread)).toEqual({

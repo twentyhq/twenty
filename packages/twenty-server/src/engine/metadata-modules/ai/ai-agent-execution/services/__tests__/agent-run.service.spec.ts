@@ -7,16 +7,16 @@ const CALLER = {
   ref: { workflowRunId: 'run-id', stepId: 'step-id' },
 };
 
-const buildSuspension = (
-  overrides: Partial<AgentRunEntity> = {},
-): AgentRunEntity =>
+const buildRun = (overrides: Partial<AgentRunEntity> = {}): AgentRunEntity =>
   ({
-    id: 'suspension-id',
+    id: 'run-id',
     workspaceId: 'workspace-id',
     threadId: 'thread-id',
     caller: CALLER,
     runSpec: null,
     summary: null,
+    status: 'SUSPENDED',
+    outcome: null,
     resumeCount: 0,
     ...overrides,
   }) as AgentRunEntity;
@@ -24,29 +24,41 @@ const buildSuspension = (
 const buildService = () => {
   const onOutcome = jest.fn().mockResolvedValue(undefined);
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+  const runRepository = {
+    update: jest.fn().mockResolvedValue({ affected: 1 }),
+  };
+  const pendingWakeUpService = {
+    cancel: jest.fn().mockResolvedValue(undefined),
+  };
 
   const service = new AgentRunService(
-    { delete: jest.fn().mockResolvedValue(undefined) } as never,
+    runRepository as never,
     { findOne: jest.fn().mockResolvedValue(null) } as never,
     { query: jest.fn().mockResolvedValue(undefined) } as never,
     {} as never,
-    {} as never,
-    { cancel: jest.fn().mockResolvedValue(undefined) } as never,
+    pendingWakeUpService as never,
     { getHandlerOrThrow: () => ({ onOutcome }) } as never,
     messageQueueService as never,
   );
 
-  return { service, onOutcome, messageQueueService };
+  return {
+    service,
+    onOutcome,
+    messageQueueService,
+    runRepository,
+    pendingWakeUpService,
+  };
 };
 
 describe('AgentRunService', () => {
   describe('deliverAnswer', () => {
     it('hands the answer to a call the caller posted itself as its completed outcome', async () => {
-      const { service, onOutcome, messageQueueService } = buildService();
+      const { service, onOutcome, messageQueueService, runRepository } =
+        buildService();
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        suspension: buildSuspension(),
+        run: buildRun(),
         toolResult: {
           success: true,
           result: {
@@ -80,6 +92,16 @@ describe('AgentRunService', () => {
         },
         summary: null,
       });
+      expect(runRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'run-id' },
+        expect.objectContaining({
+          status: 'COMPLETED',
+          outcome: {
+            result: expect.objectContaining({ outcome: 'executed' }),
+          },
+        }),
+      );
     });
 
     it('fails the caller when the answer cannot be read', async () => {
@@ -87,7 +109,7 @@ describe('AgentRunService', () => {
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        suspension: buildSuspension(),
+        run: buildRun(),
         toolResult: { success: true, result: { status: 'pending' } },
       });
 
@@ -107,7 +129,7 @@ describe('AgentRunService', () => {
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        suspension: buildSuspension({ runSpec: {} as never }),
+        run: buildRun({ runSpec: {} as never }),
         toolResult: {},
       });
 
@@ -116,9 +138,29 @@ describe('AgentRunService', () => {
         CONTINUE_AGENT_RUN_JOB_NAME,
         {
           workspaceId: 'workspace-id',
-          suspensionId: 'suspension-id',
+          runId: 'run-id',
           resumeCount: 0,
         },
+      );
+      expect(onOutcome).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('release', () => {
+    it('keeps a dropped run as cancelled and stops its wake-ups', async () => {
+      const { service, onOutcome, runRepository, pendingWakeUpService } =
+        buildService();
+
+      await service.release({ workspaceId: 'workspace-id', run: buildRun() });
+
+      expect(pendingWakeUpService.cancel).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        owner: { type: 'AGENT_RUN', id: 'run-id' },
+      });
+      expect(runRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'run-id' },
+        { status: 'CANCELLED' },
       );
       expect(onOutcome).not.toHaveBeenCalled();
     });

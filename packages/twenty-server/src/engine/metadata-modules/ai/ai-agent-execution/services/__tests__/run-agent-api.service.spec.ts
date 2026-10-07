@@ -21,7 +21,8 @@ const RUN_AS_ACTOR = {
 };
 const buildService = () => {
   const agentRunnerService = {
-    run: jest.fn().mockImplementation(async ({ conversation }) => ({
+    run: jest.fn().mockImplementation(async ({ runId, conversation }) => ({
+      runId,
       threadId: conversation.threadId,
       outcome: {
         status: 'COMPLETED',
@@ -42,15 +43,19 @@ const buildService = () => {
     }),
   };
 
+  const agentRunService = { findOne: jest.fn().mockResolvedValue(null) };
+  const agentRepository = { findOne: jest.fn().mockResolvedValue(AGENT) };
+
   const service = new RunAgentApiService(
     agentActorContextService as never,
     agentRunnerService as never,
+    agentRunService as never,
     {} as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
-    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
+    agentRepository as never,
   );
 
-  return { service, agentRunnerService };
+  return { service, agentRunnerService, agentRunService, agentRepository };
 };
 
 const runInput = (agentRunnerService: { run: jest.Mock }) =>
@@ -91,11 +96,12 @@ describe('RunAgentApiService', () => {
     });
 
     expect(result).toEqual({
+      runId: runInput(agentRunnerService).runId,
+      threadId: expect.any(String),
+      status: 'COMPLETED',
       result: { response: 'Acme is your biggest customer' },
       error: null,
       success: true,
-      isWaiting: false,
-      threadId: expect.any(String),
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
 
@@ -256,9 +262,11 @@ describe('RunAgentApiService', () => {
     jest.spyOn(Logger.prototype, 'error').mockImplementation();
     agentRunnerService.run.mockRejectedValue(new Error('provider down'));
 
-    await expect(
-      run(service, { input: userInput('Hello') }),
-    ).resolves.toMatchObject({
+    const result = await run(service, { input: userInput('Hello') });
+
+    expect(result).toMatchObject({
+      runId: runInput(agentRunnerService).runId,
+      status: 'FAILED',
       success: false,
       error: 'Agent execution failed.',
     });
@@ -297,5 +305,66 @@ describe('RunAgentApiService', () => {
         ],
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
+  });
+
+  describe('findRun', () => {
+    const storedRun = {
+      id: 'run-id',
+      threadId: 'thread-id',
+      caller: { type: 'AGENT_API_RUN', ref: { agentId: AGENT.id } },
+      status: 'COMPLETED',
+      outcome: { result: { response: 'done' } },
+    };
+
+    it('reads how a run started through the API ended', async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(storedRun);
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          callerApplication: APPLICATION as never,
+        }),
+      ).resolves.toEqual({
+        id: 'run-id',
+        threadId: 'thread-id',
+        status: 'COMPLETED',
+        result: { response: 'done' },
+        error: null,
+      });
+    });
+
+    it("hides another application's runs", async () => {
+      const { service, agentRunService, agentRepository } = buildService();
+
+      agentRunService.findOne.mockResolvedValue(storedRun);
+      agentRepository.findOne.mockResolvedValue({
+        ...AGENT,
+        applicationId: 'other-application-id',
+      });
+
+      await expect(
+        service.findRun({
+          workspaceId: 'workspace-id',
+          runId: 'run-id',
+          callerApplication: APPLICATION as never,
+        }),
+      ).rejects.toThrow('Agent run run-id not found');
+    });
+
+    it('hides runs started by another caller', async () => {
+      const { service, agentRunService } = buildService();
+
+      agentRunService.findOne.mockResolvedValue({
+        ...storedRun,
+        caller: { type: 'WORKFLOW_STEP', ref: {} },
+      });
+
+      await expect(
+        service.findRun({ workspaceId: 'workspace-id', runId: 'run-id' }),
+      ).rejects.toThrow('Agent run run-id not found');
+    });
   });
 });
