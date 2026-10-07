@@ -21,5 +21,4 @@ export type AgentRunnerRunInput = {
     senderApplicationId: string | null;
   } | null;
   executionContext: AgentRunExecutionContext;
-  // resolved while recording the turn, so a failed lookup does not stop the run
 };
