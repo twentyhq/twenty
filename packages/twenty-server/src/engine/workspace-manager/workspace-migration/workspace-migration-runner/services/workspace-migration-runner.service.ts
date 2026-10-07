@@ -81,10 +81,17 @@ export class WorkspaceMigrationRunnerService {
         flatEntityMapsKey === 'flatRolePermissionFlagMaps',
     );
 
+    const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
+      'flatWorkflowVersionMaps',
+    );
+
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
         ...(hasRolesPermissionsChanged ? ['rolesPermissions' as const] : []),
+        ...(hasWorkflowVersionsChanged
+          ? ['workflowAutomatedTriggerMaps' as const]
+          : []),
       ]),
     ];
 
