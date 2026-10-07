@@ -6,9 +6,7 @@ import { CORE_WORKFLOW_STATUS_FILTER_OPTIONS } from '@/object-core/workflows/con
 export const useCoreWorkflowStatusOptions = (): SelectOption[] => {
   const { t } = useLingui();
 
-  return CORE_WORKFLOW_STATUS_FILTER_OPTIONS.map(({ value, label, color }) => ({
-    value,
-    label: t(label),
-    color,
-  }));
+  return CORE_WORKFLOW_STATUS_FILTER_OPTIONS.map(({ value, label, color }) => {
+    return { value, label: t(label), color };
+  });
 };
