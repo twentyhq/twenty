@@ -28,14 +28,13 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import {
+  IconArrowUpRight,
   IconCopy,
-  IconGoogle,
   IconMail,
-  IconMicrosoft,
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -55,11 +54,6 @@ const StyledInputContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledGuideActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledSendingDomainColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,7 +62,6 @@ const StyledSendingDomainColumn = styled.div`
 
 export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const navigateSettings = useNavigateSettings();
   const { messageChannelId } = useParams<{ messageChannelId: string }>();
@@ -195,34 +188,19 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 title={t`Set up forwarding and DNS`}
                 description={t`Follow the guide for your email provider.`}
                 action={
-                  <StyledGuideActions>
-                    <Button
-                      size="sm"
-                      startIcon={<IconGoogle size={theme.icon.size.md} />}
-                      onClick={() =>
-                        window.open(
-                          getDocumentationUrl({
-                            locale: currentWorkspaceMember?.locale,
-                            path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace',
-                          }),
-                          '_blank',
-                        )
-                      }
-                    >{t`Google Workspace`}</Button>
-                    <Button
-                      size="sm"
-                      startIcon={<IconMicrosoft size={theme.icon.size.md} />}
-                      onClick={() =>
-                        window.open(
-                          getDocumentationUrl({
-                            locale: currentWorkspaceMember?.locale,
-                            path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365',
-                          }),
-                          '_blank',
-                        )
-                      }
-                    >{t`Microsoft 365`}</Button>
-                  </StyledGuideActions>
+                  <Button
+                    size="sm"
+                    endIcon={<IconArrowUpRight />}
+                    onClick={() =>
+                      window.open(
+                        getDocumentationUrl({
+                          locale: currentWorkspaceMember?.locale,
+                          path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
+                        }),
+                        '_blank',
+                      )
+                    }
+                  >{t`Read documentation`}</Button>
                 }
               />
             }
