@@ -118,7 +118,11 @@ import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/works
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
 
 @Module({
-  imports: [WorkspaceSchemaManagerModule, MetricsModule, WorkflowDeletionModule],
+  imports: [
+    WorkspaceSchemaManagerModule,
+    MetricsModule,
+    WorkflowDeletionModule,
+  ],
   providers: [
     CreateWorkflowActionHandlerService,
     UpdateWorkflowActionHandlerService,
