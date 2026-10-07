@@ -6,6 +6,7 @@ import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 const CONDITION_KEYS = ['actor', 'record', 'signals', 'onMismatch'] as const;
 const ON_MISMATCH_VALUES = ['drop', 'deferUntilMatch'] as const;
+const LOGICAL_KEYS = ['and', 'or', 'not'] as const;
 const FIELD_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 const OPERAND_VALIDATORS: Record<string, (value: unknown) => boolean> = {
@@ -23,6 +24,9 @@ const OPERAND_VALIDATORS: Record<string, (value: unknown) => boolean> = {
 };
 
 const isOperatorKey = (key: string): boolean => key in OPERAND_VALIDATORS;
+
+const isLogicalKey = (key: string): boolean =>
+  (LOGICAL_KEYS as readonly string[]).includes(key);
 
 const hasConcreteObjectName = (eventName: string): boolean =>
   !eventName.startsWith('*');
@@ -45,6 +49,13 @@ const validateOperand = (
     if (!isDefined(isValid)) {
       walk.errors.push(
         `record condition on "${fieldPath}" uses unknown operator "${operator}"`,
+      );
+      continue;
+    }
+
+    if ((operator === 'eq' || operator === 'neq') && value === null) {
+      walk.errors.push(
+        `record condition on "${fieldPath}" compares "${operator}" with null, use "is" instead`,
       );
       continue;
     }
@@ -127,7 +138,8 @@ const validateRecordCondition = (
 
     if (operatorKeys.length === 0) {
       const unknownOperator = Object.entries(value).find(
-        ([, childValue]) => !isPlainObject(childValue),
+        ([childKey, childValue]) =>
+          !isLogicalKey(childKey) && !isPlainObject(childValue),
       )?.[0];
 
       if (isDefined(unknownOperator)) {

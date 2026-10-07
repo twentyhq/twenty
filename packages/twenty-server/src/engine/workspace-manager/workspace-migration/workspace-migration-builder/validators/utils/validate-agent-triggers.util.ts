@@ -5,6 +5,7 @@ import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
   AGENT_TRIGGER_TYPES,
+  validateDatabaseEventTriggerConditions,
 } from 'twenty-shared/application';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 
@@ -21,6 +22,38 @@ const buildInvalidTriggerError = (
   userFriendlyMessage: msg`An agent trigger is invalid`,
 });
 
+const AGENT_UNSUPPORTED_CONDITION_KEYS = ['signals', 'onMismatch'];
+
+const validateDatabaseEventTriggerConditionsForAgent = ({
+  eventName,
+  conditions,
+}: {
+  eventName: string;
+  conditions: unknown;
+}): AgentTriggerValidationError[] => {
+  const errors = validateDatabaseEventTriggerConditions({
+    eventName,
+    conditions,
+  }).map((error) =>
+    buildInvalidTriggerError(
+      t`Invalid database event trigger conditions: ${error}`,
+    ),
+  );
+
+  if (
+    isPlainObject(conditions) &&
+    AGENT_UNSUPPORTED_CONDITION_KEYS.some((key) => key in conditions)
+  ) {
+    errors.push(
+      buildInvalidTriggerError(
+        t`Agent database event triggers only support "actor" and "record" conditions`,
+      ),
+    );
+  }
+
+  return errors;
+};
+
 const isValidCronPattern = (pattern: string): boolean => {
   try {
     CronExpressionParser.parse(pattern);
@@ -34,7 +67,7 @@ const isValidCronPattern = (pattern: string): boolean => {
 const validateDatabaseEventTriggerSettings = (
   settings: Record<string, unknown>,
 ): AgentTriggerValidationError[] => {
-  const { eventName, updatedFields, batchMode } = settings;
+  const { eventName, updatedFields, batchMode, conditions } = settings;
 
   if (
     !isString(eventName) ||
@@ -73,6 +106,15 @@ const validateDatabaseEventTriggerSettings = (
       buildInvalidTriggerError(
         t`Batch mode of a database event trigger must be true or false`,
       ),
+    );
+  }
+
+  if (isDefined(conditions)) {
+    errors.push(
+      ...validateDatabaseEventTriggerConditionsForAgent({
+        eventName,
+        conditions,
+      }),
     );
   }
 

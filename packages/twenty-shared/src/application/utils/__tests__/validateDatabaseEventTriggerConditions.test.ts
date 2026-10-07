@@ -24,6 +24,39 @@ describe('validateDatabaseEventTriggerConditions', () => {
     ).toEqual([]);
   });
 
+  it('accepts and, or and not nested in a composite field', () => {
+    expect(
+      validateDatabaseEventTriggerConditions({
+        eventName: EVENT_NAME,
+        conditions: {
+          record: {
+            emails: {
+              or: [
+                { primaryEmail: { eq: 'a@example.com' } },
+                { primaryEmail: { eq: 'b@example.com' } },
+              ],
+              not: { primaryEmail: { like: '%@spam.com' } },
+            },
+          },
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  it('rejects eq and neq against null', () => {
+    expect(
+      validateDatabaseEventTriggerConditions({
+        eventName: EVENT_NAME,
+        conditions: {
+          record: { personId: { eq: null }, companyId: { neq: null } },
+        },
+      }),
+    ).toEqual([
+      'record condition on "personId" compares "eq" with null, use "is" instead',
+      'record condition on "companyId" compares "neq" with null, use "is" instead',
+    ]);
+  });
+
   it('rejects a non-object', () => {
     expect(
       validateDatabaseEventTriggerConditions({

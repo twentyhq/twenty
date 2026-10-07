@@ -30,6 +30,51 @@ const cases: [string, DatabaseEventTriggerRecordCondition, boolean][] = [
   ['like is case sensitive', { handle: { like: '%@twenty.com' } }, false],
   ['ilike', { handle: { ilike: '%@twenty.COM' } }, true],
   ['like single character wildcard', { role: { like: 'FR_M' } }, true],
+  ['like escaped wildcard', { handle: { like: 'Ada@Twenty.com\\%' } }, false],
+  ['neq on null field', { workspaceMemberId: { neq: 'member-1' } }, false],
+  ['neq on missing field', { companyId: { neq: 'company-1' } }, false],
+  ['in on null field', { workspaceMemberId: { in: ['member-1'] } }, false],
+  ['gt on null field', { workspaceMemberId: { gt: 'a' } }, false],
+  ['eq null never matches', { workspaceMemberId: { eq: null } }, false],
+  [
+    'not of a comparison on a null field',
+    { not: { workspaceMemberId: { eq: 'member-1' } } },
+    false,
+  ],
+  [
+    'not of is on a null field',
+    { not: { workspaceMemberId: { is: 'NOT_NULL' } } },
+    true,
+  ],
+  [
+    'or with one unknown branch',
+    {
+      or: [{ workspaceMemberId: { eq: 'member-1' } }, { role: { eq: 'FROM' } }],
+    },
+    true,
+  ],
+  [
+    'and with one unknown branch',
+    {
+      and: [
+        { workspaceMemberId: { neq: 'member-1' } },
+        { role: { eq: 'FROM' } },
+      ],
+    },
+    false,
+  ],
+  [
+    'or nested in a composite field',
+    {
+      emails: {
+        or: [
+          { primaryEmail: { eq: 'grace@twenty.com' } },
+          { primaryEmail: { eq: 'ada@twenty.com' } },
+        ],
+      },
+    },
+    true,
+  ],
   ['startsWith', { handle: { startsWith: 'Ada' } }, true],
   ['two operators on one field', { score: { gt: 5, lt: 10 } }, true],
   [

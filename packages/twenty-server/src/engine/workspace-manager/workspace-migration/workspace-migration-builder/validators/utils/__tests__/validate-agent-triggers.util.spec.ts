@@ -69,6 +69,64 @@ describe('validateAgentTriggers', () => {
     expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
+  it('should accept actor and record conditions', () => {
+    expect(
+      validateAgentTriggers({
+        triggers: [
+          {
+            ...DATABASE_EVENT_TRIGGER,
+            type: 'DATABASE_EVENT',
+            settings: {
+              eventName: 'company.created',
+              conditions: {
+                actor: ['user'],
+                record: { domainName: { primaryLinkUrl: { is: 'NOT_NULL' } } },
+              },
+            },
+          },
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  it('should reject malformed conditions', () => {
+    const errors = validateAgentTriggers({
+      triggers: [
+        {
+          ...DATABASE_EVENT_TRIGGER,
+          type: 'DATABASE_EVENT',
+          settings: {
+            eventName: 'company.created',
+            conditions: { record: { and: [null] } },
+          },
+        },
+      ],
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
+  });
+
+  it('should reject signal conditions and deferral', () => {
+    const errors = validateAgentTriggers({
+      triggers: [
+        {
+          ...DATABASE_EVENT_TRIGGER,
+          type: 'DATABASE_EVENT',
+          settings: {
+            eventName: 'company.created',
+            conditions: {
+              signals: { 'messaging.import': false },
+              onMismatch: 'deferUntilMatch',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(errors).toHaveLength(1);
+  });
+
   it('should reject watched fields on a non-update event', () => {
     const errors = validateAgentTriggers({
       triggers: [

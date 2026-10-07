@@ -5,6 +5,12 @@ import type {
   DatabaseEventTriggerRecordConditionOperand,
 } from 'twenty-shared/application';
 
+import { matchesLikePattern } from 'src/engine/workspace-event-emitter/utils/matches-like-pattern.util';
+
+const UNKNOWN = null;
+
+type ConditionOutcome = boolean | typeof UNKNOWN;
+
 const OPERATOR_KEYS = new Set([
   'eq',
   'neq',
@@ -32,115 +38,138 @@ const isNullish = (value: unknown): boolean =>
 const isComparable = (value: unknown): value is string | number =>
   typeof value === 'string' || typeof value === 'number';
 
-const likeToRegExp = (pattern: string, caseInsensitive: boolean): RegExp => {
-  const escaped = pattern
-    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/%/g, '.*')
-    .replace(/_/g, '.');
+const allOf = (outcomes: ConditionOutcome[]): ConditionOutcome => {
+  if (outcomes.some((outcome) => outcome === false)) {
+    return false;
+  }
 
-  return new RegExp(`^${escaped}$`, caseInsensitive ? 'is' : 's');
+  return outcomes.some((outcome) => outcome === UNKNOWN) ? UNKNOWN : true;
+};
+
+const anyOf = (outcomes: ConditionOutcome[]): ConditionOutcome => {
+  if (outcomes.some((outcome) => outcome === true)) {
+    return true;
+  }
+
+  return outcomes.some((outcome) => outcome === UNKNOWN) ? UNKNOWN : false;
+};
+
+const negate = (outcome: ConditionOutcome): ConditionOutcome =>
+  outcome === UNKNOWN ? UNKNOWN : !outcome;
+
+const evaluateOperator = (
+  value: unknown,
+  operator: string,
+  expected: unknown,
+): ConditionOutcome => {
+  if (operator === 'is') {
+    return expected === 'NULL' ? isNullish(value) : !isNullish(value);
+  }
+
+  if (isNullish(value) || isNullish(expected)) {
+    return UNKNOWN;
+  }
+
+  switch (operator) {
+    case 'eq':
+      return value === expected;
+    case 'neq':
+      return value !== expected;
+    case 'in':
+      return Array.isArray(expected) && expected.includes(value);
+    case 'gt':
+      return isComparable(value) && isComparable(expected) && value > expected;
+    case 'gte':
+      return isComparable(value) && isComparable(expected) && value >= expected;
+    case 'lt':
+      return isComparable(value) && isComparable(expected) && value < expected;
+    case 'lte':
+      return isComparable(value) && isComparable(expected) && value <= expected;
+    case 'like':
+      return (
+        typeof value === 'string' &&
+        typeof expected === 'string' &&
+        matchesLikePattern({
+          value,
+          pattern: expected,
+          caseInsensitive: false,
+        })
+      );
+    case 'ilike':
+      return (
+        typeof value === 'string' &&
+        typeof expected === 'string' &&
+        matchesLikePattern({ value, pattern: expected, caseInsensitive: true })
+      );
+    case 'startsWith':
+      return (
+        typeof value === 'string' &&
+        typeof expected === 'string' &&
+        value.startsWith(expected)
+      );
+    default:
+      return false;
+  }
 };
 
 const evaluateOperand = (
   value: unknown,
   operand: DatabaseEventTriggerRecordConditionOperand,
-): boolean =>
-  Object.entries(operand).every(([operator, expected]) => {
-    switch (operator) {
-      case 'eq':
-        return isNullish(expected) ? isNullish(value) : value === expected;
-      case 'neq':
-        return isNullish(expected) ? !isNullish(value) : value !== expected;
-      case 'in':
-        return Array.isArray(expected) && expected.includes(value);
-      case 'is':
-        return expected === 'NULL' ? isNullish(value) : !isNullish(value);
-      case 'gt':
-        return (
-          isComparable(value) && isComparable(expected) && value > expected
-        );
-      case 'gte':
-        return (
-          isComparable(value) && isComparable(expected) && value >= expected
-        );
-      case 'lt':
-        return (
-          isComparable(value) && isComparable(expected) && value < expected
-        );
-      case 'lte':
-        return (
-          isComparable(value) && isComparable(expected) && value <= expected
-        );
-      case 'like':
-        return (
-          typeof value === 'string' &&
-          typeof expected === 'string' &&
-          likeToRegExp(expected, false).test(value)
-        );
-      case 'ilike':
-        return (
-          typeof value === 'string' &&
-          typeof expected === 'string' &&
-          likeToRegExp(expected, true).test(value)
-        );
-      case 'startsWith':
-        return (
-          typeof value === 'string' &&
-          typeof expected === 'string' &&
-          value.startsWith(expected)
-        );
-      default:
-        return false;
-    }
-  });
+): ConditionOutcome =>
+  allOf(
+    Object.entries(operand).map(([operator, expected]) =>
+      evaluateOperator(value, operator, expected),
+    ),
+  );
 
 const readField = (record: unknown, fieldName: string): unknown =>
   isPlainObject(record) ? record[fieldName] : undefined;
 
+const evaluateCondition = (
+  record: unknown,
+  condition: DatabaseEventTriggerRecordCondition,
+): ConditionOutcome =>
+  allOf(
+    Object.entries(condition).map(([key, value]): ConditionOutcome => {
+      if (key === 'and') {
+        return Array.isArray(value)
+          ? allOf(value.map((child) => evaluateCondition(record, child)))
+          : false;
+      }
+
+      if (key === 'or') {
+        return Array.isArray(value)
+          ? anyOf(value.map((child) => evaluateCondition(record, child)))
+          : false;
+      }
+
+      if (key === 'not') {
+        return isPlainObject(value)
+          ? negate(
+              evaluateCondition(
+                record,
+                value as DatabaseEventTriggerRecordCondition,
+              ),
+            )
+          : false;
+      }
+
+      const fieldValue = readField(record, key);
+
+      if (isOperand(value)) {
+        return evaluateOperand(fieldValue, value);
+      }
+
+      return isPlainObject(value)
+        ? evaluateCondition(
+            fieldValue,
+            value as DatabaseEventTriggerRecordCondition,
+          )
+        : false;
+    }),
+  );
+
 export const evaluateDatabaseEventTriggerRecordCondition = (
   record: unknown,
   condition: DatabaseEventTriggerRecordCondition,
-): boolean =>
-  Object.entries(condition).every(([key, value]) => {
-    if (key === 'and') {
-      return (
-        Array.isArray(value) &&
-        value.every((child) =>
-          evaluateDatabaseEventTriggerRecordCondition(record, child),
-        )
-      );
-    }
-
-    if (key === 'or') {
-      return (
-        Array.isArray(value) &&
-        value.some((child) =>
-          evaluateDatabaseEventTriggerRecordCondition(record, child),
-        )
-      );
-    }
-
-    if (key === 'not') {
-      return (
-        isPlainObject(value) &&
-        !evaluateDatabaseEventTriggerRecordCondition(
-          record,
-          value as DatabaseEventTriggerRecordCondition,
-        )
-      );
-    }
-
-    const fieldValue = readField(record, key);
-
-    if (isOperand(value)) {
-      return evaluateOperand(fieldValue, value);
-    }
-
-    return (
-      isPlainObject(value) &&
-      evaluateDatabaseEventTriggerRecordCondition(
-        fieldValue,
-        value as DatabaseEventTriggerRecordCondition,
-      )
-    );
-  });
+): boolean => evaluateCondition(record, condition) === true;
