@@ -336,12 +336,17 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       : undefined;
 
     const { authContext, actorContext, callerRoleId }: AgentRunCallerContext =
-      runAsContext ??
-      (await this.resolveCallerContext({
-        workspaceId,
-        ref,
-        agentAuthContext: agentContext.authContext,
-      }));
+      isDefined(runAsContext)
+        ? {
+            authContext: runAsContext.authContext,
+            actorContext: runAsContext.actorContext,
+            callerRoleId: runAsContext.roleId,
+          }
+        : await this.resolveCallerContext({
+            workspaceId,
+            ref,
+            agentAuthContext: agentContext.authContext,
+          });
 
     const memberWorkspaceMemberId = isUserAuthContext(authContext)
       ? authContext.workspaceMemberId
@@ -366,10 +371,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId: agentContext.agentRoleId,
-        runAsRoleId: runAsContext?.roleId,
         additionalRoleRestrictionIds,
       }),
-      runAsRoleId: runAsContext?.roleId,
       additionalRoleRestrictionIds,
       conversationActor: isDefined(memberWorkspaceMemberId)
         ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }

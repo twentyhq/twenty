@@ -15,8 +15,6 @@ export type AgentRunExecutionContext = {
   userWorkspaceId: string | null;
   // what the run itself can read, such as the record an awaited event is about
   rolePermissionConfig: RolePermissionConfig;
-  // narrows the agent's own role to the member a run acts as
-  runAsRoleId?: string;
   // narrows the agent's own role, such as to the application a run belongs to
   additionalRoleRestrictionIds?: string[];
   // who the continued conversation is read for, so turns others acted on read as theirs
