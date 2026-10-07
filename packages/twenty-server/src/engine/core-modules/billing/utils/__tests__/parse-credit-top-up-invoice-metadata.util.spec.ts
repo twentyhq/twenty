@@ -15,10 +15,24 @@ describe('parseCreditTopUpInvoiceMetadata', () => {
     ).toEqual({ workspaceId: WORKSPACE_ID, creditAmountMicro: 10_000_000_000 });
   });
 
+  it('reads nothing without metadata', () => {
+    expect(parseCreditTopUpInvoiceMetadata(null)).toEqual({
+      workspaceId: null,
+      creditAmountMicro: null,
+    });
+  });
+
   it.each([
-    ['no metadata', null],
     ['no workspace', { creditAmountMicro: '1000000' }],
     ['an empty workspace', { workspaceId: '', creditAmountMicro: '1000000' }],
+  ])('reads no workspace from %s', (_label, metadata) => {
+    expect(parseCreditTopUpInvoiceMetadata(metadata)).toEqual({
+      workspaceId: null,
+      creditAmountMicro: 1_000_000,
+    });
+  });
+
+  it.each([
     ['no amount', { workspaceId: WORKSPACE_ID }],
     [
       'a non-numeric amount',
@@ -37,7 +51,10 @@ describe('parseCreditTopUpInvoiceMetadata', () => {
       'an amount beyond safe integers',
       { workspaceId: WORKSPACE_ID, creditAmountMicro: '9007199254740993' },
     ],
-  ])('refuses %s', (_label, metadata) => {
-    expect(parseCreditTopUpInvoiceMetadata(metadata)).toBeNull();
+  ])('reads no amount from %s', (_label, metadata) => {
+    expect(parseCreditTopUpInvoiceMetadata(metadata)).toEqual({
+      workspaceId: WORKSPACE_ID,
+      creditAmountMicro: null,
+    });
   });
 });

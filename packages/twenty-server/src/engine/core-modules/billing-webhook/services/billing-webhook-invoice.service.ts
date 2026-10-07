@@ -229,12 +229,21 @@ export class BillingWebhookInvoiceService {
 
   private async processCreditTopUpInvoicePaid(invoice: Stripe.Invoice) {
     const stripeCustomerId = getCustomerIdFromInvoice(invoice);
-    const metadata = parseCreditTopUpInvoiceMetadata(invoice.metadata);
+    const { workspaceId, creditAmountMicro } = parseCreditTopUpInvoiceMetadata(
+      invoice.metadata,
+    );
 
-    if (!isDefined(metadata)) {
+    if (!isDefined(workspaceId)) {
       return this.skipUngrantableCreditTopUpInvoice(
         invoice,
-        `its metadata names no workspace or no positive credit amount (${JSON.stringify(invoice.metadata)})`,
+        'its metadata names no workspace',
+      );
+    }
+
+    if (!isDefined(creditAmountMicro)) {
+      return this.skipUngrantableCreditTopUpInvoice(
+        invoice,
+        `its metadata has no positive credit amount (${invoice.metadata?.creditAmountMicro})`,
       );
     }
 
@@ -256,22 +265,22 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    if (billingCustomer.workspaceId !== metadata.workspaceId) {
+    if (billingCustomer.workspaceId !== workspaceId) {
       return this.skipUngrantableCreditTopUpInvoice(
         invoice,
-        `its metadata names workspace ${metadata.workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer.workspaceId}`,
+        `its metadata names workspace ${workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer.workspaceId}`,
       );
     }
 
     await this.billingCreditTopUpService.grantPurchasedCredits({
-      workspaceId: metadata.workspaceId,
-      creditAmountMicro: metadata.creditAmountMicro,
+      workspaceId,
+      creditAmountMicro,
       stripeInvoiceId: invoice.id,
       stripeInvoiceNumber: invoice.number,
     });
 
     void this.eventLogEmitterService
-      .createContext({ workspaceId: metadata.workspaceId })
+      .createContext({ workspaceId })
       .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
         amountPaid: invoice.amount_paid,
       });
