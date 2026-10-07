@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.46.0', 1791290926000)
+@RegisteredInstanceCommand('2.46.0', 1791389713568)
 export class AddPurchaseToBillingCreditGrantTypeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const isBillingCreditGrantTablePresent = await queryRunner.query(

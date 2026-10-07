@@ -226,10 +226,10 @@ import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 
 import { DropAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791216099453-drop-agent-evaluation-inputs';
 import { AddTriggersToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791219100450-add-triggers-to-agent';
 import { AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791274238040-add-scope-and-default-value-to-application-variables';
-import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791290926000-add-purchase-to-billing-credit-grant-type';
 import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791299810581-create-pending-wake-up-table';
 import { CreateAgentRunSuspensionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791301683545-create-agent-run-suspension-table';
 import { AddUserApplicationVariableValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791328043361-add-user-application-variable-value';
+import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791389713568-add-purchase-to-billing-credit-grant-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -458,8 +458,8 @@ export const INSTANCE_COMMANDS = [
   DropAgentEvaluationInputsFastInstanceCommand,
   AddTriggersToAgentFastInstanceCommand,
   AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand,
-  AddPurchaseToBillingCreditGrantTypeFastInstanceCommand,
   CreatePendingWakeUpTableFastInstanceCommand,
   CreateAgentRunSuspensionTableFastInstanceCommand,
   AddUserApplicationVariableValueFastInstanceCommand,
+  AddPurchaseToBillingCreditGrantTypeFastInstanceCommand,
 ];
