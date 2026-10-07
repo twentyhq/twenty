@@ -2,18 +2,16 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatLastMessageIdComponentSelector } from '@/ai/states/selectors/agentChatLastMessageIdComponentSelector';
-import { agentChatNonLastMessageIdsComponentSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
+import { agentChatNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const INSTANCE_ID = 'agentChatLastMessageIdTest';
 const THREAD_ID = 'thread';
 
 const USER_MESSAGE = { id: 'user-message', role: 'user' as const, parts: [] };
@@ -24,16 +22,10 @@ const ASSISTANT_MESSAGE = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('agentChatLastMessageIdComponentSelector', () => {
+describe('agentChatLastMessageIdSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
@@ -57,21 +49,16 @@ describe('agentChatLastMessageIdComponentSelector', () => {
     '$description',
     ({ messages, expectedNonLastMessageIds, expectedLastMessageId }) => {
       jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: INSTANCE_ID,
-          familyKey: { threadId: THREAD_ID },
-        }),
+        agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
         messages,
       );
 
       const { result } = renderHook(
         () => ({
-          nonLastMessageIds: useAtomComponentSelectorValue(
-            agentChatNonLastMessageIdsComponentSelector,
+          nonLastMessageIds: useAtomStateValue(
+            agentChatNonLastMessageIdsSelector,
           ),
-          lastMessageId: useAtomComponentSelectorValue(
-            agentChatLastMessageIdComponentSelector,
-          ),
+          lastMessageId: useAtomStateValue(agentChatLastMessageIdSelector),
         }),
         { wrapper: Wrapper },
       );

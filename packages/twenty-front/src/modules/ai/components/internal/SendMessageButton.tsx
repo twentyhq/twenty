@@ -1,15 +1,15 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 type SendMessageButtonProps = {
   onSend: () => void;
@@ -27,12 +27,12 @@ export const SendMessageButton = ({
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
     { threadId: currentAiChatThread },
   );
-  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
-    agentChatIsAwaitingFirstChunkComponentFamilyState,
+  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
+    agentChatIsAwaitingFirstChunkFamilyState,
     { threadId: currentAiChatThread },
   );
 

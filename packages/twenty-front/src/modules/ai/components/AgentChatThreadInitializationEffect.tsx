@@ -7,7 +7,7 @@ import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThread
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -19,7 +19,6 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -47,9 +46,6 @@ export const AgentChatThreadInitializationEffect = () => {
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatThreadsLoading = useSetAtomState(
     agentChatThreadsLoadingState,
-  );
-  const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
   );
   const store = useStore();
   const agentChatVisibleThreads = useAtomStateValue(
@@ -126,7 +122,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
       if (isDefined(selectedThread)) {
         store.set(
-          agentChatUsageFamilyCallback({ threadId: selectedThread.id }),
+          agentChatUsageFamilyState.atomFamily({ threadId: selectedThread.id }),
           getAgentChatUsageFromThread(selectedThread),
         );
       }
@@ -145,7 +141,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
       setCurrentAiChatThread(firstThread.id);
       store.set(
-        agentChatUsageFamilyCallback({ threadId: firstThread.id }),
+        agentChatUsageFamilyState.atomFamily({ threadId: firstThread.id }),
         getAgentChatUsageFromThread(firstThread),
       );
     } else {
@@ -161,7 +157,6 @@ export const AgentChatThreadInitializationEffect = () => {
     areAgentChatThreadsLoaded,
     setCurrentAiChatThread,
     store,
-    agentChatUsageFamilyCallback,
   ]);
 
   return null;
