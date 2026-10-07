@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsSectionSkeletonLoaderProps = {
   rowCount?: number;
@@ -8,6 +9,7 @@ type SettingsSectionSkeletonLoaderProps = {
 const StyledRows = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
