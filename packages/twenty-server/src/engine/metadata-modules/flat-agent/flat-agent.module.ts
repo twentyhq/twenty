@@ -7,9 +7,5 @@ import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-mod
     WorkspaceFlatAgentMapCacheService,
     WorkspaceFlatRoleTargetByAgentIdService,
   ],
-  exports: [
-    WorkspaceFlatAgentMapCacheService,
-    WorkspaceFlatRoleTargetByAgentIdService,
-  ],
 })
 export class FlatAgentModule {}

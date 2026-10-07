@@ -53,10 +53,9 @@ export class WorkflowStepWaitWorkspaceService {
     workspaceId: string;
     workflowRunId: string;
   }): Promise<void> {
-    await this.pendingWakeUpService.cancelAllForOwner({
+    await this.pendingWakeUpService.cancel({
       workspaceId,
-      ownerType: 'WORKFLOW_STEP',
-      ownerId: workflowRunId,
+      owner: { type: 'WORKFLOW_STEP', id: workflowRunId },
     });
   }
 }

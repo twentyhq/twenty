@@ -12,6 +12,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -28,6 +29,20 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 }));
 
 const THREAD_IDS = ['thread-1', 'thread-2'];
+
+const buildThread = (
+  id: string,
+  overrides: Partial<AgentChatThreadRecord> = {},
+): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title: null,
+  deletedAt: null,
+  createdAt: '2026-10-01T09:00:00.000Z',
+  updatedAt: '2026-10-01T10:00:00.000Z',
+  lastActivityAt: '2026-10-01T10:00:00.000Z',
+  ...overrides,
+});
 
 const renderTriage = (path = '/') =>
   render(
@@ -48,15 +63,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     setAgentChatThreadList(
       jotaiStore,
-      THREAD_IDS.map(
-        (threadId) =>
-          ({
-            __typename: 'AgentChatThread',
-            id: threadId,
-            deletedAt: null,
-            lastActivityAt: '2026-10-01T10:00:00.000Z',
-          }) as never,
-      ),
+      THREAD_IDS.map((threadId) => buildThread(threadId)),
     );
     jotaiStore.set(agentChatThreadParticipantsState.atom, {});
   });
@@ -69,6 +76,8 @@ describe('NavigationDrawerAiChatTriageSection', () => {
         lastReadAt: '2026-10-01T10:00:00.000Z',
         archivedAt: null,
         snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: null,
         id: 'participant-id',
         updatedAt: '2026-10-01T10:00:00.000Z',
       },
@@ -122,5 +131,52 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
       threadId: null,
     });
+  });
+
+  it('counts the open chats waiting on an answer under Needs input', () => {
+    setAgentChatThreadList(jotaiStore, [
+      buildThread('thread-1', { pendingQuestionMessageId: 'question' }),
+      buildThread('thread-2', { pendingQuestionMessageId: null }),
+    ]);
+    THREAD_IDS.forEach(markThreadAsRead);
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: 'Needs input · 1' }),
+    ).toBeVisible();
+  });
+
+  it('flags Mentions when a chat the member was mentioned in is unread', () => {
+    markThreadAsRead('thread-2');
+    jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
+      ...participants,
+      'thread-1': {
+        id: 'mention',
+        threadId: 'thread-1',
+        lastReadAt: null,
+        archivedAt: null,
+        snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: '2026-10-01T10:00:00.000Z',
+        updatedAt: '2026-10-01T10:00:00.000Z',
+      },
+    }));
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: /^Mentions\s*, unread$/ }),
+    ).toBeVisible();
+  });
+
+  it('opens the inbox on the chats the member was mentioned in', async () => {
+    renderTriage();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
+
+    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+    );
   });
 });

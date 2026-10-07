@@ -50,7 +50,6 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
   exports: [
     WorkflowVersionStepWorkspaceService,
     WorkflowVersionStepOperationsWorkspaceService,
-    WorkflowVersionStepHelpersWorkspaceService,
   ],
 })
 export class WorkflowVersionStepModule {}

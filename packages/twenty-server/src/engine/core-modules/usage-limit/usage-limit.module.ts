@@ -73,7 +73,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitSpeedService,
     UsageLimitStockService,
     WorkspaceRecordStockService,
-    UsageLimitsCacheService,
   ],
 })
 export class UsageLimitModule {}

@@ -111,14 +111,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(FeatureFlagEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
-  exports: [
-    AdminPanelUserLookupService,
-    AdminPanelStatisticsService,
-    AdminPanelChatService,
-    AdminPanelGlobalChatThreadsService,
-    AdminPanelConfigService,
-    AdminPanelVersionService,
-    MaintenanceModeService,
-  ],
+  exports: [MaintenanceModeService],
 })
 export class AdminPanelModule {}

@@ -17,6 +17,5 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     MessagingCommonModule,
   ],
   providers: [ChannelSyncResolver, ChannelSyncService],
-  exports: [ChannelSyncService],
 })
 export class ChannelSyncModule {}
