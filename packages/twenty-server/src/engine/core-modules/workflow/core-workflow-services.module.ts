@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -39,7 +38,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     AutomatedTriggerModule,
     CacheLockModule,
-    CacheStorageModule,
     CodeStepBuildModule,
     CommandMenuItemModule,
     RecordPositionModule,

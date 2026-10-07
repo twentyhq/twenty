@@ -5,12 +5,8 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -19,7 +15,6 @@ import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-module
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
@@ -34,7 +29,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
       ApplicationRegistrationEntity,
       FeatureFlagEntity,
     ]),
-    ThrottlerModule,
     ApplicationModule,
     EventLogLiveModule,
     FeatureFlagModule,
@@ -42,10 +36,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     LogicFunctionLayerModule,
-    LogicFunctionResourceModule,
-    SubscriptionsModule,
-    TokenModule,
-    SecretEncryptionModule,
   ],
   providers: [
     LogicFunctionFromSourceHelperService,
