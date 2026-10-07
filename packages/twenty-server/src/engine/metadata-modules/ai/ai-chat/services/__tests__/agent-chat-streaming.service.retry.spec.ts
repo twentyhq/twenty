@@ -98,6 +98,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
       ),
       {
         authorizeRetry: jest

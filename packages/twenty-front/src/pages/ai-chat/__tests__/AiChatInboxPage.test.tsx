@@ -168,6 +168,12 @@ jest.mock(
   () => ({ PinnedCommandMenuItemButtons: () => null }),
 );
 
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+}));
+
 const [firstThread, secondThread, thirdThread] = THREADS;
 
 const renderInbox = (path = `/inbox/${firstThread.id}`) =>
@@ -178,6 +184,10 @@ const renderInbox = (path = `/inbox/${firstThread.id}`) =>
           <MemoryRouterAppNavigatorProvider>
             <Routes>
               <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
+              <Route
+                path={AppPath.AiChat}
+                element={<div>Chat page without the inbox</div>}
+              />
             </Routes>
           </MemoryRouterAppNavigatorProvider>
         </MemoryRouter>
@@ -203,6 +213,15 @@ describe('AiChatInboxPage', () => {
   beforeEach(() => {
     resetJotaiStore();
     isMobile = false;
+    mockIsAiChatInboxEnabled = true;
+  });
+
+  it('sends the inbox to the chat page while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+
+    renderInbox();
+
+    expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
   });
 
   it('opens the clicked chat', () => {

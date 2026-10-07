@@ -77,6 +77,7 @@ const buildResolver = () => {
     recordEvents as never,
     {} as never,
     threadService,
+    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
   const streaming = {
     streamAgentChat: jest

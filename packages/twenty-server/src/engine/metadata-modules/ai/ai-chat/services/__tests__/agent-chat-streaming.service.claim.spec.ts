@@ -121,6 +121,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       streamHeartbeatService as never,
       eventPublisherService as never,
       metricsService as never,
+      { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     );
 
     const service = new AgentChatStreamingService(

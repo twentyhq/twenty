@@ -27,6 +27,7 @@ const buildService = () => {
     threadRecordEventService as never,
     {} as never,
     {} as never,
+    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
 
   return { service, messagePartRepository, threadRecordEventService };
