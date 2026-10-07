@@ -5,7 +5,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderEmptyLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderEmptyLastColumn';
-import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
 import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { RECORD_TABLE_HEADER_DROPPABLE_ID } from '@/object-record/record-table/record-table-header/dnd/constants/RecordTableHeaderDroppableId';
 import { RecordTableHeaderDndKitProvider } from '@/object-record/record-table/record-table-header/dnd/providers/RecordTableHeaderDndKitProvider';
@@ -14,7 +13,6 @@ import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/
 import { DragDropItemDropTargetSlot } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTargetSlot';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableHeaderDnd = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -23,44 +21,22 @@ export const RecordTableHeaderDnd = () => {
     isRecordTableColumnHeadersReadOnlyComponentState,
   );
 
-  const firstScrollableRecordField = visibleRecordFields[1];
-
-  const recordFieldsWithoutFirstTwo = visibleRecordFields.slice(2);
+  const scrollableRecordFields = visibleRecordFields.slice(1);
 
   return (
     <RecordTableHeaderDndKitProvider>
-      <DragDropItemDropTargetSlot>
-        <DragDropItemDropTarget index={0} orientation="vertical" compact />
-      </DragDropItemDropTargetSlot>
-
-      {isDefined(firstScrollableRecordField) && (
-        <DragDropItemSortableCell
-          key={firstScrollableRecordField.fieldMetadataItemId}
-          id={firstScrollableRecordField.fieldMetadataItemId}
-          index={0}
-          group={RECORD_TABLE_HEADER_DROPPABLE_ID}
-          disabled={isRecordTableColumnHeadersReadOnly}
-          restrictMovementTo="x"
-          collisionDetector={closestCenter}
-        >
-          <RecordTableHeaderFirstScrollableCell
-            firstScrollableRecordField={firstScrollableRecordField}
-          />
-        </DragDropItemSortableCell>
-      )}
-
-      {recordFieldsWithoutFirstTwo.map((recordField, index) => (
+      {scrollableRecordFields.map((recordField, index) => (
         <React.Fragment key={recordField.fieldMetadataItemId}>
           <DragDropItemDropTargetSlot>
             <DragDropItemDropTarget
-              index={index + 1}
+              index={index}
               orientation="vertical"
               compact
             />
           </DragDropItemDropTargetSlot>
           <DragDropItemSortableCell
             id={recordField.fieldMetadataItemId}
-            index={index + 1}
+            index={index}
             group={RECORD_TABLE_HEADER_DROPPABLE_ID}
             disabled={isRecordTableColumnHeadersReadOnly}
             restrictMovementTo="x"
@@ -69,7 +45,7 @@ export const RecordTableHeaderDnd = () => {
             <RecordTableHeaderCell
               key={recordField.fieldMetadataItemId}
               recordField={recordField}
-              recordFieldIndex={index + 2}
+              recordFieldIndex={index + 1}
             />
           </DragDropItemSortableCell>
         </React.Fragment>
