@@ -44,6 +44,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -97,6 +98,7 @@ export class AgentChatStreamingService {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly agentRunConversationService: AgentRunConversationService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
   async tryClaimStream({
@@ -662,11 +664,13 @@ export class AgentChatStreamingService {
       return;
     }
 
-    await this.agentChatService.closePendingToolCalls({
+    // the member moved on from the question, which ends the turn that asked it
+    await this.threadLifecycleService.closePendingQuestion({
+      workspaceId,
       threadId: thread.id,
       messageId,
-      workspaceId,
-      where: { activeStreamId: IsNull() },
+      activeStreamId: null,
+      turnStatus: AgentTurnStatus.COMPLETED,
     });
   }
 

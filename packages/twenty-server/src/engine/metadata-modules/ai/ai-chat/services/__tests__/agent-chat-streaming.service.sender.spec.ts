@@ -65,6 +65,7 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
+    {} as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };
