@@ -255,10 +255,6 @@ export class SsoAuthController {
       },
     });
 
-    // An unverified user with a password may have been registered by someone
-    // else, and only verifying the address proves otherwise. A password-less
-    // user can only ever sign in through an identity provider assertion, so
-    // the flag unlocks nothing the assertion did not already grant.
     if (!user.isEmailVerified && !isNonEmptyString(user.passwordHash)) {
       await this.userService.markEmailAsVerified(user.id);
     }
