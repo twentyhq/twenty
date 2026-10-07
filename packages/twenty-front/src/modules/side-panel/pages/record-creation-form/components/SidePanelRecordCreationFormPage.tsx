@@ -7,9 +7,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
-import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
+import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
@@ -114,9 +116,22 @@ const SidePanelRecordCreationForm = ({
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
-  const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
-    objectMetadataItem,
-  });
+  const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const editableRecordFormFields = recordFormFields.filter(
+    ({ fieldMetadataItem }) =>
+      getFieldPermissions({
+        objectPermissions,
+        fieldMetadataId: fieldMetadataItem.id,
+      }).canUpdateField,
+  );
+
+  const visibleFieldMetadataItems = editableRecordFormFields
+    .filter((recordFormField) => recordFormField.isVisible)
+    .map((recordFormField) => recordFormField.fieldMetadataItem);
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -172,7 +187,7 @@ const SidePanelRecordCreationForm = ({
         requestId,
         draftRecord: computeRecordFormCreateRecordInput({
           draftRecord,
-          fieldMetadataItems: recordFormFieldMetadataItems,
+          fieldMetadataItems: objectMetadataItem.fields,
           objectMetadataItems,
         }),
       });
@@ -207,7 +222,7 @@ const SidePanelRecordCreationForm = ({
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
-          fieldMetadataItems={recordFormFieldMetadataItems}
+          fieldMetadataItems={visibleFieldMetadataItems}
           draftRecord={draftRecord}
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
