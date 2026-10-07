@@ -22,6 +22,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -44,6 +45,7 @@ type AnswerToolCallArgs = {
   userWorkspaceId: string;
   workspaceMemberId: string;
   workspace: WorkspaceEntity;
+  principalType: AgentChatPrincipalType;
 };
 
 type AnswerToolCallOutcome = {
@@ -398,6 +400,7 @@ export class ToolCallAnswerService {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    principalType,
     isStartingChatTurn,
   }: AnswerToolCallArgs & {
     messageId: string;
@@ -416,6 +419,7 @@ export class ToolCallAnswerService {
         userWorkspaceId,
         workspaceMemberId,
         workspace,
+        principalType,
       });
     } else {
       await this.threadService.getWritableThread({

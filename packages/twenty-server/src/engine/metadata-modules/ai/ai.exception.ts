@@ -33,6 +33,7 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  INCLUDED_CHAT_PAUSED = 'INCLUDED_CHAT_PAUSED',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -93,6 +94,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.INCLUDED_CHAT_PAUSED:
+      return msg`Included AI chat is paused until 00:00 UTC. Pick another model to keep chatting with your credits.`;
     default:
       assertUnreachable(code);
   }

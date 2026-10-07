@@ -6,6 +6,7 @@ export const RETRY_CHAT_MESSAGE = gql`
       messageId
       queued
       streamId
+      isIncluded
     }
   }
 `;

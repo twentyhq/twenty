@@ -21,6 +21,19 @@ describe('mapErrorToStreamError', () => {
     });
   });
 
+  it('keeps the included chat pause code, so the chat can tell it from a failure', () => {
+    const error = new AiException(
+      'Workspace workspace-id reached its included AI chat fair-use limit',
+      AiExceptionCode.INCLUDED_CHAT_PAUSED,
+    );
+
+    expect(mapErrorToStreamError(error)).toEqual({
+      code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+      message:
+        'Workspace workspace-id reached its included AI chat fair-use limit',
+    });
+  });
+
   it('collapses a generic Error to the fallback code but keeps its message', () => {
     expect(mapErrorToStreamError(new Error('Provider timed out'))).toEqual({
       code: STREAM_EXECUTION_FAILED_CODE,

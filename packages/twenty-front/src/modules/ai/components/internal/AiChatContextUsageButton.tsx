@@ -17,10 +17,10 @@ import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContex
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
+import { useAgentChatSelectedModelTier } from '@/ai/hooks/useAgentChatSelectedModelTier';
+import { useAiChatIncludedModel } from '@/ai/hooks/useAiChatIncludedModel';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
@@ -85,21 +85,25 @@ export const AiChatContextUsageButton = () => {
 
   const tiers = useAiModelTiers();
 
-  const { chatTier } = useWorkspaceAiModelTiers();
-
-  const agentChatUserSelectedModelTier = useAtomStateValue(
-    agentChatUserSelectedModelTierState,
-  );
+  const { selectedTier } = useAgentChatSelectedModelTier();
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  const modelTier = isWorkspaceSetupChat
-    ? 'fast'
-    : (agentChatUserSelectedModelTier ?? chatTier);
+  const {
+    includedModel,
+    isAutoSwitchedToIncludedModel,
+    isSelectedModelIncluded,
+  } = useAiChatIncludedModel();
+
+  // The next turn runs on the included model once auto-switched, and its window may be smaller than the tier's
+  const selectedModelContextWindowTokens = isAutoSwitchedToIncludedModel
+    ? includedModel?.contextWindowTokens
+    : tiers.find(({ tier }) => tier === selectedTier)?.model
+        ?.contextWindowTokens;
 
   const contextWindow =
     agentChatUsage?.contextWindowTokens ??
-    tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
+    selectedModelContextWindowTokens ??
     0;
 
   const conversationSize = agentChatUsage?.conversationSize ?? 0;
@@ -225,7 +229,9 @@ export const AiChatContextUsageButton = () => {
                   isExhausted: creditPercentage === 100,
                 })}
               >
-                {t`Usage`}
+                {isSelectedModelIncluded
+                  ? t`Usage, included chat not counted`
+                  : t`Usage`}
               </MetricRow>
             )}
             {showDetails && <AiChatContextUsageDetails />}

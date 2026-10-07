@@ -36,13 +36,16 @@ export const useRetryChatMessage = () => {
     store.set(isAwaitingFirstChunkAtom, true);
 
     try {
-      await apolloClient.mutate({
+      const { data } = await apolloClient.mutate({
         mutation: RetryChatMessageDocument,
         variables: { threadId, modelId: modelIdForRequest },
       });
 
-      // Same guard as useAgentChat: the stream may already have set a newer credits-exhausted error.
-      if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
+      // Same guards as useAgentChat: the stream may already have set a newer credits-exhausted error.
+      if (
+        data?.retryChatMessage.isIncluded !== true &&
+        !isAiChatCreditsExhaustedError(store.get(errorAtom))
+      ) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 

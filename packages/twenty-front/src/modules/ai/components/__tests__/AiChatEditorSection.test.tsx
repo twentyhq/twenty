@@ -1,11 +1,13 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Editor } from '@tiptap/react';
 import { type ReactNode } from 'react';
+import { type Store } from 'jotai/vanilla/store';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
@@ -13,6 +15,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { setAiChatIncludedModelWorkspace } from '@/ai/testing/setAiChatIncludedModelWorkspace';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -32,10 +35,25 @@ jest.mock('@/ai/components/AiChatStandaloneError', () => ({
 jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
 }));
+jest.mock('@/ai/components/AiChatNoMoreBillingCreditsBanner', () => ({
+  AiChatNoMoreBillingCreditsBanner: () => (
+    <div>You’ve reached your AI usage limit.</div>
+  ),
+}));
+
+const setUpCreditsCapReached =
+  ({ isEntitled }: { isEntitled: boolean }) =>
+  (store: Store) =>
+    setAiChatIncludedModelWorkspace(store, {
+      isEntitled,
+      hasReachedCreditsCap: true,
+    });
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
-const renderEditorSectionOnNewChat = () => {
+const renderEditorSectionOnNewChat = (
+  onInitializeJotaiStore?: (store: Store) => void,
+) => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
@@ -44,6 +62,7 @@ const renderEditorSectionOnNewChat = () => {
         agentChatDisplayedThreadState.atom,
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
       );
+      onInitializeJotaiStore?.(store);
     },
   });
 
@@ -83,5 +102,48 @@ describe('AiChatEditorSection', () => {
     });
 
     expect(sendButton).toBeInTheDocument();
+  });
+
+  it('hides the out of credits banner when the chat runs on the included model', () => {
+    renderEditorSectionOnNewChat(setUpCreditsCapReached({ isEntitled: true }));
+
+    expect(
+      screen.queryByText('You’ve reached your AI usage limit.'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the out of credits banner without the included model entitlement', () => {
+    renderEditorSectionOnNewChat(setUpCreditsCapReached({ isEntitled: false }));
+
+    expect(
+      screen.getByText('You’ve reached your AI usage limit.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Use GPT-5.6 Luna' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('offers to switch a picked paid tier back to the included model once credits run out', async () => {
+    renderEditorSectionOnNewChat((store) =>
+      setAiChatIncludedModelWorkspace(store, {
+        hasReachedCreditsCap: true,
+        userSelectedTier: 'smart',
+      }),
+    );
+
+    expect(
+      screen.getByText('You’ve reached your AI usage limit.'),
+    ).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Use GPT-5.6 Luna' }),
+    );
+
+    expect(
+      screen.queryByText('You’ve reached your AI usage limit.'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Use GPT-5.6 Luna' }),
+    ).not.toBeInTheDocument();
   });
 });

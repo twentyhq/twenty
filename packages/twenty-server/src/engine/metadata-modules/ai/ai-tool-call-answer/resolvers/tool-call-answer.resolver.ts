@@ -15,6 +15,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -62,6 +63,7 @@ export class ToolCallAnswerResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthIsUserSession() isUserSession: boolean,
   ): Promise<AnswerToolCallResultDTO> {
     const { streamId, turnId } = await this.toolCallAnswerService.answer({
       threadId,
@@ -71,6 +73,7 @@ export class ToolCallAnswerResolver {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
+      principalType: isUserSession ? 'userSession' : 'application',
     });
 
     if (isDefined(streamId)) {

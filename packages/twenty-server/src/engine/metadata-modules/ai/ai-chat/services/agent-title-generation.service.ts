@@ -6,9 +6,12 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AgentChatTurnPlanService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-plan.service';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -21,20 +24,51 @@ export class AgentTitleGenerationService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly agentChatTurnPlanService: AgentChatTurnPlanService,
   ) {}
 
-  async generateThreadTitle(
-    messageContent: string,
-    workspaceId: string,
-    userWorkspaceId: string | null,
-  ): Promise<string> {
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      spenders: { userWorkspaceId },
-    });
+  async generateThreadTitle({
+    messageContent,
+    workspaceId,
+    userWorkspaceId,
+    principalType,
+  }: {
+    messageContent: string;
+    workspaceId: string;
+    userWorkspaceId: string | null;
+    principalType: AgentChatPrincipalType;
+  }): Promise<string> {
+    // Titles run on the fast default, which is the included model for an entitled workspace
+    const includedModel =
+      await this.agentChatTurnPlanService.findIncludedChatModel({
+        workspaceId,
+        principalType,
+      });
+    const operationType = isDefined(includedModel)
+      ? UsageOperationType.AI_CHAT_INCLUDED
+      : UsageOperationType.AI_CHAT_TOKEN;
+
+    if (isDefined(includedModel)) {
+      const includedRefusal =
+        await this.agentChatTurnPlanService.findChatRefusal({
+          workspaceId,
+          operationType,
+          userWorkspaceId,
+        });
+
+      if (isDefined(includedRefusal)) {
+        return this.generateFallbackTitle(messageContent);
+      }
+    } else {
+      await this.aiBillingService.assertAiExecutionAllowed({
+        workspaceId,
+        operationType,
+        spenders: { userWorkspaceId },
+      });
+    }
 
     const defaultModel =
+      includedModel ??
       this.aiModelRegistryService.getDefaultModelForTier('fast');
 
     if (!defaultModel) {
@@ -76,7 +110,7 @@ export class AgentTitleGenerationService {
           defaultModel.modelId,
           { usage, cacheCreationTokens },
           workspaceId,
-          UsageOperationType.AI_CHAT_TOKEN,
+          operationType,
           null,
           userWorkspaceId,
         );

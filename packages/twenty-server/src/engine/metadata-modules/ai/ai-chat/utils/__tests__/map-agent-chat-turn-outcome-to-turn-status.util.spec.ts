@@ -41,6 +41,18 @@ describe('mapAgentChatTurnOutcomeToTurnStatus', () => {
     });
   });
 
+  it('fails a turn the fair-use ceiling stopped with the pause error the chat renders', () => {
+    expect(
+      mapAgentChatTurnOutcomeToTurnStatus({
+        kind: 'failed',
+        failurePhase: 'included_chat_paused',
+      }),
+    ).toEqual({
+      status: AgentTurnStatus.FAILED,
+      error: expect.objectContaining({ code: 'INCLUDED_CHAT_PAUSED' }),
+    });
+  });
+
   it('keeps the error code of a turn that failed while running', () => {
     expect(
       mapAgentChatTurnOutcomeToTurnStatus({

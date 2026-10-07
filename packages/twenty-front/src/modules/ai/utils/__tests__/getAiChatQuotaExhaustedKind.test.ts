@@ -29,6 +29,17 @@ describe('getAiChatQuotaExhaustedKind', () => {
     ).toBe('limit');
   });
 
+  it('leaves the included chat pause to its own message', () => {
+    expect(
+      getAiChatQuotaExhaustedKind(
+        buildError({
+          code: 'QUOTA_EXHAUSTED',
+          subCode: 'INCLUDED_CHAT_PAUSED',
+        }),
+      ),
+    ).toBeNull();
+  });
+
   it('ignores errors that are not quota refusals', () => {
     expect(
       getAiChatQuotaExhaustedKind(buildError({ code: 'RATE_LIMITED' })),

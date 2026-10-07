@@ -31,7 +31,6 @@ import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-mo
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
@@ -80,8 +79,11 @@ import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-age
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
+import { type AgentChatTurnPlan } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-plan.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { getAgentChatStepStopReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-step-stop-reason.util';
+import { getAgentChatWebSearchOperationType } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-search-operation-type.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
@@ -107,7 +109,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 
@@ -123,7 +124,7 @@ export type ChatExecutionOptions = {
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate: CodeExecutionStreamEmitter;
   onCompaction: () => void;
-  modelId?: string;
+  turnPlan: AgentChatTurnPlan;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
 };
@@ -132,6 +133,7 @@ export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
+  hasReachedIncludedChatLimit: () => boolean;
   getStreamError: () => unknown;
 };
 
@@ -168,7 +170,7 @@ export class ChatExecutionService {
     browsingContext,
     onCodeExecutionUpdate,
     onCompaction,
-    modelId,
+    turnPlan,
     abortSignal,
     conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
@@ -233,18 +235,7 @@ export class ChatExecutionService {
       { compactOutput: true, spillLargeOutput: true },
     );
 
-    const resolvedModelId = getChatModelId({
-      requestedModelId: modelId,
-      workspace,
-    });
-
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
-
-    const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent(
-        { modelId: resolvedModelId },
-        workspace,
-      );
+    const { registeredModel, operationType } = turnPlan;
 
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
@@ -461,6 +452,7 @@ export class ChatExecutionService {
     const modelMessages = pruningResult.messages;
 
     let hasNoMoreAvailableCredits = false;
+    let hasReachedIncludedChatLimit = false;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
@@ -493,16 +485,17 @@ export class ChatExecutionService {
         creditsUsedMicro,
         totalTokens,
         registeredModel.modelId,
-        UsageOperationType.AI_CHAT_TOKEN,
+        operationType,
         null,
         userWorkspaceId,
       );
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
+      void this.aiBillingService.billNativeWebSearchUsage({
+        nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
+        workspaceId: workspace.id,
         userWorkspaceId,
-      );
+        operationType: getAgentChatWebSearchOperationType(operationType),
+      });
 
       const modelAttr = { model: registeredModel.modelId };
 
@@ -547,7 +540,8 @@ export class ChatExecutionService {
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
+        hasNoMoreAvailableCredits ||
+        hasReachedIncludedChatLimit,
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
@@ -616,7 +610,7 @@ export class ChatExecutionService {
           bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+        const { exhaustedKind } =
           await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
             billingInput: {
@@ -626,12 +620,22 @@ export class ChatExecutionService {
               ),
             },
             workspaceId: workspace.id,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            operationType,
             spenders: { userWorkspaceId },
           });
 
-        if (stepHasNoMoreAvailableCredits) {
+        const stepStopReason = getAgentChatStepStopReason({
+          operationType,
+          exhaustedKind,
+        });
+
+        if (stepStopReason === 'creditsExhausted') {
           hasNoMoreAvailableCredits = true;
+        }
+
+        // The ceiling is debited after the step, so every concurrent turn overshoots by at most one step
+        if (stepStopReason === 'includedChatPaused') {
+          hasReachedIncludedChatLimit = true;
         }
 
         this.logger.log(
@@ -701,7 +705,7 @@ export class ChatExecutionService {
             workspaceId: workspace.id,
             userWorkspaceId,
             agentId: null,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            operationType,
           },
         });
       },
@@ -734,6 +738,7 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      hasReachedIncludedChatLimit: () => hasReachedIncludedChatLimit,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }

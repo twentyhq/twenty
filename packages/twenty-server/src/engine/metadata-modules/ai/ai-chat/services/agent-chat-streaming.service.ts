@@ -38,12 +38,17 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-hi
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentChatTurnPlanService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-plan.service';
+import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
+import { getAgentChatSenderPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-sender-principal-type.util';
+import { isAgentChatIncludedTurnRefused } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-included-turn-refused.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -97,6 +102,7 @@ export class AgentChatStreamingService {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly agentRunConversationService: AgentRunConversationService,
+    private readonly agentChatTurnPlanService: AgentChatTurnPlanService,
   ) {}
 
   async tryClaimStream({
@@ -156,10 +162,15 @@ export class AgentChatStreamingService {
       this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
     ]);
 
+    // The pre-flight admitted this send on its own plan, so a backlog the included chat pause holds must not hold it too
+    const isQueuedBacklogHeld =
+      hasQueuedBacklog &&
+      (await this.isQueuedBacklogHeld({ threadId, workspace }));
+
     const streamId = generateId();
 
     const claimed =
-      !hasQueuedBacklog &&
+      (!hasQueuedBacklog || isQueuedBacklogHeld) &&
       (await this.tryClaimStream({ threadId, workspaceId, streamId }));
 
     if (!claimed) {
@@ -174,7 +185,7 @@ export class AgentChatStreamingService {
       });
 
       if (hasQueuedBacklog) {
-        await this.flushNextQueuedMessage({ threadId, workspaceId });
+        await this.flushNextQueuedMessage({ threadId, workspace });
       }
 
       return { queued: true, messageId: queuedMessage.id };
@@ -280,7 +291,7 @@ export class AgentChatStreamingService {
             workspaceId,
             streamId,
           });
-          await this.flushNextQueuedMessage({ threadId, workspaceId });
+          await this.flushNextQueuedMessage({ threadId, workspace });
 
           return null;
         }
@@ -467,11 +478,13 @@ export class AgentChatStreamingService {
 
   async flushNextQueuedMessage({
     threadId,
-    workspaceId,
+    workspace,
   }: {
     threadId: string;
-    workspaceId: string;
+    workspace: WorkspaceEntity;
   }): Promise<void> {
+    const workspaceId = workspace.id;
+
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
@@ -486,67 +499,21 @@ export class AgentChatStreamingService {
       return;
     }
 
-    const queuedMessages = await this.agentChatService.getQueuedMessages({
+    const nextQueuedMessage = await this.findNextQueuedMessage({
       threadId,
       workspaceId,
     });
 
-    let nextQueued: (typeof queuedMessages)[number] | undefined;
-    let userWorkspaceId: string | undefined;
-    let workspaceMemberId: string | undefined;
-    for (const candidate of queuedMessages) {
-      try {
-        const { sender } = await this.actorService.resolveMessage({
-          workspaceId,
-          threadId,
-          messageId: candidate.id,
-        });
-        const authorization = await this.actorService.authorize({
-          workspaceId,
-          threadId,
-          sender,
-        });
-        workspaceMemberId = authorization.authContext.workspaceMemberId;
-        nextQueued = candidate;
-        userWorkspaceId = sender.userWorkspaceId;
-        break;
-      } catch (error) {
-        // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker
-        if (
-          error instanceof AiException &&
-          error.code === AiExceptionCode.THREAD_NOT_FOUND
-        ) {
-          continue;
-        }
-
-        if (
-          !(error instanceof AuthException) &&
-          !(error instanceof PermissionsException) &&
-          !(
-            error instanceof AiException &&
-            error.code === AiExceptionCode.MESSAGE_NOT_FOUND
-          )
-        ) {
-          throw error;
-        }
-        await this.agentChatService.deleteQueuedMessage({
-          messageId: candidate.id,
-          workspaceId,
-        });
-        await this.eventPublisherService.publish({
-          threadId,
-          workspaceId,
-          event: { type: 'queue-updated' },
-        });
-      }
-    }
-    if (
-      !isDefined(nextQueued) ||
-      !isDefined(userWorkspaceId) ||
-      !isDefined(workspaceMemberId)
-    ) {
+    if (!isDefined(nextQueuedMessage)) {
       return;
     }
+
+    const {
+      message: nextQueued,
+      sender,
+      workspaceMemberId,
+    } = nextQueuedMessage;
+    const { userWorkspaceId } = sender;
 
     const textPart = nextQueued.parts?.find((part) => part.type === 'text');
     const messageText = textPart?.textContent ?? '';
@@ -560,6 +527,10 @@ export class AgentChatStreamingService {
         workspaceId,
       });
 
+      return;
+    }
+
+    if (await this.isQueuedMessageHeld({ workspace, sender })) {
       return;
     }
 
@@ -626,6 +597,127 @@ export class AgentChatStreamingService {
         });
       },
     );
+  }
+
+  // Deletes the revoked messages it skips, so a caller other than the flush still cleans the queue
+  private async findNextQueuedMessage({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<{
+    message: AgentMessageWorkspaceEntity;
+    sender: AgentChatSender;
+    workspaceMemberId: string;
+  } | null> {
+    const queuedMessages = await this.agentChatService.getQueuedMessages({
+      threadId,
+      workspaceId,
+    });
+
+    for (const candidate of queuedMessages) {
+      try {
+        const { sender } = await this.actorService.resolveMessage({
+          workspaceId,
+          threadId,
+          messageId: candidate.id,
+        });
+        const authorization = await this.actorService.authorize({
+          workspaceId,
+          threadId,
+          sender,
+        });
+
+        return {
+          message: candidate,
+          sender,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+        };
+      } catch (error) {
+        // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.THREAD_NOT_FOUND
+        ) {
+          continue;
+        }
+
+        if (
+          !(error instanceof AuthException) &&
+          !(error instanceof PermissionsException) &&
+          !(
+            error instanceof AiException &&
+            error.code === AiExceptionCode.MESSAGE_NOT_FOUND
+          )
+        ) {
+          throw error;
+        }
+        await this.agentChatService.deleteQueuedMessage({
+          messageId: candidate.id,
+          workspaceId,
+        });
+        await this.eventPublisherService.publish({
+          threadId,
+          workspaceId,
+          event: { type: 'queue-updated' },
+        });
+      }
+    }
+
+    return null;
+  }
+
+  private async isQueuedBacklogHeld({
+    threadId,
+    workspace,
+  }: {
+    threadId: string;
+    workspace: WorkspaceEntity;
+  }): Promise<boolean> {
+    const nextQueuedMessage = await this.findNextQueuedMessage({
+      threadId,
+      workspaceId: workspace.id,
+    });
+
+    return (
+      isDefined(nextQueuedMessage) &&
+      (await this.isQueuedMessageHeld({
+        workspace,
+        sender: nextQueuedMessage.sender,
+      }))
+    );
+  }
+
+  // A queued message carries no model id, so it follows the workspace tier and waits while the included chat it would run on is paused
+  private async isQueuedMessageHeld({
+    workspace,
+    sender,
+  }: {
+    workspace: WorkspaceEntity;
+    sender: AgentChatSender;
+  }): Promise<boolean> {
+    const includedModel =
+      await this.agentChatTurnPlanService.findIncludedChatModel({
+        workspaceId: workspace.id,
+        principalType: getAgentChatSenderPrincipalType(sender),
+      });
+
+    if (!isDefined(includedModel)) {
+      return false;
+    }
+
+    // The worker plans again and fails the turn with the reason, so a message that cannot be planned is not held
+    const turnPlan = await this.agentChatTurnPlanService
+      .planTurnWithIncludedModel({
+        workspace,
+        requestedModelId: undefined,
+        userWorkspaceId: sender.userWorkspaceId,
+        includedModel,
+      })
+      .catch(() => null);
+
+    return isDefined(turnPlan) && isAgentChatIncludedTurnRefused(turnPlan);
   }
 
   // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why

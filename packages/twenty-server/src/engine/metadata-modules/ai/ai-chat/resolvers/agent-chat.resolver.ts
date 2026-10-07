@@ -18,8 +18,10 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -37,6 +39,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import {
@@ -177,6 +180,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthIsUserSession() isUserSession: boolean,
   ): Promise<SendChatMessageResultDTO> {
     const sentMessage = await this.sendChatMessageToThread({
       threadId,
@@ -188,6 +192,7 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
+      principalType: isUserSession ? 'userSession' : 'application',
     });
 
     const mentionedParticipantWorkspaceMemberIds =
@@ -211,6 +216,7 @@ export class AgentChatResolver {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    principalType,
   }: {
     threadId: string;
     text: string;
@@ -221,14 +227,19 @@ export class AgentChatResolver {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
+    principalType: AgentChatPrincipalType;
   }): Promise<SendChatMessageResultDTO> {
-    const thread = await this.turnPreflightService.assertCanStartChatTurn({
-      threadId,
-      modelId,
-      userWorkspaceId,
-      workspaceMemberId,
-      workspace,
-    });
+    const { thread, turnPlan } =
+      await this.turnPreflightService.assertCanStartChatTurn({
+        threadId,
+        modelId,
+        userWorkspaceId,
+        workspaceMemberId,
+        workspace,
+        principalType,
+      });
+    const isIncluded =
+      turnPlan.operationType === UsageOperationType.AI_CHAT_INCLUDED;
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.restoreThread({
@@ -257,7 +268,7 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return { messageId: queuedMessage.id, queued: true };
+      return { messageId: queuedMessage.id, queued: true, isIncluded };
     }
 
     const result = await this.agentChatStreamingService.streamAgentChat({
@@ -279,7 +290,7 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return { messageId: result.messageId, queued: true };
+      return { messageId: result.messageId, queued: true, isIncluded };
     }
 
     tagAiChatStreamScope({
@@ -293,6 +304,7 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
+      isIncluded,
     };
   }
 
@@ -304,14 +316,18 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthIsUserSession() isUserSession: boolean,
   ): Promise<SendChatMessageResultDTO> {
-    await this.turnPreflightService.assertCanStartChatTurn({
-      threadId,
-      modelId,
-      userWorkspaceId,
-      workspaceMemberId,
-      workspace,
-    });
+    const { turnPlan } = await this.turnPreflightService.assertCanStartChatTurn(
+      {
+        threadId,
+        modelId,
+        userWorkspaceId,
+        workspaceMemberId,
+        workspace,
+        principalType: isUserSession ? 'userSession' : 'application',
+      },
+    );
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
@@ -332,6 +348,8 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
+      isIncluded:
+        turnPlan.operationType === UsageOperationType.AI_CHAT_INCLUDED,
     };
   }
 

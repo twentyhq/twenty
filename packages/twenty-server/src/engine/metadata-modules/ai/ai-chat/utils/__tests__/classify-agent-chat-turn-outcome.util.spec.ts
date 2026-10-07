@@ -8,6 +8,7 @@ const baseTurn = {
   isAborted: false,
   isAwaitingUserAnswer: false,
   outOfCredits: false,
+  isIncludedChatPaused: false,
 };
 
 describe('classifyAgentChatTurnOutcome', () => {
@@ -67,6 +68,22 @@ describe('classifyAgentChatTurnOutcome', () => {
   it('still counts a turn that produced text before credits ran out as answered', () => {
     expect(
       classifyAgentChatTurnOutcome({ ...baseTurn, outOfCredits: true }),
+    ).toEqual({ kind: 'completed', outcome: 'answered' });
+  });
+
+  it('separates an included turn the fair-use ceiling stopped from an empty reply', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isIncludedChatPaused: true,
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'included_chat_paused' });
+  });
+
+  it('still counts an included turn that replied before the ceiling stopped it as answered', () => {
+    expect(
+      classifyAgentChatTurnOutcome({ ...baseTurn, isIncludedChatPaused: true }),
     ).toEqual({ kind: 'completed', outcome: 'answered' });
   });
 });

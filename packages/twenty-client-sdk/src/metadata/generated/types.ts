@@ -11238,6 +11238,9 @@ export default {
             ]
         },
         "SendChatMessageResult": {
+            "isIncluded": [
+                4
+            ],
             "mentionedParticipantWorkspaceMemberIds": [
                 477
             ],

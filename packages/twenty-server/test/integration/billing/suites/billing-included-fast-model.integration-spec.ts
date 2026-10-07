@@ -6,10 +6,9 @@ import {
   quitBillingFixtureRedis,
   resetBillingCreditState,
   setSubscriptionStatus,
-  TEST_STRIPE_CUSTOMER_ID,
   TEST_STRIPE_SUBSCRIPTION_ID,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
-import { createMockStripeEntitlementUpdatedData } from 'test/integration/billing/utils/create-mock-stripe-entitlement-updated-data.util';
+import { postStripeEntitlementSummary } from 'test/integration/billing/utils/post-stripe-entitlement-summary.util';
 import { TEST_AI_OTHER_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
@@ -113,37 +112,6 @@ describe('Included fast model (integration)', () => {
   let workspaceId: string;
   let originalLookupKeys: string[];
 
-  const postEntitlementSummary = (
-    lookupKeys: string[],
-    { hasMore = false }: { hasMore?: boolean } = {},
-  ) =>
-    client
-      .post('/webhooks/stripe')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .set('stripe-signature', 'correct-signature')
-      .set('Content-Type', 'application/json')
-      .send(
-        JSON.stringify({
-          type: 'entitlements.active_entitlement_summary.updated',
-          data: createMockStripeEntitlementUpdatedData({
-            customer: TEST_STRIPE_CUSTOMER_ID,
-            entitlements: {
-              object: 'list',
-              data: lookupKeys.map((lookupKey, index) => ({
-                id: `ent_test_${index}`,
-                object: 'entitlements.active_entitlement',
-                feature: `feat_test_${index}`,
-                livemode: false,
-                lookup_key: lookupKey,
-              })),
-              has_more: hasMore,
-              url: `/v1/customer/${TEST_STRIPE_CUSTOMER_ID}/entitlements`,
-            },
-          }),
-        }),
-      )
-      .expect(200);
-
   const findGrantedLookupKeys = async (): Promise<string[]> => {
     const grantedRows: { key: string }[] = await global.testDataSource.query(
       `SELECT key FROM core."billingEntitlement" WHERE "workspaceId" = $1 AND value = true`,
@@ -182,17 +150,17 @@ describe('Included fast model (integration)', () => {
   });
 
   afterAll(async () => {
-    await postEntitlementSummary(originalLookupKeys);
+    await postStripeEntitlementSummary(originalLookupKeys);
     await quitBillingFixtureRedis();
   });
 
   describe('entitlement', () => {
     afterEach(async () => {
-      await postEntitlementSummary(originalLookupKeys);
+      await postStripeEntitlementSummary(originalLookupKeys);
     });
 
     it('is granted by the INCLUDED_FAST_MODEL Stripe feature', async () => {
-      await postEntitlementSummary([
+      await postStripeEntitlementSummary([
         ...originalLookupKeys,
         BillingEntitlementKey.INCLUDED_FAST_MODEL,
       ]);
@@ -204,11 +172,11 @@ describe('Included fast model (integration)', () => {
     });
 
     it('is revoked when Stripe stops listing the feature', async () => {
-      await postEntitlementSummary([
+      await postStripeEntitlementSummary([
         ...originalLookupKeys,
         BillingEntitlementKey.INCLUDED_FAST_MODEL,
       ]);
-      await postEntitlementSummary(originalLookupKeys);
+      await postStripeEntitlementSummary(originalLookupKeys);
 
       expect(await findIncludedFastModelEntitlement()).toEqual({
         key: BillingEntitlementKey.INCLUDED_FAST_MODEL,
@@ -217,7 +185,7 @@ describe('Included fast model (integration)', () => {
     });
 
     it('is read from the full Stripe list when the summary is truncated', async () => {
-      await postEntitlementSummary([BillingEntitlementKey.SSO], {
+      await postStripeEntitlementSummary([BillingEntitlementKey.SSO], {
         hasMore: true,
       });
 

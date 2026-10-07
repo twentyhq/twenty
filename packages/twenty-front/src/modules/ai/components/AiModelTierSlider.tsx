@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierInformationButton } from '@/ai/components/AiModelTierInformationButton';
@@ -27,6 +28,13 @@ const StyledHeader = styled.div`
   display: flex;
   height: 20px;
   justify-content: space-between;
+`;
+
+const StyledTitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledTitle = styled.span`
@@ -130,6 +138,7 @@ type AiModelTierSliderProps = {
   onTierChange: (tier: AiModelTier) => void;
   // Shown instead of the tier name, for an agent pinned to a specific model.
   title?: string;
+  tag?: string;
   disabled?: boolean;
 };
 
@@ -137,6 +146,7 @@ export const AiModelTierSlider = ({
   selectedTier,
   onTierChange,
   title,
+  tag,
   disabled = false,
 }: AiModelTierSliderProps) => {
   const { t } = useLingui();
@@ -155,7 +165,14 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+        <StyledTitleRow>
+          <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+          {isDefined(tag) && (
+            <Tag color="green" weight="medium" preventShrink>
+              {tag}
+            </Tag>
+          )}
+        </StyledTitleRow>
         <AiModelTierInformationButton resolvedTier={resolvedTier} />
       </StyledHeader>
       <StyledTrack

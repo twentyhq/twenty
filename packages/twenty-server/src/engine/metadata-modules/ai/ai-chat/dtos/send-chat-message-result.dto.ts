@@ -14,6 +14,10 @@ export class SendChatMessageResultDTO {
   @Field(() => String, { nullable: true })
   streamId?: string;
 
+  // Pre-flight hint: an included send does not prove the credit allowance has room again
+  @Field(() => Boolean)
+  isIncluded: boolean;
+
   // The mentioned members who now follow the chat, leaving out those who
   // cannot reply in it
   @Field(() => [UUIDScalarType], { nullable: true })

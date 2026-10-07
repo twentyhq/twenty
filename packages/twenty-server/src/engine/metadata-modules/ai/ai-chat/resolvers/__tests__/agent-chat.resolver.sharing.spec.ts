@@ -8,6 +8,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
@@ -113,7 +114,13 @@ const buildResolver = () => {
         validateModelAvailability: jest.fn(),
       } as never,
       threadService,
-      { assertAiExecutionAllowed: jest.fn() } as never,
+      {
+        planTurn: jest.fn().mockResolvedValue({
+          registeredModel: { modelId: 'model' },
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          refusal: null,
+        }),
+      } as never,
     ),
     threadLifecycle,
     { findLatestTurnError: jest.fn().mockResolvedValue(null) } as never,
@@ -180,6 +187,7 @@ describe('Shared conversation API boundaries', () => {
       VIEWER_ID,
       'member',
       workspace,
+      true,
     );
     expect(sharing.restoreThreadWithAccess).toHaveBeenCalledWith({
       threadId: THREAD_ID,
@@ -223,6 +231,7 @@ describe('Shared conversation API boundaries', () => {
             VIEWER_ID,
             'member',
             workspace,
+            true,
           ),
         restore: () =>
           context.chatService.restoreThread({
@@ -272,6 +281,7 @@ describe('Shared conversation API boundaries', () => {
       VIEWER_ID,
       'member',
       workspace,
+      true,
     );
     expect(streaming.streamAgentChat).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -300,6 +310,7 @@ describe('Shared conversation API boundaries', () => {
       'owner-user',
       'owner',
       workspace,
+      true,
     );
 
     expect(streaming.streamAgentChat).toHaveBeenCalled();
@@ -330,6 +341,7 @@ describe('Shared conversation API boundaries', () => {
       'owner-user',
       'owner',
       workspace,
+      true,
     );
 
     expect(result).toMatchObject({

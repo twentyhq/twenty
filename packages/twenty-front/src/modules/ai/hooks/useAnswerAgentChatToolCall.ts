@@ -10,6 +10,7 @@ import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { getAgentChatThreadAtoms } from '@/ai/utils/getAgentChatThreadAtoms';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+import { isAiChatIncludedChatPausedError } from '@/ai/utils/isAiChatIncludedChatPausedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -84,6 +85,10 @@ export const useAnswerAgentChatToolCall = () => {
         // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
         if (isAiChatCreditsExhaustedError(error)) {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+          store.set(errorAtom, toAiChatError(error));
+        }
+
+        if (isAiChatIncludedChatPausedError(error)) {
           store.set(errorAtom, toAiChatError(error));
         }
 

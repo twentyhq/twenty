@@ -22,6 +22,7 @@ export const SEND_CHAT_MESSAGE = gql`
       messageId
       queued
       streamId
+      isIncluded
       mentionedParticipantWorkspaceMemberIds
     }
   }

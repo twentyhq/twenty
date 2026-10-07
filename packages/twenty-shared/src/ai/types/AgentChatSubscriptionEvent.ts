@@ -6,4 +6,5 @@ export type AgentChatSubscriptionEvent =
   | { type: 'tool-call-resolved'; toolCallId: string }
   | { type: 'stream-error'; code: string; message: string }
   | { type: 'credits-exhausted' }
+  | { type: 'included-chat-paused' }
   | { type: 'keepalive' };

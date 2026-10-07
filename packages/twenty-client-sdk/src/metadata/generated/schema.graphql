@@ -4184,6 +4184,7 @@ type SearchField {
 }
 
 type SendChatMessageResult {
+  isIncluded: Boolean!
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!

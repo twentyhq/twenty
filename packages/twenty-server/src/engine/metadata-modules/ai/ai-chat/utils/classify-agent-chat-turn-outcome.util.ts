@@ -5,11 +5,13 @@ export const classifyAgentChatTurnOutcome = ({
   isAborted,
   isAwaitingUserAnswer,
   outOfCredits,
+  isIncludedChatPaused,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
   outOfCredits: boolean;
+  isIncludedChatPaused: boolean;
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
   if (isAwaitingUserAnswer) {
@@ -22,6 +24,10 @@ export const classifyAgentChatTurnOutcome = ({
 
   if (hasText) {
     return { kind: 'completed', outcome: 'answered' };
+  }
+
+  if (isIncludedChatPaused) {
+    return { kind: 'failed', failurePhase: 'included_chat_paused' };
   }
 
   return {

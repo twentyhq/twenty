@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentChatTurnPlanService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-plan.service';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
+import { buildAgentChatTurnRefusalException } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-turn-refusal-exception.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import {
   AiException,
   AiExceptionCode,
@@ -16,7 +18,7 @@ export class AgentChatTurnPreflightService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly threadService: AgentChatThreadService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly agentChatTurnPlanService: AgentChatTurnPlanService,
   ) {}
 
   async assertCanStartChatTurn({
@@ -25,12 +27,14 @@ export class AgentChatTurnPreflightService {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    principalType,
   }: {
     threadId: string;
     modelId?: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
+    principalType: AgentChatPrincipalType;
   }) {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
@@ -39,9 +43,12 @@ export class AgentChatTurnPreflightService {
       );
     }
 
-    this.aiModelRegistryService.validateModelAvailability(
-      getChatModelId({ requestedModelId: modelId, workspace }),
-    );
+    const turnPlan = await this.agentChatTurnPlanService.planTurn({
+      workspace,
+      requestedModelId: modelId,
+      userWorkspaceId,
+      principalType,
+    });
 
     const thread = await this.threadService.getWritableThread({
       threadId,
@@ -49,12 +56,14 @@ export class AgentChatTurnPreflightService {
       workspaceId: workspace.id,
     });
 
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId: workspace.id,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      spenders: { userWorkspaceId },
-    });
+    if (isDefined(turnPlan.refusal)) {
+      throw buildAgentChatTurnRefusalException({
+        operationType: turnPlan.operationType,
+        refusal: turnPlan.refusal,
+        workspaceId: workspace.id,
+      });
+    }
 
-    return thread;
+    return { thread, turnPlan };
   }
 }

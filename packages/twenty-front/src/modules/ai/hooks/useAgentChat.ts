@@ -214,7 +214,11 @@ export const useAgentChat = (
       });
 
       // The stream may already have set a newer credits-exhausted error; don't clear it.
-      if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
+      // An included send passes with the allowance still spent, so it says nothing about credits.
+      if (
+        data?.sendChatMessage.isIncluded !== true &&
+        !isAiChatCreditsExhaustedError(store.get(errorAtom))
+      ) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 

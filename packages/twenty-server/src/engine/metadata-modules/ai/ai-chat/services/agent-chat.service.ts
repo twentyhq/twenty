@@ -31,6 +31,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -737,11 +738,13 @@ export class AgentChatService {
     messageContent,
     workspaceId,
     userWorkspaceId,
+    principalType,
   }: {
     threadId: string;
     messageContent: string;
     workspaceId: string;
     userWorkspaceId: string;
+    principalType: AgentChatPrincipalType;
   }): Promise<string | null> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -751,11 +754,12 @@ export class AgentChatService {
       return null;
     }
 
-    const title = await this.titleGenerationService.generateThreadTitle(
+    const title = await this.titleGenerationService.generateThreadTitle({
       messageContent,
       workspaceId,
       userWorkspaceId,
-    );
+      principalType,
+    });
 
     await this.threadRepository.update(
       workspaceId,

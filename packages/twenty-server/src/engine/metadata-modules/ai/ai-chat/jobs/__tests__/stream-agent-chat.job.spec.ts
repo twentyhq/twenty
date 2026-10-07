@@ -2,10 +2,14 @@ import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
 import { ASK_QUESTION_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { type AgentChatTurnPlan } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-plan.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -133,6 +137,41 @@ const RECOVERED_TOOL_CALL_PARTS: ModelStreamPart[] = [
   ...FINISH_PARTS,
 ];
 
+const PAID_TURN_PLAN = {
+  registeredModel: { modelId: 'openai/gpt-5.6-luna' },
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  refusal: null,
+} as unknown as AgentChatTurnPlan;
+
+const INCLUDED_TURN_PLAN = {
+  registeredModel: { modelId: 'azure-foundry/gpt-5.6-luna@medium' },
+  operationType: UsageOperationType.AI_CHAT_INCLUDED,
+  refusal: null,
+} as unknown as AgentChatTurnPlan;
+
+const buildQuotaRefusal = ({
+  exhaustedKind,
+  operationType,
+}: {
+  exhaustedKind: 'allowance' | 'limit';
+  operationType: UsageOperationType;
+}): UsageRefusal => ({
+  kind: 'quotaExhausted',
+  exhaustedScope: {
+    resourceType: UsageResourceType.AI,
+    limitKind: 'quota',
+    exhaustedKind,
+    spenderType: 'workspace',
+    spenderId: null,
+    operationType,
+    limitValue: 5_000_000,
+    remaining: 0,
+    periodCount: 1,
+    periodUnit: 'day',
+    retryAfterMs: 1_000,
+  },
+});
+
 const createFakeChatStream = ({
   parts = TEXT_PARTS,
   midStreamError,
@@ -207,6 +246,9 @@ describe('StreamAgentChatJob', () => {
       inputCostPerMillionTokens: 1,
       outputCostPerMillionTokens: 2,
     },
+    turnPlan = PAID_TURN_PLAN,
+    planTurnRejection,
+    hasReachedIncludedChatLimit = false,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
@@ -215,6 +257,9 @@ describe('StreamAgentChatJob', () => {
     totalsUpdateAffected?: number;
     finalPublishRejection?: Error;
     modelConfig?: Partial<AiModelConfig>;
+    turnPlan?: AgentChatTurnPlan;
+    planTurnRejection?: Error;
+    hasReachedIncludedChatLimit?: boolean;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
@@ -259,6 +304,7 @@ describe('StreamAgentChatJob', () => {
             stream: chatStream,
             modelConfig,
             hasNoMoreAvailableCredits: () => false,
+            hasReachedIncludedChatLimit: () => hasReachedIncludedChatLimit,
             getStreamError: () => chatStream.streamError,
           }),
     };
@@ -302,7 +348,12 @@ describe('StreamAgentChatJob', () => {
     const aiModelRegistryService = {
       getEffectiveModelConfig: jest
         .fn()
-        .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
+        .mockReturnValue({ modelId: 'anthropic/claude-sonnet-5' }),
+    };
+    const agentChatTurnPlanService = {
+      planTurn: planTurnRejection
+        ? jest.fn().mockRejectedValue(planTurnRejection)
+        : jest.fn().mockResolvedValue(turnPlan),
     };
     const sharingService = {
       hasInboxState: jest.fn().mockResolvedValue(true),
@@ -358,6 +409,7 @@ describe('StreamAgentChatJob', () => {
       threadService as never,
       metricsService as never,
       aiModelRegistryService as never,
+      agentChatTurnPlanService as never,
       actorService as never,
       sharingService as never,
       turnRecorderService as never,
@@ -384,6 +436,7 @@ describe('StreamAgentChatJob', () => {
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
+      agentChatTurnPlanService,
       turnCounts,
     };
   };
@@ -483,6 +536,7 @@ describe('StreamAgentChatJob', () => {
   it('rejects a persisted message without a turn', async () => {
     const { job, actorService, chatExecutionService } = buildJob();
     actorService.authorizeJob.mockResolvedValue({
+      sender: { userWorkspaceId: 'user-workspace-id', applicationId: null },
       message: { id: 'user-message-id', turnId: null },
     } as never);
     await expect(
@@ -501,7 +555,30 @@ describe('StreamAgentChatJob', () => {
       threadId: 'thread-id',
       messageContent: 'hello',
       workspaceId: 'workspace-id',
+      principalType: 'userSession',
     });
+  });
+
+  it('generates the title of a turn an application sent as an application, so it is never included', async () => {
+    const { job, actorService, agentChatService } = buildJob();
+
+    actorService.authorizeJob.mockResolvedValue({
+      sender: { userWorkspaceId: 'user-workspace-id', applicationId: 'app' },
+      authorization: {
+        authContext: {
+          type: 'user',
+          workspaceMemberId: 'member',
+          workspaceMember: { name: { firstName: 'Tim', lastName: 'Apple' } },
+        },
+      },
+      message: { id: 'user-message-id', turnId: 'turn-id' },
+    } as never);
+
+    await job.handle({ ...jobData, hasTitle: false });
+
+    expect(agentChatService.generateTitleIfNeeded).toHaveBeenCalledWith(
+      expect.objectContaining({ principalType: 'application' }),
+    );
   });
 
   it('does not invoke the model when the saved sender lost access before execution', async () => {
@@ -551,7 +628,9 @@ describe('StreamAgentChatJob', () => {
       expect.any(Function),
     );
     expect(claimReleases()).toContainEqual({ turnError: null });
-    expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).toHaveBeenCalledWith({ threadId: 'thread-id', workspace });
   });
 
   it('gates the thread totals on still owning the stream so a prior completion is not double-counted', async () => {
@@ -889,30 +968,278 @@ describe('StreamAgentChatJob', () => {
     ).not.toHaveBeenCalled();
     expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
-  it('labels turn-started with the resolved model, not the auto-select id', async () => {
-    const { job, aiModelRegistryService, turnCounts } = buildJob();
+  it('plans the turn once, for the requested model and the user session that sent it', async () => {
+    const { job, agentChatTurnPlanService } = buildJob();
 
     await job.handle({ ...jobData, modelId: 'default-fast-model' });
 
-    expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
-      'default-fast-model',
+    expect(agentChatTurnPlanService.planTurn).toHaveBeenCalledTimes(1);
+    expect(agentChatTurnPlanService.planTurn).toHaveBeenCalledWith({
       workspace,
-    );
-    expect(turnCounts('ai-chat/turn-started')).toEqual([
-      expect.objectContaining({
-        attributes: { model: 'openai/gpt-5.6-luna' },
-      }),
-    ]);
+      requestedModelId: 'default-fast-model',
+      userWorkspaceId: 'user-workspace-id',
+      principalType: 'userSession',
+    });
   });
 
-  it('falls back to the workspace chat tier when the turn did not pick one', async () => {
-    const { job, aiModelRegistryService } = buildJob();
+  it('plans a turn an application sent as an application turn', async () => {
+    const { job, actorService, agentChatTurnPlanService } = buildJob();
+
+    actorService.authorizeJob.mockResolvedValue({
+      sender: { userWorkspaceId: 'user-workspace-id', applicationId: 'app' },
+      authorization: {
+        authContext: {
+          type: 'user',
+          workspaceMemberId: 'member',
+          workspaceMember: { name: { firstName: 'Tim', lastName: 'Apple' } },
+        },
+      },
+      message: { id: 'user-message-id', turnId: 'turn-id' },
+    } as never);
 
     await job.handle(jobData);
+
+    expect(agentChatTurnPlanService.planTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ principalType: 'application' }),
+    );
+  });
+
+  it('labels turn-started, the running turn and its outcome with the planned model', async () => {
+    const { job, turnCounts, turnRecorderService, chatExecutionService } =
+      buildJob({ turnPlan: INCLUDED_TURN_PLAN });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-started')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'azure-foundry/gpt-5.6-luna@medium' },
+      }),
+    ]);
+    expect(turnRecorderService.markRunning).toHaveBeenCalledWith(
+      expect.objectContaining({ modelId: 'azure-foundry/gpt-5.6-luna@medium' }),
+    );
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: {
+          model: 'azure-foundry/gpt-5.6-luna@medium',
+          outcome: 'answered',
+        },
+      }),
+    ]);
+    expect(chatExecutionService.streamChat).toHaveBeenCalledWith(
+      expect.objectContaining({ turnPlan: INCLUDED_TURN_PLAN }),
+    );
+  });
+
+  it('fails the turn, labelled with the model its tier resolves to, when it cannot be planned', async () => {
+    const {
+      job,
+      turnCounts,
+      publishedEvents,
+      chatExecutionService,
+      aiModelRegistryService,
+    } = buildJob({
+      planTurnRejection: new Error(
+        'The selected model has been disabled by the administrator.',
+      ),
+    });
+
+    await expect(job.handle(jobData)).rejects.toThrow(
+      'The selected model has been disabled by the administrator.',
+    );
 
     expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
       'default-smart-model',
       workspace,
+    );
+    expect(turnCounts('ai-chat/turn-started')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'anthropic/claude-sonnet-5' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([
+      expect.objectContaining({
+        attributes: expect.objectContaining({
+          model: 'anthropic/claude-sonnet-5',
+          failure_phase: 'execution',
+        }),
+      }),
+    ]);
+    expect(publishedEvents.map((event) => event.type)).toContain(
+      'stream-error',
+    );
+    expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('shows 0 credits on an included turn but keeps its token counts', async () => {
+    const { job, turnRecorderService, publishedEvents } = buildJob({
+      turnPlan: INCLUDED_TURN_PLAN,
+    });
+
+    await job.handle(jobData);
+
+    const [{ usage }] = turnRecorderService.recordUsage.mock.calls[0] as [
+      { usage: Record<string, number> },
+    ];
+
+    expect(usage).toMatchObject({
+      inputTokens: 12,
+      outputTokens: 3,
+      inputCredits: 0,
+      outputCredits: 0,
+    });
+
+    const finishChunk = publishedEvents
+      .filter((event) => event.type === 'stream-chunk')
+      .map(
+        (event) =>
+          event.chunk as {
+            type: string;
+            messageMetadata?: { usage: Record<string, number> };
+          },
+      )
+      .find((chunk) => chunk.type === 'finish');
+
+    expect(finishChunk?.messageMetadata?.usage).toMatchObject({
+      inputTokens: 12,
+      outputTokens: 3,
+      inputCredits: 0,
+      outputCredits: 0,
+    });
+  });
+
+  it('bills a paid turn in credits', async () => {
+    const { job, turnRecorderService } = buildJob();
+
+    await job.handle(jobData);
+
+    const [{ usage }] = turnRecorderService.recordUsage.mock.calls[0] as [
+      { usage: Record<string, number> },
+    ];
+
+    expect(usage.inputCredits).toBeGreaterThan(0);
+    expect(usage.outputCredits).toBeGreaterThan(0);
+  });
+
+  it('pauses an included turn past the fair-use ceiling without running it, leaving the queue to hold what the pause would refuse', async () => {
+    const {
+      job,
+      publishedEvents,
+      chatExecutionService,
+      turnRecorderService,
+      agentChatStreamingService,
+      claimReleases,
+    } = buildJob({
+      turnPlan: {
+        ...INCLUDED_TURN_PLAN,
+        refusal: buildQuotaRefusal({
+          exhaustedKind: 'limit',
+          operationType: UsageOperationType.AI_CHAT_INCLUDED,
+        }),
+      },
+    });
+
+    await expect(job.handle(jobData)).rejects.toMatchObject({
+      code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+    });
+
+    expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
+    expect(turnRecorderService.markRunning).not.toHaveBeenCalled();
+    expect(publishedEvents).toContainEqual(
+      expect.objectContaining({
+        type: 'stream-error',
+        code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+      }),
+    );
+    expect(claimReleases()).toContainEqual({
+      turnError: expect.objectContaining({
+        code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+      }),
+    });
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).toHaveBeenCalledWith({ threadId: 'thread-id', workspace });
+  });
+
+  it('still runs a paid turn whose allowance ran out after the pre-flight, to stop at its first step', async () => {
+    const { job, chatExecutionService, agentChatStreamingService } = buildJob({
+      turnPlan: {
+        ...PAID_TURN_PLAN,
+        refusal: buildQuotaRefusal({
+          exhaustedKind: 'allowance',
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+        }),
+      },
+    });
+
+    await job.handle(jobData);
+
+    expect(chatExecutionService.streamChat).toHaveBeenCalled();
+    expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+  });
+
+  it('warns that included chat is paused once the reply that crossed the ceiling is saved', async () => {
+    const { job, publishedEvents } = buildJob({
+      turnPlan: INCLUDED_TURN_PLAN,
+      hasReachedIncludedChatLimit: true,
+    });
+
+    await job.handle(jobData);
+
+    expect(publishedEvents.slice(-2).map((event) => event.type)).toEqual([
+      'message-persisted',
+      'included-chat-paused',
+    ]);
+  });
+
+  it('leaves the queue to hold what the pause would refuse once a turn crossed the ceiling', async () => {
+    const { job, agentChatStreamingService } = buildJob({
+      turnPlan: INCLUDED_TURN_PLAN,
+      hasReachedIncludedChatLimit: true,
+    });
+
+    await job.handle(jobData);
+
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).toHaveBeenCalledWith({ threadId: 'thread-id', workspace });
+  });
+
+  it('counts an included turn the ceiling stopped before any text apart from an empty reply', async () => {
+    const { job, turnCounts, turnRecorderService } = buildJob({
+      chatStream: createFakeChatStream({ parts: EMPTY_REPLY_PARTS }),
+      turnPlan: INCLUDED_TURN_PLAN,
+      hasReachedIncludedChatLimit: true,
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([
+      expect.objectContaining({
+        attributes: expect.objectContaining({
+          failure_phase: 'included_chat_paused',
+        }),
+      }),
+    ]);
+    expect(turnRecorderService.finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.FAILED,
+        error: expect.objectContaining({
+          code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+        }),
+      }),
+    );
+  });
+
+  it('does not warn about the pause when the turn stayed under the ceiling', async () => {
+    const { job, publishedEvents } = buildJob({
+      turnPlan: INCLUDED_TURN_PLAN,
+    });
+
+    await job.handle(jobData);
+
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'included-chat-paused',
     );
   });
 

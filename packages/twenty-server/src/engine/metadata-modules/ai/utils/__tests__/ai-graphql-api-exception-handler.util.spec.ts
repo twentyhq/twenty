@@ -60,6 +60,23 @@ describe('aiGraphqlApiExceptionHandler', () => {
     );
   });
 
+  it('maps an included chat pause to QUOTA_EXHAUSTED, keeping the pause as its subCode', () => {
+    const error = new AiException(
+      'Workspace workspace-id reached its included AI chat fair-use limit',
+      AiExceptionCode.INCLUDED_CHAT_PAUSED,
+    );
+
+    const graphqlError = catchGraphqlError(error);
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.QUOTA_EXHAUSTED);
+    expect(graphqlError.extensions.subCode).toBe(
+      AiExceptionCode.INCLUDED_CHAT_PAUSED,
+    );
+    expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
+    expect(graphqlError.extensions).not.toHaveProperty('limit');
+    expect(graphqlError.extensions).not.toHaveProperty('remaining');
+  });
+
   it('maps MESSAGE_NOT_FOUND to NOT_FOUND', () => {
     const error = new AiException(
       'Message not found',

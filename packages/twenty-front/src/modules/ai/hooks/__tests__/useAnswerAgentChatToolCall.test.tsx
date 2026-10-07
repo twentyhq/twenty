@@ -8,8 +8,10 @@ import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { isAiChatIncludedChatPausedError } from '@/ai/utils/isAiChatIncludedChatPausedError';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -34,6 +36,7 @@ const key = {
 const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
 const isAwaitingFirstChunkAtom =
   agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily(key);
+const errorAtom = agentChatErrorComponentFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
@@ -127,6 +130,29 @@ describe('useAnswerAgentChatToolCall', () => {
     expect(readToolOutput()).toEqual(PENDING_OUTPUT);
     expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
     expect(enqueueToast).toHaveBeenCalled();
+  });
+
+  it('keeps the included chat pause on the thread when it refuses the answer', async () => {
+    mutate.mockRejectedValue(
+      new CombinedGraphQLErrors({
+        data: null,
+        errors: [
+          {
+            message: 'Included chat paused',
+            extensions: {
+              code: 'QUOTA_EXHAUSTED',
+              subCode: 'INCLUDED_CHAT_PAUSED',
+            },
+          },
+        ],
+      }),
+    );
+
+    expect(await answer()).toBe(false);
+    expect(isAiChatIncludedChatPausedError(jotaiStore.get(errorAtom))).toBe(
+      true,
+    );
+    expect(readToolOutput()).toEqual(PENDING_OUTPUT);
   });
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {

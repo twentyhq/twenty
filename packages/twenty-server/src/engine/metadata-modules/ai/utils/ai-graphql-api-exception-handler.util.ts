@@ -1,7 +1,9 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  BaseGraphQLError,
   ConflictError,
+  ErrorCode,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
@@ -44,6 +46,8 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
         throw new ForbiddenError(error);
+      case AiExceptionCode.INCLUDED_CHAT_PAUSED:
+        throw new BaseGraphQLError(error, ErrorCode.QUOTA_EXHAUSTED);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       case AiExceptionCode.STREAM_INTERRUPTED:

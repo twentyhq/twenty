@@ -3044,6 +3044,7 @@ export interface SearchField {
 }
 
 export interface SendChatMessageResult {
+    isIncluded: Scalars['Boolean']
     mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
@@ -7249,6 +7250,7 @@ export interface SearchFieldGenqlSelection{
 }
 
 export interface SendChatMessageResultGenqlSelection{
+    isIncluded?: boolean | number
     mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number

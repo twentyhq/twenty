@@ -1,4 +1,5 @@
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatIncludedChatPausedError } from '@/ai/utils/isAiChatIncludedChatPausedError';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
@@ -6,7 +7,11 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 export const getAiChatQuotaExhaustedKind = (
   error: unknown,
 ): 'limit' | 'allowance' | null => {
-  if (!isGraphqlErrorOfType(error, AiChatErrorCode.QUOTA_EXHAUSTED)) {
+  // The pause travels as QUOTA_EXHAUSTED, but it is neither a limit the member can manage nor the allowance
+  if (
+    !isGraphqlErrorOfType(error, AiChatErrorCode.QUOTA_EXHAUSTED) ||
+    isAiChatIncludedChatPausedError(error)
+  ) {
     return null;
   }
 

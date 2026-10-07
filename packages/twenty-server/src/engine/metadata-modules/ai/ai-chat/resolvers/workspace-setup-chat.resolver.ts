@@ -16,6 +16,7 @@ import { matchWorkspacePersonEnrichmentToUserEmail } from 'src/engine/core-modul
 import { sanitizeWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-company-enrichment.util';
 import { sanitizeWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-person-enrichment.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -57,6 +58,7 @@ export class WorkspaceSetupChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthIsUserSession() isUserSession: boolean,
   ) {
     return this.workspaceSetupChatService.startWorkspaceSetupChat({
       userId: user.id,
@@ -70,6 +72,7 @@ export class WorkspaceSetupChatResolver {
         personEnrichment: sanitizeWorkspacePersonEnrichment(personContext),
         userEmail: user.email,
       }),
+      principalType: isUserSession ? 'userSession' : 'application',
     });
   }
 }

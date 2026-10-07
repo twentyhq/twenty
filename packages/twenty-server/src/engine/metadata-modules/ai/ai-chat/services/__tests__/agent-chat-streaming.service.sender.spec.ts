@@ -8,6 +8,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const queued = {
   id: 'message-b',
@@ -65,10 +66,14 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
+    { findIncludedChatModel: jest.fn().mockResolvedValue(null) } as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };
-const args = { workspaceId: 'workspace', threadId: 'thread' };
+const args = {
+  workspace: { id: 'workspace' } as WorkspaceEntity,
+  threadId: 'thread',
+};
 
 describe('Sender-aware queue draining', () => {
   it('starts the next turn as its saved sender', async () => {

@@ -48,6 +48,8 @@ const StyledErrorMessage = styled.div`
 
 type AiChatErrorMessageProps = {
   error: AiChatError;
+  title?: string;
+  message?: string;
   hint?: string;
   onRetry?: () => void;
   button?: ComponentProps<typeof InlineBanner>['button'];
@@ -55,6 +57,8 @@ type AiChatErrorMessageProps = {
 
 export const AiChatErrorMessage = ({
   error,
+  title,
+  message,
   hint,
   onRetry,
   button,
@@ -70,9 +74,13 @@ export const AiChatErrorMessage = ({
         <IconAlertCircle size={theme.icon.size.md} />
       </StyledErrorIcon>
       <StyledErrorContent>
-        <StyledErrorTitle>{t`Failed to get response`}</StyledErrorTitle>
+        <StyledErrorTitle>
+          {title ?? t`Failed to get response`}
+        </StyledErrorTitle>
         <StyledErrorMessage>
-          {errorMessage || t`An error occurred while processing your message`}
+          {message ??
+            (errorMessage ||
+              t`An error occurred while processing your message`)}
         </StyledErrorMessage>
         {isDefined(hint) && <StyledErrorMessage>{hint}</StyledErrorMessage>}
       </StyledErrorContent>

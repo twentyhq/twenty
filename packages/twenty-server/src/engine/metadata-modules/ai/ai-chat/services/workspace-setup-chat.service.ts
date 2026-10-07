@@ -19,6 +19,8 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatTurnPlanService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-plan.service';
+import { type AgentChatPrincipalType } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-principal-type.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
@@ -29,6 +31,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;
+
+const OPENING_TURN_MODEL_ID = AUTO_SELECT_MODEL_ID_BY_TIER.fast;
 
 type StartWorkspaceSetupChatServiceResult =
   | {
@@ -50,6 +54,7 @@ export class WorkspaceSetupChatService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly agentChatTurnPlanService: AgentChatTurnPlanService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly i18nService: I18nService,
@@ -69,6 +74,7 @@ export class WorkspaceSetupChatService {
     workspace,
     companyContext,
     personContext,
+    principalType,
   }: {
     userId: string;
     userEmail: string;
@@ -78,6 +84,7 @@ export class WorkspaceSetupChatService {
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
     personContext: WorkspacePersonEnrichment | null;
+    principalType: AgentChatPrincipalType;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
@@ -148,10 +155,13 @@ export class WorkspaceSetupChatService {
       }
     }
 
-    const hasAvailableCredits =
-      await this.billingUsageService.hasAvailableCredits(workspace.id);
+    const canStartOpeningTurn = await this.canStartOpeningTurn({
+      workspace,
+      userWorkspaceId,
+      principalType,
+    });
 
-    if (!hasAvailableCredits) {
+    if (!canStartOpeningTurn) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
@@ -179,7 +189,7 @@ export class WorkspaceSetupChatService {
         },
         locale,
       }),
-      modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
+      modelId: OPENING_TURN_MODEL_ID,
     });
 
     if (!isDefined(openingTurn)) {
@@ -194,6 +204,37 @@ export class WorkspaceSetupChatService {
     });
 
     return { outcome: WorkspaceSetupChatOutcome.STARTED, thread };
+  }
+
+  // An entitled workspace can run setup on the included model once its allowance is spent
+  private async canStartOpeningTurn({
+    workspace,
+    userWorkspaceId,
+    principalType,
+  }: {
+    workspace: WorkspaceEntity;
+    userWorkspaceId: string;
+    principalType: AgentChatPrincipalType;
+  }): Promise<boolean> {
+    const includedModel =
+      await this.agentChatTurnPlanService.findIncludedChatModel({
+        workspaceId: workspace.id,
+        principalType,
+      });
+
+    if (!isDefined(includedModel)) {
+      return this.billingUsageService.hasAvailableCredits(workspace.id);
+    }
+
+    const turnPlan =
+      await this.agentChatTurnPlanService.planTurnWithIncludedModel({
+        workspace,
+        requestedModelId: OPENING_TURN_MODEL_ID,
+        userWorkspaceId,
+        includedModel,
+      });
+
+    return !isDefined(turnPlan.refusal);
   }
 
   private async createThreadWithDeterministicId({

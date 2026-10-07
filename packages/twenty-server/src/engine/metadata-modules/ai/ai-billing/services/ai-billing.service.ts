@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type ExhaustedKind } from 'src/engine/core-modules/usage-limit/types/exhausted-kind.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -149,7 +150,10 @@ export class AiBillingService {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+  }): Promise<{
+    hasNoMoreAvailableCredits: boolean;
+    exhaustedKind: ExhaustedKind | null;
+  }> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -169,14 +173,25 @@ export class AiBillingService {
         }),
       });
 
-    return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
+    return {
+      hasNoMoreAvailableCredits: exhaustedKind === 'allowance',
+      exhaustedKind,
+    };
   }
 
-  async billNativeWebSearchUsage(
-    nativeWebSearchCallCount: number,
-    workspaceId: string,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  async billNativeWebSearchUsage({
+    nativeWebSearchCallCount,
+    workspaceId,
+    userWorkspaceId,
+    operationType,
+  }: {
+    nativeWebSearchCallCount: number;
+    workspaceId: string;
+    userWorkspaceId?: string | null;
+    operationType:
+      | UsageOperationType.WEB_SEARCH
+      | UsageOperationType.AI_CHAT_INCLUDED;
+  }): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
       return;
     }
@@ -194,7 +209,7 @@ export class AiBillingService {
       events: [
         {
           resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.WEB_SEARCH,
+          operationType,
           creditsUsedMicro,
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,

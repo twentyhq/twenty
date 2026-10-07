@@ -6,14 +6,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierBars } from '@/ai/components/AiModelTierBars';
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
+import { useAgentChatSelectedModelTier } from '@/ai/hooks/useAgentChatSelectedModelTier';
+import { useAiChatIncludedModel } from '@/ai/hooks/useAiChatIncludedModel';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const SLIDER_DROPDOWN_WIDTH_PX = 240;
 
@@ -32,16 +32,20 @@ export const AiModelTierDropdown = ({
 }: AiModelTierDropdownProps) => {
   const { t } = useLingui();
   const tiers = useAiModelTiers();
-  const { chatTier } = useWorkspaceAiModelTiers();
-  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const [agentChatUserSelectedModelTier, setAgentChatUserSelectedModelTier] =
-    useAtomState(agentChatUserSelectedModelTierState);
+  const { selectedTier, workspaceTier } = useAgentChatSelectedModelTier();
+  const { includedModel, isAutoSwitchedToIncludedModel } =
+    useAiChatIncludedModel();
+  const setAgentChatUserSelectedModelTier = useSetAtomState(
+    agentChatUserSelectedModelTierState,
+  );
 
-  // The setup chat always runs on the fast tier server-side.
-  const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
-
-  const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
   const selectedResolvedTier = tiers[AI_MODEL_TIERS.indexOf(selectedTier)];
+
+  // The server runs the turn on the included model, so the picker names that model rather than the tier's
+  const autoSwitchedModelLabel =
+    isAutoSwitchedToIncludedModel && isDefined(includedModel)
+      ? includedModel.label
+      : undefined;
 
   const handleTierChange = (tier: AiModelTier) => {
     setAgentChatUserSelectedModelTier(tier === workspaceTier ? null : tier);
@@ -55,9 +59,11 @@ export const AiModelTierDropdown = ({
           <AiModelTierBars
             selectedTier={selectedTier}
             label={
-              isDefined(selectedResolvedTier.model)
-                ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
-                : selectedResolvedTier.label
+              isDefined(autoSwitchedModelLabel)
+                ? t`Included: ${autoSwitchedModelLabel}`
+                : isDefined(selectedResolvedTier.model)
+                  ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
+                  : selectedResolvedTier.label
             }
             disabled={disabled}
           />
@@ -74,6 +80,8 @@ export const AiModelTierDropdown = ({
           <AiModelTierSlider
             selectedTier={selectedTier}
             onTierChange={handleTierChange}
+            title={autoSwitchedModelLabel}
+            tag={isDefined(autoSwitchedModelLabel) ? t`Included` : undefined}
             disabled={disabled}
           />
         </StyledSliderContainer>

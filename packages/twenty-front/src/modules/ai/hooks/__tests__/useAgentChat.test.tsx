@@ -11,11 +11,15 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SendChatMessageDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const attachChatThreadToRecord = jest.fn();
 
@@ -41,24 +45,49 @@ const DRAFT_MENTIONING_COMPANY =
     label: 'Acme',
   });
 
+type SendChatMessageOutcome = 'sent' | 'sentIncluded' | 'failed';
+
 const buildSendChatMessageMock = (
-  outcome: 'sent' | 'failed',
+  outcome: SendChatMessageOutcome,
 ): MockedResponse => ({
   request: { query: SendChatMessageDocument, variables: () => true },
-  ...(outcome === 'sent'
-    ? {
+  ...(outcome === 'failed'
+    ? { error: new Error('Network error') }
+    : {
         result: {
           data: {
             sendChatMessage: {
               messageId: 'message-id',
               queued: false,
               streamId: null,
+              isIncluded: outcome === 'sentIncluded',
+              mentionedParticipantWorkspaceMemberIds: null,
             },
           },
         },
-      }
-    : { error: new Error('Network error') }),
+      }),
 });
+
+const workspaceWithCreditsCap = (hasReachedCurrentPeriodCap: boolean) => ({
+  ...mockCurrentWorkspace,
+  currentBillingSubscription: {
+    ...mockCurrentWorkspace.currentBillingSubscription,
+    billingSubscriptionItems:
+      mockCurrentWorkspace.currentBillingSubscription.billingSubscriptionItems.map(
+        (billingSubscriptionItem) => ({
+          ...billingSubscriptionItem,
+          hasReachedCurrentPeriodCap,
+        }),
+      ),
+  },
+});
+
+const hasReachedCreditsCap = () =>
+  jotaiStore
+    .get(currentWorkspaceState.atom)
+    ?.currentBillingSubscription?.billingSubscriptionItems?.find(
+      isResourceCreditSubscriptionItem,
+    )?.hasReachedCurrentPeriodCap === true;
 
 const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
@@ -66,15 +95,21 @@ const readPersistedDrafts = () =>
 const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
+  hasReachedCurrentPeriodCap = false,
 }: {
   persistedDrafts: Record<string, string>;
-  sendChatMessageOutcomes: ('sent' | 'failed')[];
+  sendChatMessageOutcomes: SendChatMessageOutcome[];
+  hasReachedCurrentPeriodCap?: boolean;
 }) => {
   const ensureThreadIdForSend = jest.fn(() => Promise.resolve(THREAD_ID));
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
     onInitializeJotaiStore: (store) => {
       store.set(aiModelsState.atom, [{ modelId: 'model', label: 'Model' }]);
+      store.set(
+        currentWorkspaceState.atom,
+        workspaceWithCreditsCap(hasReachedCurrentPeriodCap),
+      );
     },
   });
 
@@ -177,5 +212,37 @@ describe('useAgentChat', () => {
     await send(result);
 
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  it('takes a billed send as proof the workspace has credits again', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      hasReachedCurrentPeriodCap: true,
+    });
+
+    await send(result);
+
+    expect(readPersistedDrafts()[THREAD_ID]).toBeUndefined();
+    expect(hasReachedCreditsCap()).toBe(false);
+  });
+
+  it('keeps the workspace out of credits after a send on the included model', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sentIncluded'],
+      hasReachedCurrentPeriodCap: true,
+    });
+
+    await send(result);
+
+    expect(readPersistedDrafts()[THREAD_ID]).toBeUndefined();
+    expect(hasReachedCreditsCap()).toBe(true);
   });
 });

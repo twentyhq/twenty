@@ -409,6 +409,18 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        // Follows message-persisted, so the reply that crossed the ceiling is already saved
+        case 'included-chat-paused': {
+          store.set(
+            errorAtom,
+            createAiChatCodedError(
+              'Included chat paused: the workspace reached its daily fair-use limit.',
+              AiChatErrorCode.INCLUDED_CHAT_PAUSED,
+            ),
+          );
+          break;
+        }
+
         case 'credits-exhausted': {
           //TODO : add real time on currentUser
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);

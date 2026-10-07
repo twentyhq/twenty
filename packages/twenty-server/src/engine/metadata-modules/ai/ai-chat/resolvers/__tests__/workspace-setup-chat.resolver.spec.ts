@@ -47,6 +47,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       'user-workspace-id',
       'member',
       workspace,
+      true,
     );
 
   it('should pass a null company context to the service when the client-supplied object is malformed', async () => {
@@ -69,6 +70,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       workspace,
       companyContext: null,
       personContext: null,
+      principalType: 'userSession',
     });
   });
 

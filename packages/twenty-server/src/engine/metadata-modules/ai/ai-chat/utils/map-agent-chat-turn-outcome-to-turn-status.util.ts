@@ -4,6 +4,7 @@ import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-cha
 import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const FAILURE_ERRORS: Record<
   Exclude<
@@ -17,6 +18,11 @@ const FAILURE_ERRORS: Record<
     message: 'The agent stopped without replying.',
   },
   credits_exhausted: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
+  included_chat_paused: {
+    code: AiExceptionCode.INCLUDED_CHAT_PAUSED,
+    message:
+      'Included chat paused: the workspace reached its daily fair-use limit.',
+  },
 };
 
 export const mapAgentChatTurnOutcomeToTurnStatus = (

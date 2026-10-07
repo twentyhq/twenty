@@ -156,6 +156,9 @@ describe('AgentChatStreamingService claim & reap', () => {
         assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
       } as never,
       { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
+      {
+        findIncludedChatModel: jest.fn().mockResolvedValue(null),
+      } as never,
     );
 
     return {
@@ -344,7 +347,7 @@ describe('AgentChatStreamingService claim & reap', () => {
 
       await service.flushNextQueuedMessage({
         threadId: 'thread-id',
-        workspaceId: 'workspace-id',
+        workspace,
       });
 
       expect(agentChatService.promoteQueuedMessage).not.toHaveBeenCalled();
@@ -358,7 +361,7 @@ describe('AgentChatStreamingService claim & reap', () => {
 
       await service.flushNextQueuedMessage({
         threadId: 'thread-id',
-        workspaceId: 'workspace-id',
+        workspace,
       });
 
       expect(agentChatService.promoteQueuedMessage).toHaveBeenCalledWith(

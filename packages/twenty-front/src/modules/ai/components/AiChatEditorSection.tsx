@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
@@ -13,6 +14,7 @@ import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMe
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
+import { AiChatUseIncludedModelBanner } from '@/ai/components/AiChatUseIncludedModelBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
@@ -28,6 +30,8 @@ import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedTex
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
+import { useAgentChatSelectedModelTier } from '@/ai/hooks/useAgentChatSelectedModelTier';
+import { useAiChatIncludedModel } from '@/ai/hooks/useAiChatIncludedModel';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -138,8 +142,19 @@ const EditableAiChatEditorSection = () => {
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
+  const { isFollowingWorkspaceTier } = useAgentChatSelectedModelTier();
+  const { includedModel, isSelectedModelIncluded } = useAiChatIncludedModel();
+  // Neither the allowance nor customer limits count included chat, so their banners would warn about a chat that works
+  const shouldShowNoMoreCreditsBanner =
+    hasReachedAiChatCreditsCap && !isSelectedModelIncluded;
   const shouldShowUsageLimitBanner =
-    !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
+    !hasReachedAiChatCreditsCap &&
+    hasReachedAiChatUsageLimit &&
+    !isSelectedModelIncluded;
+  const includedModelToSwitchTo =
+    shouldShowNoMoreCreditsBanner && !isFollowingWorkspaceTier
+      ? includedModel
+      : null;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
 
@@ -200,7 +215,12 @@ const EditableAiChatEditorSection = () => {
             message={t`No AI provider is configured on this instance.`}
           />
         )}
-        {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
+        {shouldShowNoMoreCreditsBanner && <AiChatNoMoreBillingCreditsBanner />}
+        {isDefined(includedModelToSwitchTo) && (
+          <AiChatUseIncludedModelBanner
+            includedModelLabel={includedModelToSwitchTo.label}
+          />
+        )}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
         <AiChatParticipantMentionBar editor={editor} />
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
