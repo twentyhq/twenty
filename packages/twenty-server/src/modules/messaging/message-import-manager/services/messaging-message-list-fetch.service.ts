@@ -33,6 +33,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import { filterMessageExternalIdsToDelete } from 'src/modules/messaging/message-import-manager/utils/filter-message-external-ids-to-delete.util';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -121,11 +122,12 @@ export class MessagingMessageListFetchService {
               messageFoldersToSync,
             );
 
-          await this.cacheStorage.mdel([
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-            `messages-to-import-total:${workspaceId}:${freshMessageChannel.id}`,
-            `messages-imported:${workspaceId}:${freshMessageChannel.id}`,
-          ]);
+          const messagesImportCacheKeys = buildMessagesImportCacheKeys({
+            workspaceId,
+            messageChannelId: freshMessageChannel.id,
+          });
+
+          await this.cacheStorage.mdel(Object.values(messagesImportCacheKeys));
 
           const messageExternalIds = [
             ...messageLists.flatMap(
@@ -191,7 +193,7 @@ export class MessagingMessageListFetchService {
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
               await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+                messagesImportCacheKeys.messagesToImportKey,
                 messageExternalIdsToImport,
                 ONE_WEEK_IN_MILLISECONDS,
               );
@@ -263,18 +265,20 @@ export class MessagingMessageListFetchService {
             return;
           }
 
-          await this.cacheStorage.set(
-            `messages-to-import-total:${workspaceId}:${freshMessageChannel.id}`,
-            await this.cacheStorage.getSetLength(
-              `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-            ),
-            ONE_WEEK_IN_MILLISECONDS,
-          );
-          await this.cacheStorage.set(
-            `messages-imported:${workspaceId}:${freshMessageChannel.id}`,
-            0,
-            ONE_WEEK_IN_MILLISECONDS,
-          );
+          await this.cacheStorage.mset([
+            {
+              key: messagesImportCacheKeys.messagesToImportTotalKey,
+              value: await this.cacheStorage.getSetLength(
+                messagesImportCacheKeys.messagesToImportKey,
+              ),
+              ttl: ONE_WEEK_IN_MILLISECONDS,
+            },
+            {
+              key: messagesImportCacheKeys.messagesImportedKey,
+              value: 0,
+              ttl: ONE_WEEK_IN_MILLISECONDS,
+            },
+          ]);
 
           this.logger.debug(
             `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,

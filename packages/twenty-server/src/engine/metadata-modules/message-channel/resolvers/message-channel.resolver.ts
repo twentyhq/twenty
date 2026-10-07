@@ -40,6 +40,8 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
+import { computeMessageImportProgress } from 'src/engine/metadata-modules/message-channel/utils/compute-message-import-progress.util';
+import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
@@ -100,27 +102,22 @@ export class MessageChannelResolver {
       return null;
     }
 
-    const totalMessagesToImportCount = await this.cacheStorage.get<number>(
-      `messages-to-import-total:${workspace.id}:${messageChannel.id}`,
-    );
+    const { messagesToImportTotalKey, messagesImportedKey } =
+      buildMessagesImportCacheKeys({
+        workspaceId: workspace.id,
+        messageChannelId: messageChannel.id,
+      });
 
-    if (
-      !isDefined(totalMessagesToImportCount) ||
-      totalMessagesToImportCount === 0
-    ) {
-      return null;
-    }
+    const [totalMessagesToImportCount, importedMessagesCount] =
+      await this.cacheStorage.mget<number>([
+        messagesToImportTotalKey,
+        messagesImportedKey,
+      ]);
 
-    const importedMessagesCount =
-      (await this.cacheStorage.get<number>(
-        `messages-imported:${workspace.id}:${messageChannel.id}`,
-      )) ?? 0;
-
-    return Math.floor(
-      (Math.min(importedMessagesCount, totalMessagesToImportCount) /
-        totalMessagesToImportCount) *
-        100,
-    );
+    return computeMessageImportProgress({
+      importedMessagesCount,
+      totalMessagesToImportCount,
+    });
   }
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {

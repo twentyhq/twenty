@@ -13,6 +13,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import { RECENT_MESSAGES_IMPORT_CACHE_TTL_MS } from 'src/modules/onboarding-recent-messages-import/constants/recent-messages-import-cache-ttl-ms.constant';
 import { RecentMessagesService } from 'src/modules/onboarding-recent-messages-import/services/recent-messages.service';
 
@@ -71,7 +72,10 @@ export class OnboardingRecentMessagesImportService {
           }
 
           await this.cacheStorage.setAdd(
-            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            buildMessagesImportCacheKeys({
+              workspaceId,
+              messageChannelId: messageChannel.id,
+            }).messagesToImportKey,
             messageExternalIds,
             RECENT_MESSAGES_IMPORT_CACHE_TTL_MS,
           );
