@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { isCreditTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-top-up-allowed-for-subscription.util';
+import { isCreditOneTimeTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-one-time-top-up-allowed-for-subscription.util';
 
 const ACTIVE = {
   status: SubscriptionStatus.Active,
@@ -9,9 +9,9 @@ const ACTIVE = {
   cancelAtPeriodEnd: false,
 };
 
-describe('isCreditTopUpAllowedForSubscription', () => {
+describe('isCreditOneTimeTopUpAllowedForSubscription', () => {
   it('allows an active subscription', () => {
-    expect(isCreditTopUpAllowedForSubscription(ACTIVE)).toBe(true);
+    expect(isCreditOneTimeTopUpAllowedForSubscription(ACTIVE)).toBe(true);
   });
 
   it.each([
@@ -21,14 +21,14 @@ describe('isCreditTopUpAllowedForSubscription', () => {
     SubscriptionStatus.Canceled,
     SubscriptionStatus.Paused,
   ])('refuses a %s subscription', (status) => {
-    expect(isCreditTopUpAllowedForSubscription({ ...ACTIVE, status })).toBe(
-      false,
-    );
+    expect(
+      isCreditOneTimeTopUpAllowedForSubscription({ ...ACTIVE, status }),
+    ).toBe(false);
   });
 
   it('refuses a subscription canceling at period end', () => {
     expect(
-      isCreditTopUpAllowedForSubscription({
+      isCreditOneTimeTopUpAllowedForSubscription({
         ...ACTIVE,
         cancelAtPeriodEnd: true,
       }),
@@ -37,7 +37,7 @@ describe('isCreditTopUpAllowedForSubscription', () => {
 
   it('refuses a subscription with a scheduled cancellation date', () => {
     expect(
-      isCreditTopUpAllowedForSubscription({
+      isCreditOneTimeTopUpAllowedForSubscription({
         ...ACTIVE,
         cancelAt: new Date('2026-12-01T00:00:00.000Z'),
       }),

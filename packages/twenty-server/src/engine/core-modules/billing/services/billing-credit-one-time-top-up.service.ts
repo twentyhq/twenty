@@ -9,8 +9,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { CREDIT_TOP_UP_CREDIT_AMOUNTS } from 'src/engine/core-modules/billing/constants/credit-top-up-credit-amounts.constant';
-import { type BillingCreditTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up-offer.dto';
+import { CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNTS } from 'src/engine/core-modules/billing/constants/credit-one-time-top-up-credit-amounts.constant';
+import { type BillingCreditOneTimeTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up-offer.dto';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
@@ -19,11 +19,11 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { type OneOffInvoicePayment } from 'src/engine/core-modules/billing/types/one-off-invoice-payment.type';
-import { buildCreditTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/build-credit-top-up-invoice-metadata.util';
+import { buildCreditOneTimeTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/build-credit-one-time-top-up-invoice-metadata.util';
 import { canComputeAutomaticTax } from 'src/engine/core-modules/billing/utils/can-compute-automatic-tax.util';
-import { computeCreditTopUpAmountCents } from 'src/engine/core-modules/billing/utils/compute-credit-top-up-amount-cents.util';
-import { findCreditTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-top-up-price.util';
-import { isCreditTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-top-up-allowed-for-subscription.util';
+import { computeCreditOneTimeTopUpAmountCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-amount-cents.util';
+import { findCreditOneTimeTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-one-time-top-up-price.util';
+import { isCreditOneTimeTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-one-time-top-up-allowed-for-subscription.util';
 
 @Injectable()
 export class BillingCreditOneTimeTopUpService {
@@ -34,7 +34,9 @@ export class BillingCreditOneTimeTopUpService {
     private readonly stripeInvoiceService: StripeInvoiceService,
   ) {}
 
-  async getOffers(workspaceId: string): Promise<BillingCreditTopUpOfferDTO[]> {
+  async getOffers(
+    workspaceId: string,
+  ): Promise<BillingCreditOneTimeTopUpOfferDTO[]> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
@@ -42,20 +44,20 @@ export class BillingCreditOneTimeTopUpService {
 
     if (
       !isDefined(subscription) ||
-      !isCreditTopUpAllowedForSubscription(subscription)
+      !isCreditOneTimeTopUpAllowedForSubscription(subscription)
     ) {
       return [];
     }
 
-    const price = findCreditTopUpPrice(subscription);
+    const price = findCreditOneTimeTopUpPrice(subscription);
 
     if (!isDefined(price)) {
       return [];
     }
 
-    return CREDIT_TOP_UP_CREDIT_AMOUNTS.map((creditAmount) => ({
+    return CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNTS.map((creditAmount) => ({
       creditAmount,
-      amountCents: computeCreditTopUpAmountCents({
+      amountCents: computeCreditOneTimeTopUpAmountCents({
         creditAmountMicro: creditAmount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
         price,
       }),
@@ -74,7 +76,7 @@ export class BillingCreditOneTimeTopUpService {
     creditAmount: number;
     idempotencyKey: string;
   }): Promise<OneOffInvoicePayment> {
-    if (!CREDIT_TOP_UP_CREDIT_AMOUNTS.includes(creditAmount)) {
+    if (!CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNTS.includes(creditAmount)) {
       throw new BillingException(
         `Cannot buy ${creditAmount} credits for workspace ${workspaceId}: not one of the offered amounts`,
         BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
@@ -86,14 +88,14 @@ export class BillingCreditOneTimeTopUpService {
         { workspaceId },
       );
 
-    if (!isCreditTopUpAllowedForSubscription(subscription)) {
+    if (!isCreditOneTimeTopUpAllowedForSubscription(subscription)) {
       throw new BillingException(
         `Cannot buy credits for workspace ${workspaceId}: subscription ${subscription.id} is ${subscription.status} or canceling`,
-        BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_ALLOWED,
+        BillingExceptionCode.BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED,
       );
     }
 
-    const price = findCreditTopUpPrice(subscription);
+    const price = findCreditOneTimeTopUpPrice(subscription);
 
     if (!isDefined(price)) {
       throw new BillingException(
@@ -109,7 +111,7 @@ export class BillingCreditOneTimeTopUpService {
     ) {
       throw new BillingException(
         `Cannot buy credits for workspace ${workspaceId}: customer ${stripeCustomerId} has no payment method`,
-        BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_ALLOWED,
+        BillingExceptionCode.BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED,
       );
     }
 
@@ -123,14 +125,14 @@ export class BillingCreditOneTimeTopUpService {
     const payment = await this.stripeInvoiceService.chargeOneOffInvoice({
       stripeCustomerId,
       stripeSubscriptionId,
-      amountInCents: computeCreditTopUpAmountCents({
+      amountInCents: computeCreditOneTimeTopUpAmountCents({
         creditAmountMicro,
         price,
       }),
       currency,
       description: 'Credit top-up',
       lineDescription: `${creditAmount} credits`,
-      metadata: buildCreditTopUpInvoiceMetadata({
+      metadata: buildCreditOneTimeTopUpInvoiceMetadata({
         workspaceId,
         userId,
         creditAmountMicro,

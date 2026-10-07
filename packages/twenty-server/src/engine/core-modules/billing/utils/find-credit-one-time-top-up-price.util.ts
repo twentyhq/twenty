@@ -8,7 +8,7 @@ import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is
 const getCentsPerMicroCredit = (price: BillingPriceEntity): number =>
   Number(price.unitAmount) / Number(price.metadata?.credit_amount);
 
-export const findCreditTopUpPrice = (
+export const findCreditOneTimeTopUpPrice = (
   subscription: Pick<
     BillingSubscriptionEntity,
     'billingSubscriptionItems' | 'interval' | 'currency'
