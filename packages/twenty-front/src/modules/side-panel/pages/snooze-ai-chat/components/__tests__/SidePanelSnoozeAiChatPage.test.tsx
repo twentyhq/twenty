@@ -7,6 +7,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { snoozeAiChatIsInChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatIsInChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -15,10 +16,15 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const snoozeAgentChatThreads = jest.fn();
+const snoozeAgentChatThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
+}));
+
+jest.mock('@/ai/hooks/useAgentChatChannelThreadTriage', () => ({
+  useAgentChatChannelThreadTriage: () => ({ snoozeAgentChatThreadsInChannel }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -62,6 +68,23 @@ describe('SidePanelSnoozeAiChatPage', () => {
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
     expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+      threadIds: ['thread-1', 'thread-2'],
+      snoozedUntil: new Date(2026, 9, 1, 18, 0),
+    });
+  });
+
+  it('snoozes the chats for their channel from a channel view', () => {
+    jotaiStore.set(
+      snoozeAiChatIsInChannelComponentState.atomFamily({ instanceId: PAGE_ID }),
+      true,
+    );
+
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByText('This evening'));
+
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });

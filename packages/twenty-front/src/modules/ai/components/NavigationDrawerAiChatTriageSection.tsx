@@ -1,9 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatOpenThreadsSummarySelector } from '@/ai/states/selectors/agentChatOpenThreadsSummarySelector';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
@@ -26,6 +28,9 @@ export const NavigationDrawerAiChatTriageSection = () => {
   const agentChatThreadFilterStatus = useAtomStateValue(
     agentChatThreadFilterStatusState,
   );
+  const isChannelShown = isDefined(
+    useAtomStateValue(agentChatShownChannelViewSelector),
+  );
   const {
     openThreadCount,
     hasUnreadOpenThread,
@@ -38,11 +43,12 @@ export const NavigationDrawerAiChatTriageSection = () => {
     getNavigationSubItemLeftAdornment({
       index,
       arrayLength: OPEN_SUB_FILTER_STATUSES.length,
-      selectedIndex: isAiChatInboxPath(location.pathname)
-        ? OPEN_SUB_FILTER_STATUSES.findIndex(
-            (filterStatus) => filterStatus === agentChatThreadFilterStatus,
-          )
-        : -1,
+      selectedIndex:
+        isAiChatInboxPath(location.pathname) && !isChannelShown
+          ? OPEN_SUB_FILTER_STATUSES.findIndex(
+              (filterStatus) => filterStatus === agentChatThreadFilterStatus,
+            )
+          : -1,
     });
 
   return (

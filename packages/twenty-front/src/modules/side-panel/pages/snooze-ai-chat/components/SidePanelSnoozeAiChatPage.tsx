@@ -4,7 +4,6 @@ import { useId, useState } from 'react';
 import { IconCalendar, IconClock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import {
   type AgentChatThreadSnoozeOption,
@@ -14,6 +13,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useSnoozeAiChatThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -33,7 +33,7 @@ export const SidePanelSnoozeAiChatPage = () => {
   const snoozeAiChatThreadIds = useAtomComponentStateValue(
     snoozeAiChatThreadIdsComponentState,
   );
-  const { snoozeAgentChatThreads } = useAgentChatThreadParticipants();
+  const { snoozeAiChatThreads } = useSnoozeAiChatThreads();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openDropdown } = useOpenDropdown();
@@ -61,7 +61,7 @@ export const SidePanelSnoozeAiChatPage = () => {
     }
 
     void closeSidePanelMenu();
-    void snoozeAgentChatThreads({
+    void snoozeAiChatThreads({
       threadIds: snoozeAiChatThreadIds,
       snoozedUntil: option.date,
     });

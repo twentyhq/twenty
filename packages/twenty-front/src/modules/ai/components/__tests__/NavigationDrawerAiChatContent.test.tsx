@@ -54,6 +54,10 @@ jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
   NavigationDrawerAiChatTriageSection: () => null,
 }));
 
+jest.mock('@/ai/components/NavigationDrawerAiChatChannelsSection', () => ({
+  NavigationDrawerAiChatChannelsSection: () => null,
+}));
+
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
@@ -92,19 +96,18 @@ describe('NavigationDrawerAiChatContent', () => {
     ];
   });
 
-  it('lists favorite chats in their own section and keeps them out of Recent', () => {
+  it('lists favorite chats, leaving the rest to triage and channels', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, [
       { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
     ]);
 
-    const { getByRole } = renderContent();
+    const { getByRole, queryByRole, queryByText } = renderContent();
 
     const favorites = getByRole('region', { name: 'Favorites' });
-    const recents = getByRole('region', { name: 'Recent' });
 
     expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
-    expect(within(recents).getByText('Pipeline review')).toBeInTheDocument();
-    expect(within(recents).queryByText('Quarterly plan')).toBeNull();
+    expect(queryByRole('region', { name: 'Recent' })).toBeNull();
+    expect(queryByText('Pipeline review')).toBeNull();
   });
 
   it('shows no Favorites section without favorite chats', () => {

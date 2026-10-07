@@ -9,6 +9,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
@@ -33,13 +34,14 @@ export const useCreateAgentChatThread = () => {
   const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
 
   const [createChatThreadMutation] = useMutation(CreateChatThreadDocument, {
-    onCompleted: (data) => {
+    onCompleted: (data, options) => {
       const newThread = {
         id: data.createChatThread.id,
         title: data.createChatThread.title ?? null,
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,
         deletedAt: null,
+        channelId: options?.variables?.channelId ?? null,
       };
 
       addAgentChatThread(newThread);
@@ -87,7 +89,11 @@ export const useCreateAgentChatThread = () => {
       return pendingCreation;
     }
 
-    const creation = createChatThreadMutation()
+    const creation = createChatThreadMutation({
+      variables: {
+        channelId: store.get(agentChatNewThreadChannelIdState.atom),
+      },
+    })
       .then(
         ({ data }) => data?.createChatThread.id ?? null,
         () => null,

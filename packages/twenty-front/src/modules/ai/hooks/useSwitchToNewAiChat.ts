@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
@@ -24,7 +25,10 @@ export const useSwitchToNewAiChat = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
-  const switchToNewChat = () => {
+  const switchToNewChat = ({
+    channelId = null,
+  }: { channelId?: string | null } = {}) => {
+    store.set(agentChatNewThreadChannelIdState.atom, channelId);
     setThreadIdCreatedFromDraft(null);
     store.set(hasTriggeredCreateForDraftState.atom, false);
     selectAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);

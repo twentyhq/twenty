@@ -22,6 +22,7 @@ export const agentChatThreadInboxStatusFamilySelector =
         const status = getAgentChatThreadInboxStatus({
           lastActivityAt: thread?.lastActivityAt,
           participant: participants?.[threadId],
+          isInChannel: isDefined(thread?.channelId),
         });
 
         // Before the rows load every thread would read as unread. The thread
@@ -35,6 +36,7 @@ export const agentChatThreadInboxStatusFamilySelector =
           isAssignedToMe:
             isDefined(currentWorkspaceMemberId) &&
             thread?.assigneeId === currentWorkspaceMemberId,
+          isChannelCopy: false,
         };
       },
     areEqual: isDeeplyEqual,

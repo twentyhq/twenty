@@ -11,18 +11,27 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
+import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
+import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
+import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
@@ -50,6 +59,13 @@ const StyledListPane = styled.div<{ $isFullWidth: boolean }>`
   display: flex;
   flex: ${({ $isFullWidth }) => ($isFullWidth ? '1' : '0 0 400px')};
   min-width: 0;
+`;
+
+const StyledListContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 `;
 
 const StyledThreadListContainer = styled.div`
@@ -80,9 +96,32 @@ const AiChatInboxPageContent = () => {
   const agentChatThreadFilterStatus = useAtomStateValue(
     agentChatThreadFilterStatusState,
   );
-  const FilterStatusIcon =
-    AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
-  const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
+  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+    ({ id }) => id === agentChatShownChannelView?.channelId,
+  );
+  const agentChatChannelThreadList = useAtomStateValue(
+    agentChatChannelThreadListState,
+  );
+  const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
+  const HeaderIcon = isDefined(agentChatShownChannelView)
+    ? ChannelIcon
+    : AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
+  const headerTitle = isDefined(agentChatShownChannelView)
+    ? (channel?.name ?? '')
+    : t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus]);
+  const { threads, loading: isThreadListLoading } = useChatThreads(
+    isDefined(agentChatShownChannelView)
+      ? agentChatChannelVisibleThreadsSelector
+      : agentChatVisibleThreadsSelector,
+  );
+  const loading =
+    isThreadListLoading ||
+    (isDefined(agentChatShownChannelView) &&
+      agentChatChannelThreadList?.viewKey !==
+        getAgentChatChannelViewKey(agentChatShownChannelView));
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
@@ -138,6 +177,7 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
+      <AgentChatChannelThreadsLoadEffect />
       <RecordSelectionRecordIdsEffect records={threads} />
       {!isMobile && (
         <AiChatInboxSelectionEffect
@@ -152,19 +192,20 @@ const AiChatInboxPageContent = () => {
               showInformationBanner={isMobile}
               header={
                 <PageCardHeader
-                  icon={<FilterStatusIcon size={theme.icon.size.md} />}
-                  title={t(
-                    AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
-                      agentChatThreadFilterStatus
-                    ],
-                  )}
+                  icon={<HeaderIcon size={theme.icon.size.md} />}
+                  title={headerTitle}
                   actionButton={
                     <Button
                       size="sm"
                       variant="solid"
                       color="accent"
                       startIcon={<IconPlus />}
-                      onClick={switchToNewChat}
+                      onClick={() =>
+                        switchToNewChat({
+                          channelId:
+                            agentChatShownChannelView?.channelId ?? null,
+                        })
+                      }
                     >
                       {t`New chat`}
                     </Button>
@@ -172,35 +213,48 @@ const AiChatInboxPageContent = () => {
                 />
               }
             >
-              <StyledThreadListContainer ref={threadListContainerRef}>
-                <StyledThreadList>
-                  {loading && threads.length === 0 ? (
-                    <SkeletonLoader />
-                  ) : threads.length === 0 ? (
-                    <EmptyState.Root>
-                      <AnimatedPlaceholder type="emptyInbox" />
-                      <EmptyState.Content>
-                        <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
-                        <EmptyState.Description>
-                          {t`Conversations you can open will appear here.`}
-                        </EmptyState.Description>
-                      </EmptyState.Content>
-                    </EmptyState.Root>
-                  ) : (
-                    <AiChatInboxThreadList
-                      threads={threads}
-                      selectedThreadIds={highlightedThreadIds}
-                      onThreadClick={handleThreadClick}
-                    />
-                  )}
-                  <AgentChatThreadsFetchMoreTrigger />
-                </StyledThreadList>
-                {!isMobile && (
-                  <RecordSelectionDragSelect
-                    selectableItemsContainerRef={threadListContainerRef}
+              <StyledListContent>
+                {isDefined(agentChatShownChannelView) && (
+                  <AiChatInboxChannelToolbar
+                    channelView={agentChatShownChannelView}
                   />
                 )}
-              </StyledThreadListContainer>
+                <StyledThreadListContainer ref={threadListContainerRef}>
+                  <StyledThreadList>
+                    {loading && threads.length === 0 ? (
+                      <SkeletonLoader />
+                    ) : threads.length === 0 ? (
+                      <EmptyState.Root>
+                        <AnimatedPlaceholder type="emptyInbox" />
+                        <EmptyState.Content>
+                          <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
+                          <EmptyState.Description>
+                            {isDefined(agentChatShownChannelView)
+                              ? t`Conversations in this channel will appear here.`
+                              : t`Conversations you can open will appear here.`}
+                          </EmptyState.Description>
+                        </EmptyState.Content>
+                      </EmptyState.Root>
+                    ) : (
+                      <AiChatInboxThreadList
+                        threads={threads}
+                        selectedThreadIds={highlightedThreadIds}
+                        onThreadClick={handleThreadClick}
+                      />
+                    )}
+                    {isDefined(agentChatShownChannelView) ? (
+                      <AgentChatChannelThreadsFetchMoreTrigger />
+                    ) : (
+                      <AgentChatThreadsFetchMoreTrigger />
+                    )}
+                  </StyledThreadList>
+                  {!isMobile && (
+                    <RecordSelectionDragSelect
+                      selectableItemsContainerRef={threadListContainerRef}
+                    />
+                  )}
+                </StyledThreadListContainer>
+              </StyledListContent>
             </PageCardLayout>
           </StyledListPane>
         )}

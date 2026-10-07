@@ -25,10 +25,12 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     isDefined(agentChatDisplayedThread) && isValidUuid(agentChatDisplayedThread)
       ? agentChatDisplayedThread
       : null;
-  const lastActivityAt = useAtomFamilySelectorValue(
+  const thread = useAtomFamilySelectorValue(
     agentChatThreadRecordFamilySelector,
     threadId ?? '',
-  )?.lastActivityAt;
+  );
+  const lastActivityAt = thread?.lastActivityAt;
+  const isInChannel = isDefined(thread?.channelId);
   const agentChatThreadParticipants = useAtomStateValue(
     agentChatThreadParticipantsState,
   );
@@ -76,6 +78,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
+      isInChannel,
     });
     const visit = store.get(agentChatThreadVisitState.atom);
 
@@ -97,6 +100,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     }
   }, [
     isVisible,
+    isInChannel,
     lastActivityAt,
     agentChatThreadParticipants,
     markAgentChatThreadAsRead,

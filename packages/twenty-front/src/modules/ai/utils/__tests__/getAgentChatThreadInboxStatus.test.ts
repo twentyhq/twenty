@@ -10,6 +10,7 @@ const getStatus = ({
   snoozedUntil = null,
   isSubscribed = true,
   lastMentionedAt = null,
+  isInChannel = false,
 }: {
   lastActivityAt?: string | null;
   lastReadAt?: string | null;
@@ -17,6 +18,7 @@ const getStatus = ({
   snoozedUntil?: string | null;
   isSubscribed?: boolean;
   lastMentionedAt?: string | null;
+  isInChannel?: boolean;
 } = {}) =>
   getAgentChatThreadInboxStatus({
     lastActivityAt,
@@ -30,6 +32,7 @@ const getStatus = ({
       lastMentionedAt,
       updatedAt: ARCHIVED_AT,
     },
+    isInChannel,
   });
 
 describe('getAgentChatThreadInboxStatus', () => {
@@ -38,6 +41,7 @@ describe('getAgentChatThreadInboxStatus', () => {
       getAgentChatThreadInboxStatus({
         lastActivityAt: '2026-10-01T09:00:00.000Z',
         participant: undefined,
+        isInChannel: false,
       }),
     ).toEqual({
       scope: 'INBOX',
@@ -147,5 +151,38 @@ describe('getAgentChatThreadInboxStatus', () => {
     expect(
       getStatus({ lastMentionedAt: '2026-10-01T09:00:00.000Z' }).isMentioned,
     ).toBe(true);
+  });
+
+  it('leaves a channel chat nobody acted on to the channel', () => {
+    expect(
+      getAgentChatThreadInboxStatus({
+        lastActivityAt: '2026-10-01T09:00:00.000Z',
+        participant: undefined,
+        isInChannel: true,
+      }),
+    ).toEqual({
+      scope: 'NONE',
+      isUnread: true,
+      isSubscribed: false,
+      isMentioned: false,
+      event: null,
+    });
+  });
+
+  it('leaves a channel chat the member only read to the channel', () => {
+    expect(getStatus({ isInChannel: true, isSubscribed: false }).scope).toBe(
+      'NONE',
+    );
+  });
+
+  it('treats a channel chat the member follows like any other', () => {
+    expect(getStatus({ isInChannel: true }).scope).toBe('INBOX');
+    expect(
+      getStatus({
+        isInChannel: true,
+        isSubscribed: false,
+        archivedAt: ARCHIVED_AT,
+      }),
+    ).toMatchObject({ scope: 'ARCHIVED', event: { type: 'UNSUBSCRIBED' } });
   });
 });

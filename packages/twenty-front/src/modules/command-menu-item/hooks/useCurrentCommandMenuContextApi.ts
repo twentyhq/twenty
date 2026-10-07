@@ -1,4 +1,6 @@
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -104,9 +106,18 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     isDefined(agentChatThreadParticipants)
       ? (recordIds ?? [])
       : [];
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
   const agentChatThreadInboxStatusByThreadId = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusByThreadIdFamilySelector,
-    { threadIds: inboxStatusThreadIds },
+    {
+      threadIds: inboxStatusThreadIds,
+      channelId:
+        contextStoreInstanceId === AI_CHAT_INBOX_INSTANCE_ID
+          ? (agentChatShownChannelView?.channelId ?? null)
+          : null,
+    },
   );
 
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record

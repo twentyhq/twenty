@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
@@ -35,10 +36,9 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
-// Triage opens the inbox page; the drawer itself only lists recent chats
+// Triage and channels open the inbox page; the drawer itself only lists favorites
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -61,32 +61,17 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
-  const agentChatFavoriteThreadIds = new Set(
-    agentChatFavoriteThreads.map(({ id }) => id),
-  );
-  const recentThreads = threads.filter(
-    ({ id }) => !agentChatFavoriteThreadIds.has(id),
-  );
-
   return (
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
           <NavigationDrawerAiChatTriageSection />
+          <NavigationDrawerAiChatChannelsSection />
           {agentChatFavoriteThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
               title={t`Favorites`}
               threads={agentChatFavoriteThreads}
-              currentThreadId={currentAiChatThread}
-              onThreadClick={handleThreadClick}
-            />
-          )}
-          {recentThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
-              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-              title={t`Recent`}
-              threads={recentThreads}
               currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
             />

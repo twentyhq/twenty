@@ -89,6 +89,14 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
+  AgentChatChannelThreadsLoadEffect: () => null,
+}));
+
+jest.mock('@/ai/components/AgentChatChannelThreadsFetchMoreTrigger', () => ({
+  AgentChatChannelThreadsFetchMoreTrigger: () => null,
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));

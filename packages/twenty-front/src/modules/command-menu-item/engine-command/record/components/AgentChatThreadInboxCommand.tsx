@@ -1,3 +1,4 @@
+import { useAgentChatChannelThreadTriage } from '@/ai/hooks/useAgentChatChannelThreadTriage';
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -28,6 +29,8 @@ export const AgentChatThreadInboxCommand = ({
     subscribeToAgentChatThread,
     unsubscribeFromAgentChatThread,
   } = useAgentChatThreadParticipants();
+  const { markAgentChatThreadAsDoneInChannel, reopenAgentChatThreadInChannel } =
+    useAgentChatChannelThreadTriage();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
@@ -38,8 +41,13 @@ export const AgentChatThreadInboxCommand = ({
       return;
     }
 
+    // A channel's view files its chats for the whole channel
+    const isInChannel = selectedRecords.every(
+      (record) => record.inboxStatus?.isChannelCopy === true,
+    );
+
     if (action === 'snooze') {
-      return openSnoozeAiChatInSidePanel(threadIds);
+      return openSnoozeAiChatInSidePanel(threadIds, { isInChannel });
     }
 
     if (action === 'assign') {
@@ -49,8 +57,12 @@ export const AgentChatThreadInboxCommand = ({
     const updateThread = {
       read: markAgentChatThreadAsRead,
       unread: markAgentChatThreadAsUnread,
-      done: archiveAgentChatThread,
-      reopen: moveAgentChatThreadToInbox,
+      done: isInChannel
+        ? markAgentChatThreadAsDoneInChannel
+        : archiveAgentChatThread,
+      reopen: isInChannel
+        ? reopenAgentChatThreadInChannel
+        : moveAgentChatThreadToInbox,
       subscribe: subscribeToAgentChatThread,
       unsubscribe: unsubscribeFromAgentChatThread,
     }[action];
