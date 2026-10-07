@@ -52,6 +52,7 @@ import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -149,6 +150,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/loader',
     propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Skeleton',
+    source: 'primitives/feedback/Skeleton/Skeleton.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/skeleton',
+    propDescriptions: SKELETON_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressBar',
