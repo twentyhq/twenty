@@ -17,15 +17,19 @@ export default meta;
 type Story = StoryObj<typeof VisuallyHidden>;
 
 export const AccessibleDescription: Story = {
-  render: () => (
-    <>
-      <Button aria-describedby="action-description">
-        <IconPlus aria-hidden />
-        <VisuallyHidden>Add record</VisuallyHidden>
-      </Button>
-      <VisuallyHidden id="action-description">Creates a contact</VisuallyHidden>
-    </>
-  ),
+  render: () => {
+    return (
+      <>
+        <Button aria-describedby="action-description">
+          <IconPlus aria-hidden />
+          <VisuallyHidden>Add record</VisuallyHidden>
+        </Button>
+        <VisuallyHidden id="action-description">
+          Creates a contact
+        </VisuallyHidden>
+      </>
+    );
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
