@@ -9,7 +9,6 @@ import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Button.module.scss';
-import { formatButtonProgressLabel } from './internal/formatButtonProgressLabel';
 import { type ButtonProps } from './types/ButtonProps';
 
 export const Button = ({
@@ -18,8 +17,7 @@ export const Button = ({
   size = 'md',
   fullWidth = false,
   loading = false,
-  displayChildrenWhenLoading = false,
-  progress,
+  loadingPosition = 'center',
   elevated = false,
   startIcon,
   endIcon,
@@ -38,12 +36,11 @@ export const Button = ({
   const resolvedSize = buttonGroup?.size ?? size;
   const isLink = isDefined(href);
   const linkProps = isLink ? { href } : undefined;
-  const isInlineLoading = loading && displayChildrenWhenLoading;
-  const resolvedEndIcon = isInlineLoading ? <Loader /> : endIcon;
-  const progressLabel =
-    isInlineLoading && isDefined(progress)
-      ? formatButtonProgressLabel(progress)
-      : undefined;
+  const isCenterLoading = loading && loadingPosition === 'center';
+  const resolvedStartIcon =
+    loading && loadingPosition === 'start' ? <Loader /> : startIcon;
+  const resolvedEndIcon =
+    loading && loadingPosition === 'end' ? <Loader /> : endIcon;
 
   return (
     <ButtonPrimitive
@@ -62,23 +59,14 @@ export const Button = ({
       nativeButton={!isLink}
       render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
     >
-      <span
-        className={clsx(
-          styles.content,
-          loading && !isInlineLoading && styles.hidden,
-        )}
-      >
-        {isDefined(startIcon) && (
+      <span className={clsx(styles.content, isCenterLoading && styles.hidden)}>
+        {isDefined(resolvedStartIcon) && (
           <span className={styles.icon} aria-hidden>
-            {startIcon}
+            {resolvedStartIcon}
           </span>
         )}
-        {(isDefined(children) || isDefined(progressLabel)) && (
-          <span className={styles.label}>
-            {children}
-            {isDefined(children) && isDefined(progressLabel) && ' '}
-            {progressLabel}
-          </span>
+        {isDefined(children) && (
+          <span className={styles.label}>{children}</span>
         )}
         {isDefined(resolvedEndIcon) && (
           <span className={styles.icon} aria-hidden>
@@ -95,7 +83,7 @@ export const Button = ({
           />
         )}
       </span>
-      {loading && !isInlineLoading && (
+      {isCenterLoading && (
         <span className={styles.loader} aria-hidden>
           <Loader />
         </span>

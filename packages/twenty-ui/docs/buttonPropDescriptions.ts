@@ -8,10 +8,8 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   fullWidth: 'Expands the button to fill its container width.',
   loading:
     'Shows a loading indicator and disables activation while preserving the button width.',
-  displayChildrenWhenLoading:
-    'Keeps the label and start icon visible while loading and shows the loading indicator in place of the end icon.',
-  progress:
-    'Percentage from 0 to 100 appended to the label while loading. Visible only with `displayChildrenWhenLoading`.',
+  loadingPosition:
+    'Where the loading indicator appears. `center` hides the content behind a centered spinner; `start` and `end` keep the label visible and replace the start or end icon with the spinner.',
   elevated:
     'Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.',
   startIcon: 'Decorative content displayed before the label.',

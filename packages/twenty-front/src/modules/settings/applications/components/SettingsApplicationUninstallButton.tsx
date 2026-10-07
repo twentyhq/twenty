@@ -1,3 +1,4 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
@@ -21,6 +22,9 @@ export const SettingsApplicationUninstallButton = ({
   const uninstallDialogId = useId();
 
   const confirmationValue = t`yes`;
+  const displayedUninstallProgress = formatQueueJobProgressLabel(
+    uninstallProgress ?? 0,
+  );
 
   return (
     <>
@@ -31,10 +35,11 @@ export const SettingsApplicationUninstallButton = ({
         size="sm"
         onClick={() => openDialog(uninstallDialogId)}
         loading={isUninstalling}
-        displayChildrenWhenLoading
-        progress={uninstallProgress ?? 0}
+        loadingPosition="end"
       >
-        {isUninstalling ? t`Uninstalling` : t`Uninstall`}
+        {isUninstalling
+          ? t`Uninstalling ${displayedUninstallProgress}`
+          : t`Uninstall`}
       </Button>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}

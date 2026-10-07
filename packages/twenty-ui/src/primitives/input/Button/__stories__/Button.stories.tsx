@@ -104,28 +104,19 @@ export const Loading: Story = {
     await expect(button).toBeEnabled();
   },
 };
-export const LoadingWithProgress: Story = {
+export const LoadingAtEnd: Story = {
   ...Default,
   args: {
-    children: 'Installing',
+    children: 'Installing (42%)',
     startIcon: <IconPlus />,
     loading: true,
-    displayChildrenWhenLoading: true,
-    progress: 42,
+    loadingPosition: 'end',
   },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button');
     await expect(button).toHaveAccessibleName('Installing (42%)');
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toBeDisabled();
-  },
-};
-export const LoadingIgnoresProgressWhenChildrenAreHidden: Story = {
-  ...Default,
-  args: { children: 'Save', loading: true, progress: 42 },
-  play: async ({ canvasElement }) => {
-    const button = within(canvasElement).getByRole('button');
-    await expect(button).toHaveAccessibleName('Save');
   },
 };
 export const NativeForm: Story = {

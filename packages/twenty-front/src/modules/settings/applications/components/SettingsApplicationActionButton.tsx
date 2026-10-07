@@ -1,3 +1,4 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -42,6 +43,10 @@ export const SettingsApplicationActionButton = ({
     return null;
   }
 
+  const displayedInstallProgress = formatQueueJobProgressLabel(
+    installProgress ?? 0,
+  );
+
   return (
     <Button
       startIcon={<IconDownload />}
@@ -50,10 +55,9 @@ export const SettingsApplicationActionButton = ({
       size="sm"
       onClick={onInstall}
       loading={isInstalling}
-      displayChildrenWhenLoading
-      progress={installProgress ?? 0}
+      loadingPosition="end"
     >
-      {isInstalling ? t`Installing` : t`Install`}
+      {isInstalling ? t`Installing ${displayedInstallProgress}` : t`Install`}
     </Button>
   );
 };
