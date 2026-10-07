@@ -27,7 +27,6 @@ import {
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
-import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -477,9 +476,9 @@ export class McpProtocolService {
                 descriptor.name,
                 {
                   ...registryTools[descriptor.name],
-                  annotations: getMcpRegistryToolAnnotations(
-                    descriptor.executionRef,
-                  ),
+                  annotations: descriptor.isReadOnly
+                    ? MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS
+                    : MCP_EXECUTE_TOOL_ANNOTATIONS,
                 },
               ]),
             );

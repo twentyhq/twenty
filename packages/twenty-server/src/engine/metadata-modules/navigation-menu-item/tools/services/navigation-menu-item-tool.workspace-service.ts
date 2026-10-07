@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
-
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { createCreateNavigationMenuItemTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/create-navigation-menu-item.tool';
 import { createDeleteNavigationMenuItemTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/delete-navigation-menu-item.tool';
@@ -20,7 +19,7 @@ export class NavigationMenuItemToolWorkspaceService {
   generateNavigationMenuItemTools(
     workspaceId: string,
     userWorkspaceId?: string,
-  ): ToolSet {
+  ): StaticToolSets {
     const context = { workspaceId, userWorkspaceId };
 
     const listNavigationMenuItems = createListNavigationMenuItemsTool(
@@ -41,10 +40,14 @@ export class NavigationMenuItemToolWorkspaceService {
     );
 
     return {
-      [listNavigationMenuItems.name]: listNavigationMenuItems,
-      [createNavigationMenuItem.name]: createNavigationMenuItem,
-      [updateNavigationMenuItem.name]: updateNavigationMenuItem,
-      [deleteNavigationMenuItem.name]: deleteNavigationMenuItem,
+      readTools: {
+        [listNavigationMenuItems.name]: listNavigationMenuItems,
+      },
+      writeTools: {
+        [createNavigationMenuItem.name]: createNavigationMenuItem,
+        [updateNavigationMenuItem.name]: updateNavigationMenuItem,
+        [deleteNavigationMenuItem.name]: deleteNavigationMenuItem,
+      },
     };
   }
 }

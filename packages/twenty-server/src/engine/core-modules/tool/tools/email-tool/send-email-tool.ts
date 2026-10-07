@@ -18,6 +18,7 @@ export class SendEmailTool implements Tool {
   description =
     'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
   inputSchema = EmailToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(
     private readonly emailComposerService: EmailComposerService,

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -8,6 +7,7 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -39,9 +39,9 @@ export class MetadataToolProvider implements ToolProvider {
     context: ToolProviderContext,
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
-    const toolSet = this.buildToolSet(context);
+    const toolSets = this.buildToolSets(context);
 
-    return toolSetToDescriptors(toolSet, ToolCategory.METADATA, {
+    return toolSetToDescriptors(toolSets, ToolCategory.METADATA, {
       includeSchemas: options?.includeSchemas ?? true,
       icon: 'IconSettings',
     });
@@ -52,20 +52,34 @@ export class MetadataToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const toolSet = this.buildToolSet(context);
+    const toolSets = this.buildToolSets(context);
 
     return executeToolFromToolSet(
-      toolSet,
+      toolSets,
       toolName,
       args,
       ToolCategory.METADATA,
     );
   }
 
-  private buildToolSet(context: ToolProviderContext): ToolSet {
+  private buildToolSets(context: ToolProviderContext): StaticToolSets {
     return {
-      ...this.objectMetadataToolsFactory.generateTools(context.workspaceId),
-      ...this.fieldMetadataToolsFactory.generateTools(context.workspaceId),
+      readTools: {
+        ...this.objectMetadataToolsFactory.generateReadTools(
+          context.workspaceId,
+        ),
+        ...this.fieldMetadataToolsFactory.generateReadTools(
+          context.workspaceId,
+        ),
+      },
+      writeTools: {
+        ...this.objectMetadataToolsFactory.generateWriteTools(
+          context.workspaceId,
+        ),
+        ...this.fieldMetadataToolsFactory.generateWriteTools(
+          context.workspaceId,
+        ),
+      },
     };
   }
 }

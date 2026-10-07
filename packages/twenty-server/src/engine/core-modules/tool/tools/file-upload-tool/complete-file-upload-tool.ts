@@ -15,6 +15,7 @@ export class CompleteFileUploadTool implements Tool {
   description =
     'Confirm a direct upload after the client has PUT bytes to the uploadUrl from create_file_upload. Returns a fileId for FILES fields or code_interpreter.files. Requires UPLOAD_FILE permission.';
   inputSchema = CompleteFileUploadToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(private readonly fileUploadService: FileUploadService) {}
 

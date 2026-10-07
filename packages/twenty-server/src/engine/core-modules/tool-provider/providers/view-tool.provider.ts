@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -8,6 +7,7 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -39,9 +39,9 @@ export class ViewToolProvider implements ToolProvider {
     context: ToolProviderContext,
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSets = await this.buildToolSets(context);
 
-    return toolSetToDescriptors(toolSet, ToolCategory.VIEW, {
+    return toolSetToDescriptors(toolSets, ToolCategory.VIEW, {
       includeSchemas: options?.includeSchemas ?? true,
     });
   }
@@ -51,12 +51,14 @@ export class ViewToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSets = await this.buildToolSets(context);
 
-    return executeToolFromToolSet(toolSet, toolName, args, ToolCategory.VIEW);
+    return executeToolFromToolSet(toolSets, toolName, args, ToolCategory.VIEW);
   }
 
-  private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
+  private async buildToolSets(
+    context: ToolProviderContext,
+  ): Promise<StaticToolSets> {
     const workspaceMemberId = context.actorContext?.workspaceMemberId;
     const userWorkspaceId = context.userWorkspaceId;
 
@@ -79,7 +81,7 @@ export class ViewToolProvider implements ToolProvider {
       );
 
     if (!hasViewPermission) {
-      return readTools;
+      return { readTools, writeTools: {} };
     }
 
     const writeTools = {
@@ -92,6 +94,6 @@ export class ViewToolProvider implements ToolProvider {
       ...this.viewSortToolsFactory.generateWriteTools(context.workspaceId),
     };
 
-    return { ...readTools, ...writeTools };
+    return { readTools, writeTools };
   }
 }

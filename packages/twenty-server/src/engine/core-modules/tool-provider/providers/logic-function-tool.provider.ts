@@ -106,6 +106,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
           kind: 'logic_function',
           logicFunctionId: logicFunction.id,
         },
+        isReadOnly: false,
         frontComponentId: resolveWidgetFrontComponentId(
           logicFunction.toolTriggerSettings?.frontComponentUniversalIdentifier,
         ),

@@ -211,6 +211,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'find_many',
+          isReadOnly: true,
         });
 
         descriptors.push({
@@ -234,6 +235,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'find_one',
+          isReadOnly: true,
         });
 
         const groupByName = `group_by_${snakePlural}`;
@@ -262,6 +264,7 @@ export class DatabaseToolProvider implements ToolProvider {
             objectName: objectMetadata.nameSingular,
             icon: flatObject.icon ?? undefined,
             operation: 'group_by',
+            isReadOnly: true,
           });
         }
       }
@@ -291,6 +294,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'create_one',
+          isReadOnly: false,
           approval: { template: 'recordCreate' },
         });
 
@@ -318,6 +322,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'create_many',
+          isReadOnly: false,
         });
 
         descriptors.push({
@@ -344,6 +349,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_one',
+          isReadOnly: false,
           approval: { template: 'recordUpdate' },
         });
 
@@ -371,6 +377,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
+          isReadOnly: false,
         });
 
         descriptors.push({
@@ -397,6 +404,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'upsert_many',
+          isReadOnly: false,
         });
       }
 
@@ -422,6 +430,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_one',
+          isReadOnly: false,
           approval: { template: 'recordDelete' },
         });
 
@@ -449,6 +458,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_many',
+          isReadOnly: false,
         });
       }
     }

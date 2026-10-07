@@ -20,6 +20,7 @@ export class SearchHelpCenterTool implements Tool {
   description =
     'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
   inputSchema = SearchHelpCenterInputZodSchema;
+  isReadOnly = true;
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,

@@ -302,6 +302,7 @@ export class ActionToolProvider implements ToolProvider {
         inputSchema: toToolJsonSchema(tool.inputSchema as z.ZodType),
       }),
       executionRef: { kind: 'static', toolId },
+      isReadOnly: tool.isReadOnly,
       ...(isDefined(approval) && { approval }),
     };
   }

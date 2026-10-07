@@ -27,6 +27,7 @@ export class ShareRecordTool implements Tool {
     'Share a record with a workspace member or with every member of a role, at a READ, READ_WRITE or FULL access level. Sharing again with the same member or role replaces their access level. Only works on records whose object supports record-level sharing, and only when the caller can manage the sharing of that record.';
 
   inputSchema = ShareRecordToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(
     private readonly featureFlagService: FeatureFlagService,

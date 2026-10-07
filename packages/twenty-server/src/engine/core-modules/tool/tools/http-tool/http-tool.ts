@@ -17,6 +17,7 @@ export class HttpTool implements Tool {
   description =
     'Make an HTTP request to any URL with configurable method, headers, and body.';
   inputSchema = HttpRequestInputZodSchema;
+  isReadOnly = false;
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,

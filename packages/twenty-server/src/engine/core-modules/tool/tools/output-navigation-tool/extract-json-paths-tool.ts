@@ -34,6 +34,7 @@ export class ExtractJsonPathsTool implements Tool {
     'Extract one or more sub-trees from a large spilled tool output (JSON) by path, without loading the whole file into context. Use the shape/skeleton returned with an outputRef to target paths. Reads and parses the file once, then resolves every path independently (a failing path does not discard the others). Each value is bounded by maxItems and maxDepth.';
 
   inputSchema = ExtractJsonPathsInputZodSchema;
+  isReadOnly = true;
 
   constructor(private readonly fileService: FileService) {}
 

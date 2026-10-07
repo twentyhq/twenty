@@ -22,6 +22,7 @@ export class SaveCampaignTool implements Tool {
     'Only draft campaigns can be edited, and this tool never sends anything. ' +
     'Requires create/update permission on campaigns.';
   inputSchema = SaveCampaignToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(
     private readonly messageCampaignDraftService: MessageCampaignDraftService,

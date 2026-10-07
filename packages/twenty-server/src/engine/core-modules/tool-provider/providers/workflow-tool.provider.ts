@@ -1,6 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -10,6 +9,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'twenty-shared/ai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -48,9 +48,9 @@ export class WorkflowToolProvider implements ToolProvider {
     context: ToolProviderContext,
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSets = await this.buildToolSets(context);
 
-    if (!toolSet) {
+    if (!toolSets) {
       return [];
     }
 
@@ -60,7 +60,7 @@ export class WorkflowToolProvider implements ToolProvider {
       CoreObjectNameSingular.Workflow,
     );
 
-    return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
+    return toolSetToDescriptors(toolSets, ToolCategory.WORKFLOW, {
       includeSchemas: options?.includeSchemas ?? true,
       icon,
     });
@@ -71,25 +71,25 @@ export class WorkflowToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSets = await this.buildToolSets(context);
 
-    if (!toolSet) {
+    if (!toolSets) {
       throw new Error(
         `Workflow tool service is not available (tool: ${toolName})`,
       );
     }
 
     return executeToolFromToolSet(
-      toolSet,
+      toolSets,
       toolName,
       args,
       ToolCategory.WORKFLOW,
     );
   }
 
-  private async buildToolSet(
+  private async buildToolSets(
     context: ToolProviderContext,
-  ): Promise<ToolSet | null> {
+  ): Promise<StaticToolSets | null> {
     if (!this.workflowToolService) {
       return null;
     }

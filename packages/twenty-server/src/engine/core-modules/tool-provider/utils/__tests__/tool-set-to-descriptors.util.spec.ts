@@ -28,9 +28,11 @@ describe('toolSetToDescriptors', () => {
       get_object_metadata: { description: 'Get object metadata' },
     });
 
-    const descriptors = toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
-      includeSchemas: false,
-    });
+    const descriptors = toolSetToDescriptors(
+      { readTools: {}, writeTools: toolSet },
+      ToolCategory.WORKFLOW,
+      { includeSchemas: false },
+    );
 
     const labelByName = new Map(descriptors.map((d) => [d.name, d.label]));
 
@@ -47,13 +49,39 @@ describe('toolSetToDescriptors', () => {
       tool_c: { description: 'C' },
     });
 
-    const descriptors = toolSetToDescriptors(toolSet, ToolCategory.ACTION, {
-      includeSchemas: false,
-    });
+    const descriptors = toolSetToDescriptors(
+      { readTools: {}, writeTools: toolSet },
+      ToolCategory.ACTION,
+      { includeSchemas: false },
+    );
 
     for (const descriptor of descriptors) {
       expect(descriptor.label).toBeDefined();
       expect(descriptor.label.length).toBeGreaterThan(0);
     }
+  });
+
+  it('marks read tools read-only and write tools not', () => {
+    const descriptors = toolSetToDescriptors(
+      {
+        readTools: createMockToolSet({
+          get_view_sorts: { description: 'Get view sorts' },
+        }),
+        writeTools: createMockToolSet({
+          create_view_sort: { description: 'Create a view sort' },
+        }),
+      },
+      ToolCategory.VIEW,
+      { includeSchemas: false },
+    );
+
+    const isReadOnlyByName = Object.fromEntries(
+      descriptors.map((descriptor) => [descriptor.name, descriptor.isReadOnly]),
+    );
+
+    expect(isReadOnlyByName).toEqual({
+      get_view_sorts: true,
+      create_view_sort: false,
+    });
   });
 });

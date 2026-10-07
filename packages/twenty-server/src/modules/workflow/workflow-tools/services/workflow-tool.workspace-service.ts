@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -84,7 +84,7 @@ export class WorkflowToolWorkspaceService {
     rolePermissionConfig: RolePermissionConfig;
     actorContext?: ActorMetadata;
     userWorkspaceId?: string;
-  }): ToolSet {
+  }): StaticToolSets {
     const context: WorkflowToolContext = {
       workspaceId,
       rolePermissionConfig,
@@ -92,7 +92,18 @@ export class WorkflowToolWorkspaceService {
       userWorkspaceId,
     };
 
-    const tools = [
+    const readTools = [
+      createComputeStepOutputSchemaTool(this.deps, context),
+      createGetWorkflowCurrentVersionTool(this.deps, context),
+      createListWorkflowsTool(this.deps, context),
+      createGetWorkflowRunTool(this.deps, context),
+      createListWorkflowRunsTool(this.deps, context),
+      createGetLogicFunctionSourceTool(this.deps, context),
+      createListLogicFunctionToolsTool(this.deps, context),
+      createValidateWorkflowTool(this.deps, context),
+    ];
+
+    const writeTools = [
       createCreateCompleteWorkflowTool(this.deps, context),
       createCreateWorkflowVersionStepTool(this.deps, context),
       createUpdateWorkflowVersionStepTool(this.deps, context),
@@ -104,19 +115,16 @@ export class WorkflowToolWorkspaceService {
       createUpdateWorkflowVersionPositionsTool(this.deps, context),
       createActivateWorkflowVersionTool(this.deps, context),
       createDeactivateWorkflowVersionTool(this.deps, context),
-      createComputeStepOutputSchemaTool(this.deps, context),
-      createGetWorkflowCurrentVersionTool(this.deps, context),
-      createListWorkflowsTool(this.deps, context),
       createDeleteWorkflowTool(this.deps, context),
-      createGetWorkflowRunTool(this.deps, context),
-      createListWorkflowRunsTool(this.deps, context),
-      createGetLogicFunctionSourceTool(this.deps, context),
       createUpdateLogicFunctionSourceTool(this.deps, context),
-      createListLogicFunctionToolsTool(this.deps, context),
       createUpdateAgentTool(this.deps, context),
-      createValidateWorkflowTool(this.deps, context),
     ];
 
-    return Object.fromEntries(tools.map((tool) => [tool.name, tool]));
+    return {
+      readTools: Object.fromEntries(readTools.map((tool) => [tool.name, tool])),
+      writeTools: Object.fromEntries(
+        writeTools.map((tool) => [tool.name, tool]),
+      ),
+    };
   }
 }

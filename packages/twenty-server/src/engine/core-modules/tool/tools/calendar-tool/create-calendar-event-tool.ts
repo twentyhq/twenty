@@ -18,6 +18,7 @@ export class CreateCalendarEventTool implements Tool {
   description =
     'Create a calendar event on a connected Google or Microsoft account. Requires CREATE_CALENDAR_EVENT_TOOL permission. Set sendInvitations to true to attach attendees and email them an invitation; when false the event is created with no attendees and nobody is notified.';
   inputSchema = CreateCalendarEventToolInputZodSchema;
+  isReadOnly = false;
   flag = PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL;
 
   constructor(

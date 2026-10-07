@@ -234,7 +234,7 @@ export class FieldMetadataToolsFactory {
     return objectMetadataId;
   }
 
-  generateTools(workspaceId: string): ToolSet {
+  generateReadTools(workspaceId: string): ToolSet {
     return {
       get_field_metadata: {
         description:
@@ -293,6 +293,11 @@ export class FieldMetadataToolsFactory {
           return compactedFields;
         },
       },
+    };
+  }
+
+  generateWriteTools(workspaceId: string): ToolSet {
+    return {
       create_field_metadata: {
         description: 'Create a new field on an object.',
         inputSchema: CreateFieldMetadataInputSchema,

@@ -20,6 +20,7 @@ export class DraftEmailTool implements Tool {
   description =
     'Create a draft email using a connected account. The email will be saved as a draft, not sent.';
   inputSchema = EmailToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(
     private readonly emailComposerService: EmailComposerService,

@@ -172,7 +172,7 @@ export class ObjectMetadataToolsFactory {
     return fieldsByObjectId;
   }
 
-  generateTools(workspaceId: string): ToolSet {
+  generateReadTools(workspaceId: string): ToolSet {
     return {
       get_object_metadata: {
         description:
@@ -232,6 +232,11 @@ export class ObjectMetadataToolsFactory {
           });
         },
       },
+    };
+  }
+
+  generateWriteTools(workspaceId: string): ToolSet {
+    return {
       create_object_metadata: {
         description: 'Create a new object in the workspace data model.',
         inputSchema: CreateObjectMetadataInputSchema,

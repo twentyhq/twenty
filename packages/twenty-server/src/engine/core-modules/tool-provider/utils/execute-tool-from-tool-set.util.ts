@@ -1,16 +1,17 @@
-import { type ToolExecuteFunction, type ToolSet } from 'ai';
+import { type ToolExecuteFunction } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 // For providers whose tools are opaque AI-SDK ToolSet closures and so cannot dispatch by executionRef.
 export const executeToolFromToolSet = async (
-  toolSet: ToolSet,
+  { readTools, writeTools }: StaticToolSets,
   toolName: string,
   args: Record<string, unknown>,
   category: ToolCategory,
 ): Promise<ToolOutput> => {
-  const tool = toolSet[toolName];
+  const tool = readTools[toolName] ?? writeTools[toolName];
 
   if (!tool?.execute) {
     throw new Error(

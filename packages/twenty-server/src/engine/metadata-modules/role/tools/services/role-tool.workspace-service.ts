@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
-
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -40,7 +39,7 @@ export class RoleToolWorkspaceService {
     };
   }
 
-  generateRoleTools(context: RoleToolContext): ToolSet {
+  generateRoleTools(context: RoleToolContext): StaticToolSets {
     const listRoles = createListRolesTool(this.deps, context);
     const createRole = createCreateRoleTool(this.deps, context);
     const updateRole = createUpdateRoleTool(this.deps, context);
@@ -57,13 +56,17 @@ export class RoleToolWorkspaceService {
       createUpsertRowLevelPermissionRulesTool(this.deps, context);
 
     return {
-      [listRoles.name]: listRoles,
-      [createRole.name]: createRole,
-      [updateRole.name]: updateRole,
-      [deleteRole.name]: deleteRole,
-      [assignRoleToWorkspaceMember.name]: assignRoleToWorkspaceMember,
-      [upsertObjectPermissions.name]: upsertObjectPermissions,
-      [upsertRowLevelPermissionRules.name]: upsertRowLevelPermissionRules,
+      readTools: {
+        [listRoles.name]: listRoles,
+      },
+      writeTools: {
+        [createRole.name]: createRole,
+        [updateRole.name]: updateRole,
+        [deleteRole.name]: deleteRole,
+        [assignRoleToWorkspaceMember.name]: assignRoleToWorkspaceMember,
+        [upsertObjectPermissions.name]: upsertObjectPermissions,
+        [upsertRowLevelPermissionRules.name]: upsertRowLevelPermissionRules,
+      },
     };
   }
 }

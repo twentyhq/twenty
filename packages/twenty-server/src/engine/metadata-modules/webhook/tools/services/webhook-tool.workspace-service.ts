@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
-
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { createCreateWebhookTool } from 'src/engine/metadata-modules/webhook/tools/create-webhook.tool';
 import { createDeleteWebhookTool } from 'src/engine/metadata-modules/webhook/tools/delete-webhook.tool';
@@ -17,7 +16,7 @@ export class WebhookToolWorkspaceService {
     this.deps = { webhookService };
   }
 
-  generateWebhookTools(workspaceId: string): ToolSet {
+  generateWebhookTools(workspaceId: string): StaticToolSets {
     const context = { workspaceId };
 
     const listWebhooks = createListWebhooksTool(this.deps, context);
@@ -26,10 +25,14 @@ export class WebhookToolWorkspaceService {
     const deleteWebhook = createDeleteWebhookTool(this.deps, context);
 
     return {
-      [listWebhooks.name]: listWebhooks,
-      [createWebhook.name]: createWebhook,
-      [updateWebhook.name]: updateWebhook,
-      [deleteWebhook.name]: deleteWebhook,
+      readTools: {
+        [listWebhooks.name]: listWebhooks,
+      },
+      writeTools: {
+        [createWebhook.name]: createWebhook,
+        [updateWebhook.name]: updateWebhook,
+        [deleteWebhook.name]: deleteWebhook,
+      },
     };
   }
 }

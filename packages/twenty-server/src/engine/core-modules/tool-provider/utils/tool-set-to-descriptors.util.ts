@@ -1,9 +1,9 @@
-import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
+import { type StaticToolSets } from 'src/engine/core-modules/tool-provider/types/static-tool-sets.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 
@@ -20,13 +20,26 @@ export const humanizeToolName = (name: string): string =>
     .join(' ');
 
 export const toolSetToDescriptors = (
-  toolSet: ToolSet,
+  { readTools, writeTools }: StaticToolSets,
   category: ToolCategory,
   options?: ToolSetToDescriptorsOptions,
 ): (ToolIndexEntry | ToolDescriptor)[] => {
   const includeSchemas = options?.includeSchemas ?? true;
 
-  return Object.entries(toolSet).map(([name, tool]) => {
+  const tools = [
+    ...Object.entries(readTools).map(([name, tool]) => ({
+      name,
+      tool,
+      isReadOnly: true,
+    })),
+    ...Object.entries(writeTools).map(([name, tool]) => ({
+      name,
+      tool,
+      isReadOnly: false,
+    })),
+  ];
+
+  return tools.map(({ name, tool, isReadOnly }) => {
     const base: ToolIndexEntry = {
       name,
       label: humanizeToolName(name),
@@ -34,6 +47,7 @@ export const toolSetToDescriptors = (
       description: isNonEmptyString(tool.description) ? tool.description : '',
       category,
       executionRef: { kind: 'static' as const, toolId: name },
+      isReadOnly,
       ...(options?.icon && { icon: options.icon }),
     };
 

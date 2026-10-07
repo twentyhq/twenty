@@ -21,6 +21,7 @@ export class SearchOutputTool implements Tool {
     'Search (grep -o style) within a large spilled tool output for a text or regex pattern, returning every occurrence with surrounding characters of context. Works on raw text of any shape (CSV, HTML, stringified JSON, plain text), including single-line content. Supports stateless pagination via offset. Use this to locate an error message or key in a file too large to inline.';
 
   inputSchema = SearchOutputInputZodSchema;
+  isReadOnly = true;
 
   constructor(private readonly fileService: FileService) {}
 

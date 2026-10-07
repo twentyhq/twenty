@@ -23,6 +23,7 @@ const buildCrudEntry = (
     objectNameSingular: 'opportunity',
     operation,
   },
+  isReadOnly: false,
   approval: APPROVAL_BY_OPERATION[operation],
 });
 
@@ -44,6 +45,7 @@ const findTool = async (toolName: string) =>
       description: '',
       category: 'ACTION' as ToolIndexEntry['category'],
       executionRef: { kind: 'static', toolId: 'send_email' },
+      isReadOnly: false,
       approval: { template: 'email', alternativeToolNames: ['draft_email'] },
     } satisfies ToolIndexEntry,
     {
@@ -52,6 +54,7 @@ const findTool = async (toolName: string) =>
       description: '',
       category: 'ACTION' as ToolIndexEntry['category'],
       executionRef: { kind: 'static', toolId: 'http_request' },
+      isReadOnly: false,
     } satisfies ToolIndexEntry,
   ].find((entry) => entry.name === toolName);
 

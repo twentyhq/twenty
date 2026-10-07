@@ -17,6 +17,7 @@ export class CreateFileUploadTool implements Tool {
 
   description = `Create an upload URL for a file in agent-chat storage. PUT the bytes to uploadUrl with the returned Content-Type, then call complete_file_upload. Requires UPLOAD_FILE permission. Maximum size ${settings.storage.maxDirectUploadFileSize}.`;
   inputSchema = CreateFileUploadToolInputZodSchema;
+  isReadOnly = false;
 
   constructor(private readonly fileUploadService: FileUploadService) {}
 

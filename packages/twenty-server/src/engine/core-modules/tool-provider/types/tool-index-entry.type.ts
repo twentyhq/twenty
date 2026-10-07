@@ -12,6 +12,7 @@ export type ToolIndexEntry = {
   description: string;
   category: ToolCategory;
   executionRef: ToolExecutionRef;
+  isReadOnly: boolean;
   objectName?: string;
   operation?: string;
   icon?: string;
