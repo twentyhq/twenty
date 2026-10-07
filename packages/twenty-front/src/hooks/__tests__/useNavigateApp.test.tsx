@@ -1,34 +1,23 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import {
-  MemoryRouter,
-  type Navigator,
-  UNSAFE_NavigationContext,
-  useLocation,
-} from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 
+import {
+  type AppNavigator,
+  AppNavigatorContext,
+} from '@/app/contexts/AppNavigatorContext';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const mockNavigator = {
+const mockAppNavigator: AppNavigator = {
   push: jest.fn(),
   replace: jest.fn(),
-} as unknown as Navigator;
+};
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MemoryRouter>
-    <UNSAFE_NavigationContext.Provider
-      value={{
-        basename: '/',
-        navigator: mockNavigator,
-        static: false,
-        useTransitions: false,
-        future: {},
-      }}
-    >
-      {children}
-    </UNSAFE_NavigationContext.Provider>
-  </MemoryRouter>
+  <AppNavigatorContext.Provider value={mockAppNavigator}>
+    {children}
+  </AppNavigatorContext.Provider>
 );
 
 describe('useNavigateApp', () => {
@@ -43,7 +32,11 @@ describe('useNavigateApp', () => {
 
     result.current(AppPath.Index);
 
-    expect(mockNavigator.push).toHaveBeenCalledWith('/', undefined, undefined);
+    expect(mockAppNavigator.push).toHaveBeenCalledWith(
+      '/',
+      undefined,
+      undefined,
+    );
   });
 
   it('should navigate to the correct path with params', () => {
@@ -56,7 +49,7 @@ describe('useNavigateApp', () => {
       objectRecordId: '123',
     });
 
-    expect(mockNavigator.push).toHaveBeenCalledWith(
+    expect(mockAppNavigator.push).toHaveBeenCalledWith(
       '/object/company/123',
       undefined,
       undefined,
@@ -70,7 +63,7 @@ describe('useNavigateApp', () => {
 
     result.current(AppPath.Index, undefined, { viewId: '123', filter: 'test' });
 
-    expect(mockNavigator.push).toHaveBeenCalledWith(
+    expect(mockAppNavigator.push).toHaveBeenCalledWith(
       '/?viewId=123&filter=test',
       undefined,
       undefined,
@@ -90,25 +83,27 @@ describe('useNavigateApp', () => {
 
     result.current(AppPath.Index, undefined, undefined, options);
 
-    expect(mockNavigator.replace).toHaveBeenCalledWith(
+    expect(mockAppNavigator.replace).toHaveBeenCalledWith(
       '/',
       { test: true },
       options,
     );
-    expect(mockNavigator.push).not.toHaveBeenCalled();
+    expect(mockAppNavigator.push).not.toHaveBeenCalled();
   });
 
   it('should not re-render its caller when the location changes', () => {
     let renderCount = 0;
     let currentPathname = '';
+    let navigate: ReturnType<typeof useNavigate> | undefined;
 
-    const LocationSpyEffect = () => {
+    const LocationEffect = () => {
       currentPathname = useLocation().pathname;
+      navigate = useNavigate();
 
       return null;
     };
 
-    const { result } = renderHook(
+    renderHook(
       () => {
         renderCount++;
 
@@ -117,8 +112,8 @@ describe('useNavigateApp', () => {
       {
         wrapper: ({ children }: { children: ReactNode }) => (
           <MemoryRouter>
-            <LocationSpyEffect />
-            {children}
+            <LocationEffect />
+            <Wrapper>{children}</Wrapper>
           </MemoryRouter>
         ),
       },
@@ -127,10 +122,7 @@ describe('useNavigateApp', () => {
     const renderCountBeforeNavigation = renderCount;
 
     act(() => {
-      result.current(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Company,
-        objectRecordId: '123',
-      });
+      navigate?.('/object/company/123');
     });
 
     expect(currentPathname).toBe('/object/company/123');

@@ -1,11 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { type Navigator, UNSAFE_NavigationContext } from 'react-router-dom';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
+import {
+  type AppNavigator,
+  AppNavigatorContext,
+} from '@/app/contexts/AppNavigatorContext';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -13,10 +16,10 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 const navigateMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
 
-const navigator = {
+const appNavigator: AppNavigator = {
   push: navigateMock,
   replace: navigateMock,
-} as unknown as Navigator;
+};
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: closeSidePanelMenuMock }),
@@ -24,17 +27,9 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <I18nProvider i18n={i18n}>
-    <UNSAFE_NavigationContext.Provider
-      value={{
-        basename: '/',
-        navigator,
-        static: false,
-        useTransitions: false,
-        future: {},
-      }}
-    >
+    <AppNavigatorContext.Provider value={appNavigator}>
       <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-    </UNSAFE_NavigationContext.Provider>
+    </AppNavigatorContext.Provider>
   </I18nProvider>
 );
 
