@@ -153,21 +153,4 @@ export class AgentChatThreadParticipantResolver {
 
     return true;
   }
-
-  // Returns the members who were added, leaving out those who cannot reply in the chat
-  @Mutation(() => [UUIDScalarType])
-  async addAgentChatThreadParticipants(
-    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @Args('workspaceMemberIds', { type: () => [UUIDScalarType] })
-    participantWorkspaceMemberIds: string[],
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<string[]> {
-    return this.threadService.addParticipants({
-      threadId,
-      participantWorkspaceMemberIds,
-      workspaceMemberId,
-      workspaceId,
-    });
-  }
 }

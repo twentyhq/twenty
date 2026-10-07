@@ -20,6 +20,7 @@ import { setManualRecordShare } from 'test/integration/utils/set-manual-record-s
 
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -68,19 +69,20 @@ const readAssigneeId = async (threadId: string): Promise<string | null> => {
   return assigneeId;
 };
 
-const ADD_PARTICIPANTS = parse(
-  `mutation AddParticipants($threadId: UUID!, $workspaceMemberIds: [UUID!]!) { addAgentChatThreadParticipants(threadId: $threadId, workspaceMemberIds: $workspaceMemberIds) }`,
-);
-
+// What a message mentioning these members applies once it is sent
 const addParticipants = (
   threadId: string,
-  workspaceMemberIds: string[],
-  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  participantWorkspaceMemberIds: string[],
+  workspaceMemberId: string = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
 ) =>
-  makeMetadataApiRequest(
-    { query: ADD_PARTICIPANTS, variables: { threadId, workspaceMemberIds } },
-    token,
-  );
+  getAppProviderByClassName<AgentChatThreadService>(
+    'AgentChatThreadService',
+  ).addParticipants({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceMemberId,
+    threadId,
+    participantWorkspaceMemberIds,
+  });
 
 type Participant = {
   id: string;
@@ -740,15 +742,12 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
 
-    const response = await addParticipants(threadId, [
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    ]);
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.addAgentChatThreadParticipants).toEqual([
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    ]);
+    expect(
+      await addParticipants(threadId, [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      ]),
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
@@ -757,16 +756,13 @@ describe('Chat thread participant state through the authenticated API', () => {
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
     // Editors can mention others too; the owner keeps following as owner
-    const addedByJony = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(addedByJony.body.errors).toBeUndefined();
-    expect(addedByJony.body.data.addAgentChatThreadParticipants).toEqual([
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    ]);
+    expect(
+      await addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JANE]);
     expect(await findMyParticipant(threadId)).toMatchObject({
       lastReadAt: null,
     });
@@ -804,13 +800,13 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await setShareWithJony(threadId, true);
 
-    const response = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    await expect(
+      addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);
@@ -832,14 +828,13 @@ describe('Chat thread participant state through the authenticated API', () => {
       enabled: true,
     });
 
-    const response = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.addAgentChatThreadParticipants).toEqual([]);
+    expect(
+      await addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toEqual([]);
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);

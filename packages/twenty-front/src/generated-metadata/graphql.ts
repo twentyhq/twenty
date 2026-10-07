@@ -3091,7 +3091,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
-  addAgentChatThreadParticipants: Array<Scalars['UUID']['output']>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   archiveAgentChatThread: AgentChatThreadParticipant;
   assignAgentChatThread: Scalars['Boolean']['output'];
@@ -3382,12 +3381,6 @@ export type MutationActivateSkillArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
-};
-
-
-export type MutationAddAgentChatThreadParticipantsArgs = {
-  threadId: Scalars['UUID']['input'];
-  workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
 
