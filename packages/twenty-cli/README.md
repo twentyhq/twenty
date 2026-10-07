@@ -23,10 +23,9 @@ twenty open
 ```
 
 Replace the example URL with your workspace's address. `--use` makes this
-connection the default, even when another saved connection already is one.
-Workspace commands do not require an application project. Use `--remote <name>`
-to select another saved connection and `--json` for a structured result. Saved
-connections live in `~/.twenty/config.json`.
+connection the default, even when another saved connection already is one. Use
+`--remote <name>` to select another saved connection and `--json` for a
+structured result. Saved connections live in `~/.twenty/config.json`.
 
 Browser sign-in is supported on Twenty 2.42 and later. On older servers, sign in
 with an [API key](docs/commands.md#connections-and-authentication) instead.
@@ -62,11 +61,6 @@ Apps created with `app init` declare the oldest Twenty version they support in
 `engines.twenty`. `app exec` runs functions as the signed-in user, so it needs a
 browser sign-in and Twenty 2.46 or later. With a browser sign-in, `app uninstall`
 also needs Twenty 2.46 or later; on earlier versions, use an API key for it.
-
-Some workflows are only available through the app's `yarn twenty` commands from
-`twenty-sdk`: publishing an app, running a local Twenty server with Docker,
-extracting translations, and scaffolding definitions other than objects, fields,
-logic functions and front components.
 
 ## CLI and app dependencies
 
