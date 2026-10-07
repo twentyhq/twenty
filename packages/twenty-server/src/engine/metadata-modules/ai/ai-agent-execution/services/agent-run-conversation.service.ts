@@ -232,7 +232,7 @@ export class AgentRunConversationService {
     });
 
     // The turn fails without throwing when the workspace ran out of credits
-    if (execution.hasNoMoreAvailableCredits === true) {
+    if (execution.hasNoMoreAvailableCredits) {
       await this.recordFailureActivity({
         workspaceId,
         threadId,
