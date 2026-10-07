@@ -1,6 +1,5 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -49,21 +48,13 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
     workspaceId,
     caller,
   }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunExecutionContext> {
-    return buildWorkflowAgentRunExecutionContext(
-      await this.workflowExecutionContextService.getExecutionContext({
-        workflowRunId: caller.ref.workflowRunId,
-        workspaceId,
-      }),
-    );
-  }
+    const runInfo = { workflowRunId: caller.ref.workflowRunId, workspaceId };
 
-  async resolveTurnAuthor({
-    workspaceId,
-    caller,
-  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<ActorMetadata> {
-    return this.workflowAgentConversationService.findTurnCreatedBy({
-      workflowRunId: caller.ref.workflowRunId,
-      workspaceId,
+    return buildWorkflowAgentRunExecutionContext({
+      executionContext:
+        await this.workflowExecutionContextService.getExecutionContext(runInfo),
+      turnCreatedBy:
+        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
     });
   }
 
