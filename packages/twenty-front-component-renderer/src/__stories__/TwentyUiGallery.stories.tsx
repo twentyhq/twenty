@@ -15,7 +15,7 @@ import { animatedIconCrossfadeTest } from '@/__stories__/twenty-ui-gallery/utils
 import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
-import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
+import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
@@ -64,7 +64,7 @@ import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
 import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
-import { loaderTest } from '@/__stories__/twenty-ui-gallery/utils/loaderTest';
+import { bannerTest } from '@/__stories__/twenty-ui-gallery/utils/bannerTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -92,12 +92,12 @@ export const DataDisplayPreact: Story = createGalleryStory({
 export const FeedbackReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'react',
-  play: loaderTest,
+  play: bannerTest,
 });
 export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
-  play: loaderTest,
+  play: bannerTest,
 });
 
 export const ProgressReact: Story = createGalleryStory({
@@ -146,16 +146,16 @@ export const NumberStepperPreact: Story = createGalleryStory({
   play: numberStepperTest,
 });
 
-export const NumberStepperInteractionGapsReact: Story = createGalleryStory({
+export const NumberStepperSelectionReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'react',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
-export const NumberStepperInteractionGapsPreact: Story = createGalleryStory({
+export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({

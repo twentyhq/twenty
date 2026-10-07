@@ -46,9 +46,12 @@ jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
   useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));
 
-jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded', () => ({
-  useIsNavigationDrawerContentExpanded: () => true,
-}));
+jest.mock(
+  '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded',
+  () => ({
+    useIsNavigationDrawerContentExpanded: () => true,
+  }),
+);
 
 jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
   NavigationDrawerAiChatTriageSection: () => null,

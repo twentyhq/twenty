@@ -1,3 +1,4 @@
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
@@ -19,12 +20,12 @@ export const AiChatApiKeyNotConfiguredMessage = () => {
 
   return (
     <AiChatInlineBanner
-      message={t`Add an API key to enable AI.`}
-      button={{
-        title: t`View Docs`,
-        Icon: IconExternalLink,
-        onClick: handleDocsClick,
-      }}
-    />
+      action={
+        <InlineBanner.Action
+          startIcon={<IconExternalLink />}
+          onClick={handleDocsClick}
+        >{t`View Docs`}</InlineBanner.Action>
+      }
+    >{t`Add an API key to enable AI.`}</AiChatInlineBanner>
   );
 };

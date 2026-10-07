@@ -22,9 +22,9 @@ import {
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledTrigger = styled.button`
   align-items: center;

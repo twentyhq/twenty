@@ -9,7 +9,7 @@ import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getA
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
+import { getDataResidencyDisplay } from '@/ai/utils/getDataResidencyDisplay';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';

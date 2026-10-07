@@ -15,7 +15,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledContainer = styled(StyledWidgetScrollContainer)`
   gap: ${themeCssVariables.spacing[8]};

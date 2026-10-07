@@ -33,11 +33,7 @@ vi.mock('@/app/get-app-worker-launch', () => ({
 }));
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/create-twenty-app/src/constants/template'),
-}));
-vi.mock('@/app/get-app-template-overlay-directory', () => ({
-  getAppTemplateOverlayDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template-overlay'),
+    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template'),
 }));
 
 const REPOSITORY_ROOT = fileURLToPath(

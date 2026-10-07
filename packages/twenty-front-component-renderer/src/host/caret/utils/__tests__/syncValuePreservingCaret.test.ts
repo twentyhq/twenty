@@ -9,18 +9,26 @@ describe('syncValuePreservingCaret', () => {
     const input = document.createElement('input');
     input.value = 'old';
 
-    syncValuePreservingCaret(input, 'new');
+    const didWriteValue = syncValuePreservingCaret({
+      element: input,
+      remoteValue: 'new',
+    });
 
     expect(input.value).toBe('new');
+    expect(didWriteValue).toBe(true);
   });
 
   it('should do nothing when the value is already equal', () => {
     const input = document.createElement('input');
     input.value = 'same';
 
-    syncValuePreservingCaret(input, 'same');
+    const didWriteValue = syncValuePreservingCaret({
+      element: input,
+      remoteValue: 'same',
+    });
 
     expect(input.value).toBe('same');
+    expect(didWriteValue).toBe(false);
   });
 
   it('should preserve the caret selection when the element is focused', () => {
@@ -28,12 +36,13 @@ describe('syncValuePreservingCaret', () => {
     document.body.appendChild(input);
     input.value = 'hello world';
     input.focus();
-    input.setSelectionRange(2, 5);
+    input.setSelectionRange(2, 5, 'backward');
 
-    syncValuePreservingCaret(input, 'HELLO world');
+    syncValuePreservingCaret({ element: input, remoteValue: 'HELLO world' });
 
     expect(input.value).toBe('HELLO world');
     expect(input.selectionStart).toBe(2);
     expect(input.selectionEnd).toBe(5);
+    expect(input.selectionDirection).toBe('backward');
   });
 });
