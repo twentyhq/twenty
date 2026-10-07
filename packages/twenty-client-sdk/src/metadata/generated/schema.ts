@@ -2113,9 +2113,11 @@ export interface Mutation {
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
     generateTransientToken: TransientToken
+    generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromOTP: AuthTokens
     getAuthTokensFromSSOExchangeToken: AuthTokens
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCodeRedemption
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
@@ -2149,6 +2151,7 @@ export interface Mutation {
     revokeAllOtherUserSessions: Scalars['Int']
     revokeApiKey?: ApiKey
     revokeApplicationAuthorization: Scalars['Boolean']
+    revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
@@ -2203,6 +2206,7 @@ export interface Mutation {
     updateMessageChannel: MessageChannel
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
+    updateMyUserApplicationVariable: Scalars['Boolean']
     updateNavigationMenuItem: NavigationMenuItem
     updateOneAgent: Agent
     updateOneApplicationVariable: Scalars['Boolean']
@@ -2790,6 +2794,7 @@ export interface Query {
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
     myMessageFolders: MessageFolder[]
+    myUserApplicationVariables: WorkspaceMemberApplicationVariables[]
     navigationMenuItem?: NavigationMenuItem
     navigationMenuItems: NavigationMenuItem[]
     object: Object
@@ -2804,6 +2809,7 @@ export interface Query {
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
+    twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     unsubscribeTopics: UnsubscribeTopic[]
     usageLimits: UsageLimit[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -3260,6 +3266,25 @@ export interface TwoFactorAuthenticationMethodSummary {
     __typename: 'TwoFactorAuthenticationMethodSummary'
 }
 
+export interface TwoFactorAuthenticationRecoveryCode {
+    expiresAt: Scalars['DateTime']
+    recoveryCode: Scalars['String']
+    __typename: 'TwoFactorAuthenticationRecoveryCode'
+}
+
+export interface TwoFactorAuthenticationRecoveryCodeRedemption {
+    provisioningUri?: Scalars['String']
+    tokens?: AuthTokenPair
+    __typename: 'TwoFactorAuthenticationRecoveryCodeRedemption'
+}
+
+export interface TwoFactorAuthenticationRecoveryStatus {
+    hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']
+    isAwaitingRecoveryEnrollment: Scalars['Boolean']
+    pendingRecoveryCodeExpiresAt?: Scalars['DateTime']
+    __typename: 'TwoFactorAuthenticationRecoveryStatus'
+}
+
 export type UnsubscribeHostnameStatus = 'ACTIVE' | 'FAILED' | 'PENDING'
 
 export interface UnsubscribeTopic {
@@ -3417,6 +3442,19 @@ export interface User {
     workspaceMembers?: WorkspaceMember[]
     workspaces: UserWorkspace[]
     __typename: 'User'
+}
+
+export interface UserApplicationVariableValue {
+    description: Scalars['String']
+    isDeprecated: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isSecret: Scalars['Boolean']
+    key: Scalars['String']
+    label: Scalars['String']
+    options?: Scalars['JSON']
+    type: Scalars['String']
+    value: Scalars['String']
+    __typename: 'UserApplicationVariableValue'
 }
 
 export interface UserSession {
@@ -3806,6 +3844,13 @@ export interface WorkspaceMember {
     userId: Scalars['UUID']
     userWorkspaceId?: Scalars['UUID']
     __typename: 'WorkspaceMember'
+}
+
+export interface WorkspaceMemberApplicationVariables {
+    userWorkspaceId: Scalars['UUID']
+    variables: UserApplicationVariableValue[]
+    workspaceMemberId: Scalars['UUID']
+    __typename: 'WorkspaceMemberApplicationVariables'
 }
 
 
@@ -6225,9 +6270,11 @@ export interface MutationGenqlSelection{
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
     generateTransientToken?: TransientTokenGenqlSelection
+    generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {otp?: (Scalars['String'] | null), userId: Scalars['UUID']} })
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], otp: Scalars['String']} })
     getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], recoveryCode: Scalars['String']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), origin: Scalars['String'], password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
@@ -6261,6 +6308,7 @@ export interface MutationGenqlSelection{
     revokeAllOtherUserSessions?: boolean | number
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
+    revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
@@ -6315,6 +6363,7 @@ export interface MutationGenqlSelection{
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
+    updateMyUserApplicationVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     updateOneApplicationVariable?: { __args: {applicationId?: (Scalars['UUID'] | null), key: Scalars['String'], value: Scalars['String']} }
@@ -6943,6 +6992,7 @@ export interface QueryGenqlSelection{
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
+    myUserApplicationVariables?: WorkspaceMemberApplicationVariablesGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     object?: (ObjectGenqlSelection & { __args: {
@@ -6963,6 +7013,7 @@ export interface QueryGenqlSelection{
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
+    twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     usageLimits?: UsageLimitGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
@@ -7483,6 +7534,28 @@ export interface TwoFactorAuthenticationMethodSummaryGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
+    expiresAt?: boolean | number
+    recoveryCode?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection{
+    provisioningUri?: boolean | number
+    tokens?: AuthTokenPairGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
+    hasVerifiedTwoFactorAuthenticationMethod?: boolean | number
+    isAwaitingRecoveryEnrollment?: boolean | number
+    pendingRecoveryCodeExpiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UUIDFilterComparison {eq?: (Scalars['UUID'] | null),gt?: (Scalars['UUID'] | null),gte?: (Scalars['UUID'] | null),iLike?: (Scalars['UUID'] | null),in?: (Scalars['UUID'][] | null),is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),like?: (Scalars['UUID'] | null),lt?: (Scalars['UUID'] | null),lte?: (Scalars['UUID'] | null),neq?: (Scalars['UUID'] | null),notILike?: (Scalars['UUID'] | null),notIn?: (Scalars['UUID'][] | null),notLike?: (Scalars['UUID'] | null)}
 
 export interface UnsubscribeTopicGenqlSelection{
@@ -7868,6 +7941,20 @@ export interface UserGenqlSelection{
     workspaceMember?: WorkspaceMemberGenqlSelection
     workspaceMembers?: WorkspaceMemberGenqlSelection
     workspaces?: UserWorkspaceGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UserApplicationVariableValueGenqlSelection{
+    description?: boolean | number
+    isDeprecated?: boolean | number
+    isRequired?: boolean | number
+    isSecret?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    options?: boolean | number
+    type?: boolean | number
+    value?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8291,6 +8378,14 @@ export interface WorkspaceMemberGenqlSelection{
     userEmail?: boolean | number
     userId?: boolean | number
     userWorkspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceMemberApplicationVariablesGenqlSelection{
+    userWorkspaceId?: boolean | number
+    variables?: UserApplicationVariableValueGenqlSelection
+    workspaceMemberId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10500,6 +10595,30 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
+    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
+      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCodeRedemption']
+    export const isTwoFactorAuthenticationRecoveryCodeRedemption = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCodeRedemption => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCodeRedemption"')
+      return TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryStatus_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryStatus']
+    export const isTwoFactorAuthenticationRecoveryStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryStatus"')
+      return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
     export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
@@ -10608,6 +10727,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isUser = (obj?: { __typename?: any } | null): obj is User => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUser"')
       return User_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UserApplicationVariableValue_possibleTypes: string[] = ['UserApplicationVariableValue']
+    export const isUserApplicationVariableValue = (obj?: { __typename?: any } | null): obj is UserApplicationVariableValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserApplicationVariableValue"')
+      return UserApplicationVariableValue_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10832,6 +10959,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspaceMember = (obj?: { __typename?: any } | null): obj is WorkspaceMember => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMember"')
       return WorkspaceMember_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceMemberApplicationVariables_possibleTypes: string[] = ['WorkspaceMemberApplicationVariables']
+    export const isWorkspaceMemberApplicationVariables = (obj?: { __typename?: any } | null): obj is WorkspaceMemberApplicationVariables => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMemberApplicationVariables"')
+      return WorkspaceMemberApplicationVariables_possibleTypes.includes(obj.__typename)
     }
     
 

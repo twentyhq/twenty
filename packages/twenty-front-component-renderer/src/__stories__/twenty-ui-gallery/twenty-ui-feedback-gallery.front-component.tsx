@@ -1,7 +1,12 @@
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
-import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
+import {
+  Banner,
+  Loader,
+  ProgressBar,
+  Skeleton,
+} from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -15,7 +20,20 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
     name: 'Banner',
     node: (
-      <Banner color="blue" variant="primary">
+      <Banner
+        status="error"
+        color="blue"
+        variant="soft"
+        role="status"
+        aria-live="polite"
+        aria-label="Banner result"
+        className="custom-banner"
+        style={{ marginTop: 7 }}
+        render={<section data-composed="true" />}
+        ref={(element) => {
+          if (isDefined(element)) element.dataset.refTag = element.tagName;
+        }}
+      >
         Heads up
       </Banner>
     ),
@@ -30,15 +48,20 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
     name: 'InlineBanner compact link',
     node: (
       <InlineBanner
-        variant="compact"
-        message="Connect your account to keep your contacts in sync."
-        button={{ title: 'Connection settings', href: '#connection-settings' }}
-      />
+        layout="compact"
+        action={
+          <InlineBanner.Action href={'#connection-settings'}>
+            {'Connection settings'}
+          </InlineBanner.Action>
+        }
+      >
+        {'Connect your account to keep your contacts in sync.'}
+      </InlineBanner>
     ),
   },
   {
     name: 'InlineBanner',
-    node: <InlineBanner color="blue" message="Inline message" />,
+    node: <InlineBanner status="info">{'Inline message'}</InlineBanner>,
   },
   {
     name: 'Loader',
@@ -67,6 +90,16 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
     name: 'ProgressBar',
     node: <ProgressBar value={50} ariaLabel="Progress" />,
+  },
+  {
+    name: 'Skeleton',
+    node: <Skeleton width={180} height={16} />,
+  },
+  {
+    name: 'StaticSkeleton',
+    node: (
+      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+    ),
   },
 ];
 

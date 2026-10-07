@@ -4,6 +4,5 @@ import { WorkspaceFlatWorkflowMapCacheService } from 'src/engine/metadata-module
 
 @Module({
   providers: [WorkspaceFlatWorkflowMapCacheService],
-  exports: [WorkspaceFlatWorkflowMapCacheService],
 })
 export class FlatWorkflowModule {}

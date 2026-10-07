@@ -466,6 +466,40 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should forward the input type and data of a typed input event', () => {
+    const handleInput = jest.fn();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, { onInput: handleInput, type: 'text' }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'a';
+    act(() => {
+      node.dispatchEvent(
+        new InputEvent('input', {
+          bubbles: true,
+          inputType: 'insertText',
+          data: 'a',
+        }),
+      );
+    });
+
+    expect(handleInput).toHaveBeenCalledTimes(1);
+    expect(handleInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'input',
+        inputType: 'insertText',
+        data: 'a',
+        isComposing: false,
+        value: 'a',
+      }),
+    );
+  });
+
   it('should prevent default on dragover when a remote drop handler exists', () => {
     const handleDrop = jest.fn();
     const Wrapper = createHtmlHostWrapper('div');

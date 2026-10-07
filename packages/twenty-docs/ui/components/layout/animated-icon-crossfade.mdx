@@ -6,7 +6,7 @@ description: Crossfade between two icons as application state changes.
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
 
-`AnimatedIconCrossfade` displays one of two icon components according to `isActive`. It does not own the action or state. Compose it inside a labeled [Button](/ui/primitives/input/button).
+`AnimatedIconCrossfade` crossfades between `activeIcon` and `inactiveIcon` node content according to `isActive`. It does not own the action or state. Compose it inside a labeled [Button](/ui/primitives/input/button).
 
 ```tsx
 import { useState } from 'react';
@@ -23,8 +23,8 @@ export const EditToggle = () => {
       startIcon={
         <AnimatedIconCrossfade
           isActive={isEditing}
-          ActiveIcon={IconX}
-          InactiveIcon={IconPencil}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
         />
       }
     >
@@ -34,7 +34,11 @@ export const EditToggle = () => {
 };
 ```
 
-`size` defaults to the small theme icon size. Keep the accessible action name on the surrounding control. The icons communicate its state visually.
+Both nodes stay mounted as `isActive` changes, preserving their local state. The layers animate opacity and scale, and disable transitions for reduced motion. Both layers are decorative; keep the accessible action name on the surrounding control. For a standalone labeled image, set `role="img"` and `aria-label` on the root.
+
+Native attributes, events, `className`, `style`, and `ref` target an inline span, which can sit inside a button. `render` replaces that target through Base UI composition. The root dimensions default to the small icon theme token. Size each icon node explicitly, and use root width and height styles for larger artwork.
+
+Replace `ActiveIcon` and `InactiveIcon` constructors with lowercase `activeIcon` and `inactiveIcon` nodes. Move the former `size` option to the node dimensions and root styles.
 
 <StoryEmbed
   storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"

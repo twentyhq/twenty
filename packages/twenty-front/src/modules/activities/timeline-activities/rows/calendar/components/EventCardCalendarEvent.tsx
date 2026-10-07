@@ -21,7 +21,6 @@ import {
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
 } from '~/utils/format/formatDate';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledEventCardCalendarEventContainer = styled.div`
   cursor: pointer;
@@ -157,7 +156,7 @@ export const EventCardCalendarEvent = ({
     return <CalendarEventNotSharedContent />;
   }
 
-  if (isUndefinedOrNull(calendarEvent.startsAt)) {
+  if (!isDefined(calendarEvent.startsAt)) {
     return <div>{t`Calendar event has no start date`}</div>;
   }
 

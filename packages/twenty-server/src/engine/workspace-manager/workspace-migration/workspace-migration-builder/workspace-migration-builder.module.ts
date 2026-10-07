@@ -110,7 +110,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
-    FlatFieldMetadataTypeValidatorService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,

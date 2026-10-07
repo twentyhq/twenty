@@ -111,7 +111,6 @@ describe('AgentRunService', () => {
       toolLoadingStrategy: 'lazy',
       capabilities: {
         canAskHumans: false,
-        canProposeToolCalls: false,
       },
     });
     expect(prompt).toEqual({

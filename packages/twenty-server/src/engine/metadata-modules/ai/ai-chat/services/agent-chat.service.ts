@@ -503,41 +503,6 @@ export class AgentChatService {
     return savedTurnId;
   }
 
-  // tool call ids are only unique within a conversation
-  async findToolPart({
-    threadId,
-    toolCallId,
-    workspaceId,
-  }: {
-    threadId: string;
-    toolCallId: string;
-    workspaceId: string;
-  }): Promise<Pick<
-    AgentMessagePartWorkspaceEntity,
-    'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
-  > | null> {
-    const parts = await this.messagePartRepository.find(workspaceId, {
-      where: { toolCallId },
-      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
-    });
-
-    if (!isNonEmptyArray(parts)) {
-      return null;
-    }
-
-    const message = await this.messageRepository.findOne(workspaceId, {
-      where: {
-        id: In(parts.map((part) => part.messageId)),
-        threadId,
-      },
-      select: ['id'],
-    });
-
-    return (
-      parts.find((candidate) => candidate.messageId === message?.id) ?? null
-    );
-  }
-
   async findAwaitingToolParts({
     messageId,
     workspaceId,

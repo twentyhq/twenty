@@ -4,7 +4,7 @@
   "sourceRoot": "packages/twenty-cli/src",
   "projectType": "application",
   "tags": ["scope:cli"],
-  "implicitDependencies": ["create-twenty-app"],
+  "implicitDependencies": ["twenty-sdk"],
   "targets": {
     "build": {
       "dependsOn": ["^build"],
@@ -20,6 +20,14 @@
     },
     "typecheck": {},
     "lint": {},
+    "test:package": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": false,
+      "options": {
+        "command": "node --test packages/twenty-cli/scripts/test-check-publish.mjs packages/twenty-cli/scripts/test-template-lock.mjs packages/twenty-cli/scripts/test-package.mjs"
+      }
+    },
     "test": {
       "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

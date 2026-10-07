@@ -11,7 +11,7 @@ import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
@@ -27,7 +27,7 @@ import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsage
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledTrigger = styled.button`
   align-items: center;
@@ -57,6 +57,7 @@ const StyledFooter = styled.div`
 
 export const AiChatContextUsageButton = () => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -192,7 +193,7 @@ export const AiChatContextUsageButton = () => {
             {...getFloatingProps()}
           >
             <MetricRow
-              startIcon={IconWindow}
+              startIcon={<IconWindow size={theme.icon.size.sm} />}
               progress={percentage}
               value={
                 contextWindow > 0
@@ -210,7 +211,7 @@ export const AiChatContextUsageButton = () => {
             </MetricRow>
             {!isWorkspaceSetupChat && (
               <MetricRow
-                startIcon={IconGauge}
+                startIcon={<IconGauge size={theme.icon.size.sm} />}
                 progress={
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }
