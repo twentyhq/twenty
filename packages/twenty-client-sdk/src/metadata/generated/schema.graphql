@@ -327,6 +327,7 @@ type Application {
   frontComponents: [FrontComponent!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
+  isUninstallBlockedByOtherWorkspaceInstallations: Boolean!
   logicFunctions: [LogicFunction!]!
   logoFileId: UUID
   logoUrl: String

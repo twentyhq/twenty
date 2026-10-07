@@ -257,6 +257,7 @@ export interface Application {
     frontComponents: FrontComponent[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
+    isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']
     logicFunctions: LogicFunction[]
     logoFileId?: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -4131,6 +4132,7 @@ export interface ApplicationGenqlSelection{
     frontComponents?: FrontComponentGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
+    isUninstallBlockedByOtherWorkspaceInstallations?: boolean | number
     logicFunctions?: LogicFunctionGenqlSelection
     logoFileId?: boolean | number
     logoUrl?: boolean | number
