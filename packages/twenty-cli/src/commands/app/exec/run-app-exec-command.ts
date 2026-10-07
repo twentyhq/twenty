@@ -53,7 +53,10 @@ export const runAppExecCommand: CommandRun<TargetCommandContext> = async (
         `Executing ${formatDataValue(name)} on ${target.apiUrl}…`,
       ),
   });
-  const human = formatFunctionExecution(result);
+  const human = formatFunctionExecution(
+    result,
+    result.status === 'SUCCESS' ? process.stdout : process.stderr,
+  );
 
   if (result.status !== 'SUCCESS') {
     if (outputMode === 'human') {

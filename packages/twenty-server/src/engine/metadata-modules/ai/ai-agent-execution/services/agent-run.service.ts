@@ -195,13 +195,8 @@ export class AgentRunService {
         },
       });
 
-      if (outcome.status === 'NO_CREDITS') {
-        return {
-          result: null,
-          error: 'Agent stopped: no more available credits.',
-          success: false,
-          threadId,
-        };
+      if (outcome.status === 'FAILED') {
+        return { result: null, error: outcome.error, success: false, threadId };
       }
 
       return {
