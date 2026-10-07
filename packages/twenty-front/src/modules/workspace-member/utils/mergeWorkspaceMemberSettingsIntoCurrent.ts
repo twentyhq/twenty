@@ -1,7 +1,6 @@
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -10,6 +9,7 @@ import {
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 export type WorkspaceMemberNameUpdate = {
   firstName: string;

@@ -1,4 +1,4 @@
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { AnimatedCircleLoading } from '@/workflow/components/internal/AnimatedCircleLoading/AnimatedCircleLoading';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
