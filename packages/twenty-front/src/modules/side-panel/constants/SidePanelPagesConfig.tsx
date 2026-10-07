@@ -13,6 +13,7 @@ import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-ca
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
 import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
+import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
@@ -98,6 +99,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.CreateRelatedRecord, <SidePanelCreateRelatedRecordPage />],
   [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
+  [
+    SidePanelPages.RecordCreationFormSettings,
+    <SidePanelRecordCreationFormSettingsPage />,
+  ],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailDesignPage />],
   [SidePanelPages.EmailBlockStyle, <SidePanelEmailBlockSettingsPage />],
