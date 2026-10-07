@@ -22,6 +22,7 @@ import { useValidationRules } from '@/validation-rules/hooks/useValidationRules'
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
+import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -219,17 +220,18 @@ const SidePanelRecordCreationForm = ({
 
     setIsSubmitting(true);
     try {
-      const { validationRuleViolationFieldMetadataIds } =
-        await settleRecordCreationDraft({
-          requestId,
-          draftRecord: computeRecordFormCreateRecordInput({
-            draftRecord,
-            fieldMetadataItems: objectMetadataItem.fields,
-            objectMetadataItems,
-          }),
-        });
+      const { error } = await settleRecordCreationDraft({
+        requestId,
+        draftRecord: computeRecordFormCreateRecordInput({
+          draftRecord,
+          fieldMetadataItems: objectMetadataItem.fields,
+          objectMetadataItems,
+        }),
+      });
 
-      revealHiddenFieldsIfTargeted(validationRuleViolationFieldMetadataIds);
+      revealHiddenFieldsIfTargeted(
+        getValidationRuleViolationFieldMetadataIdsFromError(error),
+      );
     } finally {
       setIsSubmitting(false);
     }

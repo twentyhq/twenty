@@ -91,26 +91,23 @@ it('removes the form from deeper in the history when the user moved on before cr
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([otherPage]);
 });
 
-it('resolves with the fields the server rejected through validation rules and keeps the form open', async () => {
+it('resolves with the error the server rejected the draft with and keeps the form open', async () => {
   const { result, store } = setup();
-  const createRecord = jest.fn(() =>
-    Promise.reject(
-      new CombinedGraphQLErrors({
-        data: null,
-        errors: [
-          {
-            message: 'A company needs an amount',
-            extensions: {
-              subCode: 'VALIDATION_RULE_VIOLATION',
-              validationRuleViolations: [
-                { ruleId: 'amount-rule', fieldMetadataId: 'field-amount' },
-              ],
-            },
-          },
-        ],
-      }),
-    ),
-  );
+  const rejection = new CombinedGraphQLErrors({
+    data: null,
+    errors: [
+      {
+        message: 'A company needs an amount',
+        extensions: {
+          subCode: 'VALIDATION_RULE_VIOLATION',
+          validationRuleViolations: [
+            { ruleId: 'amount-rule', fieldMetadataId: 'field-amount' },
+          ],
+        },
+      },
+    ],
+  });
+  const createRecord = jest.fn(() => Promise.reject(rejection));
   act(() => {
     void result.current.requestRecordCreation({
       objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
@@ -129,8 +126,6 @@ it('resolves with the fields the server rejected through validation rules and ke
 
   expect(createRecord).toHaveBeenCalledTimes(1);
   expect(createRecord).toHaveBeenCalledWith({ name: 'Test' });
-  expect(settlement).toEqual({
-    validationRuleViolationFieldMetadataIds: ['field-amount'],
-  });
+  expect(settlement).toEqual({ error: rejection });
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
 });

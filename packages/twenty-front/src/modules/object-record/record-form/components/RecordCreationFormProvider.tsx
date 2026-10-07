@@ -10,7 +10,6 @@ import {
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
-import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -58,7 +57,7 @@ export const RecordCreationFormProvider = ({
         !isDefined(pendingRecordCreation) ||
         pendingRecordCreation.isSettling
       ) {
-        return { validationRuleViolationFieldMetadataIds: [] };
+        return {};
       }
 
       if (draftRecord === null) {
@@ -70,7 +69,7 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        return { validationRuleViolationFieldMetadataIds: [] };
+        return {};
       }
 
       setPendingRecordCreations((previousPendingRecordCreations) =>
@@ -96,10 +95,7 @@ export const RecordCreationFormProvider = ({
 
         enqueueToast(getToastOptionsFromError({ error }));
 
-        return {
-          validationRuleViolationFieldMetadataIds:
-            getValidationRuleViolationFieldMetadataIdsFromError(error),
-        };
+        return { error };
       }
 
       removePageFromSidePanelHistory(requestId);
@@ -112,7 +108,7 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      return { validationRuleViolationFieldMetadataIds: [] };
+      return {};
     },
     [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
   );

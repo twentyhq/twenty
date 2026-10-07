@@ -11,7 +11,7 @@ export type RecordCreationFormContextValue = {
   settleRecordCreationDraft: (params: {
     requestId: string;
     draftRecord: Partial<ObjectRecord> | null;
-  }) => Promise<{ validationRuleViolationFieldMetadataIds: string[] }>;
+  }) => Promise<{ error?: unknown }>;
 };
 
 export const [

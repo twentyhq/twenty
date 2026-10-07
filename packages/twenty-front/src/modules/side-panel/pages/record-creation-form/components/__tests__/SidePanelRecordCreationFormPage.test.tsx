@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -76,6 +77,22 @@ const NICKNAME_RULE: ValidationRule = {
 };
 
 const settleRecordCreationDraft = jest.fn();
+
+const buildValidationRuleViolationError = (fieldMetadataId: string) =>
+  new CombinedGraphQLErrors({
+    data: null,
+    errors: [
+      {
+        message: 'A company needs a nickname',
+        extensions: {
+          subCode: 'VALIDATION_RULE_VIOLATION',
+          validationRuleViolations: [
+            { ruleId: 'nickname-rule', fieldMetadataId },
+          ],
+        },
+      },
+    ],
+  });
 let mockValidationRules: ValidationRule[] = [];
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
@@ -225,9 +242,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     mockValidationRules = [];
-    settleRecordCreationDraft.mockResolvedValue({
-      validationRuleViolationFieldMetadataIds: [],
-    });
+    settleRecordCreationDraft.mockResolvedValue({});
     seedRecordFormPageLayout();
     jotaiStore.set(
       recordCreationFormRequestComponentState.atomFamily({
@@ -343,7 +358,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     const user = userEvent.setup();
 
     settleRecordCreationDraft.mockResolvedValue({
-      validationRuleViolationFieldMetadataIds: [NICKNAME_FIELD.id],
+      error: buildValidationRuleViolationError(NICKNAME_FIELD.id),
     });
 
     renderPage();
@@ -362,7 +377,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     const user = userEvent.setup();
 
     settleRecordCreationDraft.mockResolvedValue({
-      validationRuleViolationFieldMetadataIds: [NAME_FIELD.id],
+      error: buildValidationRuleViolationError(NAME_FIELD.id),
     });
 
     renderPage();
