@@ -27,10 +27,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
     EnterpriseKeyValidationCronJob,
     EnterpriseResolver,
   ],
-  exports: [
-    EnterprisePlanService,
-    CustomAiProviderAccessService,
-    EnterpriseKeyValidationCronJob,
-  ],
+  exports: [EnterprisePlanService, CustomAiProviderAccessService],
 })
 export class EnterpriseModule {}

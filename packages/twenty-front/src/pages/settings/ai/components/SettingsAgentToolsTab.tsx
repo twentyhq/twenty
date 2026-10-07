@@ -14,7 +14,7 @@ import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/Settings
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};

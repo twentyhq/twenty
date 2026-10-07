@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AGENT_CHAT_CHANNEL_MEMBER_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-member-columns.constant';
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-record-event.service';
@@ -38,7 +39,6 @@ type ChannelChanges = {
 };
 
 const CHANNEL_COLUMNS = `id, name, icon, color, visibility, "createdAt", "updatedAt", "deletedAt"`;
-const MEMBER_COLUMNS = `id, "channelId", "workspaceMemberId", position, "createdAt", "updatedAt", "deletedAt"`;
 
 // Channels are written in SQL so each membership and its grant land
 // together: a member reads and replies in a private channel through the
@@ -353,7 +353,7 @@ export class AgentChatChannelService {
         >(
           `WITH deleted_member AS (
              DELETE FROM ${memberTable} WHERE "channelId" = $1
-             RETURNING ${MEMBER_COLUMNS}
+             RETURNING ${AGENT_CHAT_CHANNEL_MEMBER_COLUMNS}
            )
            SELECT * FROM deleted_member`,
           [args.channelId],
@@ -447,7 +447,7 @@ export class AgentChatChannelService {
           `WITH removed_member AS (
              DELETE FROM ${memberTable}
              WHERE "channelId" = $1 AND "workspaceMemberId" = $2
-             RETURNING ${MEMBER_COLUMNS}
+             RETURNING ${AGENT_CHAT_CHANNEL_MEMBER_COLUMNS}
            )
            SELECT * FROM removed_member`,
           [args.channelId, memberId],

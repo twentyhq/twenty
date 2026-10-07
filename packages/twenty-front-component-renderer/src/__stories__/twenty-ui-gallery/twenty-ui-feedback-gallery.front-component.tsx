@@ -1,7 +1,12 @@
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
-import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
+import {
+  Banner,
+  Loader,
+  ProgressBar,
+  Skeleton,
+} from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -67,6 +72,16 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
     name: 'ProgressBar',
     node: <ProgressBar value={50} ariaLabel="Progress" />,
+  },
+  {
+    name: 'Skeleton',
+    node: <Skeleton width={180} height={16} />,
+  },
+  {
+    name: 'StaticSkeleton',
+    node: (
+      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+    ),
   },
 ];
 

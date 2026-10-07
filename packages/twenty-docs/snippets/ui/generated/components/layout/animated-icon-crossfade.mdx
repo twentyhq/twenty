@@ -11,18 +11,26 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="ActiveIcon" type="IconComponent" required>
-  Icon component for the active state.
+<ParamField body="activeIcon" type="ReactNode" required>
+  Decorative node content for the active state.
 </ParamField>
 
-<ParamField body="InactiveIcon" type="IconComponent" required>
-  Icon component for the inactive state.
+<ParamField body="className" type="string">
+  CSS class applied to the inline span root.
+</ParamField>
+
+<ParamField body="inactiveIcon" type="ReactNode" required>
+  Decorative node content for the inactive state.
 </ParamField>
 
 <ParamField body="isActive" type="boolean" required>
-  Shows ActiveIcon when true and InactiveIcon otherwise.
+  Shows activeIcon when true and inactiveIcon otherwise.
 </ParamField>
 
-<ParamField body="size" type="number">
-  Icon dimension in pixels. Defaults to the small theme icon size.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Replaces the span root while preserving both transition layers.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties">
+  Inline styles applied to the root, including width and height.
 </ParamField>

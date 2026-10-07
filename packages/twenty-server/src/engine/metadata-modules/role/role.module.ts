@@ -43,11 +43,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceRolesPermissionsCacheService,
     WorkspaceRoleIdsWithAllRecordsAccessCacheService,
   ],
-  exports: [
-    RoleService,
-    RoleToolWorkspaceService,
-    WorkspaceFlatRoleMapCacheService,
-    WorkspaceFlatRoleTargetMapCacheService,
-  ],
+  exports: [RoleService, RoleToolWorkspaceService],
 })
 export class RoleModule {}

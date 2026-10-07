@@ -81,7 +81,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
-    AgentAsyncExecutorService,
     AgentActorContextService,
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,

@@ -1,9 +1,8 @@
 import { type EntityManager } from 'typeorm';
 
+import { AGENT_CHAT_CHANNEL_MEMBER_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-member-columns.constant';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { type AgentChatChannelMemberWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-channel-member.workspace-entity';
-
-const MEMBER_COLUMNS = `id, "channelId", "workspaceMemberId", position, "createdAt", "updatedAt", "deletedAt"`;
 
 // Each membership carries the READ_WRITE grant its member reads and replies
 // in a private channel through, written in the same statement. A member
@@ -42,7 +41,7 @@ export const insertAgentChatChannelMembers = async ({
        FROM ${workspaceMemberTable} member
        WHERE member.id = ANY($2::uuid[]) AND member."deletedAt" IS NULL
        ON CONFLICT ("channelId", "workspaceMemberId") DO NOTHING
-       RETURNING ${MEMBER_COLUMNS}
+       RETURNING ${AGENT_CHAT_CHANNEL_MEMBER_COLUMNS}
      ), channel_grant AS (
        INSERT INTO ${recordShareTable}
          ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")

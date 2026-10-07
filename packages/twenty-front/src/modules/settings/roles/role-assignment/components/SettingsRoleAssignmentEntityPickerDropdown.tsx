@@ -10,7 +10,7 @@ import {
   FindManyAgentsDocument,
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type EntityData = Agent | ApiKeyForRole;
 

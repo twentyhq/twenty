@@ -24,3 +24,9 @@
     @content;
   }
 }
+
+@mixin hover-capable-without-touch {
+  @media (hover: hover) and (not (any-pointer: coarse)) {
+    @content;
+  }
+}

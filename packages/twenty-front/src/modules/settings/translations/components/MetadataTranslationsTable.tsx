@@ -2,6 +2,8 @@ import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model
 import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
 import { type MetadataTranslationLanguageRow } from '@/settings/translations/types/MetadataTranslationLanguageRow';
 import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,7 +11,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import Skeleton from 'react-loading-skeleton';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
@@ -69,7 +70,13 @@ export const MetadataTranslationsTable = ({
             <TableBody>
               {showSkeleton
                 ? Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton height={32} borderRadius={4} key={index} />
+                    <SkeletonLine
+                      baseColor={LEGACY_SKELETON_COLORS.base}
+                      highlightColor={LEGACY_SKELETON_COLORS.highlight}
+                      height={32}
+                      borderRadius={4}
+                      key={index}
+                    />
                   ))
                 : languageRows.map(({ locale, label, translations }) => (
                     <MetadataTranslationsTableRow

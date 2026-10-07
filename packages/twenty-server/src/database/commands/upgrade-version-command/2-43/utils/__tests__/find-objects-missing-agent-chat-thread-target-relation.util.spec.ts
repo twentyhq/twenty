@@ -11,6 +11,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 const STANDARD_APP_UID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APP_UID = '20202020-0000-4000-8000-000000000002';
@@ -32,6 +33,7 @@ type SourceSpecification = {
   nameSingular: string;
   isActive?: boolean;
   applicationUniversalIdentifier?: string;
+  hasTable?: boolean;
   hasReverseField?: boolean;
   forwardField?: { name?: string; universalIdentifier?: string };
   extraFields?: {
@@ -55,6 +57,7 @@ const buildArgs = ({
   const flatObjectMetadatas: FlatObjectMetadata[] = [];
   const flatFieldMetadatas: FlatFieldMetadata[] = [];
   const targetFieldIds: string[] = [];
+  const existingTableNames = new Set<string>();
 
   const registerField = ({
     id,
@@ -127,18 +130,24 @@ const buildArgs = ({
       );
     }
 
-    flatObjectMetadatas.push(
-      getFlatObjectMetadataMock({
-        id: `object-${source.key}`,
-        universalIdentifier: `object-uid-${source.key}`,
-        applicationUniversalIdentifier:
-          source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
-        nameSingular: source.nameSingular,
-        namePlural: `${source.nameSingular}s`,
-        isActive: source.isActive ?? true,
-        fieldIds: sourceFieldIds,
-      }),
-    );
+    const sourceFlatObjectMetadata = getFlatObjectMetadataMock({
+      id: `object-${source.key}`,
+      universalIdentifier: `object-uid-${source.key}`,
+      applicationUniversalIdentifier:
+        source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
+      nameSingular: source.nameSingular,
+      namePlural: `${source.nameSingular}s`,
+      isActive: source.isActive ?? true,
+      fieldIds: sourceFieldIds,
+    });
+
+    flatObjectMetadatas.push(sourceFlatObjectMetadata);
+
+    if (source.hasTable ?? true) {
+      existingTableNames.add(
+        computeObjectTargetTable(sourceFlatObjectMetadata),
+      );
+    }
   }
 
   const targetFlatObjectMetadata = getFlatObjectMetadataMock({
@@ -170,6 +179,7 @@ const buildArgs = ({
     ),
     targetFlatObjectMetadata,
     existingTargetColumnNames: new Set(targetColumnNames),
+    existingTableNames,
     twentyStandardApplicationUniversalIdentifier: STANDARD_APP_UID,
   };
 };
@@ -369,6 +379,25 @@ describe('findObjectsMissingAgentChatThreadTargetRelation', () => {
         objectNameSingular: 'pet',
         reason:
           'column "targetPetId" already exists on the agentChatThreadTarget table',
+      },
+    ]);
+  });
+
+  it('reports an object whose table does not exist', () => {
+    const result = findObjectsMissingAgentChatThreadTargetRelation(
+      buildArgs({
+        sources: [
+          { key: 'viewField', nameSingular: 'viewField', hasTable: false },
+          { key: 'pet', nameSingular: 'pet' },
+        ],
+      }),
+    );
+
+    expect(getMissingObjectNames(result)).toEqual(['pet']);
+    expect(result.unprovisionableRelations).toEqual([
+      {
+        objectNameSingular: 'viewField',
+        reason: 'table "_viewField" does not exist in the workspace schema',
       },
     ]);
   });
