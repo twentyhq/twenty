@@ -21,13 +21,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-} from '~/generated/graphql';
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
+import { ImportContacts } from '~/pages/onboarding/ImportContacts';
 
 export const SyncEmails = () => {
   const { t } = useLingui();

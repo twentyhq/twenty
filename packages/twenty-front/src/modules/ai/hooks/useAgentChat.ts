@@ -17,12 +17,12 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useWarnAboutParticipantMentionsNotAdded } from '@/ai/hooks/useWarnAboutParticipantMentionsNotAdded';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -34,6 +34,7 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getAgentChatThreadAtoms } from '@/ai/utils/getAgentChatThreadAtoms';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
+import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -59,8 +60,8 @@ export const useAgentChat = (
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
-  const { addParticipantsMentionedInMessage } =
-    useAddAgentChatThreadParticipants();
+  const { warnAboutParticipantMentionsNotAdded } =
+    useWarnAboutParticipantMentionsNotAdded();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -179,6 +180,17 @@ export const useAgentChat = (
       filename: file.filename,
     }));
 
+    // Members already following are sent too, so the mention brings the chat
+    // back to their inbox
+    const currentWorkspaceMemberId = store.get(
+      currentWorkspaceMemberState.atom,
+    )?.id;
+    const participantMentions = getParticipantMentionsFromSerializedDocument(
+      serializedContentToSend,
+    ).filter(
+      ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
+    );
+
     setAgentChatUploadedFiles([]);
 
     try {
@@ -192,6 +204,12 @@ export const useAgentChat = (
           modelId: modelIdForRequest,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
+          mentionedWorkspaceMemberIds:
+            participantMentions.length > 0
+              ? participantMentions.map(
+                  ({ workspaceMemberId }) => workspaceMemberId,
+                )
+              : undefined,
         },
       });
 
@@ -210,9 +228,10 @@ export const useAgentChat = (
       ).forEach((conversationTarget) => {
         void attachChatThreadToRecord({ threadId, ...conversationTarget });
       });
-      void addParticipantsMentionedInMessage({
-        threadId,
-        serializedMessage: serializedContentToSend,
+      warnAboutParticipantMentionsNotAdded({
+        participantMentions,
+        addedWorkspaceMemberIds:
+          data?.sendChatMessage.mentionedParticipantWorkspaceMemberIds ?? [],
       });
 
       if (data?.sendChatMessage.queued === true) {
@@ -263,7 +282,7 @@ export const useAgentChat = (
     apolloClient,
     applyOptimisticRestore,
     attachChatThreadToRecord,
-    addParticipantsMentionedInMessage,
+    warnAboutParticipantMentionsNotAdded,
   ]);
 
   useListenToBrowserEvent({

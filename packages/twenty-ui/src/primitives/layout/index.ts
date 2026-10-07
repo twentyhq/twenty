@@ -13,6 +13,7 @@ export type { AnimationDurationObject } from './Collapsible/types/AnimationDurat
 export type { AnimationDurations } from './Collapsible/types/AnimationDurations';
 export { DirectionProvider } from './DirectionProvider/DirectionProvider';
 export type { DirectionProviderProps } from './DirectionProvider/types/DirectionProviderProps';
-export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
 export type { ResizeHandleProps } from './ResizeHandle/types/ResizeHandleProps';
+export { Separator } from './Separator/Separator';
+export type { SeparatorProps } from './Separator/types/SeparatorProps';

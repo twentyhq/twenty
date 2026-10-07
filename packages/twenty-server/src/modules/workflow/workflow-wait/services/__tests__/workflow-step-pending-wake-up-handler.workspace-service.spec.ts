@@ -1,6 +1,5 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -86,13 +85,13 @@ const buildService = ({
     registry,
     workflowRunWorkspaceService as never,
     workflowExecutionContextService as never,
-    new PendingWakeUpEventRecordService(findRecordsService as never),
     messageQueueService as never,
   ).onModuleInit();
 
   const service = new PendingWakeUpResolverService(
     pendingWakeUpService as never,
     registry,
+    findRecordsService as never,
   );
 
   return {

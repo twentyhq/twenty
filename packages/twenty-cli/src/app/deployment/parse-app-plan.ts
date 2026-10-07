@@ -68,7 +68,7 @@ export const parseAppPlan = ({
     throw new CliError({
       code: 'RESPONSE_LIMIT_EXCEEDED',
       message: `The application plan exceeds ${RESULT_ITEM_LIMIT} actions.`,
-      hint: 'Reduce the app changes before requesting another preview.',
+      hint: 'Reduce the app changes before requesting another plan.',
     });
   }
 
