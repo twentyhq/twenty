@@ -1,15 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { PageLayoutType } from 'twenty-shared/types';
+import { DashboardFilterSlot, PageLayoutType } from 'twenty-shared/types';
 
 @InputType()
 export class CreatePageLayoutInput {
@@ -30,4 +32,9 @@ export class CreatePageLayoutInput {
   @IsUUID()
   @IsOptional()
   objectMetadataId?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsArray()
+  @IsOptional()
+  dashboardFilters?: DashboardFilterSlot[] | null;
 }

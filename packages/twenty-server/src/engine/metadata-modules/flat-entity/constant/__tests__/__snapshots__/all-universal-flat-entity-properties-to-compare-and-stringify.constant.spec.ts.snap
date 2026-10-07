@@ -223,9 +223,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "objectMetadataUniversalIdentifier",
       "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier",
       "isFirstTabPinned",
+      "dashboardFilters",
       "deletedAt",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "dashboardFilters",
+    ],
   },
   "pageLayoutTab": {
     "propertiesToCompare": [

@@ -62,6 +62,7 @@ export const computeSystemRecordFormPageLayoutToCreate = ({
     name: RECORD_FORM_PAGE_LAYOUT_NAME,
     type: PageLayoutType.RECORD_FORM,
     isFirstTabPinned: true,
+    dashboardFilters: null,
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
     navigationMenuItemUniversalIdentifiers: [],
     tabUniversalIdentifiers: [pageLayoutTabUniversalIdentifier],

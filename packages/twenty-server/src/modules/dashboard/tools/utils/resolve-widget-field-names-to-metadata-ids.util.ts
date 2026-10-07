@@ -3,6 +3,7 @@ import {
   type ChartFilter,
   type ChartRecordFilter,
   type ChartRecordFilterGroup,
+  type DashboardFilterBinding,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,6 +12,7 @@ import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { type ChartFilterInput } from 'src/modules/dashboard/tools/types/chart-filter-input.type';
+import { type DashboardFilterBindingsInput } from 'src/modules/dashboard/tools/types/dashboard-filter-bindings-input.type';
 import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
 import { type WidgetIdentifiersInput } from 'src/modules/dashboard/tools/types/widget-identifiers-input.type';
@@ -184,6 +186,43 @@ const resolveChartFilterFieldNamesToIds = (
   };
 };
 
+const resolveDashboardFilterBindingsFieldNamesToIds = (
+  dashboardFilterBindings: DashboardFilterBindingsInput | undefined,
+  objectMetadataId: string | undefined,
+  maps: DashboardIdentifierMaps,
+): Record<string, DashboardFilterBinding | null> | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(dashboardFilterBindings).map(([slotId, binding]) => {
+      // null means the slot is explicitly not applied to this widget
+      if (!isDefined(binding)) {
+        return [slotId, null];
+      }
+
+      const { fieldName, fieldMetadataId, ...rest } = binding;
+
+      return [
+        slotId,
+        {
+          ...rest,
+          fieldMetadataId: getFieldMetadataIdOrThrow(
+            {
+              fieldMetadataId,
+              fieldName,
+              objectMetadataId,
+              maps,
+            },
+            `dashboard filter "${slotId}" binding field`,
+          ),
+        },
+      ];
+    }),
+  );
+};
+
 export const resolveConfigurationFieldNamesToIds = (
   configuration: WidgetConfigurationInput,
   objectMetadataId: string | undefined,
@@ -196,6 +235,7 @@ export const resolveConfigurationFieldNamesToIds = (
         aggregateFieldMetadataId,
         ratioAggregateConfig,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -212,6 +252,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingsFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),
@@ -242,6 +287,7 @@ export const resolveConfigurationFieldNamesToIds = (
         secondaryAxisGroupByFieldName,
         secondaryAxisGroupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -258,6 +304,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingsFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),
@@ -293,6 +344,7 @@ export const resolveConfigurationFieldNamesToIds = (
         groupByFieldName,
         groupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -309,6 +361,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingsFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),

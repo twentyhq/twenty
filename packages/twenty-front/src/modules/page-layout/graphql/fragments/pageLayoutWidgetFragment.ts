@@ -63,6 +63,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings
         groupMode
         layout
         isCumulative
@@ -94,6 +95,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings
         isStacked
         isCumulative
         splitMultiValueFields
@@ -118,6 +120,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        dashboardFilterBindings
         timezone
         firstDayOfTheWeek
       }
@@ -130,6 +133,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         numberFormat
         description
         filter
+        dashboardFilterBindings
         prefix
         suffix
         timezone

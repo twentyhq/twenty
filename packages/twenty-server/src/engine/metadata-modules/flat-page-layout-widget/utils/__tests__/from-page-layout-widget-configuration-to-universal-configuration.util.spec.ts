@@ -1,6 +1,7 @@
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   type UniversalChartFilter,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -48,6 +49,30 @@ const getUniversalRecordFilters = (
   }
 
   return universalConfiguration.filter?.recordFilters;
+};
+
+const getUniversalDashboardFilterBindings = (
+  dashboardFilterBindings: Record<string, DashboardFilterBinding | null>,
+) => {
+  const universalConfiguration =
+    fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+      configuration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+        aggregateOperation: AggregateOperations.SUM,
+        dashboardFilterBindings,
+      },
+      fieldMetadataUniversalIdentifierById,
+    });
+
+  if (
+    universalConfiguration.configurationType !==
+    WidgetConfigurationType.AGGREGATE_CHART
+  ) {
+    throw new Error('Expected an aggregate chart universal configuration');
+  }
+
+  return universalConfiguration.dashboardFilterBindings;
 };
 
 describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
@@ -147,5 +172,54 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     ).toMatchObject({
       isUIEditable: false,
     });
+  });
+  it('should convert dashboard filter bindings to universal identifiers and keep null bindings', () => {
+    expect(
+      getUniversalDashboardFilterBindings({
+        date: { fieldMetadataId: AGGREGATE_FIELD_ID },
+        owner: {
+          fieldMetadataId: RELATION_FIELD_ID,
+          relationTargetFieldMetadataId: TARGET_TEXT_FIELD_ID,
+          subFieldName: 'firstName',
+        },
+        unbound: null,
+      }),
+    ).toEqual({
+      date: {
+        fieldMetadataUniversalIdentifier: AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+      },
+      owner: {
+        fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        relationTargetFieldMetadataUniversalIdentifier:
+          TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        subFieldName: 'firstName',
+      },
+      unbound: null,
+    });
+  });
+
+  it('should resolve a deleted dashboard filter binding field to null instead of throwing', () => {
+    expect(
+      getUniversalDashboardFilterBindings({
+        date: { fieldMetadataId: DELETED_FIELD_ID },
+      }),
+    ).toEqual({ date: { fieldMetadataUniversalIdentifier: null } });
+  });
+
+  it('should leave dashboard filter bindings undefined when the chart has none', () => {
+    const universalConfiguration =
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+          aggregateOperation: AggregateOperations.SUM,
+        },
+        fieldMetadataUniversalIdentifierById,
+      });
+
+    expect(universalConfiguration).not.toHaveProperty(
+      'dashboardFilterBindings',
+      expect.anything(),
+    );
   });
 });

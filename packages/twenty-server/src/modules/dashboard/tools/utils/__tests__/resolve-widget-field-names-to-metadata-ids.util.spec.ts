@@ -220,3 +220,51 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     );
   });
 });
+
+describe('resolveWidgetFieldNamesToIds - dashboard filter bindings', () => {
+  it('resolves binding fieldName to fieldMetadataId and keeps null bindings', () => {
+    const widget: WidgetIdentifiersInput = {
+      ...buildAggregateWidget(undefined),
+      configuration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldName: 'amount',
+        aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: true,
+        dashboardFilterBindings: {
+          date: { fieldName: 'createdAt' },
+          stage: { fieldMetadataId: STAGE_FIELD_ID, subFieldName: undefined },
+          owner: null,
+        },
+      },
+    };
+
+    const result = resolveWidgetFieldNamesToIds(widget, buildMaps());
+
+    expect(result.configuration).toMatchObject({
+      dashboardFilterBindings: {
+        date: { fieldMetadataId: CREATED_AT_FIELD_ID },
+        stage: { fieldMetadataId: STAGE_FIELD_ID },
+        owner: null,
+      },
+    });
+  });
+
+  it('throws a helpful error when a binding field name is unknown', () => {
+    const widget: WidgetIdentifiersInput = {
+      ...buildAggregateWidget(undefined),
+      configuration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldName: 'amount',
+        aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: true,
+        dashboardFilterBindings: {
+          date: { fieldName: 'nonExistentField' },
+        },
+      },
+    };
+
+    expect(() => resolveWidgetFieldNamesToIds(widget, buildMaps())).toThrow(
+      /Field "nonExistentField" not found/,
+    );
+  });
+});

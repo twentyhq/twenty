@@ -3,6 +3,7 @@
 exports[`Page layout update should succeed should update page layout name 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "deletedAt": null,
   "id": Any<String>,
   "name": "Updated Page Layout Name",
@@ -15,6 +16,7 @@ exports[`Page layout update should succeed should update page layout name 1`] = 
 exports[`Page layout update should succeed should update page layout type 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "deletedAt": null,
   "id": Any<String>,
   "name": "Original Page Layout",

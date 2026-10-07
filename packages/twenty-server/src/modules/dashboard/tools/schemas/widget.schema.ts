@@ -1,6 +1,8 @@
 import { isNumber } from '@sniptt/guards';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   AggregateOperations,
+  type CompositeFieldSubFieldName,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   ViewFilterOperand,
@@ -87,6 +89,13 @@ const AGGREGATE_OPERATION_OPTIONS = Object.values(AggregateOperations) as [
   ...AggregateOperations[],
 ];
 
+const COMPOSITE_SUB_FIELD_NAME_OPTIONS = Object.values(
+  COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
+).flatMap((subFieldNames) => Object.values(subFieldNames)) as [
+  CompositeFieldSubFieldName,
+  ...CompositeFieldSubFieldName[],
+];
+
 const FILTER_OPERAND_OPTIONS = Object.values(ViewFilterOperand) as [
   ViewFilterOperand,
   ...ViewFilterOperand[],
@@ -162,6 +171,41 @@ export const chartFilterSchema = z
   })
   .describe(
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
+  );
+
+const dashboardFilterBindingSchema = z
+  .object({
+    fieldMetadataId: z
+      .uuid()
+      .optional()
+      .describe(
+        'Field UUID the dashboard filter applies to on this widget (must belong to the widget object). Provide this or fieldName.',
+      ),
+    fieldName: z
+      .string()
+      .optional()
+      .describe(
+        'Field name the dashboard filter applies to (resolved to a UUID against the widget object). Alternative to fieldMetadataId.',
+      ),
+    subFieldName: z
+      .enum(COMPOSITE_SUB_FIELD_NAME_OPTIONS)
+      .optional()
+      .describe(
+        'Composite sub-field the filter applies to, e.g. "amountMicros" for CURRENCY.',
+      ),
+    relationTargetFieldMetadataId: z
+      .uuid()
+      .optional()
+      .describe(
+        'For a many-to-one relation field: UUID of the field on the related object the filter value is compared against.',
+      ),
+  })
+  .nullable();
+
+export const dashboardFilterBindingsSchema = z
+  .record(z.string(), dashboardFilterBindingSchema)
+  .describe(
+    'Dashboard filter slot id -> binding on this widget. null opts the widget out of that slot. A configuration update replaces the whole configuration, so repeat the existing bindings to keep them.',
   );
 
 const displayDataLabelSchema = z.boolean().optional();
@@ -324,6 +368,7 @@ const aggregateChartConfigSchemaBase = z.object({
   suffix: z.string().optional(),
   ratioAggregateConfig: ratioAggregateConfigSchema.optional(),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const aggregateChartConfigSchema = aggregateChartConfigSchemaBase.extend({
@@ -409,6 +454,7 @@ const barChartConfigSchemaCore = z.object({
     .enum(BAR_CHART_LAYOUT_OPTIONS)
     .describe('Layout orientation for bar charts'),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const barChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -494,6 +540,7 @@ const lineChartConfigSchemaCore = z.object({
   rangeMin: z.number().optional().describe('Y axis minimum value'),
   rangeMax: z.number().optional().describe('Y axis maximum value'),
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const lineChartConfigSchemaWithoutDefaults = withRangeMinMaxRefinement(
@@ -551,6 +598,7 @@ const pieChartConfigSchemaCore = z.object({
   showCenterMetric: showCenterMetricSchema,
   hideEmptyCategory: hideEmptyCategorySchema,
   filter: chartFilterSchema.optional(),
+  dashboardFilterBindings: dashboardFilterBindingsSchema.optional(),
 });
 
 const pieChartConfigSchemaWithoutDefaults = withManualSortRefinement(

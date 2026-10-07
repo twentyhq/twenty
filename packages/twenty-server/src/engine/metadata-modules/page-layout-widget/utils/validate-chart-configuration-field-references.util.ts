@@ -284,4 +284,34 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
       }
     }
   }
+
+  if (isDefined(widgetConfiguration.dashboardFilterBindings)) {
+    for (const [slotId, binding] of Object.entries(
+      widgetConfiguration.dashboardFilterBindings,
+    )) {
+      // null means the slot is explicitly not applied to this widget
+      if (!isDefined(binding)) {
+        continue;
+      }
+
+      const boundField = findActiveFlatFieldMetadataById(
+        binding.fieldMetadataId,
+        flatFieldMetadataMaps,
+      );
+
+      if (!isDefined(boundField)) {
+        throw buildChartFieldValidationException(
+          `Dashboard filter "${slotId}" is bound to field id "${binding.fieldMetadataId}", but it was deleted. Please remove or replace this binding.`,
+          widgetTitle,
+        );
+      }
+
+      if (boundField.objectMetadataId !== widgetObjectMetadataId) {
+        throw buildChartFieldValidationException(
+          `Dashboard filter "${slotId}" must be bound to a field of objectMetadataId "${widgetObjectMetadataId}".`,
+          widgetTitle,
+        );
+      }
+    }
+  }
 };

@@ -209,6 +209,7 @@ export type {
 export type {
   DashboardFilterSlot,
   DashboardFilterBinding,
+  UniversalDashboardFilterBinding,
   DashboardFilterValue,
 } from './page-layout/DashboardFilter';
 export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';

@@ -1034,6 +1034,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    dashboardFilters: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,

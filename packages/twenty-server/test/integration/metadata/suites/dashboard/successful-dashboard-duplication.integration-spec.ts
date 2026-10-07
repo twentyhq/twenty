@@ -9,6 +9,9 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { DASHBOARD_FILTER_PAGE_LAYOUT_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout/utils/dashboard-filter-page-layout-gql-fields.constant';
+import { fetchDashboardFilterTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout/utils/fetch-dashboard-filter-test-field-metadata-ids.util';
+import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
@@ -17,6 +20,8 @@ import {
 } from 'twenty-shared/testing';
 import {
   AggregateOperations,
+  type DashboardFilterBinding,
+  type DashboardFilterSlot,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewFilterOperand,
@@ -281,5 +286,116 @@ describe('Dashboard duplication should succeed', () => {
 
     expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
     expect(data.duplicateDashboard.title).toContain('(Copy)');
+  });
+  it('should duplicate a dashboard with dashboard filter slots and widget bindings', async () => {
+    currentTestContextId = 'f1c2d3e4-5a6b-4c7d-8e9f-0a1b2c3d4e5f';
+
+    const fieldMetadataIds = await fetchDashboardFilterTestFieldMetadataIds();
+
+    const dashboardFilters: DashboardFilterSlot[] = [
+      {
+        id: 'date',
+        label: 'Date',
+        filterType: 'DATE_TIME',
+        defaultOperand: ViewFilterOperand.IS_RELATIVE,
+        defaultValue: 'THIS_1_MONTH',
+      },
+      { id: 'owner', label: 'Owner', filterType: 'RELATION' },
+    ];
+    const dashboardFilterBindings: Record<
+      string,
+      DashboardFilterBinding | null
+    > = {
+      date: {
+        fieldMetadataId: fieldMetadataIds.companyCreatedAtFieldMetadataId,
+      },
+      owner: null,
+    };
+
+    const { data: pageLayoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: {
+        name: 'Page Layout with dashboard filters',
+        type: PageLayoutType.DASHBOARD,
+        dashboardFilters,
+      },
+    });
+
+    testPageLayoutId = pageLayoutData.createPageLayout.id;
+
+    const { data: tabData } = await createOnePageLayoutTab({
+      expectToFail: false,
+      input: {
+        title: 'Test Tab',
+        pageLayoutId: testPageLayoutId,
+      },
+    });
+
+    testPageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Companies this month',
+        type: WidgetType.GRAPH,
+        objectMetadataId: fieldMetadataIds.companyObjectMetadataId,
+        pageLayoutTabId: testPageLayoutTabId,
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId:
+            fieldMetadataIds.companyPositionFieldMetadataId,
+          aggregateOperation: AggregateOperations.COUNT,
+          dashboardFilterBindings,
+        },
+      },
+    });
+
+    const dashboard = await createTestDashboardWithGraphQL({
+      id: currentTestContextId,
+      title: 'Dashboard with dashboard filters',
+      pageLayoutId: testPageLayoutId,
+    });
+
+    testDashboardId = dashboard.id;
+
+    const { data, errors } = await duplicateOneDashboard({
+      expectToFail: false,
+      input: { id: testDashboardId },
+    });
+
+    expect(errors).toBeUndefined();
+
+    duplicatedDashboardId = data.duplicateDashboard.id;
+
+    const duplicatedPageLayoutId = data.duplicateDashboard.pageLayoutId;
+
+    jestExpectToBeDefined(duplicatedPageLayoutId);
+
+    const { data: duplicatedPageLayoutData } = await findOnePageLayout({
+      expectToFail: false,
+      input: { id: duplicatedPageLayoutId },
+      gqlFields: DASHBOARD_FILTER_PAGE_LAYOUT_GQL_FIELDS,
+    });
+
+    const duplicatedPageLayout = duplicatedPageLayoutData.getPageLayout;
+
+    jestExpectToBeDefined(duplicatedPageLayout);
+    expect(duplicatedPageLayout.id).not.toBe(testPageLayoutId);
+    expect(duplicatedPageLayout.dashboardFilters).toEqual(dashboardFilters);
+
+    const duplicatedWidgets =
+      duplicatedPageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [];
+
+    expect(duplicatedWidgets).toHaveLength(1);
+    expect(duplicatedWidgets[0].configuration).toMatchObject({
+      dashboardFilterBindings,
+    });
   });
 });

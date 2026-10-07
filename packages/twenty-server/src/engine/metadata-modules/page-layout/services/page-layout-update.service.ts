@@ -118,6 +118,11 @@ export class PageLayoutUpdateService {
       objectMetadataId: updateData.objectMetadataId,
       isFirstTabPinned:
         updateData.isFirstTabPinned ?? existingPageLayout.isFirstTabPinned,
+      // An explicit null clears the slots, an omitted field keeps them
+      dashboardFilters:
+        updateData.dashboardFilters === undefined
+          ? existingPageLayout.dashboardFilters
+          : updateData.dashboardFilters,
       updatedAt: new Date().toISOString(),
     };
 

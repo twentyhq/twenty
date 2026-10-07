@@ -930,6 +930,7 @@ export interface AggregateChartConfiguration {
     numberFormat?: ChartNumberFormat
     description?: Scalars['String']
     filter?: Scalars['JSON']
+    dashboardFilterBindings?: Scalars['JSON']
     timezone?: Scalars['String']
     firstDayOfTheWeek?: Scalars['Int']
     prefix?: Scalars['String']
@@ -968,6 +969,7 @@ export interface PieChartConfiguration {
     description?: Scalars['String']
     color?: Scalars['String']
     filter?: Scalars['JSON']
+    dashboardFilterBindings?: Scalars['JSON']
     timezone?: Scalars['String']
     firstDayOfTheWeek?: Scalars['Int']
     __typename: 'PieChartConfiguration'
@@ -1006,6 +1008,7 @@ export interface LineChartConfiguration {
     description?: Scalars['String']
     color?: Scalars['String']
     filter?: Scalars['JSON']
+    dashboardFilterBindings?: Scalars['JSON']
     isStacked?: Scalars['Boolean']
     isCumulative?: Scalars['Boolean']
     timezone?: Scalars['String']
@@ -1048,6 +1051,7 @@ export interface BarChartConfiguration {
     description?: Scalars['String']
     color?: Scalars['String']
     filter?: Scalars['JSON']
+    dashboardFilterBindings?: Scalars['JSON']
     groupMode?: BarChartGroupMode
     layout: BarChartLayout
     isCumulative?: Scalars['Boolean']
@@ -1228,6 +1232,7 @@ export interface PageLayout {
     applicationId: Scalars['UUID']
     isSystemSideEffect: Scalars['Boolean']
     isFirstTabPinned: Scalars['Boolean']
+    dashboardFilters?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -4801,6 +4806,7 @@ export interface AggregateChartConfigurationGenqlSelection{
     numberFormat?: boolean | number
     description?: boolean | number
     filter?: boolean | number
+    dashboardFilterBindings?: boolean | number
     timezone?: boolean | number
     firstDayOfTheWeek?: boolean | number
     prefix?: boolean | number
@@ -4835,6 +4841,7 @@ export interface PieChartConfigurationGenqlSelection{
     description?: boolean | number
     color?: boolean | number
     filter?: boolean | number
+    dashboardFilterBindings?: boolean | number
     timezone?: boolean | number
     firstDayOfTheWeek?: boolean | number
     __typename?: boolean | number
@@ -4866,6 +4873,7 @@ export interface LineChartConfigurationGenqlSelection{
     description?: boolean | number
     color?: boolean | number
     filter?: boolean | number
+    dashboardFilterBindings?: boolean | number
     isStacked?: boolean | number
     isCumulative?: boolean | number
     timezone?: boolean | number
@@ -4906,6 +4914,7 @@ export interface BarChartConfigurationGenqlSelection{
     description?: boolean | number
     color?: boolean | number
     filter?: boolean | number
+    dashboardFilterBindings?: boolean | number
     groupMode?: boolean | number
     layout?: boolean | number
     isCumulative?: boolean | number
@@ -5099,6 +5108,7 @@ export interface PageLayoutGenqlSelection{
     applicationId?: boolean | number
     isSystemSideEffect?: boolean | number
     isFirstTabPinned?: boolean | number
+    dashboardFilters?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
@@ -7877,11 +7887,11 @@ export interface CreatePageLayoutTabInput {title: Scalars['String'],position?: (
 
 export interface UpdatePageLayoutTabInput {title?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null)}
 
-export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
+export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null),dashboardFilters?: (Scalars['JSON'] | null)}
 
-export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
+export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null),dashboardFilters?: (Scalars['JSON'] | null)}
 
-export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),isFirstTabPinned?: (Scalars['Boolean'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
+export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),isFirstTabPinned?: (Scalars['Boolean'] | null),dashboardFilters?: (Scalars['JSON'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
 
 export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
 

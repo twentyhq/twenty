@@ -1,6 +1,8 @@
 import {
   type ChartFilter,
+  type DashboardFilterBinding,
   type UniversalChartFilter,
+  type UniversalDashboardFilterBinding,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,6 +82,55 @@ const convertChartFilterToUniversalFilter = ({
   };
 };
 
+const convertDashboardFilterBindingsToUniversalBindings = ({
+  dashboardFilterBindings,
+  fieldMetadataUniversalIdentifierById,
+}: {
+  dashboardFilterBindings:
+    | Record<string, DashboardFilterBinding | null>
+    | undefined;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+}): Record<string, UniversalDashboardFilterBinding | null> | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(dashboardFilterBindings).map(([slotId, binding]) => {
+      if (!isDefined(binding)) {
+        return [slotId, null];
+      }
+
+      const { fieldMetadataId, relationTargetFieldMetadataId, ...rest } =
+        binding;
+
+      return [
+        slotId,
+        {
+          ...rest,
+          fieldMetadataUniversalIdentifier: getFieldMetadataUniversalIdentifier(
+            {
+              fieldMetadataId,
+              fieldMetadataUniversalIdentifierById,
+              shouldThrowOnMissingIdentifier: false,
+            },
+          ),
+          ...(isDefined(relationTargetFieldMetadataId)
+            ? {
+                relationTargetFieldMetadataUniversalIdentifier:
+                  getFieldMetadataUniversalIdentifier({
+                    fieldMetadataId: relationTargetFieldMetadataId,
+                    fieldMetadataUniversalIdentifierById,
+                    shouldThrowOnMissingIdentifier: false,
+                  }),
+              }
+            : {}),
+        },
+      ];
+    }),
+  );
+};
+
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
@@ -102,6 +153,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataId,
         ratioAggregateConfig,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -133,6 +185,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         }),
+        dashboardFilterBindings:
+          convertDashboardFilterBindingsToUniversalBindings({
+            dashboardFilterBindings,
+            fieldMetadataUniversalIdentifierById,
+          }),
       };
     }
 
@@ -141,6 +198,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataId,
         groupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -167,6 +225,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         }),
+        dashboardFilterBindings:
+          convertDashboardFilterBindingsToUniversalBindings({
+            dashboardFilterBindings,
+            fieldMetadataUniversalIdentifierById,
+          }),
       };
     }
 
@@ -176,6 +239,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -213,6 +277,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         }),
+        dashboardFilterBindings:
+          convertDashboardFilterBindingsToUniversalBindings({
+            dashboardFilterBindings,
+            fieldMetadataUniversalIdentifierById,
+          }),
       };
     }
 
@@ -222,6 +291,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -259,6 +329,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier,
         }),
+        dashboardFilterBindings:
+          convertDashboardFilterBindingsToUniversalBindings({
+            dashboardFilterBindings,
+            fieldMetadataUniversalIdentifierById,
+          }),
       };
     }
 

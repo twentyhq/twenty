@@ -23,6 +23,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     color
     description
     filter
+    dashboardFilterBindings
     groupMode
     layout
     isCumulative
@@ -53,6 +54,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     color
     description
     filter
+    dashboardFilterBindings
     isStacked
     isCumulative
     timezone
@@ -74,6 +76,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     color
     description
     filter
+    dashboardFilterBindings
     timezone
     firstDayOfTheWeek
   }
@@ -86,6 +89,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     numberFormat
     description
     filter
+    dashboardFilterBindings
     prefix
     suffix
     timezone

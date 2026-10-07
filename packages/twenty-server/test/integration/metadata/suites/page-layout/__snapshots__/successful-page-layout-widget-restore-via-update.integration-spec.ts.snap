@@ -3,6 +3,7 @@
 exports[`Page layout widget restore via bulk update should succeed should create, delete, and restore a widget via bulk update 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
@@ -26,6 +27,7 @@ exports[`Page layout widget restore via bulk update should succeed should create
             "aggregateFieldMetadataId": Any<String>,
             "aggregateOperation": "SUM",
             "configurationType": "AGGREGATE_CHART",
+            "dashboardFilterBindings": null,
             "description": null,
             "displayDataLabel": true,
             "filter": null,
@@ -63,6 +65,7 @@ exports[`Page layout widget restore via bulk update should succeed should create
 exports[`Page layout widget restore via bulk update should succeed should handle mixed create, update, and restore in a single call 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
@@ -107,6 +110,7 @@ exports[`Page layout widget restore via bulk update should succeed should handle
             "aggregateFieldMetadataId": Any<String>,
             "aggregateOperation": "SUM",
             "configurationType": "AGGREGATE_CHART",
+            "dashboardFilterBindings": null,
             "description": null,
             "displayDataLabel": true,
             "filter": null,

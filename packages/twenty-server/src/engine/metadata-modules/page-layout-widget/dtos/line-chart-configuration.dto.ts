@@ -20,6 +20,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   type LineChartConfiguration,
   SerializedRelation,
 } from 'twenty-shared/types';
@@ -166,6 +167,12 @@ export class LineChartConfigurationDTO implements LineChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  // slotId -> binding; null means the slot is explicitly not applied to this widget
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  dashboardFilterBindings?: Record<string, DashboardFilterBinding | null>;
 
   @Field(() => Boolean, {
     nullable: true,

@@ -41,6 +41,7 @@ const PAGE_LAYOUT: FlatPageLayout = {
   tabUniversalIdentifiers: [],
   isSystemSideEffect: false,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   deletedAt: null,
 };
 

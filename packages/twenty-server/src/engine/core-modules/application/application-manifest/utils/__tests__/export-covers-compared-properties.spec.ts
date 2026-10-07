@@ -207,6 +207,15 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+  dashboardFilters: [
+    {
+      id: 'date',
+      label: 'Date',
+      filterType: 'DATE_TIME',
+      defaultOperand: ViewFilterOperand.IS_RELATIVE,
+      defaultValue: 'THIS_1_MONTH',
+    },
+  ],
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 

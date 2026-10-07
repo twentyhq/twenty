@@ -1,5 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
+  type DashboardFilterSlot,
   type PageLayoutTabLayoutMode,
   type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
@@ -38,5 +39,6 @@ export type PageLayoutManifest = SyncableEntityOptions & {
   type: PageLayoutType;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
+  dashboardFilters?: DashboardFilterSlot[] | null;
   tabs?: PageLayoutTabManifest[];
 };

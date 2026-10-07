@@ -30,5 +30,8 @@ export const fromFlatPageLayoutToPageLayoutManifest = ({
           flatPageLayout.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatPageLayout.dashboardFilters)
+    ? { dashboardFilters: flatPageLayout.dashboardFilters }
+    : {}),
   ...(isNonEmptyArray(tabs) ? { tabs } : {}),
 });

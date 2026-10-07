@@ -415,4 +415,37 @@ describe('Page layout widget creation should succeed', () => {
       );
     },
   );
+  // The single-widget path validates with whitelist: true, so an undecorated
+  // property would be silently stripped
+  it('should keep dashboard filter bindings on a GRAPH widget configuration', async () => {
+    const dashboardFilterBindings = {
+      date: { fieldMetadataId: testSetup.fieldMetadataId2 },
+      owner: null,
+    };
+
+    const { data } = await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Bar chart with dashboard filter bindings',
+        type: WidgetType.GRAPH,
+        objectMetadataId: testSetup.objectMetadataId,
+        configuration: {
+          configurationType: WidgetConfigurationType.BAR_CHART,
+          layout: BarChartLayout.VERTICAL,
+          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
+          aggregateOperation: AggregateOperations.COUNT,
+          primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
+          dashboardFilterBindings,
+        },
+        pageLayoutTabId: testSetup.pageLayoutTabId,
+        position: DEFAULT_GRID_POSITION,
+      },
+    });
+
+    createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
+
+    expect(data.createPageLayoutWidget.configuration).toMatchObject({
+      dashboardFilterBindings,
+    });
+  });
 });

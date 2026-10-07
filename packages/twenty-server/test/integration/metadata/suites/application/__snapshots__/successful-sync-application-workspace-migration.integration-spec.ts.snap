@@ -1319,6 +1319,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
+          "dashboardFilters": null,
           "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier": null,
           "deletedAt": null,
           "isFirstTabPinned": true,
@@ -1337,6 +1338,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
+          "dashboardFilters": null,
           "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier": null,
           "deletedAt": null,
           "isFirstTabPinned": true,
@@ -3084,6 +3086,7 @@ This is a test skill.",
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
+          "dashboardFilters": null,
           "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier": null,
           "deletedAt": null,
           "isFirstTabPinned": true,
@@ -3102,6 +3105,7 @@ This is a test skill.",
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
+          "dashboardFilters": null,
           "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier": null,
           "deletedAt": null,
           "isFirstTabPinned": true,

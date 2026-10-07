@@ -66,6 +66,7 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     objectMetadataId: pageLayoutEntity.objectMetadataId,
     isSystemSideEffect: pageLayoutEntity.isSystemSideEffect,
     isFirstTabPinned: pageLayoutEntity.isFirstTabPinned,
+    dashboardFilters: pageLayoutEntity.dashboardFilters,
     workspaceId: pageLayoutEntity.workspaceId,
     universalIdentifier: pageLayoutEntity.universalIdentifier,
     applicationId: pageLayoutEntity.applicationId,

@@ -19,6 +19,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   type PieChartConfiguration,
   SerializedRelation,
 } from 'twenty-shared/types';
@@ -122,6 +123,12 @@ export class PieChartConfigurationDTO implements PieChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  // slotId -> binding; null means the slot is explicitly not applied to this widget
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  dashboardFilterBindings?: Record<string, DashboardFilterBinding | null>;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

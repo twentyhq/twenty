@@ -4,6 +4,7 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs } from 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateBaseGraphFields } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util';
 import { validateChartFilter } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util';
+import { validateDashboardFilterBindings } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-dashboard-filter-bindings.util';
 import { validateGraphConfigurationByType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-by-type.util';
 import { validateGraphConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util';
 
@@ -14,7 +15,11 @@ export const validateGraphFlatPageLayoutWidgetForUpdate = (
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   } = args;
-  const { universalConfiguration, title: widgetTitle } = flatEntityToValidate;
+  const {
+    universalConfiguration,
+    title: widgetTitle,
+    objectMetadataUniversalIdentifier: widgetObjectMetadataUniversalIdentifier,
+  } = flatEntityToValidate;
   const errors: FlatPageLayoutWidgetValidationError[] = [];
 
   if (!isDefined(universalConfiguration)) {
@@ -53,6 +58,17 @@ export const validateGraphFlatPageLayoutWidgetForUpdate = (
   });
 
   errors.push(...chartFilterErrors);
+
+  const dashboardFilterBindingErrors = validateDashboardFilterBindings({
+    dashboardFilterBindings:
+      graphUniversalConfiguration.dashboardFilterBindings,
+    widgetTitle,
+    widgetObjectMetadataUniversalIdentifier,
+    flatFieldMetadataMaps:
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
+  });
+
+  errors.push(...dashboardFilterBindingErrors);
 
   return errors;
 };

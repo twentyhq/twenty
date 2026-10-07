@@ -2,7 +2,11 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
 } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
@@ -27,6 +31,15 @@ const PAGE_LAYOUT_MANIFEST: Required<Omit<PageLayoutManifest, 'tabs'>> = {
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: TAB_UID,
+  dashboardFilters: [
+    {
+      id: 'date',
+      label: 'Date',
+      filterType: 'DATE_TIME',
+      defaultOperand: ViewFilterOperand.IS_RELATIVE,
+      defaultValue: 'THIS_1_MONTH',
+    },
+  ],
 };
 
 const MINIMAL_PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {

@@ -17,11 +17,13 @@ import {
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_PAGE_LAYOUT_IS_FIRST_TAB_PINNED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/add-page-layout-is-first-tab-pinned-upgrade-command-name.constant';
+import { ADD_PAGE_LAYOUT_DASHBOARD_FILTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-page-layout-dashboard-filters-upgrade-command-name.constant';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { PageLayoutType } from 'twenty-shared/types';
+import { DashboardFilterSlot, PageLayoutType } from 'twenty-shared/types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'pageLayout', schema: 'core' })
 @Index('IDX_PAGE_LAYOUT_APPLICATION_ID', ['applicationId'])
@@ -99,6 +101,13 @@ export class PageLayoutEntity
   })
   @Column({ nullable: false, default: true, type: 'boolean' })
   isFirstTabPinned: boolean;
+
+  // null means the dashboard was never configured and keeps the built-in slots
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_PAGE_LAYOUT_DASHBOARD_FILTERS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  dashboardFilters: JsonbProperty<DashboardFilterSlot[] | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

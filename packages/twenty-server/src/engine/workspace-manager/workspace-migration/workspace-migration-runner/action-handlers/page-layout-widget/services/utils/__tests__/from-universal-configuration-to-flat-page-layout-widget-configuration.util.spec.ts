@@ -2,6 +2,7 @@ import {
   AggregateOperations,
   FieldMetadataType,
   type UniversalChartFilter,
+  type UniversalDashboardFilterBinding,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
@@ -91,6 +92,36 @@ const getChartRecordFilters = (
   return configuration.filter?.recordFilters;
 };
 
+const getDashboardFilterBindings = (
+  dashboardFilterBindings: Record<
+    string,
+    UniversalDashboardFilterBinding | null
+  >,
+) => {
+  const configuration =
+    fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+        aggregateOperation: AggregateOperations.SUM,
+        dashboardFilterBindings,
+      },
+      flatFieldMetadataMaps,
+      flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+      flatViewMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+    });
+
+  if (
+    configuration.configurationType !== WidgetConfigurationType.AGGREGATE_CHART
+  ) {
+    throw new Error('Expected an aggregate chart configuration');
+  }
+
+  return configuration.dashboardFilterBindings;
+};
+
 describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => {
   it('should create a field widget without its embedded view when the view does not exist yet', () => {
     expect(
@@ -172,5 +203,41 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
         value: 'foo',
       },
     ]);
+  });
+  it('should resolve dashboard filter binding universal identifiers back to field metadata ids and keep null bindings', () => {
+    expect(
+      getDashboardFilterBindings({
+        date: {
+          fieldMetadataUniversalIdentifier:
+            AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+        },
+        owner: {
+          fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier:
+            TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+          subFieldName: 'firstName',
+        },
+        unbound: null,
+      }),
+    ).toEqual({
+      date: { fieldMetadataId: AGGREGATE_FIELD_ID },
+      owner: {
+        fieldMetadataId: RELATION_FIELD_ID,
+        relationTargetFieldMetadataId: TARGET_TEXT_FIELD_ID,
+        subFieldName: 'firstName',
+      },
+      unbound: null,
+    });
+  });
+
+  it('should throw when a dashboard filter binding references an unknown field', () => {
+    expect(() =>
+      getDashboardFilterBindings({
+        date: {
+          fieldMetadataUniversalIdentifier:
+            '20202020-9999-4999-8999-000000000009',
+        },
+      }),
+    ).toThrow('Field metadata not found for universal identifier');
   });
 });
