@@ -143,6 +143,9 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
+    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },
   {
     name: 'Loader',
@@ -649,6 +652,16 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/inline-banner',
     propDescriptions: INLINE_BANNER_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'soft',
+      layout: 'standard',
+      embedded: 'false',
+      icon: 'decorative information icon',
+    },
   },
   {
     name: 'ToastProvider',
