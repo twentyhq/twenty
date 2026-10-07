@@ -1,5 +1,4 @@
 import { type AgentRunSummary } from 'twenty-shared/ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
@@ -13,10 +12,6 @@ export type AgentRunCallerHandler<
   buildExecutionContext(
     input: AgentRunCallerInput<TCaller>,
   ): Promise<AgentRunExecutionContext>;
-
-  resolveTurnAuthor(
-    input: AgentRunCallerInput<TCaller>,
-  ): Promise<ActorMetadata>;
 
   getWaitingState(
     input: AgentRunCallerInput<TCaller>,

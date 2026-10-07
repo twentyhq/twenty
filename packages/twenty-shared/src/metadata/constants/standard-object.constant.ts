@@ -1414,6 +1414,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
+      assigneeIndex: {
+        universalIdentifier: 'a65524f8-c999-448b-b9f4-c9ecce15fd13',
+      },
     },
   },
   agentChatThreadParticipant: {

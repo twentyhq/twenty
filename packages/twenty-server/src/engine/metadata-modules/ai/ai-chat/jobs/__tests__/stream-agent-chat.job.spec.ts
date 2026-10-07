@@ -354,6 +354,7 @@ describe('StreamAgentChatJob', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
       ),
       threadService as never,
       metricsService as never,

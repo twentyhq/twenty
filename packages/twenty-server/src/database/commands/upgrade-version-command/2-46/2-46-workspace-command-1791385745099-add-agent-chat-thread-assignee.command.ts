@@ -1,0 +1,341 @@
+import { Command } from 'nest-commander';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
+import { backfillAgentChatThreadInboxState } from 'src/database/commands/upgrade-version-command/2-46/utils/backfill-agent-chat-thread-inbox-state.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const ASSIGNEE_FIELD_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.agentChatThread.fields.assignee.universalIdentifier,
+  STANDARD_OBJECTS.workspaceMember.fields.assignedAgentChatThreads
+    .universalIdentifier,
+];
+
+const ASSIGNEE_INDEX_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.agentChatThread.indexes.assigneeIndex.universalIdentifier,
+];
+
+const ASSIGNEE_COMMAND_MENU_ITEM_NAMES = ['assignAiChat'] as const;
+
+// The assignee cannot unsubscribe, so Unsubscribe hides for them. Only an
+// expression still as the subscriptions command saved it is changed
+const UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES =
+  'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isSubscribed", true)';
+
+const UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES = `${UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES} and noneEquals(selectedRecords, "inboxStatus.isAssignedToMe", true)`;
+
+const buildUnsubscribeCommandMenuItemUpdates = ({
+  flatCommandMenuItemByUniversalIdentifier,
+  now,
+  direction,
+}: {
+  flatCommandMenuItemByUniversalIdentifier: Record<
+    string,
+    FlatCommandMenuItem | undefined
+  >;
+  now: string;
+  direction: 'up' | 'down';
+}): FlatCommandMenuItem[] => {
+  const commandMenuItem =
+    flatCommandMenuItemByUniversalIdentifier[
+      STANDARD_COMMAND_MENU_ITEMS.unsubscribeFromAiChat.universalIdentifier
+    ];
+  const [fromExpression, toExpression] =
+    direction === 'up'
+      ? [
+          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
+          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
+        ]
+      : [
+          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
+          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
+        ];
+
+  if (
+    !isDefined(commandMenuItem) ||
+    commandMenuItem.conditionalAvailabilityExpression !== fromExpression
+  ) {
+    return [];
+  }
+
+  return [
+    {
+      ...commandMenuItem,
+      conditionalAvailabilityExpression: toExpression,
+      updatedAt: now,
+    },
+  ];
+};
+
+@RegisteredWorkspaceCommand('2.46.0', 1791385745099)
+@Command({
+  name: 'upgrade:2-46:add-agent-chat-thread-assignee',
+  description: 'Add the assignee of chat threads and the Assign command',
+})
+export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly storage: AgentHistoryUpgradeStorageService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      flatCommandMenuItemMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatIndexMaps',
+      'flatCommandMenuItemMaps',
+    ]);
+
+    // Workspaces without chat history objects get the assignee when the 2.42
+    // history move provisions them
+    if (
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier
+        ],
+      )
+    ) {
+      this.logger.log(
+        `agentChatThread object not found for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
+    const fieldsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+        existingFlatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifiers: ASSIGNEE_FIELD_UNIVERSAL_IDENTIFIERS,
+      });
+    const indexesToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+        existingFlatEntityMaps: flatIndexMaps,
+        universalIdentifiers: ASSIGNEE_INDEX_UNIVERSAL_IDENTIFIERS,
+      });
+    const commandMenuItemsToCreate =
+      buildMissingStandardCommandMenuItemsToCreate({
+        commandMenuItemNames: [...ASSIGNEE_COMMAND_MENU_ITEM_NAMES],
+        flatCommandMenuItemByUniversalIdentifier:
+          flatCommandMenuItemMaps.byUniversalIdentifier,
+        flatObjectMetadataMaps,
+        workspaceId,
+        now: new Date().toISOString(),
+      });
+
+    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      now: new Date().toISOString(),
+      direction: 'up',
+    });
+
+    const operationCount =
+      fieldsToCreate.length +
+      indexesToCreate.length +
+      commandMenuItemsToCreate.length +
+      commandMenuItemsToUpdate.length;
+
+    if (operationCount === 0) {
+      return;
+    }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating ${fieldsToCreate.length} field(s), ${indexesToCreate.length} index(es) and ${commandMenuItemsToCreate.length} command menu item(s), and updating ${commandMenuItemsToUpdate.length} command menu item(s) for chat assignees`,
+    );
+
+    if (options.dryRun ?? false) {
+      return;
+    }
+
+    // The assignee opens the runtime's 2.46 chat fence. Until then chats were
+    // written to and created without inbox state, so the inbox backfill runs
+    // again for them first
+    const threadObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+    const participantObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ];
+
+    if (
+      fieldsToCreate.length > 0 &&
+      isDefined(threadObject) &&
+      isDefined(participantObject)
+    ) {
+      await backfillAgentChatThreadInboxState({
+        storage: this.storage,
+        workspaceId,
+        threadObjectMetadataId: threadObject.id,
+        participantObjectMetadataId: participantObject.id,
+      });
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: fieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            index: {
+              flatEntityToCreate: indexesToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            commandMenuItem: {
+              flatEntityToCreate: commandMenuItemsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to add chat assignees for workspace ${workspaceId}`,
+      );
+    }
+  }
+
+  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatFieldMetadataMaps, flatIndexMaps, flatCommandMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+        'flatCommandMenuItemMaps',
+      ]);
+
+    const fieldsToDelete = ASSIGNEE_FIELD_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+          flatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifier,
+        }),
+    ).filter(isDefined);
+    const indexesToDelete = ASSIGNEE_INDEX_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        findFlatEntityByUniversalIdentifier<FlatIndexMetadata>({
+          flatEntityMaps: flatIndexMaps,
+          universalIdentifier,
+        }),
+    ).filter(isDefined);
+    const commandMenuItemsToDelete = ASSIGNEE_COMMAND_MENU_ITEM_NAMES.map(
+      (name) =>
+        flatCommandMenuItemMaps.byUniversalIdentifier[
+          STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier
+        ],
+    ).filter(isDefined);
+    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      now: new Date().toISOString(),
+      direction: 'down',
+    });
+
+    if (
+      fieldsToDelete.length +
+        indexesToDelete.length +
+        commandMenuItemsToDelete.length +
+        commandMenuItemsToUpdate.length ===
+      0
+    ) {
+      return;
+    }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: deleting ${fieldsToDelete.length} field(s), ${indexesToDelete.length} index(es) and ${commandMenuItemsToDelete.length} command menu item(s) of chat assignees`,
+    );
+
+    if (options.dryRun ?? false) {
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: fieldsToDelete,
+              flatEntityToUpdate: [],
+            },
+            index: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: indexesToDelete,
+              flatEntityToUpdate: [],
+            },
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: commandMenuItemsToDelete,
+              flatEntityToUpdate: commandMenuItemsToUpdate,
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to remove chat assignees for workspace ${workspaceId}`,
+      );
+    }
+  }
+}
