@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,67 +8,50 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 type AiChatInboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
   threads: Pick<AgentChatThreadRecord, 'id'>[];
-  // Split view always has a chat beside the list; otherwise the list stands alone
-  shouldSelectFirstThread: boolean;
 };
 
 // A chat leaves the list when it is done, snoozed or deleted; the one that
-// takes its place is selected, the way a mail inbox moves on
+// takes its place is selected, the way a mail inbox moves on. The list is
+// watched because generic record deletes, other tabs and reloads change it
+// before any chat code hears of it
 export const AiChatInboxSelectionEffect = ({
   selectedThreadId,
   threads,
-  shouldSelectFirstThread,
 }: AiChatInboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
-  const [lastListedSelection, setLastListedSelection] = useState<{
+  const lastListedSelection = useRef<{
     threadId: string;
     index: number;
   } | null>(null);
 
   useEffect(() => {
-    const selectThread = (threadId: string | null) =>
-      // oxlint-disable-next-line twenty/no-navigate-prefer-link
-      navigate(AppPath.AiChatInbox, { threadId }, undefined, {
-        replace: true,
-      });
-
     if (!isDefined(selectedThreadId)) {
-      if (shouldSelectFirstThread && threads.length > 0) {
-        selectThread(threads[0].id);
-      }
-
       return;
     }
 
     const index = threads.findIndex(({ id }) => id === selectedThreadId);
 
     if (index !== -1) {
-      if (
-        lastListedSelection?.threadId !== selectedThreadId ||
-        lastListedSelection.index !== index
-      ) {
-        setLastListedSelection({ threadId: selectedThreadId, index });
-      }
-
+      lastListedSelection.current = { threadId: selectedThreadId, index };
       return;
     }
 
     // A chat opened from a link without being listed stays open
-    if (lastListedSelection?.threadId !== selectedThreadId) {
+    if (lastListedSelection.current?.threadId !== selectedThreadId) {
       return;
     }
 
     const nextThread =
-      threads[Math.min(lastListedSelection.index, threads.length - 1)];
+      threads[Math.min(lastListedSelection.current.index, threads.length - 1)];
 
-    selectThread(nextThread?.id ?? null);
-  }, [
-    lastListedSelection,
-    navigate,
-    selectedThreadId,
-    shouldSelectFirstThread,
-    threads,
-  ]);
+    // oxlint-disable-next-line twenty/no-navigate-prefer-link
+    navigate(
+      AppPath.AiChatInbox,
+      { threadId: nextThread?.id ?? null },
+      undefined,
+      { replace: true },
+    );
+  }, [navigate, selectedThreadId, threads]);
 
   return null;
 };
