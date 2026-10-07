@@ -1554,6 +1554,7 @@ export interface JobStatus {
     state: JobState
     attemptsMade: Scalars['Int']
     failedReason?: Scalars['String']
+    progress?: Scalars['Int']
     enqueuedAt: Scalars['Float']
     startedAt?: Scalars['Float']
     finishedAt?: Scalars['Float']
@@ -5432,6 +5433,7 @@ export interface JobStatusGenqlSelection{
     state?: boolean | number
     attemptsMade?: boolean | number
     failedReason?: boolean | number
+    progress?: boolean | number
     enqueuedAt?: boolean | number
     startedAt?: boolean | number
     finishedAt?: boolean | number

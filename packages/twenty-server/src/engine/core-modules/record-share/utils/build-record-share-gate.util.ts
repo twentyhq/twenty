@@ -5,10 +5,11 @@ import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
-import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type InheritedReadabilityParentExpression,
@@ -38,17 +39,16 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
-  const isGatingEnabled =
-    context.environment.isRecordShareVisibilityGatingEnabled;
+  const { sharingMode, isVisibilityGatingEnabled } = resolveObjectSharing({
+    flatObjectMetadata: target.flatObjectMetadata,
+    featureFlagsMap: context.environment.featureFlagsMap,
+  });
 
   switch (gateKind) {
     case 'open':
-      return isGatingEnabled &&
-        shouldEnforceRecordShareExceptions({
-          flatObjectMetadata: target.flatObjectMetadata,
-          isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
-          canAccessAllRecords: context.subject.canAccessAllRecords,
-        })
+      return isVisibilityGatingEnabled &&
+        sharingMode === RecordSharingMode.OPEN_BY_DEFAULT &&
+        !context.subject.canAccessAllRecords
         ? buildRecordShareExceptionGate(context, target)
         : { kind: 'open' };
     case 'deny':
@@ -58,9 +58,10 @@ export const buildRecordShareGate = ({
         context,
         target,
         buildParentPolicy,
+        isVisibilityGatingEnabled,
       });
     case 'private':
-      return isGatingEnabled
+      return isVisibilityGatingEnabled
         ? buildOwnRecordShareGate(context, target)
         : { kind: 'open' };
     default:
@@ -133,9 +134,10 @@ const buildInheritedReadabilityGate = ({
   context,
   target,
   buildParentPolicy,
-}: RecordShareGateArgs): RowAccessPolicy => {
-  const isGatingEnabled =
-    context.environment.isRecordShareVisibilityGatingEnabled;
+  isVisibilityGatingEnabled,
+}: RecordShareGateArgs & {
+  isVisibilityGatingEnabled: boolean;
+}): RowAccessPolicy => {
   const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
     target;
 
@@ -164,7 +166,7 @@ const buildInheritedReadabilityGate = ({
   const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
 
   if (parents.length === 0) {
-    return isOpenWhenDetached || !isGatingEnabled
+    return isOpenWhenDetached || !isVisibilityGatingEnabled
       ? { kind: 'open' }
       : buildOwnRecordShareGate(context, target);
   }
@@ -185,7 +187,7 @@ const buildInheritedReadabilityGate = ({
   );
 
   if (
-    !isGatingEnabled &&
+    !isVisibilityGatingEnabled &&
     parentExpressions.every(
       (parentExpression) => parentExpression.policy.kind === 'open',
     )
