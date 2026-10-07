@@ -54,12 +54,6 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
         flatCommandMenuItemMaps.byUniversalIdentifier[
           STANDARD_COMMAND_MENU_ITEMS.assignAiChat.universalIdentifier
         ] !== undefined,
-      isUnsubscribeHiddenFromAssignee:
-        flatCommandMenuItemMaps.byUniversalIdentifier[
-          STANDARD_COMMAND_MENU_ITEMS.unsubscribeFromAiChat.universalIdentifier
-        ]?.conditionalAvailabilityExpression?.includes(
-          'inboxStatus.isAssignedToMe',
-        ) ?? false,
     };
   };
 
@@ -74,7 +68,7 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
   };
 
   // An earlier suite may have rebuilt the chat objects without the
-  // Unsubscribe command, which the upgrade adds before this one
+  // subscriptions, which the upgrade adds before this one
   beforeAll(async () => {
     command = getAppProviderByClassName<AddAgentChatThreadAssigneeCommand>(
       'AddAgentChatThreadAssigneeCommand',
@@ -95,7 +89,6 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
       fieldCount: 0,
       hasIndex: false,
       hasCommandMenuItem: false,
-      isUnsubscribeHiddenFromAssignee: false,
     });
     expect(await hasAssigneeColumn()).toBe(false);
   });
@@ -107,7 +100,6 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
       fieldCount: 2,
       hasIndex: true,
       hasCommandMenuItem: true,
-      isUnsubscribeHiddenFromAssignee: true,
     });
     expect(await hasAssigneeColumn()).toBe(true);
   });
@@ -118,7 +110,6 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
       fieldCount: 2,
       hasIndex: true,
       hasCommandMenuItem: true,
-      isUnsubscribeHiddenFromAssignee: true,
     });
   });
 });
