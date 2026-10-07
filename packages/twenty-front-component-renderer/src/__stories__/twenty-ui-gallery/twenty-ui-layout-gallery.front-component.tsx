@@ -1,7 +1,8 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import 'twenty-ui/style.css';
-import { Collapsible, HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { SeparatorExample } from './separator-example';
 import { ResizeHandleExample } from './resize-handle-example';
 import { AnimatedIconCrossfadeExample } from './animated-icon-crossfade-example';
 
@@ -20,8 +21,8 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
     node: <AnimatedIconCrossfadeExample />,
   },
   {
-    name: 'HorizontalSeparator',
-    node: <HorizontalSeparator text="or" />,
+    name: 'Separator',
+    node: <SeparatorExample />,
   },
   {
     name: 'ResizeHandle',

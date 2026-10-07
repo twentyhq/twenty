@@ -9,6 +9,7 @@ import { PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pend
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -16,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     TypeOrmModule.forFeature([PendingWakeUpEntity]),
+    RecordCrudModule,
     RecordShareModule,
     WorkspaceCacheModule,
   ],

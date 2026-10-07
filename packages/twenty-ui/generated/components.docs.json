@@ -438,16 +438,23 @@
     ]
   },
   {
-    "name": "VisibilityHidden",
+    "name": "VisuallyHidden",
     "entryPoint": "twenty-ui/primitives/accessibility",
-    "slug": "accessibility/visibility-hidden",
+    "slug": "accessibility/visually-hidden",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Content hidden visually while remaining available to assistive technology."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render function composed with the hidden span props and ref."
       }
     ]
   },
@@ -928,44 +935,37 @@
     ]
   },
   {
-    "name": "HorizontalSeparator",
+    "name": "Separator",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/horizontal-separator",
+    "slug": "layout/separator",
     "props": [
       {
-        "name": "color",
-        "type": "string",
+        "name": "className",
+        "type": "string | ((state: SeparatorState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "CSS color for the line and text. Defaults to the medium border color."
+        "description": "CSS class or function of the separator orientation."
       },
       {
-        "name": "noMargin",
-        "type": "boolean",
+        "name": "orientation",
+        "type": "\"horizontal\" | \"vertical\"",
         "required": false,
-        "defaultValue": "false",
-        "description": "Removes the vertical margins."
+        "defaultValue": "horizontal",
+        "description": "Direction of the divider: horizontal or vertical."
       },
       {
-        "name": "text",
-        "type": "string",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SeparatorState>",
         "required": false,
-        "defaultValue": "",
-        "description": "Optional label displayed between two lines."
+        "defaultValue": null,
+        "description": "Element or render function composed with the native separator props and ref."
       },
       {
-        "name": "textPosition",
-        "type": "\"center\" | \"end\"",
+        "name": "style",
+        "type": "CSSProperties | ((state: SeparatorState) => CSSProperties | undefined)",
         "required": false,
-        "defaultValue": "center",
-        "description": "Places the text between two lines, or at the end of a single line."
-      },
-      {
-        "name": "visible",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Shows the dividing line. Setting it to false preserves margins and any text."
+        "defaultValue": null,
+        "description": "Native style or function of the separator orientation. Use it for spacing and line color."
       }
     ]
   },
@@ -1040,22 +1040,22 @@
     ]
   },
   {
-    "name": "TextDirectionProvider",
+    "name": "DirectionProvider",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/text-direction-provider",
+    "slug": "layout/direction-provider",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Controls that receive the direction context."
       },
       {
         "name": "direction",
         "type": "\"ltr\" | \"rtl\"",
-        "required": true,
-        "defaultValue": null,
+        "required": false,
+        "defaultValue": "ltr",
         "description": "Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content."
       }
     ]

@@ -17,7 +17,7 @@ import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
-import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
+import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
@@ -171,12 +171,12 @@ export const JsonVisualizerPreact: Story = createGalleryStory({
 export const LayoutReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'react',
-  play: resizeHandleTest,
+  play: layoutTest,
 });
 export const LayoutPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'preact',
-  play: resizeHandleTest,
+  play: layoutTest,
 });
 
 export const NavigationReact: Story = createGalleryStory({

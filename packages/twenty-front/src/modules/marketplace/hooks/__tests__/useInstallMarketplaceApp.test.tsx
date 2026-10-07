@@ -70,6 +70,19 @@ describe('useInstallMarketplaceApp', () => {
     });
 
     expect(result.current.isInstalling).toBe(true);
+    expect(result.current.installProgress).toBeUndefined();
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+        jobId: JOB_ID,
+        state: JobState.ACTIVE,
+        attemptsMade: 1,
+        progress: 43,
+        enqueuedAt: 1,
+      });
+    });
+
+    expect(result.current.installProgress).toBe(43);
 
     act(() => {
       dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
@@ -88,7 +101,7 @@ describe('useInstallMarketplaceApp', () => {
     });
   });
 
-  it('reports an installation still running on the server', async () => {
+  it('reports an installation still running on the server with its progress', async () => {
     const { result } = renderHook(
       () =>
         useInstallMarketplaceApp({
@@ -101,11 +114,25 @@ describe('useInstallMarketplaceApp', () => {
             jobId: JOB_ID,
             state: JobState.ACTIVE,
             failedReason: null,
+            progress: 57,
           }),
         ]),
       },
     );
 
     await waitFor(() => expect(result.current.isInstalling).toBe(true));
+    expect(result.current.installProgress).toBe(57);
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(QUEUE_JOB_BROWSER_EVENT_NAME, {
+        jobId: JOB_ID,
+        state: JobState.ACTIVE,
+        attemptsMade: 1,
+        progress: 86,
+        enqueuedAt: 1,
+      });
+    });
+
+    expect(result.current.installProgress).toBe(86);
   });
 });

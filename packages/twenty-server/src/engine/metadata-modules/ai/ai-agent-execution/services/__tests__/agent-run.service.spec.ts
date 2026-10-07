@@ -19,25 +19,15 @@ const RUN_AS_ACTOR = {
   workspaceMemberId: 'workspace-member-id',
   context: {},
 };
-const PRIOR_MESSAGES = [{ id: 'message-1', role: 'user', parts: [] }];
-
 const buildService = () => {
-  const executionResult = {
-    result: { response: 'Acme is your biggest customer' },
-    hasNoMoreAvailableCredits: false,
-    steps: [],
-  };
-  const agentAsyncExecutorService = {
-    executeAgent: jest.fn().mockResolvedValue(executionResult),
-  };
-  const agentRunConversationService = {
-    openTurn: jest.fn().mockResolvedValue('turn-id'),
-    closeTurn: jest.fn().mockResolvedValue(undefined),
-    failTurn: jest.fn().mockResolvedValue(undefined),
-    withThreadLock: jest.fn(({ work }) => work()),
-  };
-  const conversationReaderService = {
-    loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
+  const agentRunnerService = {
+    run: jest.fn().mockImplementation(async ({ conversation }) => ({
+      threadId: conversation.threadId,
+      outcome: {
+        status: 'COMPLETED',
+        result: { response: 'Acme is your biggest customer' },
+      },
+    })),
   };
   const agentActorContextService = {
     buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
@@ -45,25 +35,26 @@ const buildService = () => {
       authContext: { userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
       roleId: 'role-id',
     }),
+    buildApplicationAgentContext: jest.fn().mockResolvedValue({
+      application: APPLICATION,
+      authContext: { type: 'application' },
+      agentRoleId: 'agent-role-id',
+    }),
   };
 
   const service = new AgentRunService(
     agentActorContextService as never,
-    agentAsyncExecutorService as never,
-    agentRunConversationService as never,
+    agentRunnerService as never,
+    {} as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
-    conversationReaderService as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
   );
 
-  return {
-    service,
-    executionResult,
-    agentAsyncExecutorService,
-    agentRunConversationService,
-    conversationReaderService,
-  };
+  return { service, agentRunnerService };
 };
+
+const runInput = (agentRunnerService: { run: jest.Mock }) =>
+  agentRunnerService.run.mock.calls[0][0];
 
 const run = (
   service: AgentRunService,
@@ -89,13 +80,8 @@ const run = (
 const userInput = (content: string) => [{ role: 'user', content }];
 
 describe('AgentRunService', () => {
-  it('records a run without a thread in a conversation of its own', async () => {
-    const {
-      service,
-      agentAsyncExecutorService,
-      agentRunConversationService,
-      conversationReaderService,
-    } = buildService();
+  it('runs without a thread in a new conversation of its own', async () => {
+    const { service, agentRunnerService } = buildService();
 
     const result = await run(service, {
       input: userInput('Who is our biggest customer?'),
@@ -108,37 +94,42 @@ describe('AgentRunService', () => {
       result: { response: 'Acme is your biggest customer' },
       error: null,
       success: true,
+      isWaiting: false,
       threadId: expect.any(String),
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ threadId: secondResult.threadId }),
-    );
-    expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ threadId: secondResult.threadId }),
-    );
-    expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
-    expect(agentRunConversationService.withThreadLock).not.toHaveBeenCalled();
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        threadId: result.threadId,
-        title: AGENT.label,
-        senderUserWorkspaceId: null,
-        senderApplicationId: APPLICATION.id,
-        createdBy: expect.objectContaining({ source: 'APPLICATION' }),
-        messages: userInput('Who is our biggest customer?'),
-      }),
-    );
-    expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ threadId: result.threadId, turnId: 'turn-id' }),
-    );
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
-      expect.objectContaining({ priorMessages: [] }),
-    );
+
+    const { conversation, spec, prompt, executionContext, resolveCreatedBy } =
+      runInput(agentRunnerService);
+
+    expect(conversation).toEqual({
+      threadId: result.threadId,
+      isCreated: true,
+    });
+    expect(spec).toMatchObject({
+      title: AGENT.label,
+      toolLoadingStrategy: 'lazy',
+      capabilities: {
+        canAskHumans: false,
+        canProposeToolCalls: false,
+      },
+    });
+    expect(prompt).toEqual({
+      senderUserWorkspaceId: null,
+      senderApplicationId: APPLICATION.id,
+      messages: userInput('Who is our biggest customer?'),
+    });
+    expect(executionContext).toMatchObject({
+      rolePermissionConfig: { intersectionOf: ['agent-role-id'] },
+      conversationActor: { type: 'application', applicationId: APPLICATION.id },
+    });
+    await expect(resolveCreatedBy()).resolves.toMatchObject({
+      source: 'APPLICATION',
+    });
   });
 
   it('keeps the replies a run without a thread hands over as its input', async () => {
-    const { service, agentRunConversationService } = buildService();
+    const { service, agentRunnerService } = buildService();
     const history = [
       { role: 'user', content: 'Who is our biggest customer?' },
       { role: 'assistant', content: 'Acme.' },
@@ -147,31 +138,21 @@ describe('AgentRunService', () => {
 
     await run(service, { input: history });
 
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ messages: history }),
-    );
+    expect(runInput(agentRunnerService).prompt.messages).toEqual(history);
   });
 
   it('keeps accepting a prompt', async () => {
-    const { service, agentAsyncExecutorService } = buildService();
+    const { service, agentRunnerService } = buildService();
 
     await run(service, { prompt: 'Who is our biggest customer?' });
 
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: userInput('Who is our biggest customer?'),
-      }),
+    expect(runInput(agentRunnerService).prompt.messages).toEqual(
+      userInput('Who is our biggest customer?'),
     );
   });
 
   it('continues the thread as the member it runs as', async () => {
-    const {
-      service,
-      executionResult,
-      agentAsyncExecutorService,
-      agentRunConversationService,
-      conversationReaderService,
-    } = buildService();
+    const { service, agentRunnerService } = buildService();
     const threadId = buildAgentRunThreadId({
       applicationId: APPLICATION.id,
       agentId: AGENT.id,
@@ -184,41 +165,38 @@ describe('AgentRunService', () => {
       runAsWorkspaceMemberId: 'workspace-member-id',
     });
 
-    const actor = { type: 'user', userWorkspaceId: RUN_AS_USER_WORKSPACE_ID };
+    const { conversation, caller, prompt, executionContext, resolveCreatedBy } =
+      runInput(agentRunnerService);
 
     expect(result.threadId).toBe(threadId);
-    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledWith(
-      expect.objectContaining({ workspaceId: 'workspace-id', threadId }),
-    );
-    expect(conversationReaderService.loadMessages).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      threadId,
-      actor,
-    });
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
-      expect.objectContaining({ priorMessages: PRIOR_MESSAGES }),
-    );
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        threadId,
-        title: AGENT.label,
-        senderUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+    expect(conversation).toEqual({ threadId, isCreated: false });
+    expect(caller).toEqual({
+      type: 'AGENT_API_RUN',
+      ref: {
+        agentId: AGENT.id,
+        runAsWorkspaceMemberId: 'workspace-member-id',
+        requestUserWorkspaceId: null,
         createdBy: RUN_AS_ACTOR,
-        messages: userInput('And the second one?'),
-      }),
-    );
-    expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        threadId,
-        turnId: 'turn-id',
-        execution: executionResult,
-      }),
-    );
+      },
+    });
+    expect(prompt).toMatchObject({
+      senderUserWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+    });
+    await expect(resolveCreatedBy()).resolves.toEqual(RUN_AS_ACTOR);
+    expect(executionContext).toMatchObject({
+      actorContext: RUN_AS_ACTOR,
+      userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+      runAsRoleId: 'role-id',
+      rolePermissionConfig: { intersectionOf: ['role-id'] },
+      conversationActor: {
+        type: 'user',
+        userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
+      },
+    });
   });
 
-  it('gives the additional instructions to the model without recording them', async () => {
-    const { service, agentAsyncExecutorService, agentRunConversationService } =
-      buildService();
+  it('keeps the additional instructions with the run rather than in its messages', async () => {
+    const { service, agentRunnerService } = buildService();
 
     await run(service, {
       input: userInput('And the second one?'),
@@ -226,22 +204,20 @@ describe('AgentRunService', () => {
       additionalInstructions: 'Answer in Slack markdown',
     });
 
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: userInput('Answer in Slack markdown\n\nAnd the second one?'),
-      }),
-    );
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Acme renewal',
-        messages: userInput('And the second one?'),
-        senderUserWorkspaceId: null,
-      }),
-    );
+    const { spec, prompt } = runInput(agentRunnerService);
+
+    expect(spec).toMatchObject({
+      title: 'Acme renewal',
+      instructions: 'Answer in Slack markdown',
+    });
+    expect(prompt).toMatchObject({
+      messages: userInput('And the second one?'),
+      senderUserWorkspaceId: null,
+    });
   });
 
   it('records the member who called without an application as the sender', async () => {
-    const { service, agentRunConversationService } = buildService();
+    const { service, agentRunnerService } = buildService();
 
     await run(
       service,
@@ -252,49 +228,43 @@ describe('AgentRunService', () => {
       },
     );
 
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        senderUserWorkspaceId: 'caller-user-workspace-id',
-        senderApplicationId: null,
-      }),
-    );
+    expect(runInput(agentRunnerService).prompt).toMatchObject({
+      senderUserWorkspaceId: 'caller-user-workspace-id',
+      senderApplicationId: null,
+    });
   });
 
-  it('still returns the reply when the turn cannot be recorded', async () => {
-    const { service, agentRunConversationService } = buildService();
+  it('reports a run that ran out of credits', async () => {
+    const { service, agentRunnerService } = buildService();
 
-    jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    agentRunConversationService.openTurn.mockRejectedValue(
-      new Error('write failed'),
-    );
-
-    const result = await run(service, {
-      input: userInput('And the second one?'),
-      thread: { key: 'thread' },
+    agentRunnerService.run.mockResolvedValue({
+      threadId: 'thread-id',
+      outcome: {
+        status: 'FAILED',
+        error: 'Agent stopped: no more available credits.',
+      },
     });
 
-    expect(result.success).toBe(true);
-    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
+    await expect(
+      run(service, { input: userInput('Hello') }),
+    ).resolves.toMatchObject({
+      success: false,
+      error: 'Agent stopped: no more available credits.',
+    });
   });
 
-  it('records the turn as failed when the execution throws', async () => {
-    const { service, agentAsyncExecutorService, agentRunConversationService } =
-      buildService();
-    const executionError = new Error('provider down');
+  it('reports a failed run without throwing', async () => {
+    const { service, agentRunnerService } = buildService();
 
     jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    agentAsyncExecutorService.executeAgent.mockRejectedValue(executionError);
+    agentRunnerService.run.mockRejectedValue(new Error('provider down'));
 
-    const result = await run(service, {
-      input: userInput('And the second one?'),
-      thread: { key: 'thread' },
+    await expect(
+      run(service, { input: userInput('Hello') }),
+    ).resolves.toMatchObject({
+      success: false,
+      error: 'Agent execution failed.',
     });
-
-    expect(result.success).toBe(false);
-    expect(agentRunConversationService.failTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ turnId: 'turn-id', error: executionError }),
-    );
-    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
   });
 
   it('refuses a thread without an application token', async () => {
@@ -310,12 +280,12 @@ describe('AgentRunService', () => {
   });
 
   it('refuses a thread with a blank key', async () => {
-    const { service, agentAsyncExecutorService } = buildService();
+    const { service, agentRunnerService } = buildService();
 
     await expect(
       run(service, { input: userInput('Hello'), thread: { key: '  ' } }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+    expect(agentRunnerService.run).not.toHaveBeenCalled();
   });
 
   it('refuses assistant messages sent to a thread', async () => {

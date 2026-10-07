@@ -32,18 +32,14 @@ const buildService = ({
   storedWait = STORED_WAIT,
   runStatus = WorkflowRunStatus.RUNNING,
   stepStatus = StepStatus.PENDING,
-  stepType = 'WAIT_FOR_EVENT',
   readableRecords = [READABLE_RECORD],
   isRecordReadFailing = false,
-  resolveWait,
 }: {
   storedWait?: object | null;
   runStatus?: WorkflowRunStatus;
   stepStatus?: StepStatus;
-  stepType?: string;
   readableRecords?: object[];
   isRecordReadFailing?: boolean;
-  resolveWait?: jest.Mock;
 } = {}) => {
   const pendingWakeUpService = {
     find: jest.fn().mockResolvedValue(storedWait),
@@ -54,15 +50,17 @@ const buildService = ({
     getWorkflowRun: jest.fn().mockResolvedValue({
       status: runStatus,
       state: {
-        flow: { steps: [{ id: STEP_ID, type: stepType }] },
-        stepInfos: { [STEP_ID]: { status: stepStatus, threadId: 'thread-id' } },
+        flow: { steps: [{ id: STEP_ID, type: 'WAIT_FOR_EVENT' }] },
+        stepInfos: { [STEP_ID]: { status: stepStatus } },
       },
     }),
-    updateStepInfoIfPending: jest.fn().mockResolvedValue(true),
+    updateStepInfoIfPending: jest
+      .fn()
+      .mockResolvedValue(
+        runStatus === WorkflowRunStatus.RUNNING &&
+          stepStatus === StepStatus.PENDING,
+      ),
     endWorkflowRun: jest.fn(),
-  };
-  const workflowActionFactory = {
-    get: jest.fn().mockReturnValue({ execute: jest.fn(), resolveWait }),
   };
   const workflowExecutionContextService = {
     getExecutionContext: jest.fn().mockResolvedValue({
@@ -86,15 +84,14 @@ const buildService = ({
   new WorkflowStepPendingWakeUpHandlerWorkspaceService(
     registry,
     workflowRunWorkspaceService as never,
-    workflowActionFactory as never,
     workflowExecutionContextService as never,
-    findRecordsService as never,
     messageQueueService as never,
   ).onModuleInit();
 
   const service = new PendingWakeUpResolverService(
     pendingWakeUpService as never,
     registry,
+    findRecordsService as never,
   );
 
   return {
@@ -288,64 +285,22 @@ describe('WorkflowStepPendingWakeUpHandlerWorkspaceService', () => {
     );
   });
 
-  it('runs a step again on its conversation when the step resolves the wait itself', async () => {
-    const resolveWait = jest
-      .fn()
-      .mockResolvedValue({ resumedThreadId: 'thread-id' });
-    const { service, workflowRunWorkspaceService, messageQueueService } =
-      buildService({ stepType: 'AI_AGENT', resolveWait });
-
-    await service.resolve({
-      workspaceId: WORKSPACE_ID,
-      wakeUpId: WAIT_ID,
-      event: EVENT,
-    });
-
-    expect(resolveWait).toHaveBeenCalledWith(
-      expect.objectContaining({
-        outcome: {
-          type: 'EVENT_RECEIVED',
-          event: { ...EVENT, record: READABLE_RECORD },
-        },
-      }),
-    );
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).not.toHaveBeenCalled();
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      RUN_WORKFLOW_JOB_NAME,
-      {
-        workspaceId: WORKSPACE_ID,
-        workflowRunId: WORKFLOW_RUN_ID,
-        stepToResume: { stepId: STEP_ID, threadId: 'thread-id' },
-      },
-      expect.anything(),
-    );
-  });
-
   it('removes the wait of a run that is no longer running without resuming it', async () => {
-    const {
-      service,
-      pendingWakeUpService,
-      workflowRunWorkspaceService,
-      messageQueueService,
-    } = buildService({ runStatus: WorkflowRunStatus.STOPPED });
+    const { service, pendingWakeUpService, messageQueueService } = buildService(
+      { runStatus: WorkflowRunStatus.STOPPED },
+    );
 
     await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
 
     expect(pendingWakeUpService.claim).toHaveBeenCalled();
-    expect(
-      workflowRunWorkspaceService.updateStepInfoIfPending,
-    ).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('fails the run when the step cannot resume, since its wait is gone', async () => {
-    const resolveWait = jest.fn().mockRejectedValue(new Error('boom'));
-    const { service, workflowRunWorkspaceService } = buildService({
-      stepType: 'AI_AGENT',
-      resolveWait,
-    });
+    const { service, workflowRunWorkspaceService, messageQueueService } =
+      buildService();
+
+    messageQueueService.add.mockRejectedValue(new Error('boom'));
 
     await expect(
       service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID }),

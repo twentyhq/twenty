@@ -25,6 +25,24 @@ export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
   );
   await expect(canvas.getByText('Ctrl K')).toBeVisible();
 
+  const hiddenAction = canvas.getByRole('button', {
+    name: 'Add hidden record',
+  });
+  const hiddenLabel = canvas.getByTitle('Hidden action label');
+  expect(hiddenAction).toHaveAccessibleDescription('Creates a contact');
+  expect(hiddenLabel.tagName).toBe('SPAN');
+  expect(hiddenLabel).toHaveAttribute('data-composed', 'hidden-label');
+  expect(hiddenLabel).toHaveAttribute('data-ref-target', 'hidden-label');
+  expect(getComputedStyle(hiddenLabel).position).toBe('absolute');
+  expect(hiddenLabel.getBoundingClientRect().width).toBe(1);
+  expect(hiddenLabel.getBoundingClientRect().height).toBe(1);
+  await userEvent.click(hiddenAction);
+  await waitFor(() =>
+    expect(
+      canvas.getByLabelText('Hidden action activations'),
+    ).toHaveTextContent('1'),
+  );
+
   const button = canvas.getByRole('button', { name: 'Edit workspace' });
   await userEvent.click(button);
   await waitFor(() =>

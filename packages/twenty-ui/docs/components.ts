@@ -47,7 +47,7 @@ import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
-import { HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS } from './horizontalSeparatorPropDescriptions';
+import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
@@ -62,10 +62,10 @@ import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescr
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
-import { TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './textDirectionProviderPropDescriptions';
+import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
-import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
+import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
   {
@@ -116,11 +116,11 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
-    name: 'VisibilityHidden',
-    source: 'primitives/accessibility/components/VisibilityHidden.tsx',
+    name: 'VisuallyHidden',
+    source: 'primitives/accessibility/components/VisuallyHidden.tsx',
     entryPoint: 'twenty-ui/primitives/accessibility',
-    slug: 'accessibility/visibility-hidden',
-    propDescriptions: VISIBILITY_HIDDEN_PROP_DESCRIPTIONS,
+    slug: 'accessibility/visually-hidden',
+    propDescriptions: VISUALLY_HIDDEN_PROP_DESCRIPTIONS,
   },
   {
     name: 'ColorSample',
@@ -172,11 +172,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
   },
   {
-    name: 'HorizontalSeparator',
-    source: 'primitives/layout/HorizontalSeparator/HorizontalSeparator.tsx',
+    name: 'Separator',
+    source: 'primitives/layout/Separator/Separator.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/horizontal-separator',
-    propDescriptions: HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS,
+    slug: 'layout/separator',
+    propDescriptions: SEPARATOR_PROP_DESCRIPTIONS,
   },
   {
     name: 'ResizeHandle',
@@ -187,11 +187,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
   },
   {
-    name: 'TextDirectionProvider',
-    source: 'primitives/layout/TextDirectionProvider/TextDirectionProvider.tsx',
+    name: 'DirectionProvider',
+    source: 'primitives/layout/DirectionProvider/DirectionProvider.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/text-direction-provider',
-    propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
+    slug: 'layout/direction-provider',
+    propDescriptions: DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',

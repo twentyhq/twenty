@@ -10,7 +10,7 @@ import { MetricRow } from 'twenty-ui/components/data-display';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
@@ -231,7 +231,7 @@ export const AiChatContextUsageButton = () => {
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (
               <>
-                <HorizontalSeparator noMargin />
+                <Separator />
                 <StyledFooter>
                   <Button
                     size="sm"

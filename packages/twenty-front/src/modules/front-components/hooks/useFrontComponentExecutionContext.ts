@@ -23,6 +23,7 @@ import {
   OpenRecordIn,
   SidePanelPages,
   type EnqueueSnackbarParams,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -122,6 +123,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  selectedRecordsFilter,
   objectNameSingular,
   timelineActivityId,
   toolCall,
@@ -131,6 +133,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  selectedRecordsFilter?: RecordGqlOperationFilter | null;
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
@@ -436,6 +439,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    selectedRecordsFilter: selectedRecordsFilter ?? null,
     selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
       ? {
           id: selectedObjectMetadataItem.id,

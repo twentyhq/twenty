@@ -24,7 +24,6 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -55,7 +54,6 @@ const restApiCoreResolvers = [
     AuthModule,
     ApiKeyModule,
     UserRoleModule,
-    RecordTransformerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ActorModule,
     FeatureFlagModule,
