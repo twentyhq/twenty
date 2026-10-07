@@ -4,9 +4,9 @@ description: How to develop an app that works and scales well across many worksp
 icon: "gauge-high"
 ---
 
-The Twenty API accepts **500 requests per minute per application registration**, shared by every workspace that installed the app. Requests beyond that are refused with a `429`. Each practice below keeps an app inside that budget as its number of installs grows.
+The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. Each practice below keeps an app inside that budget as its number of installs grows.
 
-- **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour.
+- **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour. Job enqueues are also capped at 2,000 per minute per application registration, and a cron tick beyond that cap is skipped in the remaining workspaces, so keep a sweep idempotent and let the next tick catch up.
 
 ```ts src/logic-functions/enqueue-nightly-sweep.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
