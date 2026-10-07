@@ -69,7 +69,6 @@ const readAssigneeId = async (threadId: string): Promise<string | null> => {
   return assigneeId;
 };
 
-// What a message mentioning these members applies once it is sent
 const addParticipants = (
   threadId: string,
   participantWorkspaceMemberIds: string[],
