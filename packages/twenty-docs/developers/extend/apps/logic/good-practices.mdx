@@ -34,12 +34,16 @@ The same applies to database event triggers: a bulk write such as a mailbox sync
 
 3. **Collapse bursts into one delayed job.** When events reveal work that is larger than the event itself, mark the records and enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window. The queue ignores an id it already holds, so a burst of events becomes a single run. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
 
-4. **Spread cron work.** Schedule daily and off-peak, and keep the cron handler to an enqueue with a stable per-workspace delay, so runs spread over a window instead of starting together:
+4. **Spread sweep crons with a random delay.** A sweep cron starts in every workspace at the same minute, so the sweeps of all installs hit the rate limit together. Keep the cron handler to an enqueue, and give the job a random `delayMs` over a large window, such as one hour, so the sweeps spread across the window instead of starting at once. Schedule the cron daily and off-peak.
 
 ```ts
-const delayMs =
-  createHash('sha256').update(workspaceId).digest().readUInt32BE(0) %
-  (60 * 60 * 1000);
+const SPREAD_WINDOW_MS = 60 * 60 * 1000;
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
+  jobs: [{ payload: {} }],
+  delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
+});
 ```
 
 5. **Pace fan-outs.** Jobs enqueued without a delay all become eligible at once. Group the work into slots, delay slot `i` by `i` minutes, and delay the next page by the slots the current page used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
