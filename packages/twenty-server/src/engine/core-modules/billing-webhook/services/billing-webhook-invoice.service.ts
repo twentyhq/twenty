@@ -21,7 +21,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
-import { BillingCreditTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-top-up.service';
+import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
@@ -48,7 +48,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
-    private readonly billingCreditTopUpService: BillingCreditTopUpService,
+    private readonly billingCreditOneTimeTopUpService: BillingCreditOneTimeTopUpService,
     private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
@@ -272,7 +272,7 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    await this.billingCreditTopUpService.grantPurchasedCredits({
+    await this.billingCreditOneTimeTopUpService.grantPurchasedCredits({
       workspaceId,
       creditAmountMicro,
       stripeInvoiceId: invoice.id,

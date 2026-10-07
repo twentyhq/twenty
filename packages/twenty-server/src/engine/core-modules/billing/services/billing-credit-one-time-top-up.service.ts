@@ -7,7 +7,7 @@ import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/bi
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 
 @Injectable()
-export class BillingCreditTopUpService {
+export class BillingCreditOneTimeTopUpService {
   constructor(private readonly billingCreditService: BillingCreditService) {}
 
   async grantPurchasedCredits({
