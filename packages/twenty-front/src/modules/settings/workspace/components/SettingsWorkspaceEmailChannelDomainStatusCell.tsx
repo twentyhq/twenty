@@ -25,7 +25,9 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
     return null;
   }
 
-  const { label, color } = getEmailingDomainStatusDisplay(emailingDomain.status);
+  const { label, color } = getEmailingDomainStatusDisplay(
+    emailingDomain.status,
+  );
 
   return <Status color={color}>{label}</Status>;
 };
