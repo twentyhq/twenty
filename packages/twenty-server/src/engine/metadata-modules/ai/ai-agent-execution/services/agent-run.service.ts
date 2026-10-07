@@ -14,7 +14,7 @@ import {
   type RunAgentThread,
 } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -343,13 +343,21 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         agentAuthContext: agentContext.authContext,
       }));
 
-    const additionalRoleRestrictionIds = isDefined(callerRoleId)
-      ? [callerRoleId]
-      : undefined;
-
     const memberUserWorkspaceId = isUserAuthContext(authContext)
       ? authContext.userWorkspaceId
       : null;
+
+    // a member's run is also bounded by the application it acts through, as its sandbox calls are
+    const roleRestrictionIds = [
+      callerRoleId,
+      isDefined(memberUserWorkspaceId)
+        ? agentContext.application.defaultRoleId
+        : undefined,
+    ].filter(isDefined);
+
+    const additionalRoleRestrictionIds = isNonEmptyArray(roleRestrictionIds)
+      ? roleRestrictionIds
+      : undefined;
 
     return {
       authContext,
