@@ -25,7 +25,9 @@ type PausedAgentStep = {
 // An agent step that paused on a question before 2.46 is PENDING with its conversation on
 // stepInfo.threadId, and was continued by running the step again. The engine now continues the
 // agent itself, so the step gets the suspension the engine continues it from, and its pending
-// calls the mark that hands their answer to it.
+// calls the mark that hands their answer to it. A step whose question was
+// answered meanwhile has no call left to settle its suspension, which would then
+// block its conversation for good, so it gets none.
 @RegisteredWorkspaceCommand('2.46.0', 1791306663446)
 @Command({
   name: 'upgrade:2-46:suspend-paused-agent-steps',
@@ -84,7 +86,14 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
              AND run."deletedAt" IS NULL
              AND step.value ->> 'status' = 'PENDING'
              AND step.value ->> 'threadId' IS NOT NULL
-             AND flow_step.value ->> 'type' = 'AI_AGENT'`,
+             AND flow_step.value ->> 'type' = 'AI_AGENT'
+             AND EXISTS (
+               SELECT 1 FROM ${table('agentMessagePart')} part
+               JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+               WHERE message."threadId" = (step.value ->> 'threadId')::uuid
+                 AND jsonb_typeof(part."toolOutput") = 'object'
+                 AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+             )`,
         );
 
         if (pausedSteps.length === 0 || (options.dryRun ?? false)) {

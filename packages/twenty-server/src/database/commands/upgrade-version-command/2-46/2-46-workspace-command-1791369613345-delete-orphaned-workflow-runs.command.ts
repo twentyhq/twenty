@@ -78,8 +78,19 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
       return;
     }
 
-    const [deletedRuns]: [{ id: string }[], number] = await dataSource.query(
-      `DELETE FROM ${workflowRunTable} run WHERE ${ORPHANED_WORKFLOW_RUN_CONDITION} RETURNING run.id`,
+    // suspend-paused-agent-steps runs first and may have suspended an agent
+    // step of these runs, which would then block its conversation for good
+    const deletedRuns: { id: string }[] = await dataSource.query(
+      `WITH deleted AS (
+         DELETE FROM ${workflowRunTable} run WHERE ${ORPHANED_WORKFLOW_RUN_CONDITION} RETURNING run.id
+       ), released AS (
+         DELETE FROM "core"."agentRunSuspension" suspension
+         USING deleted
+         WHERE suspension."workspaceId" = $1
+           AND suspension.caller ->> 'type' = 'WORKFLOW_STEP'
+           AND suspension.caller -> 'ref' ->> 'workflowRunId' = deleted.id::text
+       ) SELECT id FROM deleted`,
+      [workspaceId],
     );
 
     this.logger.log(
