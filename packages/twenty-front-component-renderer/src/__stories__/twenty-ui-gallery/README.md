@@ -68,7 +68,7 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
-Body portals render in a separate layer within the front component, with a
+Body portals render in a host layer outside widget scroll frames, with a
 200px margin around its box. Oversized fixed content is clipped for painting
 and pointer interaction. Browser top-layer promotion through modal dialogs,
 popovers and fullscreen is blocked to preserve those bounds. Dropdown stories

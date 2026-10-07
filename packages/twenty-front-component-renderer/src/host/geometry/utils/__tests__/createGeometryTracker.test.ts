@@ -43,6 +43,60 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('keeps an open portal aligned through movement and stops tracking after it closes', () => {
+    const tracker = createGeometryTracker();
+    armedTrackers.push(tracker);
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    const portalLayer = document.createElement('div');
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+    tracker.setPushGeometryUpdates(jest.fn());
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    root.setGeometry({ x: 40, y: 50, width: 360, height: 220 });
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.left).toBe('calc(40px / var(--t-zoom, 1))');
+    expect(portalLayer.style.top).toBe('calc(50px / var(--t-zoom, 1))');
+    expect(portalLayer.style.width).toBe('calc(360px / var(--t-zoom, 1))');
+    expect(portalLayer.style.height).toBe('calc(220px / var(--t-zoom, 1))');
+
+    tracker.setPortalLayer(null);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('disables the portal with its owner and hides it when its owner is removed', () => {
+    const { tracker } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    const portalLayer = document.createElement('div');
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+
+    root.node.style.pointerEvents = 'none';
+    geometryGlobals.flushAnimationFrame();
+    expect(portalLayer.inert).toBe(true);
+
+    root.node.style.pointerEvents = 'auto';
+    geometryGlobals.flushAnimationFrame();
+    expect(portalLayer.inert).toBe(false);
+
+    root.node.remove();
+    geometryGlobals.flushAnimationFrame();
+    expect(portalLayer.style.display).toBe('none');
+  });
+
   it('should find the remote element id of a node through its nearest registered ancestor', () => {
     const tracker = createGeometryTracker();
     const tabList = document.createElement('div');

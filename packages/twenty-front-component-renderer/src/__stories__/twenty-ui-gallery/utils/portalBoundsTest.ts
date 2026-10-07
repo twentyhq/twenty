@@ -27,6 +27,58 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   expect(portalAction.getBoundingClientRect().top).toBeGreaterThanOrEqual(
     ownerRoot.getBoundingClientRect().bottom,
   );
+  const expectPortalReceivesPointer = () => {
+    const portalRectangle = portalAction.getBoundingClientRect();
+    expect(
+      portalAction.contains(
+        hostDocument.elementFromPoint(
+          portalRectangle.left + portalRectangle.width / 2,
+          portalRectangle.top + portalRectangle.height / 2,
+        ),
+      ),
+    ).toBe(true);
+  };
+  expectPortalReceivesPointer();
+
+  const scrollFrame = canvas.getByRole('region', {
+    name: 'Widget scroll frame',
+  });
+  scrollFrame.scrollTop = 40;
+  expect(scrollFrame.scrollTop).toBe(40);
+  await waitFor(() => {
+    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
+      ownerRoot.getBoundingClientRect().bottom,
+      0,
+    );
+    expectPortalReceivesPointer();
+  });
+
+  const rootStyle = hostDocument.documentElement.style;
+  const previousZoom = rootStyle.getPropertyValue('zoom');
+  const previousScale = rootStyle.getPropertyValue('--t-zoom');
+
+  try {
+    rootStyle.setProperty('--t-zoom', '0.8');
+    rootStyle.setProperty('zoom', 'var(--t-zoom)');
+    await waitFor(() => {
+      expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
+        ownerRoot.getBoundingClientRect().bottom,
+        0,
+      );
+      expectPortalReceivesPointer();
+    });
+  } finally {
+    rootStyle.setProperty('zoom', previousZoom);
+    rootStyle.setProperty('--t-zoom', previousScale);
+  }
+
+  await waitFor(() => {
+    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
+      ownerRoot.getBoundingClientRect().bottom,
+      0,
+    );
+  });
+
   await userEvent.click(portalAction);
   await waitFor(() =>
     expect(
