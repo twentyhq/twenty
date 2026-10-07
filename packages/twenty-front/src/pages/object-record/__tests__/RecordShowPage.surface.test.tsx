@@ -114,16 +114,13 @@ jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
   ),
 }));
 
-jest.mock(
-  '@/object-record/record-show/components/RecordShowPageHeader',
-  () => ({
-    RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
-      <div data-testid="record-header">{children}</div>
-    ),
-  }),
-);
+jest.mock('~/pages/object-record/RecordShowPageHeader', () => ({
+  RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="record-header">{children}</div>
+  ),
+}));
 
-jest.mock('@/object-record/record-show/components/RecordShowPageTitle', () => ({
+jest.mock('~/pages/object-record/RecordShowPageTitle', () => ({
   RecordShowPageTitle: () => <div data-testid="record-page-title" />,
 }));
 
