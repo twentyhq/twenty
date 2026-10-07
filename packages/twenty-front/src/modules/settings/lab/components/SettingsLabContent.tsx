@@ -70,7 +70,6 @@ export const SettingsLabContent = () => {
               description={flag.metadata.description}
               checked={flag.value}
               onChange={(value) => handleToggle(flag.key, value)}
-              switchCentered={false}
             />
           </Card.Root>
         ))}
@@ -88,7 +87,6 @@ export const SettingsLabContent = () => {
                 description={flag.metadata.description}
                 checked={flag.value}
                 onChange={(value) => handleToggle(flag.key, value)}
-                switchCentered={false}
                 divider={index < labPublicFeatureFlagsWithoutImage.length - 1}
               />
             ))}

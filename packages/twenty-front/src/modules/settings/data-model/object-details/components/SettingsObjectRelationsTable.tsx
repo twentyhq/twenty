@@ -27,11 +27,11 @@ import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectRelationItemTableRow,
 } from './SettingsObjectRelationItemTableRow';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;

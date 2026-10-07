@@ -8,6 +8,8 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 type AiChatInboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
   threads: Pick<AgentChatThreadRecord, 'id'>[];
+  // Split view always has a chat beside the list; otherwise the list stands alone
+  shouldSelectFirstThread: boolean;
 };
 
 // A chat leaves the list when it is done, snoozed or deleted; the one that
@@ -15,6 +17,7 @@ type AiChatInboxSelectionEffectProps = {
 export const AiChatInboxSelectionEffect = ({
   selectedThreadId,
   threads,
+  shouldSelectFirstThread,
 }: AiChatInboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
   const [lastListedSelection, setLastListedSelection] = useState<{
@@ -30,7 +33,7 @@ export const AiChatInboxSelectionEffect = ({
       });
 
     if (!isDefined(selectedThreadId)) {
-      if (threads.length > 0) {
+      if (shouldSelectFirstThread && threads.length > 0) {
         selectThread(threads[0].id);
       }
 
@@ -59,7 +62,13 @@ export const AiChatInboxSelectionEffect = ({
       threads[Math.min(lastListedSelection.index, threads.length - 1)];
 
     selectThread(nextThread?.id ?? null);
-  }, [lastListedSelection, navigate, selectedThreadId, threads]);
+  }, [
+    lastListedSelection,
+    navigate,
+    selectedThreadId,
+    shouldSelectFirstThread,
+    threads,
+  ]);
 
   return null;
 };

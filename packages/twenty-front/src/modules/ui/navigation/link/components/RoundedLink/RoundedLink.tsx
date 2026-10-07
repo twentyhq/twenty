@@ -2,8 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 
-import { getSafeUrl } from 'twenty-ui/utilities';
-
+import { getSafeUrl } from 'twenty-shared/utils';
 const StyledLink = styled.a`
   align-items: center;
   background-color: var(--t-background-transparent-lighter);

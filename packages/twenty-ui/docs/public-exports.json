@@ -116,6 +116,7 @@
       "Section": "components/layout/Section/Section"
     },
     "types": {
+      "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"
@@ -207,6 +208,7 @@
       "IconBadge2k": "icon/components/TablerIcons",
       "IconBaselineDensitySmall": "icon/components/TablerIcons",
       "IconBell": "icon/components/TablerIcons",
+      "IconBellOff": "icon/components/TablerIcons",
       "IconBlockquote": "icon/components/TablerIcons",
       "IconBold": "icon/components/TablerIcons",
       "IconBolt": "icon/components/TablerIcons",
@@ -700,9 +702,11 @@
     "reExports": [],
     "values": {
       "handleClickableElementKeyDown": "primitives/accessibility/utils/handleClickableElementKeyDown",
-      "VisibilityHidden": "primitives/accessibility/components/VisibilityHidden"
+      "VisuallyHidden": "primitives/accessibility/components/VisuallyHidden"
     },
-    "types": {}
+    "types": {
+      "VisuallyHiddenProps": "primitives/accessibility/types/VisuallyHiddenProps"
+    }
   },
   "primitives/data-display": {
     "reExports": [],
@@ -735,7 +739,9 @@
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
-      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
+      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
+      "Skeleton": "primitives/feedback/Skeleton/Skeleton",
+      "SKELETON_HEIGHT_SIZES": "primitives/feedback/Skeleton/constants/SKELETON_HEIGHT_SIZES"
     },
     "types": {
       "BannerActionProps": "primitives/feedback/Banner/types/BannerActionProps",
@@ -746,7 +752,8 @@
       "BannerVariant": "primitives/feedback/Banner/types/BannerVariant",
       "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
-      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
+      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps",
+      "SkeletonProps": "primitives/feedback/Skeleton/types/SkeletonProps"
     }
   },
   "primitives/input": {
@@ -778,6 +785,7 @@
       "AutocompleteRootProps": "primitives/input/Autocomplete/types/AutocompleteRootProps",
       "ButtonColor": "primitives/input/Button/types/ButtonColor",
       "ButtonGroupProps": "primitives/input/ButtonGroup/types/ButtonGroupProps",
+      "ButtonLoadingPosition": "primitives/input/Button/types/ButtonLoadingPosition",
       "ButtonProps": "primitives/input/Button/types/ButtonProps",
       "ButtonSize": "primitives/input/Button/types/ButtonSize",
       "ButtonVariant": "primitives/input/Button/types/ButtonVariant",
@@ -819,15 +827,17 @@
     "reExports": [],
     "values": {
       "Collapsible": "primitives/layout/Collapsible/Collapsible",
-      "HorizontalSeparator": "primitives/layout/HorizontalSeparator/HorizontalSeparator",
+      "DirectionProvider": "primitives/layout/DirectionProvider/DirectionProvider",
       "ResizeHandle": "primitives/layout/ResizeHandle/ResizeHandle",
-      "TextDirectionProvider": "primitives/layout/TextDirectionProvider/TextDirectionProvider"
+      "Separator": "primitives/layout/Separator/Separator"
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
       "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
       "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
-      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps"
+      "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps",
+      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
+      "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"
     }
   },
   "primitives/navigation": {

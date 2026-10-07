@@ -3,8 +3,7 @@ import gql from 'graphql-tag';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useDestroyManyRecordsMutation = ({
   objectNameSingular,
@@ -15,7 +14,7 @@ export const useDestroyManyRecordsMutation = ({
     objectNameSingular,
   });
 
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return { destroyManyRecordsMutation: EMPTY_MUTATION };
   }
 

@@ -169,8 +169,8 @@ export const DOCUMENTATION_PATHS = {
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
   UI_ICONS: '/ui/icons',
-  UI_PRIMITIVES_ACCESSIBILITY_VISIBILITY_HIDDEN:
-    '/ui/primitives/accessibility/visibility-hidden',
+  UI_PRIMITIVES_ACCESSIBILITY_VISUALLY_HIDDEN:
+    '/ui/primitives/accessibility/visually-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:
@@ -182,6 +182,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
+  UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
@@ -198,11 +199,10 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
   UI_PRIMITIVES_LAYOUT_COLLAPSIBLE: '/ui/primitives/layout/collapsible',
-  UI_PRIMITIVES_LAYOUT_HORIZONTAL_SEPARATOR:
-    '/ui/primitives/layout/horizontal-separator',
+  UI_PRIMITIVES_LAYOUT_DIRECTION_PROVIDER:
+    '/ui/primitives/layout/direction-provider',
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
-  UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
-    '/ui/primitives/layout/text-direction-provider',
+  UI_PRIMITIVES_LAYOUT_SEPARATOR: '/ui/primitives/layout/separator',
   UI_PRIMITIVES_NAVIGATION_BREADCRUMB: '/ui/primitives/navigation/breadcrumb',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',

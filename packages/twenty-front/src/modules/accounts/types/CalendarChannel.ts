@@ -3,7 +3,7 @@ import {
   type CalendarChannelSyncStage,
   type CalendarChannelSyncStatus,
 } from 'twenty-shared/types';
-import { type CalendarChannelVisibility } from '~/generated/graphql';
+import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 export type CalendarChannel = {
   id: string;

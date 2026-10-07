@@ -15,8 +15,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
-import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
+import { describeCronExpression } from '~/utils/cron-to-human/describeCronExpression';
 
 const StyledCard = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -94,7 +94,7 @@ export const CoreAgentTriggerCard = ({
       ? trigger.settings.eventName.split('.')
       : [];
 
-  const objectOptions = useWorkflowObjectSelectOptions({
+  const objectOptions = useObjectMetadataItemSelectOptions({
     selectedObjectNameSingular: objectNameSingular,
   });
 

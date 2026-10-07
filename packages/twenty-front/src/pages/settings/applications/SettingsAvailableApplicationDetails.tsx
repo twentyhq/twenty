@@ -56,11 +56,16 @@ export const SettingsAvailableApplicationDetails = () => {
     },
     [navigateSettings],
   );
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation({
-      universalIdentifier: availableApplicationId,
-      onCompleted: handleInstallCompleted,
-    });
+  const {
+    requestInstall,
+    install,
+    isInstalling,
+    installProgress,
+    modalInstanceId,
+  } = useInstallMarketplaceAppWithPermissionValidation({
+    universalIdentifier: availableApplicationId,
+    onCompleted: handleInstallCompleted,
+  });
   const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -222,6 +227,7 @@ export const SettingsAvailableApplicationDetails = () => {
               canInstallMarketplaceApps={canInstallMarketplaceApps}
               onInstall={requestInstall}
               isInstalling={isInstalling}
+              installProgress={installProgress}
             />
           ) : undefined
         }

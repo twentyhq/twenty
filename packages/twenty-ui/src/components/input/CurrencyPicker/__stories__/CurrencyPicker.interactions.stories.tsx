@@ -178,6 +178,8 @@ export const DisabledCurrency: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).toHaveBeenCalledOnce();
     await expect(args.onValueChange).toHaveBeenCalledWith('JPY');
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

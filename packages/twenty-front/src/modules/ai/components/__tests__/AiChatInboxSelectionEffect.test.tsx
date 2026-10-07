@@ -30,6 +30,7 @@ describe('AiChatInboxSelectionEffect', () => {
     render(
       <AiChatInboxSelectionEffect
         selectedThreadId={undefined}
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1', 'thread-2'])}
       />,
     );
@@ -41,6 +42,7 @@ describe('AiChatInboxSelectionEffect', () => {
     const { rerender } = render(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-2"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1', 'thread-2', 'thread-3'])}
       />,
     );
@@ -50,6 +52,7 @@ describe('AiChatInboxSelectionEffect', () => {
     rerender(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-2"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1', 'thread-3'])}
       />,
     );
@@ -61,6 +64,7 @@ describe('AiChatInboxSelectionEffect', () => {
     const { rerender } = render(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-2"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1', 'thread-2'])}
       />,
     );
@@ -68,6 +72,7 @@ describe('AiChatInboxSelectionEffect', () => {
     rerender(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-2"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1'])}
       />,
     );
@@ -79,12 +84,17 @@ describe('AiChatInboxSelectionEffect', () => {
     const { rerender } = render(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-1"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1'])}
       />,
     );
 
     rerender(
-      <AiChatInboxSelectionEffect selectedThreadId="thread-1" threads={[]} />,
+      <AiChatInboxSelectionEffect
+        selectedThreadId="thread-1"
+        shouldSelectFirstThread
+        threads={[]}
+      />,
     );
 
     expectSelected(null);
@@ -94,7 +104,20 @@ describe('AiChatInboxSelectionEffect', () => {
     render(
       <AiChatInboxSelectionEffect
         selectedThreadId="thread-9"
+        shouldSelectFirstThread
         threads={buildThreads(['thread-1'])}
+      />,
+    );
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('leaves the list alone when no chat is beside it', () => {
+    render(
+      <AiChatInboxSelectionEffect
+        selectedThreadId={undefined}
+        shouldSelectFirstThread={false}
+        threads={buildThreads(['thread-1', 'thread-2'])}
       />,
     );
 

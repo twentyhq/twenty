@@ -44900,15 +44900,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-loading-skeleton@npm:^3.3.1":
-  version: 3.5.0
-  resolution: "react-loading-skeleton@npm:3.5.0"
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: 10c0/a081f561c9700fead6ba98b91e3fe77a36a680e3fd69dbf4eecbaa5fabcb7173049c6d6fb7487355331a770bed432356edaa147702f3d46ddf0d6caa623e779f
-  languageName: node
-  linkType: hard
-
 "react-markdown@npm:^10.1.0":
   version: 10.1.0
   resolution: "react-markdown@npm:10.1.0"
@@ -50519,7 +50510,6 @@ __metadata:
     react-hotkeys-hook: "npm:^4.4.4"
     react-imask: "npm:^7.6.0"
     react-intersection-observer: "npm:^9.15.1"
-    react-loading-skeleton: "npm:^3.3.1"
     react-markdown: "npm:^10.1.0"
     react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-qr-code: "npm:^2.0.18"
@@ -51040,6 +51030,27 @@ __metadata:
 "twenty@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty@workspace:packages/twenty-cli"
+  dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/lodash.startcase": "npm:^4"
+    "@types/node": "npm:^24.0.0"
+    "@types/semver": "npm:^7.5.8"
+    chokidar: "npm:^3.6.0"
+    cjs-module-lexer: "npm:^2.2.0"
+    commander: "npm:^14.0.3"
+    esbuild: "npm:^0.28.1"
+    lodash.startcase: "npm:^4.4.0"
+    semver: "npm:7.6.3"
+    tinyglobby: "npm:^0.2.15"
+    twenty-client-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.3"
+    undici: "npm:^7.29.0"
+    uuid: "npm:^13.0.2"
+    vite: "npm:^8.0.0"
+    vitest: "npm:^4.1.0"
+  bin:
+    twenty: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

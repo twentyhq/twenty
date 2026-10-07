@@ -1,0 +1,14 @@
+.root {
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-spacing-4);
+  height: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-sm);
+
+  & > span {
+    display: flex;
+  }
+}

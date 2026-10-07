@@ -1,3 +1,4 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
@@ -9,16 +10,21 @@ import { Button } from 'twenty-ui/primitives/input';
 type SettingsApplicationUninstallButtonProps = {
   onUninstall: () => void;
   isUninstalling?: boolean;
+  uninstallProgress?: number;
 };
 
 export const SettingsApplicationUninstallButton = ({
   onUninstall,
   isUninstalling,
+  uninstallProgress,
 }: SettingsApplicationUninstallButtonProps) => {
   const { openDialog } = useDialog();
   const uninstallDialogId = useId();
 
   const confirmationValue = t`yes`;
+  const displayedUninstallProgress = formatQueueJobProgressLabel(
+    uninstallProgress ?? 0,
+  );
 
   return (
     <>
@@ -28,9 +34,12 @@ export const SettingsApplicationUninstallButton = ({
         color="danger"
         size="sm"
         onClick={() => openDialog(uninstallDialogId)}
-        disabled={isUninstalling}
+        loading={isUninstalling}
+        loadingPosition="end"
       >
-        {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+        {isUninstalling
+          ? t`Uninstalling ${displayedUninstallProgress}`
+          : t`Uninstall`}
       </Button>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
