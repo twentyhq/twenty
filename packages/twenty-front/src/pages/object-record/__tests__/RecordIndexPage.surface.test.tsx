@@ -103,6 +103,13 @@ jest.mock('@/object-core/components/CoreObjectTable', () => ({
   CoreObjectTable: () => <div data-testid="workflow-core-index" />,
 }));
 
+jest.mock(
+  '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect',
+  () => ({
+    CoreWorkflowsSelectionToContextStoreEffect: () => null,
+  }),
+);
+
 jest.mock('@/ui/layout/page/components/PageCardHeader', () => ({
   PageCardHeader: () => null,
 }));

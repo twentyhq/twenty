@@ -9,7 +9,6 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
@@ -17,6 +16,7 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
+import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
   CORE_WORKFLOWS_INITIAL_SORT,
@@ -51,8 +51,7 @@ export const WorkflowCoreIndexPage = () => {
     refetchLoadedCoreWorkflows,
   } = useCoreWorkflows({ tableId });
 
-  const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
-    useCreateCoreWorkflow();
+  const { createCoreWorkflow, canCreateCoreWorkflow } = useCreateCoreWorkflow();
 
   const {
     displayedCoreWorkflows,
@@ -121,6 +120,11 @@ export const WorkflowCoreIndexPage = () => {
       isFetchingNextPage={loading}
       onFetchNextPage={fetchNextPage}
     >
+      <CoreWorkflowsSelectionToContextStoreEffect
+        selectedCoreWorkflows={displayedCoreWorkflows.filter((coreWorkflow) =>
+          selectedRowIds.includes(coreWorkflow.id),
+        )}
+      />
       <CoreObjectTable
         tableId={tableId}
         columns={WORKFLOW_CORE_TABLE_COLUMNS}
@@ -134,13 +138,6 @@ export const WorkflowCoreIndexPage = () => {
           onToggleAllRows: selectRows,
         }}
       />
-      {canCreateCoreWorkflow && (
-        <CoreObjectTableAddNewRow
-          label={t`New ${objectMetadataItem.labelSingular}`}
-          onClick={createCoreWorkflow}
-          disabled={isCreatingCoreWorkflow}
-        />
-      )}
     </CoreObjectIndexPageLayout>
   );
 };

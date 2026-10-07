@@ -1,7 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLego } from 'twenty-ui/icon';
+import { IconLego, IconPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import {
@@ -14,7 +16,6 @@ import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
@@ -41,7 +42,24 @@ export const AgentCoreIndexPage = () => {
       icon={
         <IconLego size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       }
-      actionButton={<SidePanelToggleButton />}
+      actionButton={
+        <>
+          {canCreateCoreAgent && (
+            <CommandMenuButton
+              command={{
+                key: 'create-core-agent',
+                label: t`Create Agent`,
+                shortLabel: t`Create`,
+                Icon: IconPlus,
+                isPrimaryCTA: true,
+              }}
+              onClick={createCoreAgent}
+              disabled={isCreatingCoreAgent}
+            />
+          )}
+          <SidePanelToggleButton />
+        </>
+      }
       isInitialLoading={isInitialLoading}
       hasError={hasError}
       isEmpty={isEmpty}
@@ -60,13 +78,6 @@ export const AgentCoreIndexPage = () => {
         getItemLink={getCoreAgentItemLink}
         initialSort={CORE_AGENTS_INITIAL_SORT}
       />
-      {canCreateCoreAgent && (
-        <CoreObjectTableAddNewRow
-          label={t`New Agent`}
-          onClick={createCoreAgent}
-          disabled={isCreatingCoreAgent}
-        />
-      )}
     </CoreObjectIndexPageLayout>
   );
 };
