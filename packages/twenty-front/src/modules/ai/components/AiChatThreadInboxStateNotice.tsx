@@ -9,6 +9,8 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledNotice = styled.div`
   align-items: center;
@@ -30,7 +32,11 @@ export const AiChatThreadInboxStateNotice = () => {
     currentAiChatThread ?? '',
   );
 
-  if (!isDefined(event)) {
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+
+  if (!isAiChatInboxEnabled || !isDefined(event)) {
     return null;
   }
 
