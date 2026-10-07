@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { IconLock } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -9,7 +11,6 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { Toggle } from 'src/front-components/components/Toggle';
 import { useSlackAccessMode } from 'src/front-components/hooks/use-slack-access-mode';
-import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 
 const StyledCardContent = styled.div<{ $disabled: boolean }>`
@@ -126,7 +127,10 @@ export const SlackAccessModeSection = ({
       value ? SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS : SLACK_ACCESS_MODE.ANYONE,
     );
 
-    enqueueSlackToolResultSnackbar(result);
+    enqueueSnackbar({
+      message: isNonEmptyString(result.error) ? result.error : result.message,
+      variant: result.success ? 'success' : 'error',
+    });
   };
 
   const description = getDescription({ hasAccessModeError, isRestricted });

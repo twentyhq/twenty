@@ -11,9 +11,13 @@ import {
   IconGauge,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { MetricRow } from 'twenty-ui/components/data-display';
-import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
+import {
+  themeCssVariables,
+  useTheme,
+  useThemeContainer,
+} from 'twenty-ui/theme';
 
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
@@ -65,6 +69,7 @@ export const AiModelTierInformationButton = ({
   resolvedTier,
 }: AiModelTierInformationButtonProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const themeContainer = useThemeContainer();
 
@@ -129,7 +134,7 @@ export const AiModelTierInformationButton = ({
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getReferenceProps()}
       >
-        <IconInfoCircle size={14} />
+        <IconInfoCircle size={theme.icon.size.sm} />
       </StyledTrigger>
       {isOpen && (
         <FloatingPortal root={themeContainer}>
@@ -140,14 +145,22 @@ export const AiModelTierInformationButton = ({
             {...getFloatingProps()}
           >
             {rows.map(({ label, Icon, value }) => (
-              <MetricRow key={label} startIcon={Icon} value={value}>
+              <MetricRow
+                key={label}
+                startIcon={<Icon size={theme.icon.size.sm} />}
+                value={value}
+              >
                 {label}
               </MetricRow>
             ))}
-            <HorizontalSeparator noMargin />
+            <Separator />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
-              <MetricRow key={label} startIcon={Icon} value={value}>
+              <MetricRow
+                key={label}
+                startIcon={<Icon size={theme.icon.size.sm} />}
+                value={value}
+              >
                 {label}
               </MetricRow>
             ))}

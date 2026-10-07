@@ -154,6 +154,19 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       [threadIds],
     );
 
+  const readOwnerShares = async () => {
+    const rows: { principalId: string; workspaceMemberId: string }[] =
+      await global.testDataSource.query(
+        `SELECT share."principalId", participant."workspaceMemberId"
+         FROM ${SCHEMA}."recordShare" share
+         JOIN ${SCHEMA}."agentChatThreadParticipant" participant ON participant.id = share."recordId"
+         WHERE participant."threadId" = ANY($1) AND share."rowCause" = 'OWNER'`,
+        [threadIds],
+      );
+
+    return rows;
+  };
+
   beforeAll(async () => {
     objectCommand =
       getAppProviderByClassName<AddAgentChatThreadParticipantObjectCommand>(
@@ -274,6 +287,12 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     await runCommand(objectCommand, 'up');
     await runCommand(backfillCommand, 'up');
     await global.testDataSource.query(
+      `DELETE FROM ${SCHEMA}."recordShare" share
+       USING ${SCHEMA}."agentChatThreadParticipant" participant
+       WHERE participant.id = share."recordId" AND participant."threadId" = ANY($1)`,
+      [threadIds],
+    );
+    await global.testDataSource.query(
       `DELETE FROM core."upgradeMigration" WHERE name = $1 AND attempt = 99 AND "workspaceId" = $2`,
       [MOVE_MIGRATION_NAME, SEED_APPLE_WORKSPACE_ID],
     );
@@ -386,6 +405,16 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     expect(threads[deletedThreadId].deletedAt).toEqual(ARCHIVED_AT);
   });
 
+  it('grants each participant row to its member, and only them', async () => {
+    const participants = await readParticipants();
+    const ownerShares = await readOwnerShares();
+
+    expect(ownerShares).toHaveLength(participants.length);
+    ownerShares.forEach(({ principalId, workspaceMemberId }) =>
+      expect(principalId).toBe(workspaceMemberId),
+    );
+  });
+
   it('leaves a chat its owner deleted again after the 2.44 move in the trash', async () => {
     const threads = await readThreads();
 
@@ -411,10 +440,14 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
 
     expect(threads[legacyArchivedThreadId].deletedAt).toEqual(MOVE_RECORDED_AT);
     expect(threads[sharedThreadId].deletedAt).toBeNull();
+    expect(await readOwnerShares()).toEqual([]);
 
     await runCommand(backfillCommand, 'up');
 
     expect((await readThreads())[legacyArchivedThreadId].deletedAt).toBeNull();
+    expect(await readOwnerShares()).toHaveLength(
+      (await readParticipants()).length,
+    );
   });
 
   it('keeps chats working on a workspace the upgrade has not reached yet', () => {

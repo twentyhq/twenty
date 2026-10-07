@@ -1,3 +1,4 @@
+import { AppNavigatorProvider } from '@/app/components/AppNavigatorProvider';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
@@ -15,7 +16,7 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
-import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -170,16 +171,17 @@ export const PageDecorator: Decorator<{
   additionalRoutes?: string[];
   searchParams?: RouteParams;
 }> = (Story, { args }) => {
+  const router = createRouter({
+    Story,
+    args,
+    initialEntries: [
+      computeLocation(args.routePath, args.routeParams, args.searchParams),
+    ],
+  });
+
   return (
-    <RouterProvider
-      useTransitions={false}
-      router={createRouter({
-        Story,
-        args,
-        initialEntries: [
-          computeLocation(args.routePath, args.routeParams, args.searchParams),
-        ],
-      })}
-    />
+    <AppNavigatorProvider router={router}>
+      <RouterProvider useTransitions={false} router={router} />
+    </AppNavigatorProvider>
   );
 };

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
 import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-verifier.service';
@@ -19,7 +18,7 @@ import { MessagingOutboundDeliveryEventJob } from 'src/modules/messaging-webhook
 import { MessagingWebhooksController } from 'src/modules/messaging-webhooks/messaging-webhooks.controller';
 
 @Module({
-  imports: [TwentyConfigModule, EmailingDomainModule, EmailingModule],
+  imports: [EmailingDomainModule, EmailingModule],
   controllers: [MessagingWebhooksController],
   providers: [
     InboundMailHandlerService,

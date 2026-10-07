@@ -29,7 +29,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil updatedAt';
+  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
 
 const buildThreadMutation = (name: string) =>
   parse(
@@ -64,6 +64,8 @@ type Participant = {
   lastReadAt: string | null;
   archivedAt: string | null;
   snoozedUntil: string | null;
+  isSubscribed: boolean;
+  lastMentionedAt: string | null;
 };
 
 const runThreadMutation = (
@@ -817,5 +819,132 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);
+  });
+
+  it('keeps an unsubscribed chat done through new activity', async () => {
+    const threadId = await createTestThread();
+    const unsubscribed = await runThreadMutation(
+      'unsubscribeFromAgentChatThread',
+      threadId,
+    );
+
+    expect(unsubscribed.body.errors).toBeUndefined();
+    expect(unsubscribed.body.data.unsubscribeFromAgentChatThread).toMatchObject(
+      { isSubscribed: false, snoozedUntil: null },
+    );
+    expect(
+      unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+    ).not.toBeNull();
+
+    await getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).recordThreadActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      text: 'The renewal went through',
+    });
+
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      isSubscribed: false,
+    });
+
+    // Subscribing again leaves the chat where it is until something happens
+    const subscribed = await runThreadMutation(
+      'subscribeToAgentChatThread',
+      threadId,
+    );
+
+    expect(subscribed.body.errors).toBeUndefined();
+    expect(subscribed.body.data.subscribeToAgentChatThread).toMatchObject({
+      isSubscribed: true,
+      archivedAt:
+        unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+    });
+  });
+
+  it('follows the chat again for a member who reopens, snoozes or writes in it', async () => {
+    const threadId = await createTestThread();
+
+    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
+    await runThreadMutation('moveAgentChatThreadToInbox', threadId);
+
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+    });
+
+    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
+    await makeMetadataApiRequest(
+      {
+        query: SNOOZE,
+        variables: { threadId, snoozedUntil: buildFutureSnoozedUntil() },
+      },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      isSubscribed: true,
+    });
+
+    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).recordMemberActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      text: 'Back on this one',
+    });
+
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+    });
+  });
+
+  it('follows the chat again and records the mention for a mentioned member who had unsubscribed', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const firstMention = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(firstMention).toMatchObject({ isSubscribed: true });
+    expect(firstMention!.lastMentionedAt).not.toBeNull();
+
+    await runThreadMutation(
+      'unsubscribeFromAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const secondMention = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(secondMention).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+      lastReadAt: null,
+    });
+    expect(new Date(secondMention!.lastMentionedAt!).getTime()).toBeGreaterThan(
+      new Date(firstMention!.lastMentionedAt!).getTime(),
+    );
+  });
+
+  it('refuses to change the subscription of a member who cannot read the chat', async () => {
+    const threadId = await createTestThread();
+    const response = await runThreadMutation(
+      'unsubscribeFromAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
   });
 });

@@ -5,7 +5,7 @@ import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-h
 
 // not the SDK's hasToolCall, whose stop condition may be async: this is also read synchronously after the run
 // a pausing call refused or failing when made has no awaiting result, so the model reads its error and goes on
-// an offered pausing tool may be resolved by something other than an answer, such as a workflow wait
+// an offered pausing tool may be resolved by something other than an answer, such as a wait
 export const endsOnPausingToolCall = ({
   steps,
   offeredToolNames,
