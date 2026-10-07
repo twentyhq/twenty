@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 16:20\n"
+"PO-Revision-Date: 2026-10-07 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3819,7 +3819,7 @@ msgstr "Obtenha a certificação como Parceiro Twenty: um selo validado, um perf
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
 msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
-msgstr ""
+msgstr "Obtenha ajuda com o Twenty, quer o utilize na nossa nuvem ou o hospede você mesmo, incluindo a aplicação Twenty para Slack."
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
@@ -7428,7 +7428,7 @@ msgstr "Suporte"
 #. js-lingui-id: RgtAtw
 #: src/platform/routing/static-website-routes.ts
 msgid "Support | Twenty"
-msgstr ""
+msgstr "Suporte | Twenty"
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts
