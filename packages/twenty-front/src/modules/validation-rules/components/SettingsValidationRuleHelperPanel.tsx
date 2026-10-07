@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components/navigation';
-import { IconArrowBack, useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsValidationRuleHelperDetails } from '@/validation-rules/components/SettingsValidationRuleHelperDetails';
@@ -57,6 +57,7 @@ export const SettingsValidationRuleHelperPanel = ({
   const { getIcon } = useIcons();
 
   const highlightedItem = items[highlightedIndex];
+  const EnterHintIcon = getIcon('IconArrowBack');
 
   return (
     <StyledPanel>
@@ -88,7 +89,7 @@ export const SettingsValidationRuleHelperPanel = ({
                     ? item.field.label
                     : item.definition.name
                 }
-                RightIcon={isFocusedItem ? IconArrowBack : undefined}
+                RightIcon={isFocusedItem ? EnterHintIcon : undefined}
                 focused={isFocusedItem}
                 onMouseEnter={() => onHighlight(index)}
                 onClick={() => onSelect(item)}

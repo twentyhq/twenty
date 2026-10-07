@@ -326,7 +326,9 @@ export const SettingsValidationRulePreview = ({
           )}
           {isErrorMessageVisible && (
             <StyledErrorMessage>
-              <InlineBanner color="danger" message={trimmedMessage} embedded />
+              <InlineBanner status="error" embedded>
+                {trimmedMessage}
+              </InlineBanner>
             </StyledErrorMessage>
           )}
         </Card.Content>
