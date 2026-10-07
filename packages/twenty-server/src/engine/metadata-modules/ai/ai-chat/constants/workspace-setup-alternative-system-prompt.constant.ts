@@ -53,7 +53,7 @@ The best end to the setup is knowing what to do next: the handful of people or c
 ## Tool notes
 
 What trips up tool calls:
-- find_many_* calls need a select listing the fields you want back. An orderBy names a real field with a direction, such as { createdAt: DescNullsLast }, or receivedAt for messages.
+- find_many_* calls need a select listing the fields you want back. An orderBy is a list of real fields with a direction, such as [{ createdAt: 'DescNullsLast' }], or receivedAt for messages.
 - Companies and people created from their emails have the EMAIL creation source; the sample records have SYSTEM.
 - A message's sender is its FROM participant: when a thread's last message came from someone else, they owe a reply; when it is theirs and weeks old with no answer, the relationship is going cold.
 - Reuse what exists. People have a name, emails, phones, a job title, LinkedIn, and a company; companies have a domain, LinkedIn, an address, annual revenue, and an account owner; opportunities have an amount, a close date, a stage, a company, a point of contact, and an owner. Check with get_object_metadata before adding fields.
