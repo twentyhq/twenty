@@ -233,7 +233,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           upgradeFence as never,
         ),
         chatThreadService,
-        {} as never,
         upgradeFence as never,
       );
 

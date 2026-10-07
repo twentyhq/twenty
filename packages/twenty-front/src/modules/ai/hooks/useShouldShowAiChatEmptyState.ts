@@ -4,7 +4,7 @@ import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
+import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -25,7 +25,7 @@ export const useShouldShowAiChatEmptyState = () => {
     { threadId: currentAiChatThread },
   );
   const agentChatThreadsLoading = useAtomStateValue(
-    agentChatThreadsLoadingState,
+    agentChatThreadsLoadingSelector,
   );
 
   const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);

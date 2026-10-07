@@ -94,16 +94,10 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
       });
     }
 
-    // the member's answer already ran the call, so a Send Message step only reports it
     const actionOutput =
       outcome.status === 'FAILED'
         ? { error: outcome.error }
-        : {
-            result:
-              outcome.status === 'ANSWERED'
-                ? { threadId, ...outcome.answer }
-                : outcome.result,
-          };
+        : { result: outcome.result };
 
     // the step stays pending until the job claims it, so the run must not stay running without one
     try {
