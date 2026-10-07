@@ -105,16 +105,17 @@ export const getAgentHistorySchemaAdditions = ({
   const historyFieldIdentifiers = new Set<string>(
     historyFields.map(({ universalIdentifier }) => universalIdentifier),
   );
+  // An index on a field left out above (e.g. the relation to agentChatChannel) comes with that field's own command
   const indexes = Object.values(standard.flatIndexMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter(
       (index) =>
         (objectIdentifiers.has(index.objectMetadataUniversalIdentifier) ||
-          (isNonEmptyArray(index.universalFlatIndexFieldMetadatas) &&
-            index.universalFlatIndexFieldMetadatas.every(
-              ({ fieldMetadataUniversalIdentifier }) =>
-                historyFieldIdentifiers.has(fieldMetadataUniversalIdentifier),
-            ))) &&
+          isNonEmptyArray(index.universalFlatIndexFieldMetadatas)) &&
+        index.universalFlatIndexFieldMetadatas.every(
+          ({ fieldMetadataUniversalIdentifier }) =>
+            historyFieldIdentifiers.has(fieldMetadataUniversalIdentifier),
+        ) &&
         !isDefined(
           existing.flatIndexMaps.byUniversalIdentifier[
             index.universalIdentifier

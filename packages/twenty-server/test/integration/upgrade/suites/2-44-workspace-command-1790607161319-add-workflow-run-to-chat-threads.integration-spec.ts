@@ -8,6 +8,7 @@ import {
   LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
   LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-workflow-run-universal-identifiers.constant';
+import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791326380059-add-agent-chat-channels.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -27,8 +28,9 @@ const FIELD_UNIVERSAL_IDENTIFIERS = [
 ];
 
 // 2.46 dropped the run link from the standard objects, so a workspace
-// upgrading past 2.44 keeps its threads PRIVATE and unlinked, as a fresh
-// install leaves them.
+// upgrading past 2.44 keeps its threads unlinked, as a fresh install leaves
+// them. They read through their channel since 2.46, which this command
+// leaves alone on the way up.
 describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsCommand (integration)', () => {
   let command: AddWorkflowRunToChatThreadsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
@@ -72,9 +74,19 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
   const UNLINKED_STATE = {
     fieldCount: 0,
     hasIndex: false,
-    readability: MetadataReadability.PRIVATE,
-    readabilityParentFieldUniversalIdentifiers: null,
+    readability: MetadataReadability.INHERITED,
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECTS.agentChatThread.fields.channel.universalIdentifier,
+    ],
   };
+
+  // Down reverts threads to PRIVATE, which would cut channel members off
+  // their chats in the suites that follow
+  afterAll(async () => {
+    await getAppProviderByClassName<AddAgentChatChannelsCommand>(
+      'AddAgentChatChannelsCommand',
+    ).up(RUN_ON_WORKSPACE_ARGS);
+  });
 
   beforeAll(() => {
     command = getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
@@ -98,12 +110,16 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
     expect(await readState()).toEqual(UNLINKED_STATE);
   });
 
-  it('keeps threads PRIVATE on down', async () => {
+  it('reads threads through their own grants again on down', async () => {
     await workspaceOrmManager.executeInWorkspaceContext(
       () => command.down(RUN_ON_WORKSPACE_ARGS),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
-    expect(await readState()).toEqual(UNLINKED_STATE);
+    expect(await readState()).toEqual({
+      ...UNLINKED_STATE,
+      readability: MetadataReadability.PRIVATE,
+      readabilityParentFieldUniversalIdentifiers: null,
+    });
   });
 });

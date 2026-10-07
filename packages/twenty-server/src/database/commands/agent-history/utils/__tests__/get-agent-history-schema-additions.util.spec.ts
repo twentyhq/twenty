@@ -232,6 +232,43 @@ describe('getAgentHistorySchemaAdditions', () => {
     },
   );
 
+  it('leaves out the indexes of fields to objects that do not exist yet', () => {
+    const standard = createStandardMetadata();
+    const existingObjects = createExistingObjectsWithoutHistory(standard);
+
+    delete existingObjects.byUniversalIdentifier[
+      STANDARD_OBJECTS.agentChatChannel.universalIdentifier
+    ];
+
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: existingObjects,
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const addedFieldIdentifiers = new Set(
+      additions.fields.map((field) => field.universalIdentifier),
+    );
+
+    expect(
+      addedFieldIdentifiers.has(
+        STANDARD_OBJECTS.agentChatThread.fields.channel.universalIdentifier,
+      ),
+    ).toBe(false);
+    expect(
+      additions.indexes
+        .filter((index) =>
+          index.universalFlatIndexFieldMetadatas.some(
+            ({ fieldMetadataUniversalIdentifier }) =>
+              !addedFieldIdentifiers.has(fieldMetadataUniversalIdentifier),
+          ),
+        )
+        .map((index) => index.universalIdentifier),
+    ).toEqual([]);
+  });
+
   it('provisions both legs of a relation to a later object once it exists', () => {
     const standard = createStandardMetadata();
     const additions = getAgentHistorySchemaAdditions({
