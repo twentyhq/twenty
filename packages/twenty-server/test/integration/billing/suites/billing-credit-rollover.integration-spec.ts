@@ -2,15 +2,16 @@ import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import request from 'supertest';
 import { createMockStripeInvoiceFinalizedData } from 'test/integration/billing/utils/create-mock-stripe-invoice-finalized-data.util';
 import {
+  debitInFlightCredits,
   getSeededBillingWorkspaceId,
   insertCreditGrant,
   listCreditGrants,
   quitBillingFixtureRedis,
-  readAllowanceCounter,
+  readAllowanceConsumedMicro,
+  refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
   TEST_STRIPE_CUSTOMER_ID,
-  warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -26,6 +27,7 @@ const CLOSING_PERIOD_END = PERIOD_BOUNDARY;
 const NEXT_PERIOD_END = addMonths(PERIOD_BOUNDARY, 1);
 
 const ALLOWANCE_MICRO = 1_000_000;
+const IN_FLIGHT_CREDITS_MICRO = 120_000;
 
 const postInvoiceFinalized = (
   invoiceId = 'in_test_default',
@@ -200,30 +202,49 @@ describe('Billing credit rollover (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it('drops the allowance counter on the period transition', async () => {
-    usageSpy.mockResolvedValue(300_000);
+  describe('once Stripe has advanced the subscription', () => {
+    beforeEach(async () => {
+      usageSpy.mockResolvedValue(300_000);
+      await setupResourceCreditSubscription({
+        workspaceId,
+        periodStart: CLOSING_PERIOD_END,
+        periodEnd: NEXT_PERIOD_END,
+        creditAmountMicro: ALLOWANCE_MICRO,
+      });
+      await refreshCurrentBillingSubscription(workspaceId);
+    });
 
-    // Stripe advances the subscription in a separate event, so the counter is keyed by the closing period
-    await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
+    it.failing(
+      'keeps in-flight usage of the opened period through the transition',
+      async () => {
+        const consumedBeforeMicro =
+          await readAllowanceConsumedMicro(workspaceId);
 
-    await postInvoiceFinalized().expect(200);
+        await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+        await postInvoiceFinalized().expect(200);
 
-    expect(
-      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
-    ).toBeNull();
-  });
+        expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+          consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+        );
+      },
+    );
 
-  it('drops the allowance counter again when a successful delivery is repeated', async () => {
-    usageSpy.mockResolvedValue(300_000);
+    it.failing(
+      'keeps in-flight usage when a successful delivery is repeated',
+      async () => {
+        await postInvoiceFinalized().expect(200);
 
-    await postInvoiceFinalized().expect(200);
-    await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
+        const consumedBeforeMicro =
+          await readAllowanceConsumedMicro(workspaceId);
 
-    await postInvoiceFinalized().expect(200);
+        await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+        await postInvoiceFinalized().expect(200);
 
-    expect(
-      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
-    ).toBeNull();
+        expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+          consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+        );
+      },
+    );
   });
 
   // A 31st anchor runs Jan 31 to Feb 28; once advanced, calendar arithmetic clamps Feb 28 back to Jan 28 and swallows three days
