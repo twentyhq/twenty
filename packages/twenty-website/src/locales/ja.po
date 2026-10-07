@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 16:20\n"
+"PO-Revision-Date: 2026-10-07 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3819,7 +3819,7 @@ msgstr "Twentyパートナーとして認定を受けましょう。審査済み
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
 msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
-msgstr ""
+msgstr "クラウドでTwentyを運用する場合でもセルフホストする場合でも、Slack用Twentyアプリを含むTwentyのサポートを受けられます。"
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
@@ -7428,7 +7428,7 @@ msgstr "サポート"
 #. js-lingui-id: RgtAtw
 #: src/platform/routing/static-website-routes.ts
 msgid "Support | Twenty"
-msgstr ""
+msgstr "サポート | Twenty"
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts
