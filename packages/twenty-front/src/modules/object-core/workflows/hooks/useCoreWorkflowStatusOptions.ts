@@ -1,12 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
+import { CORE_WORKFLOW_STATUS_FILTER_OPTIONS } from '@/object-core/workflows/constants/CoreWorkflowStatusFilterOptions';
+
 export const useCoreWorkflowStatusOptions = (): SelectOption[] => {
   const { t } = useLingui();
 
-  return [
-    { value: 'DRAFT', label: t`Draft`, color: 'yellow' },
-    { value: 'ACTIVE', label: t`Active`, color: 'green' },
-    { value: 'DEACTIVATED', label: t`Deactivated`, color: 'gray' },
-  ];
+  return CORE_WORKFLOW_STATUS_FILTER_OPTIONS.map(({ value, label, color }) => ({
+    value,
+    label: t(label),
+    color,
+  }));
 };
