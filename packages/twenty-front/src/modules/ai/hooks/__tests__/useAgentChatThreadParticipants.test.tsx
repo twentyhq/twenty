@@ -14,6 +14,8 @@ const READ_PARTICIPANT = {
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: null,
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
@@ -26,8 +28,8 @@ jest.mock('@apollo/client/react', () => ({
   useApolloClient: () => ({ mutate }),
 }));
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast }),
 }));
 

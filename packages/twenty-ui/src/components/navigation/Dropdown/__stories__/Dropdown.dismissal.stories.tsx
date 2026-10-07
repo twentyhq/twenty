@@ -77,8 +77,42 @@ const openRecordActions = async (canvasElement: HTMLElement) => {
   return trigger;
 };
 
+const swipeFromElement = (element: Element) => {
+  const bounds = element.getBoundingClientRect();
+  const startX = bounds.left + bounds.width / 2;
+  const startY = bounds.top + bounds.height / 2;
+  const dispatchTouch = (
+    type: 'touchstart' | 'touchmove' | 'touchend',
+    clientX: number,
+  ) => {
+    const touch = new Touch({
+      identifier: 1,
+      target: element,
+      clientX,
+      clientY: startY,
+    });
+    const activeTouches = type === 'touchend' ? [] : [touch];
+
+    element.dispatchEvent(
+      new TouchEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        touches: activeTouches,
+        targetTouches: activeTouches,
+        changedTouches: [touch],
+      }),
+    );
+  };
+
+  dispatchTouch('touchstart', startX);
+  dispatchTouch('touchmove', startX + 40);
+  dispatchTouch('touchend', startX + 40);
+};
+
 const meta: Meta<typeof DismissibleRecordActions> = {
-  title: 'UI/Components/Dropdown/Interactions/Dismissal',
+  id: 'ui-components-dropdown-interactions-dismissal',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Dismissal',
   component: DismissibleRecordActions,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
@@ -161,6 +195,25 @@ export const InteractOutside: Story = {
         true,
       );
     }
+  },
+};
+
+export const SwipeOutside: Story = {
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const outside = within(canvasElement).getByRole('button', {
+      name: 'Outside',
+    });
+
+    await openRecordActions(canvasElement);
+    swipeFromElement(outside);
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(args.onInteractOutside).toHaveBeenCalledWith(
+      expect.objectContaining({ target: outside, type: 'touchmove' }),
+    );
   },
 };
 

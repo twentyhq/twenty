@@ -8,7 +8,7 @@ import { MultiWorkspaceDropdownWorkspacesListComponents } from '@/ui/navigation/
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownMobileBoundaryPadding';
 import { styled } from '@linaria/react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrigger = styled.div<{ shouldHideLabel: boolean }>`

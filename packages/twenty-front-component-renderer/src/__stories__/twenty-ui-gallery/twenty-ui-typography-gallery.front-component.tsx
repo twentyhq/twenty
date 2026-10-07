@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Section } from 'twenty-ui/components';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { Section } from 'twenty-ui/components/layout';
+import { VisuallyHiddenExample } from './visually-hidden-example';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   Heading,
@@ -72,8 +73,8 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'VisibilityHidden',
-    node: <VisibilityHidden>Screen-reader only</VisibilityHidden>,
+    name: 'VisuallyHidden',
+    node: <VisuallyHiddenExample />,
   },
 ];
 

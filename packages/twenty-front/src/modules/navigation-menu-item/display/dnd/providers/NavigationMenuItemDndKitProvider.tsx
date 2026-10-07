@@ -1,7 +1,7 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import type { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import type { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/common/contexts/NavigationDragSourceContext';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';

@@ -16,7 +16,8 @@ import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
 
 const meta: Meta<typeof IconButton> = {
-  title: 'UI/Components/IconButton',
+  id: 'ui-components-iconbutton',
+  title: 'UI/Components/Input/IconButton',
   component: IconButton,
   args: { children: <IconSearch />, 'aria-label': 'Search' },
 };

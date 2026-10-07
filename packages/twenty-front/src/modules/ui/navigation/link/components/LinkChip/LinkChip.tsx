@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { type LinkChipProps } from './types/LinkChipProps';
 
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
-import { useMouseDownNavigation } from '@/ui/navigation/utils/hooks/useMouseDownNavigation';
+import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNavigation';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 const styles = {

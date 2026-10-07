@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { type AiToolCallLog } from 'twenty-shared/workflow';
+import { type AgentRunToolCallLog } from 'twenty-shared/ai';
 
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import {
   IconCheck,
   IconChevronDown,
@@ -142,7 +142,7 @@ type TabType = 'output' | 'input';
 export const WorkflowRunStepLogsToolCallRow = ({
   toolCall,
 }: {
-  toolCall: AiToolCallLog;
+  toolCall: AgentRunToolCallLog;
 }) => {
   const theme = useTheme();
   const { t } = useLingui();

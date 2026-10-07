@@ -1,7 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock, Section } from 'twenty-ui/components';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCopy } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';

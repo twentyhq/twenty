@@ -10,9 +10,7 @@ import { ApplicationLookupModule } from 'src/engine/core-modules/application/app
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -44,15 +42,9 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
-    TwentyConfigModule,
-    FeatureFlagModule,
     MetricsModule,
   ],
-  exports: [
-    ApplicationService,
-    ApplicationStopModule,
-    WorkspaceFlatApplicationMapCacheService,
-  ],
+  exports: [ApplicationService, ApplicationStopModule],
   providers: [
     ApplicationResolver,
     ApplicationService,

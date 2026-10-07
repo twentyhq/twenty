@@ -40,6 +40,8 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   lastReadAt: '2026-10-01T10:00:00.000Z',
   archivedAt: null,
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
@@ -131,6 +133,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       ...READ_PARTICIPANT,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      isSubscribed: true,
+      lastMentionedAt: null,
     };
     const { store } = renderEffect({ [THREAD_ID]: snoozedParticipant });
 

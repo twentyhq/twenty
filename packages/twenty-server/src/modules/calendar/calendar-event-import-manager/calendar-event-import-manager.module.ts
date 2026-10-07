@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,8 +8,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
+import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
@@ -35,42 +33,32 @@ import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-
 import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
-import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { WorkspaceSignalModule } from 'src/engine/core-modules/workspace-signal/workspace-signal.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
-import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
-    WorkspaceSignalModule,
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
-      FeatureFlagEntity,
       WorkspaceEntity,
       CalendarChannelEntity,
       ConnectedAccountEntity,
       UserWorkspaceEntity,
     ]),
-    WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
+    CalendarCommonModule,
     GoogleCalendarDriverModule,
     CalDavDriverModule,
     MicrosoftCalendarDriverModule,
-    BillingModule,
-    RefreshTokensManagerModule,
     ConnectedAccountModule,
     EmailAliasManagerModule,
-    CalendarCommonModule,
     MetricsModule,
     FeatureFlagModule,
   ],
   providers: [
     BlocklistRepository,
     provideWorkspaceScopedRepository(CalendarChannelEntity),
-    CalendarChannelSyncStatusService,
     CalendarEventsImportService,
     CalendarFetchEventsService,
     CalendarEventImportErrorHandlerService,

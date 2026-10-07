@@ -11,8 +11,16 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="aria-hidden" type="Booleanish">
+  Mark decorative swatches as hidden from assistive technology.
+</ParamField>
+
+<ParamField body="aria-label" type="string">
+  Accessible name when the caller supplies role="img".
+</ParamField>
+
 <ParamField body="className" type="string">
-  CSS class applied to the swatch.
+  CSS class merged with the swatch class.
 </ParamField>
 
 <ParamField body="color" type="string">
@@ -23,6 +31,18 @@
   Theme color used for the background and border. Required even when `color` overrides the background.
 </ParamField>
 
-<ParamField body="variant" type="&quot;circle&quot; | &quot;default&quot; | &quot;pipeline&quot;">
-  Swatch shape: `default`, `circle`, or `pipeline`. Omitting it uses the default shape.
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the swatch div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties">
+  Native styles merged with the swatch color defaults. Explicit styles win.
+</ParamField>
+
+<ParamField body="variant" type="&quot;circle&quot; | &quot;default&quot;">
+  Generic swatch shape: `default` or `circle`. Omitting it uses the default shape.
 </ParamField>

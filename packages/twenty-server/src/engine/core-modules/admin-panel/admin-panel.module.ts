@@ -28,7 +28,6 @@ import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -38,13 +37,10 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -67,16 +63,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       BillingCustomerEntity,
       BillingPriceEntity,
     ]),
-    AuthModule,
     BillingModule,
     FileModule,
     WorkspaceDomainsModule,
-    RedisClientModule,
     TerminusModule,
     MetricsModule,
     FeatureFlagModule,
-    TelemetryModule,
-    ImpersonationModule,
     PermissionsModule,
     SecureHttpClientModule,
     ApplicationRegistrationModule,
@@ -119,14 +111,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(FeatureFlagEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
-  exports: [
-    AdminPanelUserLookupService,
-    AdminPanelStatisticsService,
-    AdminPanelChatService,
-    AdminPanelGlobalChatThreadsService,
-    AdminPanelConfigService,
-    AdminPanelVersionService,
-    MaintenanceModeService,
-  ],
+  exports: [MaintenanceModeService],
 })
 export class AdminPanelModule {}

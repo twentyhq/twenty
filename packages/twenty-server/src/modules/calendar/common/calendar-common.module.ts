@@ -6,13 +6,11 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceSignalModule } from 'src/engine/core-modules/workspace-signal/workspace-signal.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
     TypeOrmModule.forFeature([
       CalendarChannelEntity,
       ConnectedAccountEntity,

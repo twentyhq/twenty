@@ -30,7 +30,8 @@ const getAvatars = (commonProps: Partial<AvatarProps> = {}) => [
 const meta: Meta<
   AvatarGroupProps & AvatarProps & { numberOfAvatars?: number }
 > = {
-  title: 'UI/Data Display/AvatarGroup',
+  id: 'ui-data-display-avatargroup',
+  title: 'UI/Components/Data display/AvatarGroup',
   component: AvatarGroup,
   render: ({ numberOfAvatars = 5, ...args }) => (
     <AvatarGroup avatars={getAvatars(args).slice(0, numberOfAvatars)} />

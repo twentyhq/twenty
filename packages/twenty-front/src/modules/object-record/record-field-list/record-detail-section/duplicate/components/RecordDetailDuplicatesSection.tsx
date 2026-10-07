@@ -10,7 +10,7 @@ import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMe
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconArrowMerge } from 'twenty-ui/icon';
 
 export const RecordDetailDuplicatesSection = ({

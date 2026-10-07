@@ -1,6 +1,8 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { type ComponentProps } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -43,20 +45,38 @@ const buildThread = (
   ...thread,
 });
 
-const renderListItem = (thread: AgentChatThreadRecord) =>
+const renderListItem = (
+  thread: AgentChatThreadRecord,
+  {
+    isChecked = false,
+    onClick = jest.fn(),
+    onCheckboxClick,
+  }: Pick<
+    ComponentProps<typeof AiChatThreadListItem>,
+    'isChecked' | 'onCheckboxClick'
+  > &
+    Partial<Pick<ComponentProps<typeof AiChatThreadListItem>, 'onClick'>> = {},
+) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <AiChatThreadListItem
           thread={thread}
           isSelected={false}
-          onClick={jest.fn()}
+          isChecked={isChecked}
+          onClick={onClick}
+          onCheckboxClick={onCheckboxClick}
         />
       </I18nProvider>
     </JotaiProvider>,
   );
 
 describe('AiChatThreadListItem', () => {
+  beforeAll(() => {
+    // jsdom has no PointerEvent, which the checkbox dispatches on click
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   beforeEach(() => {
     resetJotaiStore();
   });
@@ -88,5 +108,38 @@ describe('AiChatThreadListItem', () => {
     );
 
     expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
+  });
+
+  it('has no checkbox where chats cannot be selected', () => {
+    renderListItem(buildThread({}));
+
+    expect(
+      screen.queryByRole('checkbox', { name: 'Select chat' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('checks the chat from its checkbox without opening it', async () => {
+    const onClick = jest.fn();
+    const onCheckboxClick = jest.fn();
+    const thread = buildThread({});
+
+    renderListItem(thread, { onClick, onCheckboxClick });
+
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Select chat' }),
+    );
+
+    expect(onCheckboxClick).toHaveBeenCalledTimes(1);
+    expect(onCheckboxClick).toHaveBeenCalledWith(thread, expect.anything());
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('shows a checked chat as checked', () => {
+    renderListItem(buildThread({}), {
+      isChecked: true,
+      onCheckboxClick: jest.fn(),
+    });
+
+    expect(screen.getByRole('checkbox', { name: 'Select chat' })).toBeChecked();
   });
 });

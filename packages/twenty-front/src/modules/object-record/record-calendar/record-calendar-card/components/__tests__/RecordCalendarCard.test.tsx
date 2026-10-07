@@ -17,10 +17,6 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState',
-  () => ({ useAtomComponentFamilyState: () => [false, jest.fn()] }),
-);
-jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({ useAtomComponentStateValue: () => false }),
 );

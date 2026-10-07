@@ -2,7 +2,10 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsRow, type SettingsRowProps } from 'twenty-ui/components';
+import {
+  SettingsRow,
+  type SettingsRowProps,
+} from 'twenty-ui/components/settings';
 import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

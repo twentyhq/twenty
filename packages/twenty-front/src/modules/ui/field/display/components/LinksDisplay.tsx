@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,

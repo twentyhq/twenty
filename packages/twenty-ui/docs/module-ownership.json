@@ -13,9 +13,9 @@
     "Collapsible",
     "ColorSample",
     "Dialog",
+    "DirectionProvider",
     "Field",
     "Heading",
-    "HorizontalSeparator",
     "Input",
     "InputGroup",
     "ListItem",
@@ -32,6 +32,7 @@
     "ResizeHandle",
     "SegmentedControl",
     "Select",
+    "Separator",
     "Shortcut",
     "Slider",
     "Status",
@@ -39,10 +40,9 @@
     "Tabs",
     "Tag",
     "Text",
-    "TextDirectionProvider",
     "Textarea",
     "Tooltip",
-    "VisibilityHidden"
+    "VisuallyHidden"
   ],
   "components": [
     "AnimatedIconCrossfade",

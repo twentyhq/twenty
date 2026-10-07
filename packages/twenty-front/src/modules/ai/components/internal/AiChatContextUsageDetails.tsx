@@ -2,8 +2,8 @@ import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MetricRow } from 'twenty-ui/components';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Separator } from 'twenty-ui/primitives/layout';
 import {
   IconArrowUp,
   IconArrowDown,
@@ -50,7 +50,7 @@ export const AiChatContextUsageDetails = () => {
     <>
       {isDefined(lastMessage) && (
         <>
-          <HorizontalSeparator noMargin />
+          <Separator />
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
             <MetricRow
@@ -83,7 +83,7 @@ export const AiChatContextUsageDetails = () => {
           </StyledSection>
         </>
       )}
-      <HorizontalSeparator noMargin />
+      <Separator />
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow

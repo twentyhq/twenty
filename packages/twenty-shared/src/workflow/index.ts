@@ -152,7 +152,6 @@ export type {
   WorkflowRunStepLog,
   WorkflowRunStepLogs,
   AiAgentStepLogDetails,
-  AiToolCallLog,
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';

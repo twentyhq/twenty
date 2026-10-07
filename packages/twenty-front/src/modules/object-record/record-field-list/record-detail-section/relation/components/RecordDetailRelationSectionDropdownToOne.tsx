@@ -27,7 +27,7 @@ import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetada
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconForbid, IconPencil } from 'twenty-ui/icon';
 
 type RecordDetailRelationSectionDropdownToOneProps = {
