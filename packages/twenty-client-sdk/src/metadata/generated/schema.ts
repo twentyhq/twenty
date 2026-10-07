@@ -2158,9 +2158,11 @@ export interface Mutation {
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
     generateTransientToken: TransientToken
+    generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromOTP: AuthTokens
     getAuthTokensFromSSOExchangeToken: AuthTokens
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCodeRedemption
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
@@ -2200,6 +2202,7 @@ export interface Mutation {
     revokeAllOtherUserSessions: Scalars['Int']
     revokeApiKey?: ApiKey
     revokeApplicationAuthorization: Scalars['Boolean']
+    revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
@@ -2861,6 +2864,7 @@ export interface Query {
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
+    twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     unsubscribeTopics: UnsubscribeTopic[]
     usageLimits: UsageLimit[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -3315,6 +3319,25 @@ export interface TwoFactorAuthenticationMethodSummary {
     strategy: Scalars['String']
     twoFactorAuthenticationMethodId: Scalars['UUID']
     __typename: 'TwoFactorAuthenticationMethodSummary'
+}
+
+export interface TwoFactorAuthenticationRecoveryCode {
+    expiresAt: Scalars['DateTime']
+    recoveryCode: Scalars['String']
+    __typename: 'TwoFactorAuthenticationRecoveryCode'
+}
+
+export interface TwoFactorAuthenticationRecoveryCodeRedemption {
+    provisioningUri?: Scalars['String']
+    tokens?: AuthTokenPair
+    __typename: 'TwoFactorAuthenticationRecoveryCodeRedemption'
+}
+
+export interface TwoFactorAuthenticationRecoveryStatus {
+    hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']
+    isAwaitingRecoveryEnrollment: Scalars['Boolean']
+    pendingRecoveryCodeExpiresAt?: Scalars['DateTime']
+    __typename: 'TwoFactorAuthenticationRecoveryStatus'
 }
 
 export type UnsubscribeHostnameStatus = 'ACTIVE' | 'FAILED' | 'PENDING'
@@ -6347,9 +6370,11 @@ export interface MutationGenqlSelection{
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
     generateTransientToken?: TransientTokenGenqlSelection
+    generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {otp?: (Scalars['String'] | null), userId: Scalars['UUID']} })
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], otp: Scalars['String']} })
     getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], recoveryCode: Scalars['String']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), origin: Scalars['String'], password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
@@ -6389,6 +6414,7 @@ export interface MutationGenqlSelection{
     revokeAllOtherUserSessions?: boolean | number
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
+    revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
@@ -7097,6 +7123,7 @@ export interface QueryGenqlSelection{
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
+    twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     usageLimits?: UsageLimitGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
@@ -7613,6 +7640,28 @@ export interface TwoFactorAuthenticationMethodSummaryGenqlSelection{
     status?: boolean | number
     strategy?: boolean | number
     twoFactorAuthenticationMethodId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
+    expiresAt?: boolean | number
+    recoveryCode?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection{
+    provisioningUri?: boolean | number
+    tokens?: AuthTokenPairGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
+    hasVerifiedTwoFactorAuthenticationMethod?: boolean | number
+    isAwaitingRecoveryEnrollment?: boolean | number
+    pendingRecoveryCodeExpiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10686,6 +10735,30 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isTwoFactorAuthenticationMethodSummary = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationMethodSummary => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationMethodSummary"')
       return TwoFactorAuthenticationMethodSummary_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
+    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
+      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCodeRedemption']
+    export const isTwoFactorAuthenticationRecoveryCodeRedemption = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCodeRedemption => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCodeRedemption"')
+      return TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryStatus_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryStatus']
+    export const isTwoFactorAuthenticationRecoveryStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryStatus"')
+      return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
     }
     
 
