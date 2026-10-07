@@ -1,4 +1,6 @@
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -10,6 +12,9 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SKIPPED_MESSAGE = 'The questions were closed without an answer.';
 
@@ -24,6 +29,7 @@ const SKIPPED_MESSAGE = 'The questions were closed without an answer.';
 export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly storage: AgentHistoryUpgradeStorageService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -36,6 +42,33 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
   }
 
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    const hasRequiredFields = [
+      STANDARD_OBJECTS.agentMessagePart.fields.toolOutput.universalIdentifier,
+      STANDARD_OBJECTS.agentChatThread.fields.pendingQuestionMessageId
+        .universalIdentifier,
+      STANDARD_OBJECTS.agentTurn.fields.status.universalIdentifier,
+    ].every((universalIdentifier) =>
+      isDefined(
+        findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+          flatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifier,
+        }),
+      ),
+    );
+
+    if (!hasRequiredFields) {
+      this.logger.log(
+        `Chat history fields not found for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     const isDryRun = options.dryRun ?? false;
 
     const { closedThreadCount, suspensionsToContinue } = await this.storage.run(
