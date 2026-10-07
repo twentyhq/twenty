@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
-import { Shortcut } from 'twenty-ui/primitives/typography';
+import { IconArrowBack, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsValidationRuleHelperDetails } from '@/validation-rules/components/SettingsValidationRuleHelperDetails';
@@ -40,7 +39,7 @@ const getItemKey = (item: ValidationRuleHelperItem) =>
 type SettingsValidationRuleHelperPanelProps = {
   items: ValidationRuleHelperItem[];
   highlightedIndex: number;
-  isEnterHintVisible: boolean;
+  isFocused: boolean;
   editorFields: ValidationRuleEditorField[];
   onHighlight: (index: number) => void;
   onSelect: (item: ValidationRuleHelperItem) => void;
@@ -49,7 +48,7 @@ type SettingsValidationRuleHelperPanelProps = {
 export const SettingsValidationRuleHelperPanel = ({
   items,
   highlightedIndex,
-  isEnterHintVisible,
+  isFocused,
   editorFields,
   onHighlight,
   onSelect,
@@ -67,12 +66,13 @@ export const SettingsValidationRuleHelperPanel = ({
         )}
         {items.map((item, index) => {
           const isHighlighted = index === highlightedIndex;
+          const isFocusedItem = isFocused && isHighlighted;
 
           return (
             <div
               key={getItemKey(item)}
               role="option"
-              aria-selected={isHighlighted}
+              aria-selected={isFocusedItem}
               ref={
                 isHighlighted
                   ? (element: HTMLDivElement | null) =>
@@ -88,13 +88,8 @@ export const SettingsValidationRuleHelperPanel = ({
                     ? item.field.label
                     : item.definition.name
                 }
-                RightComponent={
-                  isHighlighted &&
-                  isEnterHintVisible && (
-                    <Shortcut shortcut={['Enter']} variant="text" />
-                  )
-                }
-                focused={isHighlighted}
+                RightIcon={isFocusedItem ? IconArrowBack : undefined}
+                focused={isFocusedItem}
                 onMouseEnter={() => onHighlight(index)}
                 onClick={() => onSelect(item)}
               />

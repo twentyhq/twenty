@@ -69,6 +69,7 @@ export {
   IconAppWindow,
   IconArchive,
   IconArchiveOff,
+  IconArrowBack,
   IconArrowBackUp,
   IconArrowBarToDown,
   IconArrowBarToDownDashed,
