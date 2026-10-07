@@ -6,8 +6,8 @@ export function SupportDocument() {
   return (
     <>
       <p>
-        Twenty is an open-source CRM. This page explains how to get help,
-        whether you run Twenty on our cloud or host it yourself.
+        Need help with Twenty? Here&rsquo;s how to reach us, whether
+        you&rsquo;re on Twenty Cloud or hosting it yourself.
       </p>
 
       <h2>Getting help</h2>
@@ -41,7 +41,7 @@ export function SupportDocument() {
       </p>
 
       <h2>Reporting a problem</h2>
-      <p>To help us resolve issues quickly, include:</p>
+      <p>When you report a problem, tell us:</p>
       <ul>
         <li>
           Whether you&rsquo;re on Twenty Cloud or self-hosted (and the version,
