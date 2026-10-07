@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CommandMenuItemResolver } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.resolver';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
@@ -24,8 +22,6 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     CoreWorkflowAccessModule,
     FlatCommandMenuItemModule,
     FrontComponentModule,
-    FeatureFlagModule,
-    I18nModule,
     PermissionsModule,
   ],
   providers: [

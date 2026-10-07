@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadController } from 'src/engine/core-modules/file/file-upload/controllers/file-upload.controller';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
@@ -30,7 +29,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       WorkspaceEntity,
     ]),
     PermissionsModule,
-    FileStorageModule,
     FileUrlModule,
   ],
   providers: [
