@@ -377,7 +377,7 @@ export class ApplicationService {
         `Application ${application.universalIdentifier} exposes a server route and is installed in other workspaces, it cannot be uninstalled from its owner workspace ${workspaceId}`,
         ApplicationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace or uninstall it from all other workspaces before uninstalling it here.`,
+          userFriendlyMessage: msg`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`,
         },
       );
     }
