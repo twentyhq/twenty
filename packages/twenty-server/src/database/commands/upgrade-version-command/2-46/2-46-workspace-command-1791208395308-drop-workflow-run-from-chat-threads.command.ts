@@ -2,9 +2,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
 
-import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -14,9 +12,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // Kept as literals because the entries they used to name have been removed
 // from the standard objects in the same change.
@@ -27,48 +23,14 @@ const WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER =
 const CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER =
   'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b';
 
-// A call still waiting in a run's conversation gets the step it waits for,
-// which is how an answer or a wait outcome finds its step once the thread no
-// longer names its run.
-const stampPendingCallsWithTheirStep = async ({
-  manager,
-  workspaceId,
-}: {
-  manager: EntityManager;
-  workspaceId: string;
-}): Promise<number> => {
-  const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-
-  const stamped: { id: string }[] = await manager.query(
-    `UPDATE ${schema}."agentMessagePart" part
-     SET "toolOutput" = part."toolOutput" || jsonb_build_object(
-       'workflowStep',
-       jsonb_build_object('workflowRunId', thread."workflowRunId", 'stepId', step.key)
-     )
-     FROM ${schema}."agentMessage" message
-     JOIN ${schema}."agentChatThread" thread ON thread.id = message."threadId"
-     JOIN ${schema}."workflowRun" run ON run.id = thread."workflowRunId"
-     CROSS JOIN LATERAL jsonb_each(COALESCE(run.state -> 'stepInfos', '{}'::jsonb)) AS step(key, value)
-     WHERE part."messageId" = message.id
-       AND step.value ->> 'threadId' = thread.id::text
-       AND jsonb_typeof(part."toolOutput") = 'object'
-       AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
-       AND NOT part."toolOutput" ? 'workflowStep'
-     RETURNING part.id`,
-  );
-
-  return stamped.length;
-};
-
 // A conversation an agent step held now belongs to the member it was routed
-// to, as every other conversation does, rather than to its run. The calls it
-// still waits on keep resuming their step, and threads read only through their
-// own grants again.
+// to, as every other conversation does, rather than to its run, and threads
+// read only through their own grants again.
 @RegisteredWorkspaceCommand('2.46.0', 1791208395308)
 @Command({
   name: 'upgrade:2-46:drop-workflow-run-from-chat-threads',
   description:
-    'Stop linking chat threads to workflow runs: pending calls name their step, threads become PRIVATE and the run link is dropped',
+    'Stop linking chat threads to workflow runs: threads become PRIVATE and the run link is dropped',
 })
 export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -76,7 +38,6 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly storage: AgentHistoryUpgradeStorageService,
   ) {
     super(workspaceIteratorService);
   }
@@ -142,21 +103,11 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would stamp pending calls, make chat threads PRIVATE and drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
+        `[DRY RUN] Would make chat threads PRIVATE and drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
       );
 
       return;
     }
-
-    const stampedCount = fieldsToDelete.some(
-      ({ universalIdentifier }) =>
-        universalIdentifier ===
-        CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
-    )
-      ? await this.storage.run(workspaceId, ({ manager }) =>
-          stampPendingCallsWithTheirStep({ manager, workspaceId }),
-        )
-      : 0;
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -206,13 +157,13 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     }
 
     this.logger.log(
-      `Workspace ${workspaceId}: stamped ${stampedCount} pending call(s), made chat threads PRIVATE and dropped their workflow run link`,
+      `Workspace ${workspaceId}: made chat threads PRIVATE and dropped their workflow run link`,
     );
   }
 
   async down(_args: RunOnWorkspaceArgs): Promise<void> {
     // The standard objects no longer declare the run link, so it cannot be
-    // recreated, and the stamped calls resume their step without it.
+    // recreated.
   }
 
   private async runMigration(
