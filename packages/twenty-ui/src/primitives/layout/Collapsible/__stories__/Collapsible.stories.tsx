@@ -73,20 +73,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-export const Documentation: Story = {};
-export const FitContent: Story = {
-  args: { hasFixedHeight: false, defaultOpen: true },
-};
-export const CustomDurations: Story = {
-  args: { style: { transitionDuration: '1.2s, 0.8s' } },
-};
-export const WidthAnimation: Story = { args: { dimension: 'width' } };
-
-const verifyExpansion: Story['play'] = async ({ canvasElement }) => {
+const verifyExpansion: NonNullable<Story['play']> = async ({
+  canvasElement,
+  args,
+}) => {
   const canvas = within(canvasElement);
   const trigger = canvas.getByRole('button', { name: 'Import details' });
   const content = 'Match each CSV column to a record field before importing.';
+  if (args.defaultOpen) {
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(canvas.getByText(content)).toBeVisible();
+    await userEvent.click(trigger);
+    await waitFor(() =>
+      expect(canvas.queryByText(content)).not.toBeInTheDocument(),
+    );
+  }
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await userEvent.click(trigger);
   expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -115,15 +116,20 @@ const verifyExpansion: Story['play'] = async ({ canvasElement }) => {
   await waitFor(() => expect(canvas.getByText(content)).toBeVisible());
 };
 
-export const HeightInteraction: Story = { play: verifyExpansion };
-export const WidthInteraction: Story = {
-  args: WidthAnimation.args,
+export const Default: Story = { play: verifyExpansion };
+export const Documentation: Story = {};
+export const FitContent: Story = {
+  args: { hasFixedHeight: false, defaultOpen: true },
   play: verifyExpansion,
 };
-export const CustomTimingInteraction: Story = {
-  args: CustomDurations.args,
+export const WidthAnimation: Story = {
+  args: { dimension: 'width' },
+  play: verifyExpansion,
+};
+export const CustomDurations: Story = {
+  args: { style: { transitionDuration: '1.2s, 0.8s' } },
   play: async (context) => {
-    await verifyExpansion?.(context);
+    await verifyExpansion(context);
     const trigger = within(context.canvasElement).getByRole('button', {
       name: 'Import details',
     });
