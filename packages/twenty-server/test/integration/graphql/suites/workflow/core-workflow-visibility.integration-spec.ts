@@ -22,8 +22,8 @@ import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspac
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -771,7 +771,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An agent step's conversation has no grants of its own: it is read through its run, so follows the workflow's visibility.
+  // An agent step's conversation belongs to its recipient, or else the workflow's creator, whatever the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
     let conversationWorkspaceWorkflowId: string;
@@ -816,23 +816,45 @@ describe('core workflow visibility (e2e)', () => {
           'WorkflowAgentConversationWorkspaceService',
         );
 
-      const recordedConversation = await conversationService.recordExecution({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workflowRunId,
+      ({ threadId } = await conversationService.openConversation({
+        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
         stepId: 'trigger',
         title: 'Summarize the lead',
+        recipientWorkspaceMemberId: null,
+        threadKey: `${workflowRunId}:trigger`,
+      }));
+
+      const runConversationService =
+        getAppProviderByClassName<AgentRunConversationService>(
+          'AgentRunConversationService',
+        );
+
+      const turnId = await runConversationService.openTurn({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        title: 'Summarize the lead',
         agentId: null,
-        prompt: 'Summarize the lead',
-        initiatorUserWorkspaceId: null,
-        executionResult: {
+        senderUserWorkspaceId: null,
+        senderApplicationId: null,
+        messages: [{ role: 'user', content: 'Summarize the lead' }],
+        createdBy: await conversationService.findTurnCreatedBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workflowRunId,
+        }),
+      });
+
+      await runConversationService.closeTurn({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        turnId,
+        title: 'Summarize the lead',
+        agentId: null,
+        execution: {
           steps: [
             { content: [{ type: 'text', text: 'A warm lead.' }] },
           ] as AgentExecutionResult['steps'],
         },
       });
-
-      expect(recordedConversation).not.toBeNull();
-      threadId = recordedConversation!.threadId;
     });
 
     afterAll(async () => {
@@ -847,23 +869,7 @@ describe('core workflow visibility (e2e)', () => {
       }
     });
 
-    it('points the step at the conversation, which holds the prompt and the reply', async () => {
-      const runResponse = await workflowGraphqlRequest(
-        `
-          query FindRun($id: UUID!) {
-            workflowRun(filter: { id: { eq: $id } }) {
-              state
-            }
-          }
-        `,
-        { id: workflowRunId },
-      );
-
-      expect(runResponse.body.errors).toBeUndefined();
-      expect(
-        runResponse.body.data.workflowRun.state.stepInfos.trigger.threadId,
-      ).toBe(threadId);
-
+    it('records the conversation, which holds the prompt and the reply', async () => {
       const response = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
 
       expect(response.body.errors).toBeUndefined();
@@ -875,108 +881,24 @@ describe('core workflow visibility (e2e)', () => {
       ).toEqual(['user', 'assistant']);
     });
 
-    it('keeps it out of the chat list of someone who can read it', async () => {
-      expect(
-        await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-      ).not.toContain(threadId);
-    });
-
-    it('refuses to rename or delete it, even for the workflow creator', async () => {
-      const renameResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation RenameRunConversation($threadId: UUID!) {
-            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
-              id
-            }
-          }
-        `,
-        { threadId },
+    it("files it under done in the workflow creator's chats", async () => {
+      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+        threadId,
       );
 
-      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const deleteResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation DeleteRunConversation($threadId: UUID!) {
-            deleteAgentChatThread(id: $threadId) {
-              id
-            }
-          }
-        `,
-        { threadId },
-      );
-
-      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const [storedThread] = await global.testDataSource.query(
-        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+      const [{ archivedAt }] = await global.testDataSource.query(
+        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 
-      expect(storedThread).toEqual({
-        title: 'Summarize the lead',
-        deletedAt: null,
-      });
+      expect(archivedAt).not.toBeNull();
     });
 
-    it('follows the workflow visibility for another member', async () => {
-      const whileVisible = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+    it('keeps it private to its owner even when the workflow is visible', async () => {
+      const response = await readConversation(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-      expect(whileVisible.body.errors).toBeUndefined();
-      expect(whileVisible.body.data.chatThread.id).toBe(threadId);
-
-      const response = await setVisibility(
-        conversationCoreWorkflowId,
-        WorkflowVisibility.PRIVATE,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      const whilePrivate = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
-
-      expect(whilePrivate.body.data?.chatThread ?? null).toBeNull();
-      expect(whilePrivate.body.errors).toBeDefined();
-
-      const asCreator = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
-
-      expect(asCreator.body.errors).toBeUndefined();
-      expect(asCreator.body.data.chatThread.id).toBe(threadId);
-    });
-
-    it('keeps the conversation of an attempt that is retried in the step history', async () => {
-      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
-        'WorkflowRunWorkspaceService',
-      ).moveStepToRetry({
-        stepId: 'trigger',
-        error: 'The agent failed',
-        workflowRunId,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-      });
-
-      const [{ state }] = await global.testDataSource.query(
-        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
-        [workflowRunId],
-      );
-
-      expect(state.stepInfos.trigger.status).toBe('PENDING');
-      expect(state.stepInfos.trigger.threadId).toBeUndefined();
-      const { history } = state.stepInfos.trigger;
-
-      expect(history[history.length - 1]).toMatchObject({
-        status: 'FAILED',
-        error: 'The agent failed',
-        threadId,
-      });
+      expect(response.body.data?.chatThread ?? null).toBeNull();
+      expect(response.body.errors).toBeDefined();
     });
   });
 

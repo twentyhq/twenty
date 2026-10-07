@@ -1,6 +1,3 @@
-import { styled } from '@linaria/react';
-import { i18n } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -11,45 +8,27 @@ import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Select } from '@/ui/input/components/Select';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
-import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
+import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: block;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
-
-const defaultSelectedOptionMessage = msg`Select an option`;
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -71,12 +50,7 @@ type FindRecordsFormData = {
   offset?: number | string;
 };
 
-export type FindRecordsActionFilter = {
-  recordFilterGroups?: RecordFilterGroup[];
-  recordFilters?: RecordFilter[];
-};
-
-export type FindRecordsActionOrderBy = {
+type FindRecordsActionOrderBy = {
   recordSorts?: RecordSort[];
   gqlOperationOrderBy?: JsonValue;
 };
@@ -86,13 +60,9 @@ export const WorkflowEditActionFindRecords = ({
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
   const { t } = useLingui();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -116,17 +86,13 @@ export const WorkflowEditActionFindRecords = ({
   const [offsetError, setOffsetError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
+  const objectOptions = useObjectMetadataItemSelectOptions({
+    selectedObjectNameSingular: formData.objectNameSingular,
+  });
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
-  const selectedOption = selectedObjectMetadataItem
-    ? {
-        label: selectedObjectMetadataItem.labelPlural,
-        value: selectedObjectMetadataItem.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(selectedObjectMetadataItem),
-      }
-    : { label: i18n._(defaultSelectedOptionMessage), value: '' };
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -192,34 +158,24 @@ export const WorkflowEditActionFindRecords = ({
 
     setFormData(newFormData);
     saveAction(newFormData);
-    closeDropdown(dropdownId);
   };
 
   return (
     <>
       <WorkflowStepBody>
-        <StyledRecordTypeSelectContainer fullWidth>
-          <StyledLabel>{t`Object`}</StyledLabel>
-          <Dropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponent={
-              <SelectControl
-                isDisabled={isFormDisabled}
-                selectedOption={selectedOption}
-              />
-            }
-            dropdownComponents={
-              !isFormDisabled && (
-                <WorkflowObjectDropdownContent
-                  dropdownId={dropdownId}
-                  onOptionClick={handleOptionClick}
-                />
-              )
-            }
-            dropdownOffset={{ y: 4 }}
-          />
-        </StyledRecordTypeSelectContainer>
+        <Select
+          dropdownId={dropdownId}
+          label={t`Object`}
+          fullWidth
+          disabled={isFormDisabled}
+          value={formData.objectNameSingular}
+          emptyOption={{ label: t`Select an option`, value: '' }}
+          options={objectOptions}
+          onChange={handleOptionClick}
+          withSearchInput
+          dropdownSideOffset={4}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
 
         <HorizontalSeparator noMargin />
         {isDefined(selectedObjectMetadataItem) && (

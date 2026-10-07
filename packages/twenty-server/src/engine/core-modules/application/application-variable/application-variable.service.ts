@@ -8,7 +8,7 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
-import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
+import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
@@ -19,7 +19,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type GetEnvVariablesArgs = {
   workspaceId: string;
   applicationId: string;
-  applicationVariableMaps?: ApplicationVariableCacheMaps;
+  flatApplicationVariableMaps?: FlatApplicationVariableMaps;
 };
 
 @Injectable()
@@ -32,10 +32,7 @@ export class ApplicationVariableEntityService {
   ) {}
 
   getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
-    const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
-      applicationVariable.value,
-      { workspaceId: applicationVariable.workspaceId },
-    );
+    const plaintextValue = this.decryptValue(applicationVariable);
 
     if (plaintextValue === '') {
       return '';
@@ -74,25 +71,27 @@ export class ApplicationVariableEntityService {
   private async findFlatApplicationVariables({
     workspaceId,
     applicationId,
-    applicationVariableMaps: preloadedApplicationVariableMaps,
+    flatApplicationVariableMaps: preloadedFlatApplicationVariableMaps,
   }: GetEnvVariablesArgs): Promise<FlatApplicationVariable[]> {
-    const applicationVariableMaps =
-      preloadedApplicationVariableMaps ??
+    const flatApplicationVariableMaps =
+      preloadedFlatApplicationVariableMaps ??
       (
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'applicationVariableMaps',
+          'flatApplicationVariableMaps',
         ])
-      ).applicationVariableMaps;
+      ).flatApplicationVariableMaps;
 
     const universalIdentifiers =
-      applicationVariableMaps.universalIdentifiersByApplicationId[
+      flatApplicationVariableMaps.universalIdentifiersByApplicationId[
         applicationId
       ] ?? [];
 
     return universalIdentifiers
       .map(
         (universalIdentifier) =>
-          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
+          flatApplicationVariableMaps.byUniversalIdentifier[
+            universalIdentifier
+          ],
       )
       .filter(isDefined);
   }
@@ -100,22 +99,25 @@ export class ApplicationVariableEntityService {
   private toEnvVariables(
     flatApplicationVariables: FlatApplicationVariable[],
   ): Record<string, string> {
-    return flatApplicationVariables.reduce<Record<string, string>>(
-      (acc, flatApplicationVariable) => {
+    return flatApplicationVariables
+      .filter(({ scope }) => scope !== 'USER')
+      .reduce<Record<string, string>>((acc, flatApplicationVariable) => {
         acc[flatApplicationVariable.key] = this.decryptValue(
           flatApplicationVariable,
         );
 
         return acc;
-      },
-      {},
-    );
+      }, {});
   }
 
   private decryptValue({
     value,
     workspaceId,
-  }: FlatApplicationVariable): string {
+  }: Pick<FlatApplicationVariable, 'value' | 'workspaceId'>): string {
+    if (!isDefined(value)) {
+      return '';
+    }
+
     return this.secretEncryptionService.decryptVersionedOrThrow(value, {
       workspaceId,
     });
@@ -143,6 +145,13 @@ export class ApplicationVariableEntityService {
       );
     }
 
+    if (existingVariable.scope === 'USER') {
+      throw new ApplicationVariableEntityException(
+        `Application variable with key ${key} is a user variable`,
+        ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+      );
+    }
+
     await this.applicationVariableRepository.update(
       workspaceId,
       { key, applicationId },
@@ -154,7 +163,7 @@ export class ApplicationVariableEntityService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'applicationVariableMaps',
+      'flatApplicationVariableMaps',
     ]);
   }
 }

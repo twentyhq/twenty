@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -41,7 +43,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     DiscoveryModule,
     CacheLockModule,
     MetricsModule,
+    ThrottlerModule,
     UsageAnalyticsModule,
+    UsageModule,
   ],
   providers: [
     UsageLimitQuotaService,

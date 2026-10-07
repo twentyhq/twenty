@@ -8,7 +8,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();

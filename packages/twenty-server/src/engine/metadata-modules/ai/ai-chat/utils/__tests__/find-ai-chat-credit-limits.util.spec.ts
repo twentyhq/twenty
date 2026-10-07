@@ -2,6 +2,7 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { findAiChatCreditLimits } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-ai-chat-credit-limits.util';
 
 const buildLimit = (
@@ -15,7 +16,7 @@ const buildLimit = (
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1000,
   burstValue: null,
   isInstanceOverride: false,
@@ -86,7 +87,7 @@ describe('findAiChatCreditLimits', () => {
       'another operation',
       { operationType: UsageOperationType.AI_WORKFLOW_TOKEN },
     ],
-    ['another meter', { meter: 'quantity' }],
+    ['another unit', { unit: UsageUnit.TOKEN }],
     ['a speed limit', { limitKind: 'speed' }],
   ])('ignores %s', (_, overrides) => {
     expect(findLimits([buildLimit(overrides)])).toEqual([]);

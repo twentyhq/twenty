@@ -189,7 +189,8 @@ const playResetsToRootPageAfterDismissal = async ({
 };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Pages',
+  id: 'ui-components-dropdown-interactions-pages',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Pages',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
@@ -531,6 +532,35 @@ export const ResetsToRootPageAfterDismissal: Story = {
 export const ResetsToRootPageAfterDismissalWhenKeptMounted: Story = {
   render: () => <FilterPages keepMounted />,
   play: playResetsToRootPageAfterDismissal,
+};
+
+export const KeepsPageWhileClosing: Story = {
+  render: () => <FilterPages />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await openFilters(canvasElement);
+
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'People' }),
+    );
+    const popup = await body.findByRole('dialog', { name: 'Filters' });
+
+    await within(popup).findByRole('searchbox', { name: 'Search people' });
+    await userEvent.keyboard('{Escape}');
+    expect(
+      within(popup).getByRole('searchbox', {
+        name: 'Search people',
+        hidden: true,
+      }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+    await userEvent.click(trigger);
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'People' })).toBeVisible(),
+    );
+    expect(body.queryByRole('searchbox')).not.toBeInTheDocument();
+  },
 };
 
 export const SharedDestination: Story = {

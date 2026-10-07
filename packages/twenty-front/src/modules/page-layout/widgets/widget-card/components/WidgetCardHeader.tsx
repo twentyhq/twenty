@@ -6,7 +6,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconTrash } from 'twenty-ui/icon';
 

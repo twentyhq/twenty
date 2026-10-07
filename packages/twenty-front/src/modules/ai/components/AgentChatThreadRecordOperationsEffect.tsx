@@ -73,10 +73,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // Workflow run conversations are listed with the run, not in the chat list.
-          if (!isDefined(createdThread.workflowRunId)) {
-            addAgentChatThread(createdThread);
-          }
+          addAgentChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -88,7 +85,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // An updated chat past the loaded pages moves to the top; reloading keeps workflow run chats out.
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 

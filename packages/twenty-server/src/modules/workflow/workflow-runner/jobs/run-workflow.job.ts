@@ -22,6 +22,7 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -43,7 +44,7 @@ export class RunWorkflowJob {
     workflowRunId,
     lastExecutedStepId,
     stepIdsToRetry,
-    stepToResume,
+    awaitedStepOutput,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -53,11 +54,11 @@ export class RunWorkflowJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (isDefined(stepToResume)) {
-          await this.resumeAnsweredStep({
+        if (isDefined(awaitedStepOutput)) {
+          await this.completeAwaitedStep({
             workspaceId,
             workflowRunId,
-            stepToResume,
+            awaitedStepOutput,
           });
         } else if (isDefined(stepIdsToRetry)) {
           await this.retryWorkflowExecution({
@@ -78,6 +79,10 @@ export class RunWorkflowJob {
           });
         }
       } catch (error) {
+        if (isWorkflowRunNotFoundError(error)) {
+          return;
+        }
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workspaceId,
           workflowRunId,
@@ -222,21 +227,20 @@ export class RunWorkflowJob {
     });
   }
 
-  // The step stays PENDING until claimed here, so its run can't complete while queued and a second resume no-ops
-  private async resumeAnsweredStep({
+  // The step stays PENDING until claimed here, so its run can't complete while queued and a second delivery no-ops
+  private async completeAwaitedStep({
     workflowRunId,
-    stepToResume: { stepId, threadId },
+    awaitedStepOutput: { stepId, actionOutput },
     workspaceId,
   }: {
     workflowRunId: string;
-    stepToResume: { stepId: string; threadId: string };
+    awaitedStepOutput: NonNullable<RunWorkflowJobData['awaitedStepOutput']>;
     workspaceId: string;
   }): Promise<void> {
     const isClaimed =
       await this.workflowRunWorkspaceService.updateStepInfoIfPending({
         stepId,
         stepInfo: { status: StepStatus.RUNNING },
-        expectedThreadId: threadId,
         workflowRunId,
         workspaceId,
       });
@@ -249,7 +253,7 @@ export class RunWorkflowJob {
       stepIds: [stepId],
       workflowRunId,
       workspaceId,
-      resumedThreadId: threadId,
+      awaitedActionOutput: actionOutput,
     });
   }
 

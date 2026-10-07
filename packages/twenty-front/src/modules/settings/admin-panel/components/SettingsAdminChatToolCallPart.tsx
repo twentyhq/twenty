@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonTree } from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Collapsible } from 'twenty-ui/primitives/layout';

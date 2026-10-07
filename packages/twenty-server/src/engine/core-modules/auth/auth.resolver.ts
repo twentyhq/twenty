@@ -236,10 +236,11 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
+    const user =
+      await this.authService.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+        getLoginTokenFromCredentialsInput,
+        workspace,
+      );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -435,6 +436,8 @@ export class AuthResolver {
       workspace.id,
       TwoFactorAuthenticationStrategy.TOTP,
     );
+
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
 
     const authTokens = await this.authService.verify(
       email,
@@ -846,6 +849,8 @@ export class AuthResolver {
         user.email,
       );
 
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
+
       authTokens =
         await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
@@ -856,6 +861,8 @@ export class AuthResolver {
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
+
+      await this.loginTokenService.consumeLoginTokenOrThrow(tokenPayload);
 
       authTokens = await this.authService.verify(
         user.email,

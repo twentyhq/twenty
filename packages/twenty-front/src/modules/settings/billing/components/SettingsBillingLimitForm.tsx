@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -11,20 +10,21 @@ import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/S
 import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';
 import { SettingsBillingLimitSpenderSelect } from '@/settings/billing/components/SettingsBillingLimitSpenderSelect';
-import { USAGE_LIMIT_METER_ICONS } from '@/settings/billing/constants/UsageLimitMeterIcons';
-import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
 import { USAGE_LIMIT_PERIOD_ICONS } from '@/settings/billing/constants/UsageLimitPeriodIcons';
 import { USAGE_LIMIT_PERIOD_SPAN_LABELS } from '@/settings/billing/constants/UsageLimitPeriodSpanLabels';
 import { USAGE_LIMIT_PERIOD_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitPeriodUnitLabels';
+import { USAGE_LIMIT_UNIT_ICONS } from '@/settings/billing/constants/UsageLimitUnitIcons';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
-import { type UsageLimitMeter } from '@/settings/billing/types/UsageLimitMeter';
 import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { type UsageQuotaScopeConsumption } from '@/settings/billing/types/UsageQuotaScopeConsumption';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { getUsageLimitFormOptions } from '@/settings/billing/utils/getUsageLimitFormOptions';
+import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
+import { getUsageLimitAmountInput } from '@/settings/billing/utils/getUsageLimitAmountInput';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
+import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -32,6 +32,7 @@ import {
   type UsageQuotaDefinitionsQuery,
   UsageOperationType,
   type UsageResourceType,
+  type UsageUnit,
 } from '~/generated-metadata/graphql';
 
 const RING_ANCHOR_ID = 'usage-limit-form-ring';
@@ -49,7 +50,7 @@ const StyledTooltipRow = styled.div`
   white-space: nowrap;
 `;
 
-const StyledMeterRow = styled.div`
+const StyledUnitRow = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: 1fr 1fr;
@@ -83,6 +84,22 @@ export const SettingsBillingLimitForm = ({
 
   const options = getUsageLimitFormOptions({ definitions, values });
 
+  const handleValuesChange = (nextValues: UsageLimitFormValues) => {
+    const { periodUnits } = getUsageLimitFormOptions({
+      definitions,
+      values: nextValues,
+    });
+
+    onChange({
+      ...nextValues,
+      periodUnit:
+        isDefined(nextValues.periodUnit) &&
+        periodUnits.includes(nextValues.periodUnit)
+          ? nextValues.periodUnit
+          : (periodUnits[0] ?? null),
+    });
+  };
+
   const handleScopeChange = ({
     resourceType,
     operationType,
@@ -98,7 +115,7 @@ export const SettingsBillingLimitForm = ({
           operationType,
           spenderType: null,
           spenderId: '',
-          meter: null,
+          unit: null,
           periodUnit: 'month',
         }
       : { ...values, operationType };
@@ -108,38 +125,40 @@ export const SettingsBillingLimitForm = ({
       values: nextValues,
     });
 
-    onChange({
+    handleValuesChange({
       ...nextValues,
       spenderType: isNewResource
         ? (nextOptions.spenderTypes[0] ?? null)
         : nextValues.spenderType,
-      meter:
-        isDefined(nextValues.meter) &&
-        nextOptions.meters.includes(nextValues.meter)
-          ? nextValues.meter
-          : (nextOptions.meters[0] ?? null),
+      unit:
+        isDefined(nextValues.unit) &&
+        nextOptions.units.includes(nextValues.unit)
+          ? nextValues.unit
+          : (nextOptions.units[0] ?? null),
     });
   };
 
-  const isCreditsMeter = values.meter === 'creditsUsedMicro';
   const consumedValue = scopeConsumption?.consumedValue ?? null;
-  const limitValue = Number(values.limitValue);
   const progress = computeUsageLimitProgress({
-    limitValue: isCreditsMeter
-      ? limitValue * INTERNAL_CREDITS_PER_DISPLAY_CREDIT
-      : limitValue,
+    limitValue:
+      Number(values.limitValue) * getUsageLimitInputScale(values.unit),
     consumedValue,
   });
   const consumedPercentage = progress?.consumedPercentage ?? 0;
   const isExhausted = progress?.remainingValue === 0;
   const hasConsumption = isDefined(consumedValue) && consumedValue > 0;
-  const consumedText = isDefined(consumedValue)
-    ? formatLimitValue({
-        value: consumedValue,
-        meter: values.meter ?? '',
-        operationType: values.operationType ?? UsageOperationType.ALL,
-      })
-    : '';
+  const consumedText =
+    isDefined(consumedValue) && isDefined(values.unit)
+      ? formatLimitValue({
+          value: consumedValue,
+          unit: values.unit,
+          operationType: values.operationType ?? UsageOperationType.ALL,
+        })
+      : '';
+  const amountInput = getUsageLimitAmountInput({
+    unit: values.unit,
+    operationType: values.operationType,
+  });
   const periodSpanLabelDescriptor = isDefined(values.periodUnit)
     ? getUsageLimitLabel(USAGE_LIMIT_PERIOD_SPAN_LABELS, values.periodUnit)
     : undefined;
@@ -175,7 +194,9 @@ export const SettingsBillingLimitForm = ({
             spenderType={values.spenderType}
             spenderId={values.spenderId}
             isDisabled={!hasResource}
-            onChange={(spender) => onChange({ ...values, ...spender })}
+            onChange={(spender) =>
+              handleValuesChange({ ...values, ...spender })
+            }
           />
         </StyledRow>
       </Section.Root>
@@ -187,11 +208,11 @@ export const SettingsBillingLimitForm = ({
         <StyledRow>
           <StyledAmountField>
             <StyledSettingsBillingFieldLabel>
-              {isCreditsMeter ? t`Credits` : t`Amount`}
+              {t(amountInput.label)}
             </StyledSettingsBillingFieldLabel>
             <SettingsTextInput
               instanceId="usage-limit-value"
-              placeholder={isCreditsMeter ? '100' : '1000'}
+              placeholder={amountInput.placeholder}
               type="number"
               min={0}
               value={values.limitValue}
@@ -205,12 +226,12 @@ export const SettingsBillingLimitForm = ({
                   positionMethod="fixed"
                   content={
                     <>
-                      {hasConsumption ? (
+                      {hasConsumption && isDefined(values.unit) ? (
                         <StyledTooltipRow>
                           {t`Used`}
                           <SettingsBillingLimitAmount
                             text={consumedText}
-                            isCreditsMeter={isCreditsMeter}
+                            unit={values.unit}
                           />
                           {`· ${periodSpanLabel}`}
                         </StyledTooltipRow>
@@ -234,21 +255,26 @@ export const SettingsBillingLimitForm = ({
               )}
             />
           </StyledAmountField>
-          <StyledMeterRow>
+          <StyledUnitRow>
             <Select
-              dropdownId="usage-limit-meter"
-              label={t`Meter`}
+              dropdownId="usage-limit-unit"
+              label={t`Unit`}
               fullWidth
-              disabled={options.meters.length <= 1}
-              value={values.meter ?? undefined}
-              options={options.meters.map((meter: UsageLimitMeter) => ({
-                value: meter,
-                label: t(USAGE_LIMIT_METER_LABELS[meter]),
-                Icon: USAGE_LIMIT_METER_ICONS[meter],
+              disabled={options.units.length <= 1}
+              value={values.unit ?? undefined}
+              options={options.units.map((unit: UsageUnit) => ({
+                value: unit,
+                label: t(
+                  getUsageLimitUnitLabel({
+                    unit,
+                    operationType: values.operationType,
+                  }).name,
+                ),
+                Icon: USAGE_LIMIT_UNIT_ICONS[unit],
               }))}
               emptyOption={placeholderOption}
-              onChange={(meter) =>
-                isDefined(meter) && onChange({ ...values, meter })
+              onChange={(unit) =>
+                isDefined(unit) && handleValuesChange({ ...values, unit })
               }
             />
             <Select
@@ -269,7 +295,7 @@ export const SettingsBillingLimitForm = ({
                 isDefined(periodUnit) && onChange({ ...values, periodUnit })
               }
             />
-          </StyledMeterRow>
+          </StyledUnitRow>
         </StyledRow>
       </Section.Root>
     </>

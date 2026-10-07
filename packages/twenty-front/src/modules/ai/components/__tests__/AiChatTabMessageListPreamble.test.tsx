@@ -7,13 +7,20 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
+  useIsWorkspaceSetupChat: () => true,
+}));
+
+jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
+  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+}));
 
 jest.mock('@/ai/components/AiChatInitialLoadingIndicator', () => ({
   AiChatInitialLoadingIndicator: () => (
@@ -32,6 +39,9 @@ jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
 }));
 jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
   AiChatLastMessageWithStreamingState: () => null,
+}));
+jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+  AiChatThreadInboxStateNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
@@ -70,11 +80,7 @@ const renderPreambleBranch = () =>
       <AgentChatComponentInstanceContext.Provider
         value={{ instanceId: INSTANCE_ID }}
       >
-        <AiChatMessageListPreambleContext.Provider
-          value={<div data-testid="preamble" />}
-        >
-          <AiChatTabMessageList />
-        </AiChatMessageListPreambleContext.Provider>
+        <AiChatTabMessageList />
       </AgentChatComponentInstanceContext.Provider>
     </JotaiProvider>,
   );

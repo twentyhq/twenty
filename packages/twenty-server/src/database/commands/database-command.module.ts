@@ -32,6 +32,7 @@ import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanu
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
@@ -40,6 +41,7 @@ import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { AiAgentTriggerModule } from 'src/engine/metadata-modules/ai/ai-agent-trigger/ai-agent-trigger.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -65,6 +67,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 @Module({
   imports: [
     AgentHistoryMigrationModule,
+    AiAgentTriggerModule,
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
@@ -73,6 +76,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WebhookSubscriptionModule,
     EmailingModule,
     AutomatedTriggerModule,
+    PendingWakeUpModule,
     WorkflowCoreConsistencyModule,
     FileModule,
     WorkspaceModule,

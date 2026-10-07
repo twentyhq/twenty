@@ -1,5 +1,8 @@
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -12,27 +15,27 @@ const onChooseUnavailableDestination = fn();
 const onChooseDestination = fn();
 
 const NavigationMenuItemSelectableItems = () => (
-  <SelectableList
-    selectableListInstanceId={FOCUS_ID}
-    focusId={FOCUS_ID}
-    selectableItemIdArray={['unavailable-destination', 'destination']}
-  >
-    <NavigationMenuItemSelectableItem
-      item={{
-        id: 'unavailable-destination',
-        label: 'Unavailable destination',
-        isDisabled: true,
-        onClick: onChooseUnavailableDestination,
-      }}
-    />
-    <NavigationMenuItemSelectableItem
-      item={{
-        id: 'destination',
-        label: 'Choose destination',
-        onClick: onChooseDestination,
-      }}
-    />
-  </SelectableList>
+  <DropdownRoot dropdownId={FOCUS_ID} type="menu">
+    <DropdownContent aria-label="Choose destination">
+      <Dropdown.Section>
+        <NavigationMenuItemSelectableItem
+          item={{
+            id: 'unavailable-destination',
+            label: 'Unavailable destination',
+            isDisabled: true,
+            onClick: onChooseUnavailableDestination,
+          }}
+        />
+        <NavigationMenuItemSelectableItem
+          item={{
+            id: 'destination',
+            label: 'Choose destination',
+            onClick: onChooseDestination,
+          }}
+        />
+      </Dropdown.Section>
+    </DropdownContent>
+  </DropdownRoot>
 );
 
 const meta: Meta<typeof NavigationMenuItemSelectableItems> = {
@@ -42,6 +45,10 @@ const meta: Meta<typeof NavigationMenuItemSelectableItems> = {
   beforeEach: () => {
     onChooseUnavailableDestination.mockClear();
     onChooseDestination.mockClear();
+    jotaiStore.set(
+      isDropdownOpenComponentState.atomFamily({ instanceId: FOCUS_ID }),
+      true,
+    );
     jotaiStore.set(focusStackState.atom, [
       {
         focusId: FOCUS_ID,
@@ -63,9 +70,11 @@ type Story = StoryObj<typeof NavigationMenuItemSelectableItems>;
 
 export const IgnoresDisabledDestination: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
-    await userEvent.keyboard('{Enter}');
+    await expect(
+      await canvas.findByRole('menuitem', { name: 'Unavailable destination' }),
+    ).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(await canvas.findByText('Unavailable destination'));
     await expect(onChooseUnavailableDestination).not.toHaveBeenCalled();
 

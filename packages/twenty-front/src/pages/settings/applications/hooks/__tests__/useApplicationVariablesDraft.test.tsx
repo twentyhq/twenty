@@ -2,11 +2,12 @@ import { InMemoryCache, gql } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import {
   type Application,
   type ApplicationVariable,
+  ApplicationVariableScope,
   FindOneApplicationDocument,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
@@ -39,6 +40,7 @@ const buildApplicationVariable = (value: string): ApplicationVariable => ({
   isDeprecated: false,
   isRequired: false,
   type: 'TEXT',
+  scope: ApplicationVariableScope.WORKSPACE,
 });
 
 const buildApplication = (

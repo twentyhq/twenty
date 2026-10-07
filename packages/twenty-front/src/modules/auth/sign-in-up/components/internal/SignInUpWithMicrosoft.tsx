@@ -5,10 +5,10 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
 import { useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { IconMicrosoft } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

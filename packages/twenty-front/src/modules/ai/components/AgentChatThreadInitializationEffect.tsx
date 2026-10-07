@@ -1,25 +1,16 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import {
-  isDefined,
-  isValidUuid,
-  tipTapDocumentToMarkdown,
-} from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
@@ -54,12 +45,8 @@ export const AgentChatThreadInitializationEffect = () => {
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
-  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setAgentChatThreadsLoading = useSetAtomState(
     agentChatThreadsLoadingState,
-  );
-  const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    currentAiChatThreadTitleComponentFamilyState,
   );
   const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatUsageComponentFamilyState,
@@ -69,7 +56,6 @@ export const AgentChatThreadInitializationEffect = () => {
     agentChatVisibleThreadsSelector,
   );
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
   const areAgentChatThreadsLoaded = agentChatThreadList !== null;
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
@@ -134,9 +120,10 @@ export const AgentChatThreadInitializationEffect = () => {
     }
 
     if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
-      const selectedThread = agentChatThreads.find(
-        ({ id }) => id === currentAiChatThread,
+      const selectedThread = store.get(
+        agentChatThreadRecordFamilySelector.selectorFamily(currentAiChatThread),
       );
+
       if (isDefined(selectedThread)) {
         store.set(
           agentChatUsageFamilyCallback({ threadId: selectedThread.id }),
@@ -155,33 +142,15 @@ export const AgentChatThreadInitializationEffect = () => {
 
     if (sortedThreads.length > 0) {
       const firstThread = sortedThreads[0];
-      const draftForThread =
-        store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
       setCurrentAiChatThread(firstThread.id);
-      setAgentChatInput(tipTapDocumentToMarkdown(draftForThread));
-
-      const firstThreadFamilyKey = { threadId: firstThread.id };
-
       store.set(
-        threadTitleFamilyCallback(firstThreadFamilyKey),
-        firstThread.title ?? null,
-      );
-
-      store.set(
-        agentChatUsageFamilyCallback(firstThreadFamilyKey),
+        agentChatUsageFamilyCallback({ threadId: firstThread.id }),
         getAgentChatUsageFromThread(firstThread),
       );
     } else {
       store.set(hasTriggeredCreateForDraftState.atom, false);
       setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-      setAgentChatInput(
-        tipTapDocumentToMarkdown(
-          store.get(agentChatDraftsByThreadIdState.atom)[
-            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ] ?? '',
-        ),
-      );
     }
   }, [
     agentChatVisibleThreads,
@@ -190,11 +159,8 @@ export const AgentChatThreadInitializationEffect = () => {
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     areAgentChatThreadsLoaded,
-    agentChatThreads,
     setCurrentAiChatThread,
-    setAgentChatInput,
     store,
-    threadTitleFamilyCallback,
     agentChatUsageFamilyCallback,
   ]);
 

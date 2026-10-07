@@ -90,7 +90,7 @@ export const Multiple: Story = {
     await expect(trigger).toHaveTextContent('Cherry');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeVisible());
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

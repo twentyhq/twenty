@@ -903,7 +903,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `New chat`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconMessageCirclePlus',
-    isPinned: true,
+    isPinned: false,
     position: 43,
     shortLabel: i18nLabel(
       msg({ message: `New chat`, context: 'commandMenuItem.shortLabel' }),
@@ -933,9 +933,152 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SHARE_RECORD,
+    hotKeys: null,
+  },
+  markAiChatAsRead: {
+    universalIdentifier: '094d0b1f-91db-4e9a-ae8e-eed425b788b4',
+    label: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEye',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and every(selectedRecords, "inboxStatus.isUnread")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_READ,
+    hotKeys: null,
+  },
+  markAiChatAsUnread: {
+    universalIdentifier: '3a7762aa-2090-4113-85a6-f41295b9aed6',
+    label: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEyeOff',
+    isPinned: false,
+    position: 74,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isUnread", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_UNREAD,
+    hotKeys: null,
+  },
+  markAiChatAsDone: {
+    universalIdentifier: 'be18e927-4873-496d-bc12-b767b995653f',
+    label: i18nLabel(
+      msg({ message: `Mark as done`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconProgressCheck',
+    isPinned: true,
+    position: 75,
+    shortLabel: i18nLabel(
+      msg({ message: `Done`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "INBOX")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_DONE,
+    hotKeys: ['E'],
+  },
+  reopenAiChat: {
+    universalIdentifier: 'c3166829-0e0e-4821-9851-de5cf18945f3',
+    label: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCircleDashed',
+    isPinned: true,
+    position: 76,
+    shortLabel: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "ARCHIVED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
+    hotKeys: ['E'],
+  },
+  unsnoozeAiChat: {
+    universalIdentifier: '0fdab734-1e64-498d-8d3b-606e7f64d224',
+    label: i18nLabel(
+      msg({ message: `Unsnooze`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconClockOff',
+    isPinned: true,
+    position: 76,
+    shortLabel: i18nLabel(
+      msg({ message: `Unsnooze`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "SNOOZED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
+    hotKeys: ['E'],
+  },
+  snoozeAiChat: {
+    universalIdentifier: '9fbb747d-2e09-4822-a1e5-6792d0a28fb7',
+    label: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconClock',
+    isPinned: true,
+    position: 77,
+    shortLabel: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "inboxStatus") and noneEquals(selectedRecords, "inboxStatus.scope", "SNOOZED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
+    hotKeys: ['H'],
+  },
+  // Chats keep their pinned Share item; it is a system object, so this one never shows there
+  shareAnyRecord: {
+    universalIdentifier: '1e703e2c-9f3a-4a23-8448-107b01be509c',
+    label: i18nLabel(
+      msg({
+        message: `Share {objectLabelSingular}`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconShare',
+    isPinned: false,
+    position: 3,
+    shortLabel: i18nLabel(
+      msg({ message: `Share`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem and objectMetadataItem.readability != "APPLICATION" and objectMetadataItem.readability != "SYSTEM" and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SHARE_RECORD,
     hotKeys: null,

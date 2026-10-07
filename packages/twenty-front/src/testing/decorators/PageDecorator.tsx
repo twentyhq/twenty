@@ -15,7 +15,7 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
-import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -29,7 +29,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';

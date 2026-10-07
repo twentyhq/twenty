@@ -13,7 +13,8 @@ import { LightIconButton } from '../LightIconButton';
 import { type LightIconButtonProps } from '../types/LightIconButtonProps';
 
 const meta: Meta<typeof LightIconButton> = {
-  title: 'UI/Input/Button/LightIconButton',
+  id: 'ui-input-button-lighticonbutton',
+  title: 'UI/Components/Input/LightIconButton',
   component: LightIconButton,
   args: { children: <IconSearch />, 'aria-label': 'Search' },
 };

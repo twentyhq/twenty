@@ -1,27 +1,12 @@
 import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
-import {
-  FloatingPortal,
-  autoUpdate,
-  flip,
-  offset,
-  safePolygon,
-  shift,
-  useClick,
-  useDismiss,
-  useFloating,
-  useFocus,
-  useHover,
-  useInteractions,
-  useRole,
-  useTransitionStyles,
-} from '@floating-ui/react';
+import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { MetricRow } from 'twenty-ui/components';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
@@ -29,6 +14,7 @@ import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
+import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
@@ -74,9 +60,20 @@ export const AiChatContextUsageButton = () => {
 
   const shouldReduceMotion = useReducedMotion();
 
-  const [isOpen, setIsOpen] = useState(false);
-
   const [showDetails, setShowDetails] = useState(false);
+
+  const {
+    isOpen,
+    context,
+    refs,
+    floatingStyles,
+    getReferenceProps,
+    getFloatingProps,
+  } = useAiChatHoverCard({
+    placement: 'top-start',
+    role: 'dialog',
+    onOpen: () => setShowDetails(false),
+  });
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
@@ -160,41 +157,10 @@ export const AiChatContextUsageButton = () => {
     creditPercentage,
   };
 
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: (open) => {
-      setIsOpen(open);
-      if (open) {
-        setShowDetails(false);
-      }
-    },
-    placement: 'top-start',
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
-    whileElementsMounted: autoUpdate,
-  });
-
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
     initial: { opacity: 0 },
   });
-
-  const hover = useHover(context, { handleClose: safePolygon() });
-
-  const focus = useFocus(context);
-
-  const click = useClick(context);
-
-  const dismiss = useDismiss(context);
-
-  const role = useRole(context, { role: 'dialog' });
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    hover,
-    focus,
-    click,
-    dismiss,
-    role,
-  ]);
 
   return (
     <>

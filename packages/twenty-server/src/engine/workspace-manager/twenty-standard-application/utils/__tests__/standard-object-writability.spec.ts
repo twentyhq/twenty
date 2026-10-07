@@ -10,10 +10,10 @@ const NOW = '2024-01-01T00:00:00.000Z';
 // Only the platform writes these (sync bookkeeping, campaign sending state, trigger registrations).
 // timelineActivity stays OPEN because merging records reparents its rows under the caller
 const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
+  'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
-  'agentTurnEvaluation',
 
   'calendarChannelEventAssociation',
   'campaignDelivery',

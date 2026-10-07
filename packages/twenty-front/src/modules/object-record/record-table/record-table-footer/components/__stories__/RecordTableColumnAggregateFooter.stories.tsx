@@ -1,6 +1,7 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -51,7 +52,11 @@ const AggregateExample = () => {
                 objectNameSingular: 'company',
                 objectMetadataItem: company,
                 objectMetadataItems,
-                objectPermissions: { objectMetadataId: company.id },
+                objectPermissions: getObjectPermissionsForObject(
+                  {},
+                  company.id,
+                ),
+                isObjectReadOnly: false,
                 visibleRecordFields: [],
                 triggerEvent: 'CLICK',
               }}

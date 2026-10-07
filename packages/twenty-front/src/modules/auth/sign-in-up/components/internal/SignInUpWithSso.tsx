@@ -5,14 +5,14 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { IconLock } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { LastUsedPill } from './LastUsedPill';

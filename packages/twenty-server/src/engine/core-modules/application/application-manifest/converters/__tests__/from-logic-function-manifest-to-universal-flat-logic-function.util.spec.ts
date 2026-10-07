@@ -44,19 +44,16 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     logicFunctionManifest = buildLogicFunctionManifest(),
     applicationSourceType,
     existingFlatLogicFunctionMaps = emptyFlatLogicFunctionMaps,
-    isPrebuiltModeEnabled = true,
   }: {
     logicFunctionManifest?: LogicFunctionManifest;
     applicationSourceType: ApplicationRegistrationSourceType;
     existingFlatLogicFunctionMaps?: AllFlatEntityMaps['flatLogicFunctionMaps'];
-    isPrebuiltModeEnabled?: boolean;
   }) =>
     fromLogicFunctionManifestToUniversalFlatLogicFunction({
       logicFunctionManifest,
       applicationUniversalIdentifier,
       applicationSourceType,
       existingFlatLogicFunctionMaps,
-      isPrebuiltModeEnabled,
       now,
     });
 
@@ -100,15 +97,6 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     },
   );
 
-  it('should keep LIVE execution mode when prebuilt mode is disabled', () => {
-    const result = convert({
-      applicationSourceType: ApplicationRegistrationSourceType.NPM,
-      isPrebuiltModeEnabled: false,
-    });
-
-    expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
-  });
-
   it('should keep the execution mode of an already synced function', () => {
     const result = convert({
       applicationSourceType: ApplicationRegistrationSourceType.NPM,
@@ -120,13 +108,12 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
   });
 
-  it('should keep PREBUILT on an already synced function even when prebuilt mode is disabled', () => {
+  it('should keep PREBUILT on an already synced function', () => {
     const result = convert({
       applicationSourceType: ApplicationRegistrationSourceType.NPM,
       existingFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
         LogicFunctionExecutionMode.PREBUILT,
       ),
-      isPrebuiltModeEnabled: false,
     });
 
     expect(result.executionMode).toBe(LogicFunctionExecutionMode.PREBUILT);

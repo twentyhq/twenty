@@ -52,10 +52,13 @@ export const AddressFieldInput = () => {
     onEscape?.({ newValue: convertToAddress(newAddress) });
   };
 
-  const handleClickOutside = (
-    event: MouseEvent | TouchEvent,
-    newAddress: FieldAddressDraftValue,
-  ) => {
+  const handleClickOutside = ({
+    event,
+    newAddress,
+  }: {
+    event: MouseEvent | TouchEvent;
+    newAddress: FieldAddressDraftValue;
+  }) => {
     onClickOutside?.({ newValue: convertToAddress(newAddress), event });
   };
 

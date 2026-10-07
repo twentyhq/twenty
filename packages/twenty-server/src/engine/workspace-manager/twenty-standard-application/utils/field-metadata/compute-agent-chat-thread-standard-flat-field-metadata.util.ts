@@ -363,6 +363,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Failed turns hold their error now; the 2.42 history move and the 2.46 backfill still read it
   lastStreamError: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -421,6 +422,106 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           msg({ message: 'Archived At', context: 'fieldMetadata.description' }),
         ),
         icon: 'IconCalendar',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  lastActivityAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'lastActivityAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Last activity', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'When the thread was created or last received a message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarClock',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  lastMessageText: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'lastMessageText',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Last message', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'The start of the last message in the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  lastMessageSenderWorkspaceMemberId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'lastMessageSenderWorkspaceMemberId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({
+            message: 'Last message sender',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'The member who wrote the last message, empty when the agent or an application did',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  writerWorkspaceMemberIds: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'writerWorkspaceMemberIds',
+        type: FieldMetadataType.ARRAY,
+        label: i18nLabel(
+          msg({ message: 'Writers', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'The members who wrote in the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
         isSystem: true,
         isUIEditable: false,
         isNullable: true,
@@ -532,37 +633,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  workflowRun: {
-    ...createStandardRelationFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'workflowRun',
-        type: FieldMetadataType.RELATION,
-        label: i18nLabel(
-          msg({ message: 'Workflow Run', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Workflow run whose agent step held this conversation',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconHistoryToggle',
-        isUIEditable: false,
-        isNullable: true,
-        targetObjectName: 'workflowRun',
-        targetFieldName: 'agentChatThreads',
-        morphId: null,
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'workflowRunId',
-        },
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
   messages: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,
@@ -641,6 +711,36 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: true,
         targetObjectName: 'agentChatThreadTarget',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  participants: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'participants',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Participants', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Read and inbox state of each member in this thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentChatThreadParticipant',
         targetFieldName: 'thread',
         morphId: null,
         settings: {

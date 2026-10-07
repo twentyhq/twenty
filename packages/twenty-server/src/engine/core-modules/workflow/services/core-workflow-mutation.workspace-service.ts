@@ -477,6 +477,7 @@ export class CoreWorkflowMutationWorkspaceService {
       name: name ?? null,
       universalIdentifier: uuidv4(),
       workspaceWorkflowId,
+      isSystem: false,
       visibility: visibility ?? WorkflowVisibility.WORKSPACE,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
@@ -563,6 +564,7 @@ export class CoreWorkflowMutationWorkspaceService {
       lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId,
+      isSystem: coreWorkflow.isSystem,
       visibility: coreWorkflow.visibility,
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
@@ -973,12 +975,5 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.workflowCoreSyncService.deleteFromCore(workspaceId, [
       coreWorkflowId,
     ]);
-
-    if (isDefined(workspaceWorkflowId)) {
-      await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
-        workspaceId,
-        [workspaceWorkflowId],
-      );
-    }
   }
 }

@@ -24,7 +24,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';

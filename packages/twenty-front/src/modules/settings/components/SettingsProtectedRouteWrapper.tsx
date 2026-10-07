@@ -15,7 +15,7 @@ import {
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
-  settingsPermission?: PermissionFlagType;
+  settingsPermission: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
 };
 

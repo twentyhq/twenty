@@ -2,24 +2,28 @@ import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
-import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
+import { agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
+import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -169,17 +173,14 @@ const AiChatUserMessageText = ({
 type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
-  error?: AiChatError | undefined;
-  onRetry?: () => void;
+  error?: AiChatError;
 };
 
 export const AiChatMessage = ({
   messageId,
   isLastMessageStreaming = false,
   error,
-  onRetry,
 }: AiChatMessageProps) => {
-  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -190,7 +191,15 @@ export const AiChatMessage = ({
     { messageId },
   );
 
+  const isMessageBeforeFirstUserMessage = useAtomComponentFamilySelectorValue(
+    agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
+    { messageId },
+  );
+
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const firstUnreadMessageId = useAtomComponentSelectorValue(
+    agentChatFirstUnreadMessageIdComponentSelector,
+  );
 
   if (!isDefined(agentChatMessage)) {
     return null;
@@ -200,17 +209,14 @@ export const AiChatMessage = ({
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.userWorkspaceId === senderId,
   );
-  const senderLabel =
-    senderId === currentWorkspaceMember?.userWorkspaceId
-      ? t`You`
-      : isDefined(sender)
-        ? `${sender.name.firstName} ${sender.name.lastName}`.trim() ||
-          sender.userEmail
-        : t`Former member`;
-  const isUser = agentChatMessage.role === AgentMessageRole.USER;
-  const isLastAssistantMessage =
-    agentChatMessage.role === AgentMessageRole.ASSISTANT;
-  const shouldShowError = isDefined(error) && isLastAssistantMessage;
+  const senderLabel = getAgentChatSenderLabel({
+    sender,
+    isCurrentWorkspaceMember:
+      senderId === currentWorkspaceMember?.userWorkspaceId,
+  });
+  const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const shouldShowError =
+    isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageContent = (
@@ -218,52 +224,58 @@ export const AiChatMessage = ({
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
+      shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
     />
   );
 
   return (
-    <StyledMessageBubble isUser={isUser}>
-      {isUser && isDefined(senderId) && (
-        <StyledSender>{senderLabel}</StyledSender>
+    <>
+      {firstUnreadMessageId === messageId && (
+        <HorizontalSeparator
+          text={t`New`}
+          textPosition="end"
+          color={themeCssVariables.tag.text.red}
+          noMargin
+        />
       )}
-      <StyledMessageContainer isUser={isUser}>
-        {isUser ? (
-          <AiChatUserMessageText messageId={messageId}>
-            {messageContent}
-          </AiChatUserMessageText>
-        ) : (
-          <StyledMessageText>{messageContent}</StyledMessageText>
+      <StyledMessageBubble isUser={isUser}>
+        {isUser && isDefined(senderId) && (
+          <StyledSender>{senderLabel}</StyledSender>
         )}
-        {fileParts.length > 0 && (
-          <StyledFilesContainer>
-            {fileParts.map((file) => (
-              <AgentChatFilePreview key={file.filename} file={file} />
-            ))}
-          </StyledFilesContainer>
+        <StyledMessageContainer isUser={isUser}>
+          {isUser ? (
+            <AiChatUserMessageText messageId={messageId}>
+              {messageContent}
+            </AiChatUserMessageText>
+          ) : (
+            <StyledMessageText>{messageContent}</StyledMessageText>
+          )}
+          {fileParts.length > 0 && (
+            <StyledFilesContainer>
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
+              ))}
+            </StyledFilesContainer>
+          )}
+          {shouldShowError && <AiChatErrorRenderer error={error} />}
+        </StyledMessageContainer>
+        {agentChatMessage.parts.length > 0 && (
+          <StyledMessageFooter className="message-footer">
+            <StyledMessageTimestamp>
+              {beautifyPastDateRelativeToNow(
+                agentChatMessage.metadata?.createdAt ?? new Date(),
+                localeCatalog,
+              )}
+            </StyledMessageTimestamp>
+            <LightCopyIconButton
+              copyText={
+                agentChatMessage.parts.find((part) => part.type === 'text')
+                  ?.text ?? ''
+              }
+            />
+          </StyledMessageFooter>
         )}
-        {shouldShowError && isDefined(error) && (
-          <AiChatErrorRenderer
-            error={error}
-            onRetry={isReadOnly ? undefined : onRetry}
-          />
-        )}
-      </StyledMessageContainer>
-      {agentChatMessage.parts.length > 0 && (
-        <StyledMessageFooter className="message-footer">
-          <StyledMessageTimestamp>
-            {beautifyPastDateRelativeToNow(
-              agentChatMessage.metadata?.createdAt ?? new Date(),
-              localeCatalog,
-            )}
-          </StyledMessageTimestamp>
-          <LightCopyIconButton
-            copyText={
-              agentChatMessage.parts.find((part) => part.type === 'text')
-                ?.text ?? ''
-            }
-          />
-        </StyledMessageFooter>
-      )}
-    </StyledMessageBubble>
+      </StyledMessageBubble>
+    </>
   );
 };

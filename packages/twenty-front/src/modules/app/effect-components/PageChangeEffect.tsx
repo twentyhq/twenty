@@ -16,9 +16,8 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
@@ -37,7 +36,7 @@ import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
+import { getPageLayoutIdForLocation } from '@/app/utils/getPageLayoutIdForLocation';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
@@ -66,7 +65,7 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  // TODO: make useResetTableRowSelection accept an empty recordTableId, then drop CoreObjectNamePlural.Person
+  // TODO: make useResetRecordSelection accept an empty recordIndexId, then drop CoreObjectNamePlural.Person
   const objectNamePlural =
     matchPath(AppPath.RecordIndexPage, location.pathname)?.params
       .objectNamePlural ?? CoreObjectNamePlural.Person;
@@ -86,12 +85,10 @@ export const PageChangeEffect = () => {
     contextStoreCurrentViewId || '',
   );
 
-  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
+  const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordIndexId);
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
-  const { resetRecordBoardSelection } =
-    useResetRecordBoardSelection(recordIndexId);
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordIndexId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordIndexId);
 
@@ -189,13 +186,13 @@ export const PageChangeEffect = () => {
     );
 
     if (isLeavingRecordIndexPage) {
+      resetRecordSelection();
+
       if (contextStoreCurrentViewType === ContextStoreViewType.Table) {
-        resetTableRowSelection();
         unfocusRecordTableRow();
         deactivateRecordTableRow();
       }
       if (contextStoreCurrentViewType === ContextStoreViewType.Kanban) {
-        resetRecordBoardSelection();
         deactivateBoardCard();
         unfocusBoardCard();
       }
@@ -343,22 +340,6 @@ export const PageChangeEffect = () => {
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.InstallApps): {
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.InstallApps,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.InstallApps,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: false,
-              enableGlobalHotkeysConflictingWithKeyboard: false,
-            },
-          },
-        });
-        break;
-      }
       case isMatchingLocation(location, AppPath.InviteTeam): {
         resetFocusStackToFocusItem({
           focusStackItem: {
@@ -412,10 +393,9 @@ export const PageChangeEffect = () => {
     location,
     previousLocation,
     contextStoreCurrentViewType,
-    resetTableRowSelection,
+    resetRecordSelection,
     unfocusRecordTableRow,
     deactivateRecordTableRow,
-    resetRecordBoardSelection,
     deactivateBoardCard,
     unfocusBoardCard,
     resetFocusStackToRecordIndex,

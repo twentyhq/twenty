@@ -5,14 +5,14 @@ description: Trigger actions with accessible icon buttons.
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
-import IconButtonReference from '/snippets/ui/generated/input/icon-button.mdx';
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
 
 `IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
 
 ## Usage
 
 ```tsx
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const CreateRecordButton = () => (
@@ -40,7 +40,7 @@ Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `out
 Add `tooltip` to show text on hover and keyboard focus. Keep `aria-label` as the accessible name of the action. Disabled and loading buttons retain hover tooltips.
 
 ```tsx
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconSearch } from 'twenty-ui/icon';
 
 export const SearchRecordsButton = () => (
@@ -69,7 +69,7 @@ Use `elevated` to add a shadow and backdrop blur. The default neutral outline bu
 `elevated` defaults to `false`. It does not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
 
 ```tsx
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const AddWidgetButton = () => (
@@ -101,7 +101,7 @@ Replace existing `FloatingIconButton` controls with `IconButton elevated`. Pass 
 
 ```tsx
 import { ButtonGroup } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconSearch } from 'twenty-ui/icon';
 
 export const RecordActions = () => (
