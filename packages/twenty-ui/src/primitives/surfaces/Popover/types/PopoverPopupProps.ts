@@ -9,9 +9,9 @@ export type PopoverPopupProps = PopoverPrimitive.Popup.Props & {
   /** Alignment of the popup along the anchor. */
   align?: PopoverAlign;
   /** Distance in pixels between the anchor and the popup. */
-  sideOffset?: number;
+  sideOffset?: PopoverPrimitive.Positioner.Props['sideOffset'];
   /** Offset in pixels along the alignment axis. */
-  alignOffset?: number;
+  alignOffset?: PopoverPrimitive.Positioner.Props['alignOffset'];
   /** Shows an arrow pointing at the anchor. */
   arrow?: boolean;
   /** Element or position the popup is anchored to. Defaults to the trigger. */

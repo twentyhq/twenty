@@ -3,7 +3,7 @@ import { type CSSProperties, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
@@ -500,7 +500,7 @@ const ScopedCountryExample = (props: Partial<CountrySelectProps>) => {
 
   return (
     <ThemeProvider colorScheme="dark" applyToRoot={false}>
-      <TextDirectionProvider direction="rtl">
+      <DirectionProvider direction="rtl">
         <div dir="rtl">
           <CountrySelectExample
             {...props}
@@ -508,7 +508,7 @@ const ScopedCountryExample = (props: Partial<CountrySelectProps>) => {
           />
           <div ref={setContainer} role="region" aria-label="Country portal" />
         </div>
-      </TextDirectionProvider>
+      </DirectionProvider>
     </ThemeProvider>
   );
 };

@@ -1,25 +1,18 @@
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecordCalendarGroupByRecords } from '@/object-record/record-calendar/hooks/useRecordCalendarGroupByRecords';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { hasInitializedRecordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/hasInitializedRecordCalendarSelectedDateComponentState';
-import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useEffect } from 'react';
 
 export const RecordIndexCalendarDataLoaderEffect = () => {
   const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
     RecordCalendarComponentInstanceContext,
-  );
-
-  const selectedRecordIds = useAtomComponentSelectorValue(
-    recordCalendarSelectedRecordIdsComponentSelector,
-    recordCalendarId,
   );
 
   const recordCalendarSelectedDate = useAtomComponentStateValue(
@@ -29,13 +22,9 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
-    contextStoreTargetedRecordsRuleComponentState,
-    recordCalendarId,
-  );
-
-  const setRecordCalendarRecordIds = useSetAtomComponentState(
-    recordCalendarRecordIdsComponentState,
+  const setRecordIndexRecordIdsByGroup = useSetAtomComponentFamilyState(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    NO_RECORD_GROUP_FAMILY_KEY,
     recordCalendarId,
   );
 
@@ -55,27 +44,13 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
     upsertRecordsInStore({ partialRecords: records });
     const recordIds = records.map((record) => record.id);
-    setRecordCalendarRecordIds(recordIds);
+    setRecordIndexRecordIdsByGroup(recordIds);
   }, [
     hasInitializedRecordCalendarSelectedDate,
     records,
-    setRecordCalendarRecordIds,
+    setRecordIndexRecordIdsByGroup,
     upsertRecordsInStore,
   ]);
-
-  useEffect(() => {
-    setContextStoreTargetedRecordsRule({
-      mode: 'selection',
-      selectedRecordIds,
-    });
-
-    return () => {
-      setContextStoreTargetedRecordsRule({
-        mode: 'selection',
-        selectedRecordIds: [],
-      });
-    };
-  }, [selectedRecordIds, setContextStoreTargetedRecordsRule]);
 
   return <></>;
 };

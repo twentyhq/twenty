@@ -457,11 +457,25 @@
     "slug": "data-display/color-sample",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mark decorative swatches as hidden from assistive technology."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name when the caller supplies role=\"img\"."
+      },
+      {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the swatch."
+        "description": "CSS class merged with the swatch class."
       },
       {
         "name": "color",
@@ -478,11 +492,32 @@
         "description": "Theme color used for the background and border. Required even when `color` overrides the background."
       },
       {
-        "name": "variant",
-        "type": "\"circle\" | \"default\" | \"pipeline\"",
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Swatch shape: `default`, `circle`, or `pipeline`. Omitting it uses the default shape."
+        "description": "Ref to the swatch div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the swatch color defaults. Explicit styles win."
+      },
+      {
+        "name": "variant",
+        "type": "\"circle\" | \"default\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Generic swatch shape: `default` or `circle`. Omitting it uses the default shape."
       }
     ]
   },
@@ -569,11 +604,67 @@
     "slug": "feedback/loader",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Hide a decorative loader when another element supplies loading feedback."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name for a labeled loader status."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of text that names the loader status."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class merged with the loader container class."
+      },
+      {
         "name": "color",
         "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
         "required": false,
         "defaultValue": null,
         "description": "Theme color for the animated dot and border. When omitted, inherits the button color if available, otherwise the tertiary text color."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the container div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supply status to expose loading feedback as a live region. No role is assigned by default."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the loader color defaults. Explicit styles win."
       }
     ]
   },
@@ -949,22 +1040,22 @@
     ]
   },
   {
-    "name": "TextDirectionProvider",
+    "name": "DirectionProvider",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/text-direction-provider",
+    "slug": "layout/direction-provider",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Controls that receive the direction context."
       },
       {
         "name": "direction",
         "type": "\"ltr\" | \"rtl\"",
-        "required": true,
-        "defaultValue": null,
+        "required": false,
+        "defaultValue": "ltr",
         "description": "Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content."
       }
     ]
@@ -6453,7 +6544,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -6530,7 +6621,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "8",
             "description": "Distance in pixels between the anchor and the popup."
@@ -8167,7 +8258,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -8237,7 +8328,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
             "description": "Distance in pixels between the anchor and the popup."
@@ -9257,25 +9348,53 @@
     "slug": "components/code-editor/code-editor-header",
     "props": [
       {
-        "name": "leftNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the start of the header, such as tabs."
-      },
-      {
-        "name": "rightNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the end of the header, such as actions."
-      },
-      {
-        "name": "title",
+        "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Text shown at the start of the header, after `leftNodes`."
+        "description": "Additional CSS class applied to the root element."
+      },
+      {
+        "name": "endElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the end of the header, such as actions. Use a fragment for multiple elements."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the rendered root element, a div by default."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replace the root div or compose it with another component. Native props and refs target the rendered root."
+      },
+      {
+        "name": "startElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the start of the header, before the title, such as tabs. Use a fragment for multiple elements."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown after `startElement`. This is visible header content, not the native HTML title attribute."
       }
     ]
   },

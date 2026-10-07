@@ -1,4 +1,5 @@
 import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -6,6 +7,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
@@ -16,6 +18,9 @@ export const useOpenAskAiPageInSidePanel = () => {
   const setHasAgentChatBeenOpened = useSetAtomState(
     hasAgentChatBeenOpenedState,
   );
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
 
   const openAskAiPage = useCallback(
     ({
@@ -23,7 +28,7 @@ export const useOpenAskAiPageInSidePanel = () => {
     }: {
       resetNavigationStack?: boolean;
     } = {}) => {
-      if (isCurrentPathAiChatPage()) {
+      if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
         return;
       }
 
@@ -42,7 +47,12 @@ export const useOpenAskAiPageInSidePanel = () => {
         resetNavigationStack: shouldReset,
       });
     },
-    [navigateSidePanelMenu, isSidePanelOpened, setHasAgentChatBeenOpened],
+    [
+      navigateSidePanelMenu,
+      isSidePanelOpened,
+      setHasAgentChatBeenOpened,
+      isWorkspaceSuspended,
+    ],
   );
 
   return {
