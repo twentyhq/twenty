@@ -1,5 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { getMeetingEndTime } from 'src/logic-functions/domain/get-meeting-end-time.util';
+
 export const hasMeetingEnded = ({
   startsAt,
   endsAt,
@@ -11,22 +13,11 @@ export const hasMeetingEnded = ({
   now: Date;
   startGraceHours?: number;
 }): boolean => {
-  if (!isUndefined(endsAt)) {
-    const meetingEndTime = new Date(endsAt).getTime();
+  const meetingEndTime = getMeetingEndTime({
+    startsAt,
+    endsAt,
+    startGraceHours,
+  });
 
-    if (!Number.isNaN(meetingEndTime)) {
-      return meetingEndTime <= now.getTime();
-    }
-  }
-
-  if (isUndefined(startsAt)) {
-    return false;
-  }
-
-  const meetingStartTime = new Date(startsAt).getTime();
-
-  return (
-    !Number.isNaN(meetingStartTime) &&
-    meetingStartTime + startGraceHours * 60 * 60 * 1000 <= now.getTime()
-  );
+  return !isUndefined(meetingEndTime) && meetingEndTime <= now.getTime();
 };

@@ -52,6 +52,7 @@ import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -151,6 +152,13 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: LOADER_PROP_DESCRIPTIONS,
   },
   {
+    name: 'Skeleton',
+    source: 'primitives/feedback/Skeleton/Skeleton.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/skeleton',
+    propDescriptions: SKELETON_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'ProgressBar',
     source: 'primitives/feedback/ProgressBar/ProgressBar.tsx',
     entryPoint: 'twenty-ui/primitives/feedback',
@@ -184,7 +192,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/resize-handle',
     propDescriptions: RESIZE_HANDLE_PROP_DESCRIPTIONS,
-    propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
+    propDefaults: {
+      axis: 'y without edge',
+      defaultValue: '150',
+      dragThreshold: '5 with edge; 0 otherwise',
+      min: '50',
+      max: '500',
+      placement: 'edge with edge; inline otherwise',
+      step: '10',
+    },
   },
   {
     name: 'DirectionProvider',

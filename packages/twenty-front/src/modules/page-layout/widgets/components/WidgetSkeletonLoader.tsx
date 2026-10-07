@@ -1,7 +1,6 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from 'twenty-ui/theme';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -12,19 +11,9 @@ const StyledContainer = styled.div`
 `;
 
 export const WidgetSkeletonLoader = () => {
-  const theme = useTheme();
   return (
     <StyledContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={4}
-      >
-        <Skeleton
-          width={120}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-        />
-      </SkeletonTheme>
+      <SkeletonLine width={120} height={SKELETON_HEIGHT_SIZES.m} />
     </StyledContainer>
   );
 };

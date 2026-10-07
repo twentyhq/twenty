@@ -130,7 +130,6 @@
     "react-hotkeys-hook": "^4.4.4",
     "react-imask": "^7.6.0",
     "react-intersection-observer": "^9.15.1",
-    "react-loading-skeleton": "^3.3.1",
     "react-markdown": "^10.1.0",
     "react-phone-number-input": "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch",
     "react-qr-code": "^2.0.18",
