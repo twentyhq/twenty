@@ -25,7 +25,7 @@
       "dependsOn": ["build"],
       "cache": false,
       "options": {
-        "command": "node --test packages/twenty-cli/scripts/test-package.mjs"
+        "command": "node --test packages/twenty-cli/scripts/test-check-publish.mjs packages/twenty-cli/scripts/test-package.mjs"
       }
     },
     "test": {
