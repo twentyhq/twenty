@@ -20,6 +20,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { getWorkflowStepWaitingState } from 'src/modules/workflow/workflow-runner/utils/get-workflow-step-waiting-state.util';
 import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
@@ -27,9 +28,7 @@ import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils
 // A WORKFLOW_STEP wake-up is owned by a workflow run and keyed by the step that waits
 @Injectable()
 export class WorkflowStepPendingWakeUpHandlerWorkspaceService
-  implements
-    PendingWakeUpOwnerHandler<WorkflowRunWorkspaceEntity>,
-    OnModuleInit
+  implements PendingWakeUpOwnerHandler<WorkflowRunWorkspaceEntity>, OnModuleInit
 {
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
@@ -61,21 +60,15 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
       workflowRunId,
       workspaceId,
     });
-    const stepStatus = workflowRun?.state?.stepInfos?.[stepId]?.status;
+    const status = getWorkflowStepWaitingState({ workflowRun, stepId });
 
-    if (workflowRun?.status !== WorkflowRunStatus.RUNNING) {
-      return { status: 'GONE', owner: workflowRun };
+    if (status === 'NOT_READY') {
+      return { status };
     }
 
-    // the wait is armed before its step reads as pending
-    if (stepStatus === StepStatus.RUNNING) {
-      return { status: 'NOT_READY' };
-    }
-
-    return {
-      status: stepStatus === StepStatus.PENDING ? 'WAITING' : 'GONE',
-      owner: workflowRun,
-    };
+    return status === 'WAITING' && isDefined(workflowRun)
+      ? { status, owner: workflowRun }
+      : { status: 'GONE', owner: workflowRun };
   }
 
   async getReadPermissions({ wakeUp }: { wakeUp: PendingWakeUpEntity }) {
@@ -89,13 +82,14 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
     claimedWakeUp,
     outcome,
     owner: workflowRun,
+    isOwnerGone,
   }: {
     claimedWakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
     owner: WorkflowRunWorkspaceEntity | null;
     isOwnerGone: boolean;
   }): Promise<void> {
-    if (!isDefined(workflowRun)) {
+    if (!isDefined(workflowRun) || isOwnerGone) {
       return;
     }
 

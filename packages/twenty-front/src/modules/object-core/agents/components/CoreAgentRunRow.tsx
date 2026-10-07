@@ -13,7 +13,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatDuration } from '~/utils/format/formatDuration';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 type CoreAgentRunRowProps = {
   run: CoreAgentRun;

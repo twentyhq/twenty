@@ -90,7 +90,6 @@ export class AgentTriggerRunnerService
         // nobody is there to answer, so the run can wait but not ask
         capabilities: {
           canAskHumans: false,
-          canProposeToolCalls: false,
         },
         toolLoadingStrategy: 'lazy',
       },

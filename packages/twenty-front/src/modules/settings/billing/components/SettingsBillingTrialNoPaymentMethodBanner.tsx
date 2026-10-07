@@ -65,14 +65,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     <>
       <ToastOnQueryErrorEffect error={error} />
       <InlineBanner
-        color="blue"
-        message={message}
-        button={{
-          title: t`Add card`,
-          hidden: !hasPermissionToManageBilling,
-          onClick: openPaymentMethodUpdate,
-        }}
-      />
+        status="info"
+        action={
+          hasPermissionToManageBilling && (
+            <InlineBanner.Action
+              onClick={openPaymentMethodUpdate}
+            >{t`Add card`}</InlineBanner.Action>
+          )
+        }
+      >
+        {message}
+      </InlineBanner>
     </>
   );
 };

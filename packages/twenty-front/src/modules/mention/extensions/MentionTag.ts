@@ -1,7 +1,7 @@
-import { formatRecordReference } from '@/ai/utils/formatRecordReference';
 import { MentionChip } from '@/mention/components/MentionChip';
 import { Node } from '@tiptap/core';
 import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
+import { formatRecordReference } from 'twenty-shared/ai';
 
 export const MentionTag = Node.create({
   name: 'mentionTag',

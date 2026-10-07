@@ -294,23 +294,31 @@ export class CoreWorkflowAccessService {
   }
 
   // The command menu lists every member's manual triggers in one read, so the rule comes back as a filter.
-  async findInaccessibleWorkspaceWorkflowVersionIds({
+  async findInaccessibleWorkflowVersionIds({
     workspaceId,
     userWorkspaceId,
+    coreWorkflowVersionIds,
     workspaceWorkflowVersionIds,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
+    coreWorkflowVersionIds: string[];
     workspaceWorkflowVersionIds: string[];
   }): Promise<Set<string>> {
-    if (workspaceWorkflowVersionIds.length === 0) {
+    if (
+      coreWorkflowVersionIds.length === 0 &&
+      workspaceWorkflowVersionIds.length === 0
+    ) {
       return new Set();
     }
 
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        where: [
+          { id: In(coreWorkflowVersionIds) },
+          { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        ],
         select: {
           id: true,
           coreWorkflowId: true,
@@ -337,11 +345,10 @@ export class CoreWorkflowAccessService {
 
     return new Set(
       coreWorkflowVersions.flatMap(
-        ({ coreWorkflowId, workspaceWorkflowVersionId }) =>
+        ({ id, coreWorkflowId, workspaceWorkflowVersionId }) =>
           isDefined(coreWorkflowId) &&
-          isDefined(workspaceWorkflowVersionId) &&
           inaccessibleCoreWorkflowIds.has(coreWorkflowId)
-            ? [workspaceWorkflowVersionId]
+            ? [id, workspaceWorkflowVersionId].filter(isDefined)
             : [],
       ),
     );

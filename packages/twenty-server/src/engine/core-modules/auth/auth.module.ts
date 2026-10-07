@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -116,7 +115,6 @@ import { AuthService } from './services/auth.service';
     ConnectionProviderModule,
     ApplicationConnectionsModule,
     WorkspaceCacheModule,
-    CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
     BillingModule,

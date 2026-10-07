@@ -20,6 +20,7 @@ export type WebsiteRouteId =
   | 'privacyPolicy'
   | 'product'
   | 'releases'
+  | 'support'
   | 'terms'
   | 'whyTwenty';
 

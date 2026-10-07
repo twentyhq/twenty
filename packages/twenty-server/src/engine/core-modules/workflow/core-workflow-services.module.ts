@@ -62,7 +62,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],
   exports: [
-    CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,

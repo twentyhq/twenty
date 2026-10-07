@@ -17,6 +17,5 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [ValidationRuleService, ValidationRuleResolver],
-  exports: [ValidationRuleService],
 })
 export class ValidationRuleModule {}

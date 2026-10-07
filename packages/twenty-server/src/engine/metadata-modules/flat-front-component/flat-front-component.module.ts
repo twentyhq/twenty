@@ -4,6 +4,5 @@ import { WorkspaceFlatFrontComponentMapCacheService } from 'src/engine/metadata-
 
 @Module({
   providers: [WorkspaceFlatFrontComponentMapCacheService],
-  exports: [WorkspaceFlatFrontComponentMapCacheService],
 })
 export class FlatFrontComponentModule {}

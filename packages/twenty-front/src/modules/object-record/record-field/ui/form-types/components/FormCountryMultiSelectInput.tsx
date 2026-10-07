@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { type IconComponentProps } from 'twenty-ui/icon';

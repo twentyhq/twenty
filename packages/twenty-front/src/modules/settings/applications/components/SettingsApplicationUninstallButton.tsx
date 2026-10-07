@@ -5,7 +5,6 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useId } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationUninstallButtonProps = {
@@ -31,12 +30,12 @@ export const SettingsApplicationUninstallButton = ({
     <>
       <Button
         startIcon={<IconTrash />}
-        endIcon={isUninstalling ? <Loader /> : undefined}
         variant="outline"
         color="danger"
         size="sm"
         onClick={() => openDialog(uninstallDialogId)}
-        disabled={isUninstalling}
+        loading={isUninstalling}
+        loadingPosition="end"
       >
         {isUninstalling
           ? t`Uninstalling ${displayedUninstallProgress}`

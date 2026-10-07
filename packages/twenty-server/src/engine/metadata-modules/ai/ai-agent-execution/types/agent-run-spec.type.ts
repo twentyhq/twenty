@@ -10,10 +10,8 @@ export type AgentRunSpec = {
   // the caller's own instructions, after what the engine says about its pausing tools
   instructions: string | null;
   capabilities: {
-    // ask_question and request_form, answered from the conversation
+    // ask_question, request_form and propose_tool_call, answered from the conversation
     canAskHumans: boolean;
-    // propose_tool_call, for an action a person approves first
-    canProposeToolCalls: boolean;
   };
   additionalExcludedToolNames?: string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
