@@ -264,12 +264,6 @@ export class WorkflowCommonWorkspaceService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const workflowRunRepository =
-        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          'workflowRun',
-          { shouldBypassPermissionChecks: true },
-        );
-
       const workflowRepository =
         this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
           'workflow',
@@ -286,10 +280,6 @@ export class WorkflowCommonWorkspaceService {
         switch (operation) {
           case 'delete':
             await workflowAutomatedTriggerRepository.softDelete({
-              workflowId,
-            });
-
-            await workflowRunRepository.softDelete({
               workflowId,
             });
 

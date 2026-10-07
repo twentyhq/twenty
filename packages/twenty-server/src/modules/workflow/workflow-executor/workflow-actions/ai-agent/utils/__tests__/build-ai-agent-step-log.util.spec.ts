@@ -1,4 +1,5 @@
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
+import { type AgentRunSummary } from 'twenty-shared/ai';
+
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
 
 const SUMMARY: AgentRunSummary = {

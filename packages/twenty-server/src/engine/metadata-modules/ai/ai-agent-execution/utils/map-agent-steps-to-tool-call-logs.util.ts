@@ -1,7 +1,7 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { type AgentRunToolCallLog } from 'twenty-shared/ai';
 
 import { isFailedToolOutput } from 'src/engine/core-modules/tool-provider/utils/is-failed-tool-output.util';
-import { type AgentRunToolCallLog } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-tool-call-log.type';
 import {
   TRUNCATION_SENTINEL,
   truncateStringToUtf8ByteBudget,

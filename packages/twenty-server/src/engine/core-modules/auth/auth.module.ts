@@ -29,9 +29,6 @@ import { ResetPasswordService } from 'src/engine/core-modules/auth/services/rese
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -66,7 +63,7 @@ import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modul
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -76,7 +73,6 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-
 import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
-import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 
 @Module({
   imports: [
@@ -97,6 +93,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ]),
     UserWorkspaceModule,
     OnboardingModule,
+    CalendarCommonModule,
     ConnectedAccountModule,
     MessagingCommonModule,
     OnboardingRecentMessagesImportModule,
@@ -140,19 +137,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
   providers: [
     SignInUpService,
     AuthService,
-    JwtAuthStrategy,
     SamlAuthStrategy,
     AuthResolver,
     GoogleAPIsService,
     GoogleApiScopesService,
     GoogleApisServiceAvailabilityService,
     MicrosoftAPIsService,
-    AccessTokenService,
-    RefreshTokenService,
-    LoginTokenService,
     ResetPasswordService,
     // TODO: move these calendar, message and connected account services to business modules once they can hold controllers
-    CalendarChannelSyncStatusService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
@@ -163,9 +155,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuthSsoService,
   ],
   exports: [
-    AccessTokenService,
-    LoginTokenService,
-    RefreshTokenService,
+    TokenModule,
     CreateMessageChannelService,
     CreateCalendarChannelService,
   ],

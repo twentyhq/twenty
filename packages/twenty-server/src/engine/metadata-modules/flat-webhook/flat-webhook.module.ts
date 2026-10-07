@@ -4,6 +4,5 @@ import { WorkspaceFlatWebhookMapCacheService } from 'src/engine/metadata-modules
 
 @Module({
   providers: [WorkspaceFlatWebhookMapCacheService],
-  exports: [WorkspaceFlatWebhookMapCacheService],
 })
 export class FlatWebhookModule {}

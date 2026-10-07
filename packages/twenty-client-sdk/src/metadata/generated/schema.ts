@@ -59,6 +59,8 @@ export interface AgentChatThread {
 export interface AgentChatThreadParticipant {
     archivedAt?: Scalars['DateTime']
     id: Scalars['UUID']
+    isSubscribed: Scalars['Boolean']
+    lastMentionedAt?: Scalars['DateTime']
     lastReadAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
     threadId: Scalars['UUID']
@@ -1250,7 +1252,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ASK_AI' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ASK_AI' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -2185,6 +2187,7 @@ export interface Mutation {
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
     stopImpersonation: StopImpersonation
+    subscribeToAgentChatThread: AgentChatThreadParticipant
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
     syncApplication: WorkspaceMigration
@@ -2194,6 +2197,7 @@ export interface Mutation {
     triggerInstallApplicationJob: TriggerInstallApplicationJobResult
     triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
     uninstallApplication: Scalars['Boolean']
+    unsubscribeFromAgentChatThread: AgentChatThreadParticipant
     updateApiKey?: ApiKey
     updateAppMessageChannel: MessageChannel
     updateApplication: Application
@@ -2210,6 +2214,7 @@ export interface Mutation {
     updateMessageChannel: MessageChannel
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
+    updateMyUserApplicationVariable: Scalars['Boolean']
     updateNavigationMenuItem: NavigationMenuItem
     updateOneAgent: Agent
     updateOneApplicationVariable: Scalars['Boolean']
@@ -2798,6 +2803,7 @@ export interface Query {
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
     myMessageFolders: MessageFolder[]
+    myUserApplicationVariables: WorkspaceMemberApplicationVariables[]
     navigationMenuItem?: NavigationMenuItem
     navigationMenuItems: NavigationMenuItem[]
     object: Object
@@ -3005,6 +3011,7 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 
 export interface RunAgentResult {
     error?: Scalars['String']
+    isWaiting: Scalars['Boolean']
     result?: Scalars['JSON']
     success: Scalars['Boolean']
     threadId?: Scalars['UUID']
@@ -3048,6 +3055,7 @@ export interface SearchField {
 }
 
 export interface SendChatMessageResult {
+    mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
     streamId?: Scalars['String']
@@ -3423,6 +3431,19 @@ export interface User {
     workspaceMembers?: WorkspaceMember[]
     workspaces: UserWorkspace[]
     __typename: 'User'
+}
+
+export interface UserApplicationVariableValue {
+    description: Scalars['String']
+    isDeprecated: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isSecret: Scalars['Boolean']
+    key: Scalars['String']
+    label: Scalars['String']
+    options?: Scalars['JSON']
+    type: Scalars['String']
+    value: Scalars['String']
+    __typename: 'UserApplicationVariableValue'
 }
 
 export interface UserSession {
@@ -3814,6 +3835,13 @@ export interface WorkspaceMember {
     __typename: 'WorkspaceMember'
 }
 
+export interface WorkspaceMemberApplicationVariables {
+    userWorkspaceId: Scalars['UUID']
+    variables: UserApplicationVariableValue[]
+    workspaceMemberId: Scalars['UUID']
+    __typename: 'WorkspaceMemberApplicationVariables'
+}
+
 
 /** Date format as Month first, Day first, Year first or system as default */
 export type WorkspaceMemberDateFormatEnum = 'DAY_FIRST' | 'MONTH_FIRST' | 'SYSTEM' | 'YEAR_FIRST'
@@ -3908,6 +3936,8 @@ export interface AgentChatThreadGenqlSelection{
 export interface AgentChatThreadParticipantGenqlSelection{
     archivedAt?: boolean | number
     id?: boolean | number
+    isSubscribed?: boolean | number
+    lastMentionedAt?: boolean | number
     lastReadAt?: boolean | number
     snoozedUntil?: boolean | number
     threadId?: boolean | number
@@ -6280,7 +6310,7 @@ export interface MutationGenqlSelection{
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
-    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), fileAttachments?: (FileAttachmentInput[] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
+    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
@@ -6302,6 +6332,7 @@ export interface MutationGenqlSelection{
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     stopImpersonation?: StopImpersonationGenqlSelection
+    subscribeToAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     switchBillingPlan?: BillingUpdateGenqlSelection
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null), manifest: Scalars['JSON']} })
@@ -6311,6 +6342,7 @@ export interface MutationGenqlSelection{
     triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
     triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
+    unsubscribeFromAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
@@ -6327,6 +6359,7 @@ export interface MutationGenqlSelection{
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
+    updateMyUserApplicationVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     updateOneApplicationVariable?: { __args: {applicationId?: (Scalars['UUID'] | null), key: Scalars['String'], value: Scalars['String']} }
@@ -6956,6 +6989,7 @@ export interface QueryGenqlSelection{
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
+    myUserApplicationVariables?: WorkspaceMemberApplicationVariablesGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     object?: (ObjectGenqlSelection & { __args: {
@@ -7187,6 +7221,7 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
+    isWaiting?: boolean | number
     result?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
@@ -7235,6 +7270,7 @@ export interface SearchFieldGenqlSelection{
 }
 
 export interface SendChatMessageResultGenqlSelection{
+    mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number
     streamId?: boolean | number
@@ -7883,6 +7919,20 @@ export interface UserGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UserApplicationVariableValueGenqlSelection{
+    description?: boolean | number
+    isDeprecated?: boolean | number
+    isRequired?: boolean | number
+    isSecret?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    options?: boolean | number
+    type?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UserSessionGenqlSelection{
     authProvider?: boolean | number
     createdAt?: boolean | number
@@ -8302,6 +8352,14 @@ export interface WorkspaceMemberGenqlSelection{
     userEmail?: boolean | number
     userId?: boolean | number
     userWorkspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceMemberApplicationVariablesGenqlSelection{
+    userWorkspaceId?: boolean | number
+    variables?: UserApplicationVariableValueGenqlSelection
+    workspaceMemberId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10631,6 +10689,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const UserApplicationVariableValue_possibleTypes: string[] = ['UserApplicationVariableValue']
+    export const isUserApplicationVariableValue = (obj?: { __typename?: any } | null): obj is UserApplicationVariableValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserApplicationVariableValue"')
+      return UserApplicationVariableValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UserSession_possibleTypes: string[] = ['UserSession']
     export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
@@ -10851,6 +10917,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspaceMember = (obj?: { __typename?: any } | null): obj is WorkspaceMember => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMember"')
       return WorkspaceMember_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceMemberApplicationVariables_possibleTypes: string[] = ['WorkspaceMemberApplicationVariables']
+    export const isWorkspaceMemberApplicationVariables = (obj?: { __typename?: any } | null): obj is WorkspaceMemberApplicationVariables => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMemberApplicationVariables"')
+      return WorkspaceMemberApplicationVariables_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11199,10 +11273,12 @@ export const enumEngineComponentKey = {
    SHARE_RECORD: 'SHARE_RECORD' as const,
    SNOOZE_AI_CHAT: 'SNOOZE_AI_CHAT' as const,
    STOP_WORKFLOW_RUN: 'STOP_WORKFLOW_RUN' as const,
+   SUBSCRIBE_TO_AI_CHAT: 'SUBSCRIBE_TO_AI_CHAT' as const,
    TEST_WORKFLOW: 'TEST_WORKFLOW' as const,
    TIDY_UP_WORKFLOW: 'TIDY_UP_WORKFLOW' as const,
    TOGGLE_WORKFLOW_VISIBILITY: 'TOGGLE_WORKFLOW_VISIBILITY' as const,
    TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
+   UNSUBSCRIBE_FROM_AI_CHAT: 'UNSUBSCRIBE_FROM_AI_CHAT' as const,
    UPDATE_MULTIPLE_RECORDS: 'UPDATE_MULTIPLE_RECORDS' as const,
    USE_AS_DRAFT_WORKFLOW_VERSION: 'USE_AS_DRAFT_WORKFLOW_VERSION' as const,
    VIEW_PREVIOUS_AI_CHATS: 'VIEW_PREVIOUS_AI_CHATS' as const

@@ -5,7 +5,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { FlatViewModule } from 'src/engine/metadata-modules/flat-view/flat-view.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
@@ -16,7 +15,6 @@ import { ViewController } from 'src/engine/metadata-modules/view/controllers/vie
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -32,12 +30,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     PermissionsModule,
     WorkspaceMigrationModule,
-    FlatViewModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   controllers: [ViewController],
   providers: [
-    ViewService,
     CompleteViewUpsertService,
     ViewResolver,
     ViewQueryParamsService,
@@ -46,8 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     provideWorkspaceScopedRepository(ViewEntity),
   ],
   exports: [
-    ViewService,
-    ViewQueryParamsService,
+    ViewPermissionsModule,
     ViewToolsFactory,
     TypeOrmModule.forFeature([ViewEntity]),
   ],

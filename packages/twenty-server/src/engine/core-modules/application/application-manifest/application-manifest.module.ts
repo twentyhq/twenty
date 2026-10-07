@@ -49,7 +49,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   ],
   exports: [
     ApplicationManifestApplyService,
-    ApplicationManifestMigrationService,
     ApplicationSyncService,
     ApplicationUninstallService,
     ApplicationUpgradeRoleGrantService,

@@ -53,6 +53,8 @@ type AgentChatThread {
 type AgentChatThreadParticipant {
   archivedAt: DateTime
   id: UUID!
+  isSubscribed: Boolean!
+  lastMentionedAt: DateTime
   lastReadAt: DateTime
   snoozedUntil: DateTime
   threadId: UUID!
@@ -1921,10 +1923,12 @@ enum EngineComponentKey {
   SHARE_RECORD
   SNOOZE_AI_CHAT
   STOP_WORKFLOW_RUN
+  SUBSCRIBE_TO_AI_CHAT
   TEST_WORKFLOW
   TIDY_UP_WORKFLOW
   TOGGLE_WORKFLOW_VISIBILITY
   TRIGGER_WORKFLOW_VERSION
+  UNSUBSCRIBE_FROM_AI_CHAT
   UPDATE_MULTIPLE_RECORDS
   USE_AS_DRAFT_WORKFLOW_VERSION
   VIEW_PREVIOUS_AI_CHATS
@@ -3115,7 +3119,7 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
@@ -3137,6 +3141,7 @@ type Mutation {
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
+  subscribeToAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   switchBillingPlan: BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
@@ -3146,6 +3151,7 @@ type Mutation {
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
   triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
+  unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
@@ -3162,6 +3168,7 @@ type Mutation {
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
+  updateMyUserApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   updateOneApplicationVariable(applicationId: UUID, key: String!, value: String!): Boolean!
@@ -3837,6 +3844,7 @@ type Query {
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
+  myUserApplicationVariables: [WorkspaceMemberApplicationVariables!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   navigationMenuItems: [NavigationMenuItem!]!
   object(
@@ -4145,6 +4153,7 @@ enum RunAgentMessageRole {
 
 type RunAgentResult {
   error: String
+  isWaiting: Boolean!
   result: JSON
   success: Boolean!
   threadId: UUID
@@ -4192,6 +4201,7 @@ type SearchField {
 }
 
 type SendChatMessageResult {
+  mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!
   streamId: String
@@ -5356,6 +5366,18 @@ type User {
   workspaces: [UserWorkspace!]!
 }
 
+type UserApplicationVariableValue {
+  description: String!
+  isDeprecated: Boolean!
+  isRequired: Boolean!
+  isSecret: Boolean!
+  key: String!
+  label: String!
+  options: JSON
+  type: String!
+  value: String!
+}
+
 type UserSession {
   authProvider: String!
   createdAt: DateTime!
@@ -5835,6 +5857,12 @@ type WorkspaceMember {
   userEmail: String!
   userId: UUID!
   userWorkspaceId: UUID
+}
+
+type WorkspaceMemberApplicationVariables {
+  userWorkspaceId: UUID!
+  variables: [UserApplicationVariableValue!]!
+  workspaceMemberId: UUID!
 }
 
 """Date format as Month first, Day first, Year first or system as default"""
