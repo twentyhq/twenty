@@ -6,8 +6,6 @@ import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/consta
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 
-// Requests a follow-up may still have to finish: pending ones without a bot,
-// and canceled ones whose bot may still be booked at Recall.
 export const findStuckCallRecordingRequestIds = async (
   client: CoreApiClient,
 ): Promise<string[]> => {

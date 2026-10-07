@@ -142,7 +142,6 @@ const resolveCanceledRequestFollowUp = ({
     return { action: 'cancel-bot', externalBotId: callRecording.externalBotId };
   }
 
-  // Without an attempt marker no booking ever reached Recall.
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
     return { action: 'none', reason: 'request never reached Recall' };
   }

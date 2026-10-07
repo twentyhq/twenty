@@ -7,7 +7,6 @@ import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bo
 import { clearCanceledRecallBot } from 'src/logic-functions/data/clear-canceled-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
-// The caller arms recovery after clearing calendar flags, so a queue outage cannot block cancellation.
 export const cancelCallRecordingRequest = async ({
   client,
   callRecording,

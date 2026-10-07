@@ -17,6 +17,8 @@ import {
 
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
+  CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -33,8 +35,6 @@ import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/
 import { CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS } from 'src/logic-functions/constants/call-recording-request-follow-up-delay-ms';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
-import { RECALL_RECOVERY_CALLS_PER_MINUTE } from 'src/logic-functions/constants/recall-recovery-calls-per-minute';
-import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { updatePendingCallRecording } from 'src/logic-functions/data/update-pending-call-recording.util';
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
@@ -53,24 +53,12 @@ import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-sche
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
-// Call Recorder end-to-end behavior against a live Twenty server.
-//
-// The app is installed on the test server by the vitest global setup, and all
-// reads and writes go through the real API into the test database. Lifecycle
-// scenarios control delivery order with fakes for:
-//   - the Recall API (a fetch interceptor that replays the same bot for a
-//     repeated Idempotency-Key, like the real API),
-//   - the trigger transports: webhook deliveries invoke the webhook logic
-//     function handler directly, and cron / database-event triggers invoke
-//     the flows they dispatch, including queued artifact imports. Queued
-//     request follow-ups run with the clock moved to when the queue would
-//     have released them.
-//
-// Queue scenarios bypass those fakes and use the installed app's real worker.
-//
-// The suite issues a few hundred API requests; if the test server runs with
-// the default API_RATE_LIMITING_LONG_LIMIT of 100 requests per minute,
-// raise it (e.g. to 100000) or the runs trip the limiter.
+// Lifecycle tests use the real Twenty API/database with simulated Recall responses
+// and trigger delivery. runArmedFollowUps advances time and invokes handlers directly;
+// it does not prove queue timing or deduplication. The real-worker cases remove
+// fetch interception and exercise the installed app's queue and worker.
+// Test-server API limits are raised for fixture throughput; throttling behavior
+// is verified separately with synthetic responses in fetch-with-rate-limit-retry.test.ts.
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
@@ -346,6 +334,7 @@ class FakeRecallApi {
   stuckRequestSweepRequests: object[] = [];
   calendarEventSweepRequests: object[] = [];
   followUps: ArmedFollowUp[] = [];
+  cancellationCleanupRequests: object[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -356,6 +345,7 @@ class FakeRecallApi {
   failBotCreation = false;
   failNextDelete = false;
   failFollowUpEnqueue = false;
+  failCancellationCleanupEnqueue = false;
   failCalendarEventUpdates = false;
   failCallRecordingReads = false;
   failRecallRemovals = false;
@@ -488,46 +478,48 @@ class FakeRecallApi {
       const payloads =
         input?.jobs?.map(({ payload }) => payload) ?? input?.payloads ?? [];
 
-      if (
-        input?.logicFunctionUniversalIdentifier ===
-        STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
-      ) {
-        this.recoveryRequests.push(...payloads);
-      } else if (
-        input?.logicFunctionUniversalIdentifier ===
-        PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
-      ) {
-        this.stuckRequestSweepRequests.push(...payloads);
-      } else if (
-        input?.logicFunctionUniversalIdentifier ===
-        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
-      ) {
-        this.calendarEventSweepRequests.push(...payloads);
-      } else if (
-        input?.logicFunctionUniversalIdentifier ===
-        FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
-      ) {
-        const delayMs = input.delayMs ?? 0;
+      switch (input?.logicFunctionUniversalIdentifier) {
+        case STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.recoveryRequests.push(...payloads);
+          break;
+        case PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.stuckRequestSweepRequests.push(...payloads);
+          break;
+        case SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.calendarEventSweepRequests.push(...payloads);
+          break;
+        case FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER: {
+          if (this.failFollowUpEnqueue) {
+            return jsonResponse(503, {});
+          }
 
-        if (this.failFollowUpEnqueue) {
-          return jsonResponse(503, {});
+          const delayMs = input.delayMs ?? 0;
+          this.followUps.push(
+            ...(input.jobs ?? []).map(({ jobId, payload }) => ({
+              jobId,
+              payload: payload as ArmedFollowUp['payload'],
+              delayMs,
+              dueAt: Date.now() + delayMs,
+            })),
+          );
+          break;
         }
-
-        this.followUps.push(
-          ...(input.jobs ?? []).map(({ jobId, payload }) => ({
-            jobId,
-            payload: payload as ArmedFollowUp['payload'],
-            delayMs,
-            dueAt: Date.now() + delayMs,
-          })),
-        );
-      } else if (
-        input?.logicFunctionUniversalIdentifier ===
-        CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
-      ) {
-        this.creditCheckRequests.push(...payloads);
-      } else {
-        this.artifactImportRequests.push(...payloads);
+        case CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.creditCheckRequests.push(...payloads);
+          break;
+        case CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          if (this.failCancellationCleanupEnqueue) {
+            return jsonResponse(503, {});
+          }
+          this.cancellationCleanupRequests.push(...payloads);
+          break;
+        case IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.artifactImportRequests.push(...payloads);
+          break;
+        default:
+          throw new Error(
+            `Unexpected queued logic function: ${input?.logicFunctionUniversalIdentifier}`,
+          );
       }
 
       return jsonResponse(200, {
@@ -2422,6 +2414,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('CANCELED');
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
     });
 
     it('cancels a meeting in a mixed batch before active follow-up enqueueing fails', async () => {
@@ -2460,7 +2453,6 @@ describe('call recorder app lifecycle (integration)', () => {
       recall.failNextDelete = true;
       await cancelThroughCalendar(calendarEventId);
 
-      // The Recall half failed, so the bot id must survive for the follow-up.
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         botId,
       );
@@ -3307,7 +3299,6 @@ describe('call recorder app lifecycle (integration)', () => {
       const firstBotId = (await fetchCallRecording(callRecordingId))
         .externalBotId;
 
-      // The id write-back got lost after the POST reached Recall.
       await client.mutation({
         updateCallRecording: {
           __args: { id: callRecordingId, data: { externalBotId: null } },
@@ -3318,8 +3309,6 @@ describe('call recorder app lifecycle (integration)', () => {
       vi.setSystemTime(Date.now() + CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS);
       await followUpCallRecordingRequestHandler({ callRecordingId });
 
-      // Recall dedupes the repeated idempotency key: the very same bot is
-      // written back, without any list request.
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         firstBotId,
       );
@@ -3532,24 +3521,6 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
-    it('spreads a burst of follow-ups one minute apart', async () => {
-      await enqueueCallRecordingRequestFollowUps({
-        callRecordingIds: Array.from(
-          { length: RECALL_RECOVERY_CALLS_PER_MINUTE + 1 },
-          () => randomUUID(),
-        ),
-      });
-
-      expect(
-        recall.followUps.map(
-          ({ delayMs }) => delayMs - CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS,
-        ),
-      ).toEqual([
-        ...Array(RECALL_RECOVERY_CALLS_PER_MINUTE).fill(0),
-        MILLISECONDS_PER_MINUTE,
-      ]);
-    });
-
     it('follows up on requests left stuck by an earlier version after an upgrade', async () => {
       const pendingCallRecordingId = await createPendingCallRecording({
         calendarEventId: await createCalendarEvent(),
@@ -3597,7 +3568,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.stuckRequestSweepRequests).toHaveLength(0);
     });
 
-    describe('through the real worker', () => {
+    describe('with real queue transport', () => {
       beforeEach(() => {
         vi.unstubAllGlobals();
         vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
@@ -4167,12 +4138,29 @@ describe('call recorder app lifecycle (integration)', () => {
           (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
         ).toBe('CANCELED');
         expect(followUpsArmedFor(callRecordingId)).toHaveLength(0);
+        expect(recall.cancellationCleanupRequests).toHaveLength(1);
 
         recall.failFollowUpEnqueue = false;
         await syncCalendarBotSchedulingHandler();
         expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
       },
     );
+
+    it('persists cancellation and arms follow-up even when cleanup enqueueing fails', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      turnRecordingOff();
+      recall.followUps = [];
+      recall.failCancellationCleanupEnqueue = true;
+
+      await expect(syncCalendarBotSchedulingHandler()).rejects.toThrow();
+
+      expect(await fetchCallRecording(callRecordingId)).toMatchObject({
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: botId,
+      });
+      expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
+    });
 
     it('stops the cancellation chain when Recall is down, leaving the bot to its follow-up', async () => {
       const { callRecordingId, botId } =

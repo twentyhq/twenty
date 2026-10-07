@@ -6,7 +6,10 @@ import { RECALL_RECOVERY_CALLS_PER_MINUTE } from 'src/logic-functions/constants/
 
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-sdk/logic-function', () => ({ enqueueJobs: enqueueJobsMock }));
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
 
 describe('enqueueCallRecordingRequestFollowUps', () => {
   beforeEach(() => {
@@ -17,7 +20,31 @@ describe('enqueueCallRecordingRequestFollowUps', () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it('deduplicates bulk and individual arms across a pacing window boundary', async () => {
+  it('paces every batch and includes each recording exactly once', async () => {
+    const callRecordingIds = Array.from(
+      { length: 121 },
+      (_, index) => `recording-${index}`,
+    );
+    await enqueueCallRecordingRequestFollowUps({ callRecordingIds });
+
+    const calls = enqueueJobsMock.mock.calls.map(([input]) => input);
+    expect(calls.map(({ jobs }) => jobs.length)).toEqual([60, 60, 1]);
+    expect(calls.map(({ delayMs }) => delayMs)).toEqual([
+      1_800_000, 1_860_000, 1_920_000,
+    ]);
+    expect(
+      calls
+        .flatMap(({ jobs }) =>
+          jobs.map(
+            ({ payload }: { payload: { callRecordingId: string } }) =>
+              payload.callRecordingId,
+          ),
+        )
+        .sort(),
+    ).toEqual([...callRecordingIds].sort());
+  });
+
+  it('uses the same job ID for bulk and individual arms across a pacing window boundary', async () => {
     const callRecordingId = 'z-recording';
     await enqueueCallRecordingRequestFollowUps({
       callRecordingIds: [

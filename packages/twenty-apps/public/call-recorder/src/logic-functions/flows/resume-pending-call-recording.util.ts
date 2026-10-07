@@ -17,8 +17,6 @@ export type ResumePendingCallRecordingResult =
   | { status: 'skipped'; reason: string }
   | { status: 'deferred'; reason: string };
 
-// Finishes bot scheduling right away for one row that transitioned back to
-// pending; what it defers is left to the row's follow-up.
 export const resumePendingCallRecording = async ({
   client,
   callRecordingId,

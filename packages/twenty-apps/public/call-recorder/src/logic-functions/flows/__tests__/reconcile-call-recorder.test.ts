@@ -693,7 +693,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('persists the cancel intent and leaves the bot for the planned stale-state cron when the Recall cancel fails', async () => {
+  it('persists the cancel intent and leaves the bot for recovery when the Recall cancel fails', async () => {
     vi.useFakeTimers();
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ detail: 'server error' }), {
@@ -1115,7 +1115,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('clears the stale bot id for the stale-state cron to re-create when the existing Recall bot no longer exists', async () => {
+  it('clears the stale bot id for recovery to re-create when the existing Recall bot no longer exists', async () => {
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
         if (requestInit.method === 'PATCH') {

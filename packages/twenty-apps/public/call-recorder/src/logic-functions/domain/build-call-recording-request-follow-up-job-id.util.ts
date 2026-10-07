@@ -1,11 +1,8 @@
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 
-// Follow-ups of a recording armed for the same attempt and due in the same
-// window share a job id, so every writer can arm one without the queue running
-// duplicates. A re-arm is the next attempt, so it never collides with the
-// running job that armed it.
 const FOLLOW_UP_DEDUPLICATION_WINDOW_MS = 5 * MILLISECONDS_PER_MINUTE;
 
+// Include the attempt so a running job cannot deduplicate its own successor.
 export const buildCallRecordingRequestFollowUpJobId = ({
   callRecordingId,
   attempt,

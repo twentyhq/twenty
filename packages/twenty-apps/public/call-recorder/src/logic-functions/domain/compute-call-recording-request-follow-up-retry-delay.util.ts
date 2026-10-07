@@ -22,8 +22,6 @@ export const computeCallRecordingRequestFollowUpRetryDelayMs = ({
     ? Number.NaN
     : new Date(meetingStartsAt).getTime() - now.getTime();
 
-  // A retry that would land after the meeting started comes at the start
-  // instead, while a bot can still join on time.
   if (timeUntilMeetingStartMs > 0) {
     return Math.min(scheduledDelayMs, timeUntilMeetingStartMs);
   }

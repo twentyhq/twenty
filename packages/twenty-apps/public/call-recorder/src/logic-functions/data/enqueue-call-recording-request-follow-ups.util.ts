@@ -20,8 +20,6 @@ export const enqueueCallRecordingRequestFollowUps = async ({
   attempt?: number;
 }): Promise<void> => {
   const now = Date.now();
-  // A follow-up can call Recall, so a burst of them is spread one minute
-  // apart rather than landing at once.
   const followUpSlots = getBatches(
     getUniqueSortedIds(callRecordingIds),
     RECALL_RECOVERY_CALLS_PER_MINUTE,
