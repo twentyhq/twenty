@@ -22,7 +22,6 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
         packages/twenty-ui/**
-        packages/create-twenty-app/**
         .github/actions/yarn-install/**
         .github/workflows/ci-cli.yaml
         package.json
