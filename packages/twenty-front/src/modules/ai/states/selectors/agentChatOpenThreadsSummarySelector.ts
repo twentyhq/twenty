@@ -12,6 +12,7 @@ type AgentChatOpenThreadsSummary = {
   hasUnreadOpenThread: boolean;
   needsInputThreadCount: number;
   hasUnreadMentionThread: boolean;
+  hasUnreadAssignedThread: boolean;
 };
 
 export const agentChatOpenThreadsSummarySelector =
@@ -24,6 +25,7 @@ export const agentChatOpenThreadsSummarySelector =
           hasUnreadOpenThread: false,
           needsInputThreadCount: 0,
           hasUnreadMentionThread: false,
+          hasUnreadAssignedThread: false,
         };
       }
 
@@ -47,6 +49,10 @@ export const agentChatOpenThreadsSummarySelector =
         ).length,
         hasUnreadMentionThread: openThreads.some(
           ({ inboxStatus }) => inboxStatus.isMentioned && inboxStatus.isUnread,
+        ),
+        hasUnreadAssignedThread: openThreads.some(
+          ({ inboxStatus }) =>
+            inboxStatus.isAssignedToMe && inboxStatus.isUnread,
         ),
       };
     },

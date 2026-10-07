@@ -132,6 +132,28 @@ export class AgentChatThreadParticipantResolver {
     });
   }
 
+  // Clears the assignee when no member is given
+  @Mutation(() => Boolean)
+  async assignAgentChatThread(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('assigneeWorkspaceMemberId', {
+      type: () => UUIDScalarType,
+      nullable: true,
+    })
+    assigneeWorkspaceMemberId: string | null,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    await this.threadService.assign({
+      threadId,
+      assigneeWorkspaceMemberId: assigneeWorkspaceMemberId ?? null,
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    return true;
+  }
+
   // Returns the members who were added, leaving out those who cannot reply in the chat
   @Mutation(() => [UUIDScalarType])
   async addAgentChatThreadParticipants(

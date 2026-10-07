@@ -633,6 +633,39 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Set through the assign mutation, which also lets the assignee reply and
+  // brings the chat to their inbox
+  assignee: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'assignee',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Assignee', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member responsible for the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'assignedAgentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'assigneeId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   messages: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,
