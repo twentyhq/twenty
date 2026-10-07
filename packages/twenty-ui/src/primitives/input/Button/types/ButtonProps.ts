@@ -3,6 +3,7 @@ import { type Button as ButtonPrimitive } from '@base-ui/react/button';
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
 import { type ButtonColor } from './ButtonColor';
+import { type ButtonLoadingPosition } from './ButtonLoadingPosition';
 import { type ButtonSize } from './ButtonSize';
 import { type ButtonVariant } from './ButtonVariant';
 
@@ -16,6 +17,7 @@ export type ButtonProps = Omit<
     size?: ButtonSize;
     fullWidth?: boolean;
     loading?: boolean;
+    loadingPosition?: ButtonLoadingPosition;
     elevated?: boolean;
     startIcon?: ReactNode;
     endIcon?: ReactNode;

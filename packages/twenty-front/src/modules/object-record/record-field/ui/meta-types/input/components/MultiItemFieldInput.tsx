@@ -29,8 +29,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledAddItemContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]};
