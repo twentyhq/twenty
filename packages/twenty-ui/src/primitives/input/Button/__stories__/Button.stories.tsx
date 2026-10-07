@@ -120,6 +120,14 @@ export const LoadingWithProgress: Story = {
     await expect(button).toBeDisabled();
   },
 };
+export const LoadingIgnoresProgressWhenChildrenAreHidden: Story = {
+  ...Default,
+  args: { children: 'Save', loading: true, progress: 42 },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button');
+    await expect(button).toHaveAccessibleName('Save');
+  },
+};
 export const NativeForm: Story = {
   ...Default,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
