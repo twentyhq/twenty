@@ -29,16 +29,18 @@ package owns the `twenty` executable that comes first on PATH.
 
 ```bash
 twenty doctor --offline
-twenty auth login --url https://acme.twenty.com
+twenty auth login --url https://acme.twenty.com --use
 twenty metadata object list
 twenty data list companies --limit 5
 twenty open
 ```
 
-Replace the example URL with your workspace's address. Workspace commands do
-not require an application project. Use `--remote <name>` to select another
-saved connection and `--json` for a structured result. Saved connections live in
-`~/.twenty/config.json`, the file the SDK's `yarn twenty` commands also use.
+Replace the example URL with your workspace's address. `--use` makes this
+connection the default, even when another saved connection already is one.
+Workspace commands do not require an application project. Use `--remote <name>`
+to select another saved connection and `--json` for a structured result. Saved
+connections live in `~/.twenty/config.json`, the file the SDK's `yarn twenty`
+commands also use.
 
 Browser sign-in is supported on Twenty 2.42 and later. On older servers, sign in
 with an [API key](docs/commands.md#connections-and-authentication) instead.
@@ -47,8 +49,8 @@ with an [API key](docs/commands.md#connections-and-authentication) instead.
 
 App projects pin Yarn 4 in `packageManager`. Run `corepack enable` once so
 `yarn` uses that version; if `corepack` is missing, install it with
-`npm install -g corepack`. These steps use the connection saved by
-`twenty auth login`:
+`npm install -g corepack`. These steps use the default connection;
+`twenty auth status` shows which one that is:
 
 ```bash
 twenty app init my-app
@@ -71,8 +73,9 @@ also delete stored data. Pull can overwrite local edits; read its
 [reconciliation rules](docs/commands.md#pull-an-app) before using it.
 
 Apps created with `app init` declare the oldest Twenty version they support in
-`engines.twenty`. With a browser sign-in, `app exec` and `app uninstall` need
-Twenty 2.46 or later; on earlier versions, sign in with an API key for them.
+`engines.twenty`. `app exec` runs functions as the signed-in user, so it needs a
+browser sign-in and Twenty 2.46 or later. With a browser sign-in, `app uninstall`
+also needs Twenty 2.46 or later; on earlier versions, use an API key for it.
 
 Some workflows are only available through the app's `yarn twenty` commands from
 `twenty-sdk`: publishing an app, running a local Twenty server with Docker,
