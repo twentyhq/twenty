@@ -79,10 +79,13 @@ const PURCHASE_MUTATION = gql`
   }
 `;
 
-const purchaseCreditOneTimeTopUp = (
-  creditAmount: number,
-  accessToken?: string,
-) =>
+const purchaseCreditOneTimeTopUp = ({
+  creditAmount,
+  accessToken,
+}: {
+  creditAmount: number;
+  accessToken?: string;
+}) =>
   makeMetadataApiRequest(
     {
       query: PURCHASE_MUTATION,
@@ -251,7 +254,7 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
   });
 
   it('refuses an amount that is not offered', async () => {
-    const response = await purchaseCreditOneTimeTopUp(7);
+    const response = await purchaseCreditOneTimeTopUp({ creditAmount: 7 });
 
     expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
       'BILLING_CREDIT_AMOUNT_INVALID',
@@ -268,7 +271,7 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
       status: 'trialing',
     });
 
-    const response = await purchaseCreditOneTimeTopUp(10);
+    const response = await purchaseCreditOneTimeTopUp({ creditAmount: 10 });
 
     expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
       'BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED',
@@ -277,7 +280,10 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
   });
 
   it('refuses an API key', async () => {
-    const response = await purchaseCreditOneTimeTopUp(10, API_KEY_ACCESS_TOKEN);
+    const response = await purchaseCreditOneTimeTopUp({
+      creditAmount: 10,
+      accessToken: API_KEY_ACCESS_TOKEN,
+    });
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.data?.purchaseCreditOneTimeTopUp ?? null).toBeNull();

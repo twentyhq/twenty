@@ -22,10 +22,13 @@ const buildPrice = (
   } as BillingPriceEntity;
 };
 
-const buildSubscription = (
-  billingPrices: BillingPriceEntity[],
+const buildSubscription = ({
+  billingPrices,
   productKey = BillingProductKey.RESOURCE_CREDIT,
-) =>
+}: {
+  billingPrices: BillingPriceEntity[];
+  productKey?: BillingProductKey;
+}) =>
   ({
     interval: SubscriptionInterval.Month,
     currency: 'USD',
@@ -37,14 +40,16 @@ const buildSubscription = (
 describe('findCreditOneTimeTopUpPrice', () => {
   it('takes the cheapest rate per credit, not the cheapest tier', () => {
     const price = findCreditOneTimeTopUpPrice(
-      buildSubscription([
-        buildPrice({ stripePriceId: 'price_small', unitAmount: 2_000 }),
-        buildPrice({
-          stripePriceId: 'price_large',
-          unitAmount: 5_000,
-          creditAmountMicro: '100000000',
-        }),
-      ]),
+      buildSubscription({
+        billingPrices: [
+          buildPrice({ stripePriceId: 'price_small', unitAmount: 2_000 }),
+          buildPrice({
+            stripePriceId: 'price_large',
+            unitAmount: 5_000,
+            creditAmountMicro: '100000000',
+          }),
+        ],
+      }),
     );
 
     expect(price?.stripePriceId).toBe('price_large');
@@ -52,14 +57,16 @@ describe('findCreditOneTimeTopUpPrice', () => {
 
   it('never prices at the free tier', () => {
     const price = findCreditOneTimeTopUpPrice(
-      buildSubscription([
-        buildPrice({
-          stripePriceId: 'price_free',
-          unitAmount: 0,
-          creditAmountMicro: '5000000',
-        }),
-        buildPrice({ stripePriceId: 'price_20' }),
-      ]),
+      buildSubscription({
+        billingPrices: [
+          buildPrice({
+            stripePriceId: 'price_free',
+            unitAmount: 0,
+            creditAmountMicro: '5000000',
+          }),
+          buildPrice({ stripePriceId: 'price_20' }),
+        ],
+      }),
     );
 
     expect(price?.stripePriceId).toBe('price_20');
@@ -67,29 +74,31 @@ describe('findCreditOneTimeTopUpPrice', () => {
 
   it('skips archived, legacy, other-interval and other-currency prices', () => {
     const price = findCreditOneTimeTopUpPrice(
-      buildSubscription([
-        buildPrice({
-          stripePriceId: 'price_archived',
-          active: false,
-          unitAmount: 1,
-        }),
-        buildPrice({
-          stripePriceId: 'price_legacy',
-          unitAmount: 1,
-          metadata: { credit_amount: '20000000', isLegacy: 'true' },
-        }),
-        buildPrice({
-          stripePriceId: 'price_yearly',
-          interval: SubscriptionInterval.Year,
-          unitAmount: 1,
-        }),
-        buildPrice({
-          stripePriceId: 'price_eur',
-          currency: 'EUR',
-          unitAmount: 1,
-        }),
-        buildPrice({ stripePriceId: 'price_20' }),
-      ]),
+      buildSubscription({
+        billingPrices: [
+          buildPrice({
+            stripePriceId: 'price_archived',
+            active: false,
+            unitAmount: 1,
+          }),
+          buildPrice({
+            stripePriceId: 'price_legacy',
+            unitAmount: 1,
+            metadata: { credit_amount: '20000000', isLegacy: 'true' },
+          }),
+          buildPrice({
+            stripePriceId: 'price_yearly',
+            interval: SubscriptionInterval.Year,
+            unitAmount: 1,
+          }),
+          buildPrice({
+            stripePriceId: 'price_eur',
+            currency: 'EUR',
+            unitAmount: 1,
+          }),
+          buildPrice({ stripePriceId: 'price_20' }),
+        ],
+      }),
     );
 
     expect(price?.stripePriceId).toBe('price_20');
@@ -97,9 +106,11 @@ describe('findCreditOneTimeTopUpPrice', () => {
 
   it('matches the currency whatever its case', () => {
     const price = findCreditOneTimeTopUpPrice(
-      buildSubscription([
-        buildPrice({ stripePriceId: 'price_20', currency: 'usd' }),
-      ]),
+      buildSubscription({
+        billingPrices: [
+          buildPrice({ stripePriceId: 'price_20', currency: 'usd' }),
+        ],
+      }),
     );
 
     expect(price?.stripePriceId).toBe('price_20');
@@ -108,7 +119,10 @@ describe('findCreditOneTimeTopUpPrice', () => {
   it('finds nothing without a resource credit item', () => {
     expect(
       findCreditOneTimeTopUpPrice(
-        buildSubscription([buildPrice({})], BillingProductKey.BASE_PRODUCT),
+        buildSubscription({
+          billingPrices: [buildPrice({})],
+          productKey: BillingProductKey.BASE_PRODUCT,
+        }),
       ),
     ).toBeUndefined();
   });
@@ -116,7 +130,7 @@ describe('findCreditOneTimeTopUpPrice', () => {
   it('finds nothing when every tier is free', () => {
     expect(
       findCreditOneTimeTopUpPrice(
-        buildSubscription([buildPrice({ unitAmount: 0 })]),
+        buildSubscription({ billingPrices: [buildPrice({ unitAmount: 0 })] }),
       ),
     ).toBeUndefined();
   });
