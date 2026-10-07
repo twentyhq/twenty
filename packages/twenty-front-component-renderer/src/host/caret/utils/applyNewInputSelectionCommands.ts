@@ -1,5 +1,6 @@
-import { isArray, isNumber, isObject } from '@sniptt/guards';
+import { isArray, isNumber } from '@sniptt/guards';
 import { type RefObject } from 'react';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { applyInputSelectionRequest } from '@/host/caret/utils/applyInputSelectionRequest';
@@ -18,11 +19,11 @@ export const applyNewInputSelectionCommands = ({
   }
 
   for (const selectionCommand of selectionCommands) {
-    if (!isObject(selectionCommand)) {
+    if (!isPlainObject(selectionCommand)) {
       continue;
     }
 
-    const { sequence, request } = selectionCommand as Record<string, unknown>;
+    const { sequence, request } = selectionCommand;
 
     if (
       !isNumber(sequence) ||

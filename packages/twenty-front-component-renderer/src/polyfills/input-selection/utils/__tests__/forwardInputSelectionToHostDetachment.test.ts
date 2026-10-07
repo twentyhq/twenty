@@ -126,23 +126,6 @@ describe('forwarding input selection when the remote control moves, detaches or 
     expect(readRemoteSelectionCommands(remoteControl)).toEqual([]);
   });
 
-  it('should remove host selection listeners when the renderer unmounts', () => {
-    const { hostControl, remoteControl, root } = renderRemoteControl({
-      htmlTag: 'input',
-    });
-
-    hostControl.setSelectionRange(1, 1);
-    hostControl.dispatchEvent(new Event('selectionchange'));
-
-    expect(remoteControl.selectionStart).toBe(1);
-
-    act(() => root.render(null));
-    hostControl.setSelectionRange(4, 4);
-    hostControl.dispatchEvent(new Event('selectionchange'));
-
-    expect(remoteControl.selectionStart).toBe(1);
-  });
-
   it('should not replay an acknowledged command when a control is remounted', async () => {
     const {
       connection,

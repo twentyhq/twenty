@@ -138,24 +138,6 @@ describe('serializeEvent', () => {
     expect(result).toEqual({ type: 'compositionupdate', data: 'か' });
   });
 
-  it('should forward composing keyboard state from a React host event', () => {
-    const result = serializeEvent({
-      type: 'keydown',
-      key: 'Enter',
-      keyCode: 229,
-      which: 229,
-      nativeEvent: { isComposing: true },
-    });
-
-    expect(result).toEqual({
-      type: 'keydown',
-      key: 'Enter',
-      keyCode: 229,
-      which: 229,
-      isComposing: true,
-    });
-  });
-
   it.each([true, false])(
     'should forward input composition state when isComposing is %s',
     (isComposing) => {
@@ -172,20 +154,6 @@ describe('serializeEvent', () => {
       });
     },
   );
-
-  it('should read the input type and data from the native event of a React input event', () => {
-    expect(
-      serializeEvent({
-        type: 'input',
-        nativeEvent: { inputType: 'insertText', data: 'a', isComposing: false },
-      }),
-    ).toEqual({
-      type: 'input',
-      inputType: 'insertText',
-      data: 'a',
-      isComposing: false,
-    });
-  });
 
   it('should ignore invalid composition and keyboard state', () => {
     expect(

@@ -1,14 +1,24 @@
+import { isNumber, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 
 export const syncValuePreservingCaret = ({
   element,
-  nextValue,
+  remoteValue,
 }: {
-  element: CaretPreservingElement;
-  nextValue: string;
+  element: CaretPreservingElement | null;
+  remoteValue: unknown;
 }): boolean => {
+  if (
+    !isDefined(element) ||
+    (!isString(remoteValue) && !isNumber(remoteValue))
+  ) {
+    return false;
+  }
+
+  const nextValue = String(remoteValue);
+
   if (element.value === nextValue) {
     return false;
   }

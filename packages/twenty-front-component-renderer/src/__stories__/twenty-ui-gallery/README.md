@@ -20,35 +20,35 @@ the Dropdown-based popups.
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
 
-| Fixture                          | Components                                                                                                                                                  |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                                          |
-| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)                              |
-| `twenty-ui-autocomplete`         | Autocomplete (inline Home/End, controlled editing, composing confirmation, filtering, disabled state and Empty cleanup; `TwentyUiAutocomplete.stories.tsx`) |
-| `twenty-ui-display-helpers`      | Text                                                                                                                                                        |
-| `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                                           |
-| `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                                            |
-| `twenty-ui-image-input`          | ImageInput                                                                                                                                                  |
-| `twenty-ui-list-item`            | ListItem                                                                                                                                                    |
-| `twenty-ui-settings-row`         | SettingsRow                                                                                                                                                 |
-| `twenty-ui-tabs`                 | Tabs                                                                                                                                                        |
-| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                                             |
-| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                                          |
-| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                                              |
-| `twenty-ui-popover`              | Popover                                                                                                                                                     |
-| `twenty-ui-dialog`               | Dialog                                                                                                                                                      |
-| `twenty-ui-menu`                 | Menu                                                                                                                                                        |
-| `twenty-ui-select`               | Select                                                                                                                                                      |
-| `twenty-ui-dropdown`             | Dropdown                                                                                                                                                    |
-| `twenty-ui-toast`                | Toast                                                                                                                                                       |
-| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                                                 |
-| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                                     |
-| `twenty-ui-checkbox`             | Checkbox                                                                                                                                                    |
-| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                                                       |
-| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                                     |
-| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                                               |
-| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)                         |
-| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                                         |
+| Fixture                          | Components                                                                                                                          |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                  |
+| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)      |
+| `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)    |
+| `twenty-ui-display-helpers`      | Text                                                                                                                                |
+| `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
+| `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
+| `twenty-ui-image-input`          | ImageInput                                                                                                                          |
+| `twenty-ui-list-item`            | ListItem                                                                                                                            |
+| `twenty-ui-settings-row`         | SettingsRow                                                                                                                         |
+| `twenty-ui-tabs`                 | Tabs                                                                                                                                |
+| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                     |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                  |
+| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                      |
+| `twenty-ui-popover`              | Popover                                                                                                                             |
+| `twenty-ui-dialog`               | Dialog                                                                                                                              |
+| `twenty-ui-menu`                 | Menu                                                                                                                                |
+| `twenty-ui-select`               | Select                                                                                                                              |
+| `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
+| `twenty-ui-toast`                | Toast                                                                                                                               |
+| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
+| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
+| `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
+| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
+| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                             |
+| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                       |
+| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                 |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -68,22 +68,11 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
-Input and textarea selection reads combine host snapshots with the component's
-own pending selection commands, which commit with controlled values. Moved
-controls keep their pending commands; controls still detached once the removing
-code finishes discard them and their subscriptions. Input types without text
-selection behave as in a browser. NumberStepper stories verify exactly-once
-stepping, selected-range replacement and continued mid-string editing in both
-runtimes.
-
 The Autocomplete fixture uses the public inline list interface to isolate input
-behavior from popup support. Composition events preserve interim text and defer
-filtering. A composing Enter does not activate an item or submit the form; a later
-ordinary Enter activates the highlighted item once. Popup selection filling the
-input remains part of the portal acceptance. Empty uses worker-local text traversal
-in DOM order and restores its temporary announcement marker on its timer or cleanup.
-The narrow TreeWalker supports SHOW_TEXT, nextNode and currentNode without callback
-filters; document Selection and DOM Range are outside this scope.
+behavior from popup support. Its Empty section runs Base UI's live-region marker
+through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
+currentNode without callback filters; document Selection and DOM Range are
+outside this scope.
 
 ## Known sandbox limitations
 

@@ -29,31 +29,15 @@ describe('installTextTreeWalkerPolyfill', () => {
     expect(walker.nextNode()).toBe(text);
   });
 
-  it.each([
-    'FILTER_ACCEPT',
-    'FILTER_REJECT',
-    'FILTER_SKIP',
-    'SHOW_ALL',
-    'SHOW_ELEMENT',
-    'SHOW_ATTRIBUTE',
-    'SHOW_TEXT',
-    'SHOW_CDATA_SECTION',
-    'SHOW_ENTITY_REFERENCE',
-    'SHOW_ENTITY',
-    'SHOW_PROCESSING_INSTRUCTION',
-    'SHOW_COMMENT',
-    'SHOW_DOCUMENT',
-    'SHOW_DOCUMENT_TYPE',
-    'SHOW_DOCUMENT_FRAGMENT',
-    'SHOW_NOTATION',
-  ] as const)(
-    'should expose the standard NodeFilter.%s constant',
-    (constantName) => {
-      const { nodeFilter } = createPolyfillDocument();
+  it('should expose the standard NodeFilter constants', () => {
+    const { nodeFilter } = createPolyfillDocument();
 
-      expect(nodeFilter[constantName]).toBe(NodeFilter[constantName]);
-    },
-  );
+    expect(Object.keys(nodeFilter)).toHaveLength(16);
+
+    for (const [constantName, constantValue] of Object.entries(nodeFilter)) {
+      expect(constantValue).toBe(Reflect.get(NodeFilter, constantName));
+    }
+  });
 
   it('should reject unsupported node masks and callback filters', () => {
     const { document, nodeFilter } = createPolyfillDocument();

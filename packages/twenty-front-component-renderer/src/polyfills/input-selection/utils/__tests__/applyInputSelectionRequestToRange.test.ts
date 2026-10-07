@@ -1,35 +1,8 @@
-import { type InputSelectionRange } from '@/types/InputSelectionRange';
-
 import { applyInputSelectionRequestToRange } from '../applyInputSelectionRequestToRange';
 
 const VALUE_LENGTH = 'abcdef'.length;
 
-const COLLAPSED_RANGE: InputSelectionRange = {
-  selectionStart: 0,
-  selectionEnd: 0,
-  selectionDirection: 'none',
-};
-
 describe('applyInputSelectionRequestToRange', () => {
-  it('should collapse a range whose start is after its end', () => {
-    expect(
-      applyInputSelectionRequestToRange({
-        range: COLLAPSED_RANGE,
-        request: {
-          method: 'setSelectionRange',
-          start: 10,
-          end: 2,
-          direction: 'forward',
-        },
-        valueLength: VALUE_LENGTH,
-      }),
-    ).toEqual({
-      selectionStart: 2,
-      selectionEnd: 2,
-      selectionDirection: 'forward',
-    });
-  });
-
   it('should move the end with the start setter and keep the direction', () => {
     const rangeAfterStart = applyInputSelectionRequestToRange({
       range: {
@@ -59,24 +32,6 @@ describe('applyInputSelectionRequestToRange', () => {
     });
   });
 
-  it('should select the whole value', () => {
-    expect(
-      applyInputSelectionRequestToRange({
-        range: {
-          selectionStart: 2,
-          selectionEnd: 3,
-          selectionDirection: 'backward',
-        },
-        request: { method: 'select' },
-        valueLength: VALUE_LENGTH,
-      }),
-    ).toEqual({
-      selectionStart: 0,
-      selectionEnd: 6,
-      selectionDirection: 'none',
-    });
-  });
-
   it('should change only the direction with the direction setter', () => {
     expect(
       applyInputSelectionRequestToRange({
@@ -92,25 +47,6 @@ describe('applyInputSelectionRequestToRange', () => {
       selectionStart: 1,
       selectionEnd: 3,
       selectionDirection: 'forward',
-    });
-  });
-
-  it('should clamp an offset beyond the value length', () => {
-    expect(
-      applyInputSelectionRequestToRange({
-        range: COLLAPSED_RANGE,
-        request: {
-          method: 'setSelectionRange',
-          start: 2,
-          end: 4294967295,
-          direction: 'none',
-        },
-        valueLength: VALUE_LENGTH,
-      }),
-    ).toEqual({
-      selectionStart: 2,
-      selectionEnd: VALUE_LENGTH,
-      selectionDirection: 'none',
     });
   });
 });

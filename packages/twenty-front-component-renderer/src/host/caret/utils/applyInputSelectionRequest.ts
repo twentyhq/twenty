@@ -1,5 +1,5 @@
-import { isNull, isNumber, isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNull, isNumber } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { isInputSelectionDirection } from '@/utils/isInputSelectionDirection';
@@ -12,13 +12,11 @@ export const applyInputSelectionRequest = ({
   element: CaretPreservingElement | null;
   request: unknown;
 }): void => {
-  if (!isDefined(element) || !element.isConnected || !isObject(request)) {
+  if (!isDefined(element) || !element.isConnected || !isPlainObject(request)) {
     return;
   }
 
-  const remoteRequest = request as Record<string, unknown>;
-
-  if (remoteRequest.method === 'select') {
+  if (request.method === 'select') {
     element.select();
     return;
   }
@@ -30,32 +28,31 @@ export const applyInputSelectionRequest = ({
   }
 
   if (
-    remoteRequest.method === 'setSelectionRange' &&
-    isNumber(remoteRequest.start) &&
-    isNumber(remoteRequest.end)
+    request.method === 'setSelectionRange' &&
+    isNumber(request.start) &&
+    isNumber(request.end)
   ) {
     element.setSelectionRange(
-      remoteRequest.start,
-      remoteRequest.end,
-      normalizeInputSelectionDirection(remoteRequest.direction),
+      request.start,
+      request.end,
+      normalizeInputSelectionDirection(request.direction),
     );
     return;
   }
 
   if (
-    (remoteRequest.property === 'selectionStart' ||
-      remoteRequest.property === 'selectionEnd') &&
-    (isNumber(remoteRequest.value) || isNull(remoteRequest.value))
+    (request.property === 'selectionStart' ||
+      request.property === 'selectionEnd') &&
+    isNumber(request.value)
   ) {
-    element[remoteRequest.property] = remoteRequest.value;
+    element[request.property] = request.value;
     return;
   }
 
   if (
-    remoteRequest.property === 'selectionDirection' &&
-    (isInputSelectionDirection(remoteRequest.value) ||
-      isNull(remoteRequest.value))
+    request.property === 'selectionDirection' &&
+    isInputSelectionDirection(request.value)
   ) {
-    element.selectionDirection = remoteRequest.value;
+    element.selectionDirection = request.value;
   }
 };

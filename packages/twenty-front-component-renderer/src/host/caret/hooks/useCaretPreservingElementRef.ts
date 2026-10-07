@@ -4,7 +4,7 @@ import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingE
 import { applyNewInputSelectionCommands } from '@/host/caret/utils/applyNewInputSelectionCommands';
 import { createInputSelectionListenerRef } from '@/host/caret/utils/createInputSelectionListenerRef';
 import { createInputSelectionPublisher } from '@/host/caret/utils/createInputSelectionPublisher';
-import { syncRemoteValuePreservingCaret } from '@/host/caret/utils/syncRemoteValuePreservingCaret';
+import { syncValuePreservingCaret } from '@/host/caret/utils/syncValuePreservingCaret';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
 export const useCaretPreservingElementRef = ({
@@ -49,7 +49,7 @@ export const useCaretPreservingElementRef = ({
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    const didWriteValue = syncRemoteValuePreservingCaret({
+    const didWriteValue = syncValuePreservingCaret({
       element: attachedElement,
       remoteValue: value,
     });

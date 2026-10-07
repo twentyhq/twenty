@@ -8,8 +8,6 @@ import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twent
 
 const FRUITS = ['Apple', 'Banana', 'Cherry', 'かき'];
 
-const DEFAULT_EMPTY_ANNOUNCEMENT = 'Try another search.';
-
 const AutocompleteExample = () => {
   const [query, setQuery] = useState('Apple');
   const [changes, setChanges] = useState(0);
@@ -19,8 +17,6 @@ const AutocompleteExample = () => {
   const [selections, setSelections] = useState(0);
   const [isFruitAutocompleteMounted, setIsFruitAutocompleteMounted] =
     useState(true);
-  const [isAnnouncementMounted, setIsAnnouncementMounted] = useState(false);
-  const [announcement, setAnnouncement] = useState(DEFAULT_EMPTY_ANNOUNCEMENT);
 
   return (
     <TwentyUiGalleryCard title="Autocomplete">
@@ -94,30 +90,14 @@ const AutocompleteExample = () => {
             {selectedFruit}; Selections: {selections}
           </Text>
         </form>
-        <Button
-          onClick={() => {
-            setAnnouncement(DEFAULT_EMPTY_ANNOUNCEMENT);
-            setIsAnnouncementMounted(true);
-          }}
-        >
-          Show empty announcement
-        </Button>
-        <Button onClick={() => setAnnouncement('Search updated.')}>
-          Update empty announcement
-        </Button>
-        <Button onClick={() => setIsAnnouncementMounted(false)}>
-          Remove empty announcement
-        </Button>
-        {isAnnouncementMounted && (
-          <Autocomplete.Root inline open items={[]}>
-            <Autocomplete.Empty aria-label="Empty announcement">
-              <Text>
-                No <Text>matching</Text> fruits.
-              </Text>
-              <Text>{announcement}</Text>
-            </Autocomplete.Empty>
-          </Autocomplete.Root>
-        )}
+        <Autocomplete.Root inline open items={[]}>
+          <Autocomplete.Empty aria-label="Empty announcement">
+            <Text>
+              No <Text>matching</Text> fruits.
+            </Text>
+            <Text>Try another search.</Text>
+          </Autocomplete.Empty>
+        </Autocomplete.Root>
       </ThemeProvider>
     </TwentyUiGalleryCard>
   );

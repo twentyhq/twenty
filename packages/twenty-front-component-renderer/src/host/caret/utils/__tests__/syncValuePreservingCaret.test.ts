@@ -11,7 +11,7 @@ describe('syncValuePreservingCaret', () => {
 
     const didWriteValue = syncValuePreservingCaret({
       element: input,
-      nextValue: 'new',
+      remoteValue: 'new',
     });
 
     expect(input.value).toBe('new');
@@ -24,7 +24,7 @@ describe('syncValuePreservingCaret', () => {
 
     const didWriteValue = syncValuePreservingCaret({
       element: input,
-      nextValue: 'same',
+      remoteValue: 'same',
     });
 
     expect(input.value).toBe('same');
@@ -38,7 +38,7 @@ describe('syncValuePreservingCaret', () => {
     input.focus();
     input.setSelectionRange(2, 5, 'backward');
 
-    syncValuePreservingCaret({ element: input, nextValue: 'HELLO world' });
+    syncValuePreservingCaret({ element: input, remoteValue: 'HELLO world' });
 
     expect(input.value).toBe('HELLO world');
     expect(input.selectionStart).toBe(2);

@@ -1,29 +1,22 @@
-import { isNull, isNumber, isObject } from '@sniptt/guards';
+import { isNumber } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 
-import { type InputSelectionState } from '@/types/InputSelectionState';
+import { type InputSelectionRange } from '@/types/InputSelectionRange';
 import { isInputSelectionDirection } from '@/utils/isInputSelectionDirection';
 
 export const readInputSelectionState = (
   target: unknown,
-): InputSelectionState | undefined => {
-  if (!isObject(target)) {
+): InputSelectionRange | undefined => {
+  if (!isPlainObject(target)) {
     return undefined;
   }
 
-  const { selectionStart, selectionEnd, selectionDirection } = target as Record<
-    string,
-    unknown
-  >;
-  const isSelectionStartValid =
-    isNumber(selectionStart) || isNull(selectionStart);
-  const isSelectionEndValid = isNumber(selectionEnd) || isNull(selectionEnd);
-  const isSelectionDirectionValid =
-    isInputSelectionDirection(selectionDirection) || isNull(selectionDirection);
+  const { selectionStart, selectionEnd, selectionDirection } = target;
 
   if (
-    !isSelectionStartValid ||
-    !isSelectionEndValid ||
-    !isSelectionDirectionValid
+    !isNumber(selectionStart) ||
+    !isNumber(selectionEnd) ||
+    !isInputSelectionDirection(selectionDirection)
   ) {
     return undefined;
   }

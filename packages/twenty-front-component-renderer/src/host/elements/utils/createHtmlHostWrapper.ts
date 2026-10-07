@@ -59,7 +59,12 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   const caretPreservingTag = htmlTag as 'input' | 'textarea';
 
-  return ({ children, ...props }: WrapperProps) => {
+  return ({
+    children,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.request]: selectionCommands,
+    [INPUT_SELECTION_BRIDGE_PROPERTIES.update]: onSelectionUpdate,
+    ...props
+  }: WrapperProps) => {
     const {
       setEditableFocused,
       reactBindableProps,
@@ -76,8 +81,8 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     const caretPreservingElementRef = useCaretPreservingElementRef({
       composedElementRef,
       value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
-      selectionCommands: props[INPUT_SELECTION_BRIDGE_PROPERTIES.request],
-      onSelectionUpdate: props[INPUT_SELECTION_BRIDGE_PROPERTIES.update],
+      selectionCommands,
+      onSelectionUpdate,
     });
 
     if (

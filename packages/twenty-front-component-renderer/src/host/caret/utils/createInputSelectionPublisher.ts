@@ -1,8 +1,7 @@
 import { isFunction } from '@sniptt/guards';
 import { type RefObject } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual } from 'twenty-shared/utils';
 
-import { isSameInputSelectionSnapshot } from '@/host/caret/utils/isSameInputSelectionSnapshot';
 import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
 import { readInputSelectionState } from '@/utils/readInputSelectionState';
@@ -11,11 +10,6 @@ const UNSUPPORTED_INPUT_SELECTION_STATE: InputSelectionState = {
   selectionStart: null,
   selectionEnd: null,
   selectionDirection: null,
-};
-
-type InputSelectionPublication = {
-  subscriber: unknown;
-  snapshot: InputSelectionSnapshot;
 };
 
 export const createInputSelectionPublisher = ({
@@ -27,18 +21,8 @@ export const createInputSelectionPublisher = ({
   latestOnSelectionUpdateRef: RefObject<unknown>;
   appliedSelectionSequenceRef: RefObject<number>;
 }) => {
-  let lastPublication: InputSelectionPublication | undefined;
-
-  const isUnchangedSinceLastPublication = ({
-    subscriber,
-    snapshot,
-  }: InputSelectionPublication): boolean =>
-    isDefined(lastPublication) &&
-    lastPublication.subscriber === subscriber &&
-    isSameInputSelectionSnapshot({
-      previousSnapshot: lastPublication.snapshot,
-      nextSnapshot: snapshot,
-    });
+  let lastSubscriber: unknown;
+  let lastSnapshot: InputSelectionSnapshot | undefined;
 
   return ({ shouldSkipUnchanged }: { shouldSkipUnchanged: boolean }) => {
     const subscriber = latestOnSelectionUpdateRef.current;
@@ -55,12 +39,14 @@ export const createInputSelectionPublisher = ({
 
     if (
       shouldSkipUnchanged &&
-      isUnchangedSinceLastPublication({ subscriber, snapshot })
+      subscriber === lastSubscriber &&
+      fastDeepEqual(snapshot, lastSnapshot)
     ) {
       return;
     }
 
-    lastPublication = { subscriber, snapshot };
+    lastSubscriber = subscriber;
+    lastSnapshot = snapshot;
     subscriber(snapshot);
   };
 };

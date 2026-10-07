@@ -45,9 +45,9 @@ export type SerializedEventData = {
   data?: string;
   clipboardText?: string;
   value?: string;
-  selectionStart?: number | null;
-  selectionEnd?: number | null;
-  selectionDirection?: InputSelectionDirection | null;
+  selectionStart?: number;
+  selectionEnd?: number;
+  selectionDirection?: InputSelectionDirection;
   checked?: boolean;
   selectedOptionIndexes?: number[];
   scrollTop?: number;

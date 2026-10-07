@@ -18,8 +18,7 @@ import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapp
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
-
-type TextControl = HTMLInputElement | HTMLTextAreaElement;
+import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 
 export const createRemoteTextControlRenderer = () => {
   const mountedRoots: Root[] = [];
@@ -43,7 +42,7 @@ export const createRemoteTextControlRenderer = () => {
     ) as RemoteRootElement;
     const remoteControl = document.createElement(
       `html-${htmlTag}`,
-    ) as unknown as TextControl;
+    ) as unknown as CaretPreservingElement;
     const remoteSibling = document.createElement(
       'html-div',
     ) as unknown as HTMLElement;
@@ -101,7 +100,9 @@ export const createRemoteTextControlRenderer = () => {
       );
     });
 
-    const hostControl = container.querySelector(htmlTag) as TextControl;
+    const hostControl = container.querySelector(
+      htmlTag,
+    ) as CaretPreservingElement;
 
     scheduleBatch.mockClear();
 
@@ -112,7 +113,6 @@ export const createRemoteTextControlRenderer = () => {
       remoteControl,
       remoteRoot,
       remoteSibling,
-      root,
       scheduleBatch,
       selectionStore,
     };

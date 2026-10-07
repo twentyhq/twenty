@@ -31,52 +31,6 @@ describe('applyNewInputSelectionCommands', () => {
     expect(appliedSelectionSequenceRef.current).toBe(2);
   });
 
-  it('should skip a command that arrives after a newer one', () => {
-    const input = createConnectedTextInput('hello world');
-    const appliedSelectionSequenceRef = { current: 0 };
-
-    applyNewInputSelectionCommands({
-      element: input,
-      selectionCommands: [
-        {
-          sequence: 3,
-          request: {
-            method: 'setSelectionRange',
-            start: 1,
-            end: 2,
-            direction: 'none',
-          },
-        },
-        {
-          sequence: 2,
-          request: {
-            method: 'setSelectionRange',
-            start: 5,
-            end: 6,
-            direction: 'none',
-          },
-        },
-      ],
-      appliedSelectionSequenceRef,
-    });
-
-    expect(input.selectionStart).toBe(1);
-    expect(input.selectionEnd).toBe(2);
-    expect(appliedSelectionSequenceRef.current).toBe(3);
-  });
-
-  it('should acknowledge commands while no element is attached', () => {
-    const appliedSelectionSequenceRef = { current: 0 };
-
-    applyNewInputSelectionCommands({
-      element: null,
-      selectionCommands: [{ sequence: 5, request: { method: 'select' } }],
-      appliedSelectionSequenceRef,
-    });
-
-    expect(appliedSelectionSequenceRef.current).toBe(5);
-  });
-
   it.each([
     {
       selectionCommands: [

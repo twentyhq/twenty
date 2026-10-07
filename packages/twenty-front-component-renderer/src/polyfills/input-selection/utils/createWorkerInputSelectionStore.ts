@@ -2,11 +2,11 @@ import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
-import { type InputSelectionUpdateListener } from '@/polyfills/input-selection/types/InputSelectionUpdateListener';
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
 import { createInputSelectionCommandQueue } from '@/polyfills/input-selection/utils/createInputSelectionCommandQueue';
 import { resolveOptimisticInputSelectionState } from '@/polyfills/input-selection/utils/resolveOptimisticInputSelectionState';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
+import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
 
 export const createWorkerInputSelectionStore =
@@ -15,7 +15,7 @@ export const createWorkerInputSelectionStore =
     const hostSelectionStates = new WeakMap<object, InputSelectionState>();
     const hostSelectionSubscriptions = new WeakMap<
       object,
-      InputSelectionUpdateListener
+      (snapshot: InputSelectionSnapshot) => void
     >();
     const trackedElements = new Set<object>();
 
@@ -23,9 +23,7 @@ export const createWorkerInputSelectionStore =
     let hasScheduledDetachedElementSweep = false;
 
     const renewHostSelectionSubscription = (element: object): void => {
-      const handleSelectionUpdate: InputSelectionUpdateListener = (
-        snapshot,
-      ) => {
+      const handleSelectionUpdate = (snapshot: InputSelectionSnapshot) => {
         const isLatestSubscription =
           hostSelectionSubscriptions.get(element) === handleSelectionUpdate;
 
@@ -52,18 +50,18 @@ export const createWorkerInputSelectionStore =
       );
     };
 
-    const subscribeToHostSelection = (element: object): void => {
+    const subscribeToHostSelection = (element: object): boolean => {
       if (!isElementUnderRemoteRoot(element, rootElement)) {
-        return;
+        return false;
       }
 
       trackedElements.add(element);
 
-      if (hostSelectionSubscriptions.has(element)) {
-        return;
+      if (!hostSelectionSubscriptions.has(element)) {
+        renewHostSelectionSubscription(element);
       }
 
-      renewHostSelectionSubscription(element);
+      return true;
     };
 
     const forgetDetachedElement = (element: object): void => {
@@ -128,11 +126,10 @@ export const createWorkerInputSelectionStore =
       element: object;
       request: InputSelectionRequest;
     }): void => {
-      if (!isElementUnderRemoteRoot(element, rootElement)) {
+      if (!subscribeToHostSelection(element)) {
         return;
       }
 
-      subscribeToHostSelection(element);
       commandQueue.enqueueCommand({ element, request });
     };
 

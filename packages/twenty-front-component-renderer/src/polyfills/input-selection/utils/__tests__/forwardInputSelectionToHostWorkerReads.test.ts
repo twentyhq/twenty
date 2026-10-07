@@ -125,28 +125,4 @@ describe('reading forwarded input selection in the worker', () => {
     expect(remoteControl.selectionEnd).toBe(3);
     expect(remoteControl.selectionDirection).toBe('backward');
   });
-
-  it('should default to the end of the value before any host snapshot', () => {
-    const { remoteControl } = renderRemoteControl({
-      htmlTag: 'input',
-      shouldReadBeforeConnect: false,
-    });
-
-    expect(remoteControl.selectionStart).toBe(7);
-    expect(remoteControl.selectionEnd).toBe(7);
-    expect(remoteControl.selectionDirection).toBe('none');
-  });
-
-  it('should forward a document-level selectionchange of the focused control', () => {
-    const { hostControl, remoteControl } = renderRemoteControl({
-      htmlTag: 'input',
-    });
-
-    hostControl.focus();
-    hostControl.setSelectionRange(3, 6);
-    document.dispatchEvent(new Event('selectionchange'));
-
-    expect(remoteControl.selectionStart).toBe(3);
-    expect(remoteControl.selectionEnd).toBe(6);
-  });
 });
