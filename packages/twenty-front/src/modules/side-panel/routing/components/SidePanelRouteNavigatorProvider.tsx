@@ -1,3 +1,4 @@
+import { AppNavigatorContext } from '@/app/contexts/AppNavigatorContext';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -114,7 +115,9 @@ export const SidePanelRouteNavigatorProvider = ({
 
   return (
     <UNSAFE_NavigationContext.Provider value={navigationContextValue}>
-      {children}
+      <AppNavigatorContext.Provider value={navigator}>
+        {children}
+      </AppNavigatorContext.Provider>
     </UNSAFE_NavigationContext.Provider>
   );
 };
