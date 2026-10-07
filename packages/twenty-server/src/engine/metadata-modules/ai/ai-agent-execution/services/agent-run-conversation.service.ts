@@ -241,7 +241,7 @@ export class AgentRunConversationService {
     }
 
     if (isAwaitingAnswer) {
-      await this.recordWaitingActivity({
+      await this.recordThreadActivitySafely({
         workspaceId,
         threadId,
         text: findLastMessageText(replyParts) ?? title,
@@ -294,7 +294,7 @@ export class AgentRunConversationService {
       return;
     }
 
-    await this.recordWaitingActivity({
+    await this.recordThreadActivitySafely({
       workspaceId,
       threadId,
       text: failure.message,
@@ -304,7 +304,7 @@ export class AgentRunConversationService {
 
   // the waiting call or the failure is already saved and shows in the conversation, so a
   // failure to bring it back to the inbox must not fail the run
-  private async recordWaitingActivity(args: {
+  private async recordThreadActivitySafely(args: {
     workspaceId: string;
     threadId: string;
     text: string;
@@ -314,7 +314,7 @@ export class AgentRunConversationService {
       .recordThreadActivity(args)
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not record waiting activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+          `Could not record activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
         ),
       );
   }

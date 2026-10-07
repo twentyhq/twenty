@@ -267,8 +267,6 @@ export class SeedDefaultAgentChatChannelsCommand extends ProvisionedWorkspaceCom
     return channelObject.id;
   }
 
-  // Everyone with AI access joins General; the members whose role manages
-  // every setting also join System
   private async findDefaultMemberIds(
     workspaceId: string,
   ): Promise<Record<DefaultChannel['kind'], string[]>> {
