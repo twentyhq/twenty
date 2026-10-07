@@ -71,6 +71,7 @@ const meta: Meta<typeof MultiWorkspaceDropdownButton> = {
       frontDomain: 'example.com',
       defaultSubdomain: 'app',
       publicFunctionDomain: undefined,
+      serverUrl: 'https://api.example.com',
     });
     jotaiStore.set(availableWorkspacesState.atom, {
       availableWorkspacesForSignIn: AVAILABLE_WORKSPACES,
