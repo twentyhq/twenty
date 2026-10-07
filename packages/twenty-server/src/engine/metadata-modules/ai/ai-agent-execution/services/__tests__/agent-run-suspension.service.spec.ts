@@ -28,7 +28,7 @@ const buildService = () => {
   const service = new AgentRunSuspensionService(
     { delete: jest.fn().mockResolvedValue(undefined) } as never,
     { findOne: jest.fn().mockResolvedValue(null) } as never,
-    { query: jest.fn().mockResolvedValue(undefined) } as never,
+    { query: jest.fn().mockResolvedValue([]) } as never,
     {} as never,
     {} as never,
     { cancel: jest.fn().mockResolvedValue(undefined) } as never,

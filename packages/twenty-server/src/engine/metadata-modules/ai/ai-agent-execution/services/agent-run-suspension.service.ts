@@ -26,6 +26,7 @@ import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/u
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
@@ -46,6 +47,7 @@ export class AgentRunSuspensionService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     @InjectMessageQueue(MessageQueue.aiQueue)

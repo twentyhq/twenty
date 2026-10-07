@@ -4,6 +4,7 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 const buildService = ({
   pendingQuestionMessageId = 'question-message-id' as string | null,
   isAwaitedByCaller = true,
+  waitMessageIds = [] as string[],
 } = {}) => {
   const threadRepository = {
     findOne: jest
@@ -15,7 +16,7 @@ const buildService = ({
       ),
   };
   const messagePartRepository = {
-    query: jest.fn().mockResolvedValue(undefined),
+    query: jest.fn().mockResolvedValue(waitMessageIds.map((id) => ({ id }))),
     find: jest.fn().mockResolvedValue([
       {
         toolOutput: {
@@ -28,18 +29,22 @@ const buildService = ({
   const threadLifecycleService = {
     closePendingQuestion: jest.fn().mockResolvedValue(undefined),
   };
+  const turnRecorderService = {
+    endWaitingTurn: jest.fn().mockResolvedValue(undefined),
+  };
 
   const service = new AgentRunSuspensionService(
     {} as never,
     threadRepository as never,
     messagePartRepository as never,
     threadLifecycleService as never,
+    turnRecorderService as never,
     {} as never,
     {} as never,
     {} as never,
   );
 
-  return { service, threadLifecycleService };
+  return { service, threadLifecycleService, turnRecorderService };
 };
 
 describe('AgentRunSuspensionService closeAwaitedCalls', () => {
@@ -51,12 +56,34 @@ describe('AgentRunSuspensionService closeAwaitedCalls', () => {
       threadId: 'thread-id',
     });
 
+    expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledTimes(
+      1,
+    );
     expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       messageId: 'question-message-id',
       activeStreamId: null,
       turnStatus: AgentTurnStatus.CANCELLED,
+    });
+  });
+
+  it('cancels the turn of a wait the dropped run was suspended on', async () => {
+    const { service, turnRecorderService } = buildService({
+      pendingQuestionMessageId: null,
+      waitMessageIds: ['wait-message-id'],
+    });
+
+    await service.closeAwaitedCalls({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+    });
+
+    expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledTimes(1);
+    expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      messageId: 'wait-message-id',
+      status: AgentTurnStatus.CANCELLED,
     });
   });
 
