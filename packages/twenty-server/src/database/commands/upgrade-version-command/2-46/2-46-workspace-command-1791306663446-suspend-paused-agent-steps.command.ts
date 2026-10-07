@@ -6,18 +6,20 @@ import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-h
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import {
+  buildPausedAgentStepRunSpec,
+  type PausedAgentStepDefinition,
+} from 'src/database/commands/upgrade-version-command/2-46/suspend-paused-agent-steps-run-spec.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
-import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type PausedAgentStep = {
   workflowRunId: string;
   stepId: string;
   threadId: string;
-  step: WorkflowAiAgentAction;
+  step: PausedAgentStepDefinition;
   applicationId: string | null;
   summary: object | null;
 };
@@ -137,7 +139,7 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
                 },
               }),
               JSON.stringify(
-                buildWorkflowAgentRunSpec({
+                buildPausedAgentStepRunSpec({
                   step: pausedStep.step,
                   isApplicationBound: isDefined(pausedStep.applicationId),
                 }),
