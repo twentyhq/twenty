@@ -11,7 +11,7 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { normalizeSearchText, useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,7 +22,6 @@ import { useContext } from 'react';
 import { IconCode, IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const useCommandMenuAppActions = () => {
   const { t } = useLingui();

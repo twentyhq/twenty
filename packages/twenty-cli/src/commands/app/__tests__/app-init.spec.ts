@@ -14,23 +14,18 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { TEMPLATE_PACKAGE_VERSION } from '@create-twenty-app/constants/template-package-version';
 import { isDefined } from 'twenty-shared/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-package-version.constant';
 import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
-import { getAppTemplateOverlayDirectory } from '@/app/get-app-template-overlay-directory';
 
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: vi.fn(),
-}));
-
-vi.mock('@/app/get-app-template-overlay-directory', () => ({
-  getAppTemplateOverlayDirectory: vi.fn(),
 }));
 
 vi.mock('node:fs/promises', async (importOriginal) => {
@@ -40,14 +35,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 });
 
 const TEMPLATE_DIRECTORY = fileURLToPath(
-  new URL(
-    '../../../../../create-twenty-app/src/constants/template',
-    import.meta.url,
-  ),
-);
-
-const TEMPLATE_OVERLAY_DIRECTORY = fileURLToPath(
-  new URL('../../../../app-template-overlay', import.meta.url),
+  new URL('../../../../app-template', import.meta.url),
 );
 
 const UUID_PATTERN =
@@ -79,9 +67,6 @@ describe('app init', () => {
     await mkdir(join(root, 'home'));
     await mkdir(workDirectory);
     vi.mocked(getAppTemplateDirectory).mockReturnValue(TEMPLATE_DIRECTORY);
-    vi.mocked(getAppTemplateOverlayDirectory).mockReturnValue(
-      TEMPLATE_OVERLAY_DIRECTORY,
-    );
     vi.stubEnv('HOME', join(root, 'home'));
     vi.stubEnv('TWENTY_API_KEY', '');
     vi.stubEnv('TWENTY_API_URL', '');
@@ -119,13 +104,13 @@ describe('app init', () => {
       engines: {
         node: '^24.5.0',
         npm: 'please-use-yarn',
-        twenty: `>=${TEMPLATE_PACKAGE_VERSION}`,
+        twenty: `>=${APP_TEMPLATE_PACKAGE_VERSION}`,
         yarn: '>=4.0.2',
       },
       devDependencies: {
-        'twenty-client-sdk': TEMPLATE_PACKAGE_VERSION,
-        'twenty-sdk': TEMPLATE_PACKAGE_VERSION,
-        'twenty-ui': TEMPLATE_PACKAGE_VERSION,
+        'twenty-client-sdk': APP_TEMPLATE_PACKAGE_VERSION,
+        'twenty-sdk': APP_TEMPLATE_PACKAGE_VERSION,
+        'twenty-ui': APP_TEMPLATE_PACKAGE_VERSION,
       },
     });
 
@@ -168,7 +153,7 @@ describe('app init', () => {
     expect(globalSetup).not.toContain('twenty-sdk/cli');
     expect(await readFile(join(testsDirectory, 'run-twenty.ts'), 'utf8')).toBe(
       await readFile(
-        join(TEMPLATE_OVERLAY_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
+        join(TEMPLATE_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
         'utf8',
       ),
     );
@@ -202,9 +187,9 @@ describe('app init', () => {
         path: appDirectory,
       },
       packages: [
-        { name: 'twenty-client-sdk', version: TEMPLATE_PACKAGE_VERSION },
-        { name: 'twenty-sdk', version: TEMPLATE_PACKAGE_VERSION },
-        { name: 'twenty-ui', version: TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-client-sdk', version: APP_TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-sdk', version: APP_TEMPLATE_PACKAGE_VERSION },
+        { name: 'twenty-ui', version: APP_TEMPLATE_PACKAGE_VERSION },
       ],
       nextSteps: [
         { command: 'cd apps/billing', description: 'Enter the new app' },
