@@ -143,12 +143,13 @@ describe('SsoAuthController', () => {
     expect(response.redirect).toHaveBeenCalledWith('https://redirect');
   });
 
-  it('marks an existing unverified user as verified after an SSO sign-in', async () => {
+  it('marks an existing password-less unverified user as verified after an SSO sign-in', async () => {
     const existingUser = {
       id: 'existing-user-id',
       email: EMAIL,
       isEmailVerified: false,
-    } as UserEntity;
+      passwordHash: null,
+    } as unknown as UserEntity;
 
     userService.findUserByEmail.mockResolvedValue(existingUser);
     authService.signInUp.mockResolvedValue({
@@ -164,6 +165,25 @@ describe('SsoAuthController', () => {
       existingUser.id,
     );
     expect(response.redirect).toHaveBeenCalledWith('https://redirect');
+  });
+
+  it('does not mark an existing unverified user who has a password', async () => {
+    const existingUser = {
+      id: 'existing-user-id',
+      email: EMAIL,
+      isEmailVerified: false,
+      passwordHash: 'password-hash',
+    } as UserEntity;
+
+    userService.findUserByEmail.mockResolvedValue(existingUser);
+    authService.signInUp.mockResolvedValue({
+      workspace,
+      user: existingUser,
+    } as Awaited<ReturnType<AuthService['signInUp']>>);
+
+    await controller.samlAuthCallback(buildSamlRequest(), buildResponse());
+
+    expect(userService.markEmailAsVerified).not.toHaveBeenCalled();
   });
 
   it('does not touch an existing user whose email is already verified', async () => {
