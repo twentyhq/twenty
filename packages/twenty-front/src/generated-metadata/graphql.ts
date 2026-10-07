@@ -6160,6 +6160,7 @@ export enum RunAgentMessageRole {
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
+  isWaiting: Scalars['Boolean']['output'];
   result?: Maybe<Scalars['JSON']['output']>;
   success: Scalars['Boolean']['output'];
   threadId?: Maybe<Scalars['UUID']['output']>;
