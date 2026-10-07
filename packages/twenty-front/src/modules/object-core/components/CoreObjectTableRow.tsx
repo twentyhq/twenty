@@ -20,6 +20,7 @@ const StyledCoreObjectTableHeaderRow = styled(TableRow)`
   > [data-table-header] {
     color: ${themeCssVariables.font.color.secondary};
     font-size: ${themeCssVariables.font.size.sm};
+    height: ${themeCssVariables.spacing[10]};
   }
 `;
 
