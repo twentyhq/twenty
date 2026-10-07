@@ -9,20 +9,13 @@ import { CommonResultGettersService } from 'src/engine/api/common/common-result-
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
-import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
-import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -32,25 +25,18 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceQueryHookModule,
-    WorkspaceQueryRunnerModule,
-    PermissionsModule,
     TypeOrmModule.forFeature([RoleTargetEntity]),
-    UserRoleModule,
-    ApiKeyModule,
     FileModule,
     ViewModule,
     ViewFilterModule,
     ViewFilterGroupModule,
-    ThrottlerModule,
     UsageLimitModule,
     UsageModule,
     MetricsModule,
     RecordPositionModule,
     RecordShareModule,
     RecordTransformerModule,
-    FeatureFlagModule,
     WorkspaceCacheModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
