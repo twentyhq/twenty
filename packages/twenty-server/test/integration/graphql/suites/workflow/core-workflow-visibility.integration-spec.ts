@@ -19,6 +19,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -677,6 +678,64 @@ describe('core workflow visibility (e2e)', () => {
           APPLE_JANE_ADMIN_ACCESS_TOKEN,
         ),
       ).toContain(manualWorkspaceWorkflowVersionId);
+    });
+
+    it('takes out an item that only carries the core version id', async () => {
+      const [{ coreWorkflowVersionId: manualCoreWorkflowVersionId }] =
+        await global.testDataSource.query(
+          `SELECT "coreWorkflowVersionId" FROM core."commandMenuItem"
+           WHERE "workspaceId" = $1 AND "workflowVersionId" = $2`,
+          [SEED_APPLE_WORKSPACE_ID, manualWorkspaceWorkflowVersionId],
+        );
+
+      const setItemWorkflowVersionId = async (
+        from: string | null,
+        to: string | null,
+      ) => {
+        await global.testDataSource.query(
+          `UPDATE core."commandMenuItem" SET "workflowVersionId" = $3
+           WHERE "workspaceId" = $1 AND "coreWorkflowVersionId" = $2
+             AND "workflowVersionId" IS NOT DISTINCT FROM $4`,
+          [SEED_APPLE_WORKSPACE_ID, manualCoreWorkflowVersionId, to, from],
+        );
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'flatCommandMenuItemMaps',
+        ]);
+      };
+
+      const listCommandMenuItemCoreWorkflowVersionIds = async (
+        token: string,
+      ) => {
+        const { data } = await findCommandMenuItems({
+          expectToFail: false,
+          gqlFields: 'id coreWorkflowVersionId',
+          input: undefined,
+          token,
+        });
+
+        return data.commandMenuItems.map(
+          ({ coreWorkflowVersionId }) => coreWorkflowVersionId,
+        );
+      };
+
+      await setItemWorkflowVersionId(manualWorkspaceWorkflowVersionId, null);
+
+      try {
+        expect(
+          await listCommandMenuItemCoreWorkflowVersionIds(
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).not.toContain(manualCoreWorkflowVersionId);
+        expect(
+          await listCommandMenuItemCoreWorkflowVersionIds(
+            APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          ),
+        ).toContain(manualCoreWorkflowVersionId);
+      } finally {
+        await setItemWorkflowVersionId(null, manualWorkspaceWorkflowVersionId);
+      }
     });
   });
 
