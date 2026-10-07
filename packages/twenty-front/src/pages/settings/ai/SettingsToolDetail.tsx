@@ -11,7 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -19,7 +19,6 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useTheme } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   GetToolIndexDocument,
@@ -32,7 +31,6 @@ const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
 export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
-  const theme = useTheme();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
@@ -201,18 +199,12 @@ export const SettingsToolDetail = () => {
     >
       <SettingsPageContainer>
         {loading ? (
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Section.Root>
-              <Skeleton height={20} width={200} />
-              <Skeleton height={20} width={400} />
+          <Section.Root>
+            <Skeleton height={20} width={200} />
+            <Skeleton height={20} width={400} />
 
-              <Skeleton height={80} />
-            </Section.Root>
-          </SkeletonTheme>
+            <Skeleton height={80} />
+          </Section.Root>
         ) : (
           <>
             <Section.Root>

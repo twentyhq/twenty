@@ -1,13 +1,12 @@
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 
-const StyledStaticCellSkeleton = styled.div`
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
+const StyledCellSkeleton = styled(Skeleton)`
+  display: block;
   margin: 8px;
-  padding: 8px;
+  width: calc(100% - 16px);
 `;
 
 export const RecordTableCellLoading = ({
@@ -22,7 +21,7 @@ export const RecordTableCellLoading = ({
       widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
       isSelected={isSelected}
     >
-      <StyledStaticCellSkeleton />
+      <StyledCellSkeleton animated={false} height={16} />
     </RecordTableCellStyleWrapper>
   );
 };

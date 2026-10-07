@@ -1,7 +1,6 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -34,33 +33,17 @@ const SKELETON_ROWS = [
 ];
 
 export const SettingsMessageFoldersSkeletonLoader = () => {
-  const theme = useTheme();
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonContainer>
-        {SKELETON_ROWS.map((row, index) => (
-          <StyledSkeletonRow key={index}>
-            <StyledSkeletonFolderInfo>
-              <Skeleton
-                width={20}
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-              />
-              <Skeleton
-                width={row.width}
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-              />
-            </StyledSkeletonFolderInfo>
-            <Skeleton
-              width={16}
-              height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-            />
-          </StyledSkeletonRow>
-        ))}
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
+    <StyledSkeletonContainer>
+      {SKELETON_ROWS.map((row, index) => (
+        <StyledSkeletonRow key={index}>
+          <StyledSkeletonFolderInfo>
+            <Skeleton width={20} height={16} />
+            <Skeleton width={row.width} height={16} />
+          </StyledSkeletonFolderInfo>
+          <Skeleton width={16} height={16} />
+        </StyledSkeletonRow>
+      ))}
+    </StyledSkeletonContainer>
   );
 };

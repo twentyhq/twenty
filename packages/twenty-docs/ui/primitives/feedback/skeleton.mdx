@@ -1,0 +1,49 @@
+---
+title: Skeleton
+description: Show themed placeholder shapes while content loads.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+`Skeleton` provides a placeholder shape with theme colors and a moving highlight. Compose shapes in the layout of the content being loaded. The application owns loading state, row counts and feature-specific layouts.
+
+<StoryEmbed storyId="ui-feedback-skeleton--shapes" title="Skeleton shapes" />
+
+## Usage
+
+```tsx
+import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text render={<div />} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <Skeleton width={180} height={16} />
+      <Skeleton width={120} height={13} />
+    </Text>
+  </Text>
+);
+```
+
+Numeric dimensions use pixels. CSS lengths such as percentages and `em` are also supported. Without dimensions, the placeholder fills the available width and is one em tall. Use equal dimensions and `borderRadius="50%"` for a circle.
+
+## Motion and accessibility
+
+Skeletons are decorative and have `aria-hidden="true"` by default. Keep loading announcements in a host-owned status region instead of announcing each shape. Skeleton does not accept children.
+
+The moving highlight follows text direction and stops when the user prefers reduced motion. Pass `animated={false}` for a static placeholder.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="Static skeleton" />
+
+## Composition and theme
+
+Native props, `className`, `style` and `ref` target the placeholder span. Use `render` to compose another element. Explicit native styles override dimension and color props.
+
+Default colors and corner radius follow the current CSS theme, including scoped themes. `baseColor` and `highlightColor` support local color overrides. No skeleton-specific provider or stylesheet import is needed after loading `twenty-ui/style.css` and the UI theme.
+
+## Props
+
+<SkeletonReference />

@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
@@ -61,16 +60,11 @@ export const LeftPanelSkeletonLoader = () => {
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
-          <SkeletonTheme
-            baseColor={theme.background.quaternary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton
-              width={96}
-              height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-            />
-          </SkeletonTheme>
+          <Skeleton
+            width={96}
+            height={16}
+            baseColor={themeCssVariables.background.quaternary}
+          />
         </StyledSkeletonTitleContainer>
         <StyledSkeletonContainer>
           <MainNavigationDrawerItemsSkeletonLoader length={3} />

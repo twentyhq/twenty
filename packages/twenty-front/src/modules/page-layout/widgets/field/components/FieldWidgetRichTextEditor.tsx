@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -6,9 +5,9 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { isUndefined } from '@sniptt/guards';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const RichTextFieldEditor = lazy(() =>
   import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
@@ -41,16 +40,9 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  const theme = useTheme();
   return (
     <StyledSkeletonContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={themeCssVariables.border.radius.md}
-      >
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-      </SkeletonTheme>
+      <Skeleton height={16} borderRadius={themeCssVariables.border.radius.md} />
     </StyledSkeletonContainer>
   );
 };

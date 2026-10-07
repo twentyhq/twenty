@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RECORD_BOARD_COLUMN_PADDING_AND_BORDER_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnPaddingAndBorderWidth';
 
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
@@ -28,8 +27,7 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 const BOARD_CARD_HEADER_HEIGHT = 32 + 8 + 4;
 
 // Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
-const BOARD_CARD_FIELD_ROW_HEIGHT =
-  SKELETON_LOADER_HEIGHT_SIZES.standard.s + 8 + 2;
+const BOARD_CARD_FIELD_ROW_HEIGHT = 16 + 8 + 2;
 
 // StyledBodyContainer padding (4+4) + card border (2×1px) + StyledSkeletonCardContainer margin-bottom spacing(2)
 const BOARD_CARD_CHROME_HEIGHT = 8 + 2 + 8;

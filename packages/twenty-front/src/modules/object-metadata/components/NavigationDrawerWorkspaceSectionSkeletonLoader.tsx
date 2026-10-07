@@ -1,8 +1,7 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitleSkeleton = styled.div`
@@ -30,32 +29,30 @@ const fillSkeletonContainer = css`
 export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
   return (
     <NavigationDrawerSection>
-      <SkeletonTheme
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.light}
-        borderRadius={4}
-      >
-        <StyledTitleSkeleton>
-          <Skeleton
-            width={72}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.xs}
-          />
-        </StyledTitleSkeleton>
-        <StyledRowsContainer>
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-        </StyledRowsContainer>
-      </SkeletonTheme>
+      <StyledTitleSkeleton>
+        <Skeleton
+          width={72}
+          height={13}
+          highlightColor={themeCssVariables.background.transparent.light}
+        />
+      </StyledTitleSkeleton>
+      <StyledRowsContainer>
+        <Skeleton
+          className={fillSkeletonContainer}
+          height={16}
+          highlightColor={themeCssVariables.background.transparent.light}
+        />
+        <Skeleton
+          className={fillSkeletonContainer}
+          height={16}
+          highlightColor={themeCssVariables.background.transparent.light}
+        />
+        <Skeleton
+          className={fillSkeletonContainer}
+          height={16}
+          highlightColor={themeCssVariables.background.transparent.light}
+        />
+      </StyledRowsContainer>
     </NavigationDrawerSection>
   );
 };

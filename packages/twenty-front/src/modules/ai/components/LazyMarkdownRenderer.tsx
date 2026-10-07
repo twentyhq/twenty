@@ -1,4 +1,3 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
   StyledMarkdownContainer,
   StyledSkeletonContainer,
@@ -8,24 +7,13 @@ import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBl
 import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
 import { memo, Suspense, useRef } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from 'twenty-ui/theme';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 
 export const MarkdownLoadingSkeleton = () => {
-  const theme = useTheme();
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={theme.border.radius.sm}
-    >
-      <StyledSkeletonContainer>
-        <Skeleton
-          width={200}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
+    <StyledSkeletonContainer>
+      <Skeleton width={200} height={16} />
+    </StyledSkeletonContainer>
   );
 };
 

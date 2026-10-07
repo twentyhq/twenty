@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
-import { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -26,16 +25,7 @@ const StyledBodyContainer = styled.div`
   padding-top: 4px;
 `;
 
-const StyledStaticCellSkeleton = styled.div<{ width: number; height: number }>`
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-
-  height: ${({ height }) => height}px;
-  width: ${({ width }) => width}px;
-`;
-
 export const RecordBoardColumnCardContainerSkeletonLoader = () => {
-  const theme = useTheme();
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
@@ -55,14 +45,15 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
   const titleSkeletonWidth = isCompactModeActive ? 72 : 54;
 
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={2}
-    >
+    <>
       <RecordCardHeaderContainer isCompact={isCompactModeActive}>
         <StyledSkeletonTitle>
-          <StyledStaticCellSkeleton width={titleSkeletonWidth} height={12} />
+          <Skeleton
+            animated={false}
+            width={titleSkeletonWidth}
+            height={12}
+            style={{ display: 'block' }}
+          />
         </StyledSkeletonTitle>
       </RecordCardHeaderContainer>
       <StyledBodyContainer>
@@ -70,18 +61,12 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
           skeletonItems.map(({ id }) => (
             <RecordCardBodyContainer key={id}>
               <StyledSkeletonIconAndText>
-                <StyledStaticCellSkeleton
-                  width={16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                />
-                <StyledStaticCellSkeleton
-                  width={151}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                />
+                <Skeleton animated={false} width={16} height={16} />
+                <Skeleton animated={false} width={151} height={16} />
               </StyledSkeletonIconAndText>
             </RecordCardBodyContainer>
           ))}
       </StyledBodyContainer>
-    </SkeletonTheme>
+    </>
   );
 };

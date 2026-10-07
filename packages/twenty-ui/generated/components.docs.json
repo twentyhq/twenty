@@ -676,6 +676,90 @@
     ]
   },
   {
+    "name": "Skeleton",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/skeleton",
+    "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Animate the highlight by default. Reduced-motion preferences always disable animation."
+      },
+      {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholders are decorative and hidden from assistive technology by default. The host owns loading announcements."
+      },
+      {
+        "name": "baseColor",
+        "type": "BackgroundColor",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder background color. Defaults to the tertiary theme background."
+      },
+      {
+        "name": "borderRadius",
+        "type": "BorderRadius<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Corner radius in pixels or a CSS length. Defaults to the small theme radius. Use 50% with equal dimensions for a circle."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class merged with the placeholder class."
+      },
+      {
+        "name": "height",
+        "type": "Height<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder height in pixels or a CSS length. Defaults to one em."
+      },
+      {
+        "name": "highlightColor",
+        "type": "BackgroundColor",
+        "required": false,
+        "defaultValue": null,
+        "description": "Animated highlight color. Defaults to the lighter transparent theme background."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLSpanElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the placeholder span, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the placeholder dimensions and colors. Explicit styles win."
+      },
+      {
+        "name": "width",
+        "type": "Width<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width."
+      }
+    ]
+  },
+  {
     "name": "ProgressBar",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/progress-bar",

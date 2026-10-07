@@ -9,7 +9,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import Skeleton from 'react-loading-skeleton';
+import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
