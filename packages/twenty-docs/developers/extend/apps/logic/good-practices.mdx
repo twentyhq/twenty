@@ -4,11 +4,9 @@ description: How to develop an app that works and scales well across many worksp
 icon: "gauge-high"
 ---
 
-## The application API rate limit
+## Application API rate limit
 
-The Twenty API accepts **500 requests per minute per application registration**. The limit is enforced at the server level and shared by every workspace that has installed the app: all installs draw on the same budget. A request beyond the limit is refused with a `429`.
-
-Everything an app does is therefore multiplied by its number of installs. A cron trigger makes this visible: the pattern is evaluated per workspace, so every install starts a run at the same minute, and all of those runs call the same budget.
+The Twenty API accepts **500 requests per minute per application registration**, shared by every workspace that installed the app. Requests beyond that are refused with a `429`. A cron trigger starts in every workspace at the same minute, so every install draws on this budget at once:
 
 ```text
    pattern "0 3 * * *"                  the server, every minute
@@ -24,30 +22,12 @@ Everything an app does is therefore multiplied by its number of installs. A cron
                                    N × calls  →  429
 ```
 
-The same applies to database event triggers: a bulk write such as a mailbox sync emits one event per record, and one API call per event drains the budget within seconds.
-
 ## How to deal with it
 
-1. **Batch database event triggers.** Set `batchMode: true` so up to 200 events arrive in one run, and declare `updatedFields` so unrelated updates never start a run. Reduce the batch to the distinct records it touches before the first API call. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
-
-2. **Make one request per batch, not per record.** The limit counts requests, not records. Read with `in` filters over the whole batch, and write with `createMany` and `upsert: true`, or `updateMany` with a filter: 200 records in one mutation is one request, 200 single updates are 200 requests. Skip writes that change nothing.
-
-3. **Collapse bursts into one delayed job.** When events reveal work that is larger than the event itself, mark the records and enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window. The queue ignores an id it already holds, so a burst of events becomes a single run. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
-
-4. **Spread sweep crons with a random delay.** A sweep cron starts in every workspace at the same minute, so the sweeps of all installs hit the rate limit together. Keep the cron handler to an enqueue, and give the job a random `delayMs` over a large window, such as one hour, so the sweeps spread across the window instead of starting at once. Schedule the cron daily and off-peak.
-
-```ts
-const SPREAD_WINDOW_MS = 60 * 60 * 1000;
-
-await enqueueJobs({
-  logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
-  jobs: [{ payload: {} }],
-  delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
-});
-```
-
-5. **Pace fan-outs.** Jobs enqueued without a delay all become eligible at once. Group the work into slots, delay slot `i` by `i` minutes, and delay the next page by the slots the current page used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
-
-6. **Retry a `429` with backoff.** The client SDK throws on any non-2xx response. Retry `429` and `5xx` with exponential backoff, jitter and a cap on attempts, or re-enqueue the job with a delay instead of waiting inside the run. Throw `RetryableLogicFunctionError` when the whole run should be redelivered.
-
-7. **Cache what does not change.** A value fixed at connection time, such as an identity or a team id, belongs in the [key-value store](/developers/extend/apps/logic/key-value-store) rather than in a request on every event.
+- **Batch database event triggers.** Set `batchMode: true`, declare `updatedFields`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
+- **One request per batch, not per record.** Read with `in` filters, write with `createMany` and `upsert: true` or `updateMany`.
+- **Collapse bursts into one delayed job.** Enqueue with `delayMs` and a deterministic `jobId` that includes a time window; the queue ignores an id it already holds. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
+- **Spread sweep crons with a random delay.** The cron handler only enqueues the job, with a random `delayMs` over a large window such as one hour, so the sweeps of all installs spread out instead of hitting the limit together.
+- **Pace fan-outs with `delayMs`.** Group jobs into slots per minute and delay the next page by the slots used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
+- **Retry a `429` with backoff**, or re-enqueue with a delay instead of waiting inside the run.
+- **Cache what does not change** in the [key-value store](/developers/extend/apps/logic/key-value-store).
