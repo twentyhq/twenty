@@ -22,5 +22,8 @@ export class MessagingCleanCacheJob {
     await this.cacheStorage.del(
       `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
     );
+    await this.cacheStorage.del(
+      `messages-to-import-total:${data.workspaceId}:${data.messageChannelId}`,
+    );
   }
 }

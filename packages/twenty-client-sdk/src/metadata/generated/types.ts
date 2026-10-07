@@ -5623,6 +5623,9 @@ export default {
             "id": [
                 477
             ],
+            "importProgress": [
+                7
+            ],
             "isContactAutoCreationEnabled": [
                 4
             ],

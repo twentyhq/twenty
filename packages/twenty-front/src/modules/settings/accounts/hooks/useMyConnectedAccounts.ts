@@ -31,8 +31,11 @@ export const useMyConnectedAccounts = () => {
     client: apolloClient,
   });
 
-  const { channels: messageChannels, loading: messageChannelsLoading } =
-    useMyMessageChannels();
+  const {
+    channels: messageChannels,
+    loading: messageChannelsLoading,
+    refetch: refetchMessageChannels,
+  } = useMyMessageChannels();
   const { channels: calendarChannels, loading: calendarChannelsLoading } =
     useMyCalendarChannels();
 
@@ -58,5 +61,6 @@ export const useMyConnectedAccounts = () => {
     accounts,
     loading:
       accountsLoading || messageChannelsLoading || calendarChannelsLoading,
+    refetchMessageChannels,
   };
 };

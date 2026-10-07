@@ -4,6 +4,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 const ALL_NON_SYNCABLE_BROADCAST_ENTITY_NAME = {
   application: 'application',
   applicationRegistration: 'applicationRegistration',
+  messageChannel: 'messageChannel',
 } as const;
 
 type NonSyncableBroadcastEntityName =

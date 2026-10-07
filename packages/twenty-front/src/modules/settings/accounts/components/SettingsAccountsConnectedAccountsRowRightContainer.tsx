@@ -26,6 +26,8 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
 
   const status = computeSyncStatus(messageChannel, calendarChannel);
 
+  const importProgress = messageChannel?.importProgress;
+
   // Archived accounts retain their synced data but cannot be synced until they
   // are reconnected, so the live sync status is no longer relevant.
   if (isArchived) {
@@ -49,11 +51,11 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
         <Status color="orange" weight="medium">{t`Not synced`}</Status>
       )}
       {status === SyncStatus.IMPORTING && (
-        <Status
-          color="turquoise"
-          weight="medium"
-          loading
-        >{t`Importing`}</Status>
+        <Status color="turquoise" weight="medium" loading>
+          {isDefined(importProgress)
+            ? t`Importing ${importProgress}%`
+            : t`Importing`}
+        </Status>
       )}
       {status === SyncStatus.PENDING_CONFIGURATION && (
         <Status color="orange" weight="medium">{t`Setup incomplete`}</Status>

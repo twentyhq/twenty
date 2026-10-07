@@ -17,6 +17,7 @@ export const GET_MY_MESSAGE_CHANNELS = gql`
       syncStatus
       syncStage
       syncStageStartedAt
+      importProgress
       connectedAccountId
       connectedAccount {
         id

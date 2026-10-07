@@ -25,6 +25,7 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -44,6 +45,7 @@ export class MessageChannelSyncStatusService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly metricsService: MetricsService,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
   public async markAsMessagesListFetchPending(
@@ -72,6 +74,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsMessagesImportPending(
@@ -100,6 +104,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async resetAndMarkAsMessagesListFetchPending(
@@ -113,6 +119,9 @@ export class MessageChannelSyncStatusService {
     for (const messageChannelId of messageChannelIds) {
       await this.cacheStorage.del(
         `messages-to-import:${workspaceId}:${messageChannelId}`,
+      );
+      await this.cacheStorage.del(
+        `messages-to-import-total:${workspaceId}:${messageChannelId}`,
       );
     }
 
@@ -194,6 +203,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsMessagesListFetchScheduledIfPending(
@@ -220,7 +231,16 @@ export class MessageChannelSyncStatusService {
       .returning('id')
       .execute();
 
-    return updateResult.raw.map((row: { id: string }) => row.id);
+    const scheduledMessageChannelIds = updateResult.raw.map(
+      (row: { id: string }) => row.id,
+    );
+
+    await this.broadcastMessageChannelsUpdated(
+      scheduledMessageChannelIds,
+      workspaceId,
+    );
+
+    return scheduledMessageChannelIds;
   }
 
   public async markAsMessagesListFetchOngoing(
@@ -247,6 +267,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsMessageSyncCompleted(
@@ -281,6 +303,8 @@ export class MessageChannelSyncStatusService {
       key: MetricsKeys.MessageChannelSyncJobActive,
       eventIds: messageChannelIds,
     });
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsMessagesImportScheduled(
@@ -305,6 +329,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsMessagesImportOngoing(
@@ -331,6 +357,8 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
   }
 
   public async markAsFailed(
@@ -400,6 +428,42 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+
+    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
+  }
+
+  private async broadcastMessageChannelsUpdated(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ): Promise<void> {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    try {
+      const messageChannels = await this.messageChannelRepository.find({
+        where: { id: In(messageChannelIds), workspaceId },
+        relations: { connectedAccount: true },
+      });
+
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: messageChannels.map((messageChannel) => ({
+          type: 'updated',
+          entityName: 'messageChannel',
+          recordId: messageChannel.id,
+          properties: { after: { id: messageChannel.id } },
+          recipientUserWorkspaceIds: [
+            messageChannel.connectedAccount.userWorkspaceId,
+          ],
+        })),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast updated event for message channels [${messageChannelIds.join(', ')}] in workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   private async addToAccountsToReconnect(

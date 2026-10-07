@@ -1,5 +1,12 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,6 +17,9 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -70,7 +80,47 @@ export class MessageChannelResolver {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
+
+  @ResolveField('importProgress', () => Int, { nullable: true })
+  async importProgress(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<number | null> {
+    if (
+      messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_PENDING &&
+      messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED &&
+      messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING
+    ) {
+      return null;
+    }
+
+    const totalMessagesToImportCount = await this.cacheStorage.get<number>(
+      `messages-to-import-total:${workspace.id}:${messageChannel.id}`,
+    );
+
+    if (!isDefined(totalMessagesToImportCount)) {
+      return null;
+    }
+
+    const remainingMessagesToImportCount = await this.cacheStorage.getSetLength(
+      `messages-to-import:${workspace.id}:${messageChannel.id}`,
+    );
+
+    const importedMessagesCount = Math.max(
+      totalMessagesToImportCount - remainingMessagesToImportCount,
+      0,
+    );
+
+    return Math.floor(
+      (importedMessagesCount / totalMessagesToImportCount) * 100,
+    );
+  }
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
     nullable: true,

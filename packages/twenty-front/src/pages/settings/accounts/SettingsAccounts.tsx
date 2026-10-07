@@ -2,6 +2,7 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { useRefetchOnMessageChannelChange } from '@/settings/accounts/hooks/useRefetchOnMessageChannelChange';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -13,7 +14,13 @@ import { Section } from 'twenty-ui/components/layout';
 export const SettingsAccounts = () => {
   const { t } = useLingui();
 
-  const { accounts: allAccounts, loading } = useMyConnectedAccounts();
+  const {
+    accounts: allAccounts,
+    loading,
+    refetchMessageChannels,
+  } = useMyConnectedAccounts();
+
+  useRefetchOnMessageChannelChange({ refetch: refetchMessageChannels });
 
   return (
     <SettingsPageLayout
