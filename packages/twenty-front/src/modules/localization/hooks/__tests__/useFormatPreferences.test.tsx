@@ -15,11 +15,11 @@ import { detectNumberFormat } from '@/localization/utils/detection/detectNumberF
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 
-jest.mock('@/settings/profile/hooks/useUpdateWorkspaceMemberSettings', () => ({
+jest.mock('@/workspace-member/hooks/useUpdateWorkspaceMemberSettings', () => ({
   useUpdateWorkspaceMemberSettings: jest.fn(),
 }));
 jest.mock('@/localization/utils/detection/detectTimeZone');

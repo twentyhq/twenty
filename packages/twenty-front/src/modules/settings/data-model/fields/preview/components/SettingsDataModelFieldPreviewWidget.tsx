@@ -6,7 +6,7 @@ import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/prev
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelFieldPreviewWidgetProps = {
   className?: string;

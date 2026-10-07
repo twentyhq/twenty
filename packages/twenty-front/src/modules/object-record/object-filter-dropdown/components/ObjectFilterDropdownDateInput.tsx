@@ -18,8 +18,8 @@ import {
   type RelativeDateFilter,
   resolveDateFilter,
 } from 'twenty-shared/utils';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateString } from '~/utils/string/formatDateString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
 
 export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);

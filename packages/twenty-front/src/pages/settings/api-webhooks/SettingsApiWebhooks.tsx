@@ -27,7 +27,7 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
   (typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS)[keyof typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS];
