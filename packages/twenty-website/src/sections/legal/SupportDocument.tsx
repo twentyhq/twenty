@@ -35,10 +35,8 @@ export function SupportDocument() {
         . For questions and bug reports, email{' '}
         <a href="mailto:contact@twenty.com">contact@twenty.com</a>, open an
         issue on{' '}
-        <ExternalLink href="https://github.com/twentyhq/twenty/issues">
-          GitHub
-        </ExternalLink>
-        , or ask the community on{' '}
+        <ExternalLink href={SITE_URLS.githubIssues}>GitHub</ExternalLink>, or
+        ask the community on{' '}
         <ExternalLink href={SITE_URLS.discord}>Discord</ExternalLink>.
       </p>
 
