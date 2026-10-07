@@ -1194,6 +1194,7 @@ export type ClientConfig = {
   publicFeatureFlags: Array<PublicFeatureFlag>;
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;
+  serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
 };

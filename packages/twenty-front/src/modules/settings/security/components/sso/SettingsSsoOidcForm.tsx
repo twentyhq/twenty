@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { useServerBaseUrl } from '@/settings/security/hooks/useServerBaseUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -8,7 +9,6 @@ import { Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledInputsContainer = styled.div`
@@ -38,9 +38,10 @@ export const SettingsSsoOidcForm = () => {
   const { control } = useFormContext();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
+  const serverBaseUrl = useServerBaseUrl();
 
   const authorizedUrl = window.location.origin;
-  const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/oidc/callback`;
+  const redirectionUrl = `${serverBaseUrl}/auth/oidc/callback`;
 
   return (
     <>

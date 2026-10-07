@@ -1,4 +1,5 @@
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
+import { useServerBaseUrl } from '@/settings/security/hooks/useServerBaseUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -53,6 +54,7 @@ export const SettingsSsoSamlForm = () => {
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
+  const serverBaseUrl = useServerBaseUrl();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -73,8 +75,8 @@ export const SettingsSsoSamlForm = () => {
     }
   };
 
-  const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/saml/login/${getValues('id')}`;
-  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback/${getValues('id')}`;
+  const entityID = `${serverBaseUrl}/auth/saml/login/${getValues('id')}`;
+  const acsUrl = `${serverBaseUrl}/auth/saml/callback/${getValues('id')}`;
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 

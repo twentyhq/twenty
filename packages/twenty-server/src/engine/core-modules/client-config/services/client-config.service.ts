@@ -208,6 +208,7 @@ export class ClientConfigService {
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,

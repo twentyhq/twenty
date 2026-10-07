@@ -71,6 +71,7 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
+        serverUrl: 'http://localhost:3000',
         publicFunctionDomain: null,
         support: {
           supportDriver: SupportDriver.NONE,
