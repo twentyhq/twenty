@@ -3466,7 +3466,7 @@ export interface Query {
     getResourceCreditUsage: BillingResourceCreditUsage[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectedAccounts: ApplicationConnectedAccountDTO[]
-    myApplicationUserVariables: WorkspaceMemberApplicationVariables[]
+    myUserApplicationVariables: WorkspaceMemberApplicationVariables[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
     getInviteSuggestions: InviteSuggestion[]
     findWorkspaceInvitations: WorkspaceInvitation[]
@@ -3656,7 +3656,7 @@ export interface Mutation {
     deleteConnectedAccount: ConnectedAccountPublicDTO
     disconnectConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
-    updateMyApplicationUserVariable: Scalars['Boolean']
+    updateMyUserApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
@@ -7462,7 +7462,7 @@ export interface QueryGenqlSelection{
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectedAccounts?: (ApplicationConnectedAccountDTOGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    myApplicationUserVariables?: WorkspaceMemberApplicationVariablesGenqlSelection
+    myUserApplicationVariables?: WorkspaceMemberApplicationVariablesGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -7703,7 +7703,7 @@ export interface MutationGenqlSelection{
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
-    updateMyApplicationUserVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
+    updateMyUserApplicationVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection

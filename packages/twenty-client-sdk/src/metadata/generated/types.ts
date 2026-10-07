@@ -7936,7 +7936,7 @@ export default {
                     ]
                 }
             ],
-            "myApplicationUserVariables": [
+            "myUserApplicationVariables": [
                 158
             ],
             "applicationConnectionProviders": [
@@ -9722,7 +9722,7 @@ export default {
                     ]
                 }
             ],
-            "updateMyApplicationUserVariable": [
+            "updateMyUserApplicationVariable": [
                 8,
                 {
                     "applicationUniversalIdentifier": [

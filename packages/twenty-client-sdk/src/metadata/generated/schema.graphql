@@ -3967,7 +3967,7 @@ type Query {
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  myApplicationUserVariables: [WorkspaceMemberApplicationVariables!]!
+  myUserApplicationVariables: [WorkspaceMemberApplicationVariables!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4300,7 +4300,7 @@ type Mutation {
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
-  updateMyApplicationUserVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
+  updateMyUserApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!

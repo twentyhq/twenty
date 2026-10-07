@@ -3306,7 +3306,7 @@ export type Mutation = {
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
   updateMessageFolders: Array<MessageFolder>;
-  updateMyApplicationUserVariable: Scalars['Boolean']['output'];
+  updateMyUserApplicationVariable: Scalars['Boolean']['output'];
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean']['output'];
@@ -4444,7 +4444,7 @@ export type MutationUpdateMessageFoldersArgs = {
 };
 
 
-export type MutationUpdateMyApplicationUserVariableArgs = {
+export type MutationUpdateMyUserApplicationVariableArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
   key: Scalars['String']['input'];
   value: Scalars['String']['input'];
@@ -5357,11 +5357,11 @@ export type Query = {
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
   mostlyEmptyFieldMetadataIds: Array<Scalars['UUID']['output']>;
-  myApplicationUserVariables: Array<WorkspaceMemberApplicationVariables>;
   myCalendarChannels: Array<CalendarChannel>;
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
   myMessageFolders: Array<MessageFolder>;
+  myUserApplicationVariables: Array<WorkspaceMemberApplicationVariables>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
