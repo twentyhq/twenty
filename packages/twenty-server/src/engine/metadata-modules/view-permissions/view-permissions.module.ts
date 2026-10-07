@@ -5,13 +5,8 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -23,14 +18,7 @@ import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-perm
 @Module({
   imports: [
     FeatureFlagModule,
-    TypeOrmModule.forFeature([
-      ViewEntity,
-      ViewFieldEntity,
-      ViewFilterEntity,
-      ViewFilterGroupEntity,
-      ViewGroupEntity,
-      ViewSortEntity,
-    ]),
+    TypeOrmModule.forFeature([ViewEntity]),
     ApplicationModule,
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -44,11 +32,6 @@ import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-perm
     CreateViewChildEntityPermissionGuard,
     ViewPermissionGuard,
     provideWorkspaceScopedRepository(ViewEntity),
-    provideWorkspaceScopedRepository(ViewFieldEntity),
-    provideWorkspaceScopedRepository(ViewFilterEntity),
-    provideWorkspaceScopedRepository(ViewFilterGroupEntity),
-    provideWorkspaceScopedRepository(ViewGroupEntity),
-    provideWorkspaceScopedRepository(ViewSortEntity),
   ],
   exports: [
     ViewService,

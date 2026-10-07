@@ -2,7 +2,7 @@ import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { ApolloFactory, type Options } from '@/apollo/services/ApolloFactory';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
 import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';

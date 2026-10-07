@@ -136,7 +136,6 @@ export class AgentRunConversationService {
     title,
     agentId,
     execution,
-    isAwaitedByCaller,
   }: {
     workspaceId: string;
     threadId: string;
@@ -144,8 +143,6 @@ export class AgentRunConversationService {
     title: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
-    // a caller such as a workflow step waits on the calls the run pauses on
-    isAwaitedByCaller?: boolean;
   }): Promise<{ isAwaitingAnswer: boolean }> {
     const turn = { workspaceId, threadId, turnId, execution };
 
@@ -157,7 +154,6 @@ export class AgentRunConversationService {
           turnId,
           agentId,
           execution,
-          isAwaitedByCaller,
         })
         .catch(async (error: unknown) => {
           await this.turnRecorderService.finishExecutedTurn({
