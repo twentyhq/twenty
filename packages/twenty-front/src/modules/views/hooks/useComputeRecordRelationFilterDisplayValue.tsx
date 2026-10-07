@@ -16,11 +16,14 @@ import {
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
+  // Names the object the ids belong to when the filtered field is not a relation (a chart's own id).
+  relationObjectNameSingular?: string;
 };
 
 // The stored displayValue is deprecated and empty for filters created without one, so compute the label at runtime.
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
+  relationObjectNameSingular: relationObjectNameSingularFromParams,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -41,6 +44,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   });
 
   const relationObjectMetadataNameSingular =
+    relationObjectNameSingularFromParams ??
     getRelationObjectMetadataNameSingular({
       field: fieldMetadataItem,
     });

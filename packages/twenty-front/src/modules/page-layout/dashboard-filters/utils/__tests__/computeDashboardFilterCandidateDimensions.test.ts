@@ -238,6 +238,57 @@ describe('computeDashboardFilterCandidateDimensions', () => {
     ).toBeUndefined();
   });
 
+  it('keeps a second relation to the same target as a dimension of its own', () => {
+    const companyField = getFieldOrThrow(
+      opportunityObjectMetadataItem,
+      'company',
+    );
+
+    const opportunityWithPartner = {
+      ...opportunityObjectMetadataItem,
+      fields: [
+        ...opportunityObjectMetadataItem.fields,
+        {
+          ...companyField,
+          id: 'partner-company-field-id',
+          name: 'partnerCompany',
+          label: 'Partner company',
+        },
+      ],
+    };
+
+    const dimensions = computeDashboardFilterCandidateDimensions({
+      widgets: [OPPORTUNITY_WIDGET, COMPANY_WIDGET],
+      objectMetadataItems: [
+        companyObjectMetadataItem,
+        opportunityWithPartner,
+        workspaceMemberObjectMetadataItem,
+        personObjectMetadataItem,
+      ],
+    });
+
+    expect(
+      findDimensionByKey(dimensions, COMPANY_TARGET_DIMENSION_KEY)
+        ?.proposedBindingsByWidgetId['opportunity-widget'],
+    ).toEqual({ fieldMetadataId: companyField.id });
+
+    expect(
+      findDimensionByKey(
+        dimensions,
+        getDashboardFilterFieldDimensionKey({
+          name: 'partnerCompany',
+          type: FieldMetadataType.RELATION,
+        }),
+      ),
+    ).toMatchObject({
+      label: 'Partner company',
+      filterType: 'RELATION',
+      proposedBindingsByWidgetId: {
+        'opportunity-widget': { fieldMetadataId: 'partner-company-field-id' },
+      },
+    });
+  });
+
   it('never offers the raw id field as a dimension of its own', () => {
     const dimensions = computeDashboardFilterCandidateDimensions({
       widgets: [COMPANY_WIDGET],

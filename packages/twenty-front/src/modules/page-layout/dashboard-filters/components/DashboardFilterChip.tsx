@@ -15,6 +15,7 @@ import {
 type DashboardFilterChipProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
+  relationTargetObjectNameSingular: string | undefined;
   widgetCounts: DashboardFilterSlotWidgetCounts;
   onEdit?: () => void;
 };
@@ -23,6 +24,7 @@ type DashboardFilterChipProps = {
 export const DashboardFilterChip = ({
   slot,
   representativeBinding,
+  relationTargetObjectNameSingular,
   widgetCounts,
   onEdit,
 }: DashboardFilterChipProps) => {
@@ -45,6 +47,7 @@ export const DashboardFilterChip = ({
           <DashboardFilterChipDropdown
             slot={slot}
             representativeBinding={representativeBinding}
+            relationTargetObjectNameSingular={relationTargetObjectNameSingular}
             widgetCounts={widgetCounts}
             onEdit={onEdit}
           />

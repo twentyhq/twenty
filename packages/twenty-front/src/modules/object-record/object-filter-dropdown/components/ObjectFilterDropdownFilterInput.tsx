@@ -22,11 +22,15 @@ import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId: string;
   recordFilterId?: string;
+  // Forces the relation record picker for this object even when the filtered field is not a relation
+  // (a dashboard filter bound to a chart's own id); the field type decides otherwise.
+  relationRecordSelectObjectNameSingular?: string;
 };
 
 export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilterId,
+  relationRecordSelectObjectNameSingular,
 }: ObjectFilterDropdownFilterInputProps) => {
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
@@ -55,9 +59,9 @@ export const ObjectFilterDropdownFilterInput = ({
     return null;
   }
 
-  const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
-  );
+  const filterType = isDefined(relationRecordSelectObjectNameSingular)
+    ? 'RELATION'
+    : getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type);
 
   const isOnlyOperand = !isOperandWithFilterValue;
 
@@ -113,6 +117,7 @@ export const ObjectFilterDropdownFilterInput = ({
             <ObjectFilterDropdownRecordSelect
               recordFilterId={recordFilterId}
               dropdownId={filterDropdownId}
+              objectNameSingular={relationRecordSelectObjectNameSingular}
             />
           </>
         )}

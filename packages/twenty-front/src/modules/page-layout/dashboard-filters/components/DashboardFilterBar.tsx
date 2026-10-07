@@ -1,11 +1,14 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { useOpenDashboardFilterEditor } from '@/page-layout/dashboard-filters/hooks/useOpenDashboardFilterEditor';
 import { countDashboardFilterSlotWidgets } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotWidgets';
 import { getDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBinding';
+import { getDashboardFilterSlotRelationTargetObjectMetadataId } from '@/page-layout/dashboard-filters/utils/getDashboardFilterSlotRelationTargetObjectMetadataId';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -37,6 +40,7 @@ export const DashboardFilterBar = () => {
     useDashboardFilterSlots();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const isDashboardFiltersEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
@@ -62,16 +66,30 @@ export const DashboardFilterBar = () => {
     const representativeBinding = getDashboardFilterRepresentativeBinding({
       slotId: slot.id,
       bindingsByWidgetId,
+      objectMetadataItems,
     });
 
     if (!isDefined(representativeBinding)) {
       return [];
     }
 
+    const relationTargetObjectMetadataId =
+      slot.filterType === 'RELATION'
+        ? getDashboardFilterSlotRelationTargetObjectMetadataId({
+            slotId: slot.id,
+            bindingsByWidgetId,
+            objectMetadataItems,
+          })
+        : undefined;
+
     return [
       {
         slot,
         representativeBinding,
+        relationTargetObjectNameSingular: objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === relationTargetObjectMetadataId,
+        )?.nameSingular,
         widgetCounts: countDashboardFilterSlotWidgets({
           slotId: slot.id,
           widgets,
@@ -96,17 +114,29 @@ export const DashboardFilterBar = () => {
       {slots.length > 0 && <DashboardFilterUrlSyncEffect slots={slots} />}
       {(chips.length > 0 || canEditDashboardFilters) && (
         <StyledBar className="page-layout-tab-list-print-hidden">
-          {chips.map(({ slot, representativeBinding, widgetCounts }) => (
-            <DashboardFilterChip
-              key={slot.id}
-              slot={slot}
-              representativeBinding={representativeBinding}
-              widgetCounts={widgetCounts}
-              onEdit={
-                canEditDashboardFilters ? () => handleEditSlot(slot) : undefined
-              }
-            />
-          ))}
+          {chips.map(
+            ({
+              slot,
+              representativeBinding,
+              relationTargetObjectNameSingular,
+              widgetCounts,
+            }) => (
+              <DashboardFilterChip
+                key={slot.id}
+                slot={slot}
+                representativeBinding={representativeBinding}
+                relationTargetObjectNameSingular={
+                  relationTargetObjectNameSingular
+                }
+                widgetCounts={widgetCounts}
+                onEdit={
+                  canEditDashboardFilters
+                    ? () => handleEditSlot(slot)
+                    : undefined
+                }
+              />
+            ),
+          )}
           {canEditDashboardFilters && (
             <LightButton
               emphasis="subtle"

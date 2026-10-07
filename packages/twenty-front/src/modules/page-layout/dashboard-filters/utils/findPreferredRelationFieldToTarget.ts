@@ -1,8 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { PREFERRED_OWNER_FIELD_NAMES } from '@/page-layout/dashboard-filters/constants/PreferredOwnerFieldNames';
-import { compareFieldMetadataItemNames } from '@/page-layout/dashboard-filters/utils/compareFieldMetadataItemNames';
 import { isDefined } from 'twenty-shared/utils';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 
 // A field named after its target (company -> Company) is the canonical link; owner-like names come next.
 export const findPreferredRelationFieldToTarget = ({
@@ -33,8 +33,6 @@ export const findPreferredRelationFieldToTarget = ({
     )
     .find(isDefined);
 
-  return (
-    preferredField ??
-    [...candidateFields].sort(compareFieldMetadataItemNames)[0]
-  );
+  // Metadata field order is not stable across workspaces, so ties fall back to the name order.
+  return preferredField ?? [...candidateFields].sort(sortByProperty('name'))[0];
 };

@@ -1,6 +1,7 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -43,11 +44,13 @@ import { IconFilter } from 'twenty-ui/icon';
 type DashboardFilterDefaultValueDropdownContentProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding | undefined;
+  relationTargetObjectMetadataId: string | undefined;
 };
 
 export const DashboardFilterDefaultValueDropdownContent = ({
   slot,
   representativeBinding,
+  relationTargetObjectMetadataId,
 }: DashboardFilterDefaultValueDropdownContentProps) => {
   const { t } = useLingui();
   const store = useStore();
@@ -115,14 +118,27 @@ export const DashboardFilterDefaultValueDropdownContent = ({
   const relationTargetFieldMetadataId =
     representativeBinding?.relationTargetFieldMetadataId ?? null;
 
+  // Same rule as the chip: a RELATION slot bound only through charts' own ids gets the picker of the derived target.
+  const isBoundThroughOwnId =
+    slot.filterType === 'RELATION' &&
+    isDefined(representativeFieldMetadataItem) &&
+    !isManyToOneRelationField(representativeFieldMetadataItem);
+
+  const recordSelectObjectNameSingular = isBoundThroughOwnId
+    ? objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === relationTargetObjectMetadataId,
+      )?.nameSingular
+    : undefined;
+
   const defaultRecordFilter: RecordFilter | null =
     isDefined(representativeFieldMetadataItem) && isDefined(slot.defaultOperand)
       ? {
           id: getDashboardFilterRecordFilterId(slot.id),
           fieldMetadataId: representativeFieldMetadataItem.id,
-          type: getFilterTypeFromFieldType(
-            representativeFieldMetadataItem.type,
-          ),
+          type: isBoundThroughOwnId
+            ? 'RELATION'
+            : getFilterTypeFromFieldType(representativeFieldMetadataItem.type),
           operand: slot.defaultOperand,
           value: slot.defaultValue ?? '',
           displayValue:
@@ -237,6 +253,7 @@ export const DashboardFilterDefaultValueDropdownContent = ({
         <DashboardFilterChipDropdownContent
           slotLabel={slot.label}
           dropdownId={dropdownId}
+          recordSelectObjectNameSingular={recordSelectObjectNameSingular}
         />
       }
       dropdownPlacement="bottom-end"

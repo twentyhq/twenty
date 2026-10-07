@@ -7,16 +7,19 @@ import { t } from '@lingui/core/macro';
 
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;
+  relationObjectNameSingular?: string;
 };
 
 // TODO: refactor this with new useGetRecordFilterDisplayValue
 export const useComputeRecordRelationFilterLabelValue = ({
   recordFilter,
+  relationObjectNameSingular,
 }: ObjectFilterDropdownRecordSelectProps) => {
   const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
 
   const { displayValue, loading } = useComputeRecordRelationFilterDisplayValue({
     recordFilter,
+    relationObjectNameSingular,
   });
 
   if (loading) {

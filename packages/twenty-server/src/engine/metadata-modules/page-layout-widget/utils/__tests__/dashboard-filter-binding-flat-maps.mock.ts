@@ -1,4 +1,5 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -13,6 +14,8 @@ export const WORKSPACE_MEMBER_OBJECT_ID =
 
 export const COMPANY_POSITION_FIELD_ID = '11111111-0000-4000-8000-000000000000';
 export const COMPANY_ID_FIELD_ID = '11111111-0000-4000-8000-00000000000a';
+export const COMPANY_EXTERNAL_ID_FIELD_ID =
+  '11111111-0000-4000-8000-00000000000b';
 export const COMPANY_CREATED_AT_FIELD_ID =
   '11111111-1111-4111-8111-000000000001';
 export const COMPANY_NAME_FIELD_ID = '11111111-2222-4222-8222-000000000002';
@@ -53,6 +56,7 @@ const buildField = ({
   objectMetadataId,
   type,
   label,
+  name,
   relationType,
   relationTargetObjectMetadataId,
 }: {
@@ -60,6 +64,7 @@ const buildField = ({
   objectMetadataId: string;
   type: FieldMetadataType;
   label: string;
+  name?: string;
   relationType?: RelationType;
   relationTargetObjectMetadataId?: string;
 }): FlatFieldMetadata =>
@@ -69,6 +74,7 @@ const buildField = ({
     objectMetadataId,
     type,
     label,
+    ...(isDefined(name) ? { name } : {}),
     ...(relationType
       ? {
           settings: { relationType, joinColumnName: `${label}Id` },
@@ -83,6 +89,14 @@ export const dashboardFilterBindingFlatFieldMetadataMaps = buildFlatEntityMaps([
     objectMetadataId: COMPANY_OBJECT_ID,
     type: FieldMetadataType.UUID,
     label: 'Id',
+    name: 'id',
+  }),
+  buildField({
+    id: COMPANY_EXTERNAL_ID_FIELD_ID,
+    objectMetadataId: COMPANY_OBJECT_ID,
+    type: FieldMetadataType.UUID,
+    label: 'External id',
+    name: 'externalId',
   }),
   buildField({
     id: COMPANY_POSITION_FIELD_ID,

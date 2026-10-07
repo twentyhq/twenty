@@ -5,6 +5,9 @@ import {
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { pageLayoutEditingDashboardFilterSlotIdComponentState } from '@/page-layout/states/pageLayoutEditingDashboardFilterSlotIdComponentState';
+import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
@@ -22,7 +25,12 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { type DashboardFilterSlot, SidePanelPages } from 'twenty-shared/types';
+import {
+  type DashboardFilterSlot,
+  SidePanelPages,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
   FeatureFlagKey,
@@ -35,6 +43,7 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
+const mockNavigateSidePanel = jest.fn();
 
 jest.mock(
   '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
@@ -45,14 +54,40 @@ jest.mock(
   }),
 );
 
+jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
+  useNavigateSidePanel: () => ({
+    navigateSidePanel: mockNavigateSidePanel,
+  }),
+}));
+
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+
+const companyNameField = companyObjectMetadataItem.fields.find(
+  (field) => field.name === 'name',
+);
+
+if (!isDefined(companyNameField)) {
+  throw new Error('Expected the company mock to have a name field');
+}
+
+const COMPANY_NAME_SLOT: DashboardFilterSlot = {
+  id: 'company-name-slot',
+  label: 'Company name',
+  filterType: 'TEXT',
+  defaultOperand: ViewFilterOperand.CONTAINS,
+};
 
 const companyChartWidget = buildDraftPageLayoutWidget({
   id: 'company-widget',
   pageLayoutTabId: 'tab-1',
   title: 'Companies',
   type: WidgetType.GRAPH,
-  configuration: buildDefaultBarChartConfiguration({}),
+  configuration: {
+    ...buildDefaultBarChartConfiguration({}),
+    dashboardFilterBindings: {
+      [COMPANY_NAME_SLOT.id]: { fieldMetadataId: companyNameField.id },
+    },
+  },
   position: {
     layoutMode: PageLayoutTabLayoutMode.GRID,
     row: 0,
@@ -222,6 +257,57 @@ describe('DashboardFilterBar', () => {
       screen.queryByRole('button', { name: 'Add filter' }),
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Date')).not.toBeInTheDocument();
+  });
+
+  it('opens the slot editor from the chip Edit item in edit mode', async () => {
+    await renderDashboardFilterBar({
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      isInEditMode: true,
+      dashboardFilters: [COMPANY_NAME_SLOT],
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('Company name'));
+    await user.click(await screen.findByText('Edit'));
+
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: SidePanelPages.PageLayoutDashboardFilters,
+        resetNavigationStack: true,
+      }),
+    );
+
+    const { pageId } = mockNavigateSidePanel.mock.calls[0][0];
+
+    expect(
+      jotaiStore.get(
+        sidePanelSubPageStackComponentState.atomFamily({ instanceId: pageId }),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        subPage: SidePanelSubPages.PageLayoutDashboardFilterDetail,
+        title: 'Company name',
+      }),
+    ]);
+    expect(
+      jotaiStore.get(
+        pageLayoutEditingDashboardFilterSlotIdComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+      ),
+    ).toBe(COMPANY_NAME_SLOT.id);
+  });
+
+  it('hides the chip Edit item outside edit mode', async () => {
+    await renderDashboardFilterBar({
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      dashboardFilters: [COMPANY_NAME_SLOT],
+    });
+
+    await userEvent.setup().click(screen.getByText('Company name'));
+
+    expect(screen.queryByText('Edit')).not.toBeInTheDocument();
   });
 
   it('does not show the Add filter button when the feature flag is off even in edit mode', async () => {

@@ -3,6 +3,7 @@ import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/g
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type DashboardFilterCandidateDimension } from '@/page-layout/dashboard-filters/types/DashboardFilterCandidateDimension';
 import { type DashboardFilterObjectMetadataItem } from '@/page-layout/dashboard-filters/types/DashboardFilterObjectMetadataItem';
+import { collectBoundDashboardFilterDimensionKeys } from '@/page-layout/dashboard-filters/utils/collectBoundDashboardFilterDimensionKeys';
 import { findPreferredRelationFieldToTarget } from '@/page-layout/dashboard-filters/utils/findPreferredRelationFieldToTarget';
 import { getDashboardFilterFieldDimensionKey } from '@/page-layout/dashboard-filters/utils/getDashboardFilterFieldDimensionKey';
 import { getDashboardFilterRelationTargetDimensionKey } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRelationTargetDimensionKey';
@@ -67,40 +68,6 @@ const groupBindingsBySlotId = (
   return bindingsBySlotId;
 };
 
-// A slot bound through a target field (company -> name) filters that target field, not the relation.
-const collectBoundFieldDimensionKeys = ({
-  bindingsBySlotId,
-  fieldById,
-}: {
-  bindingsBySlotId: Record<
-    string,
-    Record<string, DashboardFilterBinding | null>
-  >;
-  fieldById: Map<string, FieldWithOwner>;
-}): Set<string> => {
-  const boundFieldDimensionKeys = new Set<string>();
-
-  for (const bindings of Object.values(bindingsBySlotId)) {
-    for (const binding of Object.values(bindings)) {
-      if (!isDefined(binding)) {
-        continue;
-      }
-
-      const boundField = fieldById.get(
-        binding.relationTargetFieldMetadataId ?? binding.fieldMetadataId,
-      );
-
-      if (isDefined(boundField)) {
-        boundFieldDimensionKeys.add(
-          getDashboardFilterFieldDimensionKey(boundField.field),
-        );
-      }
-    }
-  }
-
-  return boundFieldDimensionKeys;
-};
-
 const isDimensionCoveredBySlot = (
   dimension: DashboardFilterCandidateDimension,
   slotBindings: Record<string, DashboardFilterBinding | null>,
@@ -125,13 +92,20 @@ const buildFieldDimensions = (
         continue;
       }
 
+      const filterType = getFilterTypeFromFieldType(field.type);
+
+      // The filterable predicate never yields a search vector, but the type still has to be narrowed.
+      if (filterType === 'TS_VECTOR') {
+        continue;
+      }
+
       const key = getDashboardFilterFieldDimensionKey(field);
 
       const dimension = fieldDimensionsByKey.get(key) ?? {
         key,
         label: field.label,
         icon: field.icon,
-        filterType: getFilterTypeFromFieldType(field.type),
+        filterType,
         proposedBindingsByWidgetId: {},
       };
 
@@ -307,16 +281,16 @@ export const computeDashboardFilterCandidateDimensions = ({
 
   const bindingsBySlotId = groupBindingsBySlotId(existingBindingsByWidgetId);
 
-  const boundFieldDimensionKeys = collectBoundFieldDimensionKeys({
-    bindingsBySlotId,
-    fieldById,
+  const boundDimensionKeys = collectBoundDashboardFilterDimensionKeys({
+    bindingsByWidgetId: existingBindingsByWidgetId,
+    objectMetadataItems,
   });
 
   const existingSlotBindings = Object.values(bindingsBySlotId);
 
   const fieldDimensions = Array.from(fieldDimensionsByKey.values()).filter(
     (dimension) =>
-      !boundFieldDimensionKeys.has(dimension.key) &&
+      !boundDimensionKeys.has(dimension.key) &&
       !isRelationFieldDimensionSubsumed({
         dimension,
         relationTargetDimensionsByTargetId,

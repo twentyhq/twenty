@@ -124,7 +124,13 @@ describe('validateDashboardFilters', () => {
   });
 
   it('should reject the TS_VECTOR filter type since no chip can render it', () => {
-    const errors = validate([{ ...DATE_SLOT, filterType: 'TS_VECTOR' }]);
+    // Deliberately malformed input: the slot type no longer admits TS_VECTOR at compile time.
+    const searchVectorSlot = {
+      ...DATE_SLOT,
+      filterType: 'TS_VECTOR',
+    } as unknown as DashboardFilterSlot;
+
+    const errors = validate([searchVectorSlot]);
 
     expect(errors).toHaveLength(1);
     expect(errors[0].value).toBe('TS_VECTOR');

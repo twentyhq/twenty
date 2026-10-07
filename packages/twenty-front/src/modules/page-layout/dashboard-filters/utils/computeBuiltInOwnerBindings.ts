@@ -1,13 +1,13 @@
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
 import { PREFERRED_OWNER_FIELD_NAMES } from '@/page-layout/dashboard-filters/constants/PreferredOwnerFieldNames';
-import { compareFieldMetadataItemNames } from '@/page-layout/dashboard-filters/utils/compareFieldMetadataItemNames';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   CoreObjectNameSingular,
   type DashboardFilterBinding,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 import {
   type FieldMetadataType,
   type RelationType,
@@ -47,9 +47,10 @@ const findOwnerField = (fields: OwnerBindingCandidateField[]) => {
       ownerFieldCandidates.find((field) => field.name === preferredFieldName),
   ).find(isDefined);
 
+  // Metadata field order is not stable across workspaces, so ties fall back to the name order.
   return (
     preferredOwnerField ??
-    [...ownerFieldCandidates].sort(compareFieldMetadataItemNames)[0]
+    [...ownerFieldCandidates].sort(sortByProperty('name'))[0]
   );
 };
 

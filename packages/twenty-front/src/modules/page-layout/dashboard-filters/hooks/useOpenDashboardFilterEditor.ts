@@ -21,12 +21,13 @@ export const useOpenDashboardFilterEditor = (pageLayoutId: string) => {
     pageLayoutId,
   );
 
+  // Navigating first: opening over a closing panel runs the close cleanup, which resets the editing slot id.
   const openDashboardFiltersEditor = useCallback(() => {
-    setPageLayoutEditingDashboardFilterSlotId(null);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutDashboardFilters,
       resetNavigationStack: true,
     });
+    setPageLayoutEditingDashboardFilterSlotId(null);
   }, [navigatePageLayoutSidePanel, setPageLayoutEditingDashboardFilterSlotId]);
 
   // The sub-page stack is scoped to a page instance that only exists once the page mounts,
@@ -35,7 +36,6 @@ export const useOpenDashboardFilterEditor = (pageLayoutId: string) => {
     (slot: DashboardFilterSlot) => {
       const pageId = v4();
 
-      setPageLayoutEditingDashboardFilterSlotId(slot.id);
       navigateSidePanel({
         page: SidePanelPages.PageLayoutDashboardFilters,
         pageTitle: getPageLayoutPageTitle(
@@ -55,6 +55,7 @@ export const useOpenDashboardFilterEditor = (pageLayoutId: string) => {
           },
         ],
       );
+      setPageLayoutEditingDashboardFilterSlotId(slot.id);
     },
     [navigateSidePanel, setPageLayoutEditingDashboardFilterSlotId, store],
   );

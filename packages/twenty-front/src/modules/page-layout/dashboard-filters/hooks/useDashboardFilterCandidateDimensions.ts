@@ -1,8 +1,13 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useDashboardFilterSlotsForPageLayout } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlotsForPageLayout';
 import { type DashboardFilterCandidateDimension } from '@/page-layout/dashboard-filters/types/DashboardFilterCandidateDimension';
+import { collectBoundDashboardFilterDimensionKeys } from '@/page-layout/dashboard-filters/utils/collectBoundDashboardFilterDimensionKeys';
 import { computeDashboardFilterCandidateDimensions } from '@/page-layout/dashboard-filters/utils/computeDashboardFilterCandidateDimensions';
-import { prioritizeBuiltInDashboardFilterCandidateDimensions } from '@/page-layout/dashboard-filters/utils/prioritizeBuiltInDashboardFilterCandidateDimensions';
+import { getDashboardFilterRelationTargetDimensionKey } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRelationTargetDimensionKey';
+import {
+  getBuiltInDateDimensionKey,
+  prioritizeBuiltInDashboardFilterCandidateDimensions,
+} from '@/page-layout/dashboard-filters/utils/prioritizeBuiltInDashboardFilterCandidateDimensions';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,6 +15,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useDashboardFilterCandidateDimensions = (
@@ -32,29 +38,44 @@ export const useDashboardFilterCandidateDimensions = (
     useDashboardFilterSlotsForPageLayout(pageLayoutId);
 
   return useMemo(() => {
+    // Built-in bindings are not slots the user owns, so they must stay pickable.
+    const existingBindingsByWidgetId = isUsingBuiltInSlots
+      ? {}
+      : bindingsByWidgetId;
+
     const dimensions = computeDashboardFilterCandidateDimensions({
       widgets: pageLayoutDraft.tabs.flatMap((tab) => tab.widgets),
       objectMetadataItems,
-      // Built-in bindings are not slots the user owns, so they must stay pickable.
-      existingBindingsByWidgetId: isUsingBuiltInSlots
-        ? undefined
-        : bindingsByWidgetId,
+      existingBindingsByWidgetId,
       isJsonFilterEnabled,
     });
 
-    if (!isUsingBuiltInSlots) {
-      return dimensions;
-    }
+    const workspaceMemberObjectMetadataId = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular ===
+        CoreObjectNameSingular.WorkspaceMember,
+    )?.id;
+
+    const boundDimensionKeys = collectBoundDashboardFilterDimensionKeys({
+      bindingsByWidgetId: existingBindingsByWidgetId,
+      objectMetadataItems,
+    });
 
     return prioritizeBuiltInDashboardFilterCandidateDimensions({
       dimensions,
-      workspaceMemberObjectMetadataId: objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular ===
-          CoreObjectNameSingular.WorkspaceMember,
-      )?.id,
+      workspaceMemberObjectMetadataId,
       dateLabel: t`Date`,
       ownerLabel: t`Owner`,
+      hasDateEquivalentSlot: boundDimensionKeys.has(
+        getBuiltInDateDimensionKey(),
+      ),
+      hasOwnerEquivalentSlot:
+        isDefined(workspaceMemberObjectMetadataId) &&
+        boundDimensionKeys.has(
+          getDashboardFilterRelationTargetDimensionKey(
+            workspaceMemberObjectMetadataId,
+          ),
+        ),
     });
   }, [
     pageLayoutDraft,

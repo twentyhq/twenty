@@ -40,11 +40,43 @@ const ADDRESS_FIELD = {
   type: FieldMetadataType.ADDRESS,
 };
 
+const COMPANY_ID_FIELD = {
+  id: 'company-id-field-id',
+  type: FieldMetadataType.UUID,
+};
+
 const FIELD_METADATA_ITEMS = [
   CREATED_AT_FIELD,
   ACCOUNT_OWNER_FIELD,
   ADDRESS_FIELD,
+  COMPANY_ID_FIELD,
 ];
+
+const COMPANY_SLOT: DashboardFilterSlot = {
+  id: 'company-slot',
+  label: 'Company',
+  filterType: 'RELATION',
+};
+
+const COMPANY_ID_BINDING: DashboardFilterBinding = {
+  fieldMetadataId: COMPANY_ID_FIELD.id,
+};
+
+const FIRST_COMPANY_ID = '20202020-0000-4000-8000-000000000001';
+const SECOND_COMPANY_ID = '20202020-0000-4000-8000-000000000002';
+const CURRENT_WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-00000000aaaa';
+
+const buildRelationValue = ({
+  selectedRecordIds,
+  isCurrentWorkspaceMemberSelected = false,
+}: {
+  selectedRecordIds: string[];
+  isCurrentWorkspaceMemberSelected?: boolean;
+}) =>
+  JSON.stringify({
+    isCurrentWorkspaceMemberSelected,
+    selectedRecordIds,
+  });
 
 const DATE_VALUE: DashboardFilterValue = {
   operand: ViewFilterOperand.IS_AFTER,
@@ -219,6 +251,135 @@ describe('buildRecordFiltersFromDashboardFilters', () => {
         relationTargetFieldMetadataId: 'target-field-id',
       },
     ]);
+  });
+
+  describe('RELATION slot bound to the target object id', () => {
+    it('turns the selected record ids into a UUID filter', () => {
+      const recordFilters = buildRecordFiltersFromDashboardFilters({
+        slots: [COMPANY_SLOT],
+        values: {
+          [COMPANY_SLOT.id]: {
+            operand: ViewFilterOperand.IS,
+            value: buildRelationValue({
+              selectedRecordIds: [FIRST_COMPANY_ID, SECOND_COMPANY_ID],
+            }),
+          },
+        },
+        bindings: { [COMPANY_SLOT.id]: COMPANY_ID_BINDING },
+        fieldMetadataItems: FIELD_METADATA_ITEMS,
+      });
+
+      expect(recordFilters).toEqual([
+        {
+          id: 'dashboard-filter-company-slot',
+          fieldMetadataId: COMPANY_ID_FIELD.id,
+          type: 'UUID',
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify([FIRST_COMPANY_ID, SECOND_COMPANY_ID]),
+          subFieldName: undefined,
+          relationTargetFieldMetadataId: null,
+        },
+      ]);
+    });
+
+    it('resolves "Me" to the current workspace member id', () => {
+      const recordFilters = buildRecordFiltersFromDashboardFilters({
+        slots: [COMPANY_SLOT],
+        values: {
+          [COMPANY_SLOT.id]: {
+            operand: ViewFilterOperand.IS_NOT,
+            value: buildRelationValue({
+              selectedRecordIds: [FIRST_COMPANY_ID],
+              isCurrentWorkspaceMemberSelected: true,
+            }),
+          },
+        },
+        bindings: { [COMPANY_SLOT.id]: COMPANY_ID_BINDING },
+        fieldMetadataItems: FIELD_METADATA_ITEMS,
+        currentWorkspaceMemberId: CURRENT_WORKSPACE_MEMBER_ID,
+      });
+
+      expect(recordFilters).toHaveLength(1);
+      expect(recordFilters[0]?.operand).toBe(ViewFilterOperand.IS_NOT);
+      expect(recordFilters[0]?.value).toBe(
+        JSON.stringify([FIRST_COMPANY_ID, CURRENT_WORKSPACE_MEMBER_ID]),
+      );
+    });
+
+    it('emits nothing when no record is selected', () => {
+      const recordFilters = buildRecordFiltersFromDashboardFilters({
+        slots: [COMPANY_SLOT],
+        values: {
+          [COMPANY_SLOT.id]: {
+            operand: ViewFilterOperand.IS,
+            value: buildRelationValue({ selectedRecordIds: [] }),
+          },
+        },
+        bindings: { [COMPANY_SLOT.id]: COMPANY_ID_BINDING },
+        fieldMetadataItems: FIELD_METADATA_ITEMS,
+      });
+
+      expect(recordFilters).toEqual([]);
+    });
+
+    it('emits nothing when only "Me" is selected and no current member is known', () => {
+      const recordFilters = buildRecordFiltersFromDashboardFilters({
+        slots: [COMPANY_SLOT],
+        values: {
+          [COMPANY_SLOT.id]: {
+            operand: ViewFilterOperand.IS,
+            value: buildRelationValue({
+              selectedRecordIds: [],
+              isCurrentWorkspaceMemberSelected: true,
+            }),
+          },
+        },
+        bindings: { [COMPANY_SLOT.id]: COMPANY_ID_BINDING },
+        fieldMetadataItems: FIELD_METADATA_ITEMS,
+      });
+
+      expect(recordFilters).toEqual([]);
+    });
+
+    it.each([ViewFilterOperand.IS_EMPTY, ViewFilterOperand.IS_NOT_EMPTY])(
+      'emits nothing for the %s operand',
+      (operand) => {
+        const recordFilters = buildRecordFiltersFromDashboardFilters({
+          slots: [COMPANY_SLOT],
+          values: { [COMPANY_SLOT.id]: { operand, value: '' } },
+          bindings: { [COMPANY_SLOT.id]: COMPANY_ID_BINDING },
+          fieldMetadataItems: FIELD_METADATA_ITEMS,
+        });
+
+        expect(recordFilters).toEqual([]);
+      },
+    );
+
+    it('leaves a RELATION slot bound to a relation field untouched', () => {
+      const relationValue = buildRelationValue({
+        selectedRecordIds: [FIRST_COMPANY_ID],
+        isCurrentWorkspaceMemberSelected: true,
+      });
+
+      const recordFilters = buildRecordFiltersFromDashboardFilters({
+        slots: [OWNER_SLOT],
+        values: {
+          [OWNER_SLOT.id]: {
+            operand: ViewFilterOperand.IS,
+            value: relationValue,
+          },
+        },
+        bindings: {
+          [OWNER_SLOT.id]: { fieldMetadataId: ACCOUNT_OWNER_FIELD.id },
+        },
+        fieldMetadataItems: FIELD_METADATA_ITEMS,
+        currentWorkspaceMemberId: CURRENT_WORKSPACE_MEMBER_ID,
+      });
+
+      expect(recordFilters).toEqual([
+        expect.objectContaining({ type: 'RELATION', value: relationValue }),
+      ]);
+    });
   });
 
   it('emits two filters for two bound slots', () => {

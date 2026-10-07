@@ -55,6 +55,45 @@ describe('prioritizeBuiltInDashboardFilterCandidateDimensions', () => {
     ]);
   });
 
+  it('stops promoting a built-in once a slot equivalent to it exists', () => {
+    expect(
+      prioritizeBuiltInDashboardFilterCandidateDimensions({
+        dimensions: [
+          NAME_DIMENSION,
+          WORKSPACE_MEMBER_DIMENSION,
+          CREATED_AT_DIMENSION,
+        ],
+        workspaceMemberObjectMetadataId: WORKSPACE_MEMBER_OBJECT_METADATA_ID,
+        dateLabel: 'Date',
+        ownerLabel: 'Owner',
+        hasDateEquivalentSlot: true,
+      }),
+    ).toEqual([
+      { ...WORKSPACE_MEMBER_DIMENSION, label: 'Owner' },
+      NAME_DIMENSION,
+      CREATED_AT_DIMENSION,
+    ]);
+
+    expect(
+      prioritizeBuiltInDashboardFilterCandidateDimensions({
+        dimensions: [
+          NAME_DIMENSION,
+          WORKSPACE_MEMBER_DIMENSION,
+          CREATED_AT_DIMENSION,
+        ],
+        workspaceMemberObjectMetadataId: WORKSPACE_MEMBER_OBJECT_METADATA_ID,
+        dateLabel: 'Date',
+        ownerLabel: 'Owner',
+        hasDateEquivalentSlot: true,
+        hasOwnerEquivalentSlot: true,
+      }),
+    ).toEqual([
+      NAME_DIMENSION,
+      WORKSPACE_MEMBER_DIMENSION,
+      CREATED_AT_DIMENSION,
+    ]);
+  });
+
   it('keeps the list as is when no built-in equivalent exists', () => {
     expect(
       prioritizeBuiltInDashboardFilterCandidateDimensions({

@@ -4,6 +4,7 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { type DashboardFilterObjectMetadataItem } from '@/page-layout/dashboard-filters/types/DashboardFilterObjectMetadataItem';
 import { computePersistedDashboardFilterBindings } from '@/page-layout/dashboard-filters/utils/computePersistedDashboardFilterBindings';
 import { findPreferredRelationFieldToTarget } from '@/page-layout/dashboard-filters/utils/findPreferredRelationFieldToTarget';
+import { getDashboardFilterFieldDimensionKey } from '@/page-layout/dashboard-filters/utils/getDashboardFilterFieldDimensionKey';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   type DashboardFilterBinding,
@@ -125,10 +126,15 @@ export const computeBindingsForNewWidget = ({
           continue;
         }
 
+        // Same dimension key as the picker: name and type, plus identical options for select fields.
+        const existingFieldDimensionKey = getDashboardFilterFieldDimensionKey(
+          existingField.field,
+        );
+
         const matchingField = filterableFields.find(
           (field) =>
-            field.name === existingField.field.name &&
-            field.type === existingField.field.type,
+            getDashboardFilterFieldDimensionKey(field) ===
+            existingFieldDimensionKey,
         );
 
         if (isDefined(matchingField)) {

@@ -12,6 +12,7 @@ type DashboardFilterDefaultValueDropdownProps = {
   pageLayoutId: string;
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding | undefined;
+  relationTargetObjectMetadataId: string | undefined;
 };
 
 // Same shape as the chip: a dedicated filter instance holds one scratch RecordFilter the reused inputs write to.
@@ -19,6 +20,7 @@ export const DashboardFilterDefaultValueDropdown = ({
   pageLayoutId,
   slot,
   representativeBinding,
+  relationTargetObjectMetadataId,
 }: DashboardFilterDefaultValueDropdownProps) => {
   const instanceId = `dashboard-filter-default-${pageLayoutId}-${slot.id}`;
 
@@ -31,6 +33,7 @@ export const DashboardFilterDefaultValueDropdown = ({
           <DashboardFilterDefaultValueDropdownContent
             slot={slot}
             representativeBinding={representativeBinding}
+            relationTargetObjectMetadataId={relationTargetObjectMetadataId}
           />
           <DashboardFilterDefaultValueSyncEffect
             pageLayoutId={pageLayoutId}

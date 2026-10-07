@@ -2,6 +2,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { DASHBOARD_FILTER_LABEL_MAX_LENGTH } from '@/page-layout/dashboard-filters/constants/DashboardFilterLabelMaxLength';
 import { useDashboardFilterSlotsForPageLayout } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlotsForPageLayout';
 import { useRemoveDashboardFilterSlot } from '@/page-layout/dashboard-filters/hooks/useRemoveDashboardFilterSlot';
 import { useUpdatePageLayoutDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useUpdatePageLayoutDashboardFilters';
@@ -21,6 +22,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconExclamationCircle, IconTag, IconTrash } from 'twenty-ui/icon';
@@ -58,6 +61,9 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
   const { goBackFromSidePanelSubPage } = useSidePanelSubPageHistory();
   const { openDialog } = useDialog();
 
+  // The text input keeps its own draft, so a rejected commit remounts it on the stored label.
+  const [labelInputResetCount, setLabelInputResetCount] = useState(0);
+
   const graphWidgets = pageLayoutDraft.tabs
     .flatMap((tab) => tab.widgets)
     .filter(
@@ -68,6 +74,7 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
   const representativeBinding = getDashboardFilterRepresentativeBinding({
     slotId: slot.id,
     bindingsByWidgetId,
+    objectMetadataItems,
   });
 
   const slotRelationTargetObjectMetadataId =
@@ -90,7 +97,16 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
   ];
 
   const handleLabelChange = (label: string) => {
-    updatePageLayoutDashboardFilterSlot(slot.id, { label });
+    const trimmedLabel = label.trim();
+
+    if (!isNonEmptyString(trimmedLabel)) {
+      setLabelInputResetCount((previousResetCount) => previousResetCount + 1);
+      return;
+    }
+
+    updatePageLayoutDashboardFilterSlot(slot.id, {
+      label: trimmedLabel.slice(0, DASHBOARD_FILTER_LABEL_MAX_LENGTH),
+    });
   };
 
   const handleRequiredChange = (isRequired: boolean) => {
@@ -114,6 +130,7 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
             itemId={DASHBOARD_FILTER_SETTINGS_SELECTABLE_ITEM_IDS.LABEL}
           >
             <CommandMenuItemTextInput
+              key={`${slot.label}-${labelInputResetCount}`}
               id={DASHBOARD_FILTER_SETTINGS_SELECTABLE_ITEM_IDS.LABEL}
               label={t`Label`}
               Icon={IconTag}
@@ -129,6 +146,9 @@ export const SidePanelDashboardFilterDetailSubPageContent = ({
               pageLayoutId={pageLayoutId}
               slot={slot}
               representativeBinding={representativeBinding}
+              relationTargetObjectMetadataId={
+                slotRelationTargetObjectMetadataId
+              }
             />
           </SelectableListItem>
           <SelectableListItem

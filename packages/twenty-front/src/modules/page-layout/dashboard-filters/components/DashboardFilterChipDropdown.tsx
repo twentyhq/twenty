@@ -1,5 +1,6 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -44,6 +45,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 type DashboardFilterChipDropdownProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
+  relationTargetObjectNameSingular: string | undefined;
   widgetCounts: DashboardFilterSlotWidgetCounts;
   onEdit?: () => void;
 };
@@ -51,6 +53,7 @@ type DashboardFilterChipDropdownProps = {
 export const DashboardFilterChipDropdown = ({
   slot,
   representativeBinding,
+  relationTargetObjectNameSingular,
   widgetCounts,
   onEdit,
 }: DashboardFilterChipDropdownProps) => {
@@ -114,9 +117,20 @@ export const DashboardFilterChipDropdown = ({
 
   const slotValue = dashboardFilterValues[slot.id];
   const recordFilterId = getDashboardFilterRecordFilterId(slot.id);
-  const filterType = getFilterTypeFromFieldType(
-    representativeFieldMetadataItem.type,
-  );
+
+  // A RELATION slot whose only bindings are charts' own id fields still edits record ids: the picker and the
+  // label are driven by the derived target object instead of a relation on the field.
+  const isBoundThroughOwnId =
+    slot.filterType === 'RELATION' &&
+    !isManyToOneRelationField(representativeFieldMetadataItem);
+
+  const recordSelectObjectNameSingular = isBoundThroughOwnId
+    ? relationTargetObjectNameSingular
+    : undefined;
+
+  const filterType = isBoundThroughOwnId
+    ? 'RELATION'
+    : getFilterTypeFromFieldType(representativeFieldMetadataItem.type);
   const subFieldName = representativeBinding.subFieldName;
   const relationTargetFieldMetadataId =
     representativeBinding.relationTargetFieldMetadataId ?? null;
@@ -215,10 +229,13 @@ export const DashboardFilterChipDropdown = ({
           disabled={isDropdownOpen}
         >
           <div>
-            {slot.filterType === 'RELATION' ? (
+            {slot.filterType === 'RELATION' &&
+            (!isBoundThroughOwnId ||
+              isDefined(relationTargetObjectNameSingular)) ? (
               <DashboardFilterRelationChipButton
                 slot={slot}
                 recordFilter={recordFilter}
+                relationObjectNameSingular={relationTargetObjectNameSingular}
                 Icon={ChipIcon}
                 testId={recordFilterId}
                 onClick={handleChipClick}
@@ -241,6 +258,7 @@ export const DashboardFilterChipDropdown = ({
         <DashboardFilterChipDropdownContent
           slotLabel={slot.label}
           dropdownId={dropdownId}
+          recordSelectObjectNameSingular={recordSelectObjectNameSingular}
           onEditClick={isDefined(onEdit) ? handleEditClick : undefined}
         />
       }

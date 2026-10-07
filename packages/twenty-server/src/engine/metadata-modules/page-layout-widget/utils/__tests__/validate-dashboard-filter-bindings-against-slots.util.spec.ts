@@ -8,6 +8,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import {
   COMPANY_ACCOUNT_OWNER_FIELD_ID,
   COMPANY_CREATED_AT_FIELD_ID,
+  COMPANY_EXTERNAL_ID_FIELD_ID,
   COMPANY_ID_FIELD_ID,
   COMPANY_NAME_FIELD_ID,
   COMPANY_NOTES_FIELD_ID,
@@ -124,6 +125,14 @@ describe('validateDashboardFilterBindingsAgainstSlotsOrThrow', () => {
     expect(() =>
       validate({ owner: { fieldMetadataId: COMPANY_ID_FIELD_ID } }),
     ).not.toThrow();
+  });
+
+  it('should reject another UUID column of the widget object for a RELATION slot', () => {
+    expect(() =>
+      validate({ owner: { fieldMetadataId: COMPANY_EXTERNAL_ID_FIELD_ID } }),
+    ).toThrow(
+      'Dashboard filter "owner" expects a RELATION field but is bound to "External id" (UUID).',
+    );
   });
 
   it('should reject a UUID binding on a slot that is not a RELATION', () => {

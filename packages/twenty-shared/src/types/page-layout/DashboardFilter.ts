@@ -1,5 +1,5 @@
 import { type CompositeFieldSubFieldName } from '../CompositeFieldSubFieldNameType';
-import { type FilterableAndTSVectorFieldType } from '../FilterableFieldType';
+import { type FilterableFieldType } from '../FilterableFieldType';
 import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties';
 import { type SerializedRelation } from '../SerializedRelation';
 import { type ViewFilterOperand } from '../ViewFilterOperand';
@@ -8,7 +8,7 @@ import { type ViewFilterOperand } from '../ViewFilterOperand';
 export type DashboardFilterSlot = {
   id: string;
   label: string;
-  filterType: FilterableAndTSVectorFieldType;
+  filterType: FilterableFieldType;
   defaultOperand?: ViewFilterOperand | null;
   defaultValue?: string | null;
   isRequired?: boolean;

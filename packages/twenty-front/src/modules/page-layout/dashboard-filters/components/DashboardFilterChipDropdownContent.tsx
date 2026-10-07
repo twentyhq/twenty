@@ -13,12 +13,14 @@ import { IconPencil, IconX } from 'twenty-ui/icon';
 type DashboardFilterChipDropdownContentProps = {
   slotLabel: string;
   dropdownId: string;
+  recordSelectObjectNameSingular?: string;
   onEditClick?: () => void;
 };
 
 export const DashboardFilterChipDropdownContent = ({
   slotLabel,
   dropdownId,
+  recordSelectObjectNameSingular,
   onEditClick,
 }: DashboardFilterChipDropdownContentProps) => {
   const { t } = useLingui();
@@ -42,7 +44,10 @@ export const DashboardFilterChipDropdownContent = ({
       >
         {slotLabel}
       </DropdownMenuHeader>
-      <ObjectFilterDropdownFilterInput filterDropdownId={dropdownId} />
+      <ObjectFilterDropdownFilterInput
+        filterDropdownId={dropdownId}
+        relationRecordSelectObjectNameSingular={recordSelectObjectNameSingular}
+      />
       {isDefined(onEditClick) && (
         <>
           <DropdownMenuSeparator />

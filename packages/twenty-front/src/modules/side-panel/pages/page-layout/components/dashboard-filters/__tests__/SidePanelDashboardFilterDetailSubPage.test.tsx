@@ -1,5 +1,6 @@
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutEditingDashboardFilterSlotIdComponentState } from '@/page-layout/states/pageLayoutEditingDashboardFilterSlotIdComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { SidePanelDashboardFilterDetailSubPage } from '@/side-panel/pages/page-layout/components/dashboard-filters/SidePanelDashboardFilterDetailSubPage';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -76,17 +77,47 @@ const personWidget = buildChartWidget({
   },
 });
 
-const renderDetailSubPage = async () => {
+const getFieldLabelOrThrow = (
+  objectMetadataItem: { fields: { name: string; label: string }[] },
+  fieldName: string,
+) => {
+  const field = objectMetadataItem.fields.find(
+    (field) => field.name === fieldName,
+  );
+
+  if (!isDefined(field)) {
+    throw new Error(`Expected a ${fieldName} field`);
+  }
+
+  return field.label;
+};
+
+const COMPANY_NAME_SLOT: DashboardFilterSlot = {
+  id: 'company-name-slot',
+  label: 'Company name',
+  filterType: 'TEXT',
+  defaultOperand: ViewFilterOperand.CONTAINS,
+};
+
+const renderDetailSubPage = async ({
+  slots = [CLOSING_MONTH_SLOT],
+  widgets = [companyWidget, personWidget],
+  editingSlotId = CLOSING_MONTH_SLOT.id,
+}: {
+  slots?: DashboardFilterSlot[];
+  widgets?: PageLayoutWidget[];
+  editingSlotId?: string;
+} = {}) => {
   const pageLayout = setUpDashboardStore({
-    widgets: [companyWidget, personWidget],
-    dashboardFilters: [CLOSING_MONTH_SLOT],
+    widgets,
+    dashboardFilters: slots,
   });
 
   jotaiStore.set(
     pageLayoutEditingDashboardFilterSlotIdComponentState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
     }),
-    CLOSING_MONTH_SLOT.id,
+    editingSlotId,
   );
 
   await renderInSidePanel(<SidePanelDashboardFilterDetailSubPage />);
@@ -129,6 +160,121 @@ describe('SidePanelDashboardFilterDetailSubPage', () => {
       getDraftWidgetBindings('company-widget')?.[CLOSING_MONTH_SLOT.id],
     ).toEqual({ fieldMetadataId: companyCreatedAtFieldId });
     expect(jotaiStore.get(getPersistedAtom())).toBe(pageLayout);
+  });
+
+  it('changes a widget binding to another field of the same type', async () => {
+    await renderDetailSubPage();
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('Companies'));
+    await user.click(
+      await screen.findByRole('option', {
+        name: getFieldLabelOrThrow(companyObjectMetadataItem, 'updatedAt'),
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        getDraftWidgetBindings('company-widget')?.[CLOSING_MONTH_SLOT.id],
+      ).toEqual({
+        fieldMetadataId: getFieldIdOrThrow(
+          companyObjectMetadataItem,
+          'updatedAt',
+        ),
+      }),
+    );
+  });
+
+  it('binds a widget through a one-hop relation target field', async () => {
+    const nameBoundCompanyWidget = buildChartWidget({
+      id: 'company-widget',
+      title: 'Companies',
+      objectMetadataId: companyObjectMetadataItem.id,
+      dashboardFilterBindings: {
+        [COMPANY_NAME_SLOT.id]: {
+          fieldMetadataId: getFieldIdOrThrow(companyObjectMetadataItem, 'name'),
+        },
+      },
+    });
+
+    const unboundPersonWidget = buildChartWidget({
+      id: 'person-widget',
+      title: 'People',
+      objectMetadataId: personObjectMetadataItem.id,
+      dashboardFilterBindings: { [COMPANY_NAME_SLOT.id]: null },
+    });
+
+    await renderDetailSubPage({
+      slots: [COMPANY_NAME_SLOT],
+      widgets: [nameBoundCompanyWidget, unboundPersonWidget],
+      editingSlotId: COMPANY_NAME_SLOT.id,
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('People'));
+    await user.click(
+      await screen.findByRole('option', {
+        name: getFieldLabelOrThrow(personObjectMetadataItem, 'company'),
+      }),
+    );
+    await user.click(
+      await screen.findByRole('option', {
+        name: getFieldLabelOrThrow(companyObjectMetadataItem, 'name'),
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        getDraftWidgetBindings('person-widget')?.[COMPANY_NAME_SLOT.id],
+      ).toEqual({
+        fieldMetadataId: getFieldIdOrThrow(personObjectMetadataItem, 'company'),
+        relationTargetFieldMetadataId: getFieldIdOrThrow(
+          companyObjectMetadataItem,
+          'name',
+        ),
+      }),
+    );
+  });
+
+  it('ignores an empty label and keeps the stored one', async () => {
+    await renderDetailSubPage();
+
+    const user = userEvent.setup();
+
+    const labelInput = screen.getByDisplayValue('Closing month');
+
+    await user.clear(labelInput);
+    await user.keyboard('{Enter}');
+
+    await waitFor(() =>
+      expect(screen.getByDisplayValue('Closing month')).toBeInTheDocument(),
+    );
+
+    const [slot] = jotaiStore.get(getDraftAtom())
+      .dashboardFilters as DashboardFilterSlot[];
+
+    expect(slot.label).toBe('Closing month');
+  });
+
+  it('stores a trimmed label', async () => {
+    await renderDetailSubPage();
+
+    const user = userEvent.setup();
+
+    const labelInput = screen.getByDisplayValue('Closing month');
+
+    await user.clear(labelInput);
+    await user.type(labelInput, '  Close date  ');
+    await user.keyboard('{Enter}');
+
+    await waitFor(() => {
+      const [slot] = jotaiStore.get(getDraftAtom())
+        .dashboardFilters as DashboardFilterSlot[];
+
+      expect(slot.label).toBe('Close date');
+    });
   });
 
   it('toggles the required flag on the slot', async () => {

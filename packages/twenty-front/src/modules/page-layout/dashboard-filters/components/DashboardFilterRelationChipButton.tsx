@@ -9,6 +9,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 type DashboardFilterRelationChipButtonProps = {
   slot: DashboardFilterSlot;
   recordFilter: RecordFilter | null;
+  relationObjectNameSingular: string | undefined;
   Icon: IconComponent;
   testId: string;
   onClick: () => void;
@@ -26,13 +27,16 @@ type DashboardFilterRelationChipButtonWithValueProps = Omit<
 const DashboardFilterRelationChipButtonWithValue = ({
   slot,
   recordFilter,
+  relationObjectNameSingular,
   Icon,
   testId,
   onClick,
   onRemove,
 }: DashboardFilterRelationChipButtonWithValueProps) => {
+  // A slot bound through a chart's own id has no relation on the field, so the target object is passed in.
   const { labelValue } = useComputeRecordRelationFilterLabelValue({
     recordFilter,
+    relationObjectNameSingular,
   });
 
   return (
@@ -52,6 +56,7 @@ const DashboardFilterRelationChipButtonWithValue = ({
 export const DashboardFilterRelationChipButton = ({
   slot,
   recordFilter,
+  relationObjectNameSingular,
   Icon,
   testId,
   onClick,
@@ -61,6 +66,7 @@ export const DashboardFilterRelationChipButton = ({
     <DashboardFilterRelationChipButtonWithValue
       slot={slot}
       recordFilter={recordFilter}
+      relationObjectNameSingular={relationObjectNameSingular}
       Icon={Icon}
       testId={testId}
       onClick={onClick}

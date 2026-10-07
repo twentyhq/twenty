@@ -94,7 +94,8 @@ export const ChartDataSourceDropdownContent = () => {
 
   const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId !== newObjectMetadataItemId) {
-      // Bindings point at fields of the previous object, so they are rebuilt for the new one or dropped.
+      // Bindings point at fields of the previous object, so they are rebuilt for the new one; while the
+      // dashboard runs on the built-ins they are left for the save-time sanitizer to drop.
       const dashboardFilters = pageLayoutDraft.dashboardFilters as
         | DashboardFilterSlot[]
         | null
@@ -124,7 +125,9 @@ export const ChartDataSourceDropdownContent = () => {
           groupBySubFieldName: undefined,
           filter: {},
           ratioAggregateConfig: undefined,
-          dashboardFilterBindings,
+          ...(isDefined(dashboardFilterBindings)
+            ? { dashboardFilterBindings }
+            : {}),
         },
       });
 

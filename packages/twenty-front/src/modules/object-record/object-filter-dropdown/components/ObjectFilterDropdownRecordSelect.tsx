@@ -37,6 +37,9 @@ export const MAX_RECORDS_TO_DISPLAY = 3;
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilterId?: string;
   dropdownId: string;
+  // Picks records of this object instead of the one the filtered field relates to (a dashboard filter
+  // bound to a chart's own id has no relation to derive it from); the value written is the same relation JSON.
+  objectNameSingular?: string;
 };
 
 type ObjectFilterDropdownRecordSelectContentProps = {
@@ -242,6 +245,7 @@ const ObjectFilterDropdownRecordSelectContent = ({
 export const ObjectFilterDropdownRecordSelect = ({
   recordFilterId,
   dropdownId,
+  objectNameSingular: objectNameSingularFromProps,
 }: ObjectFilterDropdownRecordSelectProps) => {
   const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
@@ -275,11 +279,13 @@ export const ObjectFilterDropdownRecordSelect = ({
     ? relationTargetFieldMetadataItem
     : fieldMetadataItemUsedInFilterDropdown;
 
-  const objectNameSingular = isDefined(effectiveFieldMetadataItem)
-    ? getRelationObjectMetadataNameSingular({
-        field: effectiveFieldMetadataItem,
-      })
-    : undefined;
+  const objectNameSingular =
+    objectNameSingularFromProps ??
+    (isDefined(effectiveFieldMetadataItem)
+      ? getRelationObjectMetadataNameSingular({
+          field: effectiveFieldMetadataItem,
+        })
+      : undefined);
 
   // A stale filter whose relation-target field was deleted can't resolve an
   // object to pick records from — render nothing rather than crash.

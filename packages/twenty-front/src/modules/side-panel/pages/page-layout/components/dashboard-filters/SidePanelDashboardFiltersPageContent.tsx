@@ -2,6 +2,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { DASHBOARD_FILTER_MAX_SLOT_COUNT } from '@/page-layout/dashboard-filters/constants/DashboardFilterMaxSlotCount';
 import { useAddDashboardFilterSlot } from '@/page-layout/dashboard-filters/hooks/useAddDashboardFilterSlot';
 import { useDashboardFilterSlotsForPageLayout } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlotsForPageLayout';
 import { type DashboardFilterCandidateDimension } from '@/page-layout/dashboard-filters/types/DashboardFilterCandidateDimension';
@@ -84,15 +85,18 @@ export const SidePanelDashboardFiltersPageContent = ({
     DASHBOARD_FILTER_SETTINGS_SELECTABLE_ITEM_IDS.ADD_FILTER,
   ];
 
+  const hasReachedMaxSlotCount =
+    !isUsingBuiltInSlots && slots.length >= DASHBOARD_FILTER_MAX_SLOT_COUNT;
+
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Filters`}>
         {isUsingBuiltInSlots && (
-          <StyledHint>{t`Built-in filters. Add a filter to customize.`}</StyledHint>
+          <StyledHint>{t`Adding a filter replaces the built-in Date and Owner filters`}</StyledHint>
         )}
         {slots.map((slot) => {
           const representativeBinding = getDashboardFilterRepresentativeBinding(
-            { slotId: slot.id, bindingsByWidgetId },
+            { slotId: slot.id, bindingsByWidgetId, objectMetadataItems },
           );
 
           const { fieldMetadataItem } = isDefined(representativeBinding)
@@ -109,7 +113,9 @@ export const SidePanelDashboardFiltersPageContent = ({
               bindingsByWidgetId,
             });
 
-          const filterTypeLabel = getDashboardFilterTypeLabel(slot.filterType);
+          const filterTypeLabel = t(
+            getDashboardFilterTypeLabel(slot.filterType),
+          );
 
           const description = plural(graphWidgetCount, {
             one: `${filterTypeLabel} · ${boundWidgetCount} of # widget`,
@@ -154,6 +160,7 @@ export const SidePanelDashboardFiltersPageContent = ({
             label={t`Add filter`}
             Icon={IconPlus}
             dropdownPlacement="bottom-end"
+            disabled={hasReachedMaxSlotCount}
             dropdownComponents={
               <LegacyDropdownContent>
                 <DashboardFilterCandidateDimensionsDropdownContent
@@ -164,6 +171,9 @@ export const SidePanelDashboardFiltersPageContent = ({
             }
           />
         </SelectableListItem>
+        {hasReachedMaxSlotCount && (
+          <StyledHint>{t`A dashboard can have up to ${DASHBOARD_FILTER_MAX_SLOT_COUNT} filters`}</StyledHint>
+        )}
       </SidePanelGroup>
     </SidePanelList>
   );

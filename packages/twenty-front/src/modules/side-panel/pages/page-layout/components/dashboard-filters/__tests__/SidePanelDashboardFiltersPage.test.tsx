@@ -151,7 +151,9 @@ describe('SidePanelDashboardFiltersPage', () => {
     await renderInSidePanel(<SidePanelDashboardFiltersPage />);
 
     expect(
-      screen.getByText('Built-in filters. Add a filter to customize.'),
+      screen.getByText(
+        'Adding a filter replaces the built-in Date and Owner filters',
+      ),
     ).toBeVisible();
     expect(screen.getByText('Date')).toBeVisible();
     expect(screen.getByText('Owner')).toBeVisible();

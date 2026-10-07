@@ -6,22 +6,30 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const CREATED_AT_FIELD_NAME = 'createdAt';
 
-// While a dashboard still runs on the built-ins, picking the first custom filter drops them, so the two equivalents come first.
+export const getBuiltInDateDimensionKey = () =>
+  getDashboardFilterFieldDimensionKey({
+    name: CREATED_AT_FIELD_NAME,
+    type: FieldMetadataType.DATE_TIME,
+  });
+
+// The first custom filter drops the built-in Date and Owner, so their equivalents lead the list under the
+// built-in labels until the dashboard has a slot standing for each of them again.
 export const prioritizeBuiltInDashboardFilterCandidateDimensions = ({
   dimensions,
   workspaceMemberObjectMetadataId,
   dateLabel,
   ownerLabel,
+  hasDateEquivalentSlot = false,
+  hasOwnerEquivalentSlot = false,
 }: {
   dimensions: DashboardFilterCandidateDimension[];
   workspaceMemberObjectMetadataId: string | undefined;
   dateLabel: string;
   ownerLabel: string;
+  hasDateEquivalentSlot?: boolean;
+  hasOwnerEquivalentSlot?: boolean;
 }): DashboardFilterCandidateDimension[] => {
-  const dateDimensionKey = getDashboardFilterFieldDimensionKey({
-    name: CREATED_AT_FIELD_NAME,
-    type: FieldMetadataType.DATE_TIME,
-  });
+  const dateDimensionKey = getBuiltInDateDimensionKey();
 
   const ownerDimensionKey = isDefined(workspaceMemberObjectMetadataId)
     ? getDashboardFilterRelationTargetDimensionKey(
@@ -29,13 +37,13 @@ export const prioritizeBuiltInDashboardFilterCandidateDimensions = ({
       )
     : undefined;
 
-  const dateDimension = dimensions.find(
-    (dimension) => dimension.key === dateDimensionKey,
-  );
+  const dateDimension = hasDateEquivalentSlot
+    ? undefined
+    : dimensions.find((dimension) => dimension.key === dateDimensionKey);
 
-  const ownerDimension = dimensions.find(
-    (dimension) => dimension.key === ownerDimensionKey,
-  );
+  const ownerDimension = hasOwnerEquivalentSlot
+    ? undefined
+    : dimensions.find((dimension) => dimension.key === ownerDimensionKey);
 
   return [
     ...(isDefined(dateDimension)
@@ -46,8 +54,7 @@ export const prioritizeBuiltInDashboardFilterCandidateDimensions = ({
       : []),
     ...dimensions.filter(
       (dimension) =>
-        dimension.key !== dateDimensionKey &&
-        dimension.key !== ownerDimensionKey,
+        dimension !== dateDimension && dimension !== ownerDimension,
     ),
   ];
 };

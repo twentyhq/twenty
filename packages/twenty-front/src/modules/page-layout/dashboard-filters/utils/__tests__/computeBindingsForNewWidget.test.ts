@@ -244,6 +244,68 @@ describe('computeBindingsForNewWidget', () => {
     });
   });
 
+  it('does not match a same-named select field whose options differ', () => {
+    const petObjectMetadataItem = getMockObjectMetadataItemOrThrow('pet');
+    const speciesField = petObjectMetadataItem.fields.find(
+      (field) => field.name === 'species',
+    );
+
+    if (!isDefined(speciesField) || !isDefined(speciesField.options?.[0])) {
+      throw new Error('Expected the pet species field to have options');
+    }
+
+    const [firstOption] = speciesField.options;
+
+    const buildPetLikeObject = (id: string, optionValues: string[]) => ({
+      ...petObjectMetadataItem,
+      id,
+      fields: petObjectMetadataItem.fields.map((field) =>
+        field.id === speciesField.id
+          ? {
+              ...field,
+              id: `${id}-species`,
+              options: optionValues.map((value, index) => ({
+                ...firstOption,
+                id: `${id}-${value}`,
+                value,
+                label: value,
+                position: index,
+              })),
+            }
+          : { ...field, id: `${id}-${field.name}` },
+      ),
+    });
+
+    const dogsAndCats = buildPetLikeObject('dogs-and-cats-object', [
+      'DOG',
+      'CAT',
+    ]);
+    const allAnimals = buildPetLikeObject('all-animals-object', [
+      'DOG',
+      'CAT',
+      'BIRD',
+    ]);
+
+    const speciesSlot: DashboardFilterSlot = {
+      id: 'species-slot',
+      label: 'Species',
+      filterType: 'SELECT',
+    };
+
+    expect(
+      computeBindingsForNewWidget({
+        widget: { objectMetadataId: allAnimals.id },
+        slots: [speciesSlot],
+        existingWidgets: [
+          buildBoundGraphWidget('dogs-and-cats-widget', {
+            'species-slot': { fieldMetadataId: 'dogs-and-cats-object-species' },
+          }),
+        ],
+        objectMetadataItems: [dogsAndCats, allAnimals],
+      }),
+    ).toEqual({ 'species-slot': null });
+  });
+
   it('returns nothing for a widget whose object is unknown', () => {
     expect(
       computeBindingsForNewWidget({

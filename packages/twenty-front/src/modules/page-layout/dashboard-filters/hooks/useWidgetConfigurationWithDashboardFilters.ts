@@ -1,4 +1,5 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -23,6 +24,11 @@ export const useWidgetConfigurationWithDashboardFilters = (
     flattenedFieldMetadataItemsSelector,
   );
 
+  // "Me" on a slot bound to a chart's own id has to become that member's id before the UUID filter is built.
+  const {
+    filterValueDependencies: { currentWorkspaceMemberId },
+  } = useFilterValueDependencies();
+
   const widgetId = widget.id;
   const configuration = widget.configuration;
   const bindings = bindingsByWidgetId[widgetId];
@@ -37,6 +43,7 @@ export const useWidgetConfigurationWithDashboardFilters = (
       values: dashboardFilterValues,
       bindings,
       fieldMetadataItems: flattenedFieldMetadataItems,
+      currentWorkspaceMemberId,
     });
 
     if (dashboardRecordFilters.length === 0) {
@@ -61,5 +68,6 @@ export const useWidgetConfigurationWithDashboardFilters = (
     dashboardFilterValues,
     bindings,
     flattenedFieldMetadataItems,
+    currentWorkspaceMemberId,
   ]);
 };

@@ -1,12 +1,13 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const ID_FIELD_NAME = 'id';
 
-// A RELATION slot has no stored target: the first bound widget tells which object its values are records of.
+// A RELATION slot stores no target: a MANY_TO_ONE binding names it through its relation, and a chart bound
+// through its own id IS the target, so the field's owning object is the answer.
 export const getDashboardFilterSlotRelationTargetObjectMetadataId = ({
   slotId,
   bindingsByWidgetId,
@@ -17,28 +18,39 @@ export const getDashboardFilterSlotRelationTargetObjectMetadataId = ({
     string,
     Record<string, DashboardFilterBinding | null>
   >;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataItems: {
+    id: string;
+    fields: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'relation'>[];
+  }[];
 }): string | undefined =>
   Object.values(bindingsByWidgetId)
     .map((bindings) => bindings[slotId])
     .filter(isDefined)
     .map((binding) => {
-      const { fieldMetadataItem, objectMetadataItem } =
-        getFieldMetadataItemById({
-          fieldMetadataId: binding.fieldMetadataId,
-          objectMetadataItems,
-        });
+      const owningObjectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.fields.some(
+            (field) => field.id === binding.fieldMetadataId,
+          ),
+      );
 
-      if (!isDefined(fieldMetadataItem)) {
+      const boundField = owningObjectMetadataItem?.fields.find(
+        (field) => field.id === binding.fieldMetadataId,
+      );
+
+      if (!isDefined(owningObjectMetadataItem) || !isDefined(boundField)) {
         return undefined;
       }
 
-      if (fieldMetadataItem.name === ID_FIELD_NAME) {
-        return objectMetadataItem?.id;
+      if (
+        boundField.name === ID_FIELD_NAME &&
+        boundField.type === FieldMetadataType.UUID
+      ) {
+        return owningObjectMetadataItem.id;
       }
 
-      return isManyToOneRelationField(fieldMetadataItem)
-        ? fieldMetadataItem.relation.targetObjectMetadata.id
+      return isManyToOneRelationField(boundField)
+        ? boundField.relation.targetObjectMetadata.id
         : undefined;
     })
     .find(isDefined);

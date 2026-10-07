@@ -1,6 +1,9 @@
 import {
+  type DashboardFilterBinding,
   type DashboardFilterSlot,
+  FieldMetadataType,
   FILTERABLE_FIELD_TYPES,
+  type FilterableAndTSVectorFieldType,
 } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
@@ -16,17 +19,27 @@ const FILTERABLE_FIELD_TYPE_SET: ReadonlySet<string> = new Set(
   FILTERABLE_FIELD_TYPES,
 );
 
+const ID_FIELD_NAME = 'id';
+
 // A RELATION slot filters on record ids, so a chart on the relation target
-// object itself binds the slot to its own id field
+// object itself binds the slot to its own id field; no other UUID column
+// holds the ids the slot value carries
 const isBindingTypeAcceptedForSlot = ({
   effectiveFilterType,
   slotFilterType,
+  boundField,
+  binding,
 }: {
-  effectiveFilterType: DashboardFilterSlot['filterType'];
+  effectiveFilterType: FilterableAndTSVectorFieldType;
   slotFilterType: DashboardFilterSlot['filterType'];
+  boundField: FlatFieldMetadata;
+  binding: DashboardFilterBinding;
 }): boolean =>
   effectiveFilterType === slotFilterType ||
-  (effectiveFilterType === 'UUID' && slotFilterType === 'RELATION');
+  (slotFilterType === 'RELATION' &&
+    boundField.type === FieldMetadataType.UUID &&
+    boundField.name === ID_FIELD_NAME &&
+    !isDefined(binding.relationTargetFieldMetadataId));
 
 // Slots live on the layout and bindings on the widgets, so only the layout
 // save has both sides in hand to check that a binding fits its slot
@@ -106,6 +119,8 @@ export const validateDashboardFilterBindingsAgainstSlotsOrThrow = ({
       !isBindingTypeAcceptedForSlot({
         effectiveFilterType,
         slotFilterType: slot.filterType,
+        boundField,
+        binding,
       })
     ) {
       throw buildChartFieldValidationException(
