@@ -10,8 +10,6 @@ import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai
 export type AgentRunCallerHandler<
   TCaller extends AgentRunCaller = AgentRunCaller,
 > = {
-  callerType: TCaller['type'];
-
   buildExecutionContext(
     input: AgentRunCallerInput<TCaller>,
   ): Promise<AgentRunExecutionContext>;

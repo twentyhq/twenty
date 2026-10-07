@@ -1,7 +1,7 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { type AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
+import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
@@ -60,7 +60,7 @@ describe('SendChatMessageWorkflowAction', () => {
     });
 
     action = new SendChatMessageWorkflowAction(
-      { sendMessage } as unknown as AgentCallerInboxService,
+      { sendMessage } as unknown as AgentCallerConversationService,
       new WorkflowRunInboxSenderWorkspaceService(
         {
           executeInWorkspaceContext: jest.fn((callback) => callback()),

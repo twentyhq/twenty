@@ -19,9 +19,7 @@ import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-ag
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
-import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
-import { type AgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-wait.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
@@ -38,8 +36,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-const AGENT_RUN_OWNER_TYPE = 'AGENT_RUN';
 
 // The suspended runs callers wait on: what continues them, and who gets their outcome
 @Injectable()
@@ -147,26 +143,6 @@ export class AgentRunSuspensionService {
     }
   }
 
-  async armWait({
-    workspaceId,
-    suspensionId,
-    wait,
-  }: {
-    workspaceId: string;
-    suspensionId: string;
-    wait: AgentRunWait;
-  }): Promise<void> {
-    await this.pendingWakeUpService.arm({
-      workspaceId,
-      owner: {
-        type: AGENT_RUN_OWNER_TYPE,
-        id: suspensionId,
-        key: wait.toolCallId,
-      },
-      condition: wait.condition,
-    });
-  }
-
   async scheduleContinuation({
     workspaceId,
     suspension,
@@ -182,18 +158,6 @@ export class AgentRunSuspensionService {
         resumeCount: suspension.resumeCount,
       },
     );
-  }
-
-  async getCallerWaitingState({
-    workspaceId,
-    suspension: { caller },
-  }: {
-    workspaceId: string;
-    suspension: AgentRunSuspensionEntity;
-  }): Promise<AgentRunCallerWaitingState> {
-    return this.callerHandlerRegistry
-      .getHandlerOrThrow(caller.type)
-      .getWaitingState({ workspaceId, caller });
   }
 
   // The caller marks its call before it records the suspension, so a call without one is not ready yet
@@ -213,10 +177,9 @@ export class AgentRunSuspensionService {
       return { status: 'NOT_READY' };
     }
 
-    const status = await this.getCallerWaitingState({
-      workspaceId,
-      suspension,
-    });
+    const status = await this.callerHandlerRegistry
+      .getHandlerOrThrow(suspension.caller.type)
+      .getWaitingState({ workspaceId, caller: suspension.caller });
 
     return status === 'NOT_READY' ? { status } : { status, suspension };
   }
@@ -308,10 +271,9 @@ export class AgentRunSuspensionService {
     workspaceId: string;
     suspension: Pick<AgentRunSuspensionEntity, 'id' | 'threadId'>;
   }): Promise<void> {
-    await this.pendingWakeUpService.cancelAllForOwner({
+    await this.pendingWakeUpService.cancel({
       workspaceId,
-      ownerType: AGENT_RUN_OWNER_TYPE,
-      ownerId: suspension.id,
+      owner: { type: 'AGENT_RUN', id: suspension.id },
     });
     await this.suspensionRepository.delete(workspaceId, { id: suspension.id });
     await this.closeAwaitedCalls({
@@ -329,7 +291,20 @@ export class AgentRunSuspensionService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    await this.closeWaitCalls({ workspaceId, threadId });
+    // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
+    await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
+         FROM ${table('agentMessage')} message
+         WHERE message.id = part."messageId" AND message."threadId" = $1
+           AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
+        [
+          threadId,
+          JSON.stringify(buildWaitOutcomeToolOutput({ type: 'CANCELLED' })),
+          AGENT_WAIT_TOOL_NAMES,
+        ],
+      ),
+    );
 
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
@@ -384,28 +359,5 @@ export class AgentRunSuspensionService {
       messageId: pendingQuestionMessageId,
       status: AgentTurnStatus.CANCELLED,
     });
-  }
-
-  // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
-  private async closeWaitCalls({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
-         FROM ${table('agentMessage')} message
-         WHERE message.id = part."messageId" AND message."threadId" = $1
-           AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
-        [
-          threadId,
-          JSON.stringify(buildWaitOutcomeToolOutput({ type: 'CANCELLED' })),
-          AGENT_WAIT_TOOL_NAMES,
-        ],
-      ),
-    );
   }
 }
