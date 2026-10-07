@@ -15,7 +15,8 @@ const buildFieldMetadataItem = (
     isActive: boolean;
     isSystem: boolean;
     isUIEditable: boolean;
-    settings: { relationType: RelationType } | null;
+    settings: unknown;
+    morphRelations: { sourceFieldMetadata: { id: string; name: string } }[];
   }> = {},
 ) => ({
   id,
@@ -25,6 +26,7 @@ const buildFieldMetadataItem = (
   isSystem: false,
   isUIEditable: true,
   settings: null,
+  morphRelations: null,
   ...overrides,
 });
 
@@ -33,13 +35,15 @@ const buildFormFieldWidget = ({
   index,
   isActive = true,
   type = WidgetType.FORM_FIELD,
+  id = `widget-${fieldMetadataId}`,
 }: {
   fieldMetadataId: string;
   index: number;
   isActive?: boolean;
   type?: WidgetType;
+  id?: string;
 }) => ({
-  id: `widget-${fieldMetadataId}`,
+  id,
   isActive,
   type,
   position: {
@@ -66,6 +70,15 @@ const buildPageLayout = (
   })),
 });
 
+const summarize = (
+  recordFormFields: ReturnType<typeof computeRecordFormFields>,
+) =>
+  recordFormFields.map(({ fieldMetadataItem, widgets, isVisible }) => ({
+    name: fieldMetadataItem.name,
+    widgets: widgets.map(({ id, isActive }) => [id, isActive]),
+    isVisible,
+  }));
+
 const NAME_FIELD = buildFieldMetadataItem('field-name', 'name');
 const CODE_FIELD = buildFieldMetadataItem('field-code', 'code');
 const CITY_FIELD = buildFieldMetadataItem('field-city', 'city');
@@ -83,20 +96,11 @@ describe('computeRecordFormFields', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD],
-      restrictedFields: {},
     });
 
-    expect(result).toEqual([
-      {
-        widgetId: 'widget-field-name',
-        fieldMetadataItem: NAME_FIELD,
-        isVisible: true,
-      },
-      {
-        widgetId: 'widget-field-code',
-        fieldMetadataItem: CODE_FIELD,
-        isVisible: true,
-      },
+    expect(result.map(({ fieldMetadataItem }) => fieldMetadataItem)).toEqual([
+      NAME_FIELD,
+      CODE_FIELD,
     ]);
   });
 
@@ -118,7 +122,6 @@ describe('computeRecordFormFields', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
-      restrictedFields: {},
     });
 
     expect(result.map((field) => field.fieldMetadataItem.name)).toEqual([
@@ -145,66 +148,150 @@ describe('computeRecordFormFields', () => {
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
-      restrictedFields: {},
     });
 
-    expect(
-      result.map(({ fieldMetadataItem, isVisible }) => [
-        fieldMetadataItem.name,
-        isVisible,
-      ]),
-    ).toEqual([
-      ['name', true],
-      ['code', false],
-      ['city', true],
+    expect(summarize(result)).toEqual([
+      {
+        name: 'name',
+        widgets: [['widget-field-name', true]],
+        isVisible: true,
+      },
+      {
+        name: 'code',
+        widgets: [['widget-field-code', false]],
+        isVisible: false,
+      },
+      {
+        name: 'city',
+        widgets: [['widget-field-city', true]],
+        isVisible: true,
+      },
     ]);
   });
 
-  it('should keep a single entry per field, preferring a visible widget', () => {
+  it('should merge the widgets of a field into one entry, placed at its first visible widget', () => {
     const result = computeRecordFormFields({
       recordFormPageLayout: buildPageLayout([
         {
           position: 10,
           widgets: [
-            {
-              ...buildFormFieldWidget({
-                fieldMetadataId: 'field-name',
-                index: 0,
-                isActive: false,
-              }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-name',
+              index: 0,
+              isActive: false,
               id: 'hidden-name-widget',
-            },
-            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 1 }),
-            buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 2 }),
-            {
-              ...buildFormFieldWidget({
-                fieldMetadataId: 'field-code',
-                index: 3,
-              }),
-              id: 'second-code-widget',
-            },
+            }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 1 }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 2 }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-city',
+              index: 3,
+              isActive: false,
+            }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-city',
+              index: 4,
+              isActive: false,
+              id: 'second-city-widget',
+            }),
           ],
         },
       ]),
-      fieldMetadataItems: [NAME_FIELD, CODE_FIELD],
-      restrictedFields: {},
+      fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
     });
 
-    expect(
-      result.map(({ widgetId, isVisible }) => [widgetId, isVisible]),
-    ).toEqual([
-      ['widget-field-name', true],
-      ['widget-field-code', true],
+    expect(summarize(result)).toEqual([
+      {
+        name: 'code',
+        widgets: [['widget-field-code', true]],
+        isVisible: true,
+      },
+      {
+        name: 'name',
+        widgets: [
+          ['hidden-name-widget', false],
+          ['widget-field-name', true],
+        ],
+        isVisible: true,
+      },
+      {
+        name: 'city',
+        widgets: [
+          ['widget-field-city', false],
+          ['second-city-widget', false],
+        ],
+        isVisible: false,
+      },
     ]);
   });
 
-  it('should drop inactive tabs and non form field widgets', () => {
+  it('should merge the widgets of every morph target into the morph field', () => {
+    const ownerField = buildFieldMetadataItem('field-owner-person', 'owner', {
+      type: FieldMetadataType.MORPH_RELATION,
+      settings: { relationType: RelationType.MANY_TO_ONE },
+      morphRelations: [
+        {
+          sourceFieldMetadata: {
+            id: 'field-owner-person',
+            name: 'ownerPerson',
+          },
+        },
+        {
+          sourceFieldMetadata: {
+            id: 'field-owner-company',
+            name: 'ownerCompany',
+          },
+        },
+      ],
+    });
+
     const result = computeRecordFormFields({
       recordFormPageLayout: buildPageLayout([
         {
           position: 10,
           widgets: [
             buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-owner-person',
+              index: 1,
+              isActive: false,
+            }),
+            buildFormFieldWidget({
+              fieldMetadataId: 'field-owner-company',
+              index: 2,
+              isActive: false,
+            }),
+          ],
+        },
+      ]),
+      fieldMetadataItems: [NAME_FIELD, ownerField],
+    });
+
+    expect(summarize(result)).toEqual([
+      {
+        name: 'name',
+        widgets: [['widget-field-name', true]],
+        isVisible: true,
+      },
+      {
+        name: 'owner',
+        widgets: [
+          ['widget-field-owner-person', false],
+          ['widget-field-owner-company', false],
+        ],
+        isVisible: false,
+      },
+    ]);
+  });
+
+  it('should drop inactive tabs, non form field widgets and widgets of deleted fields', () => {
+    const result = computeRecordFormFields({
+      recordFormPageLayout: buildPageLayout([
+        {
+          position: 10,
+          widgets: [
+            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-gone', index: 1 }),
             buildFormFieldWidget({
               fieldMetadataId: 'field-city',
               index: 2,
@@ -216,16 +303,11 @@ describe('computeRecordFormFields', () => {
           position: 20,
           isActive: false,
           widgets: [
-            buildFormFieldWidget({
-              fieldMetadataId: 'field-code',
-              index: 0,
-              isActive: false,
-            }),
+            buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 0 }),
           ],
         },
       ]),
       fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
-      restrictedFields: {},
     });
 
     expect(result.map((field) => field.fieldMetadataItem.name)).toEqual([
@@ -233,78 +315,77 @@ describe('computeRecordFormFields', () => {
     ]);
   });
 
-  it('should drop widgets whose field is deleted, deactivated or no longer supported', () => {
+  it('should only keep hidden widgets whose field the form can offer', () => {
+    const hiddenFieldMetadataItems = [
+      buildFieldMetadataItem('field-inactive', 'inactive', {
+        isActive: false,
+      }),
+      buildFieldMetadataItem('field-system', 'system', { isSystem: true }),
+      buildFieldMetadataItem('field-rating', 'rating', {
+        type: FieldMetadataType.RATING,
+      }),
+      buildFieldMetadataItem('field-people', 'people', {
+        type: FieldMetadataType.RELATION,
+        settings: { relationType: RelationType.ONE_TO_MANY },
+      }),
+      buildFieldMetadataItem('field-company', 'company', {
+        type: FieldMetadataType.RELATION,
+        settings: { relationType: RelationType.MANY_TO_ONE },
+      }),
+      buildFieldMetadataItem('field-legacy', 'legacy', {
+        settings: 'not-an-object',
+      }),
+    ];
+
     const result = computeRecordFormFields({
       recordFormPageLayout: buildPageLayout([
         {
           position: 10,
-          widgets: [
-            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
-            buildFormFieldWidget({ fieldMetadataId: 'field-gone', index: 1 }),
+          widgets: hiddenFieldMetadataItems.map(({ id }, index) =>
             buildFormFieldWidget({
-              fieldMetadataId: 'field-inactive',
-              index: 2,
+              fieldMetadataId: id,
+              index,
               isActive: false,
             }),
-            buildFormFieldWidget({
-              fieldMetadataId: 'field-rating',
-              index: 3,
-              isActive: false,
-            }),
-            buildFormFieldWidget({
-              fieldMetadataId: 'field-people',
-              index: 4,
-              isActive: false,
-            }),
-          ],
+          ),
         },
       ]),
-      fieldMetadataItems: [
-        NAME_FIELD,
-        buildFieldMetadataItem('field-inactive', 'inactive', {
-          isActive: false,
-        }),
-        buildFieldMetadataItem('field-rating', 'rating', {
-          type: FieldMetadataType.RATING,
-        }),
-        buildFieldMetadataItem('field-people', 'people', {
-          type: FieldMetadataType.RELATION,
-          settings: { relationType: RelationType.ONE_TO_MANY },
-        }),
-      ],
-      restrictedFields: {},
+      fieldMetadataItems: hiddenFieldMetadataItems,
     });
 
     expect(result.map((field) => field.fieldMetadataItem.name)).toEqual([
-      'name',
+      'company',
+      'legacy',
     ]);
   });
 
-  it('should drop fields the user cannot update, whether visible or hidden', () => {
+  it('should keep visible widgets whatever their field', () => {
+    const visibleFieldMetadataItems = [
+      buildFieldMetadataItem('field-system', 'system', { isSystem: true }),
+      buildFieldMetadataItem('field-rating', 'rating', {
+        type: FieldMetadataType.RATING,
+      }),
+      buildFieldMetadataItem('field-files', 'files', {
+        type: FieldMetadataType.FILES,
+      }),
+    ];
+
     const result = computeRecordFormFields({
       recordFormPageLayout: buildPageLayout([
         {
           position: 10,
-          widgets: [
-            buildFormFieldWidget({ fieldMetadataId: 'field-name', index: 0 }),
-            buildFormFieldWidget({ fieldMetadataId: 'field-code', index: 1 }),
-            buildFormFieldWidget({
-              fieldMetadataId: 'field-city',
-              index: 2,
-              isActive: false,
-            }),
-          ],
+          widgets: visibleFieldMetadataItems.map(({ id }, index) =>
+            buildFormFieldWidget({ fieldMetadataId: id, index }),
+          ),
         },
       ]),
-      fieldMetadataItems: [NAME_FIELD, CODE_FIELD, CITY_FIELD],
-      restrictedFields: {
-        'field-code': { canRead: true, canUpdate: false },
-        'field-city': { canRead: true, canUpdate: false },
-      },
+      fieldMetadataItems: visibleFieldMetadataItems,
     });
 
     expect(result.map((field) => field.fieldMetadataItem.name)).toEqual([
-      'name',
+      'system',
+      'rating',
+      'files',
     ]);
   });
 });

@@ -1,9 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RecordFormField } from '@/object-record/record-form/types/RecordFormField';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import groupBy from 'lodash.groupby';
+import uniqBy from 'lodash.uniqby';
 import {
   isDefined,
   isFieldMetadataEligibleForRecordForm,
@@ -28,7 +29,11 @@ type RecordFormLayout = { tabs: RecordFormTab[] };
 type RecordFormFieldMetadataItem = Pick<
   FieldMetadataItem,
   'id' | 'name' | 'type' | 'isActive' | 'isSystem' | 'isUIEditable' | 'settings'
->;
+> & {
+  morphRelations?:
+    | Pick<FieldMetadataItemRelation, 'sourceFieldMetadata'>[]
+    | null;
+};
 
 const getVerticalListIndex = (pageLayoutWidget: RecordFormWidget): number => {
   const { position } = pageLayoutWidget;
@@ -53,47 +58,49 @@ const getFormFieldMetadataId = (
 
 const isFieldMetadataItemEligibleForRecordForm = (
   fieldMetadataItem: RecordFormFieldMetadataItem,
-): boolean => {
-  const { settings } = fieldMetadataItem;
-
-  return isFieldMetadataEligibleForRecordForm({
+): boolean =>
+  isFieldMetadataEligibleForRecordForm({
     fieldName: fieldMetadataItem.name,
     fieldType: fieldMetadataItem.type,
     isActive: fieldMetadataItem.isActive === true,
     isSystem: fieldMetadataItem.isSystem === true,
     isUIEditable: fieldMetadataItem.isUIEditable !== false,
-    relationType:
-      isDefined(settings) && 'relationType' in settings
-        ? settings.relationType
-        : undefined,
+    relationType: fieldMetadataItem.settings?.relationType,
   });
-};
 
 export const computeRecordFormFields = <
   TFieldMetadataItem extends RecordFormFieldMetadataItem,
 >({
   recordFormPageLayout,
   fieldMetadataItems,
-  restrictedFields,
 }: {
   recordFormPageLayout: RecordFormLayout;
   fieldMetadataItems: TFieldMetadataItem[];
-  restrictedFields: RestrictedFieldsPermissions;
 }): RecordFormField<TFieldMetadataItem>[] => {
-  const fieldMetadataItemById = new Map(
-    fieldMetadataItems
-      .filter(
-        (fieldMetadataItem) =>
-          isFieldMetadataItemEligibleForRecordForm(fieldMetadataItem) &&
-          getFieldPermissions({
-            objectPermissions: { restrictedFields },
-            fieldMetadataId: fieldMetadataItem.id,
-          }).canUpdateField,
-      )
-      .map((fieldMetadataItem) => [fieldMetadataItem.id, fieldMetadataItem]),
-  );
+  const fieldMetadataItemByFormFieldMetadataId = new Map<
+    string,
+    TFieldMetadataItem
+  >();
 
-  const recordFormFields = [...recordFormPageLayout.tabs]
+  for (const fieldMetadataItem of fieldMetadataItems) {
+    const formFieldMetadataIds = [
+      fieldMetadataItem.id,
+      ...(fieldMetadataItem.morphRelations ?? []).map(
+        (morphRelation) => morphRelation.sourceFieldMetadata.id,
+      ),
+    ];
+
+    for (const formFieldMetadataId of formFieldMetadataIds) {
+      if (!fieldMetadataItemByFormFieldMetadataId.has(formFieldMetadataId)) {
+        fieldMetadataItemByFormFieldMetadataId.set(
+          formFieldMetadataId,
+          fieldMetadataItem,
+        );
+      }
+    }
+  }
+
+  const formFieldWidgetEntries = [...recordFormPageLayout.tabs]
     .filter((pageLayoutTab) => pageLayoutTab.isActive)
     .sort((tabA, tabB) => tabA.position - tabB.position)
     .flatMap((pageLayoutTab) =>
@@ -107,39 +114,45 @@ export const computeRecordFormFields = <
         ),
     )
     .flatMap((pageLayoutWidget) => {
-      const fieldMetadataId = getFormFieldMetadataId(pageLayoutWidget);
-      const fieldMetadataItem = isDefined(fieldMetadataId)
-        ? fieldMetadataItemById.get(fieldMetadataId)
+      const formFieldMetadataId = getFormFieldMetadataId(pageLayoutWidget);
+      const fieldMetadataItem = isDefined(formFieldMetadataId)
+        ? fieldMetadataItemByFormFieldMetadataId.get(formFieldMetadataId)
         : undefined;
 
       return isDefined(fieldMetadataItem)
-        ? [
-            {
-              widgetId: pageLayoutWidget.id,
-              fieldMetadataItem,
-              isVisible: pageLayoutWidget.isActive,
-            },
-          ]
+        ? [{ pageLayoutWidget, fieldMetadataItem }]
         : [];
     });
 
-  const visibleFieldMetadataIds = new Set(
-    recordFormFields
-      .filter((recordFormField) => recordFormField.isVisible)
-      .map((recordFormField) => recordFormField.fieldMetadataItem.id),
+  const formFieldWidgetEntriesByFieldMetadataId = groupBy(
+    formFieldWidgetEntries,
+    ({ fieldMetadataItem }) => fieldMetadataItem.id,
   );
-  const keptFieldMetadataIds = new Set<string>();
 
-  return recordFormFields.filter(({ fieldMetadataItem, isVisible }) => {
-    if (
-      keptFieldMetadataIds.has(fieldMetadataItem.id) ||
-      (!isVisible && visibleFieldMetadataIds.has(fieldMetadataItem.id))
-    ) {
-      return false;
-    }
+  const visibleFieldMetadataIds = new Set(
+    formFieldWidgetEntries
+      .filter(({ pageLayoutWidget }) => pageLayoutWidget.isActive)
+      .map(({ fieldMetadataItem }) => fieldMetadataItem.id),
+  );
 
-    keptFieldMetadataIds.add(fieldMetadataItem.id);
-
-    return true;
-  });
+  return uniqBy(
+    formFieldWidgetEntries.filter(
+      ({ pageLayoutWidget, fieldMetadataItem }) =>
+        pageLayoutWidget.isActive ||
+        !visibleFieldMetadataIds.has(fieldMetadataItem.id),
+    ),
+    ({ fieldMetadataItem }) => fieldMetadataItem.id,
+  )
+    .map(({ pageLayoutWidget, fieldMetadataItem }) => ({
+      fieldMetadataItem,
+      widgets: formFieldWidgetEntriesByFieldMetadataId[
+        fieldMetadataItem.id
+      ].map((formFieldWidgetEntry) => formFieldWidgetEntry.pageLayoutWidget),
+      isVisible: pageLayoutWidget.isActive,
+    }))
+    .filter(
+      ({ fieldMetadataItem, isVisible }) =>
+        isVisible ||
+        isFieldMetadataItemEligibleForRecordForm(fieldMetadataItem),
+    );
 };

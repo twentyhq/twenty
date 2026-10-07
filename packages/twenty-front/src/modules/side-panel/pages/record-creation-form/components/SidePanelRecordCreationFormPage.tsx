@@ -7,6 +7,8 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
@@ -115,12 +117,19 @@ const SidePanelRecordCreationForm = ({
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
   const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
-
-  const recordFormFieldMetadataItems = recordFormFields.map(
-    (recordFormField) => recordFormField.fieldMetadataItem,
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
   );
 
-  const visibleFieldMetadataItems = recordFormFields
+  const editableRecordFormFields = recordFormFields.filter(
+    ({ fieldMetadataItem }) =>
+      getFieldPermissions({
+        objectPermissions,
+        fieldMetadataId: fieldMetadataItem.id,
+      }).canUpdateField,
+  );
+
+  const visibleFieldMetadataItems = editableRecordFormFields
     .filter((recordFormField) => recordFormField.isVisible)
     .map((recordFormField) => recordFormField.fieldMetadataItem);
 
@@ -178,7 +187,7 @@ const SidePanelRecordCreationForm = ({
         requestId,
         draftRecord: computeRecordFormCreateRecordInput({
           draftRecord,
-          fieldMetadataItems: recordFormFieldMetadataItems,
+          fieldMetadataItems: objectMetadataItem.fields,
           objectMetadataItems,
         }),
       });
