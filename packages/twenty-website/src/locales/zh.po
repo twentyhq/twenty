@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 16:20\n"
+"PO-Revision-Date: 2026-10-07 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3819,7 +3819,7 @@ msgstr "获得 Twenty 合作伙伴认证：经过审核的徽章、供客户查�
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
 msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
-msgstr ""
+msgstr "获取 Twenty 的帮助，无论您是在我们的云端运行它还是自行托管，包括适用于 Slack 的 Twenty 应用。"
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
@@ -7428,7 +7428,7 @@ msgstr "支持"
 #. js-lingui-id: RgtAtw
 #: src/platform/routing/static-website-routes.ts
 msgid "Support | Twenty"
-msgstr ""
+msgstr "支持 | Twenty"
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts

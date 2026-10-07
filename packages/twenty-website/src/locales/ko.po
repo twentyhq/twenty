@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 16:20\n"
+"PO-Revision-Date: 2026-10-07 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3817,7 +3817,7 @@ msgstr "Twenty 파트너로 인증받으세요. 검증된 배지, 고객이 확�
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
 msgid "Get help with Twenty, whether you run it on our cloud or host it yourself, including the Twenty app for Slack."
-msgstr ""
+msgstr "클라우드에서 Twenty를 실행하든 직접 호스팅하든, Slack용 Twenty 앱을 포함하여 Twenty 관련 도움을 받으세요."
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-lead/PartnerDirectoryPanel.tsx
@@ -7426,7 +7426,7 @@ msgstr "지원"
 #. js-lingui-id: RgtAtw
 #: src/platform/routing/static-website-routes.ts
 msgid "Support | Twenty"
-msgstr ""
+msgstr "지원 | Twenty"
 
 #. js-lingui-id: Aq66kg
 #: src/partner-application/data/partner-country-options.ts
