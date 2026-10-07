@@ -212,14 +212,14 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
   private async flushWorkspaceCaches(
     siteNames: SecretEncryptionRotationSiteName[],
   ): Promise<void> {
-    const workspaceCacheKeyNames = Object.values(
+    const workspaceCacheKeyNamesToFlush = Object.values(
       SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
     )
-      .flatMap((entry) => Object.values(entry.columnSiteNames))
-      .filter((meta) => siteNames.includes(meta.siteName))
-      .flatMap((meta) => meta.workspaceCacheKeyNames);
+      .flatMap(({ columnSiteNames }) => Object.values(columnSiteNames))
+      .filter(({ siteName }) => siteNames.includes(siteName))
+      .flatMap(({ workspaceCacheKeyNames }) => workspaceCacheKeyNames);
 
-    if (workspaceCacheKeyNames.length === 0) {
+    if (workspaceCacheKeyNamesToFlush.length === 0) {
       return;
     }
 
@@ -227,15 +227,15 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
       `SELECT "id" FROM "core"."workspace"`,
     );
 
-    for (const workspace of workspaces) {
+    for (const { id: workspaceId } of workspaces) {
       await this.workspaceCacheService.flush(
-        workspace.id,
-        workspaceCacheKeyNames,
+        workspaceId,
+        workspaceCacheKeyNamesToFlush,
       );
     }
 
     this.logger.log(
-      `[secret-encryption:rotate] flushed workspace cache keys ${workspaceCacheKeyNames.join(
+      `[secret-encryption:rotate] flushed workspace cache keys ${workspaceCacheKeyNamesToFlush.join(
         ', ',
       )} for ${workspaces.length} workspace(s)`,
     );

@@ -379,6 +379,7 @@ export class UserWorkspaceService {
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatRoleTargetMaps',
+        'userApplicationVariableValueMaps',
       ]);
 
       await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
@@ -386,10 +387,6 @@ export class UserWorkspaceService {
         coreWorkflowIds: createdCoreWorkflowIds,
       });
     }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'userApplicationVariableValueMaps',
-    ]);
   }
 
   async findAvailableWorkspacesByEmail(email: string) {
