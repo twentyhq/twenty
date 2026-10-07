@@ -42,7 +42,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -108,7 +107,6 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
-    private readonly sharingService: AgentChatSharingService,
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
@@ -781,9 +779,7 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
-      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
-        ? { lastMessageText: replyText }
-        : null,
+      lastMessageText: replyText,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,

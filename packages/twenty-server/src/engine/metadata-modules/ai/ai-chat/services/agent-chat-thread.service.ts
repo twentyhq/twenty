@@ -9,7 +9,6 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
-import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -123,10 +122,7 @@ export class AgentChatThreadService {
         memberIds: candidateMemberIds,
       });
 
-    if (
-      participantMemberIds.length === 0 ||
-      !(await this.sharingService.hasInboxState(args.workspaceId))
-    ) {
+    if (participantMemberIds.length === 0) {
       return participantMemberIds;
     }
 
@@ -212,13 +208,11 @@ export class AgentChatThreadService {
       return;
     }
 
-    const activity = (await this.sharingService.hasInboxState(workspaceId))
-      ? await this.recordAgentActivity({ workspaceId, threadId, text })
-      : await touchAgentChatThread({
-          repository: this.threadRepository,
-          workspaceId,
-          threadId,
-        });
+    const activity = await this.recordAgentActivity({
+      workspaceId,
+      threadId,
+      text,
+    });
 
     if (!isDefined(activity)) {
       return;

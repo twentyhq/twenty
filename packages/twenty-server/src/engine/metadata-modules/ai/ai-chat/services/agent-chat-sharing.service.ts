@@ -7,7 +7,6 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,7 +16,6 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -33,12 +31,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
-
-// Added by 2.46 commands that run after the participant object's
-const INBOX_STATE_LATER_FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.agentChatThreadParticipant.fields.isSubscribed
-    .universalIdentifier,
-];
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -58,42 +50,25 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  // Fence for the 2.46 cross-upgrade window: until every 2.46 inbox command
-  // has reached a workspace, it lacks the participant table, the thread's
-  // lastActivityAt column or the fields added after them. Remove once 2.46
-  // leaves the window.
-  async hasInboxState(workspaceId: string): Promise<boolean> {
-    return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
-  }
-
-  async findParticipantObjectMetadataId(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+  async findParticipantObjectMetadataId(workspaceId: string): Promise<string> {
+    const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
       ]);
 
-    const hasLaterInboxFields =
-      INBOX_STATE_LATER_FIELD_UNIVERSAL_IDENTIFIERS.every(
-        (universalIdentifier) =>
-          isDefined(
-            findFlatEntityByUniversalIdentifier({
-              flatEntityMaps: flatFieldMetadataMaps,
-              universalIdentifier,
-            }),
-          ),
-      );
-
-    if (!hasLaterInboxFields) {
-      return undefined;
-    }
-
-    return findAgentChatFlatObjectMetadata(
+    const participantObjectMetadataId = findAgentChatFlatObjectMetadata(
       flatObjectMetadataMaps,
       'agentChatThreadParticipant',
     )?.id;
+
+    if (!isDefined(participantObjectMetadataId)) {
+      throw new AiException(
+        'Chat thread participant object not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    return participantObjectMetadataId;
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
@@ -234,7 +209,6 @@ export class AgentChatSharingService {
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const participantObjectMetadataId =
       await this.findParticipantObjectMetadataId(args.workspaceId);
-    const hasInboxState = isDefined(participantObjectMetadataId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -252,8 +226,8 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
-           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId", "lastActivityAt")
+           VALUES ($1, $2, $3, $4, clock_timestamp()) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -280,27 +254,25 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        if (hasInboxState) {
-          await manager.query(
-            `WITH participant AS (
-               INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
-               VALUES ($1, $2, $3, CASE WHEN $5::boolean THEN clock_timestamp() END)
-               RETURNING id, "workspaceMemberId"
-             )
-             ${buildAgentChatThreadParticipantOwnerShareInsert({
-               workspaceId: args.workspaceId,
-               participantSource: 'participant',
-               objectMetadataIdParameter: '$4',
-             })}`,
-            [
-              record.id,
-              authContext.workspaceMemberId,
-              record.lastActivityAt,
-              participantObjectMetadataId,
-              args.isArchived ?? false,
-            ],
-          );
-        }
+        await manager.query(
+          `WITH participant AS (
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
+             VALUES ($1, $2, $3, CASE WHEN $5::boolean THEN clock_timestamp() END)
+             RETURNING id, "workspaceMemberId"
+           )
+           ${buildAgentChatThreadParticipantOwnerShareInsert({
+             workspaceId: args.workspaceId,
+             participantSource: 'participant',
+             objectMetadataIdParameter: '$4',
+           })}`,
+          [
+            record.id,
+            authContext.workspaceMemberId,
+            record.lastActivityAt,
+            participantObjectMetadataId,
+            args.isArchived ?? false,
+          ],
+        );
         return record;
       },
     );

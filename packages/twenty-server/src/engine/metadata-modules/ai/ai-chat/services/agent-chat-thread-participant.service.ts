@@ -21,7 +21,6 @@ import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/meta
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -234,10 +233,6 @@ export class AgentChatThreadParticipantService {
 
   // For the row written along with a new thread
   async emitParticipantCreated(args: AgentChatThreadAccessArgs): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
-      return;
-    }
-
     const participant = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) => this.findOne({ manager, ...args }),
@@ -281,16 +276,6 @@ export class AgentChatThreadParticipantService {
   }: AgentChatThreadAccessArgs & {
     text: string;
   }): Promise<AgentChatThreadActivity> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return (
-        (await touchAgentChatThread({
-          repository: this.threadRepository,
-          workspaceId,
-          threadId,
-        })) ?? throwAgentChatThreadNotFound()
-      );
-    }
-
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
     const participantObjectMetadataId =
       await this.sharingService.findParticipantObjectMetadataId(workspaceId);
@@ -451,13 +436,6 @@ export class AgentChatThreadParticipantService {
 
     if (!isDefined(readableThreadId)) {
       throwAgentChatThreadNotFound();
-    }
-
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      throw new AiException(
-        'Chat inbox state is not available until this workspace finishes upgrading',
-        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
-      );
     }
   }
 

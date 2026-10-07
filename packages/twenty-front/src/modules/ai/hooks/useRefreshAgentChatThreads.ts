@@ -10,7 +10,6 @@ import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatT
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
@@ -84,13 +83,7 @@ export const useRefreshAgentChatThreads = () => {
             filter: isDefined(threadIdFilter)
               ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
               : AGENT_CHAT_THREAD_LIST_FILTER,
-            orderBy: [
-              {
-                [getAgentChatThreadLastActivityFieldName(
-                  chatObjectMetadataItem,
-                )]: 'DescNullsLast',
-              },
-            ],
+            orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,
             lastCursor,
           },
