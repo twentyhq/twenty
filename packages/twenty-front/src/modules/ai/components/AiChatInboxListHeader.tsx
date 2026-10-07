@@ -2,10 +2,13 @@ import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
+import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
+import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
@@ -30,6 +33,8 @@ export const AiChatInboxListHeader = ({
   );
   const FilterStatusIcon =
     AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
+  const isMobile = useIsMobile();
+  const isSplitView = useIsAiChatInboxSplitView();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
@@ -59,15 +64,20 @@ export const AiChatInboxListHeader = ({
             <SidePanelToggleButton />
           </>
         ) : (
-          <Button
-            size="sm"
-            variant="solid"
-            color="accent"
-            startIcon={<IconPlus />}
-            onClick={switchToNewChat}
-          >
-            {t`New chat`}
-          </Button>
+          <>
+            {!isMobile && <AiChatInboxLayoutDropdown />}
+            <Button
+              size="sm"
+              variant="solid"
+              color="accent"
+              startIcon={<IconPlus />}
+              onClick={switchToNewChat}
+            >
+              {t`New chat`}
+            </Button>
+            {/* In split view the chat beside the list has the command menu */}
+            {!isSplitView && <SidePanelToggleButton />}
+          </>
         )
       }
     />

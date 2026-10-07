@@ -1,4 +1,5 @@
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
+import { type AgentRunSummary } from 'twenty-shared/ai';
+
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 
 const buildSummary = ({

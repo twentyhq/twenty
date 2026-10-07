@@ -1,5 +1,6 @@
+import { type AgentRunSummary } from 'twenty-shared/ai';
+
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
 import { mapAgentStepsToToolCallLogs } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-steps-to-tool-call-logs.util';
 
 export const buildAgentRunSummary = ({

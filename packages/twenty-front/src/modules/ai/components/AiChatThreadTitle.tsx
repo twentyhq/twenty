@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from 'twenty-shared/utils';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
@@ -35,7 +35,7 @@ export const AiChatThreadTitle = ({ thread }: AiChatThreadTitleProps) => {
   return (
     <StyledTitle $isUnread={isUnread}>
       {isNonEmptyString(thread.title) ? thread.title : t`Untitled`}
-      {isUnread && <VisibilityHidden>{t`, unread`}</VisibilityHidden>}
+      {isUnread && <VisuallyHidden>{t`, unread`}</VisuallyHidden>}
     </StyledTitle>
   );
 };
