@@ -53,6 +53,7 @@ export const useOptimisticallyRestoreOnSend = () => {
               lastReadAt: optimisticUpdatedAt,
               archivedAt: null,
               snoozedUntil: null,
+              isSubscribed: true,
               updatedAt:
                 previousParticipant?.updatedAt ??
                 AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT,

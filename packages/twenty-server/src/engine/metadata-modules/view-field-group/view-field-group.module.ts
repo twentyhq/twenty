@@ -29,6 +29,5 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     FieldsWidgetUpsertService,
     provideWorkspaceScopedRepository(ViewEntity),
   ],
-  exports: [ViewFieldGroupService],
 })
 export class ViewFieldGroupModule {}

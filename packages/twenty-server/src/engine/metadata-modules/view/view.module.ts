@@ -43,7 +43,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   exports: [
     ViewPermissionsModule,
-    ViewQueryParamsService,
     ViewToolsFactory,
     TypeOrmModule.forFeature([ViewEntity]),
   ],

@@ -43,6 +43,11 @@ export const AiChatThreadActivityTime = ({
 
         return t`Done ${doneTime}`;
       }
+      case 'UNSUBSCRIBED': {
+        const unsubscribedTime = beautifyPastDateRelativeToNowShort(event.at);
+
+        return t`Unsubscribed ${unsubscribedTime}`;
+      }
       default:
         return beautifyPastDateRelativeToNowShort(
           getAgentChatThreadLastActivityAt(thread),

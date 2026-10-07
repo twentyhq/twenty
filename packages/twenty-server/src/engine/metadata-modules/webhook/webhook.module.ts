@@ -23,6 +23,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   controllers: [WebhookController],
   providers: [WebhookService, WebhookResolver, WebhookToolWorkspaceService],
-  exports: [WebhookService, WebhookToolWorkspaceService],
+  exports: [WebhookToolWorkspaceService],
 })
 export class WebhookModule {}

@@ -275,6 +275,12 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.SNOOZE_AI_CHAT]: (
     <AgentChatThreadInboxCommand action="snooze" />
   ),
+  [EngineComponentKey.SUBSCRIBE_TO_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action="subscribe" />
+  ),
+  [EngineComponentKey.UNSUBSCRIBE_FROM_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action="unsubscribe" />
+  ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (

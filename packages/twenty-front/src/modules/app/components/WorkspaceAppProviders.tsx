@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
+import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
@@ -36,15 +37,10 @@ import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFile
 import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
 import { PageFavicon } from '@/app/components/PageFavicon';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
-import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const WorkspaceAppProviders = () => {
-  const { pathname } = useLocation();
-  const pageTitle = getPageTitleFromPath(pathname);
-
   return (
     <SharedAppProviders>
       <UserMetadataProviderInitialEffect />
@@ -74,7 +70,7 @@ export const WorkspaceAppProviders = () => {
                             <PromiseRejectionEffect />
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
-                            <PageTitle title={pageTitle} />
+                            <WorkspaceAppPageTitle />
                             <PageFavicon />
                             <RecordCreationFormProvider>
                               <Outlet />

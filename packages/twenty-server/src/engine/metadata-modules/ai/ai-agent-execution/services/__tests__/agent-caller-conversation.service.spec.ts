@@ -34,6 +34,8 @@ const buildService = ({ isCreated = true } = {}) => {
   const service = new AgentCallerConversationService(
     agentInboxService as never,
     agentRunSuspensionService as never,
+    {} as never,
+    {} as never,
   );
 
   return { service, agentInboxService, agentRunSuspensionService };

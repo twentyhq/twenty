@@ -1,3 +1,4 @@
+import { AppNavigatorProvider } from '@/app/components/AppNavigatorProvider';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
@@ -170,16 +171,17 @@ export const PageDecorator: Decorator<{
   additionalRoutes?: string[];
   searchParams?: RouteParams;
 }> = (Story, { args }) => {
+  const router = createRouter({
+    Story,
+    args,
+    initialEntries: [
+      computeLocation(args.routePath, args.routeParams, args.searchParams),
+    ],
+  });
+
   return (
-    <RouterProvider
-      useTransitions={false}
-      router={createRouter({
-        Story,
-        args,
-        initialEntries: [
-          computeLocation(args.routePath, args.routeParams, args.searchParams),
-        ],
-      })}
-    />
+    <AppNavigatorProvider router={router}>
+      <RouterProvider useTransitions={false} router={router} />
+    </AppNavigatorProvider>
   );
 };
