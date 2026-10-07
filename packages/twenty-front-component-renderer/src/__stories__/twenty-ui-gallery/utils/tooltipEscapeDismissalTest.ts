@@ -34,5 +34,29 @@ export const tooltipEscapeDismissalTest: TwentyUiGalleryPlayFunction = async ({
     expect(canvas.getByRole('status')).toHaveTextContent('Export help: closed'),
   );
   expect(page.queryByText(TOOLTIP_CONTENT)).not.toBeInTheDocument();
+  await user.tab();
+  expect(canvas.getByRole('button', { name: 'Export details' })).toHaveFocus();
+  await waitFor(() => {
+    expect(page.getByText('Export visible records')).toBeVisible();
+    expect(page.getByText('Your current filters are applied.')).toBeVisible();
+  });
+  await user.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(page.queryByText('Export visible records')).not.toBeInTheDocument(),
+  );
+  await user.tab();
+  expect(canvas.getByRole('button', { name: 'Detached export' })).toHaveFocus();
+  await waitFor(() =>
+    expect(page.getByText('Detached export help')).toBeVisible(),
+  );
+  await user.tab();
+  expect(canvas.getByRole('button', { name: 'Local export' })).toHaveFocus();
+  await waitFor(() =>
+    expect(page.getByText('Local export help')).toBeVisible(),
+  );
+  await user.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(page.queryByText('Local export help')).not.toBeInTheDocument(),
+  );
   expect(errorHandler).not.toHaveBeenCalled();
 };
