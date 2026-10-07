@@ -41,6 +41,7 @@ import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadat
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { computeMessageImportProgress } from 'src/engine/metadata-modules/message-channel/utils/compute-message-import-progress.util';
+import { MESSAGING_MESSAGES_IMPORT_SYNC_STAGES } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-import-sync-stages.constant';
 import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import {
   MessageChannelException,
@@ -92,12 +93,7 @@ export class MessageChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<number | null> {
     if (
-      messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_PENDING &&
-      messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED &&
-      messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING
+      !MESSAGING_MESSAGES_IMPORT_SYNC_STAGES.includes(messageChannel.syncStage)
     ) {
       return null;
     }
