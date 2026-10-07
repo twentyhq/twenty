@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -18,7 +17,6 @@ import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-mod
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -36,10 +34,9 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ApplicationModule,
     CoreWorkflowAccessModule,
     WorkflowRunRecordShareModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
+    TypeOrmModule.forFeature([WorkflowVersionEntity]),
     AutomatedTriggerModule,
     CacheLockModule,
-    CacheStorageModule,
     CodeStepBuildModule,
     CommandMenuItemModule,
     RecordPositionModule,
