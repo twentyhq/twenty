@@ -65,7 +65,7 @@ const SidePanelRecordCreationFormSettings = ({
     objectId: objectMetadataId,
   });
   const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
-  const eligibleRecordFormFields = recordFormFields.filter(
+  const configurableRecordFormFields = recordFormFields.filter(
     ({ fieldMetadataItem }) =>
       isFieldMetadataItemEligibleForRecordForm(fieldMetadataItem),
   );
@@ -105,7 +105,7 @@ const SidePanelRecordCreationFormSettings = ({
 
     const pageLayoutWidgetIsActiveUpdates =
       computePageLayoutWidgetIsActiveUpdates({
-        recordFormFields: eligibleRecordFormFields,
+        recordFormFields: configurableRecordFormFields,
         isVisibleByFieldMetadataId,
       });
 
@@ -126,7 +126,7 @@ const SidePanelRecordCreationFormSettings = ({
     <StyledContainer>
       <StyledContent>
         <SidePanelGroup heading={t`Fields`}>
-          {eligibleRecordFormFields.map((recordFormField) => {
+          {configurableRecordFormFields.map((recordFormField) => {
             const { fieldMetadataItem } = recordFormField;
             const isVisible = isRecordFormFieldVisible(recordFormField);
 
