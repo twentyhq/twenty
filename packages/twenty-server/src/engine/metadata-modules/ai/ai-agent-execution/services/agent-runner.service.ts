@@ -66,7 +66,7 @@ export class AgentRunnerService {
   ) {}
 
   run(input: AgentRunnerRunInput): Promise<AgentRunnerResult> {
-    return this.runSegment(input, null);
+    return this.runSegment({ input, suspension: null });
   }
 
   // Picks a suspended run up where it paused, with its answer or wait outcome already in its conversation
@@ -124,8 +124,8 @@ export class AgentRunnerService {
         );
       }
 
-      result = await this.runSegment(
-        {
+      result = await this.runSegment({
+        input: {
           workspaceId,
           conversation: { threadId, isCreated: false },
           caller,
@@ -140,7 +140,7 @@ export class AgentRunnerService {
             handler.resolveTurnAuthor({ workspaceId, caller }),
         },
         suspension,
-      );
+      });
     } catch (error) {
       await this.agentRunSuspensionService.settle({
         workspaceId,
@@ -166,22 +166,28 @@ export class AgentRunnerService {
 
   // nothing else writes to the conversation while the run goes on: another run would read it half
   // written, and a run that suspends would read a member's message once it goes on
-  private runSegment(
-    input: AgentRunnerRunInput,
+  private runSegment({
+    input,
+    suspension,
+  }: {
+    input: AgentRunnerRunInput;
     // the suspension a continued run resumes from
-    suspension: AgentRunSuspensionEntity | null,
-  ): Promise<AgentRunnerResult> {
+    suspension: AgentRunSuspensionEntity | null;
+  }): Promise<AgentRunnerResult> {
     return this.agentRunConversationService.withThreadLock({
       workspaceId: input.workspaceId,
       threadId: input.conversation.threadId,
-      work: () => this.runTurn(input, suspension),
+      work: () => this.runTurn({ input, suspension }),
     });
   }
 
-  private async runTurn(
-    input: AgentRunnerRunInput,
-    suspension: AgentRunSuspensionEntity | null,
-  ): Promise<AgentRunnerResult> {
+  private async runTurn({
+    input,
+    suspension,
+  }: {
+    input: AgentRunnerRunInput;
+    suspension: AgentRunSuspensionEntity | null;
+  }): Promise<AgentRunnerResult> {
     const {
       workspaceId,
       conversation: { threadId, isCreated },
