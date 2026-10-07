@@ -162,4 +162,50 @@ describe('useUpsertRecordsInStore', () => {
 
     expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
   });
+
+  it('should not update when a partial record matches the stored values', () => {
+    const recordId = 'test-record-4';
+
+    const { result } = renderHook(
+      () => {
+        const recordStore = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
+        const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+        return { recordStore, upsertRecordsInStore };
+      },
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [
+          {
+            id: recordId,
+            __typename: 'Person',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        ],
+      });
+    });
+
+    const recordAfterFirstUpsert = result.current.recordStore;
+
+    act(() => {
+      result.current.upsertRecordsInStore({
+        partialRecords: [
+          {
+            id: recordId,
+            __typename: 'Person',
+            name: 'John Doe',
+          },
+        ],
+      });
+    });
+
+    expect(result.current.recordStore).toBe(recordAfterFirstUpsert);
+  });
 });
