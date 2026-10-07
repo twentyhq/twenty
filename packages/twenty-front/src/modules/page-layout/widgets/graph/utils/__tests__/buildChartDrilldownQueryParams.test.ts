@@ -31,11 +31,18 @@ const AMOUNT_FIELD = {
   label: 'Amount',
 };
 
+const COMPANY_FIELD = {
+  id: 'field-company',
+  name: 'company',
+  type: FieldMetadataType.RELATION,
+  label: 'Company',
+};
+
 const objectMetadataItem = {
   id: 'object-opportunity',
   nameSingular: 'opportunity',
   namePlural: 'opportunities',
-  fields: [STATUS_FIELD, CREATED_AT_FIELD, AMOUNT_FIELD],
+  fields: [STATUS_FIELD, CREATED_AT_FIELD, AMOUNT_FIELD, COMPANY_FIELD],
 } as EnrichedObjectMetadataItem;
 
 const DATE_SLOT: DashboardFilterSlot = {
@@ -85,6 +92,34 @@ describe('buildChartDrilldownQueryParams', () => {
       }),
     });
 
+    expect(queryParams.get('filter[createdAt][IS_RELATIVE]')).toBe(
+      'PAST_7_DAY',
+    );
+    expect(queryParams.get('filter[status][IS]')).toBe('["WON"]');
+  });
+
+  it('omits a dashboard filter bound through a relation target field, which the URL grammar cannot express', () => {
+    const companyNameRecordFilter = buildRecordFilterFromDashboardFilterSlot({
+      slot: { id: 'company', label: 'Company', filterType: 'TEXT' },
+      binding: {
+        fieldMetadataId: COMPANY_FIELD.id,
+        relationTargetFieldMetadataId: 'field-company-name',
+      },
+      value: { operand: ViewFilterOperand.CONTAINS, value: 'acme' },
+      fieldMetadataItem: COMPANY_FIELD,
+    });
+
+    const queryParams = buildDrilldownQueryParams({
+      ...BASE_CONFIGURATION,
+      filter: appendRecordFiltersToChartFilter({
+        chartFilter: BASE_CONFIGURATION.filter,
+        recordFilters: [dashboardDateRecordFilter, companyNameRecordFilter],
+      }),
+    });
+
+    expect(
+      Array.from(queryParams.keys()).some((key) => key.includes('company')),
+    ).toBe(false);
     expect(queryParams.get('filter[createdAt][IS_RELATIVE]')).toBe(
       'PAST_7_DAY',
     );

@@ -1,4 +1,4 @@
-import { isNumber } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   AggregateOperations,
@@ -8,6 +8,7 @@ import {
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
@@ -173,25 +174,47 @@ const COMPOSITE_FIELD_SUB_FIELD_NAME_OPTIONS = Object.values(
   ...CompositeFieldSubFieldName[],
 ];
 
-const dashboardFilterBindingSchema = z.object({
-  fieldMetadataId: z
-    .uuid()
-    .describe(
-      'UUID of the field of the widget object the dashboard filter value is applied to.',
-    ),
-  subFieldName: z
-    .enum(COMPOSITE_FIELD_SUB_FIELD_NAME_OPTIONS)
-    .optional()
-    .describe(
-      'Required for composite fields — the sub field the value is applied to, e.g. "amountMicros" for CURRENCY or "addressCity" for ADDRESS.',
-    ),
-  relationTargetFieldMetadataId: z
-    .uuid()
-    .optional()
-    .describe(
-      'For RELATION fields only: UUID of a field of the related object to filter on instead of the related record itself.',
-    ),
-});
+const dashboardFilterBindingSchema = z
+  .object({
+    fieldMetadataId: z
+      .uuid()
+      .optional()
+      .describe(
+        'UUID of the field of the widget object the dashboard filter value is applied to. Provide this or fieldName.',
+      ),
+    fieldName: z
+      .string()
+      .optional()
+      .describe(
+        'Name of the field of the widget object the dashboard filter value is applied to (resolved to a UUID). Alternative to fieldMetadataId.',
+      ),
+    subFieldName: z
+      .enum(COMPOSITE_FIELD_SUB_FIELD_NAME_OPTIONS)
+      .optional()
+      .describe(
+        'Required for composite fields: the sub field the value is applied to, e.g. "amountMicros" for CURRENCY or "addressCity" for ADDRESS.',
+      ),
+    relationTargetFieldMetadataId: z
+      .uuid()
+      .optional()
+      .describe(
+        'For RELATION fields only: UUID of a field of the related object to filter on instead of the related record itself. Provide this or relationTargetFieldName.',
+      ),
+    relationTargetFieldName: z
+      .string()
+      .optional()
+      .describe(
+        'For RELATION fields only: name of a field of the related object to filter on (resolved to a UUID against the object the relation targets). Alternative to relationTargetFieldMetadataId.',
+      ),
+  })
+  .refine(
+    (binding) =>
+      isDefined(binding.fieldMetadataId) || isNonEmptyString(binding.fieldName),
+    {
+      message: 'Provide fieldMetadataId or fieldName.',
+      path: ['fieldMetadataId'],
+    },
+  );
 
 export const dashboardFilterBindingsSchema = z
   .record(z.string().min(1), dashboardFilterBindingSchema.nullable())

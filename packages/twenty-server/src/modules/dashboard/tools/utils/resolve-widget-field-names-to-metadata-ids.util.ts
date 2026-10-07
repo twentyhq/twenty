@@ -3,6 +3,7 @@ import {
   type ChartFilter,
   type ChartRecordFilter,
   type ChartRecordFilterGroup,
+  type DashboardFilterBindingsBySlotId,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,6 +12,7 @@ import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { type ChartFilterInput } from 'src/modules/dashboard/tools/types/chart-filter-input.type';
+import { type DashboardFilterBindingsInput } from 'src/modules/dashboard/tools/types/dashboard-filter-bindings-input.type';
 import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
 import { type WidgetIdentifiersInput } from 'src/modules/dashboard/tools/types/widget-identifiers-input.type';
@@ -184,6 +186,78 @@ const resolveChartFilterFieldNamesToIds = (
   };
 };
 
+// A relation target name is looked up on the object the bound relation points to, which only the bound field can tell.
+const resolveDashboardFilterBindingFieldNamesToIds = (
+  dashboardFilterBindings: DashboardFilterBindingsInput | undefined,
+  objectMetadataId: string | undefined,
+  maps: DashboardIdentifierMaps,
+): DashboardFilterBindingsBySlotId | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(dashboardFilterBindings).map(([slotId, binding]) => {
+      if (!isDefined(binding)) {
+        return [slotId, null];
+      }
+
+      const {
+        fieldName,
+        fieldMetadataId,
+        relationTargetFieldName,
+        relationTargetFieldMetadataId,
+        ...rest
+      } = binding;
+
+      const resolvedFieldMetadataId = getFieldMetadataIdOrThrow(
+        { fieldMetadataId, fieldName, objectMetadataId, maps },
+        `dashboard filter "${slotId}" binding field`,
+      );
+
+      if (
+        !isDefined(relationTargetFieldMetadataId) &&
+        !isNonEmptyString(relationTargetFieldName)
+      ) {
+        return [slotId, { ...rest, fieldMetadataId: resolvedFieldMetadataId }];
+      }
+
+      const relationTargetObjectMetadataId = isDefined(
+        relationTargetFieldMetadataId,
+      )
+        ? undefined
+        : maps.fieldById.get(resolvedFieldMetadataId)
+            ?.relationTargetObjectMetadataId;
+
+      if (
+        !isDefined(relationTargetFieldMetadataId) &&
+        !isDefined(relationTargetObjectMetadataId)
+      ) {
+        throw new Error(
+          `Dashboard filter "${slotId}" binding: relationTargetFieldName "${relationTargetFieldName}" requires the bound field to be a RELATION field.`,
+        );
+      }
+
+      return [
+        slotId,
+        {
+          ...rest,
+          fieldMetadataId: resolvedFieldMetadataId,
+          relationTargetFieldMetadataId: getFieldMetadataIdOrThrow(
+            {
+              fieldMetadataId: relationTargetFieldMetadataId,
+              fieldName: relationTargetFieldName,
+              objectMetadataId: relationTargetObjectMetadataId ?? undefined,
+              maps,
+            },
+            `dashboard filter "${slotId}" binding relation target field`,
+          ),
+        },
+      ];
+    }),
+  );
+};
+
 export const resolveConfigurationFieldNamesToIds = (
   configuration: WidgetConfigurationInput,
   objectMetadataId: string | undefined,
@@ -196,6 +270,7 @@ export const resolveConfigurationFieldNamesToIds = (
         aggregateFieldMetadataId,
         ratioAggregateConfig,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -212,6 +287,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),
@@ -242,6 +322,7 @@ export const resolveConfigurationFieldNamesToIds = (
         secondaryAxisGroupByFieldName,
         secondaryAxisGroupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -258,6 +339,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),
@@ -293,6 +379,7 @@ export const resolveConfigurationFieldNamesToIds = (
         groupByFieldName,
         groupByFieldMetadataId,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = configuration;
 
@@ -309,6 +396,11 @@ export const resolveConfigurationFieldNamesToIds = (
         ),
         filter: resolveChartFilterFieldNamesToIds(
           filter,
+          objectMetadataId,
+          maps,
+        ),
+        dashboardFilterBindings: resolveDashboardFilterBindingFieldNamesToIds(
+          dashboardFilterBindings,
           objectMetadataId,
           maps,
         ),

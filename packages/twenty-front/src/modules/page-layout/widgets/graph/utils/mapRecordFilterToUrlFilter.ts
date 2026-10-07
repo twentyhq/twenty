@@ -25,6 +25,11 @@ export const mapRecordFilterToUrlFilter = ({
     return null;
   }
 
+  // The URL filter grammar cannot name a field of the related record; emitting the base field would make the record index show a chip it then ignores.
+  if (isDefined(recordFilter.relationTargetFieldMetadataId)) {
+    return null;
+  }
+
   const urlFilter: UrlFilter = {
     field: fieldMetadataItem.name,
     op: recordFilter.operand,

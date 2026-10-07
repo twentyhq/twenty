@@ -1,9 +1,9 @@
+import { useInitializeDashboardFilterValues } from '@/page-layout/dashboard-filters/hooks/useInitializeDashboardFilterValues';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { parseDashboardFilterValuesFromSearchParams } from '@/page-layout/dashboard-filters/utils/parseDashboardFilterValuesFromSearchParams';
-import { resolveInitialDashboardFilterValues } from '@/page-layout/dashboard-filters/utils/resolveInitialDashboardFilterValues';
 import { serializeDashboardFilterValuesToSearchParams } from '@/page-layout/dashboard-filters/utils/serializeDashboardFilterValuesToSearchParams';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useEffect, useState } from 'react';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 
@@ -19,26 +19,27 @@ export const DashboardFilterUrlSyncEffect = ({
 }: DashboardFilterUrlSyncEffectProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [dashboardFilterValues, setDashboardFilterValues] =
-    useAtomComponentState(dashboardFilterValuesComponentState);
+  const dashboardFilterValues = useAtomComponentStateValue(
+    dashboardFilterValuesComponentState,
+  );
 
-  const [hasInitializedFromUrl, setHasInitializedFromUrl] = useState(false);
+  const valuesFromUrl = useMemo(
+    () =>
+      parseDashboardFilterValuesFromSearchParams({
+        searchParams,
+        pageLayoutId,
+        slots,
+      }),
+    [searchParams, pageLayoutId, slots],
+  );
+
+  const hasInitialized = useInitializeDashboardFilterValues({
+    slots,
+    valuesFromUrl,
+  });
 
   useEffect(() => {
-    if (!hasInitializedFromUrl) {
-      setDashboardFilterValues(
-        resolveInitialDashboardFilterValues({
-          slots,
-          valuesFromUrl: parseDashboardFilterValuesFromSearchParams({
-            searchParams,
-            pageLayoutId,
-            slots,
-          }),
-        }),
-      );
-
-      setHasInitializedFromUrl(true);
-
+    if (!hasInitialized) {
       return;
     }
 
@@ -58,13 +59,11 @@ export const DashboardFilterUrlSyncEffect = ({
       { replace: true },
     );
   }, [
-    hasInitializedFromUrl,
+    hasInitialized,
     pageLayoutId,
     slots,
-    searchParams,
     setSearchParams,
     dashboardFilterValues,
-    setDashboardFilterValues,
   ]);
 
   return null;

@@ -1,5 +1,7 @@
 import { DashboardFilterRequiredSlotStatusDisplay } from '@/page-layout/dashboard-filters/components/DashboardFilterRequiredSlotStatusDisplay';
+import { useAreDashboardFilterValuesInitialized } from '@/page-layout/dashboard-filters/hooks/useAreDashboardFilterValuesInitialized';
 import { useMissingRequiredDashboardFilterSlot } from '@/page-layout/dashboard-filters/hooks/useMissingRequiredDashboardFilterSlot';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChartRenderer';
@@ -11,10 +13,17 @@ import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 export const GraphWidget = () => {
   const widget = useCurrentWidget();
 
+  const areDashboardFilterValuesInitialized =
+    useAreDashboardFilterValuesInitialized();
+
   const missingRequiredDashboardFilterSlot =
     useMissingRequiredDashboardFilterSlot();
 
-  // Decided before picking a renderer so none of their query hooks mounts.
+  // Both decided before picking a renderer so none of their query hooks mounts, and never with values the initializer is about to replace.
+  if (!areDashboardFilterValuesInitialized) {
+    return <WidgetSkeletonLoader />;
+  }
+
   if (isDefined(missingRequiredDashboardFilterSlot)) {
     return (
       <DashboardFilterRequiredSlotStatusDisplay

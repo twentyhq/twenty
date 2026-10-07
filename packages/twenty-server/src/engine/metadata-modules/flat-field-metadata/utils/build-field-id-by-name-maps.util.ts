@@ -9,10 +9,16 @@ export const buildFieldIdByNameMaps = (
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): {
   fieldIdByObjectIdAndName: Map<string, string>;
-  fieldById: Map<string, { type: FieldMetadataType }>;
+  fieldById: Map<
+    string,
+    { type: FieldMetadataType; relationTargetObjectMetadataId?: string | null }
+  >;
 } => {
   const fieldIdByObjectIdAndName = new Map<string, string>();
-  const fieldById = new Map<string, { type: FieldMetadataType }>();
+  const fieldById = new Map<
+    string,
+    { type: FieldMetadataType; relationTargetObjectMetadataId?: string | null }
+  >();
 
   for (const fieldMetadata of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
@@ -31,6 +37,8 @@ export const buildFieldIdByNameMaps = (
 
     fieldById.set(fieldMetadata.id, {
       type: fieldMetadata.type,
+      relationTargetObjectMetadataId:
+        fieldMetadata.relationTargetObjectMetadataId ?? null,
     });
   }
 

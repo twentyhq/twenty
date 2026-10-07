@@ -55,7 +55,7 @@ export const createUpdateDashboardWidgetTool = (
 
 Use get_dashboard first to find the widgetId.
 
-You can reference the object and fields by NAME instead of UUID: pass objectName and the *FieldName variants in configuration (aggregateFieldName, primaryAxisGroupByFieldName, secondaryAxisGroupByFieldName, groupByFieldName) and fieldName inside filter recordFilters. They are resolved server-side against the widget object, falling back to the widget's existing object when you don't change it. UUID variants still work and take precedence.
+You can reference the object and fields by NAME instead of UUID: pass objectName and the *FieldName variants in configuration (aggregateFieldName, primaryAxisGroupByFieldName, secondaryAxisGroupByFieldName, groupByFieldName) and fieldName inside filter recordFilters and dashboardFilterBindings (plus relationTargetFieldName for a field of the related object). They are resolved server-side against the widget object, falling back to the widget's existing object when you don't change it. UUID variants still work and take precedence.
 
 Only provide fields you want to change - others remain unchanged.`,
   inputSchema: updateDashboardWidgetSchema,

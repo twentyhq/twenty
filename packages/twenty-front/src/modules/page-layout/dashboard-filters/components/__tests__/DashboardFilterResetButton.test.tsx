@@ -1,5 +1,6 @@
 import { DashboardFilterResetButton } from '@/page-layout/dashboard-filters/components/DashboardFilterResetButton';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
+import { hasInitializedDashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/hasInitializedDashboardFilterValuesComponentState';
 import { type DashboardFilterValues } from '@/page-layout/dashboard-filters/types/DashboardFilterValues';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -36,10 +37,19 @@ const valuesAtom = dashboardFilterValuesComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
 
-const renderResetButton = (values: DashboardFilterValues) => {
+const hasInitializedAtom =
+  hasInitializedDashboardFilterValuesComponentState.atomFamily({
+    instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+  });
+
+const renderResetButton = (
+  values: DashboardFilterValues,
+  { hasInitialized = true }: { hasInitialized?: boolean } = {},
+) => {
   const store = createStore();
 
   store.set(valuesAtom, values);
+  store.set(hasInitializedAtom, hasInitialized);
 
   render(
     <PageLayoutTestWrapper
@@ -77,6 +87,14 @@ describe('DashboardFilterResetButton', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
 
     expect(store.get(valuesAtom)).toEqual({ date: TODAY_VALUE });
+    expect(
+      screen.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('stays hidden until the values have been seeded, whatever memory holds', () => {
+    renderResetButton({ date: PAST_VALUE }, { hasInitialized: false });
+
     expect(
       screen.queryByRole('button', { name: 'Reset' }),
     ).not.toBeInTheDocument();

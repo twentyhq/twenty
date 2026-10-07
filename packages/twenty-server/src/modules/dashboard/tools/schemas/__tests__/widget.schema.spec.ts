@@ -30,8 +30,19 @@ describe('dashboardFilterBindingsSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('accepts bindings that name their fields instead of giving UUIDs', () => {
+    const result = dashboardFilterBindingsSchema.safeParse({
+      date: { fieldName: 'createdAt' },
+      owner: { fieldName: 'owner', relationTargetFieldName: 'name' },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it.each([
     ['a fieldMetadataId that is not a UUID', { fieldMetadataId: 'createdAt' }],
+    ['a binding with neither fieldMetadataId nor fieldName', {}],
+    ['a blank fieldName', { fieldName: '' }],
     [
       'an unknown composite sub field name',
       { fieldMetadataId: AMOUNT_FIELD_ID, subFieldName: 'amount' },
