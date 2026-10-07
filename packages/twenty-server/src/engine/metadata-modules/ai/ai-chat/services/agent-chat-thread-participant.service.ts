@@ -23,12 +23,17 @@ import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+// Runs in the participant write's transaction, after the participant row is
+// locked, in the order member activity takes the two locks
+type WriteThreadStep = (context: AgentHistoryStorageContext) => Promise<void>;
 
 type BuildParticipantWriteQuery = (tables: {
   participantTable: string;
@@ -120,11 +125,15 @@ export class AgentChatThreadParticipantService {
 
   // An assignee follows the chat and finds it in their inbox, unread unless
   // they assigned it to themselves
+  // The assignment is written by writeAssignment in the same transaction, so
+  // it is never saved without the assignee following the chat
   async markAsAssigned({
     isSelfAssigned,
+    writeAssignment,
     ...args
   }: AgentChatThreadAccessArgs & {
     isSelfAssigned: boolean;
+    writeAssignment: WriteThreadStep;
   }): Promise<AgentChatThreadParticipantRow | null> {
     return this.writeOne(
       args,
@@ -140,6 +149,7 @@ export class AgentChatThreadParticipantService {
            "updatedAt" = now()
          RETURNING *`,
       [isSelfAssigned],
+      writeAssignment,
     );
   }
 
@@ -160,20 +170,24 @@ export class AgentChatThreadParticipantService {
 
   // Files the chat under done and keeps it there whatever happens in it,
   // until the member is mentioned or writes in it again
+  // The assignee is checked under the thread's lock, which an assignment
+  // takes too, so the member cannot be assigned while unsubscribing
   async unsubscribe(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
-    const thread = await this.threadRepository.findOne(args.workspaceId, {
-      where: { id: args.threadId },
-      select: ['id', 'assigneeId'],
-    });
-
-    if (thread?.assigneeId === args.workspaceMemberId) {
-      throw new AiException(
-        'The assignee of a chat cannot unsubscribe from it',
-        AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
+    const assertIsNotAssignee: WriteThreadStep = async ({ manager, table }) => {
+      const [thread] = await manager.query<{ assigneeId: string | null }[]>(
+        `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+        [args.threadId],
       );
-    }
+
+      if (thread?.assigneeId === args.workspaceMemberId) {
+        throw new AiException(
+          'The assignee of a chat cannot unsubscribe from it',
+          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
+        );
+      }
+    };
 
     return this.upsertOne(
       args,
@@ -186,6 +200,8 @@ export class AgentChatThreadParticipantService {
            "snoozedUntil" = NULL,
            "updatedAt" = now()
          RETURNING *`,
+      [],
+      assertIsNotAssignee,
     );
   }
 
@@ -469,10 +485,11 @@ export class AgentChatThreadParticipantService {
     args: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
+    writeThread?: WriteThreadStep,
   ): Promise<AgentChatThreadParticipantDTO> {
     await this.assertCanWriteInboxState(args);
 
-    return this.writeOneOrThrow(args, buildQuery, extraParameters);
+    return this.writeOneOrThrow(args, buildQuery, extraParameters, writeThread);
   }
 
   private async assertCanWriteInboxState({
@@ -502,9 +519,10 @@ export class AgentChatThreadParticipantService {
     args: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[],
+    writeThread?: WriteThreadStep,
   ): Promise<AgentChatThreadParticipantDTO> {
     return (
-      (await this.writeOne(args, buildQuery, extraParameters)) ??
+      (await this.writeOne(args, buildQuery, extraParameters, writeThread)) ??
       throwAgentChatThreadNotFound()
     );
   }
@@ -515,6 +533,7 @@ export class AgentChatThreadParticipantService {
     { workspaceId, workspaceMemberId, threadId }: AgentChatThreadAccessArgs,
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
+    writeThread?: WriteThreadStep,
   ): Promise<AgentChatThreadParticipantRow | null> {
     const parameters = [
       threadId,
@@ -533,6 +552,8 @@ export class AgentChatThreadParticipantService {
           threadId,
           lock: true,
         });
+
+        await writeThread?.({ manager, table });
 
         const [after] = await manager.query<AgentChatThreadParticipantRow[]>(
           `WITH written_participant AS (

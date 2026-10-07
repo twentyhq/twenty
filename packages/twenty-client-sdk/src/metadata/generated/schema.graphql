@@ -194,6 +194,7 @@ enum EngineComponentKey {
   SNOOZE_AI_CHAT
   SUBSCRIBE_TO_AI_CHAT
   UNSUBSCRIBE_FROM_AI_CHAT
+  ASSIGN_AI_CHAT
   NAVIGATION
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
@@ -4379,6 +4380,7 @@ type Mutation {
   moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
   subscribeToAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  assignAgentChatThread(threadId: UUID!, assigneeWorkspaceMemberId: UUID): Boolean!
   addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!

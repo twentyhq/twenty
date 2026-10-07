@@ -10554,6 +10554,18 @@ export default {
                     ]
                 }
             ],
+            "assignAgentChatThread": [
+                8,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "assigneeWorkspaceMemberId": [
+                        3
+                    ]
+                }
+            ],
             "addAgentChatThreadParticipants": [
                 3,
                 {
