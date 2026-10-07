@@ -61,11 +61,19 @@ export class DeferredDatabaseEventTriggerService {
       [logicFunctionId],
       DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
     );
-    await this.cacheStorage.setIfAbsent(
-      this.buildSinceKey({ workspaceId, logicFunctionId }),
+    const sinceKey = this.buildSinceKey({ workspaceId, logicFunctionId });
+    const isFirstMiss = await this.cacheStorage.setIfAbsent(
+      sinceKey,
       new Date().toISOString(),
       DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
     );
+
+    if (!isFirstMiss) {
+      await this.cacheStorage.expire(
+        sinceKey,
+        DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
+      );
+    }
 
     if (droppedEventCount > 0) {
       const droppedKey = this.buildDroppedKey({ workspaceId, logicFunctionId });

@@ -132,6 +132,22 @@ describe('DeferredDatabaseEventTriggerService', () => {
       );
     });
 
+    it('keeps the first since alive while the function keeps missing batches', async () => {
+      cacheStorage.setIfAbsent.mockResolvedValue(false);
+
+      await service.defer({
+        workspaceId: WORKSPACE_ID,
+        signal: 'messaging.initialImport',
+        logicFunctionId: LOGIC_FUNCTION_ID,
+        droppedEventCount: 0,
+      });
+
+      expect(cacheStorage.expire).toHaveBeenCalledWith(
+        `${WORKSPACE_ID}:${LOGIC_FUNCTION_ID}:since`,
+        DEFERRED_DATABASE_EVENT_TRIGGER_TTL_MS,
+      );
+    });
+
     it('does not touch the counter when nothing was dropped', async () => {
       await service.defer({
         workspaceId: WORKSPACE_ID,
