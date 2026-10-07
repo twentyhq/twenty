@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="children" type="ReactNode" required>
+<ParamField body="children" type="ReactNode">
   Content hidden visually while remaining available to assistive technology.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render function composed with the hidden span props and ref.
 </ParamField>

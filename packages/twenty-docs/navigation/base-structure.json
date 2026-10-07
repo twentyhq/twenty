@@ -548,7 +548,7 @@
                 {
                   "key": "uiAccessibility",
                   "label": "Accessibility",
-                  "pages": ["ui/primitives/accessibility/visibility-hidden"]
+                  "pages": ["ui/primitives/accessibility/visually-hidden"]
                 },
                 {
                   "key": "uiDataDisplay",

@@ -42,7 +42,7 @@
     "Text",
     "Textarea",
     "Tooltip",
-    "VisibilityHidden"
+    "VisuallyHidden"
   ],
   "components": [
     "AnimatedIconCrossfade",

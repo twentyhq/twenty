@@ -537,7 +537,7 @@
                       {
                         "group": "Accessibility",
                         "pages": [
-                          "ui/primitives/accessibility/visibility-hidden"
+                          "ui/primitives/accessibility/visually-hidden"
                         ]
                       },
                       {

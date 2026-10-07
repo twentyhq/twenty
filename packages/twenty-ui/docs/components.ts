@@ -65,7 +65,7 @@ import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
-import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
+import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
   {
@@ -116,11 +116,11 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
-    name: 'VisibilityHidden',
-    source: 'primitives/accessibility/components/VisibilityHidden.tsx',
+    name: 'VisuallyHidden',
+    source: 'primitives/accessibility/components/VisuallyHidden.tsx',
     entryPoint: 'twenty-ui/primitives/accessibility',
-    slug: 'accessibility/visibility-hidden',
-    propDescriptions: VISIBILITY_HIDDEN_PROP_DESCRIPTIONS,
+    slug: 'accessibility/visually-hidden',
+    propDescriptions: VISUALLY_HIDDEN_PROP_DESCRIPTIONS,
   },
   {
     name: 'ColorSample',
