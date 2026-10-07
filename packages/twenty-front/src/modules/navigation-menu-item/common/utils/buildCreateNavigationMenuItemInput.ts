@@ -3,11 +3,12 @@ import type {
   NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
-import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
@@ -25,7 +26,9 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? 'Link';
     const linkUrl = (draftItem.link ?? '').trim();
-    input.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : undefined;
+    input.link = linkUrl
+      ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
+      : undefined;
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;

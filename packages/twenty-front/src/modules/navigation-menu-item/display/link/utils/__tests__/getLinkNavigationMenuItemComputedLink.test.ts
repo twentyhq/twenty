@@ -19,10 +19,16 @@ describe('getLinkNavigationMenuItemComputedLink', () => {
     );
   });
 
-  it('does not treat protocol-relative URLs as internal paths', () => {
+  it('keeps protocol-relative URLs external', () => {
     expect(getLinkNavigationMenuItemComputedLink({ link: '//evil.com' })).toBe(
       'https:////evil.com',
     );
+  });
+
+  it('keeps a path with control characters external', () => {
+    expect(
+      getLinkNavigationMenuItemComputedLink({ link: '/\t/evil.com' }),
+    ).toBe('https:///\t/evil.com');
   });
 
   it('returns an empty string without a link', () => {

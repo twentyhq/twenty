@@ -1,16 +1,14 @@
-import { isInternalAppPath } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isSafeInternalPath } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getLinkNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'link'>,
 ): string => {
   const linkUrl = (item.link ?? '').trim();
-  if (
-    linkUrl.startsWith('http://') ||
-    linkUrl.startsWith('https://') ||
-    isInternalAppPath(linkUrl)
-  ) {
-    return linkUrl;
+
+  if (linkUrl === '') {
+    return '';
   }
-  return linkUrl ? `https://${linkUrl}` : '';
+
+  return isSafeInternalPath(linkUrl) ? linkUrl : ensureAbsoluteUrl(linkUrl);
 };

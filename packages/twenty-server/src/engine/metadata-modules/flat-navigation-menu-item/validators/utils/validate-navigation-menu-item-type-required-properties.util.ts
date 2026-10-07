@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 import {
   isDefined,
-  isInternalAppPath,
+  isSafeInternalPath,
   isValidUrl,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -104,7 +104,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       ];
     }
     case NavigationMenuItemType.LINK: {
-      return isDefined(link) && (isValidUrl(link) || isInternalAppPath(link))
+      return isDefined(link) && (isValidUrl(link) || isSafeInternalPath(link))
         ? []
         : [
             buildInvalidInputError(

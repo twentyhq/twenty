@@ -1,4 +1,5 @@
-import { isInternalAppPath } from 'twenty-shared/utils';
+import { useLocation } from 'react-router-dom';
+import { isSafeInternalPath } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -23,11 +24,14 @@ export const NavigationMenuItemLinkDisplay = ({
   );
   const theme = useTheme();
 
+  const location = useLocation();
+
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
+  const isInternalLink = isSafeInternalPath(computedLink);
 
   const defaultRightOptions = !isLayoutCustomizationModeEnabled &&
-    !isInternalAppPath(computedLink) && (
+    !isInternalLink && (
       <IconArrowUpRight
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.md}
@@ -49,7 +53,7 @@ export const NavigationMenuItemLinkDisplay = ({
           : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
-      active={false}
+      active={isInternalLink && location.pathname === computedLink}
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"
