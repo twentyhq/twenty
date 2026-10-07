@@ -137,7 +137,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_LIST' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NEW_AI_CHAT' | 'SHARE_RECORD' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MARK_AI_CHAT_AS_DONE' | 'REOPEN_AI_CHAT' | 'SNOOZE_AI_CHAT' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'CANCEL_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_LIST' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NEW_AI_CHAT' | 'SHARE_RECORD' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MARK_AI_CHAT_AS_DONE' | 'REOPEN_AI_CHAT' | 'SNOOZE_AI_CHAT' | 'SUBSCRIBE_TO_AI_CHAT' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'ASSIGN_AI_CHAT' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'CANCEL_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
 
@@ -1554,6 +1554,7 @@ export interface JobStatus {
     state: JobState
     attemptsMade: Scalars['Int']
     failedReason?: Scalars['String']
+    progress?: Scalars['Int']
     enqueuedAt: Scalars['Float']
     startedAt?: Scalars['Float']
     finishedAt?: Scalars['Float']
@@ -3112,6 +3113,7 @@ export interface SendChatMessageResult {
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
     streamId?: Scalars['String']
+    mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     __typename: 'SendChatMessageResult'
 }
 
@@ -3121,6 +3123,8 @@ export interface AgentChatThreadParticipant {
     lastReadAt?: Scalars['DateTime']
     archivedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
+    isSubscribed: Scalars['Boolean']
+    lastMentionedAt?: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'AgentChatThreadParticipant'
 }
@@ -3726,6 +3730,9 @@ export interface Mutation {
     archiveAgentChatThread: AgentChatThreadParticipant
     snoozeAgentChatThread: AgentChatThreadParticipant
     moveAgentChatThreadToInbox: AgentChatThreadParticipant
+    subscribeToAgentChatThread: AgentChatThreadParticipant
+    unsubscribeFromAgentChatThread: AgentChatThreadParticipant
+    assignAgentChatThread: Scalars['Boolean']
     addAgentChatThreadParticipants: Scalars['UUID'][]
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     sendInboxMessage: SendInboxMessageResult
@@ -5432,6 +5439,7 @@ export interface JobStatusGenqlSelection{
     state?: boolean | number
     attemptsMade?: boolean | number
     failedReason?: boolean | number
+    progress?: boolean | number
     enqueuedAt?: boolean | number
     startedAt?: boolean | number
     finishedAt?: boolean | number
@@ -7079,6 +7087,7 @@ export interface SendChatMessageResultGenqlSelection{
     messageId?: boolean | number
     queued?: boolean | number
     streamId?: boolean | number
+    mentionedParticipantWorkspaceMemberIds?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7089,6 +7098,8 @@ export interface AgentChatThreadParticipantGenqlSelection{
     lastReadAt?: boolean | number
     archivedAt?: boolean | number
     snoozedUntil?: boolean | number
+    isSubscribed?: boolean | number
+    lastMentionedAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7739,7 +7750,7 @@ export interface MutationGenqlSelection{
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     createChatThread?: AgentChatThreadGenqlSelection
-    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
+    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
@@ -7748,6 +7759,9 @@ export interface MutationGenqlSelection{
     archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     snoozeAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], snoozedUntil: Scalars['DateTime']} })
     moveAgentChatThreadToInbox?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    subscribeToAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    unsubscribeFromAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    assignAgentChatThread?: { __args: {threadId: Scalars['UUID'], assigneeWorkspaceMemberId?: (Scalars['UUID'] | null)} }
     addAgentChatThreadParticipants?: { __args: {threadId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
@@ -10919,6 +10933,9 @@ export const enumEngineComponentKey = {
    MARK_AI_CHAT_AS_DONE: 'MARK_AI_CHAT_AS_DONE' as const,
    REOPEN_AI_CHAT: 'REOPEN_AI_CHAT' as const,
    SNOOZE_AI_CHAT: 'SNOOZE_AI_CHAT' as const,
+   SUBSCRIBE_TO_AI_CHAT: 'SUBSCRIBE_TO_AI_CHAT' as const,
+   UNSUBSCRIBE_FROM_AI_CHAT: 'UNSUBSCRIBE_FROM_AI_CHAT' as const,
+   ASSIGN_AI_CHAT: 'ASSIGN_AI_CHAT' as const,
    NAVIGATION: 'NAVIGATION' as const,
    TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
    FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const,

@@ -13,6 +13,7 @@ import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modul
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -181,6 +182,13 @@ export class AgentChatThreadService {
   }: AgentChatThreadAccessArgs & {
     assigneeWorkspaceMemberId: string | null;
   }): Promise<void> {
+    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
+      throw new AiException(
+        'Chat assignees are not available until this workspace finishes upgrading',
+        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
+      );
+    }
+
     const thread = await this.getWritableThread(args);
 
     if (
@@ -201,11 +209,12 @@ export class AgentChatThreadService {
       }
     }
 
-    const assignedThreadIds = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
-          `WITH assigned_thread AS (
+    const writeAssignment = async ({
+      manager,
+      table,
+    }: AgentHistoryStorageContext): Promise<void> => {
+      const assignedThreadIds = await manager.query<{ id: string }[]>(
+        `WITH assigned_thread AS (
            UPDATE ${table('agentChatThread')}
            SET "assigneeId" = $2::uuid,
              "updatedAt" = now(),
@@ -218,26 +227,26 @@ export class AgentChatThreadService {
              END
            WHERE id = $1
            RETURNING id
-           )
-           SELECT id FROM assigned_thread`,
-          [args.threadId, assigneeWorkspaceMemberId],
-        ),
-    );
+         )
+         SELECT id FROM assigned_thread`,
+        [args.threadId, assigneeWorkspaceMemberId],
+      );
 
-    if (assignedThreadIds.length !== 1) {
-      return throwAgentChatThreadNotFound();
-    }
+      if (assignedThreadIds.length !== 1) {
+        throwAgentChatThreadNotFound();
+      }
+    };
 
-    if (
-      isDefined(assigneeWorkspaceMemberId) &&
-      (await this.sharingService.hasInboxState(args.workspaceId))
-    ) {
+    if (isDefined(assigneeWorkspaceMemberId)) {
       await this.participantService.markAsAssigned({
         workspaceId: args.workspaceId,
         threadId: args.threadId,
         workspaceMemberId: assigneeWorkspaceMemberId,
         isSelfAssigned: assigneeWorkspaceMemberId === args.workspaceMemberId,
+        writeAssignment,
       });
+    } else {
+      await this.threadRepository.query(args.workspaceId, writeAssignment);
     }
 
     await this.threadRecordEventService.emitThreadUpdated({

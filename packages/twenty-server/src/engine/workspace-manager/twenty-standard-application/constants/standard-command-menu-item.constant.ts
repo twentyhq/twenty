@@ -1113,7 +1113,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,

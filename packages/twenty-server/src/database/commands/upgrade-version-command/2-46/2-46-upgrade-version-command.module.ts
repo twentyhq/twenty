@@ -11,6 +11,7 @@ import { BackfillAgentAndWorkflowIsSystemCommand } from 'src/database/commands/u
 import { TurnHiddenAgentMessagesIntoSystemMessagesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791204952095-turn-hidden-agent-messages-into-system-messages.command';
 import { AddAgentTurnRunFieldsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227584393-add-agent-turn-run-fields.command';
 import { BackfillFailedAgentTurnsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227584394-backfill-failed-agent-turns.command';
+import { SuspendPausedAgentStepsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791306663446-suspend-paused-agent-steps.command';
 import { AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791324440418-add-agent-chat-thread-assignee.command';
 import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791326380059-add-agent-chat-channels.command';
@@ -36,6 +37,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropAgentTurnEvaluationObjectCommand,
     AddAgentTurnRunFieldsCommand,
     BackfillFailedAgentTurnsCommand,
+    SuspendPausedAgentStepsCommand,
     AddAgentChatThreadSubscriptionsCommand,
     AddAgentChatThreadAssigneeCommand,
     AddAgentChatChannelsCommand,

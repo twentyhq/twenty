@@ -11,6 +11,7 @@ import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/comma
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -30,6 +31,56 @@ const ASSIGNEE_INDEX_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const ASSIGNEE_COMMAND_MENU_ITEM_NAMES = ['assignAiChat'] as const;
+
+// The assignee cannot unsubscribe, so Unsubscribe hides for them. Only an
+// expression still as the subscriptions command saved it is changed
+const UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES =
+  'numberOfSelectedRecords >= 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isSubscribed", true)';
+
+const UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES = `${UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES} and noneEquals(selectedRecords, "inboxStatus.isAssignedToMe", true)`;
+
+const buildUnsubscribeCommandMenuItemUpdates = ({
+  flatCommandMenuItemByUniversalIdentifier,
+  now,
+  direction,
+}: {
+  flatCommandMenuItemByUniversalIdentifier: Record<
+    string,
+    FlatCommandMenuItem | undefined
+  >;
+  now: string;
+  direction: 'up' | 'down';
+}): FlatCommandMenuItem[] => {
+  const commandMenuItem =
+    flatCommandMenuItemByUniversalIdentifier[
+      STANDARD_COMMAND_MENU_ITEMS.unsubscribeFromAiChat.universalIdentifier
+    ];
+  const [fromExpression, toExpression] =
+    direction === 'up'
+      ? [
+          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
+          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
+        ]
+      : [
+          UNSUBSCRIBE_EXPRESSION_WITH_ASSIGNEES,
+          UNSUBSCRIBE_EXPRESSION_BEFORE_ASSIGNEES,
+        ];
+
+  if (
+    !isDefined(commandMenuItem) ||
+    commandMenuItem.conditionalAvailabilityExpression !== fromExpression
+  ) {
+    return [];
+  }
+
+  return [
+    {
+      ...commandMenuItem,
+      conditionalAvailabilityExpression: toExpression,
+      updatedAt: now,
+    },
+  ];
+};
 
 @RegisteredWorkspaceCommand('2.46.0', 1791324440418)
 @Command({
@@ -112,17 +163,25 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
         now: new Date().toISOString(),
       });
 
+    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      now: new Date().toISOString(),
+      direction: 'up',
+    });
+
     const operationCount =
       fieldsToCreate.length +
       indexesToCreate.length +
-      commandMenuItemsToCreate.length;
+      commandMenuItemsToCreate.length +
+      commandMenuItemsToUpdate.length;
 
     if (operationCount === 0) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating ${fieldsToCreate.length} field(s), ${indexesToCreate.length} index(es) and ${commandMenuItemsToCreate.length} command menu item(s) for chat assignees`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating ${fieldsToCreate.length} field(s), ${indexesToCreate.length} index(es) and ${commandMenuItemsToCreate.length} command menu item(s), and updating ${commandMenuItemsToUpdate.length} command menu item(s) for chat assignees`,
     );
 
     if (options.dryRun ?? false) {
@@ -150,7 +209,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
             },
           },
         },
@@ -192,11 +251,18 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
           STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier
         ],
     ).filter(isDefined);
+    const commandMenuItemsToUpdate = buildUnsubscribeCommandMenuItemUpdates({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      now: new Date().toISOString(),
+      direction: 'down',
+    });
 
     if (
       fieldsToDelete.length +
         indexesToDelete.length +
-        commandMenuItemsToDelete.length ===
+        commandMenuItemsToDelete.length +
+        commandMenuItemsToUpdate.length ===
       0
     ) {
       return;
@@ -231,7 +297,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: commandMenuItemsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: commandMenuItemsToUpdate,
             },
           },
         },

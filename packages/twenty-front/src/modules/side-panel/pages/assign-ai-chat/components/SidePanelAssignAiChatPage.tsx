@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconUserOff } from 'twenty-ui/icon';
@@ -14,6 +15,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -50,29 +52,13 @@ export const SidePanelAssignAiChatPage = () => {
     return null;
   }
 
-  const normalizedSearch = search.trim().toLowerCase();
+  const members = getAssignAiChatMemberOptions({
+    workspaceMembers: currentWorkspaceMembers,
+    currentWorkspaceMemberId: currentWorkspaceMember?.id,
+    search,
+  });
 
-  // The member's own name comes first, as assigning to oneself is the most
-  // common pick
-  const members = currentWorkspaceMembers
-    .map((workspaceMember) => ({
-      workspaceMember,
-      label:
-        `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim() ||
-        workspaceMember.userEmail,
-    }))
-    .filter(({ workspaceMember, label }) =>
-      `${label} ${workspaceMember.userEmail}`
-        .toLowerCase()
-        .includes(normalizedSearch),
-    )
-    .sort(
-      (memberA, memberB) =>
-        Number(memberB.workspaceMember.id === currentWorkspaceMember?.id) -
-        Number(memberA.workspaceMember.id === currentWorkspaceMember?.id),
-    );
-
-  const isUnassignShown = hasAssignee && normalizedSearch === '';
+  const isUnassignShown = hasAssignee && !isNonEmptyString(search.trim());
 
   const handleAssign = (assigneeWorkspaceMemberId: string | null) => {
     void closeSidePanelMenu();

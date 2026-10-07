@@ -52,6 +52,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -81,6 +82,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ]),
     MetricsModule,
     EnterpriseModule,
+    UsageAnalyticsModule,
     UsageLimitModule,
     WorkspaceIteratorModule,
   ],

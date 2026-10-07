@@ -10,8 +10,7 @@ import { IsNull } from 'typeorm';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
-import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/types/tool-call-workflow-step.type';
-import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-history/utils/stamp-pending-tool-parts-with-workflow-step.util';
+import { stampPendingToolPartsAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-history/utils/stamp-pending-tool-parts-awaited-by-caller.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -216,7 +215,7 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
-    workflowStep,
+    isAwaitedByCaller = false,
     scope,
   }: {
     workspaceId: string;
@@ -224,18 +223,16 @@ export class AgentConversationWriterService {
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
-    workflowStep?: ToolCallWorkflowStep;
+    // a caller such as a workflow step waits on the calls the run pauses on
+    isAwaitedByCaller?: boolean;
     scope?: AgentHistoryTransactionScope;
   }): Promise<{
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
     const mappedReplyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
-    const replyParts = isDefined(workflowStep)
-      ? stampPendingToolPartsWithWorkflowStep({
-          parts: mappedReplyParts,
-          workflowStep,
-        })
+    const replyParts = isAwaitedByCaller
+      ? stampPendingToolPartsAwaitedByCaller(mappedReplyParts)
       : mappedReplyParts;
 
     if (replyParts.length === 0) {

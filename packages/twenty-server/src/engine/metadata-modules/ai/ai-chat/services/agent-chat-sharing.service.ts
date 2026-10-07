@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,6 +17,7 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -31,6 +33,14 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
+
+// Added by 2.46 commands that run after the participant object's
+const INBOX_STATE_LATER_FIELD_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.isSubscribed
+    .universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.assignee.universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.channel.universalIdentifier,
+];
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
   RecordShareAccessLevel.READ_WRITE,
@@ -50,10 +60,10 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  // Fence for the 2.46 cross-upgrade window: until
-  // upgrade:2-46:add-agent-chat-channels, the last of the 2.46 inbox
-  // commands, has reached a workspace, it lacks some of the participant
-  // table and the thread's inbox columns. Remove once 2.46 leaves the window.
+  // Fence for the 2.46 cross-upgrade window: until every 2.46 inbox command
+  // has reached a workspace, it lacks the participant table, the thread's
+  // lastActivityAt column or the fields added after them. Remove once 2.46
+  // leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
     return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
   }
@@ -61,19 +71,24 @@ export class AgentChatSharingService {
   async findParticipantObjectMetadataId(
     workspaceId: string,
   ): Promise<string | undefined> {
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
-    if (
-      !isDefined(
-        findAgentChatFlatObjectMetadata(
-          flatObjectMetadataMaps,
-          'agentChatChannel',
-        ),
-      )
-    ) {
+    const hasLaterInboxFields =
+      INBOX_STATE_LATER_FIELD_UNIVERSAL_IDENTIFIERS.every(
+        (universalIdentifier) =>
+          isDefined(
+            findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier,
+            }),
+          ),
+      );
+
+    if (!hasLaterInboxFields) {
       return undefined;
     }
 
