@@ -13,7 +13,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { type AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
+import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -234,7 +234,7 @@ describe('Send chat message workflow step', () => {
         arguments: { id: companyId, employees: 25 },
       };
       let postAgain: () => ReturnType<
-        AgentCallerInboxService['sendMessage']
+        AgentCallerConversationService['sendMessage']
       > = () => Promise.reject(new Error('The step has not posted yet'));
 
       const { status, stepResult } = await runWorkflowActionStep({
@@ -267,8 +267,8 @@ describe('Send chat message workflow step', () => {
             });
 
           postAgain = () =>
-            getAppProviderByClassName<AgentCallerInboxService>(
-              'AgentCallerInboxService',
+            getAppProviderByClassName<AgentCallerConversationService>(
+              'AgentCallerConversationService',
             ).sendMessage({
               workspaceId: SEED_APPLE_WORKSPACE_ID,
               sender,

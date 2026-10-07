@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
@@ -71,6 +72,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
     userWorkspaceId: 'user-workspace-id',
     rolePermissionConfig: { intersectionOf: [] },
     conversationActor: { type: 'application', applicationId: 'app-id' },
+    usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
   },
   resolveCreatedBy: async () => CREATED_BY,
 };
@@ -99,6 +101,7 @@ const buildService = (execution = buildExecution()) => {
       assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
       closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
     } as never,
+    {} as never,
     {} as never,
     {} as never,
     {} as never,
@@ -157,6 +160,7 @@ describe('AgentRunnerService', () => {
           /^base prompt\n\n.*wait_for_event/,
         ),
         priorMessages: PRIOR_MESSAGES,
+        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       }),
     );
     expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(

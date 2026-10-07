@@ -648,7 +648,7 @@ export class AgentChatStreamingService {
     ) {
       throw new AiException(
         'This conversation is waiting on an answer to the run that asked',
-        AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
     }
 

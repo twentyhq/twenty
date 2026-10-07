@@ -16,7 +16,6 @@ import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agen
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -63,7 +62,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   ],
   providers: [
     AgentAsyncExecutorService,
-    AgentCallerInboxService,
     AgentActorContextService,
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
@@ -83,7 +81,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
-    AgentCallerInboxService,
     AgentActorContextService,
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,

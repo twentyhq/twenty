@@ -4,7 +4,14 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 
 type AgentChatThreadInboxCommandProps = {
-  action: 'read' | 'unread' | 'done' | 'reopen' | 'snooze';
+  action:
+    | 'read'
+    | 'unread'
+    | 'done'
+    | 'reopen'
+    | 'snooze'
+    | 'subscribe'
+    | 'unsubscribe';
 };
 
 export const AgentChatThreadInboxCommand = ({
@@ -16,6 +23,8 @@ export const AgentChatThreadInboxCommand = ({
     markAgentChatThreadAsUnread,
     archiveAgentChatThread,
     moveAgentChatThreadToInbox,
+    subscribeToAgentChatThread,
+    unsubscribeFromAgentChatThread,
   } = useAgentChatThreadParticipants();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
 
@@ -35,6 +44,8 @@ export const AgentChatThreadInboxCommand = ({
       unread: markAgentChatThreadAsUnread,
       done: archiveAgentChatThread,
       reopen: moveAgentChatThreadToInbox,
+      subscribe: subscribeToAgentChatThread,
+      unsubscribe: unsubscribeFromAgentChatThread,
     }[action];
 
     // One at a time: a failed update reloads every chat's state, which would

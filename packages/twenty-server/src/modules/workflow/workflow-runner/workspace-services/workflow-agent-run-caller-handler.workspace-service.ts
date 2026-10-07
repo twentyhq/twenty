@@ -31,8 +31,6 @@ type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
 export class WorkflowAgentRunCallerHandlerWorkspaceService
   implements AgentRunCallerHandler<WorkflowStepCaller>, OnModuleInit
 {
-  readonly callerType = 'WORKFLOW_STEP';
-
   constructor(
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -44,7 +42,7 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('WORKFLOW_STEP', this);
   }
 
   async buildExecutionContext({
