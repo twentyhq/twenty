@@ -8,6 +8,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   FeatureFlagKey,
   { label: MessageDescriptor; description: MessageDescriptor }
 > = {
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Show the new accounts layout with the apps using each connection.`,
+  },
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
