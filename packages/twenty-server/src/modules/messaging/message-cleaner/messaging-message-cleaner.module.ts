@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
@@ -17,7 +16,7 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, MessageChannelEntity]),
+    TypeOrmModule.forFeature([MessageChannelEntity]),
     MessagingCommonModule,
     MatchParticipantModule,
     WorkspaceIteratorModule,

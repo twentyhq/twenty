@@ -1,4 +1,4 @@
-import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings';
+import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings';
 import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { msg } from '@lingui/core/macro';
 
