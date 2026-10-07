@@ -405,4 +405,21 @@ describe('app init', () => {
     });
     expect(await readdir(workDirectory)).toEqual([]);
   });
+
+  it('copies the template lockfile and leaves its root entry for yarn install to rename', async () => {
+    const template = join(root, 'template');
+    const lockfile =
+      '"TO-BE-GENERATED@workspace:.":\n  version: 0.0.0-use.local\n  resolution: "TO-BE-GENERATED@workspace:."\n';
+
+    await cp(TEMPLATE_DIRECTORY, template, { recursive: true });
+    await writeFile(join(template, 'yarn.lock'), lockfile);
+    vi.mocked(getAppTemplateDirectory).mockReturnValue(template);
+
+    const result = await runJson(['my-app']);
+
+    expect(result.exitCode).toBe(0);
+    expect(
+      await readFile(join(workDirectory, 'my-app', 'yarn.lock'), 'utf8'),
+    ).toBe(lockfile);
+  });
 });
