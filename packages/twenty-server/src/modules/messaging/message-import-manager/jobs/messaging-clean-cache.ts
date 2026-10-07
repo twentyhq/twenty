@@ -4,7 +4,6 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 
 export type MessagingCleanCacheJobData = {
   workspaceId: string;
@@ -20,8 +19,10 @@ export class MessagingCleanCacheJob {
 
   @Process(MessagingCleanCacheJob.name)
   async handle(data: MessagingCleanCacheJobData): Promise<void> {
-    await this.cacheStorage.mdel(
-      Object.values(buildMessagesImportCacheKeys(data)),
-    );
+    await this.cacheStorage.mdel([
+      `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
+      `messages-to-import-total:${data.workspaceId}:${data.messageChannelId}`,
+      `messages-imported:${data.workspaceId}:${data.messageChannelId}`,
+    ]);
   }
 }

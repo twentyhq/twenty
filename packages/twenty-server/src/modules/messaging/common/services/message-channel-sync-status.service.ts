@@ -27,7 +27,6 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -88,13 +87,13 @@ export class MessageChannelSyncStatusService {
       return;
     }
 
-    await this.cacheStorage.mdel(
-      messageChannelIds.flatMap((messageChannelId) =>
-        Object.values(
-          buildMessagesImportCacheKeys({ workspaceId, messageChannelId }),
-        ),
-      ),
-    );
+    for (const messageChannelId of messageChannelIds) {
+      await this.cacheStorage.mdel([
+        `messages-to-import:${workspaceId}:${messageChannelId}`,
+        `messages-to-import-total:${workspaceId}:${messageChannelId}`,
+        `messages-imported:${workspaceId}:${messageChannelId}`,
+      ]);
+    }
 
     const authContext = buildSystemAuthContext(workspaceId);
 

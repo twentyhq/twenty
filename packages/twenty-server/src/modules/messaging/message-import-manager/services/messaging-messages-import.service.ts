@@ -27,7 +27,6 @@ import {
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -71,12 +70,6 @@ export class MessagingMessagesImportService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const { messagesToImportKey, messagesImportedKey } =
-      buildMessagesImportCacheKeys({
-        workspaceId,
-        messageChannelId: messageChannel.id,
-      });
-
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
@@ -108,7 +101,7 @@ export class MessagingMessagesImportService {
           }
 
           messageIdsToFetch = await this.cacheStorage.setPop(
-            messagesToImportKey,
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messagesGetBatchSize,
           );
 
@@ -218,7 +211,7 @@ export class MessagingMessagesImportService {
           }
 
           await this.cacheStorage.incrBy(
-            messagesImportedKey,
+            `messages-imported:${workspaceId}:${messageChannel.id}`,
             messageIdsToFetch.length,
           );
 
@@ -252,7 +245,7 @@ export class MessagingMessagesImportService {
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
           );
           await this.cacheStorage.setAdd(
-            messagesToImportKey,
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageIdsToFetch,
           );
 

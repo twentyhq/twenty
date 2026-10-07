@@ -42,7 +42,6 @@ import { MessageChannelMetadataService } from 'src/engine/metadata-modules/messa
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { computeMessageImportProgress } from 'src/engine/metadata-modules/message-channel/utils/compute-message-import-progress.util';
 import { MESSAGING_MESSAGES_IMPORT_SYNC_STAGES } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-import-sync-stages.constant';
-import { buildMessagesImportCacheKeys } from 'src/modules/messaging/message-import-manager/utils/build-messages-import-cache-keys.util';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
@@ -98,16 +97,10 @@ export class MessageChannelResolver {
       return null;
     }
 
-    const { messagesToImportTotalKey, messagesImportedKey } =
-      buildMessagesImportCacheKeys({
-        workspaceId: workspace.id,
-        messageChannelId: messageChannel.id,
-      });
-
     const [totalMessagesToImportCount, importedMessagesCount] =
       await this.cacheStorage.mget<number>([
-        messagesToImportTotalKey,
-        messagesImportedKey,
+        `messages-to-import-total:${workspace.id}:${messageChannel.id}`,
+        `messages-imported:${workspace.id}:${messageChannel.id}`,
       ]);
 
     return computeMessageImportProgress({
