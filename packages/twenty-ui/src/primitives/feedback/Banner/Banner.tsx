@@ -27,8 +27,8 @@ export const Banner = ({
   render,
   ref,
   ...props
-}: BannerProps) =>
-  useRender({
+}: BannerProps) => {
+  return useRender({
     render,
     ref,
     state: { status, variant, color },
@@ -48,3 +48,4 @@ export const Banner = ({
       ),
     },
   });
+};
