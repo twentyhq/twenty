@@ -253,7 +253,7 @@ export const Focusable: Story = {
     await expect(await body.findByRole('tooltip')).toHaveTextContent(longText);
     await userEvent.hover(text);
     await userEvent.unhover(text);
-    await expect(body.getByRole('tooltip')).toBeVisible();
+    await waitFor(() => expect(body.getByRole('tooltip')).toBeVisible());
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: 'Next action' }),
