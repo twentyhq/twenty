@@ -217,6 +217,8 @@ export const DashboardFilterChipDropdown = ({
     onEdit?.();
   };
 
+  // The scratch is dropped on close so a later effect run can never replay a value the viewer has since
+  // replaced through Reset or a chart; opening re-seeds it from the slot value.
   const handleDropdownClose = () => {
     const [currentRecordFilter] = store.get(currentRecordFilters);
 
@@ -225,7 +227,11 @@ export const DashboardFilterChipDropdown = ({
       isRecordFilterConsideredEmpty(currentRecordFilter)
     ) {
       clearSlotValue();
+      return;
     }
+
+    store.set(currentRecordFilters, []);
+    store.set(objectFilterDropdownCurrentRecordFilter, null);
   };
 
   const ChipIcon = getIcon(representativeFieldMetadataItem.icon);

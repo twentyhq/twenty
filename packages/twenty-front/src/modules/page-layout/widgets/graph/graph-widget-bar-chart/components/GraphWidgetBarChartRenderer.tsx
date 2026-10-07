@@ -142,7 +142,6 @@ export const GraphWidgetBarChartRenderer = ({
   const canClickChartBuckets =
     canRedirectToFilteredView || canCrossFilterChartBuckets;
 
-  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
   const handleSliceClick = (slice: BarChartSlice) => {
     const displayValue = slice.indexValue;
     const rawValue = formattedToRawLookup.get(displayValue) ?? null;

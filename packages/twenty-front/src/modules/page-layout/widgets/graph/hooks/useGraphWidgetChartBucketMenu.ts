@@ -64,7 +64,6 @@ export const useGraphWidgetChartBucketMenu = ({
     });
   };
 
-  // Returns false when the bucket cannot feed a slot, so the caller falls back to today's drilldown.
   const tryOpenChartBucketMenu = (bucketRawValue: RawDimensionValue) => {
     const crossFilterTarget = getChartBucketCrossFilterTarget(bucketRawValue);
 

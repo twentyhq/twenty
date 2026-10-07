@@ -55,6 +55,14 @@ const workPreferenceField = getFieldByNameOrThrow(
   personObjectMetadataItem,
   'workPreference',
 );
+const opportunityIdField = getFieldByNameOrThrow(
+  opportunityObjectMetadataItem,
+  'id',
+);
+const createdByField = getFieldByNameOrThrow(
+  companyObjectMetadataItem,
+  'createdBy',
+);
 
 const ACME_COMPANY_ID = '20202020-0000-4000-8000-00000000ac3e';
 
@@ -90,6 +98,29 @@ describe('isChartBucketFieldCrossFilterable', () => {
       isChartBucketFieldCrossFilterable({
         fieldMetadataItem: workPreferenceField,
       }),
+    ).toBe(false);
+  });
+
+  it('rejects ids, actor sub-fields and currency amounts even though their first operand is IS', () => {
+    expect(
+      isChartBucketFieldCrossFilterable({
+        fieldMetadataItem: opportunityIdField,
+      }),
+    ).toBe(false);
+    expect(
+      isChartBucketFieldCrossFilterable({
+        fieldMetadataItem: createdByField,
+        subFieldName: 'source',
+      }),
+    ).toBe(false);
+    expect(
+      isChartBucketFieldCrossFilterable({
+        fieldMetadataItem: amountField,
+        subFieldName: 'amountMicros',
+      }),
+    ).toBe(false);
+    expect(
+      isChartBucketFieldCrossFilterable({ fieldMetadataItem: amountField }),
     ).toBe(false);
   });
 });

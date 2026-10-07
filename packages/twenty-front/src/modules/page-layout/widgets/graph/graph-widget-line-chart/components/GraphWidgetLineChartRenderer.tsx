@@ -151,7 +151,6 @@ export const GraphWidgetLineChartRenderer = ({
   const canClickChartBuckets =
     canRedirectToFilteredView || canCrossFilterChartBuckets;
 
-  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
   const handlePointClick = (point: Point<LineSeries>) => {
     const xValue = (point.data as LineChartDataPoint).x;
     const rawValue = formattedToRawLookup.get(xValue as string) ?? null;

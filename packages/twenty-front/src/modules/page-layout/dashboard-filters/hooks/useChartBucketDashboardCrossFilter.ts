@@ -60,7 +60,8 @@ export const useChartBucketDashboardCrossFilter = ({
   const getChartBucketCrossFilterTarget = (
     bucketRawValue: RawDimensionValue,
   ): ChartBucketCrossFilterTarget | undefined => {
-    if (!isDefined(crossFilterSource)) {
+    // The empty bucket has no IS value, and a relation chart has no drilldown either, so its click does nothing.
+    if (!isDefined(crossFilterSource) || !isDefined(bucketRawValue)) {
       return undefined;
     }
 

@@ -1,28 +1,17 @@
-import { useParams } from 'react-router-dom';
-
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
+// Resolved by field id rather than through the route's object, so the input also works where the route has no
+// :objectNamePlural, such as a dashboard's filter chips.
 export const useOptionsForSelect = (fieldMetadataId: string) => {
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const fieldMetadataItem = objectMetadataItem.readableFields.find(
-    (field) => field.id === fieldMetadataId,
+  const { foundFieldMetadataItem } = useAtomFamilySelectorValue(
+    fieldMetadataItemByIdSelector,
+    { fieldMetadataItemId: fieldMetadataId },
   );
 
-  const selectOptions = fieldMetadataItem?.options;
-
   return {
-    selectOptions,
+    selectOptions: foundFieldMetadataItem?.options,
   };
 };

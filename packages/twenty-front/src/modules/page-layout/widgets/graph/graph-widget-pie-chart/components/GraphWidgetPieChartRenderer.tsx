@@ -116,7 +116,6 @@ export const GraphWidgetPieChartRenderer = ({
   const canClickChartBuckets =
     canRedirectToFilteredView || canCrossFilterChartBuckets;
 
-  // A bucket that maps to a dashboard filter slot offers the choice; the others drill down as before.
   const handleSliceClick = (datum: PieChartDataItemWithColor) => {
     const rawValue = formattedToRawLookup.get(datum.key) ?? null;
 

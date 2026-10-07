@@ -2,6 +2,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
 import { DashboardFilterCrossFilterTabChangeEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterCrossFilterTabChangeEffect';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
+import { useClearDashboardCrossFilters } from '@/page-layout/dashboard-filters/hooks/useClearDashboardCrossFilters';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
 import { useOpenDashboardFilterEditor } from '@/page-layout/dashboard-filters/hooks/useOpenDashboardFilterEditor';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
@@ -52,6 +53,8 @@ export const DashboardFilterBar = () => {
   const { openDashboardFiltersEditor, openDashboardFilterSlotEditor } =
     useOpenDashboardFilterEditor(currentPageLayout.id);
 
+  const { clearDashboardCrossFilters } = useClearDashboardCrossFilters();
+
   // In edit mode the bar stays even without slots so the editor entry point is reachable.
   const canEditDashboardFilters =
     isPageLayoutInEditMode &&
@@ -69,7 +72,9 @@ export const DashboardFilterBar = () => {
   });
 
   // The URL follows the state through the sync effect, so restoring the defaults is a single state write.
+  // Cross-filter markers go too, or a default equal to a chart's pick would still read as a cross-filter.
   const handleResetClick = () => {
+    clearDashboardCrossFilters();
     setDashboardFilterValues(computeDashboardFilterDefaultValues(slots));
   };
 

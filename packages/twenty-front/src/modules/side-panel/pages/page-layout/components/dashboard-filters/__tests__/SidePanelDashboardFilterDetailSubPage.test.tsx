@@ -22,6 +22,7 @@ import {
   renderInSidePanel,
   setUpDashboardStore,
 } from './dashboardFilterSidePanelTestUtils';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockGoBackFromSidePanelSubPage = jest.fn();
 
@@ -373,5 +374,68 @@ describe('SidePanelDashboardFilterDetailSubPage', () => {
     expect(
       getDraftWidgetBindings('person-widget')?.[CLOSING_MONTH_SLOT.id],
     ).toEqual({ fieldMetadataId: personCreatedAtFieldId });
+  });
+});
+
+const opportunityObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('opportunity');
+
+const STAGE_SLOT: DashboardFilterSlot = {
+  id: 'stage-slot',
+  label: 'Stage',
+  filterType: 'SELECT',
+};
+
+const opportunityStageField = opportunityObjectMetadataItem.fields.find(
+  (field) => field.name === 'stage',
+);
+
+if (
+  !isDefined(opportunityStageField) ||
+  !isDefined(opportunityStageField.options) ||
+  opportunityStageField.options.length === 0
+) {
+  throw new Error(
+    'Expected the opportunity mock to have a stage field with options',
+  );
+}
+
+const [firstStageOption] = opportunityStageField.options;
+
+const opportunityWidget = buildChartWidget({
+  id: 'opportunity-widget',
+  title: 'Opportunities',
+  objectMetadataId: opportunityObjectMetadataItem.id,
+  dashboardFilterBindings: {
+    [STAGE_SLOT.id]: { fieldMetadataId: opportunityStageField.id },
+  },
+});
+
+describe('SidePanelDashboardFilterDetailSubPage default value of a SELECT slot', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('lists the field options and stores the pick as the slot default', async () => {
+    await renderDetailSubPage({
+      slots: [STAGE_SLOT],
+      widgets: [opportunityWidget],
+      editingSlotId: STAGE_SLOT.id,
+    });
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('Default value'));
+    await user.click(
+      await screen.findByRole('option', { name: firstStageOption.label }),
+    );
+
+    await waitFor(() => {
+      const [slot] = jotaiStore.get(getDraftAtom())
+        .dashboardFilters as DashboardFilterSlot[];
+
+      expect(slot.defaultOperand).toBe(ViewFilterOperand.IS);
+      expect(slot.defaultValue).toBe(JSON.stringify([firstStageOption.value]));
+    });
   });
 });
