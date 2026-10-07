@@ -20,9 +20,11 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
 ];
 
 // Author misconfigurations: no retry produces a model, and reporting them as system errors buries real ones.
-// API_KEY_NOT_CONFIGURED is what an instance with no provider raises via getDefaultModelForTier.
+// API_KEY_NOT_CONFIGURED is what an instance with no provider raises via getDefaultModelForTier, and
+// INVALID_AGENT_INPUT what a malformed agent or inbox input raises, such as a call that cannot be proposed.
 const USER_FACING_AI_EXCEPTION_CODES = [
   AiExceptionCode.API_KEY_NOT_CONFIGURED,
+  AiExceptionCode.INVALID_AGENT_INPUT,
   AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
   AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
   AiExceptionCode.INVALID_EVALUATION_REQUEST,

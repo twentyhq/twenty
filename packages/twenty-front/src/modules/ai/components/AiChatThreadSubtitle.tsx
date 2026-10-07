@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { IconHandClick } from 'twenty-ui/icon';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -97,7 +97,7 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
             size="xs"
             shape="circle"
           />
-          <VisibilityHidden>{t`, assigned to ${assigneeName}`}</VisibilityHidden>
+          <VisuallyHidden>{t`, assigned to ${assigneeName}`}</VisuallyHidden>
         </StyledAssignee>
       )}
     </StyledSubtitle>

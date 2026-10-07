@@ -51,7 +51,7 @@ export const useAgentChatChannelActions = () => {
   );
 
   const renameAgentChatChannel = useCallback(
-    (channelId: string, name: string) =>
+    ({ channelId, name }: { channelId: string; name: string }) =>
       runChannelMutation(UpdateAgentChatChannelDocument, {
         channelId,
         input: { name },
@@ -60,7 +60,13 @@ export const useAgentChatChannelActions = () => {
   );
 
   const setAgentChatChannelVisibility = useCallback(
-    (channelId: string, visibility: AgentChatChannelVisibility) =>
+    ({
+      channelId,
+      visibility,
+    }: {
+      channelId: string;
+      visibility: AgentChatChannelVisibility;
+    }) =>
       runChannelMutation(UpdateAgentChatChannelDocument, {
         channelId,
         input: { visibility },
@@ -81,7 +87,13 @@ export const useAgentChatChannelActions = () => {
   );
 
   const deleteAgentChatChannel = useCallback(
-    (channelId: string, destinationChannelId: string | null) =>
+    ({
+      channelId,
+      destinationChannelId,
+    }: {
+      channelId: string;
+      destinationChannelId: string | null;
+    }) =>
       runChannelMutation(DeleteAgentChatChannelDocument, {
         channelId,
         destinationChannelId,

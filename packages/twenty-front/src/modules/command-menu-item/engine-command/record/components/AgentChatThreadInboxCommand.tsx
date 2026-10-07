@@ -43,7 +43,7 @@ export const AgentChatThreadInboxCommand = ({
 
     // A channel's view files its chats for the whole channel
     const isInChannel = selectedRecords.every(
-      (record) => record.inboxStatus?.isChannelCopy === true,
+      (record) => record.inboxStatus?.isChannelCopy ?? false,
     );
 
     if (action === 'snooze') {

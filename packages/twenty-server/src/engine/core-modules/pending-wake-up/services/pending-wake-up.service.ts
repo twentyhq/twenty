@@ -10,11 +10,17 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RESUME_PENDING_WAKE_UP_JOB_NAME } from 'src/engine/core-modules/pending-wake-up/constants/resume-pending-wake-up-job-name.constant';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
-import { type PendingWakeUpOwner } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner.type';
 import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
 import { type ResumePendingWakeUpJobData } from 'src/engine/core-modules/pending-wake-up/types/resume-pending-wake-up-job-data.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+// key tells apart the wake-ups one owner holds at once, like the steps of a workflow run
+type PendingWakeUpOwner = {
+  type: PendingWakeUpOwnerType;
+  id: string;
+  key: string;
+};
 
 type ScheduledWakeUp = Pick<
   PendingWakeUpEntity,
@@ -86,12 +92,14 @@ export class PendingWakeUpService {
     attempt,
     recordReadAttempt,
     delayMs = 0,
+    deduplicationId,
   }: Pick<
     ResumePendingWakeUpJobData,
     'event' | 'attempt' | 'recordReadAttempt'
   > & {
     wakeUp: ScheduledWakeUp;
     delayMs?: number;
+    deduplicationId?: string;
   }): Promise<void> {
     await this.messageQueueService.add<ResumePendingWakeUpJobData>(
       RESUME_PENDING_WAKE_UP_JOB_NAME,
@@ -103,20 +111,13 @@ export class PendingWakeUpService {
         recordReadAttempt,
       },
       {
-        ...this.buildResumeJobOptions(wakeUp),
+        ...this.pendingWakeUpOwnerHandlerRegistryService
+          .getHandlerOrThrow(wakeUp.ownerType)
+          .buildResumeJobOptions(wakeUp.ownerId),
         delay: Math.max(delayMs, 0),
-      },
-    );
-  }
-
-  // A wake-up stays overdue until its job claims it, so each sweep would queue it again
-  async scheduleOverdueResolution(wakeUp: ScheduledWakeUp): Promise<void> {
-    await this.messageQueueService.add<ResumePendingWakeUpJobData>(
-      RESUME_PENDING_WAKE_UP_JOB_NAME,
-      { workspaceId: wakeUp.workspaceId, wakeUpId: wakeUp.id },
-      {
-        ...this.buildResumeJobOptions(wakeUp),
-        deduplication: { id: `overdue-pending-wake-up-${wakeUp.id}` },
+        ...(isDefined(deduplicationId)
+          ? { deduplication: { id: deduplicationId } }
+          : {}),
       },
     );
   }
@@ -160,38 +161,18 @@ export class PendingWakeUpService {
     });
   }
 
+  // without a key, every wake-up the owner holds
   async cancel({
     workspaceId,
-    owner,
+    owner: { type, id, key },
   }: {
     workspaceId: string;
-    owner: PendingWakeUpOwner;
+    owner: Omit<PendingWakeUpOwner, 'key'> & { key?: string };
   }): Promise<void> {
     await this.pendingWakeUpRepository.delete(workspaceId, {
-      ownerType: owner.type,
-      ownerId: owner.id,
-      ownerKey: owner.key,
+      ownerType: type,
+      ownerId: id,
+      ...(isDefined(key) ? { ownerKey: key } : {}),
     });
-  }
-
-  async cancelAllForOwner({
-    workspaceId,
-    ownerType,
-    ownerId,
-  }: {
-    workspaceId: string;
-    ownerType: PendingWakeUpOwnerType;
-    ownerId: string;
-  }): Promise<void> {
-    await this.pendingWakeUpRepository.delete(workspaceId, {
-      ownerType,
-      ownerId,
-    });
-  }
-
-  private buildResumeJobOptions({ ownerType, ownerId }: ScheduledWakeUp) {
-    return this.pendingWakeUpOwnerHandlerRegistryService
-      .getHandlerOrThrow(ownerType)
-      .buildResumeJobOptions(ownerId);
   }
 }

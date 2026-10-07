@@ -1,16 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
+import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
+import { useAgentChatInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
+import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -29,32 +27,22 @@ export const AiChatInboxListHeader = ({
 }: AiChatInboxListHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
-  );
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
-    ({ id }) => id === agentChatShownChannelView?.channelId,
-  );
-  const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
-  const HeaderIcon = isDefined(agentChatShownChannelView)
-    ? ChannelIcon
-    : AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
-  const headerLabel = isDefined(agentChatShownChannelView)
-    ? (channel?.name ?? '')
-    : t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus]);
+  const { HeadingIcon, headingLabel } = useAgentChatInboxViewHeading();
+  const isMobile = useIsMobile();
+  const isSplitView = useIsAiChatInboxSplitView();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
 
   return (
     <PageCardHeader
-      icon={<HeaderIcon size={theme.icon.size.md} />}
+      icon={<HeadingIcon size={theme.icon.size.md} />}
       title={
         <RecordIndexPageHeaderTitle
-          label={headerLabel}
+          label={headingLabel}
           numberOfSelectedRecords={selectedThreadCount}
         />
       }
@@ -72,19 +60,24 @@ export const AiChatInboxListHeader = ({
             <SidePanelToggleButton />
           </>
         ) : (
-          <Button
-            size="sm"
-            variant="solid"
-            color="accent"
-            startIcon={<IconPlus />}
-            onClick={() =>
-              switchToNewChat({
-                channelId: agentChatShownChannelView?.channelId ?? null,
-              })
-            }
-          >
-            {t`New chat`}
-          </Button>
+          <>
+            {!isMobile && <AiChatInboxLayoutDropdown />}
+            <Button
+              size="sm"
+              variant="solid"
+              color="accent"
+              startIcon={<IconPlus />}
+              onClick={() =>
+                switchToNewChat({
+                  channelId: agentChatShownChannelView?.channelId ?? null,
+                })
+              }
+            >
+              {t`New chat`}
+            </Button>
+            {/* In split view the chat beside the list has the command menu */}
+            {!isSplitView && <SidePanelToggleButton />}
+          </>
         )
       }
     />

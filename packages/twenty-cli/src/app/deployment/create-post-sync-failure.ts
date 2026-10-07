@@ -19,7 +19,7 @@ const POST_SYNC_STEPS: Record<
   clientGeneration: {
     cancelledMessage: 'generating its typed API client was cancelled',
     failedMessage: 'its typed API client was not regenerated',
-    hint: 'The workspace already has this version of the app, but the client files in node_modules/twenty-client-sdk may be incomplete. Fix the problem, then run twenty app apply again: it repeats the preview, upload and sync before regenerating the client. twenty app plan shows what that sync would change.',
+    hint: 'The workspace already has this version of the app, but the client files in node_modules/twenty-client-sdk may be incomplete. Fix the problem, then run twenty app apply again: it requests a fresh plan, uploads and syncs before regenerating the client. twenty app plan shows what that sync would change.',
   },
 };
 
