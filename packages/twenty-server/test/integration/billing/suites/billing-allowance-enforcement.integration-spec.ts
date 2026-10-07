@@ -17,14 +17,21 @@ import {
   refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
+  TEST_STRIPE_CUSTOMER_ID,
+  TEST_STRIPE_PRODUCT_ID,
+  TEST_STRIPE_SUBSCRIPTION_ID,
   TEST_STRIPE_SUBSCRIPTION_ITEM_ID,
+  upsertResourceCreditPrice,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
+import { createMockStripeSubscriptionCreatedData } from 'test/integration/billing/utils/create-mock-stripe-subscription-created-data.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -37,6 +44,7 @@ const PERIOD_START = subDays(new Date(), 1);
 const PERIOD_END = addDays(PERIOD_START, 30);
 const ALLOWANCE_MICRO = 5 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
 const IN_FLIGHT_CREDITS_MICRO = 100;
+const UPGRADED_STRIPE_PRICE_ID = 'price_resource_credit_test_upgraded';
 const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
 
 const GRANT_MUTATION = `
@@ -337,5 +345,65 @@ describe('Credit allowance enforcement (integration)', () => {
       exhaustedKind: 'allowance',
       limitValue: ALLOWANCE_MICRO + grantMicro,
     });
+  });
+
+  it('lifts a refusal once an in-app tier upgrade is synced, before any webhook', async () => {
+    await recordAiUsage(ALLOWANCE_MICRO);
+
+    expect(await findAllowanceRefusal()).toMatchObject({
+      exhaustedKind: 'allowance',
+      limitValue: ALLOWANCE_MICRO,
+    });
+
+    await upsertResourceCreditPrice({
+      stripePriceId: UPGRADED_STRIPE_PRICE_ID,
+      creditAmountMicro: 2 * ALLOWANCE_MICRO,
+    });
+
+    const { object: stripeSubscription } =
+      createMockStripeSubscriptionCreatedData({
+        id: TEST_STRIPE_SUBSCRIPTION_ID,
+        customer: TEST_STRIPE_CUSTOMER_ID,
+        metadata: { workspaceId },
+      });
+    const [stripeSubscriptionItem] = stripeSubscription.items.data;
+
+    const getSubscriptionSpy = jest
+      .spyOn(
+        getAppProviderByClassName<StripeSubscriptionScheduleService>(
+          'StripeSubscriptionScheduleService',
+        ),
+        'getSubscriptionWithSchedule',
+      )
+      .mockResolvedValue({
+        ...stripeSubscription,
+        items: {
+          ...stripeSubscription.items,
+          data: [
+            {
+              ...stripeSubscriptionItem,
+              id: TEST_STRIPE_SUBSCRIPTION_ITEM_ID,
+              quantity: 1,
+              current_period_start: Math.floor(PERIOD_START.getTime() / 1000),
+              current_period_end: Math.floor(PERIOD_END.getTime() / 1000),
+              price: {
+                ...stripeSubscriptionItem.price,
+                id: UPGRADED_STRIPE_PRICE_ID,
+                product: TEST_STRIPE_PRODUCT_ID,
+              },
+            },
+          ],
+        },
+      } as never);
+
+    try {
+      await getAppProviderByClassName<BillingSubscriptionService>(
+        'BillingSubscriptionService',
+      ).syncSubscriptionToDatabase(workspaceId, TEST_STRIPE_SUBSCRIPTION_ID);
+    } finally {
+      getSubscriptionSpy.mockRestore();
+    }
+
+    expect(await findAllowanceRefusal()).toBeNull();
   });
 });
