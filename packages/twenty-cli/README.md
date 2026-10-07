@@ -5,19 +5,20 @@ inspect metadata and records, send API requests, and develop applications.
 
 ## Install
 
-The CLI needs Node.js 24.5 or later.
+The CLI needs Node.js 24.5 or later. If `twenty-sdk` is installed globally,
+uninstall it first. Both packages provide a `twenty` command: installing this
+CLI afterwards takes over the SDK's command, and installing the SDK after this
+CLI fails with `EEXIST`.
+
+```bash
+npm uninstall -g twenty-sdk
+```
+
+Then install the CLI:
 
 ```bash
 npm install -g twenty
 twenty --version
-```
-
-If `twenty-sdk` is installed globally, uninstall it first. Both packages provide
-a `twenty` command: installing this CLI afterwards takes over the SDK's command,
-and installing the SDK after this CLI fails with `EEXIST`.
-
-```bash
-npm uninstall -g twenty-sdk
 ```
 
 Inside an app project, `yarn twenty` still runs the commands of the app's own
@@ -39,18 +40,23 @@ not require an application project. Use `--remote <name>` to select another
 saved connection and `--json` for a structured result. Saved connections live in
 `~/.twenty/config.json`, the file the SDK's `yarn twenty` commands also use.
 
-Browser sign-in needs Twenty 2.42 or later. On older servers, sign in with an
-[API key](docs/commands.md#connections-and-authentication) instead.
+Browser sign-in is supported on Twenty 2.42 and later. On older servers, sign in
+with an [API key](docs/commands.md#connections-and-authentication) instead.
 
 ## Develop an application
+
+App projects pin Yarn 4 in `packageManager`. Run `corepack enable` once so
+`yarn` uses that version; if `corepack` is missing, install it with
+`npm install -g corepack`. These steps use the connection saved by
+`twenty auth login`:
 
 ```bash
 twenty app init my-app
 cd my-app
 yarn install
 twenty app build
-twenty app apply --create --remote dev
-twenty app dev --remote dev
+twenty app apply --create
+twenty app dev
 ```
 
 `app init` writes files without installing dependencies. `app build` checks the
