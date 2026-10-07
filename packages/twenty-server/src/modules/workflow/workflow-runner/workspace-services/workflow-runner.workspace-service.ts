@@ -22,13 +22,8 @@ import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workf
 import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-import {
-  type WorkflowFormAction,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
-import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
-import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -106,56 +101,6 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
         workflowRunId,
         lastExecutedStepId,
-      },
-      buildRunWorkflowJobOptions(workflowRunId),
-    );
-  }
-
-  // a Send Message step completes with the answer; an agent step stays PENDING until the resume job claims it
-  async resumeAnsweredStep({
-    workspaceId,
-    workflowRunId,
-    step,
-    threadId,
-    toolResult,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    step: WorkflowAction;
-    threadId: string;
-    toolResult: Record<string, unknown>;
-  }): Promise<void> {
-    // the member's answer already ran the call, so the step only reports it
-    if (isWorkflowSendChatMessageAction(step)) {
-      const hasCompletedStep =
-        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-          stepId: step.id,
-          stepInfo: {
-            status: StepStatus.SUCCESS,
-            result: buildSendChatMessageAnswerResult({ threadId, toolResult }),
-          },
-          expectedThreadId: threadId,
-          workspaceId,
-          workflowRunId,
-        });
-
-      if (hasCompletedStep) {
-        await this.resume({
-          workspaceId,
-          workflowRunId,
-          lastExecutedStepId: step.id,
-        });
-      }
-
-      return;
-    }
-
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RunWorkflowJob.name,
-      {
-        workspaceId,
-        workflowRunId,
-        stepToResume: { stepId: step.id, threadId },
       },
       buildRunWorkflowJobOptions(workflowRunId),
     );

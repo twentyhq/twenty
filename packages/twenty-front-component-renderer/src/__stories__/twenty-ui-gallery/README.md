@@ -23,7 +23,8 @@ effect within the interaction timeout.
 | Fixture                          | Components                                                                                                                          |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                  |
-| `twenty-ui-number-stepper`       | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission)                                         |
+| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)      |
+| `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)    |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                |
 | `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
 | `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
@@ -79,6 +80,12 @@ overflow, a tall menu that stays attached to its trigger and scrolls within the
 area, callbacks, removal, an unchanged page scroll size, and a host control
 that stays usable outside the allowed area.
 
+The Autocomplete fixture uses the public inline list interface to isolate input
+behavior from popup support. Its Empty section runs Base UI's live-region marker
+through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
+currentNode without callback filters; document Selection and DOM Range are
+outside this scope.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -91,7 +98,6 @@ expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
 | Popover, Dialog, AlertDialog, Menu, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and content that is visible and receives the pointer; search, selection, dismissal and focus restoration are not covered yet. |
 | Fixed-position popups | `position: fixed` resolves against the component box, as inside an iframe, while the worker positions popups in page coordinates. Popups anchored with fixed positioning, such as the `MenuPicker` tooltip (`positionMethod="fixed"`), render offset by the component's position; absolute positioning, the Base UI default, works. |
@@ -162,10 +168,11 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-The CountrySelect and reading-directions fixtures live in their own story
-files, so run them separately:
+The Autocomplete, CountrySelect and reading-directions fixtures live in their
+own story files, so run them separately:
 
 ```sh
+npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```

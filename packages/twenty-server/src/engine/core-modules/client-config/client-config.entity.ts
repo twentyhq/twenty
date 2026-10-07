@@ -284,8 +284,6 @@ export class OnboardingConfig {
 
   inviteTeamCreditsRewardPerUser: number;
 
-  installAppsCreditsReward: number;
-
   createProfileCreditsReward: number;
 
   upgradeCreditsReward: number;

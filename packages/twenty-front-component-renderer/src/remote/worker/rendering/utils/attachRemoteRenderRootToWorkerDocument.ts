@@ -8,6 +8,7 @@ import {
 
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
+import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
 import { createConnectionIgnoringRootPropertyUpdates } from '@/remote/worker/rendering/utils/createConnectionIgnoringRootPropertyUpdates';
@@ -26,6 +27,7 @@ export const attachRemoteRenderRootToWorkerDocument = (
   remoteRoot.append(renderContainer);
   workerGeometryStore.setRootElement(remoteRoot);
   workerFocusTransport.setRootElement(remoteRoot);
+  workerInputSelectionStore.setRootElement(remoteRoot);
   installStyleBridge(remoteRoot);
 
   return renderContainer;

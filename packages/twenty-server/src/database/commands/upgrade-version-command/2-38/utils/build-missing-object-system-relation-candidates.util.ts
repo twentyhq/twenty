@@ -10,6 +10,7 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export type DefaultRelationHolderNameSingular =
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
@@ -42,6 +43,7 @@ type BuildMissingObjectSystemRelationCandidatesArgs = Pick<
     DefaultRelationHolderNameSingular,
     Set<string>
   >;
+  existingTableNames: Set<string>;
   twentyStandardApplicationUniversalIdentifier: string;
 };
 
@@ -50,6 +52,7 @@ export const buildMissingObjectSystemRelationCandidates = ({
   flatFieldMetadataMaps,
   holderFlatObjectMetadataByNameSingular,
   existingColumnNamesByHolderNameSingular,
+  existingTableNames,
   twentyStandardApplicationUniversalIdentifier,
 }: BuildMissingObjectSystemRelationCandidatesArgs): MissingObjectSystemRelationCandidates => {
   const holderContexts = DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
@@ -109,6 +112,7 @@ export const buildMissingObjectSystemRelationCandidates = ({
       sourceFlatFieldMetadatas.map(({ name }) => name),
     );
     const missingHolderNameSingulars: DefaultRelationHolderNameSingular[] = [];
+    const sourceTableName = computeObjectTargetTable(sourceFlatObjectMetadata);
 
     for (const holderContext of holderContexts) {
       const { holderNameSingular, holderFlatObjectMetadata } = holderContext;
@@ -202,6 +206,15 @@ export const buildMissingObjectSystemRelationCandidates = ({
       if (holderContext.existingColumnNames.has(joinColumnName)) {
         pushUnprovisionable(
           `column "${joinColumnName}" already exists on the ${holderNameSingular} table`,
+        );
+        continue;
+      }
+
+      // Legacy standard objects demoted to the custom application (e.g. a
+      // pre-1.10 viewField) resolve to a prefixed table that was never created.
+      if (!existingTableNames.has(sourceTableName)) {
+        pushUnprovisionable(
+          `table "${sourceTableName}" does not exist in the workspace schema`,
         );
         continue;
       }

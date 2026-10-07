@@ -1,6 +1,14 @@
+import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
-import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
+import {
+  Banner,
+  Loader,
+  ProgressBar,
+  Skeleton,
+} from 'twenty-ui/primitives/feedback';
+import { isDefined } from 'twenty-shared/utils';
+import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -39,11 +47,41 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Loader',
-    node: <Loader color="blue" />,
+    node: (
+      <Loader
+        color="blue"
+        role="status"
+        aria-label="Loading results"
+        className="custom-loader"
+        style={{ borderColor: '#123456' }}
+        render={(props) =>
+          createElement('span', { ...props, 'data-composed': 'true' })
+        }
+        ref={(element) => {
+          if (isDefined(element)) {
+            element.dataset.refTag = element.tagName;
+          }
+        }}
+      />
+    ),
+  },
+  {
+    name: 'DecorativeLoader',
+    node: <Loader aria-hidden="true" />,
   },
   {
     name: 'ProgressBar',
     node: <ProgressBar value={50} ariaLabel="Progress" />,
+  },
+  {
+    name: 'Skeleton',
+    node: <Skeleton width={180} height={16} />,
+  },
+  {
+    name: 'StaticSkeleton',
+    node: (
+      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+    ),
   },
 ];
 

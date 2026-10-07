@@ -6,18 +6,18 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
 import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
 import { MainButton } from 'twenty-ui/components/input';
 import { IconGoogle } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();
@@ -59,7 +59,7 @@ export const SignInUpWithGoogle = ({
           <LastUsedPill />
         )}
       </StyledSsoButtonContainer>
-      <HorizontalSeparator visible={false} />
+      <SignInUpSeparator />
     </>
   );
 };

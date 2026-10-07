@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
 import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
 import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
+import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
+import { readInputSelectionState } from '@/utils/readInputSelectionState';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applySerializedEventTargetProperties = ({
@@ -16,6 +18,11 @@ export const applySerializedEventTargetProperties = ({
     if (key in eventData) {
       Reflect.set(element, key, eventData[key]);
     }
+  }
+
+  const selectionState = readInputSelectionState(eventData);
+  if (isDefined(selectionState)) {
+    workerInputSelectionStore.applySnapshot({ element, state: selectionState });
   }
 
   if (eventData.checked) {

@@ -17,7 +17,7 @@ import {
   useNavigationMenuItemEditController,
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const VIEW_OBJECT_PAGE = 'view-object';
 

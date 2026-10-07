@@ -1,7 +1,7 @@
 import { DomainShell } from '@/app/components/DomainShell';
 import { I18nActivationGate } from '@/app/components/I18nActivationGate';
 import { LocaleDirectionProvider } from '@/app/components/LocaleDirectionProvider';
-import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
+import { ApolloDevLogEffect } from '@/apollo/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';

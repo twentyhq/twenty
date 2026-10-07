@@ -14,6 +14,8 @@ const READ_PARTICIPANT = {
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: null,
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
