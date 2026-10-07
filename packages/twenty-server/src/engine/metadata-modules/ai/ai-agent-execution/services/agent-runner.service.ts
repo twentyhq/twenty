@@ -136,8 +136,6 @@ export class AgentRunnerService {
             workspaceId,
             caller,
           }),
-          resolveCreatedBy: () =>
-            handler.resolveTurnAuthor({ workspaceId, caller }),
         },
         suspension,
       });
@@ -215,7 +213,7 @@ export class AgentRunnerService {
 
     const turnId = await this.tryRecording(
       `record the agent turn in thread ${threadId}`,
-      async () =>
+      () =>
         this.agentRunConversationService.openTurn({
           workspaceId,
           threadId,
@@ -223,7 +221,7 @@ export class AgentRunnerService {
           agentId,
           senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
           senderApplicationId: prompt?.senderApplicationId ?? null,
-          createdBy: await input.resolveCreatedBy(),
+          createdBy: executionContext.turnCreatedBy,
           messages: prompt?.messages ?? [],
         }),
     );
@@ -258,16 +256,10 @@ export class AgentRunnerService {
               : {}),
           },
           canProposeToolCalls: spec.capabilities.canAskHumans,
-          actorContext: executionContext.actorContext,
-          authContext: executionContext.authContext,
           workspaceId,
-          userWorkspaceId: executionContext.userWorkspaceId,
-          runAsRoleId: executionContext.runAsRoleId,
-          additionalRoleRestrictionIds:
-            executionContext.additionalRoleRestrictionIds,
+          executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
           toolLoadingStrategy: spec.toolLoadingStrategy,
-          usageOperationType: executionContext.usageOperationType,
         }),
       );
     } catch (error) {
