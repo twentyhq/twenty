@@ -8,7 +8,7 @@ import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/se
 export class WorkflowStepWaitWorkspaceService {
   constructor(private readonly pendingWakeUpService: PendingWakeUpService) {}
 
-  // An answer wait is resolved through the step's conversation, so it is not stored
+  // A callback wait is resolved by what the step handed its work to, so it is not stored
   async arm({
     workspaceId,
     workflowRunId,
@@ -20,7 +20,7 @@ export class WorkflowStepWaitWorkspaceService {
     stepId: string;
     wait: WorkflowStepWait;
   }): Promise<void> {
-    if (wait.type === 'ANSWER') {
+    if (wait.type === 'CALLBACK') {
       return;
     }
 

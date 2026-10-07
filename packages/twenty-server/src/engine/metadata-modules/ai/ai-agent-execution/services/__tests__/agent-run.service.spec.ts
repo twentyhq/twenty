@@ -212,7 +212,10 @@ describe('AgentRunService', () => {
 
     agentRunnerService.run.mockResolvedValue({
       threadId: 'thread-id',
-      outcome: { status: 'NO_CREDITS' },
+      outcome: {
+        status: 'FAILED',
+        error: 'Agent stopped: no more available credits.',
+      },
     });
 
     await expect(

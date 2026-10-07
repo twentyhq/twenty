@@ -5,12 +5,11 @@ import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { AwaitedToolCallHandlerModule } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/awaited-tool-call-handler.module';
 import { ToolCallAnswerResolver } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/tool-call-answer.resolver';
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
-// an answer resumes a chat here, or the run waiting on it through the handler it registered
+// an answer resumes a chat here, or continues the suspended run its caller waits on
 @Module({
   imports: [
     AgentHistoryModule,
@@ -19,7 +18,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AgentChatStreamStateModule,
     PermissionsModule,
     ToolProviderModule,
-    AwaitedToolCallHandlerModule,
   ],
   providers: [ToolCallAnswerService, ToolCallAnswerResolver],
 })
