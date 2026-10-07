@@ -21,6 +21,65 @@
     cursor: default;
     opacity: 0.5;
   }
+
+  &[data-edge]:not([data-disabled])[data-axis='x'] {
+    cursor: col-resize;
+  }
+
+  &[data-edge]:not([data-disabled])[data-axis='y'] {
+    cursor: row-resize;
+  }
+
+  &[data-placement='edge'] {
+    position: absolute;
+    inset-block: auto;
+    inset-inline: auto;
+    top: 0;
+  }
+
+  &[data-placement='edge'][data-axis='x'] {
+    bottom: 0;
+    width: 8px;
+  }
+
+  &[data-placement='edge'][data-edge='left'] {
+    left: -4px;
+  }
+
+  &[data-placement='edge'][data-edge='right'] {
+    right: -4px;
+  }
+
+  &[data-placement='edge'][data-axis='y'] {
+    left: 0;
+    right: 0;
+    height: 8px;
+  }
+
+  &[data-placement='edge'][data-edge='bottom'] {
+    top: auto;
+    bottom: 0;
+  }
+
+  &[data-placement='gap'] {
+    box-sizing: content-box;
+    position: relative;
+    z-index: 1;
+  }
+
+  &[data-placement='gap'][data-axis='x'] {
+    height: 100%;
+    width: 0;
+    margin: 0 -4px;
+    padding: 0 4px;
+  }
+
+  &[data-placement='gap'][data-axis='y'] {
+    width: 100%;
+    height: 0;
+    margin: -4px 0;
+    padding: 4px 0;
+  }
 }
 
 .bar {
@@ -39,4 +98,36 @@
 
 .area:not([data-disabled]):hover > .bar {
   background-color: var(--t-font-color-tertiary);
+}
+
+.area[data-edge] > .bar {
+  block-size: 48px;
+  inline-size: 4px;
+  transition:
+    background-color duration(fast),
+    transform duration(fast);
+}
+
+.area[data-edge][data-axis='y'] > .bar {
+  block-size: 3px;
+  inline-size: 48px;
+}
+
+.area[data-edge]:not([data-disabled]):is(
+    :hover,
+    :focus-visible,
+    [data-resizing]
+  )
+  > .bar {
+  background-color: var(--t-border-color-strong);
+  transform: scaleY(1.2);
+}
+
+.area[data-edge][data-axis='y']:not([data-disabled]):is(
+    :hover,
+    :focus-visible,
+    [data-resizing]
+  )
+  > .bar {
+  transform: scaleX(1.2);
 }

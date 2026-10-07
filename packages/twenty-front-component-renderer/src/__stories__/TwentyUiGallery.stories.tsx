@@ -15,10 +15,11 @@ import { animatedIconCrossfadeTest } from '@/__stories__/twenty-ui-gallery/utils
 import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
-import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
+import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { resizeHandlePanelTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandlePanelTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
@@ -145,16 +146,16 @@ export const NumberStepperPreact: Story = createGalleryStory({
   play: numberStepperTest,
 });
 
-export const NumberStepperInteractionGapsReact: Story = createGalleryStory({
+export const NumberStepperSelectionReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'react',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
-export const NumberStepperInteractionGapsPreact: Story = createGalleryStory({
+export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({
@@ -177,6 +178,18 @@ export const LayoutPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'preact',
   play: layoutTest,
+});
+
+export const ResizeHandleReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-resize-handle',
+  runtime: 'react',
+  play: resizeHandlePanelTest,
+});
+
+export const ResizeHandlePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-resize-handle',
+  runtime: 'preact',
+  play: resizeHandlePanelTest,
 });
 
 export const NavigationReact: Story = createGalleryStory({
