@@ -11,6 +11,7 @@ export const GET_AGENT_CHAT_CHANNELS = gql`
       isMember
       canManage
       memberCount
+      isSystem
     }
   }
 `;

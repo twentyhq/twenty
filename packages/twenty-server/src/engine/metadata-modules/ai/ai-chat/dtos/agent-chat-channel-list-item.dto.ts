@@ -28,4 +28,8 @@ export class AgentChatChannelListItemDTO {
 
   @Field(() => Int)
   memberCount: number;
+
+  // Where conversations no member started land, so it stays
+  @Field(() => Boolean)
+  isSystem: boolean;
 }

@@ -10,6 +10,7 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { AgentChatDefaultChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-default-channel.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -37,6 +38,7 @@ export class AgentRunConversationService {
     private readonly cacheLockService: CacheLockService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly threadService: AgentChatThreadService,
+    private readonly defaultChannelService: AgentChatDefaultChannelService,
   ) {}
 
   withThreadLock<TResult>({
@@ -85,12 +87,19 @@ export class AgentRunConversationService {
       where: { id: threadId },
       select: ['id'],
     });
+    const newThreadChannel = isDefined(existingThread)
+      ? {}
+      : await this.defaultChannelService.findSystemThreadChannel(workspaceId);
 
     return this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
         if (!isDefined(existingThread)) {
-          await scope.insert('agentChatThread', { id: threadId, title });
+          await scope.insert('agentChatThread', {
+            id: threadId,
+            title,
+            ...newThreadChannel,
+          });
         }
 
         const turnId = await this.conversationWriterService.insertTurn({
@@ -164,6 +173,7 @@ export class AgentRunConversationService {
             ...turn,
             error: mapErrorToStreamError(error),
           });
+          await this.recordFailureActivity({ workspaceId, threadId, error });
 
           throw error;
         });
@@ -186,10 +196,12 @@ export class AgentRunConversationService {
 
   async failTurn({
     workspaceId,
+    threadId,
     turnId,
     error,
   }: {
     workspaceId: string;
+    threadId: string;
     turnId: string;
     error: unknown;
   }): Promise<void> {
@@ -199,14 +211,43 @@ export class AgentRunConversationService {
       status: AgentTurnStatus.FAILED,
       error: mapErrorToStreamError(error),
     });
+    await this.recordFailureActivity({ workspaceId, threadId, error });
   }
 
-  // the waiting call is already saved and can be answered from the conversation, so a
+  // A failed run in a channel comes back for its members, where a chat
+  // filed away by default would otherwise hide it
+  private async recordFailureActivity({
+    workspaceId,
+    threadId,
+    error,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    error: unknown;
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread?.channelId)) {
+      return;
+    }
+
+    await this.recordWaitingActivity({
+      workspaceId,
+      threadId,
+      text: mapErrorToStreamError(error).message,
+      threadBefore: thread,
+    });
+  }
+
+  // the waiting call or the failure is already saved and shows in the conversation, so a
   // failure to bring it back to the inbox must not fail the run
   private async recordWaitingActivity(args: {
     workspaceId: string;
     threadId: string;
     text: string;
+    threadBefore?: AgentChatThreadWorkspaceEntity;
   }): Promise<void> {
     await this.threadService
       .recordThreadActivity(args)

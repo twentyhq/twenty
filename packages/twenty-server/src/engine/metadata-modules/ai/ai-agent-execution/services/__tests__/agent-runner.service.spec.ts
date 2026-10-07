@@ -217,6 +217,7 @@ describe('AgentRunnerService', () => {
     await expect(service.run(RUN_INPUT)).rejects.toThrow('provider down');
     expect(agentRunConversationService.failTurn).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
+      threadId: 'thread-id',
       turnId: 'turn-id',
       error,
     });

@@ -4,10 +4,14 @@ import { type AgentChatChannelListItemDTO } from 'src/engine/metadata-modules/ai
 import { type AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-default-channel-id.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-type ChannelRow = Omit<AgentChatChannelListItemDTO, 'canManage'> & {
+type ChannelRow = Omit<
+  AgentChatChannelListItemDTO,
+  'canManage' | 'isSystem'
+> & {
   visibility: AgentChatChannelVisibility;
 };
 
@@ -73,10 +77,16 @@ export class AgentChatChannelListService {
       authContext,
     );
 
+    const systemChannelId = buildAgentChatDefaultChannelId({
+      workspaceId,
+      kind: 'SYSTEM',
+    });
+
     // Only joined channels show their settings, so only they are checked
     return Promise.all(
       rows.map(async (row) => ({
         ...row,
+        isSystem: row.id === systemChannelId,
         canManage:
           row.isMember &&
           (await this.channelAccessService.canManageChannel({

@@ -40,6 +40,13 @@ const buildService = () => {
       ),
   };
 
+  const defaultChannelService = {
+    findSystemThreadChannel: jest.fn().mockResolvedValue({
+      channelId: 'system-channel-id',
+      channelArchivedAt: '2026-10-07T00:00:00.000Z',
+    }),
+  };
+
   const service = new AgentInboxService(
     threadRepository as never,
     {} as never,
@@ -47,6 +54,7 @@ const buildService = () => {
     threadService as never,
     {} as never,
     {} as never,
+    defaultChannelService as never,
   );
 
   return { service, threadRepository, threadService };
@@ -91,7 +99,7 @@ describe('AgentInboxService.openThread', () => {
     });
   });
 
-  it('keeps a conversation with no member out of every inbox', async () => {
+  it('files a conversation with no member in the System channel', async () => {
     const { service, threadRepository, threadService } = buildService();
 
     const { thread, isCreated } = await service.openThread({
@@ -104,6 +112,8 @@ describe('AgentInboxService.openThread', () => {
     expect(threadRepository.insert).toHaveBeenCalledWith('workspace-id', {
       id: thread.id,
       title: 'Draft the quote',
+      channelId: 'system-channel-id',
+      channelArchivedAt: '2026-10-07T00:00:00.000Z',
     });
     expect(thread.id).not.toBe(
       buildInboxThreadId({

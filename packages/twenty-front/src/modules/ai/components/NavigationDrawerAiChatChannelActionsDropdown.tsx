@@ -73,6 +73,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
             {t`Leave channel`}
           </Dropdown.ActionItem>
           {channel.canManage &&
+            !channel.isSystem &&
             (destinationChannels.length === 0 ? (
               <Dropdown.ActionItem
                 color="danger"

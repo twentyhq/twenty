@@ -3578,6 +3578,7 @@ type AgentChatChannelListItem {
   isMember: Boolean!
   canManage: Boolean!
   memberCount: Int!
+  isSystem: Boolean!
 }
 
 enum AgentChatChannelVisibility {

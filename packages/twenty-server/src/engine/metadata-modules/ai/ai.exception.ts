@@ -22,6 +22,7 @@ export enum AiExceptionCode {
   CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
   CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
+  SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED = 'SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED',
   CHAT_CHANNEL_MANAGEMENT_FORBIDDEN = 'CHAT_CHANNEL_MANAGEMENT_FORBIDDEN',
   INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
   INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
@@ -82,6 +83,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Channel not found.`;
     case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       return msg`Move this channel's chats to another channel before deleting it.`;
+    case AiExceptionCode.SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED:
+      return msg`Conversations no member started land in System, so it can't be deleted.`;
     case AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN:
       return msg`Only the people who manage this channel can do this.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:

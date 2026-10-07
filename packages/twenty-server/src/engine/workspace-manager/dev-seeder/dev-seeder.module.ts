@@ -1,4 +1,5 @@
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -47,6 +48,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 @Module({
   imports: [
     AgentHistoryModule,
+    AgentChatThreadModule,
     AiAgentExecutionModule,
     TimelineActivityModule,
     ObjectMetadataModule,

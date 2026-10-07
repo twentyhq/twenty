@@ -233,6 +233,7 @@ export class AgentRunnerService {
         await this.recordConversation(threadId, () =>
           this.agentRunConversationService.failTurn({
             workspaceId,
+            threadId,
             turnId,
             error,
           }),

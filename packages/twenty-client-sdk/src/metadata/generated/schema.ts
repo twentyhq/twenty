@@ -3126,6 +3126,7 @@ export interface AgentChatChannelListItem {
     isMember: Scalars['Boolean']
     canManage: Scalars['Boolean']
     memberCount: Scalars['Int']
+    isSystem: Scalars['Boolean']
     __typename: 'AgentChatChannelListItem'
 }
 
@@ -7168,6 +7169,7 @@ export interface AgentChatChannelListItemGenqlSelection{
     isMember?: boolean | number
     canManage?: boolean | number
     memberCount?: boolean | number
+    isSystem?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

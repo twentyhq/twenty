@@ -5,6 +5,7 @@ import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentChatDefaultChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-default-channel.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
@@ -38,6 +39,7 @@ export class AgentInboxService {
     private readonly threadService: AgentChatThreadService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly defaultChannelService: AgentChatDefaultChannelService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -175,7 +177,8 @@ export class AgentInboxService {
 
   // The thread key picks the sender's conversation with the member, so every
   // write with the same key lands in one thread. A conversation with no
-  // member belongs to no inbox, and only the server reads it. One the member
+  // member lands in the System channel, or in no inbox once System is gone.
+  // One the member
   // deleted is returned as it is, and the caller decides whether to write to it.
   async openThread({
     workspaceId,
@@ -312,7 +315,13 @@ export class AgentInboxService {
     threadId: string;
     title: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    await this.threadRepository.insert(workspaceId, { id: threadId, title });
+    await this.threadRepository.insert(workspaceId, {
+      id: threadId,
+      title,
+      ...(await this.defaultChannelService.findSystemThreadChannel(
+        workspaceId,
+      )),
+    });
 
     return this.threadRepository.findOneOrFail(workspaceId, {
       where: { id: threadId },

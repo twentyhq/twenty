@@ -15,8 +15,17 @@ const turn = {
   turnId: 'turn-id',
 };
 
-const buildService = () => {
+const buildService = ({
+  thread = null,
+}: { thread?: { id: string; channelId: string | null } | null } = {}) => {
   const scope = { insert: jest.fn().mockResolvedValue(undefined) };
+  const threadRepository = { findOne: jest.fn().mockResolvedValue(thread) };
+  const defaultChannelService = {
+    findSystemThreadChannel: jest.fn().mockResolvedValue({
+      channelId: 'system-channel-id',
+      channelArchivedAt: '2026-10-07T00:00:00.000Z',
+    }),
+  };
   const conversationWriterService = {
     runInTransaction: jest
       .fn()
@@ -28,6 +37,7 @@ const buildService = () => {
       .mockResolvedValue({ isAwaitingAnswer: false, replyParts: [] }),
   };
   const turnRecorderService = {
+    finish: jest.fn().mockResolvedValue(undefined),
     finishExecutedTurn: jest.fn().mockResolvedValue(undefined),
   };
   const threadService = {
@@ -36,17 +46,37 @@ const buildService = () => {
 
   return {
     service: new AgentRunConversationService(
-      { findOne: jest.fn().mockResolvedValue(null) } as never,
+      threadRepository as never,
       conversationWriterService as never,
       {} as never,
       turnRecorderService as never,
       threadService as never,
+      defaultChannelService as never,
     ),
+    scope,
     conversationWriterService,
     turnRecorderService,
     threadService,
+    defaultChannelService,
   };
 };
+
+const openTurn = (service: AgentRunConversationService) =>
+  service.openTurn({
+    workspaceId: 'workspace-id',
+    threadId: 'thread-id',
+    title: 'Helper',
+    agentId: 'agent-id',
+    senderUserWorkspaceId: null,
+    senderApplicationId: 'application-id',
+    createdBy: {
+      source: FieldActorSource.APPLICATION,
+      name: 'Helper app',
+      workspaceMemberId: null,
+      context: {},
+    },
+    messages: [{ role: 'user', content: 'Who is our biggest customer?' }],
+  });
 
 const closeTurn = (service: AgentRunConversationService) =>
   service.closeTurn({
@@ -169,6 +199,59 @@ describe('AgentRunConversationService', () => {
       execution,
       error: expect.objectContaining({ code: expect.any(String) }),
     });
+  });
+
+  it('files a new conversation as done in the System channel', async () => {
+    const { service, scope } = buildService();
+
+    await openTurn(service);
+
+    expect(scope.insert).toHaveBeenCalledWith('agentChatThread', {
+      id: 'thread-id',
+      title: 'Helper',
+      channelId: 'system-channel-id',
+      channelArchivedAt: '2026-10-07T00:00:00.000Z',
+    });
+  });
+
+  it('leaves an existing conversation where it is', async () => {
+    const { service, scope, defaultChannelService } = buildService({
+      thread: { id: 'thread-id', channelId: null },
+    });
+
+    await openTurn(service);
+
+    expect(
+      defaultChannelService.findSystemThreadChannel,
+    ).not.toHaveBeenCalled();
+    expect(scope.insert).not.toHaveBeenCalledWith(
+      'agentChatThread',
+      expect.anything(),
+    );
+  });
+
+  it('brings a failed conversation back in its channel', async () => {
+    const thread = { id: 'thread-id', channelId: 'system-channel-id' };
+    const { service, threadService } = buildService({ thread });
+
+    await service.failTurn({ ...turn, error: new Error('Model unavailable') });
+
+    expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      text: 'Model unavailable',
+      threadBefore: thread,
+    });
+  });
+
+  it('leaves a failed conversation outside channels as it is', async () => {
+    const { service, threadService } = buildService({
+      thread: { id: 'thread-id', channelId: null },
+    });
+
+    await service.failTurn({ ...turn, error: new Error('Model unavailable') });
+
+    expect(threadService.recordThreadActivity).not.toHaveBeenCalled();
   });
 
   it('marks the calls it leaves pending as awaited by a caller', async () => {

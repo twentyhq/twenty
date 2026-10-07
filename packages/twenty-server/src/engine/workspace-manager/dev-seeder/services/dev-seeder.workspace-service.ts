@@ -1,5 +1,6 @@
 import { seedAgentChatThreadInboxState } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agent-chat-thread-inbox-state.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
+import { AgentChatDefaultChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-default-channel.service';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { Injectable } from '@nestjs/common';
@@ -84,6 +85,7 @@ export class DevSeederWorkspaceService {
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly agentChatDefaultChannelService: AgentChatDefaultChannelService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -244,6 +246,10 @@ export class DevSeederWorkspaceService {
       workspaceId,
       applicationId: workspaceCustomFlatApplication.id,
     });
+
+    await this.agentChatDefaultChannelService.ensureDefaultChannels(
+      workspaceId,
+    );
 
     await this.workspaceCacheStorageService.flush(workspaceId);
   }

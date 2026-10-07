@@ -4,6 +4,7 @@ import { MetadataReadability } from 'twenty-shared/types';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791326380059-add-agent-chat-channels.command';
+import { type SeedDefaultAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791339914839-seed-default-agent-chat-channels.command';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -87,6 +88,13 @@ describe('2-46 workspace command - add agent chat channels (integration)', () =>
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+  });
+
+  // down drops the channel tables, and the default channels with them
+  afterAll(async () => {
+    await getAppProviderByClassName<SeedDefaultAgentChatChannelsCommand>(
+      'SeedDefaultAgentChatChannelsCommand',
+    ).up(RUN_ON_WORKSPACE_ARGS);
   });
 
   it('removes channels and reads chats through their own grants again on down', async () => {

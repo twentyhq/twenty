@@ -9,6 +9,7 @@ import {
   LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-workflow-run-universal-identifiers.constant';
 import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791326380059-add-agent-chat-channels.command';
+import { type SeedDefaultAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791339914839-seed-default-agent-chat-channels.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -85,6 +86,9 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
   afterAll(async () => {
     await getAppProviderByClassName<AddAgentChatChannelsCommand>(
       'AddAgentChatChannelsCommand',
+    ).up(RUN_ON_WORKSPACE_ARGS);
+    await getAppProviderByClassName<SeedDefaultAgentChatChannelsCommand>(
+      'SeedDefaultAgentChatChannelsCommand',
     ).up(RUN_ON_WORKSPACE_ARGS);
   });
 

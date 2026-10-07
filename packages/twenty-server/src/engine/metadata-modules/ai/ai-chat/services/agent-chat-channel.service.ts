@@ -16,6 +16,7 @@ import {
   throwAgentChatChannelManagementForbidden,
   throwAgentChatChannelNotFound,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-errors.util';
+import { buildAgentChatDefaultChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-default-channel-id.util';
 import { getAgentChatChannelTables } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-channel-tables.util';
 import { insertAgentChatChannelMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/insert-agent-chat-channel-members.util';
 import { writeAgentChatChannelGeneralAccess } from 'src/engine/metadata-modules/ai/ai-chat/utils/write-agent-chat-channel-general-access.util';
@@ -260,6 +261,19 @@ export class AgentChatChannelService {
     destinationChannelId: string | null;
   }): Promise<void> {
     await this.channelAccessService.assertCanManageChannel(args);
+
+    if (
+      args.channelId ===
+      buildAgentChatDefaultChannelId({
+        workspaceId: args.workspaceId,
+        kind: 'SYSTEM',
+      })
+    ) {
+      throw new AiException(
+        'The System channel receives the conversations no member started',
+        AiExceptionCode.SYSTEM_CHAT_CHANNEL_CANNOT_BE_DELETED,
+      );
+    }
 
     const channel = await this.findChannelOrThrow(args);
 

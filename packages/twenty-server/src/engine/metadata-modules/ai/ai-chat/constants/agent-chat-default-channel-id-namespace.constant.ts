@@ -1,0 +1,2 @@
+export const AGENT_CHAT_DEFAULT_CHANNEL_ID_NAMESPACE =
+  '3f0b8a52-6f4e-4f7a-9a1c-2d6e5b7c8a91';

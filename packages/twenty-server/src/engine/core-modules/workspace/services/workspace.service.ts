@@ -35,6 +35,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { AgentChatDefaultChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-default-channel.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -192,6 +193,7 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly agentChatDefaultChannelService: AgentChatDefaultChannelService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -541,6 +543,8 @@ export class WorkspaceService {
         workspaceId: workspace.id,
         schemaName: getWorkspaceSchemaName(workspace.id),
       });
+
+      await this.seedDefaultAgentChatChannels(workspace.id);
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
@@ -1223,6 +1227,24 @@ export class WorkspaceService {
     } catch (error) {
       this.logger.error(
         `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
+  }
+
+  // Channels are a convenience: a workspace without them still works and its
+  // members can create their own
+  private async seedDefaultAgentChatChannels(
+    workspaceId: string,
+  ): Promise<void> {
+    try {
+      await this.agentChatDefaultChannelService.ensureDefaultChannels(
+        workspaceId,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to seed default chat channels for workspace ${workspaceId}`,
         error,
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);

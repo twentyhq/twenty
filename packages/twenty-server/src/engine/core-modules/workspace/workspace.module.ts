@@ -33,6 +33,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -68,6 +69,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     WorkspaceCacheStorageModule,
     RoleModule,
     AiAgentModule,
+    AgentChatThreadModule,
     DnsManagerModule,
     WorkspaceDomainsModule,
     SubdomainManagerModule,

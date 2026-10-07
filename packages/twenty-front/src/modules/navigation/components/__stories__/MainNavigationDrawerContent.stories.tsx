@@ -30,6 +30,7 @@ const CHANNEL = {
   isMember: true,
   canManage: true,
   memberCount: 1,
+  isSystem: false,
 };
 
 const ContentWithCollapseControl = () => {
