@@ -1,1 +1,0 @@
-export const PANEL_RESIZE_HANDLE_DRAG_THRESHOLD = 5;

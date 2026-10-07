@@ -10,8 +10,6 @@
 export { AnimatedIconCrossfade } from './AnimatedIconCrossfade/AnimatedIconCrossfade';
 export { OverflowingList } from './OverflowingList/OverflowingList';
 export type { OverflowingListProps } from './OverflowingList/types/OverflowingListProps';
-export { PanelResizeHandle } from './PanelResizeHandle/PanelResizeHandle';
-export type { PanelResizeHandleProps } from './PanelResizeHandle/types/PanelResizeHandleProps';
 export { Section } from './Section/Section';
 export type { SectionHeaderProps } from './Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './Section/types/SectionRootProps';

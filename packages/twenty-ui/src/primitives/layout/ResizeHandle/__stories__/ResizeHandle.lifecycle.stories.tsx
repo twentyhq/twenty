@@ -20,7 +20,7 @@ const meta = {
     max: 200,
     dragThreshold: 4,
     onValueChange: fn(),
-    onValueCommit: fn(),
+    onValueCommitted: fn(),
     onResizeStart: fn(),
     onResizeEnd: fn(),
     onActivate: fn(),
@@ -48,7 +48,7 @@ export const ClickAndDrag: Story = {
         await expect(args.onResizeStart).not.toHaveBeenCalled();
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         await expect(args.onActivate).toHaveBeenCalledTimes(1);
-        await expect(args.onValueCommit).not.toHaveBeenCalled();
+        await expect(args.onValueCommitted).not.toHaveBeenCalled();
         await expect(handle).not.toHaveFocus();
 
         handle.focus();
@@ -67,12 +67,12 @@ export const ClickAndDrag: Story = {
         await userEvent.keyboard('{ArrowRight}{Enter}');
         await expect(handle).toHaveAttribute('aria-valuenow', '175');
         await expect(args.onActivate).toHaveBeenCalledTimes(3);
-        await expect(args.onValueCommit).not.toHaveBeenCalled();
+        await expect(args.onValueCommitted).not.toHaveBeenCalled();
         await fireEvent.pointerUp(handle, { pointerId: 1, clientX: 140 });
         await fireEvent.click(handle, { detail: 1 });
         await expect(handle).toHaveAttribute('aria-valuenow', '190');
-        await expect(args.onValueCommit).toHaveBeenCalledTimes(1);
-        await expect(args.onValueCommit).toHaveBeenCalledWith(190);
+        await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+        await expect(args.onValueCommitted).toHaveBeenCalledWith(190);
         await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
         await expect(args.onResizeEnd).toHaveBeenCalledWith({
           cancelled: false,
@@ -100,8 +100,8 @@ export const ReleaseMovement: Story = {
         await expect(handle).toHaveAttribute('aria-valuenow', '200');
         await expect(args.onResizeStart).toHaveBeenCalledTimes(1);
         await expect(args.onResizeStart).toHaveBeenCalledWith(200);
-        await expect(args.onValueCommit).toHaveBeenCalledTimes(1);
-        await expect(args.onValueCommit).toHaveBeenCalledWith(200);
+        await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+        await expect(args.onValueCommitted).toHaveBeenCalledWith(200);
         await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
         await expect(args.onResizeEnd).toHaveBeenCalledWith({
           cancelled: false,
@@ -139,12 +139,12 @@ export const ScaledPhysicalDirection: Story = {
         await expect(handle).toHaveAttribute('aria-valuenow', '200');
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         await expect(args.scale).toHaveBeenCalledTimes(1);
-        await expect(args.onValueCommit).toHaveBeenCalledTimes(1);
-        await expect(args.onValueCommit).toHaveBeenCalledWith(200);
+        await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+        await expect(args.onValueCommitted).toHaveBeenCalledWith(200);
         handle.focus();
         await userEvent.keyboard('{ArrowLeft}');
         await expect(handle).toHaveAttribute('aria-valuenow', '190');
-        await expect(args.onValueCommit).toHaveBeenLastCalledWith(190);
+        await expect(args.onValueCommitted).toHaveBeenLastCalledWith(190);
       },
     });
   },
@@ -170,7 +170,7 @@ export const ReverseVertical: Story = {
         handle.focus();
         await userEvent.keyboard('{ArrowDown}');
         await expect(handle).toHaveAttribute('aria-valuenow', '170');
-        await expect(args.onValueCommit).toHaveBeenLastCalledWith(170);
+        await expect(args.onValueCommitted).toHaveBeenLastCalledWith(170);
       },
     });
   },
@@ -200,14 +200,14 @@ export const EscapeCancellation: Story = {
           await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
           await expect(args.onResizeEnd).toHaveBeenCalledWith({
             cancelled: true,
-            value: 190,
+            value: 150,
           });
           await expect(handleDocumentKeyDown).not.toHaveBeenCalled();
           await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
           await pointer.pointer({ target: handle, coords: { x: 180 } });
           await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-          await expect(handle).toHaveAttribute('aria-valuenow', '190');
-          await expect(args.onValueCommit).not.toHaveBeenCalled();
+          await expect(handle).toHaveAttribute('aria-valuenow', '150');
+          await expect(args.onValueCommitted).not.toHaveBeenCalled();
           await expect(args.onActivate).not.toHaveBeenCalled();
           await fireEvent.click(handle, { detail: 0 });
           await expect(args.onActivate).toHaveBeenCalledTimes(1);
@@ -246,11 +246,11 @@ export const DisabledDuringDrag: Story = {
         await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
         await expect(args.onResizeEnd).toHaveBeenCalledWith({
           cancelled: true,
-          value: 190,
+          value: 150,
         });
         await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-        await expect(args.onValueCommit).not.toHaveBeenCalled();
+        await expect(args.onValueCommitted).not.toHaveBeenCalled();
         await expect(args.onActivate).not.toHaveBeenCalled();
       },
     });

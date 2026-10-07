@@ -5,19 +5,17 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
-import { PanelResizeHandle } from '../PanelResizeHandle';
-import { type PanelResizeHandleProps } from '../types/PanelResizeHandleProps';
+import { RESIZE_HANDLE_DEFAULTS } from '../internal/ResizeHandleDefaults.constant';
+import { ResizeHandle } from '../ResizeHandle';
+import { type ResizeHandleProps } from '../types/ResizeHandleProps';
 
-export const PanelResizeHandleDemo = ({
+export const ResizeHandlePanelDemo = ({
   edge = 'right',
   placement = 'edge',
-  minSize,
-  maxSize,
-  size: initialSize,
-}: Pick<
-  PanelResizeHandleProps,
-  'edge' | 'placement' | 'minSize' | 'maxSize' | 'size'
->) => {
+  min,
+  max,
+  value: initialSize = RESIZE_HANDLE_DEFAULTS.value,
+}: Pick<ResizeHandleProps, 'edge' | 'placement' | 'min' | 'max' | 'value'>) => {
   const regionId = useId();
   const separatorRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState(initialSize);
@@ -46,25 +44,26 @@ export const PanelResizeHandleDemo = ({
   };
 
   const isHorizontal = edge === 'left' || edge === 'right';
+  const gapStyle = isHorizontal ? { width: 12 } : { height: 12 };
   const isBefore = edge === 'left' || edge === 'top';
   const adjacentPanel = (
-    <Card.Root style={{ padding: 24 }}>
+    <Card.Root role="region" aria-label="Activity" style={{ padding: 24 }}>
       <Text>Activity</Text>
     </Card.Root>
   );
   const separator = (
-    <PanelResizeHandle
+    <ResizeHandle
       ref={mergedSeparatorRef}
       edge={edge}
       placement={placement}
-      gapSize={12}
+      style={placement === 'gap' ? gapStyle : undefined}
       aria-label="Resize notes"
       aria-controls={regionId}
-      size={committedSize}
-      minSize={minSize}
-      maxSize={maxSize}
-      onSizePreview={setSize}
-      onSizeCommitted={setCommittedSize}
+      value={size}
+      min={min}
+      max={max}
+      onValueChange={setSize}
+      onValueCommitted={setCommittedSize}
       onActivate={collapseNotes}
     />
   );
@@ -89,6 +88,8 @@ export const PanelResizeHandleDemo = ({
       {placement === 'gap' && isBefore && separator}
       <Card.Root
         id={regionId}
+        role="region"
+        aria-label="Notes"
         style={{
           position: 'relative',
           overflow: 'visible',

@@ -17,7 +17,7 @@ type UseResizeHandleInteractionArgs = Required<
   Pick<
     ResizeHandleProps,
     | 'direction'
-    | 'onValueCommit'
+    | 'onValueCommitted'
     | 'onResizeStart'
     | 'onResizeEnd'
     | 'onActivate'
@@ -32,7 +32,7 @@ export const useResizeHandleInteraction = ({
   direction,
   value,
   onValueChange,
-  onValueCommit,
+  onValueCommitted,
   onResizeStart,
   onResizeEnd,
   onActivate,
@@ -53,7 +53,7 @@ export const useResizeHandleInteraction = ({
       isReversed,
       value,
       onValueChange,
-      onValueCommit,
+      onValueCommitted,
       onResizeStart,
       onResizeEnd,
       onActivate,
@@ -115,7 +115,7 @@ export const useResizeHandleInteraction = ({
     }
 
     onValueChange(boundedValue);
-    onValueCommit?.(boundedValue);
+    onValueCommitted?.(boundedValue);
   };
 
   return { ...pointerInteractionProps, onKeyDown: handleKeyDown };

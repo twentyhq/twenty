@@ -14,7 +14,7 @@ type UseResizeHandlePointerInteractionArgs = Required<
 > &
   Pick<
     ResizeHandleProps,
-    'onValueCommit' | 'onResizeStart' | 'onResizeEnd' | 'onActivate'
+    'onValueCommitted' | 'onResizeStart' | 'onResizeEnd' | 'onActivate'
   > & {
     isReversed: boolean;
     onValueChange: (value: number) => void;
@@ -27,7 +27,7 @@ export const useResizeHandlePointerInteraction = ({
   isReversed,
   value,
   onValueChange,
-  onValueCommit,
+  onValueCommitted,
   onResizeStart,
   onResizeEnd,
   onActivate,
@@ -59,11 +59,19 @@ export const useResizeHandlePointerInteraction = ({
       return;
     }
 
-    if (!cancelled) {
-      onValueCommit?.(gesture.currentValue);
+    const finalValue = cancelled
+      ? clamp(gesture.startValue, min, max)
+      : gesture.currentValue;
+
+    if (cancelled) {
+      onValueChange(finalValue);
     }
 
-    onResizeEnd?.({ cancelled, value: gesture.currentValue });
+    if (!cancelled) {
+      onValueCommitted?.(finalValue);
+    }
+
+    onResizeEnd?.({ cancelled, value: finalValue });
   });
 
   useEffect(

@@ -13,7 +13,7 @@ import {
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
 import { DialogContainerContext } from '@/ui/layout/dialog/contexts/DialogContainerContext';
-import { PanelResizeHandle } from 'twenty-ui/components/layout';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { useLingui } from '@lingui/react/macro';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -88,6 +88,7 @@ export const SidePanelForDesktop = () => {
     null,
   );
   const [isResizing, setIsResizing] = useState(false);
+  const [liveWidth, setLiveWidth] = useState<number | null>(null);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
   const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
@@ -142,6 +143,7 @@ export const SidePanelForDesktop = () => {
   const handleWidthChange = useCallback(
     (width: number) => {
       setSidePanelWidth(width);
+      setLiveWidth(null);
       setIsResizing(false);
       setTableWidthResizeIsActive(true);
     },
@@ -149,6 +151,7 @@ export const SidePanelForDesktop = () => {
   );
 
   const handleWidthPreview = (width: number) => {
+    setLiveWidth(width);
     document.documentElement.style.setProperty(
       SIDE_PANEL_WIDTH_VAR,
       `${width}px`,
@@ -156,6 +159,7 @@ export const SidePanelForDesktop = () => {
   };
 
   const handleResizeEnd = () => {
+    setLiveWidth(null);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
   };
@@ -167,6 +171,7 @@ export const SidePanelForDesktop = () => {
 
   const handleCollapse = useCallback(() => {
     closeSidePanelMenu();
+    setLiveWidth(null);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
   }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
@@ -178,13 +183,13 @@ export const SidePanelForDesktop = () => {
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
       {isSidePanelOpened && (
-        <PanelResizeHandle
+        <ResizeHandle
           edge="left"
-          minSize={SIDE_PANEL_CONSTRAINTS.min}
-          maxSize={SIDE_PANEL_CONSTRAINTS.max}
-          size={sidePanelWidth}
-          onSizePreview={handleWidthPreview}
-          onSizeCommitted={handleWidthChange}
+          min={SIDE_PANEL_CONSTRAINTS.min}
+          max={SIDE_PANEL_CONSTRAINTS.max}
+          value={liveWidth ?? sidePanelWidth}
+          onValueChange={handleWidthPreview}
+          onValueCommitted={handleWidthChange}
           onActivate={handleCollapse}
           placement="gap"
           aria-label={t`Resize side panel`}

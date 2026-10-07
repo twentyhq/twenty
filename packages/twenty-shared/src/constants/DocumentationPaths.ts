@@ -159,8 +159,6 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/layout/animated-icon-crossfade',
   UI_COMPONENTS_LAYOUT_OVERFLOWING_LIST:
     '/ui/components/layout/overflowing-list',
-  UI_COMPONENTS_LAYOUT_PANEL_RESIZE_HANDLE:
-    '/ui/components/layout/panel-resize-handle',
   UI_COMPONENTS_LAYOUT_SECTION: '/ui/components/layout/section',
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',

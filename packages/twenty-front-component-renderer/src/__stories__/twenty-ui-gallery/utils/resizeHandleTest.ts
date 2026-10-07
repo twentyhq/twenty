@@ -49,12 +49,22 @@ export const resizeHandleTest: TwentyUiGalleryPlayFunction = async (
           expect(canvas.getByText('180 pixels')).toBeVisible();
         });
         await fireEvent[endEvent](handle, { pointerId: 1, clientY: 80 });
+        const finalValue = endEvent === 'pointerUp' ? '180' : '200';
+        const valueAfterKeyboardStep = endEvent === 'pointerUp' ? '190' : '200';
+
+        await waitFor(() => {
+          expect(handle).toHaveAttribute('aria-valuenow', finalValue);
+          expect(canvas.getByText(`${finalValue} pixels`)).toBeVisible();
+        });
         await pointer.pointer({ target: handle, coords: { y: 0 } });
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         handle.focus();
         await userEvent.keyboard('{ArrowDown}');
         await waitFor(() =>
-          expect(handle).toHaveAttribute('aria-valuenow', '190'),
+          expect(handle).toHaveAttribute(
+            'aria-valuenow',
+            valueAfterKeyboardStep,
+          ),
         );
         await userEvent.keyboard('{End}');
         await waitFor(() =>

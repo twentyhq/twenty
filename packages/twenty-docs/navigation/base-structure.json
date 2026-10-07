@@ -680,7 +680,6 @@
                   "key": "uiComponentsLayout",
                   "label": "Layout",
                   "pages": [
-                    "ui/components/layout/panel-resize-handle",
                     "ui/components/layout/section",
                     "ui/components/layout/overflowing-list",
                     "ui/components/layout/animated-icon-crossfade"

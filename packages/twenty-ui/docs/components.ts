@@ -56,7 +56,6 @@ import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTe
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
 import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
-import { PANEL_RESIZE_HANDLE_PROP_DESCRIPTIONS } from './panelResizeHandlePropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescriptions';
@@ -185,7 +184,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/resize-handle',
     propDescriptions: RESIZE_HANDLE_PROP_DESCRIPTIONS,
-    propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
+    propDefaults: {
+      axis: 'y without edge',
+      defaultValue: '150',
+      dragThreshold: '5 with edge; 0 otherwise',
+      min: '50',
+      max: '500',
+      placement: 'edge with edge; inline otherwise',
+      step: '10',
+    },
   },
   {
     name: 'TextDirectionProvider',
@@ -547,21 +554,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/overflowing-list',
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'PanelResizeHandle',
-    source: 'components/layout/PanelResizeHandle/PanelResizeHandle.tsx',
-    entryPoint: 'twenty-ui/components/layout',
-    slug: 'components/layout/panel-resize-handle',
-    propDescriptions: PANEL_RESIZE_HANDLE_PROP_DESCRIPTIONS,
-    propDefaults: {
-      disabled: 'false',
-      gapSize: '0',
-      showGrip: 'true',
-      placement: 'edge',
-      step: '10',
-      scale: '1',
-    },
   },
   {
     name: 'Section',

@@ -887,8 +887,8 @@
         "name": "axis",
         "type": "\"x\" | \"y\"",
         "required": false,
-        "defaultValue": "y",
-        "description": "Pointer movement axis: `y` for height or `x` for width."
+        "defaultValue": "y without edge",
+        "description": "Pointer movement axis without `edge`: `y` for height or `x` for width."
       },
       {
         "name": "defaultValue",
@@ -915,8 +915,15 @@
         "name": "dragThreshold",
         "type": "number",
         "required": false,
-        "defaultValue": "0",
-        "description": "Physical pointer distance required before resizing starts. Movement below the threshold remains a click."
+        "defaultValue": "5 with edge; 0 otherwise",
+        "description": "Physical pointer distance required before resizing starts. Movement below the threshold remains a click. Defaults to 5 with `edge` and 0 otherwise."
+      },
+      {
+        "name": "edge",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical panel edge. Determines the movement axis and increasing direction, independently of text direction."
       },
       {
         "name": "max",
@@ -944,7 +951,7 @@
         "type": "((details: { cancelled: boolean; value: number; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called after a started drag ends, with its latest live value and whether it was cancelled. Cancellation keeps the live value until the caller changes it."
+        "description": "Called after a started drag ends, with its final value and whether it was cancelled. Cancellation restores the starting value within the current bounds."
       },
       {
         "name": "onResizeStart",
@@ -958,14 +965,21 @@
         "type": "((value: number) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the bounded size after pointer or keyboard interaction."
+        "description": "Called with the bounded size during pointer or keyboard interaction and with the restored value on cancellation."
       },
       {
-        "name": "onValueCommit",
+        "name": "onValueCommitted",
         "type": "((value: number) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit."
+      },
+      {
+        "name": "placement",
+        "type": "\"edge\" | \"gap\" | \"inline\"",
+        "required": false,
+        "defaultValue": "edge with edge; inline otherwise",
+        "description": "Layout mode: `inline` stays in normal flow, `edge` positions the handle on the panel edge, and `gap` sits between panels. Defaults to `edge` when `edge` is set and `inline` otherwise."
       },
       {
         "name": "render",
@@ -993,7 +1007,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Controlled size. Apply the value to the element being resized."
+        "description": "Current controlled size. Update it in `onValueChange` and apply it to the element being resized."
       }
     ]
   },
@@ -9055,125 +9069,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
-      }
-    ]
-  },
-  {
-    "name": "PanelResizeHandle",
-    "entryPoint": "twenty-ui/components/layout",
-    "slug": "components/layout/panel-resize-handle",
-    "props": [
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Prevents resizing and activation and removes the separator from the tab order."
-      },
-      {
-        "name": "edge",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Physical panel edge. Left and top reverse the size change; right and bottom follow pointer movement."
-      },
-      {
-        "name": "gapSize",
-        "type": "number",
-        "required": false,
-        "defaultValue": "0",
-        "description": "Space occupied by the gap placement, in CSS pixels."
-      },
-      {
-        "name": "maxSize",
-        "type": "number",
-        "required": true,
-        "defaultValue": null,
-        "description": "Maximum allowed size."
-      },
-      {
-        "name": "minSize",
-        "type": "number",
-        "required": true,
-        "defaultValue": null,
-        "description": "Minimum allowed size."
-      },
-      {
-        "name": "onActivate",
-        "type": "(() => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Requests activation on a click without dragging or on Enter or Space. The application decides whether to collapse or close the panel."
-      },
-      {
-        "name": "onResizeEnd",
-        "type": "((details: { cancelled: boolean; size: number; }) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Reports whether the pointer drag was cancelled and its final or restored size."
-      },
-      {
-        "name": "onResizeStart",
-        "type": "((size: number) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Reports the first candidate size when a pointer drag passes the movement threshold."
-      },
-      {
-        "name": "onSizeCommitted",
-        "type": "((size: number) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Reports the final size after a successful drag or a keyboard size change. Save controlled sizes here."
-      },
-      {
-        "name": "onSizePreview",
-        "type": "((size: number) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Reports live size updates and the restored starting size after cancellation. Apply this size to the panel layout."
-      },
-      {
-        "name": "placement",
-        "type": "\"edge\" | \"gap\"",
-        "required": false,
-        "defaultValue": "edge",
-        "description": "An absolute edge inside a positioned panel, or a gap in the surrounding layout."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "scale",
-        "type": "number | (() => number)",
-        "required": false,
-        "defaultValue": "1",
-        "description": "Positive CSS zoom or scale factor, or a function evaluated at pointer down. Pointer distance is divided by this value."
-      },
-      {
-        "name": "showGrip",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Shows the grip on the edge placement. Does not disable interaction."
-      },
-      {
-        "name": "size",
-        "type": "number",
-        "required": true,
-        "defaultValue": null,
-        "description": "Required committed size in CSS pixels. The handle maintains a separate live size during a drag."
-      },
-      {
-        "name": "step",
-        "type": "number",
-        "required": false,
-        "defaultValue": "10",
-        "description": "Keyboard arrow increment in size units. Pointer movement is not snapped."
       }
     ]
   },

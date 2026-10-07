@@ -11,8 +11,8 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="axis" type="&quot;x&quot; | &quot;y&quot;" default="y">
-  Pointer movement axis: `y` for height or `x` for width.
+<ParamField body="axis" type="&quot;x&quot; | &quot;y&quot;" default="y without edge">
+  Pointer movement axis without `edge`: `y` for height or `x` for width.
 </ParamField>
 
 <ParamField body="defaultValue" type="number | (readonly string[] &amp; number)" default="150">
@@ -27,8 +27,12 @@
   Disables resizing and removes the handle from the tab order.
 </ParamField>
 
-<ParamField body="dragThreshold" type="number" default="0">
-  Physical pointer distance required before resizing starts. Movement below the threshold remains a click.
+<ParamField body="dragThreshold" type="number" default="5 with edge; 0 otherwise">
+  Physical pointer distance required before resizing starts. Movement below the threshold remains a click. Defaults to 5 with `edge` and 0 otherwise.
+</ParamField>
+
+<ParamField body="edge" type="&quot;bottom&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
+  Physical panel edge. Determines the movement axis and increasing direction, independently of text direction.
 </ParamField>
 
 <ParamField body="max" type="number" default="500">
@@ -44,7 +48,7 @@
 </ParamField>
 
 <ParamField body="onResizeEnd" type="((details: { cancelled: boolean; value: number; }) =&gt; void)">
-  Called after a started drag ends, with its latest live value and whether it was cancelled. Cancellation keeps the live value until the caller changes it.
+  Called after a started drag ends, with its final value and whether it was cancelled. Cancellation restores the starting value within the current bounds.
 </ParamField>
 
 <ParamField body="onResizeStart" type="((value: number) =&gt; void)">
@@ -52,11 +56,15 @@
 </ParamField>
 
 <ParamField body="onValueChange" type="((value: number) =&gt; void)">
-  Called with the bounded size after pointer or keyboard interaction.
+  Called with the bounded size during pointer or keyboard interaction and with the restored value on cancellation.
 </ParamField>
 
-<ParamField body="onValueCommit" type="((value: number) =&gt; void)">
+<ParamField body="onValueCommitted" type="((value: number) =&gt; void)">
   Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit.
+</ParamField>
+
+<ParamField body="placement" type="&quot;edge&quot; | &quot;gap&quot; | &quot;inline&quot;" default="edge with edge; inline otherwise">
+  Layout mode: `inline` stays in normal flow, `edge` positions the handle on the panel edge, and `gap` sits between panels. Defaults to `edge` when `edge` is set and `inline` otherwise.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
@@ -75,5 +83,5 @@
 </ParamField>
 
 <ParamField body="value" type="number">
-  Controlled size. Apply the value to the element being resized.
+  Current controlled size. Update it in `onValueChange` and apply it to the element being resized.
 </ParamField>
