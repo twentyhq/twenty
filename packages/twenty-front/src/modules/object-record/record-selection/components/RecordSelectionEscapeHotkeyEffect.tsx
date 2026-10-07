@@ -1,7 +1,7 @@
 import { Key } from 'ts-key-enum';
 
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
-import { PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 export const RecordSelectionEscapeHotkeyEffect = () => {

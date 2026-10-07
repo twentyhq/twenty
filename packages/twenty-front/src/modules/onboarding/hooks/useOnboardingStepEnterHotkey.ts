@@ -1,4 +1,4 @@
-import { type PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
+import { type PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
 

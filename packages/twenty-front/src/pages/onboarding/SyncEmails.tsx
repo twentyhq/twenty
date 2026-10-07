@@ -15,7 +15,7 @@ import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEm
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';

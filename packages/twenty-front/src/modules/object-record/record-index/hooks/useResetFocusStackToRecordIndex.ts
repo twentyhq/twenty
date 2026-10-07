@@ -1,4 +1,4 @@
-import { PageFocusId } from '@/ui/utilities/focus/types/PageFocusId';
+import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
