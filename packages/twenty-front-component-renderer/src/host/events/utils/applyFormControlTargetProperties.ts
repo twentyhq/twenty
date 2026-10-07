@@ -15,7 +15,11 @@ export const applyFormControlTargetProperties = ({
   serializedEvent: SerializedEventData;
   target: Record<string, unknown>;
 }): void => {
-  Object.assign(serializedEvent, readInputSelectionState(target));
+  const inputSelectionState = readInputSelectionState(target);
+
+  if (isDefined(inputSelectionState)) {
+    Object.assign(serializedEvent, inputSelectionState);
+  }
 
   if (
     CHECKED_STATE_SETTLED_EVENT_TYPES.has(serializedEvent.type) &&

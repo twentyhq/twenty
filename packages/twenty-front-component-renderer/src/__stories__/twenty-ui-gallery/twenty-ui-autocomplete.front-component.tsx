@@ -8,6 +8,8 @@ import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twent
 
 const FRUITS = ['Apple', 'Banana', 'Cherry', 'かき'];
 
+const DEFAULT_EMPTY_ANNOUNCEMENT = 'Try another search.';
+
 const AutocompleteExample = () => {
   const [query, setQuery] = useState('Apple');
   const [changes, setChanges] = useState(0);
@@ -15,9 +17,10 @@ const AutocompleteExample = () => {
   const [composingConfirmations, setComposingConfirmations] = useState(0);
   const [selectedFruit, setSelectedFruit] = useState('None');
   const [selections, setSelections] = useState(0);
-  const [isMounted, setIsMounted] = useState(true);
+  const [isFruitAutocompleteMounted, setIsFruitAutocompleteMounted] =
+    useState(true);
   const [isAnnouncementMounted, setIsAnnouncementMounted] = useState(false);
-  const [announcement, setAnnouncement] = useState('Try another search.');
+  const [announcement, setAnnouncement] = useState(DEFAULT_EMPTY_ANNOUNCEMENT);
 
   return (
     <TwentyUiGalleryCard title="Autocomplete">
@@ -29,7 +32,7 @@ const AutocompleteExample = () => {
             setSubmissions((count) => count + 1);
           }}
         >
-          {isMounted && (
+          {isFruitAutocompleteMounted && (
             <Autocomplete.Root
               inline
               open
@@ -74,7 +77,10 @@ const AutocompleteExample = () => {
           <Button type="button" onClick={() => setQuery('')}>
             Reset search
           </Button>
-          <Button type="button" onClick={() => setIsMounted(false)}>
+          <Button
+            type="button"
+            onClick={() => setIsFruitAutocompleteMounted(false)}
+          >
             Remove autocomplete
           </Button>
           <Text role="status" aria-label="Autocomplete state">
@@ -90,7 +96,7 @@ const AutocompleteExample = () => {
         </form>
         <Button
           onClick={() => {
-            setAnnouncement('Try another search.');
+            setAnnouncement(DEFAULT_EMPTY_ANNOUNCEMENT);
             setIsAnnouncementMounted(true);
           }}
         >

@@ -3,6 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { expectCaretAt } from '@/__stories__/twenty-ui-gallery/utils/expectCaretAt';
 
 export const autocompleteInputTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -13,7 +14,9 @@ export const autocompleteInputTest: TwentyUiGalleryPlayFunction = async ({
   const input = canvas.getByRole<HTMLInputElement>('combobox', {
     name: 'Fruit',
   });
-  const state = canvas.getByRole('status', { name: 'Autocomplete state' });
+  const autocompleteState = canvas.getByRole('status', {
+    name: 'Autocomplete state',
+  });
   const disabledInput = canvas.getByLabelText('Disabled fruit');
 
   await expect(disabledInput).toBeDisabled();
@@ -21,22 +24,13 @@ export const autocompleteInputTest: TwentyUiGalleryPlayFunction = async ({
   await expect(disabledInput).toHaveValue('Cherry');
   await userEvent.click(input);
   await userEvent.keyboard('{Home}');
-  await waitFor(() => {
-    expect(input.selectionStart).toBe(0);
-    expect(input.selectionEnd).toBe(0);
-  });
+  await expectCaretAt({ input, offset: 0 });
   await userEvent.keyboard('{End}');
-  await waitFor(() => {
-    expect(input.selectionStart).toBe(5);
-    expect(input.selectionEnd).toBe(5);
-  });
+  await expectCaretAt({ input, offset: 5 });
   await userEvent.keyboard('{ArrowLeft}{ArrowLeft}x');
   await waitFor(() => expect(input).toHaveValue('Appxle'));
-  await waitFor(() => {
-    expect(input.selectionStart).toBe(4);
-    expect(input.selectionEnd).toBe(4);
-  });
-  await expect(state).toHaveTextContent(
+  await expectCaretAt({ input, offset: 4 });
+  await expect(autocompleteState).toHaveTextContent(
     'Query: Appxle; Changes: 1; Submissions: 0',
   );
   await userEvent.click(

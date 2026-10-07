@@ -3,6 +3,7 @@ import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { dispatchComposingEnterKeyPress } from '@/__stories__/twenty-ui-gallery/utils/dispatchComposingEnterKeyPress';
 
 export const autocompleteCompositionTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -13,8 +14,15 @@ export const autocompleteCompositionTest: TwentyUiGalleryPlayFunction = async ({
   const input = canvas.getByRole<HTMLInputElement>('combobox', {
     name: 'Fruit',
   });
-  const state = canvas.getByRole('status', { name: 'Autocomplete state' });
-  const selection = canvas.getByRole('status', { name: 'Selected fruit' });
+  const autocompleteState = canvas.getByRole('status', {
+    name: 'Autocomplete state',
+  });
+  const selectedFruitState = canvas.getByRole('status', {
+    name: 'Selected fruit',
+  });
+  const compositionConfirmations = canvas.getByRole('status', {
+    name: 'Composition confirmations',
+  });
 
   await userEvent.click(canvas.getByRole('button', { name: 'Reset search' }));
   await waitFor(() => expect(input).toHaveValue(''));
@@ -34,47 +42,22 @@ export const autocompleteCompositionTest: TwentyUiGalleryPlayFunction = async ({
     isComposing: true,
   });
   await waitFor(() => expect(input).toHaveValue('か'));
-  input.dispatchEvent(
-    new KeyboardEvent('keydown', {
-      bubbles: true,
-      cancelable: true,
-      key: 'Enter',
-      code: 'Enter',
-      keyCode: 229,
-      which: 229,
-      isComposing: true,
-    }),
-  );
-  input.dispatchEvent(
-    new KeyboardEvent('keyup', {
-      bubbles: true,
-      key: 'Enter',
-      code: 'Enter',
-      keyCode: 229,
-      which: 229,
-      isComposing: true,
-    }),
-  );
-  await waitFor(() =>
-    expect(
-      canvas.getByRole('status', { name: 'Composition confirmations' }),
-    ).toHaveTextContent('1'),
-  );
-  await expect(state).toHaveTextContent(
+  dispatchComposingEnterKeyPress(input);
+  await waitFor(() => expect(compositionConfirmations).toHaveTextContent('1'));
+  await expect(autocompleteState).toHaveTextContent(
     'Query: empty; Changes: 0; Submissions: 0',
   );
   await expect(input).toHaveValue('か');
-  await expect(selection).toHaveTextContent('None; Selections: 0');
+  await expect(selectedFruitState).toHaveTextContent('None; Selections: 0');
   await expect(apple).toBeVisible();
 
   input.dispatchEvent(
-    new CompositionEvent('compositionend', {
-      bubbles: true,
-      data: 'か',
-    }),
+    new CompositionEvent('compositionend', { bubbles: true, data: 'か' }),
   );
   await waitFor(() =>
-    expect(state).toHaveTextContent('Query: か; Changes: 1; Submissions: 0'),
+    expect(autocompleteState).toHaveTextContent(
+      'Query: か; Changes: 1; Submissions: 0',
+    ),
   );
   const persimmon = await canvas.findByRole('option', { name: 'かき' });
   await waitFor(() =>
@@ -85,9 +68,9 @@ export const autocompleteCompositionTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(persimmon).toHaveAttribute('data-highlighted'));
   await userEvent.keyboard('{Enter}');
   await waitFor(() =>
-    expect(selection).toHaveTextContent('かき; Selections: 1'),
+    expect(selectedFruitState).toHaveTextContent('かき; Selections: 1'),
   );
-  await expect(state).toHaveTextContent(
+  await expect(autocompleteState).toHaveTextContent(
     'Query: か; Changes: 1; Submissions: 0',
   );
   await expect(input).toHaveValue('か');

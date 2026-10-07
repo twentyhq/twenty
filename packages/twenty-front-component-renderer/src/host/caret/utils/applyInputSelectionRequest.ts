@@ -1,6 +1,7 @@
 import { isNull, isNumber, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 import { isInputSelectionDirection } from '@/utils/isInputSelectionDirection';
 import { normalizeInputSelectionDirection } from '@/utils/normalizeInputSelectionDirection';
 
@@ -8,44 +9,53 @@ export const applyInputSelectionRequest = ({
   element,
   request,
 }: {
-  element: HTMLInputElement | HTMLTextAreaElement | null;
+  element: CaretPreservingElement | null;
   request: unknown;
 }): void => {
   if (!isDefined(element) || !element.isConnected || !isObject(request)) {
     return;
   }
-  const command = request as Record<string, unknown>;
-  if (command.method === 'select') {
+
+  const remoteRequest = request as Record<string, unknown>;
+
+  if (remoteRequest.method === 'select') {
     element.select();
     return;
   }
-  if (isNull(element.selectionStart)) {
+
+  const supportsSelectionRange = !isNull(element.selectionStart);
+
+  if (!supportsSelectionRange) {
     return;
   }
+
   if (
-    command.method === 'setSelectionRange' &&
-    isNumber(command.start) &&
-    isNumber(command.end)
+    remoteRequest.method === 'setSelectionRange' &&
+    isNumber(remoteRequest.start) &&
+    isNumber(remoteRequest.end)
   ) {
     element.setSelectionRange(
-      command.start,
-      command.end,
-      normalizeInputSelectionDirection(command.direction),
+      remoteRequest.start,
+      remoteRequest.end,
+      normalizeInputSelectionDirection(remoteRequest.direction),
     );
     return;
   }
+
   if (
-    (command.property === 'selectionStart' ||
-      command.property === 'selectionEnd') &&
-    (isNumber(command.value) || isNull(command.value))
+    (remoteRequest.property === 'selectionStart' ||
+      remoteRequest.property === 'selectionEnd') &&
+    (isNumber(remoteRequest.value) || isNull(remoteRequest.value))
   ) {
-    element[command.property] = command.value;
+    element[remoteRequest.property] = remoteRequest.value;
     return;
   }
+
   if (
-    command.property === 'selectionDirection' &&
-    (isInputSelectionDirection(command.value) || isNull(command.value))
+    remoteRequest.property === 'selectionDirection' &&
+    (isInputSelectionDirection(remoteRequest.value) ||
+      isNull(remoteRequest.value))
   ) {
-    element.selectionDirection = command.value;
+    element.selectionDirection = remoteRequest.value;
   }
 };

@@ -1,38 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { NODE_TYPE_BY_NAME } from '@/polyfills/dom/constants/NodeTypeByName';
 import { NODE_FILTER } from '@/polyfills/dom/constants/NodeFilter';
-
-const getNextDescendant = ({
-  node,
-  root,
-}: {
-  node: Node;
-  root: Node;
-}): Node | null => {
-  if (isDefined(node.firstChild)) {
-    return node.firstChild;
-  }
-
-  let ancestor: Node | null = node;
-
-  while (isDefined(ancestor) && ancestor !== root) {
-    if (isDefined(ancestor.nextSibling)) {
-      return ancestor.nextSibling;
-    }
-
-    ancestor = ancestor.parentNode;
-  }
-
-  return null;
-};
+import { NODE_TYPE_BY_NAME } from '@/polyfills/dom/constants/NodeTypeByName';
+import { type WorkerTextTreeWalker } from '@/polyfills/dom/types/WorkerTextTreeWalker';
+import { findNextNodeInTreeOrderWithinRoot } from '@/polyfills/dom/utils/findNextNodeInTreeOrderWithinRoot';
 
 export const createWorkerTextTreeWalker = (
   root: Node,
-): Pick<
-  TreeWalker,
-  'root' | 'currentNode' | 'nextNode' | 'whatToShow' | 'filter'
-> => {
+): WorkerTextTreeWalker => {
   let currentNode = root;
 
   return {
@@ -42,20 +17,26 @@ export const createWorkerTextTreeWalker = (
     get currentNode() {
       return currentNode;
     },
-    set currentNode(node) {
+    set currentNode(node: Node) {
       currentNode = node;
     },
     nextNode: () => {
-      let nextNode = getNextDescendant({ node: currentNode, root });
+      let candidateNode = findNextNodeInTreeOrderWithinRoot({
+        node: currentNode,
+        root,
+      });
 
-      while (isDefined(nextNode)) {
-        if (nextNode.nodeType === NODE_TYPE_BY_NAME.TEXT) {
-          currentNode = nextNode;
+      while (isDefined(candidateNode)) {
+        if (candidateNode.nodeType === NODE_TYPE_BY_NAME.TEXT) {
+          currentNode = candidateNode;
 
-          return nextNode;
+          return candidateNode;
         }
 
-        nextNode = getNextDescendant({ node: nextNode, root });
+        candidateNode = findNextNodeInTreeOrderWithinRoot({
+          node: candidateNode,
+          root,
+        });
       }
 
       return null;

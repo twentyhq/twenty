@@ -1,7 +1,7 @@
-import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isArray } from '@sniptt/guards';
 import React from 'react';
 
+import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
@@ -76,7 +76,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     const caretPreservingElementRef = useCaretPreservingElementRef({
       composedElementRef,
       value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
-      selectionRequest: props[INPUT_SELECTION_BRIDGE_PROPERTIES.request],
+      selectionCommands: props[INPUT_SELECTION_BRIDGE_PROPERTIES.request],
       onSelectionUpdate: props[INPUT_SELECTION_BRIDGE_PROPERTIES.update],
     });
 

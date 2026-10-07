@@ -13,6 +13,11 @@ const UNSUPPORTED_INPUT_SELECTION_STATE: InputSelectionState = {
   selectionDirection: null,
 };
 
+type InputSelectionPublication = {
+  subscriber: unknown;
+  snapshot: InputSelectionSnapshot;
+};
+
 export const createInputSelectionPublisher = ({
   attachedElementRef,
   latestOnSelectionUpdateRef,
@@ -22,8 +27,18 @@ export const createInputSelectionPublisher = ({
   latestOnSelectionUpdateRef: RefObject<unknown>;
   appliedSelectionSequenceRef: RefObject<number>;
 }) => {
-  let lastPublishedSubscriber: unknown = null;
-  let lastPublishedSnapshot: InputSelectionSnapshot | null = null;
+  let lastPublication: InputSelectionPublication | undefined;
+
+  const isUnchangedSinceLastPublication = ({
+    subscriber,
+    snapshot,
+  }: InputSelectionPublication): boolean =>
+    isDefined(lastPublication) &&
+    lastPublication.subscriber === subscriber &&
+    isSameInputSelectionSnapshot({
+      previousSnapshot: lastPublication.snapshot,
+      nextSnapshot: snapshot,
+    });
 
   return ({ shouldSkipUnchanged }: { shouldSkipUnchanged: boolean }) => {
     const subscriber = latestOnSelectionUpdateRef.current;
@@ -40,18 +55,12 @@ export const createInputSelectionPublisher = ({
 
     if (
       shouldSkipUnchanged &&
-      subscriber === lastPublishedSubscriber &&
-      isDefined(lastPublishedSnapshot) &&
-      isSameInputSelectionSnapshot({
-        previousSnapshot: lastPublishedSnapshot,
-        nextSnapshot: snapshot,
-      })
+      isUnchangedSinceLastPublication({ subscriber, snapshot })
     ) {
       return;
     }
 
-    lastPublishedSubscriber = subscriber;
-    lastPublishedSnapshot = snapshot;
+    lastPublication = { subscriber, snapshot };
     subscriber(snapshot);
   };
 };

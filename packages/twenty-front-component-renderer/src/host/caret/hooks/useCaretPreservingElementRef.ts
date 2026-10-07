@@ -1,24 +1,21 @@
-import { isArray, isNumber, isObject, isString } from '@sniptt/guards';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
-import { applyInputSelectionRequest } from '@/host/caret/utils/applyInputSelectionRequest';
+import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
+import { applyNewInputSelectionCommands } from '@/host/caret/utils/applyNewInputSelectionCommands';
 import { createInputSelectionListenerRef } from '@/host/caret/utils/createInputSelectionListenerRef';
 import { createInputSelectionPublisher } from '@/host/caret/utils/createInputSelectionPublisher';
-import { syncValuePreservingCaret } from '@/host/caret/utils/syncValuePreservingCaret';
-
-type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
+import { syncRemoteValuePreservingCaret } from '@/host/caret/utils/syncRemoteValuePreservingCaret';
+import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
 export const useCaretPreservingElementRef = ({
   composedElementRef,
   value,
-  selectionRequest,
+  selectionCommands,
   onSelectionUpdate,
 }: {
   composedElementRef: ElementRefCallback;
   value: unknown;
-  selectionRequest?: unknown;
+  selectionCommands?: unknown;
   onSelectionUpdate?: unknown;
 }): ElementRefCallback => {
   const latestComposedElementRefRef = useRef(composedElementRef);
@@ -28,52 +25,42 @@ export const useCaretPreservingElementRef = ({
   const attachedElementRef = useRef<CaretPreservingElement | null>(null);
   const appliedSelectionSequenceRef = useRef(0);
 
-  const [{ caretPreservingElementRef, publishSelection }] = useState(() => {
-    const publishInputSelection = createInputSelectionPublisher({
+  const [publishInputSelection] = useState(() =>
+    createInputSelectionPublisher({
       attachedElementRef,
       latestOnSelectionUpdateRef,
       appliedSelectionSequenceRef,
-    });
+    }),
+  );
+
+  const [caretPreservingElementRef] = useState(() => {
     const inputSelectionListenerRef = createInputSelectionListenerRef({
       onSelectionChange: () =>
         publishInputSelection({ shouldSkipUnchanged: false }),
     });
 
-    return {
-      publishSelection: publishInputSelection,
-      caretPreservingElementRef: (element: Element | null) => {
-        attachedElementRef.current = element as CaretPreservingElement | null;
-        inputSelectionListenerRef(element);
-        latestComposedElementRefRef.current(element);
-      },
+    return (element: Element | null) => {
+      attachedElementRef.current = element as CaretPreservingElement | null;
+      inputSelectionListenerRef(element);
+      latestComposedElementRefRef.current(element);
     };
   });
 
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
-    const didWriteValue =
-      isDefined(attachedElement) &&
-      (isString(value) || isNumber(value)) &&
-      syncValuePreservingCaret({
-        element: attachedElement,
-        nextValue: String(value),
-      });
-    const commands = isArray(selectionRequest) ? selectionRequest : [];
-    for (const command of commands) {
-      if (!isObject(command)) {
-        continue;
-      }
-      const { sequence, request } = command as Record<string, unknown>;
-      if (
-        !isNumber(sequence) ||
-        sequence <= appliedSelectionSequenceRef.current
-      ) {
-        continue;
-      }
-      appliedSelectionSequenceRef.current = sequence;
-      applyInputSelectionRequest({ element: attachedElement, request });
-    }
-    publishSelection({ shouldSkipUnchanged: !didWriteValue });
+
+    const didWriteValue = syncRemoteValuePreservingCaret({
+      element: attachedElement,
+      remoteValue: value,
+    });
+
+    applyNewInputSelectionCommands({
+      element: attachedElement,
+      selectionCommands,
+      appliedSelectionSequenceRef,
+    });
+
+    publishInputSelection({ shouldSkipUnchanged: !didWriteValue });
   });
 
   return caretPreservingElementRef;

@@ -15,11 +15,11 @@ export const createInputSelectionListenerRef = ({
     }
 
     const { ownerDocument } = attachedElement;
+    const isBubbledElementSelectionChange = event.target !== ownerDocument;
+    const isAttachedElementFocused =
+      ownerDocument.activeElement === attachedElement;
 
-    if (
-      event.target !== ownerDocument ||
-      ownerDocument.activeElement !== attachedElement
-    ) {
+    if (isBubbledElementSelectionChange || !isAttachedElementFocused) {
       return;
     }
 

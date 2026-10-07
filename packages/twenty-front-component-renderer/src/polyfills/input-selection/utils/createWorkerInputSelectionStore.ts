@@ -1,172 +1,148 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
-import { isDefined } from 'twenty-shared/utils';
 
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
+import { type InputSelectionUpdateListener } from '@/polyfills/input-selection/types/InputSelectionUpdateListener';
+import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
+import { createInputSelectionCommandQueue } from '@/polyfills/input-selection/utils/createInputSelectionCommandQueue';
 import { resolveOptimisticInputSelectionState } from '@/polyfills/input-selection/utils/resolveOptimisticInputSelectionState';
-import { type InputSelectionCommand } from '@/types/InputSelectionCommand';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
-import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
 
-export const createWorkerInputSelectionStore = () => {
-  let rootElement: object | null = null;
-  const states = new WeakMap<object, InputSelectionState>();
-  const pendingCommands = new WeakMap<object, InputSelectionCommand[]>();
-  let commandSequence = 0;
-  const subscriptions = new WeakMap<
-    object,
-    (state: InputSelectionSnapshot) => void
-  >();
-  const trackedElements = new Set<object>();
-  let hasScheduledDetachedElementSweep = false;
+export const createWorkerInputSelectionStore =
+  (): WorkerInputSelectionStore => {
+    const commandQueue = createInputSelectionCommandQueue();
+    const hostSelectionStates = new WeakMap<object, InputSelectionState>();
+    const hostSelectionSubscriptions = new WeakMap<
+      object,
+      InputSelectionUpdateListener
+    >();
+    const trackedElements = new Set<object>();
 
-  const updatePendingCommands = ({
-    element,
-    commands,
-  }: {
-    element: object;
-    commands: InputSelectionCommand[];
-  }) => {
-    pendingCommands.set(element, commands);
-    updateRemoteElementProperty(
-      element as Element,
-      INPUT_SELECTION_BRIDGE_PROPERTIES.request,
-      commands,
-    );
-  };
+    let rootElement: object | null = null;
+    let hasScheduledDetachedElementSweep = false;
 
-  const replaceSubscription = (element: object) => {
-    const handleSelectionUpdate = (state: InputSelectionSnapshot) => {
-      if (
-        subscriptions.get(element) !== handleSelectionUpdate ||
-        !isElementUnderRemoteRoot(element, rootElement)
-      ) {
-        return;
-      }
+    const renewHostSelectionSubscription = (element: object): void => {
+      const handleSelectionUpdate: InputSelectionUpdateListener = (
+        snapshot,
+      ) => {
+        const isLatestSubscription =
+          hostSelectionSubscriptions.get(element) === handleSelectionUpdate;
 
-      states.set(element, state);
-      trackedElements.add(element);
+        if (
+          !isLatestSubscription ||
+          !isElementUnderRemoteRoot(element, rootElement)
+        ) {
+          return;
+        }
 
-      const commands = pendingCommands.get(element);
+        hostSelectionStates.set(element, snapshot);
+        trackedElements.add(element);
+        commandQueue.acknowledgeCommands({
+          element,
+          acknowledgedCommandSequence: snapshot.selectionCommandSequence ?? 0,
+        });
+      };
 
-      if (!isDefined(commands)) {
-        return;
-      }
-
-      const acknowledgedSequence = state.selectionCommandSequence ?? 0;
-      const unacknowledgedCommands = commands.filter(
-        ({ sequence }) => sequence > acknowledgedSequence,
-      );
-
-      if (unacknowledgedCommands.length === commands.length) {
-        return;
-      }
-
-      updatePendingCommands({ element, commands: unacknowledgedCommands });
-    };
-
-    subscriptions.set(element, handleSelectionUpdate);
-    updateRemoteElementProperty(
-      element as Element,
-      INPUT_SELECTION_BRIDGE_PROPERTIES.update,
-      handleSelectionUpdate,
-    );
-  };
-
-  const subscribe = (element: object) => {
-    if (!isElementUnderRemoteRoot(element, rootElement)) {
-      return;
-    }
-
-    trackedElements.add(element);
-
-    if (subscriptions.has(element)) {
-      return;
-    }
-
-    replaceSubscription(element);
-  };
-
-  const forgetDetachedElement = (element: object) => {
-    trackedElements.delete(element);
-    states.delete(element);
-
-    if (pendingCommands.delete(element)) {
+      hostSelectionSubscriptions.set(element, handleSelectionUpdate);
       updateRemoteElementProperty(
         element as Element,
-        INPUT_SELECTION_BRIDGE_PROPERTIES.request,
-        [],
+        INPUT_SELECTION_BRIDGE_PROPERTIES.update,
+        handleSelectionUpdate,
       );
-    }
+    };
 
-    if (subscriptions.has(element)) {
-      replaceSubscription(element);
-    }
-  };
-
-  const sweepDetachedElements = () => {
-    hasScheduledDetachedElementSweep = false;
-
-    for (const element of trackedElements) {
-      if (isElementUnderRemoteRoot(element, rootElement)) {
-        continue;
+    const subscribeToHostSelection = (element: object): void => {
+      if (!isElementUnderRemoteRoot(element, rootElement)) {
+        return;
       }
 
-      forgetDetachedElement(element);
-    }
-  };
+      trackedElements.add(element);
 
-  return {
-    setRootElement: (element: object) => {
-      rootElement = element;
-    },
-    applySnapshot: ({
-      element,
-      state,
-    }: {
-      element: object;
-      state: InputSelectionState;
-    }) => {
-      states.set(element, state);
-
-      if (isElementUnderRemoteRoot(element, rootElement)) {
-        trackedElements.add(element);
+      if (hostSelectionSubscriptions.has(element)) {
+        return;
       }
-    },
-    scheduleDetachedElementSweep: () => {
+
+      renewHostSelectionSubscription(element);
+    };
+
+    const forgetDetachedElement = (element: object): void => {
+      trackedElements.delete(element);
+      hostSelectionStates.delete(element);
+      commandQueue.discardPendingCommands(element);
+
+      if (hostSelectionSubscriptions.has(element)) {
+        renewHostSelectionSubscription(element);
+      }
+    };
+
+    const sweepDetachedElements = (): void => {
+      hasScheduledDetachedElementSweep = false;
+
+      for (const element of trackedElements) {
+        if (isElementUnderRemoteRoot(element, rootElement)) {
+          continue;
+        }
+
+        forgetDetachedElement(element);
+      }
+    };
+
+    const scheduleDetachedElementSweep = (): void => {
       if (hasScheduledDetachedElementSweep || trackedElements.size === 0) {
         return;
       }
 
       hasScheduledDetachedElementSweep = true;
       queueMicrotask(sweepDetachedElements);
-    },
-    read: (element: object): InputSelectionState => {
-      subscribe(element);
+    };
+
+    const applySnapshot = ({
+      element,
+      state,
+    }: {
+      element: object;
+      state: InputSelectionState;
+    }): void => {
+      hostSelectionStates.set(element, state);
+
+      if (isElementUnderRemoteRoot(element, rootElement)) {
+        trackedElements.add(element);
+      }
+    };
+
+    const readSelection = (element: object): InputSelectionState => {
+      subscribeToHostSelection(element);
 
       return resolveOptimisticInputSelectionState({
-        hostState: states.get(element),
-        pendingCommands: pendingCommands.get(element) ?? [],
+        hostState: hostSelectionStates.get(element),
+        pendingCommands: commandQueue.readPendingCommands(element),
         value: (element as { value?: unknown }).value,
       });
-    },
-    request: ({
+    };
+
+    const requestSelection = ({
       element,
       request,
     }: {
       element: object;
       request: InputSelectionRequest;
-    }) => {
+    }): void => {
       if (!isElementUnderRemoteRoot(element, rootElement)) {
         return;
       }
-      subscribe(element);
-      const commands = [
-        ...(pendingCommands.get(element) ?? []),
-        { sequence: ++commandSequence, request },
-      ];
-      updatePendingCommands({ element, commands });
-    },
+
+      subscribeToHostSelection(element);
+      commandQueue.enqueueCommand({ element, request });
+    };
+
+    return {
+      setRootElement: (nextRootElement: object) => {
+        rootElement = nextRootElement;
+      },
+      applySnapshot,
+      scheduleDetachedElementSweep,
+      read: readSelection,
+      request: requestSelection,
+    };
   };
-};

@@ -1,8 +1,8 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 
 export const numberStepperSelectionTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -10,14 +10,18 @@ export const numberStepperSelectionTest: TwentyUiGalleryPlayFunction = async ({
   const canvas = within(canvasElement);
   await expectFrontComponentMounted(canvas);
 
-  const status = canvas.getByRole('status', { name: 'Quantity state' });
+  const quantityState = canvas.getByRole('status', { name: 'Quantity state' });
   await userEvent.click(canvas.getByRole('button', { name: 'Increase value' }));
   await waitFor(() =>
-    expect(status).toHaveTextContent('Value: 4; Changes: 1; Submissions: 0'),
+    expect(quantityState).toHaveTextContent(
+      'Value: 4; Changes: 1; Submissions: 0',
+    ),
   );
   await userEvent.click(canvas.getByRole('button', { name: 'Decrease value' }));
   await waitFor(() =>
-    expect(status).toHaveTextContent('Value: 3; Changes: 2; Submissions: 0'),
+    expect(quantityState).toHaveTextContent(
+      'Value: 3; Changes: 2; Submissions: 0',
+    ),
   );
 
   const amount = canvas.getByRole<HTMLInputElement>('textbox', {

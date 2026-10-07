@@ -69,11 +69,12 @@ run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
 Input and textarea selection reads combine host snapshots with the component's
-own pending requests, which commit with controlled values. Moved controls keep
-their pending requests; controls still detached once the removing code finishes
-discard them and their subscriptions. Input types without text selection behave
-as in a browser. NumberStepper stories verify exactly-once stepping,
-selected-range replacement and continued mid-string editing in both runtimes.
+own pending selection commands, which commit with controlled values. Moved
+controls keep their pending commands; controls still detached once the removing
+code finishes discard them and their subscriptions. Input types without text
+selection behave as in a browser. NumberStepper stories verify exactly-once
+stepping, selected-range replacement and continued mid-string editing in both
+runtimes.
 
 The Autocomplete fixture uses the public inline list interface to isolate input
 behavior from popup support. Composition events preserve interim text and defer

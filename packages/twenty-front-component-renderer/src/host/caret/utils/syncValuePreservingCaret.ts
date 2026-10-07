@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
+import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingElement';
 
 export const syncValuePreservingCaret = ({
   element,

@@ -9,19 +9,24 @@ export const readInputSelectionState = (
   if (!isObject(target)) {
     return undefined;
   }
+
   const { selectionStart, selectionEnd, selectionDirection } = target as Record<
     string,
     unknown
   >;
+  const isSelectionStartValid =
+    isNumber(selectionStart) || isNull(selectionStart);
+  const isSelectionEndValid = isNumber(selectionEnd) || isNull(selectionEnd);
+  const isSelectionDirectionValid =
+    isInputSelectionDirection(selectionDirection) || isNull(selectionDirection);
+
   if (
-    !(isNumber(selectionStart) || isNull(selectionStart)) ||
-    !(isNumber(selectionEnd) || isNull(selectionEnd)) ||
-    !(
-      isInputSelectionDirection(selectionDirection) ||
-      isNull(selectionDirection)
-    )
+    !isSelectionStartValid ||
+    !isSelectionEndValid ||
+    !isSelectionDirectionValid
   ) {
     return undefined;
   }
+
   return { selectionStart, selectionEnd, selectionDirection };
 };

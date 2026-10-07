@@ -1,41 +1,29 @@
 import { type InputSelectionRange } from '@/types/InputSelectionRange';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 
-const clampInputSelectionRange = ({
-  range,
-  valueLength,
-}: {
-  range: InputSelectionRange;
-  valueLength: number;
-}): InputSelectionRange => {
-  const selectionEnd = Math.min(range.selectionEnd, valueLength);
-
-  return {
-    selectionStart: Math.min(range.selectionStart, selectionEnd),
-    selectionEnd,
-    selectionDirection: range.selectionDirection,
-  };
-};
-
 const resolveRequestedRange = ({
   range,
   request,
+  valueLength,
 }: {
   range: InputSelectionRange;
   request: InputSelectionRequest;
+  valueLength: number;
 }): InputSelectionRange => {
+  if ('method' in request && request.method === 'select') {
+    return {
+      selectionStart: 0,
+      selectionEnd: valueLength,
+      selectionDirection: 'none',
+    };
+  }
+
   if ('method' in request) {
-    return request.method === 'select'
-      ? {
-          selectionStart: 0,
-          selectionEnd: Number.POSITIVE_INFINITY,
-          selectionDirection: 'none',
-        }
-      : {
-          selectionStart: request.start,
-          selectionEnd: request.end,
-          selectionDirection: request.direction,
-        };
+    return {
+      selectionStart: request.start,
+      selectionEnd: request.end,
+      selectionDirection: request.direction,
+    };
   }
 
   if (request.property === 'selectionDirection') {
@@ -53,6 +41,22 @@ const resolveRequestedRange = ({
   };
 };
 
+const clampInputSelectionRange = ({
+  range,
+  valueLength,
+}: {
+  range: InputSelectionRange;
+  valueLength: number;
+}): InputSelectionRange => {
+  const selectionEnd = Math.min(range.selectionEnd, valueLength);
+
+  return {
+    selectionStart: Math.min(range.selectionStart, selectionEnd),
+    selectionEnd,
+    selectionDirection: range.selectionDirection,
+  };
+};
+
 export const applyInputSelectionRequestToRange = ({
   range,
   request,
@@ -63,6 +67,6 @@ export const applyInputSelectionRequestToRange = ({
   valueLength: number;
 }): InputSelectionRange =>
   clampInputSelectionRange({
-    range: resolveRequestedRange({ range, request }),
+    range: resolveRequestedRange({ range, request, valueLength }),
     valueLength,
   });
