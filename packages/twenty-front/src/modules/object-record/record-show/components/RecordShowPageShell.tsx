@@ -29,6 +29,7 @@ type RecordShowPageShellProps = {
   loading: boolean;
   error?: ErrorLike;
   headerActions?: ReactNode;
+  headerTitlePrefix?: ReactNode;
   headerTitleAccessory?: ReactNode;
   headerTitleMode?: RecordShowPageHeaderTitleMode;
   isRecordIdentifierBarHidden?: boolean;
@@ -41,6 +42,7 @@ export const RecordShowPageShell = ({
   loading,
   error,
   headerActions,
+  headerTitlePrefix,
   headerTitleAccessory,
   headerTitleMode,
   isRecordIdentifierBarHidden = false,
@@ -90,15 +92,16 @@ export const RecordShowPageShell = ({
               objectNameSingular={objectNameSingular}
               objectRecordId={objectRecordId}
               titleMode={headerTitleMode}
+              titlePrefix={headerTitlePrefix}
               titleAccessory={headerTitleAccessory}
             >
               {!isInSidePanel && (
                 <>
                   <RecordShowCommandMenu />
+                  {headerActions}
                   {!isLayoutCustomizationModeEnabled && (
                     <SidePanelToggleButton />
                   )}
-                  {headerActions}
                 </>
               )}
             </RecordShowPageHeader>

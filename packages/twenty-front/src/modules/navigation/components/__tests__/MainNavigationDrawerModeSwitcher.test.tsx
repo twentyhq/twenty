@@ -48,6 +48,8 @@ const receiveOpenChat = (
       lastReadAt,
       archivedAt: null,
       snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
       id: 'participant-id',
       updatedAt: LAST_ACTIVITY_AT,
     },

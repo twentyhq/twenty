@@ -16,7 +16,6 @@ import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
-import { resolveRecordShareFeatureFlags } from 'src/engine/core-modules/record-share/utils/resolve-record-share-feature-flags.util';
 import {
   type EventRecordSnapshot,
   resolveEventRecordSnapshots,
@@ -177,7 +176,7 @@ export class RecordAccessPolicyService {
             environment: {
               flatObjectMetadataMaps,
               flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-              ...resolveRecordShareFeatureFlags(featureFlagsMap),
+              featureFlagsMap,
             },
             tableAlias: objectMetadata.nameSingular,
             flatObjectMetadata: objectMetadata,

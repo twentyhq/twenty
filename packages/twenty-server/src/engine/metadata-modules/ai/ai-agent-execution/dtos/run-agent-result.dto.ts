@@ -16,6 +16,9 @@ export class RunAgentResultDTO implements RunAgentResult {
   @Field()
   success: boolean;
 
+  @Field()
+  isWaiting: boolean;
+
   @Field(() => UUIDScalarType, { nullable: true })
   threadId: string | null;
 }

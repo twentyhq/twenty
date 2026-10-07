@@ -38,6 +38,7 @@ const DEFINITIONS = {
         },
       ],
       allowedSpenderTypes: ['workspace', 'userWorkspace', 'apiKey'],
+      operatorOnlyScopes: [],
     },
   ],
   isIntraWorkspaceLimitEntitled: true,

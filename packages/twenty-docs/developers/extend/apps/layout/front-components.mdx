@@ -133,12 +133,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 - **`USER`** — configured by each member for themselves, under their own user settings.
 
 <Note>
-  `USER` items are not displayed yet. Their placement under the user's own
-  settings lands with per-member variable values; until then a `USER` item is
-  persisted and synced but nothing renders it.
+  `USER` items are not displayed yet. Until their placement under the member's
+  own settings lands, a `USER` item is persisted and synced but nothing renders
+  it.
 </Note>
 
-A `USER` item runs as the member viewing it. Members cannot save their own value of an application variable yet, even one declared with `scope: 'USER'` (see [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables)). Until they can, an item that stores something per person should persist it through the app's own objects: a workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyUserApplicationVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -460,6 +460,7 @@ Available hooks:
 | --------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `useUserId()`                                 | `string` or `null`                               | The current user's ID                                                                                            |
 | `useSelectedRecordIds()`                      | `string[]`                                       | All selected record IDs (empty array if none selected)                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` or `null`             | Filter matching exactly the selected records, including under Select all                                         |
 | `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` or `null` | The object metadata associated with this front component's record context                                        |
 | `useRecordId()`                               | `string` or `null`                               | **Deprecated.** Use `useSelectedRecordIds()` instead                                                             |
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
@@ -501,7 +502,7 @@ Object metadata can be available even when no records are selected. It belongs t
 
 ## Application variables
 
-Workspace application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
+Application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -566,6 +567,7 @@ Notes:
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
 - Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Your component cannot write it: `updateMyUserApplicationVariable` refuses application tokens and takes the member's own session only. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### System variables
 
@@ -748,6 +750,36 @@ export default defineCommandMenuItem({
   frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
+
+#### Select all
+
+When the user selects all records of a view, `useSelectedRecordIds()` returns an empty array: the selection is defined by the view's filters, search and unticked rows, and can hold far more records than fit in memory. `useSelectedRecordsFilter()` returns a filter matching exactly the selected records in every case, so query with it instead of listing IDs:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+For large selections, pass the filter to a [logic function](/developers/extend/apps/logic/logic-functions) and process the records there, page by page.
 
 ## Public assets
 
