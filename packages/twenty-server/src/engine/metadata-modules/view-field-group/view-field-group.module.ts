@@ -11,7 +11,6 @@ import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-gr
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
@@ -20,7 +19,6 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     ViewPermissionsModule,
     ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([ViewFieldGroupEntity, ViewEntity]),
-    WorkspaceCacheStorageModule,
     ApplicationModule,
     PermissionsModule,
     WorkspaceMigrationModule,

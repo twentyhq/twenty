@@ -10,11 +10,9 @@ import { MessageFindManyPostQueryHook } from 'src/modules/messaging/common/query
 import { MessageFindOnePostQueryHook } from 'src/modules/messaging/common/query-hooks/message/message-find-one.post-query.hook';
 import { MessageThreadTargetCreateManyPreQueryHook } from 'src/modules/messaging/common/query-hooks/message-thread-target/message-thread-target-create-many.pre-query-hook';
 import { MessageThreadTargetCreateOnePreQueryHook } from 'src/modules/messaging/common/query-hooks/message-thread-target/message-thread-target-create-one.pre-query-hook';
-import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
   imports: [
-    MessagingImportManagerModule,
     TypeOrmModule.forFeature([
       ConnectedAccountEntity,
       MessageChannelEntity,

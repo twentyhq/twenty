@@ -8,7 +8,6 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/services/workspace-api-key-map-cache.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -32,7 +31,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     JwtModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
-    FeatureFlagModule,
     RoleTargetModule,
     TokenModule,
     PermissionsModule,

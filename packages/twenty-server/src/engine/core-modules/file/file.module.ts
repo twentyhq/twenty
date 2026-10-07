@@ -2,13 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
@@ -22,14 +19,11 @@ import { FileService } from './services/file.service';
   imports: [
     JwtModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
-    PermissionsModule,
-    FileStorageModule,
     FileUrlModule,
     FilesFieldModule,
     FileCorePictureModule,
     FileEmailAttachmentModule,
     FileUploadModule,
-    SecureHttpClientModule,
   ],
   providers: [
     FileService,
