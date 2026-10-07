@@ -5,11 +5,9 @@ import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-
 import { CommandMenuItemResolver } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.resolver';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
-import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/command-menu-item/interceptors/command-menu-item-graphql-api-exception.interceptor';
 import { FlatCommandMenuItemModule } from 'src/engine/metadata-modules/flat-command-menu-item/flat-command-menu-item.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
@@ -24,12 +22,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     FrontComponentModule,
     PermissionsModule,
   ],
-  providers: [
-    CommandMenuItemService,
-    CommandMenuItemResolver,
-    CommandMenuItemGraphqlApiExceptionInterceptor,
-    WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  ],
+  providers: [CommandMenuItemService, CommandMenuItemResolver],
   exports: [CommandMenuItemService],
 })
 export class CommandMenuItemModule {}
