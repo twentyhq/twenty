@@ -33,11 +33,9 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -93,8 +91,6 @@ export class AgentChatStreamingService {
     private readonly metricsService: MetricsService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly actorService: AgentChatActorService,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunService: AgentRunService,
     private readonly agentRunConversationService: AgentRunConversationService,
@@ -630,8 +626,8 @@ export class AgentChatStreamingService {
     );
   }
 
-  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
-  // an answer holding the stream keeps them, and calls a caller waits on gate that caller, so a chat message never closes them
+  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why.
+  // An answer holding the stream keeps them, and a chat message never closes calls a caller waits on
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -644,17 +640,6 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    if (
-      isDefined(messageId) &&
-      (await this.isAwaitingCaller({ messageId, workspaceId }))
-    ) {
-      throw new AiException(
-        'This conversation is waiting on an answer to the run that asked',
-        AiExceptionCode.THREAD_AWAITING_ANSWER,
-      );
-    }
-
-    // a run waiting on an event or a duration asks nothing, yet reads the conversation when it goes on
     await this.agentRunService.assertConversationNotSuspended({
       workspaceId,
       threadId: thread.id,
@@ -672,22 +657,6 @@ export class AgentChatStreamingService {
       activeStreamId: null,
       turnStatus: AgentTurnStatus.COMPLETED,
     });
-  }
-
-  // a call a caller such as a workflow step waits on gates that caller until it is answered
-  private async isAwaitingCaller({
-    messageId,
-    workspaceId,
-  }: {
-    messageId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const parts = await this.messagePartRepository.find(workspaceId, {
-      where: { messageId },
-      select: ['id', 'toolOutput'],
-    });
-
-    return parts.some((part) => isToolOutputAwaitedByCaller(part.toolOutput));
   }
 
   private async enqueueStreamJob({

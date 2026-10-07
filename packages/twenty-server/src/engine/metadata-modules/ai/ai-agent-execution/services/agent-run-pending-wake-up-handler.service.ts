@@ -140,7 +140,9 @@ export class AgentRunPendingWakeUpHandlerService
       toolCallId,
     });
 
+    // an agent waits on time and events only, its questions continue it without a wake-up
     if (
+      outcome.type === 'ANSWERED' ||
       !isDefined(pendingPart) ||
       !isAwaitingPausingToolOutput(pendingPart.toolOutput)
     ) {

@@ -33,9 +33,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
+import { type AgentCallAwaiter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-call-awaiter.type';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type AnswerToolCallArgs = {
@@ -104,9 +103,13 @@ export class ToolCallAnswerService {
       );
     }
 
-    // a caller such as a workflow step that waits on the call takes the answer instead of a chat turn.
-    // An answer replaces that output, so a call no longer pending starts nothing and is refused below
-    const isAwaitedByCaller = isToolOutputAwaitedByCaller(toolPart.toolOutput);
+    // a caller that waits on the call, such as a workflow step or a suspended run, takes the answer
+    // instead of a chat turn. A call no longer pending starts nothing and is refused below
+    const awaiter = await this.agentRunService.findAwaiter({
+      workspaceId,
+      threadId,
+      toolCallId,
+    });
     const isToolCallPending =
       thread.pendingQuestionMessageId === toolPart.messageId &&
       isAwaitingPausingToolOutput(toolPart.toolOutput);
@@ -114,7 +117,7 @@ export class ToolCallAnswerService {
     await this.assertCanAnswerInChat({
       ...args,
       messageId: toolPart.messageId,
-      isStartingChatTurn: !isAwaitedByCaller && isToolCallPending,
+      isStartingChatTurn: !isDefined(awaiter) && isToolCallPending,
     });
 
     if (!isToolCallPending) {
@@ -153,7 +156,6 @@ export class ToolCallAnswerService {
       );
     }
 
-    let awaitingRun: AgentRunEntity | null = null;
     let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
@@ -170,13 +172,8 @@ export class ToolCallAnswerService {
         throw this.notPending();
       }
 
-      if (isAwaitedByCaller) {
-        const waitingState = await this.agentRunService.findWaitingRun({
-          workspaceId,
-          threadId,
-        });
-
-        if (waitingState.status === 'NOT_READY') {
+      if (isDefined(awaiter)) {
+        if (awaiter.status === 'NOT_READY') {
           throw new AiException(
             'The run waiting on this call is not ready for an answer yet',
             AiExceptionCode.TOOL_CALL_NOT_PENDING,
@@ -186,8 +183,8 @@ export class ToolCallAnswerService {
           );
         }
 
-        if (waitingState.status === 'GONE') {
-          // the run waiting on the call was dropped, as when it is released
+        if (awaiter.status === 'GONE') {
+          // what waited on the call was dropped, as a workflow run that ended
           await this.threadLifecycleService.closePendingQuestion({
             workspaceId,
             threadId,
@@ -196,15 +193,10 @@ export class ToolCallAnswerService {
             turnStatus: AgentTurnStatus.CANCELLED,
           });
 
-          await this.agentRunService.release({
-            workspaceId,
-            run: waitingState.run,
-          });
+          await this.agentRunService.releaseAwaiter({ workspaceId, awaiter });
 
           throw this.notPending();
         }
-
-        awaitingRun = waitingState.run;
       }
 
       const runningToolResult = pausingToolCall.toRunningToolResult?.(
@@ -269,7 +261,7 @@ export class ToolCallAnswerService {
           threadId,
           workspaceId,
           streamId,
-          awaitingRun,
+          awaiter,
           error,
         });
       } else {
@@ -289,7 +281,7 @@ export class ToolCallAnswerService {
         threadId,
         userWorkspaceId,
         turnStatus:
-          isAwaitedByCaller || !isLastAnswer
+          isDefined(awaiter) || !isLastAnswer
             ? AgentTurnStatus.COMPLETED
             : AgentTurnStatus.RUNNING,
         uiMessage: {
@@ -318,17 +310,18 @@ export class ToolCallAnswerService {
         );
 
       // a suspended run continues in its own job, and only the last answer resumes a chat
-      if (isAwaitedByCaller || !isLastAnswer) {
+      if (isDefined(awaiter) || !isLastAnswer) {
         await this.streamRecoveryService.releaseStreamClaim({
           threadId,
           workspaceId,
           streamId,
         });
 
-        if (isLastAnswer && isDefined(awaitingRun)) {
+        if (isLastAnswer && isDefined(awaiter)) {
           await this.agentRunService.deliverAnswer({
             workspaceId,
-            run: awaitingRun,
+            threadId,
+            awaiter,
             toolResult,
           });
         }
@@ -353,7 +346,7 @@ export class ToolCallAnswerService {
         threadId,
         workspaceId,
         streamId,
-        awaitingRun,
+        awaiter,
         error,
       });
 
@@ -365,16 +358,16 @@ export class ToolCallAnswerService {
     threadId,
     workspaceId,
     streamId,
-    awaitingRun,
+    awaiter,
     error,
   }: {
     threadId: string;
     workspaceId: string;
     streamId: string;
-    awaitingRun: AgentRunEntity | null;
+    awaiter: AgentCallAwaiter | null;
     error: unknown;
   }): Promise<void> {
-    if (!isDefined(awaitingRun)) {
+    if (!isDefined(awaiter)) {
       await this.streamRecoveryService.failStream({
         threadId,
         workspaceId,
@@ -390,13 +383,10 @@ export class ToolCallAnswerService {
       workspaceId,
       streamId,
     });
-    await this.agentRunService.settle({
+    await this.agentRunService.failAnswer({
       workspaceId,
-      run: awaitingRun,
-      outcome: {
-        status: 'FAILED',
-        error: 'The run could not resume after its question was answered',
-      },
+      awaiter,
+      error: 'The run could not resume after its question was answered',
     });
   }
 

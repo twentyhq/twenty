@@ -103,6 +103,22 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
 
     // the claimed wait is gone, so a step that cannot resume would wait forever
     try {
+      // the run job ends the step with the answer through the executor's usual path, so a failure is
+      // retried or continues on failure like any failed step
+      if (outcome.type === 'ANSWERED') {
+        await this.messageQueueService.add<RunWorkflowJobData>(
+          RUN_WORKFLOW_JOB_NAME,
+          {
+            workspaceId,
+            workflowRunId,
+            awaitedStepOutput: { stepId, actionOutput: outcome.answer },
+          },
+          buildRunWorkflowJobOptions(workflowRunId),
+        );
+
+        return;
+      }
+
       const hasCompletedStep =
         await this.workflowRunWorkspaceService.updateStepInfoIfPending({
           stepId,

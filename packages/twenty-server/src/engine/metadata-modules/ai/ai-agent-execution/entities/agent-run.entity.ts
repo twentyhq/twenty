@@ -45,9 +45,8 @@ export class AgentRunEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'jsonb' })
   caller: AgentRunCaller;
 
-  // null when the caller posted the awaited call itself: the answer is its outcome
-  @Column({ type: 'jsonb', nullable: true })
-  runSpec: AgentRunSpec | null;
+  @Column({ type: 'jsonb' })
+  runSpec: AgentRunSpec;
 
   @Column({ type: 'varchar' })
   @WasIntroducedInUpgrade({

@@ -34,7 +34,7 @@ type AgentCallerAwaitedToolCall = {
 
 // The conversations a caller, such as a workflow step, holds with a member's inbox: the one its agent
 // run writes to, and the messages it sends itself, which may ask the member to approve a call. The
-// caller waits on that answer as on a suspended run, so it gets it through its handler
+// caller waits on that answer with an ANSWER wake-up, which the answer resolves
 @Injectable()
 export class AgentCallerConversationService {
   constructor(
@@ -141,8 +141,8 @@ export class AgentCallerConversationService {
     | { status: 'DELIVERED'; threadId: string }
     // the member deleted the conversation, so the call can no longer be answered
     | { status: 'DISMISSED'; threadId: string }
-    // the caller waits, and gets the answer through its handler's onOutcome
-    | { status: 'AWAITING'; threadId: string }
+    // the caller arms an ANSWER wake-up on the call, which the answer resolves
+    | { status: 'AWAITING'; threadId: string; toolCallId: string }
     // a message sent before already holds the answer
     | { status: 'ANSWERED'; threadId: string; answer: ProposedToolCallAnswer }
   > {
@@ -171,7 +171,7 @@ export class AgentCallerConversationService {
     // one is reused so nothing runs twice, and one closed unanswered, such as by a run that ended and
     // was retried, is asked again in a new message
     for (let attempt = 0; attempt < MAX_ASK_ATTEMPTS; attempt++) {
-      const { threadId, isDismissed, awaitedToolOutput } =
+      const { threadId, isDismissed, awaitedToolCall: postedToolCall } =
         await this.agentInboxService.sendMessage({
           workspaceId,
           sender,
@@ -189,23 +189,24 @@ export class AgentCallerConversationService {
         return { status: 'DISMISSED', threadId };
       }
 
-      const status = readToolCallStatus(awaitedToolOutput);
+      const status = readToolCallStatus(postedToolCall?.output);
 
       if (status === 'skipped') {
         continue;
       }
 
-      if (status === 'pending' || status === 'running') {
-        await this.agentRunService.awaitCallerCall({
-          workspaceId,
+      if (
+        isDefined(postedToolCall) &&
+        (status === 'pending' || status === 'running')
+      ) {
+        return {
+          status: 'AWAITING',
           threadId,
-          caller: awaitedToolCall.caller,
-        });
-
-        return { status: 'AWAITING', threadId };
+          toolCallId: postedToolCall.toolCallId,
+        };
       }
 
-      const answer = readProposedToolCallAnswer(awaitedToolOutput);
+      const answer = readProposedToolCallAnswer(postedToolCall?.output);
 
       if (!isDefined(answer)) {
         throw new AiException(
@@ -288,10 +289,7 @@ export class AgentCallerConversationService {
     return {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
-      output: {
-        ...buildProposeToolCallPendingOutput(resolution.proposal),
-        awaitedByCaller: true,
-      },
+      output: buildProposeToolCallPendingOutput(resolution.proposal),
     };
   }
 }

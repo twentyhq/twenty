@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import isEqual from 'lodash.isequal';
 import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
@@ -9,6 +8,9 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
+import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
+import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
@@ -16,13 +18,12 @@ import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { type AgentCallAwaiter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-call-awaiter.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
-import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
-import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -47,6 +48,8 @@ export class AgentRunService {
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly pendingWakeUpService: PendingWakeUpService,
+    private readonly pendingWakeUpOwnerHandlerRegistry: PendingWakeUpOwnerHandlerRegistryService,
+    private readonly pendingWakeUpResolverService: PendingWakeUpResolverService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -84,7 +87,7 @@ export class AgentRunService {
     workspaceId: string;
     threadId: string;
     caller: AgentRunCaller;
-    runSpec: AgentRunSpec | null;
+    runSpec: AgentRunSpec;
     summary: AgentRunSummary | null;
   }): Promise<AgentRunEntity> {
     return this.runRepository.insertAndReturnOne(workspaceId, {
@@ -96,7 +99,8 @@ export class AgentRunService {
     } as QueryDeepPartialEntity<AgentRunEntity>);
   }
 
-  // a new message must not slip in while a run waits in the conversation: the run would read it on continuing
+  // a new message must not slip in while a run waits in the conversation, as the run would read it
+  // on continuing, nor while a caller waits on a call it posted there, as the message would close it
   async assertConversationNotSuspended({
     workspaceId,
     threadId,
@@ -104,52 +108,16 @@ export class AgentRunService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    const run = await this.findSuspended({ workspaceId, where: { threadId } });
+    const [run, answerWakeUp] = await Promise.all([
+      this.findSuspended({ workspaceId, where: { threadId } }),
+      this.pendingWakeUpService.findAnswerWakeUp({ workspaceId, threadId }),
+    ]);
 
-    if (isDefined(run)) {
+    if (isDefined(run) || isDefined(answerWakeUp)) {
       throw new AiException(
         'The conversation is waiting on an earlier run; send the next message once it has finished',
         AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
-    }
-  }
-
-  // A call the caller posted itself, such as a workflow step asking for approval: there is no
-  // agent to continue, so the answer goes straight back to the caller. Posting again is a no-op
-  async awaitCallerCall({
-    workspaceId,
-    threadId,
-    caller,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    caller: AgentRunCaller;
-  }): Promise<void> {
-    try {
-      await this.suspend({
-        workspaceId,
-        threadId,
-        caller,
-        runSpec: null,
-        summary: null,
-      });
-    } catch (error) {
-      if (!isUniqueViolationError(error)) {
-        throw error;
-      }
-
-      const existingRun = await this.findSuspended({
-        workspaceId,
-        where: { threadId },
-      });
-
-      // jsonb stores keys in its own order, so the stored caller is compared by value
-      if (!isEqual(existingRun?.caller, caller)) {
-        throw new AiException(
-          'The conversation is waiting on another run',
-          AiExceptionCode.THREAD_AWAITING_ANSWER,
-        );
-      }
     }
   }
 
@@ -170,60 +138,116 @@ export class AgentRunService {
     );
   }
 
-  // The caller marks its call before it suspends the run, so a call without one is not ready yet
-  async findWaitingRun({
+  // A call a caller posted, such as a workflow step asking for approval, is awaited by its ANSWER
+  // wake-up; any other one by the run suspended in the conversation, which asked it
+  async findAwaiter({
     workspaceId,
     threadId,
+    toolCallId,
   }: {
     workspaceId: string;
     threadId: string;
-  }): Promise<
-    | { status: 'NOT_READY' }
-    | { status: 'WAITING' | 'GONE'; run: AgentRunEntity }
-  > {
+    toolCallId: string;
+  }): Promise<AgentCallAwaiter | null> {
+    const wakeUp = await this.pendingWakeUpService.findAnswerWakeUp({
+      workspaceId,
+      threadId,
+      toolCallId,
+    });
+
+    if (isDefined(wakeUp)) {
+      const { status } = await this.pendingWakeUpOwnerHandlerRegistry
+        .getHandlerOrThrow(wakeUp.ownerType)
+        .getOwnerState(wakeUp);
+
+      return { status, wakeUp };
+    }
+
     const run = await this.findSuspended({ workspaceId, where: { threadId } });
 
     if (!isDefined(run)) {
-      return { status: 'NOT_READY' };
+      return null;
     }
 
     const status = await this.callerHandlerRegistry
       .getHandlerOrThrow(run.caller.type)
       .getWaitingState({ workspaceId, caller: run.caller });
 
-    return status === 'NOT_READY' ? { status } : { status, run };
+    return { status, run };
   }
 
-  // The last answer continues the agent, or is itself the outcome of the call the caller proposed
+  // The last answer continues the agent, or is itself the outcome of the call the caller posted
   async deliverAnswer({
     workspaceId,
-    run,
+    threadId,
+    awaiter,
     toolResult,
   }: {
     workspaceId: string;
-    run: AgentRunEntity;
+    threadId: string;
+    awaiter: AgentCallAwaiter;
     toolResult: Record<string, unknown>;
   }): Promise<void> {
-    if (isDefined(run.runSpec)) {
-      await this.scheduleContinuation({ workspaceId, run });
+    if ('run' in awaiter) {
+      await this.scheduleContinuation({ workspaceId, run: awaiter.run });
 
       return;
     }
 
     const answer = readProposedToolCallAnswer(toolResult);
 
-    await this.settle({
+    await this.pendingWakeUpResolverService.resolve({
       workspaceId,
-      run,
-      outcome: isDefined(answer)
-        ? {
-            status: 'COMPLETED',
-            result: { threadId: run.threadId, ...answer },
-          }
-        : {
-            status: 'FAILED',
-            error: 'The answer to the proposed call could not be read',
-          },
+      wakeUpId: awaiter.wakeUp.id,
+      answer: isDefined(answer)
+        ? { result: { threadId, ...answer } }
+        : { error: 'The answer to the proposed call could not be read' },
+    });
+  }
+
+  // an answer that cannot be delivered fails whoever waits on it, rather than leaving it waiting
+  async failAnswer({
+    workspaceId,
+    awaiter,
+    error,
+  }: {
+    workspaceId: string;
+    awaiter: AgentCallAwaiter;
+    error: string;
+  }): Promise<void> {
+    if ('run' in awaiter) {
+      await this.settle({
+        workspaceId,
+        run: awaiter.run,
+        outcome: { status: 'FAILED', error },
+      });
+
+      return;
+    }
+
+    await this.pendingWakeUpResolverService.resolve({
+      workspaceId,
+      wakeUpId: awaiter.wakeUp.id,
+      answer: { error },
+    });
+  }
+
+  async releaseAwaiter({
+    workspaceId,
+    awaiter,
+  }: {
+    workspaceId: string;
+    awaiter: AgentCallAwaiter;
+  }): Promise<void> {
+    if ('run' in awaiter) {
+      await this.release({ workspaceId, run: awaiter.run });
+
+      return;
+    }
+
+    await this.pendingWakeUpService.claim({
+      workspaceId,
+      wakeUpId: awaiter.wakeUp.id,
     });
   }
 
@@ -266,7 +290,7 @@ export class AgentRunService {
       owner: { type: 'AGENT_RUN', id: run.id },
     });
     await this.recordOutcome({ workspaceId, runId: run.id, outcome, summary });
-    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+    await this.closeAwaitedCalls({ workspaceId, run });
 
     await this.callerHandlerRegistry
       .getHandlerOrThrow(run.caller.type)
@@ -310,7 +334,7 @@ export class AgentRunService {
     run,
   }: {
     workspaceId: string;
-    run: Pick<AgentRunEntity, 'id' | 'threadId'>;
+    run: Pick<AgentRunEntity, 'id' | 'threadId' | 'createdAt'>;
   }): Promise<void> {
     await this.pendingWakeUpService.cancel({
       workspaceId,
@@ -321,17 +345,17 @@ export class AgentRunService {
       { id: run.id },
       { status: 'CANCELLED' },
     );
-    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+    await this.closeAwaitedCalls({ workspaceId, run });
   }
 
   // An answer holding the conversation's claim closes its calls itself once it finds its caller gone,
-  // and a question the member asked of their own in the conversation stays open
+  // and a question the member asked of their own before the run started stays open
   async closeAwaitedCalls({
     workspaceId,
-    threadId,
+    run: { threadId, createdAt },
   }: {
     workspaceId: string;
-    threadId: string;
+    run: Pick<AgentRunEntity, 'threadId' | 'createdAt'>;
   }): Promise<void> {
     // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
     await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
@@ -348,6 +372,55 @@ export class AgentRunService {
       ),
     );
 
+    await this.closePendingQuestion({
+      workspaceId,
+      threadId,
+      isAwaited: (messageId) =>
+        this.messagePartRepository.query(
+          workspaceId,
+          async ({ manager, table }) =>
+            (
+              await manager.query(
+                `SELECT 1 FROM ${table('agentMessage')} WHERE id = $1 AND "createdAt" >= $2`,
+                [messageId, createdAt],
+              )
+            ).length > 0,
+        ),
+    });
+  }
+
+  // A call a caller posted stops waiting with the caller's wake-up
+  async closePostedCalls({
+    workspaceId,
+    cancelledWakeUps,
+  }: {
+    workspaceId: string;
+    cancelledWakeUps: PendingWakeUpEntity[];
+  }): Promise<void> {
+    for (const { condition } of cancelledWakeUps) {
+      if (condition.type === 'ANSWER') {
+        await this.closePendingQuestion({
+          workspaceId,
+          threadId: condition.threadId,
+          isAwaited: (messageId) =>
+            this.messagePartRepository.existsBy(workspaceId, {
+              messageId,
+              toolCallId: condition.toolCallId,
+            }),
+        });
+      }
+    }
+  }
+
+  private async closePendingQuestion({
+    workspaceId,
+    threadId,
+    isAwaited,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    isAwaited: (messageId: string) => Promise<boolean>;
+  }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
         id: threadId,
@@ -358,17 +431,9 @@ export class AgentRunService {
     });
     const pendingQuestionMessageId = thread?.pendingQuestionMessageId;
 
-    if (!isDefined(pendingQuestionMessageId)) {
-      return;
-    }
-
-    const pendingParts = await this.messagePartRepository.find(workspaceId, {
-      where: { messageId: pendingQuestionMessageId },
-      select: ['toolOutput'],
-    });
-
     if (
-      !pendingParts.some((part) => isToolOutputAwaitedByCaller(part.toolOutput))
+      !isDefined(pendingQuestionMessageId) ||
+      !(await isAwaited(pendingQuestionMessageId))
     ) {
       return;
     }

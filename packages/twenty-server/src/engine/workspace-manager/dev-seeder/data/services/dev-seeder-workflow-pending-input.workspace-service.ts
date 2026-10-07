@@ -30,10 +30,12 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { buildWorkflowStepCaller } from 'src/modules/workflow/workflow-executor/utils/build-workflow-step-caller.util';
-import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowAiAgentAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import {
   type WorkflowManualTrigger,
@@ -189,6 +191,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     applicationId: string;
   }): Promise<void> {
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
+      const step: WorkflowAiAgentAction = {
+        id: seedId(agentWorkflow.stepKey, workspaceId),
+        name: agentWorkflow.stepName,
+        type: WorkflowActionType.AI_AGENT,
+        valid: true,
+        settings: {
+          input: {
+            prompt: agentWorkflow.stepPrompt,
+            humanInputInstructions: agentWorkflow.humanInputInstructions,
+          },
+          outputSchema: {},
+          errorHandlingOptions: ERROR_HANDLING_OPTIONS,
+        },
+        nextStepIds: [],
+      };
       const workflow = await this.insertWorkflow({
         workspaceId,
         applicationId,
@@ -196,21 +213,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         name: agentWorkflow.name,
         position: agentWorkflow.position,
         icon: agentWorkflow.icon,
-        step: {
-          id: seedId(agentWorkflow.stepKey, workspaceId),
-          name: agentWorkflow.stepName,
-          type: WorkflowActionType.AI_AGENT,
-          valid: true,
-          settings: {
-            input: {
-              prompt: agentWorkflow.stepPrompt,
-              humanInputInstructions: agentWorkflow.humanInputInstructions,
-            },
-            outputSchema: {},
-            errorHandlingOptions: ERROR_HANDLING_OPTIONS,
-          },
-          nextStepIds: [],
-        },
+        step,
       });
       const workflowRunId = seedId(
         `workflowRun:${agentWorkflow.runKey}`,
@@ -294,12 +297,10 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               workflowRunId,
               stepId: workflow.step.id,
             }),
-            runSpec: isWorkflowAiAgentAction(workflow.step)
-              ? buildWorkflowAgentRunSpec({
-                  step: workflow.step,
-                  isApplicationBound: false,
-                })
-              : null,
+            runSpec: buildWorkflowAgentRunSpec({
+              step,
+              isApplicationBound: false,
+            }),
             summary: null,
           });
 

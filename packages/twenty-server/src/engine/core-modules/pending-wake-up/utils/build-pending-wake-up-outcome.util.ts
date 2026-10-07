@@ -7,10 +7,16 @@ import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-
 export const buildPendingWakeUpOutcome = ({
   condition,
   event,
+  answer,
 }: {
   condition: PendingWakeUpCondition;
   event?: PendingWakeUpEvent;
+  answer?: Extract<PendingWakeUpOutcome, { type: 'ANSWERED' }>['answer'];
 }): PendingWakeUpOutcome => {
+  if (isDefined(answer)) {
+    return { type: 'ANSWERED', answer };
+  }
+
   if (isDefined(event)) {
     return { type: 'EVENT_RECEIVED', event };
   }

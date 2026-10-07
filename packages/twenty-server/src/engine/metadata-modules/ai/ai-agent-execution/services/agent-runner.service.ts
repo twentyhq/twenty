@@ -111,11 +111,7 @@ export class AgentRunnerService {
       where: { id: runId },
     });
 
-    if (
-      !isDefined(run) ||
-      !isDefined(run.runSpec) ||
-      run.resumeCount !== resumeCount
-    ) {
+    if (!isDefined(run) || run.resumeCount !== resumeCount) {
       return;
     }
 
@@ -406,10 +402,14 @@ export class AgentRunnerService {
 
     if (!isSuspended) {
       // a pause the run could not keep leaves nothing to answer
-      if (!isDefined(run)) {
+      const startedRun = isDefined(run)
+        ? null
+        : await this.agentRunService.findOne({ workspaceId, id: runId });
+
+      if (isDefined(startedRun)) {
         await this.agentRunService.closeAwaitedCalls({
           workspaceId,
-          threadId,
+          run: startedRun,
         });
       }
 

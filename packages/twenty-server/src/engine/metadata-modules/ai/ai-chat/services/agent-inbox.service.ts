@@ -86,8 +86,11 @@ export class AgentInboxService {
       return {
         threadId,
         isDismissed: false,
-        awaitedToolOutput: isDefined(buildAwaitingToolCall)
-          ? await this.findToolOutput({ workspaceId, toolCallId })
+        awaitedToolCall: isDefined(buildAwaitingToolCall)
+          ? {
+              toolCallId,
+              output: await this.findToolOutput({ workspaceId, toolCallId }),
+            }
           : undefined,
       };
     }
@@ -170,7 +173,11 @@ export class AgentInboxService {
       ? awaitingToolCall.output
       : await this.findToolOutput({ workspaceId, toolCallId });
 
-    return { threadId, isDismissed: false, awaitedToolOutput };
+    return {
+      threadId,
+      isDismissed: false,
+      awaitedToolCall: { toolCallId, output: awaitedToolOutput },
+    };
   }
 
   // The thread key picks the sender's conversation with the member, so every
