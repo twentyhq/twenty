@@ -1,4 +1,4 @@
-import { CREDIT_TOP_UP_INVOICE_KIND } from 'src/engine/core-modules/billing/constants/credit-top-up-invoice-kind.constant';
+import { CREDIT_TOP_UP } from 'src/engine/core-modules/billing/constants/credit-top-up.constant';
 
 export type MockStripeCreditTopUpInvoicePaidData = {
   object: {
@@ -33,7 +33,7 @@ export const createMockStripeCreditTopUpInvoicePaidData = ({
     number: invoiceNumber,
     amount_paid: amountPaid,
     metadata: {
-      kind: CREDIT_TOP_UP_INVOICE_KIND,
+      kind: CREDIT_TOP_UP,
       workspaceId,
       creditAmountMicro: String(creditAmountMicro),
     },
