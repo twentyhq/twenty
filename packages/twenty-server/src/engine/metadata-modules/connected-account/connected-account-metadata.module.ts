@@ -6,7 +6,6 @@ import { AppOAuthRefreshModule } from 'src/engine/core-modules/application/conne
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { ConnectedAccountResolver } from 'src/engine/metadata-modules/connected-account/resolvers/connected-account.resolver';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -37,7 +36,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectedAccountMetadataService,
     ConnectedAccountOwnershipTransferService,
     ConnectedAccountResolver,
-    ConnectedAccountGraphqlApiExceptionInterceptor,
   ],
   exports: [
     ConnectedAccountMetadataService,
