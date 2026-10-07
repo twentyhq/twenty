@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isNonEmptyString } from '@sniptt/guards';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const getFieldMetadataItemInitialValues = (
