@@ -143,6 +143,16 @@ export class ConfigVariables {
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which an admin-issued two-factor authentication recovery code is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsPositiveDuration()
+  @IsOptional()
+  TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_EXPIRES_IN = '1h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Google Calendar integration',
     type: ConfigVariableType.BOOLEAN,
