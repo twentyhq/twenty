@@ -1,11 +1,13 @@
+import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+
 export type WorkflowExecutorInput = {
   stepIds: string[];
   workflowRunId: string;
   workspaceId: string;
   shouldComputeWorkflowRunStatus?: boolean;
   executedStepsCount?: number;
-  // The conversation the resumed step continues; set only when stepIds is that one step, already claimed out of PENDING
-  resumedThreadId?: string;
+  // What a step that waited on a callback was handed; set only when stepIds is that one step, already claimed out of PENDING
+  awaitedActionOutput?: WorkflowActionOutput;
 };
 
 export type WorkflowBranchExecutorInput = {
@@ -14,5 +16,5 @@ export type WorkflowBranchExecutorInput = {
   workflowRunId: string;
   workspaceId: string;
   executedStepsCount?: number;
-  resumedThreadId?: string;
+  awaitedActionOutput?: WorkflowActionOutput;
 };
