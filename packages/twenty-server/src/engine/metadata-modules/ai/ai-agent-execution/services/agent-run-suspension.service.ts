@@ -292,25 +292,18 @@ export class AgentRunSuspensionService {
     threadId: string;
   }): Promise<void> {
     // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
-    await this.messagePartRepository.query(
+    const waitMessages = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
-        await manager.query(
-          `UPDATE ${table('agentTurn')} turn SET "status" = $3, "endedAt" = now(), "updatedAt" = now()
-           FROM ${table('agentMessage')} message
-           WHERE turn.id = message."turnId" AND message."threadId" = $1 AND turn."status" = $4
-             AND EXISTS (
-               SELECT 1 FROM ${table('agentMessagePart')} part
-               WHERE part."messageId" = message.id AND part."toolName" = ANY($2)
-                 AND part."toolOutput"->'result'->>'status' = 'pending'
-             )`,
-          [
-            threadId,
-            AGENT_WAIT_TOOL_NAMES,
-            AgentTurnStatus.CANCELLED,
-            AgentTurnStatus.WAITING_FOR_INPUT,
-          ],
+        const messages = await manager.query<{ id: string }[]>(
+          `SELECT DISTINCT message.id
+           FROM ${table('agentMessagePart')} part
+           JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+           WHERE message."threadId" = $1 AND part."toolName" = ANY($2)
+             AND part."toolOutput"->'result'->>'status' = 'pending'`,
+          [threadId, AGENT_WAIT_TOOL_NAMES],
         );
+
         await manager.query(
           `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
            FROM ${table('agentMessage')} message
@@ -322,8 +315,18 @@ export class AgentRunSuspensionService {
             AGENT_WAIT_TOOL_NAMES,
           ],
         );
+
+        return messages;
       },
     );
+
+    for (const { id: messageId } of waitMessages) {
+      await this.turnRecorderService.endWaitingTurn({
+        workspaceId,
+        messageId,
+        status: AgentTurnStatus.CANCELLED,
+      });
+    }
 
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
