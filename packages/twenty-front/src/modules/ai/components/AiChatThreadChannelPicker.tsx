@@ -59,7 +59,10 @@ export const AiChatThreadChannelPicker = ({
               endIcon={id === currentChannelId ? <IconCheck /> : undefined}
               onClick={() => {
                 if (id !== currentChannelId) {
-                  void moveAgentChatThreadToChannel(thread.id, id);
+                  void moveAgentChatThreadToChannel({
+                    threadId: thread.id,
+                    channelId: id,
+                  });
                 }
               }}
             >

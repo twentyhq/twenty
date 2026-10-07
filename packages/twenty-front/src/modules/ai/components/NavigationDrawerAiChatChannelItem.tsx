@@ -62,7 +62,10 @@ export const NavigationDrawerAiChatChannelItem = ({
     const trimmedName = name.trim();
 
     if (trimmedName.length > 0 && trimmedName !== channel.name) {
-      void renameAgentChatChannel(channel.id, trimmedName);
+      void renameAgentChatChannel({
+        channelId: channel.id,
+        name: trimmedName,
+      });
     }
   };
 
@@ -107,7 +110,10 @@ export const NavigationDrawerAiChatChannelItem = ({
             dropdownId={dropdownId}
             onRename={() => setDraftName(channel.name)}
             onSetVisibility={(visibility) =>
-              void setAgentChatChannelVisibility(channel.id, visibility)
+              void setAgentChatChannelVisibility({
+                channelId: channel.id,
+                visibility,
+              })
             }
             onLeave={() => void leaveAgentChatChannel(channel.id)}
             onDelete={(destinationChannelId) => {
@@ -126,7 +132,10 @@ export const NavigationDrawerAiChatChannelItem = ({
             : t`With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone.`
         }
         onConfirmClick={() =>
-          void deleteAgentChatChannel(channel.id, deleteDestinationChannelId)
+          void deleteAgentChatChannel({
+            channelId: channel.id,
+            destinationChannelId: deleteDestinationChannelId,
+          })
         }
         confirmButtonText={t`Delete channel`}
       />

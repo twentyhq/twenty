@@ -20,7 +20,13 @@ export const useMoveAgentChatThreadToChannel = () => {
   const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
 
   const moveAgentChatThreadToChannel = useCallback(
-    async (threadId: string, channelId: string | null) => {
+    async ({
+      threadId,
+      channelId,
+    }: {
+      threadId: string;
+      channelId: string | null;
+    }) => {
       const previousChannelId = store.get(
         agentChatThreadRecordFamilySelector.selectorFamily(threadId),
       )?.channelId;
