@@ -15,8 +15,8 @@ import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { logDebug } from '~/utils/logDebug';
 
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
+import { type ApolloManager } from '@/apollo/types/ApolloManager';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
