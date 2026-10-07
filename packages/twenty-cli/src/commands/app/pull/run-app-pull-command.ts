@@ -20,7 +20,7 @@ import { type TargetCommandContext } from '@/catalog/types/target-command-contex
 import { formatDataValue } from '@/data/format-data-value';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { formatSuccessLine } from '@/output/style';
+import { commandText, formatSuccessLine } from '@/output/style';
 
 export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
   options,
@@ -235,7 +235,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
             ),
           ]
         : []),
-      'Run twenty app typecheck to check the generated definitions.',
+      `Run ${commandText('twenty app typecheck')} to check the generated definitions.`,
     ]
       .filter(Boolean)
       .join('\n'),
