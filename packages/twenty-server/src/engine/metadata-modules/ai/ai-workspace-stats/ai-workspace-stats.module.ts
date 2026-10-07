@@ -17,6 +17,5 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     UserRoleModule,
   ],
   providers: [AiWorkspaceStatsResolver, AiWorkspaceStatsService],
-  exports: [AiWorkspaceStatsService],
 })
 export class AiWorkspaceStatsModule {}

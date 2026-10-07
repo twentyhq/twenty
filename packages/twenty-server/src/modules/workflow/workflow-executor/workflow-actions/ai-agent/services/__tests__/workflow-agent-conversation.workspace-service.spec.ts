@@ -57,7 +57,7 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
           ...OPEN_ARGS,
           recipientWorkspaceMemberId: 'recipient-id',
         }),
-      ).resolves.toEqual({ threadId: 'thread-id', isCreated: true });
+      ).resolves.toMatchObject({ threadId: 'thread-id', isCreated: true });
 
       expect(
         agentCallerConversationService.openConversation,

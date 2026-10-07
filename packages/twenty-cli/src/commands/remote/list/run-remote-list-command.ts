@@ -25,7 +25,7 @@ export const runRemoteListCommand: CommandRun = async () => {
   if (remotes.length === 0) {
     return {
       data: { remotes, defaultRemote: null },
-      human: `No saved remotes. ${dimText('Sign in with: ')}${commandText('twenty auth login --with-token --url <url> --name <name>')}`,
+      human: `No saved remotes. ${dimText('Sign in with: ')}${commandText('twenty auth login --url <url>')}`,
     };
   }
 

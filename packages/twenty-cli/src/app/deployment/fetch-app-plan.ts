@@ -26,7 +26,7 @@ export const fetchAppPlan = async ({
   ) {
     throw new CliError({
       code: 'TOOLING_UNSUPPORTED',
-      message: 'This CLI cannot preview the manifest returned by the SDK.',
+      message: 'The app build produced a manifest that this CLI cannot plan.',
     });
   }
 
@@ -56,7 +56,7 @@ export const fetchAppPlan = async ({
       throw new CliError({
         code: 'PLAN_UNAVAILABLE',
         message:
-          'This app needs an owned registration before the server can preview it. Nothing was registered, uploaded or synchronized.',
+          'This app must be registered in this workspace before its changes can be planned. Nothing was registered, uploaded or synchronized.',
         hint: 'Run twenty app apply --create to register it and install it in this workspace.',
         details: {
           ...error.details,

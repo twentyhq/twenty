@@ -47,8 +47,12 @@ export class PendingWakeUpSweepCronJob {
       [OVERDUE_WAKE_UPS_BATCH_SIZE],
     );
 
+    // a wake-up stays overdue until its job claims it, so each sweep would queue it again
     for (const overdueWakeUp of overdueWakeUps) {
-      await this.pendingWakeUpService.scheduleOverdueResolution(overdueWakeUp);
+      await this.pendingWakeUpService.scheduleResolution({
+        wakeUp: overdueWakeUp,
+        deduplicationId: `overdue-pending-wake-up-${overdueWakeUp.id}`,
+      });
     }
 
     if (overdueWakeUps.length > 0) {

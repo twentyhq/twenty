@@ -27,6 +27,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ViewSortToolsFactory,
     provideWorkspaceScopedRepository(ViewSortEntity),
   ],
-  exports: [ViewSortService, ViewSortToolsFactory],
+  exports: [ViewSortToolsFactory],
 })
 export class ViewSortModule {}

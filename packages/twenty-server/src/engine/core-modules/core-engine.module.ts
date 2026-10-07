@@ -203,8 +203,6 @@ import { FileApiModule } from './file/file-api.module';
     EventLogsViewerModule,
     AuthModule,
     FeatureFlagModule,
-    TimelineMessagingModule,
-    TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
     WorkspaceInvitationModule,
