@@ -61,7 +61,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
     if (
       inferDeletionFromMissingEntities &&
       isDefined(existing) &&
-      existing.isSystem &&
+      !isDefined(existing.workspaceWorkflowId) &&
       !declaredWorkflowIds.has(existing.universalIdentifier)
     ) {
       throw new ApplicationException(

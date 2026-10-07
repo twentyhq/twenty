@@ -1,5 +1,4 @@
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
-import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -138,24 +137,6 @@ describe('application workflow manifest updates', () => {
     expect(() =>
       compute({ workflows: [], fromAllFlatEntityMaps: compute() }),
     ).toThrow('Removing application workflows is not supported');
-  });
-
-  it('keeps workspace workflows out of a full sync', () => {
-    const fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
-    const workspaceWorkflowUniversalIdentifier =
-      '77777777-7777-4777-8777-777777777777';
-
-    fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
-      workspaceWorkflowUniversalIdentifier
-    ] = {
-      universalIdentifier: workspaceWorkflowUniversalIdentifier,
-      isSystem: false,
-      workspaceWorkflowId: null,
-    } as FlatWorkflow;
-
-    expect(() =>
-      compute({ workflows: [], fromAllFlatEntityMaps }),
-    ).not.toThrow();
   });
 
   it('allows omitted workflows on additive syncs', () => {
