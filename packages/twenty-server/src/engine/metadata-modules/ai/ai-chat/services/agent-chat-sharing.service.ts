@@ -38,6 +38,7 @@ const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 const INBOX_STATE_LATER_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThreadParticipant.fields.isSubscribed
     .universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.assignee.universalIdentifier,
 ];
 
 const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
