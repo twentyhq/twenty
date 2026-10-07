@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,6 +29,10 @@ import {
 export class AgentRunPendingWakeUpHandlerService
   implements PendingWakeUpOwnerHandler<AgentRunSuspensionEntity>, OnModuleInit
 {
+  private readonly logger = new Logger(
+    AgentRunPendingWakeUpHandlerService.name,
+  );
+
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
@@ -103,9 +107,11 @@ export class AgentRunPendingWakeUpHandlerService
       return;
     }
 
+    let waitMessageId: string;
+
     // the claimed wake-up is gone, so a run that cannot continue would wait forever
     try {
-      await this.recordWaitOutcome({
+      waitMessageId = await this.recordWaitOutcome({
         workspaceId,
         threadId: suspension.threadId,
         toolCallId,
@@ -128,6 +134,38 @@ export class AgentRunPendingWakeUpHandlerService
 
       throw error;
     }
+
+    // the turn only shows what happened, so failing to end it must not fail a run that goes on
+    await this.endWaitedTurn({ workspaceId, messageId: waitMessageId }).catch(
+      (error: unknown) =>
+        this.logger.warn(
+          `Could not end the turn of wait message ${waitMessageId}: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+    );
+  }
+
+  // a step can pause on a question next to the wait, and the turn waits until both are done
+  private async endWaitedTurn({
+    workspaceId,
+    messageId,
+  }: {
+    workspaceId: string;
+    messageId: string;
+  }): Promise<void> {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId },
+      select: ['toolOutput'],
+    });
+
+    if (parts.some((part) => isAwaitingPausingToolOutput(part.toolOutput))) {
+      return;
+    }
+
+    await this.turnRecorderService.endWaitingTurn({
+      workspaceId,
+      messageId,
+      status: AgentTurnStatus.COMPLETED,
+    });
   }
 
   // The wait call stays pending in the conversation until its wake-up resolves it, then carries the outcome
@@ -141,7 +179,7 @@ export class AgentRunPendingWakeUpHandlerService
     threadId: string;
     toolCallId: string;
     outcome: PendingWakeUpOutcome;
-  }): Promise<void> {
+  }): Promise<string> {
     const pendingPart = await this.conversationReaderService.findToolPart({
       workspaceId,
       threadId,
@@ -164,10 +202,6 @@ export class AgentRunPendingWakeUpHandlerService
       { toolOutput: buildWaitOutcomeToolOutput(outcome) },
     );
 
-    await this.turnRecorderService.endWaitingTurn({
-      workspaceId,
-      messageId: pendingPart.messageId,
-      status: AgentTurnStatus.COMPLETED,
-    });
+    return pendingPart.messageId;
   }
 }

@@ -164,6 +164,7 @@ describe('AgentRunConversationService', () => {
         execution: pausedExecution,
       }),
     ).resolves.toEqual({ isAwaitingAnswer: false });
+    expect(turnRecorderService.finishExecutedTurn).toHaveBeenCalledTimes(1);
     expect(turnRecorderService.finishExecutedTurn).toHaveBeenCalledWith({
       ...turn,
       execution: pausedExecution,
