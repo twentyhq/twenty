@@ -8,7 +8,6 @@ import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-exe
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -28,7 +27,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserRoleModule,
     ToolProviderModule,
     SkillModule,
-    TwentyConfigModule,
     WorkspaceCacheModule,
   ],
   controllers: [McpCoreController],

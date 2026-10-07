@@ -15,7 +15,7 @@ import {
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {
   PageDecorator,
