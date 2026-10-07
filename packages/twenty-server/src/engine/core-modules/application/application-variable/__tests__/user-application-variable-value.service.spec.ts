@@ -118,18 +118,14 @@ describe('UserApplicationVariableValueService', () => {
       });
     });
 
-    it('should give a run with nobody behind it the defaults', async () => {
+    it('should leave user variables out of a run with nobody behind it', async () => {
       const envVariables = await service.getServerEnvVariables({
         workspaceId: WORKSPACE_ID,
         applicationId: APPLICATION_ID,
         userWorkspaceId: undefined,
       });
 
-      expect(envVariables).toEqual({
-        RECORD_MY_MEETINGS: 'off',
-        PERSONAL_API_KEY: '',
-        LANGUAGE: 'en',
-      });
+      expect(envVariables).toEqual({});
     });
   });
 });

@@ -214,17 +214,18 @@ export class UserApplicationVariableValueService {
     userWorkspaceId: string | undefined;
     flatUserApplicationVariables: FlatApplicationVariable[];
   }): Promise<Record<string, string>> {
-    if (!isNonEmptyArray(flatUserApplicationVariables)) {
+    if (
+      !isDefined(userWorkspaceId) ||
+      !isNonEmptyArray(flatUserApplicationVariables)
+    ) {
       return {};
     }
 
-    const userValues = isDefined(userWorkspaceId)
-      ? await this.findUserValues({
-          workspaceId,
-          userWorkspaceId,
-          flatUserApplicationVariables,
-        })
-      : [];
+    const userValues = await this.findUserValues({
+      workspaceId,
+      userWorkspaceId,
+      flatUserApplicationVariables,
+    });
 
     return Object.fromEntries(
       toUserApplicationVariableValues({
