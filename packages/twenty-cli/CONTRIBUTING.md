@@ -123,9 +123,12 @@ release must be built from the commit of an SDK release:
 
 `yarn npm publish` first runs `scripts/check-publish.mjs`, which needs a fresh
 build and npm registry access. It fails when the executable, worker, lazy chunks
-or templates are missing, when `dist` was built for another version, or when
-`app init` would pin versions that are not on npm. An unreachable registry is
-reported separately from a missing version. To run it before tagging:
+or templates are missing, when `dist` was built for another version, when one of
+its CLI runs fails or times out, or when `app init` would pin versions that are
+not on npm. An unreachable registry is reported separately from a missing
+version. The check does not read tags: it confirms that the pinned versions are
+published, and tagging the SDK release commit remains a release step. To run it
+before tagging:
 
 ```bash
 yarn nx build twenty-cli

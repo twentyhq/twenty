@@ -103,7 +103,31 @@ const checkBundleReferences = async () => {
   return bundleFiles.length;
 };
 
+const parseResult = (output) => {
+  try {
+    return JSON.parse(output);
+  } catch {
+    return undefined;
+  }
+};
+
+const describeExit = (error) => {
+  if (error.code === 'ETIMEDOUT') {
+    return `timed out after ${COMMAND_TIMEOUT_MILLISECONDS / 1000}s`;
+  }
+
+  return typeof error.signal === 'string'
+    ? `was stopped by ${error.signal}`
+    : `exited with code ${error.status}`;
+};
+
+const describeError = (result) =>
+  typeof result?.error?.code === 'string'
+    ? `: ${result.error.code} ${result.error.message}`
+    : ` without an error result. ${BUILD_HINT}`;
+
 const runCli = ({ executable, commandArguments, workingDirectory, home }) => {
+  const command = `twenty ${commandArguments.join(' ')}`;
   const environment = Object.fromEntries(
     Object.entries(process.env).filter(([name]) => !name.startsWith('TWENTY_')),
   );
@@ -122,23 +146,15 @@ const runCli = ({ executable, commandArguments, workingDirectory, home }) => {
       },
     );
   } catch (error) {
-    output = error.stdout;
-  }
-
-  let result;
-
-  try {
-    result = JSON.parse(output);
-  } catch {
     fail(
-      `twenty ${commandArguments.join(' ')} did not print a JSON result. ${BUILD_HINT}`,
+      `${command} ${describeExit(error)}${describeError(parseResult(error.stdout))}`,
     );
   }
 
-  if (result.ok !== true) {
-    fail(
-      `twenty ${commandArguments.join(' ')} failed: ${result.error?.code} ${result.error?.message}`,
-    );
+  const result = parseResult(output);
+
+  if (result?.ok !== true) {
+    fail(`${command} did not report success${describeError(result)}`);
   }
 
   return result.data;
