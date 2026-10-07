@@ -1,7 +1,8 @@
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-// A concurrent build that failed leaves an invalid index that IF NOT EXISTS
-// would then keep, so it is dropped before building again
+// A concurrent build can outlast the core pool's request query_timeout, so it
+// runs on its own connection without one. A failed build leaves an invalid
+// index that IF NOT EXISTS would then keep, so it is dropped first.
 export const createCoreIndexConcurrently = async ({
   dataSource,
   indexName,
@@ -11,24 +12,41 @@ export const createCoreIndexConcurrently = async ({
   indexName: string;
   createIndexQuery: string;
 }): Promise<void> => {
-  const invalidIndexes: { name: string }[] = await dataSource.query(
-    `SELECT index_class.relname AS name
-     FROM pg_index
-     JOIN pg_class index_class ON index_class.oid = pg_index.indexrelid
-     JOIN pg_namespace namespace ON namespace.oid = index_class.relnamespace
-     WHERE namespace.nspname = 'core'
-       AND index_class.relname = $1
-       AND NOT pg_index.indisvalid`,
-    [indexName],
-  );
+  const indexBuildDataSource = await new DataSource({
+    ...dataSource.options,
+    entities: [],
+    migrations: [],
+    subscribers: [],
+    poolSize: 1,
+    extra: {
+      ...(dataSource.options.extra as Record<string, unknown> | undefined),
+      query_timeout: undefined,
+    },
+  } as typeof dataSource.options).initialize();
 
-  if (invalidIndexes.length > 0) {
-    await dataSource.query(
-      `DROP INDEX CONCURRENTLY IF EXISTS "core"."${indexName}"`,
+  try {
+    const invalidIndexes: { name: string }[] =
+      await indexBuildDataSource.query(
+        `SELECT index_class.relname AS name
+         FROM pg_index
+         JOIN pg_class index_class ON index_class.oid = pg_index.indexrelid
+         JOIN pg_namespace namespace ON namespace.oid = index_class.relnamespace
+         WHERE namespace.nspname = 'core'
+           AND index_class.relname = $1
+           AND NOT pg_index.indisvalid`,
+        [indexName],
+      );
+
+    if (invalidIndexes.length > 0) {
+      await indexBuildDataSource.query(
+        `DROP INDEX CONCURRENTLY IF EXISTS "core"."${indexName}"`,
+      );
+    }
+
+    await indexBuildDataSource.query(
+      createIndexQuery.replace(' INDEX ', ' INDEX CONCURRENTLY '),
     );
+  } finally {
+    await indexBuildDataSource.destroy();
   }
-
-  await dataSource.query(
-    createIndexQuery.replace(' INDEX ', ' INDEX CONCURRENTLY '),
-  );
 };
