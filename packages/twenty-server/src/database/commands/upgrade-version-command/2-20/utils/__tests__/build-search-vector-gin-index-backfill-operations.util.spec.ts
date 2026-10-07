@@ -1,7 +1,4 @@
-import {
-  FieldMetadataType,
-  IndexType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, IndexType } from 'twenty-shared/types';
 
 import { buildSearchVectorGinIndexBackfillOperations } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-vector-gin-index-backfill-operations.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -161,11 +158,11 @@ describe('buildSearchVectorGinIndexBackfillOperations', () => {
       ];
 
     expect(createdIndexes).toHaveLength(1);
-    expect(createdIndexes?.[0].indexType).toBe(IndexType.GIN);
-    expect(createdIndexes?.[0].objectMetadataUniversalIdentifier).toBe(
+    expect(createdIndexes?.[0]?.indexType).toBe(IndexType.GIN);
+    expect(createdIndexes?.[0]?.objectMetadataUniversalIdentifier).toBe(
       flatObjectMetadata.universalIdentifier,
     );
-    expect(createdIndexes?.[0].applicationUniversalIdentifier).toBe(
+    expect(createdIndexes?.[0]?.applicationUniversalIdentifier).toBe(
       INSTALLED_APPLICATION_UID,
     );
   });

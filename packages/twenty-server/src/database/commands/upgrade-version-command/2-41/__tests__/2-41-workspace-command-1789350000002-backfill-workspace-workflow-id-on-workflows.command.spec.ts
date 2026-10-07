@@ -65,7 +65,7 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
     const updateCalls = query.mock.calls.filter((call) => isUpdate(call[0]));
 
     expect(updateCalls).toHaveLength(1);
-    expect(updateCalls[0][1]).toEqual([WORKSPACE_ID]);
+    expect(updateCalls[0]?.[1]).toEqual([WORKSPACE_ID]);
     expect(queryRunner.connect).toHaveBeenCalledTimes(1);
     expect(queryRunner.release).toHaveBeenCalledTimes(1);
   });

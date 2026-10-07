@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { DataSource, QueryRunner } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -25,9 +26,7 @@ type ApplicationVariableRow = {
 // into the enc:v2 envelope, then tightens the CHECK constraint to require
 // encryption for ALL rows (not just isSecret=true ones).
 @RegisteredInstanceCommand('2.9.0', 1798400000000, { type: 'slow' })
-export class EncryptNonSecretApplicationVariableSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptNonSecretApplicationVariableSlowInstanceCommand implements SlowInstanceCommand {
   private readonly logger = new Logger(
     EncryptNonSecretApplicationVariableSlowInstanceCommand.name,
   );
@@ -80,7 +79,11 @@ export class EncryptNonSecretApplicationVariableSlowInstanceCommand
       }
 
       totalEncrypted += batchEncrypted;
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
 
       this.logger.log(
         `Encrypted ${batchEncrypted} non-secret application variables in this batch (${totalEncrypted} total so far)`,

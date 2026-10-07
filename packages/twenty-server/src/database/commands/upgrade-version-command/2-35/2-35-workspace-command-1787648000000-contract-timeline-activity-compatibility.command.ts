@@ -1,5 +1,9 @@
 import { Command } from 'nest-commander';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -190,6 +194,8 @@ LEFT JOIN "core"."timelineActivityType" timeline_activity_type
   AND timeline_activity_type."workspaceId" = $1`,
       [workspaceId],
     );
+
+    assertIsDefinedOrThrow(audit);
 
     return {
       missingTypeIdCount: Number(audit.missingTypeIdCount),

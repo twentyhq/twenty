@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type LinkMetadata, type LinksMetadata } from 'twenty-shared/types';
-import { normalizeDomain } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, normalizeDomain } from 'twenty-shared/utils';
 
 import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
 
@@ -30,9 +30,13 @@ export const normalizeDomainNameLinks = (
 
   const changed =
     normalizedPrimaryLinkUrl !== domainName.primaryLinkUrl ||
-    normalizedSecondaryLinks.some(
-      (link, index) => link.url !== secondaryLinks[index].url,
-    );
+    normalizedSecondaryLinks.some((link, index) => {
+      const secondaryLink = secondaryLinks[index];
+
+      assertIsDefinedOrThrow(secondaryLink);
+
+      return link.url !== secondaryLink.url;
+    });
 
   return {
     changed,

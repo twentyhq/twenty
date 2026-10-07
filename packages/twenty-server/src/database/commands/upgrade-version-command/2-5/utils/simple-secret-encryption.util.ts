@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { createDecipheriv, createHash } from 'crypto';
 
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -30,6 +31,11 @@ export class SimpleSecretEncryptionUtil {
       .slice(0, this.keyLength);
 
     const [ivHex, encryptedData] = encryptedSecret.split(':');
+
+    if (!isDefined(ivHex) || !isDefined(encryptedData)) {
+      throw new Error('Encrypted secret is malformed');
+    }
+
     const iv = Buffer.from(ivHex, 'hex');
 
     const decipher = createDecipheriv(this.algorithm, encryptionKey, iv);

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
@@ -27,9 +27,7 @@ const isPlaintext = (value: string | null): value is string =>
   isDefined(value) && !value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX);
 
 @RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
-export class EncryptConnectedAccountTokensSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
@@ -91,7 +89,11 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
         );
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
   }
 

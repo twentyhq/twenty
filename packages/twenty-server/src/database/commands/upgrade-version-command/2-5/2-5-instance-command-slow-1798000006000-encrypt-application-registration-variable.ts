@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { legacyDecryptVersionedWithFallback } from 'src/database/commands/upgrade-version-command/2-5/utils/legacy-decrypt-versioned-with-fallback.util';
@@ -22,9 +22,7 @@ type ApplicationRegistrationVariableRow = {
 };
 
 @RegisteredInstanceCommand('2.5.0', 1798000006000, { type: 'slow' })
-export class EncryptApplicationRegistrationVariableSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptApplicationRegistrationVariableSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -78,7 +76,11 @@ export class EncryptApplicationRegistrationVariableSlowInstanceCommand
         );
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
   }
 

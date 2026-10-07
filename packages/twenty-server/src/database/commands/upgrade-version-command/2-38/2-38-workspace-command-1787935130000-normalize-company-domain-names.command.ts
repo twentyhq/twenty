@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -78,7 +78,11 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
         break;
       }
 
-      afterCompanyId = candidates[candidates.length - 1].id;
+      const candidate = candidates[candidates.length - 1];
+
+      assertIsDefinedOrThrow(candidate);
+
+      afterCompanyId = candidate.id;
 
       const rewrites = computeCompanyDomainNameRewrites(candidates);
 
@@ -207,9 +211,7 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
       return new Set();
     }
 
-    const rows = await dataSource.query<
-      { domainNamePrimaryLinkUrl: string }[]
-    >(
+    const rows = await dataSource.query<{ domainNamePrimaryLinkUrl: string }[]>(
       `
 SELECT company."domainNamePrimaryLinkUrl"
 FROM "${schemaName}"."company" company

@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { getSystemRecordPageLayoutUniversalIdentifier } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -284,6 +284,7 @@ export class ReconcileWorkspaceCustomRecordPageCommand extends ProvisionedWorksp
 
     if (flaggedCandidates.length === 1) {
       const systemStackFlatPageLayout = flaggedCandidates[0];
+      assertIsDefinedOrThrow(systemStackFlatPageLayout);
 
       for (const flatPageLayout of candidates) {
         if (flatPageLayout.id === systemStackFlatPageLayout.id) {

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildWorkflowCommandUpdatePermissionUpdates } from 'src/database/commands/upgrade-version-command/2-45/utils/build-workflow-command-update-permission-updates.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const NOW = '2026-09-30T12:00:00.000Z';
 const RECORD_UPDATE_PERMISSION_CONDITION =
@@ -77,8 +78,10 @@ describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
 
   it('leaves customized expressions untouched', () => {
     const items = withPreviousExpressions();
-    const [customizedUniversalIdentifier] =
-      WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS;
+    const customizedUniversalIdentifier =
+      WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS[0];
+    jestExpectToBeDefined(customizedUniversalIdentifier);
+
     const customized = items[customizedUniversalIdentifier];
 
     if (!isDefined(customized)) {

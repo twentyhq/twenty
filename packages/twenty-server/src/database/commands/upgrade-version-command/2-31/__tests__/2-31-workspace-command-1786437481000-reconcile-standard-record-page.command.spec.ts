@@ -24,6 +24,7 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company;
@@ -31,6 +32,8 @@ const COMPANY_PRE_2_31_LAYOUT_UNIVERSAL_IDENTIFIER =
   PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
     COMPANY_OBJECT_UNIVERSAL_IDENTIFIER
   ];
+jestExpectToBeDefined(COMPANY_PRE_2_31_LAYOUT_UNIVERSAL_IDENTIFIER);
+
 const CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-0000-4000-8000-0000000000bb';
 

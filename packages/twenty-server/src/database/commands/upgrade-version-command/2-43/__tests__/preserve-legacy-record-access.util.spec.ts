@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const objects = [
@@ -93,6 +94,8 @@ it('backfills existing private objects even when chat metadata is absent', async
     .mockResolvedValueOnce([{ id: 'last' }])
     .mockResolvedValueOnce([{ lastId: 'last', count: 1 }])
     .mockResolvedValueOnce([]);
+  jestExpectToBeDefined(objects[1]);
+
   await preserveLegacyRecordAccess({
     ...args,
     objects: [objects[1]],

@@ -1,7 +1,11 @@
 import { Command } from 'nest-commander';
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { IsNull, MoreThan, Not } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -91,9 +95,9 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     }
 
     const personRepository =
-      this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
-        { shouldBypassPermissionChecks: true },
-      );
+      this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person', {
+        shouldBypassPermissionChecks: true,
+      });
 
     let candidateCount = 0;
     let migratedCount = 0;
@@ -107,7 +111,11 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     });
 
     while (persons.length > 0) {
-      cursor = persons[persons.length - 1].id;
+      const lastPerson = persons[persons.length - 1];
+
+      assertIsDefinedOrThrow(lastPerson);
+
+      cursor = lastPerson.id;
 
       for (const person of persons) {
         const avatarUrl = person.avatarUrl;

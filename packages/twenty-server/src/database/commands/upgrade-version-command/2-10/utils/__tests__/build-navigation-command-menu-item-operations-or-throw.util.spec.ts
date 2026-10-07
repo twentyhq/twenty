@@ -76,11 +76,11 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
     });
 
     expect(result.flatEntityToCreate).toHaveLength(1);
-    expect(result.flatEntityToCreate[0].universalIdentifier).toBe(
+    expect(result.flatEntityToCreate[0]?.universalIdentifier).toBe(
       getLegacyNavigationCommandUniversalIdentifier('call-recording'),
     );
-    expect(result.flatEntityToCreate[0].position).toBe(0);
-    expect(result.flatEntityToCreate[0].payload).toEqual({
+    expect(result.flatEntityToCreate[0]?.position).toBe(0);
+    expect(result.flatEntityToCreate[0]?.payload).toEqual({
       objectMetadataItemId: objectMetadata.id,
     });
     expect(result.flatEntityToUpdate).toHaveLength(0);
@@ -104,7 +104,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       renamedCollisionObjectMetadatas: [],
     });
 
-    expect(result.flatEntityToCreate[0].payload).toEqual({
+    expect(result.flatEntityToCreate[0]?.payload).toEqual({
       objectMetadataItemId: 'existing-call-recording-object-id',
     });
   });
@@ -188,7 +188,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       renamedCollisionObjectMetadatas: [],
     });
 
-    expect(result.flatEntityToCreate[0].position).toBe(6);
+    expect(result.flatEntityToCreate[0]?.position).toBe(6);
   });
 
   it('rewrites the stale availability expression of a renamed object navigation item', () => {
@@ -216,10 +216,10 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
     });
 
     expect(result.flatEntityToUpdate).toHaveLength(1);
-    expect(result.flatEntityToUpdate[0].conditionalAvailabilityExpression).toBe(
-      'targetObjectReadPermissions.callRecordingOld',
-    );
-    expect(result.flatEntityToUpdate[0].updatedAt).toBe(NOW);
+    expect(
+      result.flatEntityToUpdate[0]?.conditionalAvailabilityExpression,
+    ).toBe('targetObjectReadPermissions.callRecordingOld');
+    expect(result.flatEntityToUpdate[0]?.updatedAt).toBe(NOW);
     expect(result.flatEntityToCreate).toHaveLength(0);
   });
 

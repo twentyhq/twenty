@@ -238,18 +238,18 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(customApplicationRows).toHaveLength(1);
-    expect(customApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(customApplicationRows?.[0]?.fieldMetadataUniversalIdentifier).toBe(
       nameField.universalIdentifier,
     );
-    expect(customApplicationRows?.[0].objectMetadataUniversalIdentifier).toBe(
+    expect(customApplicationRows?.[0]?.objectMetadataUniversalIdentifier).toBe(
       customObject.universalIdentifier,
     );
     // The row points at the object's searchVector field via the new FK.
     expect(
-      customApplicationRows?.[0].tsVectorFieldMetadataUniversalIdentifier,
+      customApplicationRows?.[0]?.tsVectorFieldMetadataUniversalIdentifier,
     ).toBe(searchVectorField.universalIdentifier);
     // Custom object name field is seeded at position 0.
-    expect(customApplicationRows?.[0].position).toBe(0);
+    expect(customApplicationRows?.[0]?.position).toBe(0);
     // No spurious row for the prefix-overlapping `nameDescription` field.
     expect(
       customApplicationRows?.some(
@@ -394,11 +394,11 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(standardApplicationRows).toHaveLength(1);
-    expect(standardApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(standardApplicationRows?.[0]?.fieldMetadataUniversalIdentifier).toBe(
       standardFieldUniversalIdentifier,
     );
     expect(
-      standardApplicationRows?.[0].tsVectorFieldMetadataUniversalIdentifier,
+      standardApplicationRows?.[0]?.tsVectorFieldMetadataUniversalIdentifier,
     ).toBe(standardSearchVectorField.universalIdentifier);
 
     const customApplicationRows =
@@ -407,11 +407,11 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(customApplicationRows).toHaveLength(1);
-    expect(customApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(customApplicationRows?.[0]?.fieldMetadataUniversalIdentifier).toBe(
       nameField.universalIdentifier,
     );
     expect(
-      customApplicationRows?.[0].tsVectorFieldMetadataUniversalIdentifier,
+      customApplicationRows?.[0]?.tsVectorFieldMetadataUniversalIdentifier,
     ).toBe(searchVectorField.universalIdentifier);
   });
 
@@ -502,7 +502,7 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(standardApplicationRows).toHaveLength(1);
-    expect(standardApplicationRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(standardApplicationRows?.[0]?.fieldMetadataUniversalIdentifier).toBe(
       phoneFieldUniversalIdentifier,
     );
     // The prefix-overlapping `phoneNumber` field is never selected.
@@ -585,7 +585,7 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(standardApplicationRows).toHaveLength(1);
-    expect(standardApplicationRows?.[0].position).toBe(3);
+    expect(standardApplicationRows?.[0]?.position).toBe(3);
   });
 
   it('is a no-op when the searchFieldMetadata rows already exist (idempotent)', () => {
@@ -638,8 +638,7 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
     const existingSearchFieldMetadata = buildSearchFieldMetadata({
       id: 'existing-search-field-id',
       universalIdentifier: getSearchFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         fieldMetadataUniversalIdentifier: nameField.universalIdentifier,
       }),
       objectMetadataId: 'stale-object-metadata-id',

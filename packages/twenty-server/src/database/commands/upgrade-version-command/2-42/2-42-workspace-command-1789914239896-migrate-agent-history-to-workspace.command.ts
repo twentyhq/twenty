@@ -1,5 +1,9 @@
 import { Command } from 'nest-commander';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
@@ -142,7 +146,11 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
         for (const thread of threads) {
           await this.reapDeadStream({ runner, workspaceId, source, thread });
         }
-        lastId = threads[threads.length - 1].id;
+        const lastThread = threads[threads.length - 1];
+
+        assertIsDefinedOrThrow(lastThread);
+
+        lastId = lastThread.id;
       }
     } finally {
       await runner.release();

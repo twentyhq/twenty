@@ -147,7 +147,7 @@ describe('computeRecordPageStackReownUpdates', () => {
       expect.stringContaining('Duplicate tab title "Home"'),
     );
     expect(reownUpdates.pageLayoutTabUpdates).toHaveLength(1);
-    expect(reownUpdates.pageLayoutTabUpdates[0].id).toBe(stack.homeTab.id);
+    expect(reownUpdates.pageLayoutTabUpdates[0]?.id).toBe(stack.homeTab.id);
   });
 
   it('skips the second widget claiming the same title on a tab with a warning', () => {
@@ -168,7 +168,7 @@ describe('computeRecordPageStackReownUpdates', () => {
       expect.stringContaining('Duplicate widget title "Fields"'),
     );
     expect(reownUpdates.pageLayoutWidgetUpdates).toHaveLength(1);
-    expect(reownUpdates.pageLayoutWidgetUpdates[0].id).toBe(
+    expect(reownUpdates.pageLayoutWidgetUpdates[0]?.id).toBe(
       stack.fieldsWidget.id,
     );
   });
@@ -329,7 +329,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     });
 
     expect(reownUpdates.viewUpdates).toHaveLength(1);
-    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+    expect(reownUpdates.viewUpdates[0]?.id).toBe(stack.view.id);
   });
 
   it('re-owns only the system view when the user-added FIELDS widget comes first in walk order', () => {
@@ -353,7 +353,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     });
 
     expect(reownUpdates.viewUpdates).toHaveLength(1);
-    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+    expect(reownUpdates.viewUpdates[0]?.id).toBe(stack.view.id);
   });
 
   // Custom objects have no pre-2.31 literal and their engine widget is not
@@ -388,7 +388,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     });
 
     expect(reownUpdates.viewUpdates).toHaveLength(1);
-    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+    expect(reownUpdates.viewUpdates[0]?.id).toBe(stack.view.id);
   });
 
   // Pre-2-15 custom rows are stuck at isSystemSideEffect false, so the engine
@@ -481,7 +481,7 @@ describe('computeRecordPageStackReownUpdates', () => {
       expect.stringContaining('Duplicate view field group name "General"'),
     );
     expect(reownUpdates.viewFieldGroupUpdates).toHaveLength(1);
-    expect(reownUpdates.viewFieldGroupUpdates[0].id).toBe(
+    expect(reownUpdates.viewFieldGroupUpdates[0]?.id).toBe(
       stack.viewFieldGroup?.id,
     );
   });
@@ -505,6 +505,6 @@ describe('computeRecordPageStackReownUpdates', () => {
 
     expect(warnMock).not.toHaveBeenCalled();
     expect(reownUpdates.pageLayoutTabUpdates).toHaveLength(1);
-    expect(reownUpdates.pageLayoutTabUpdates[0].id).toBe(stack.homeTab.id);
+    expect(reownUpdates.pageLayoutTabUpdates[0]?.id).toBe(stack.homeTab.id);
   });
 });

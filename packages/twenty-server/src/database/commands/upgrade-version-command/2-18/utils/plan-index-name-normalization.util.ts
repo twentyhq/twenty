@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export type FlatIndexNameStatus = {
   indexMetadataId: string;
   objectMetadataId: string;
@@ -42,6 +44,10 @@ export const planIndexNameNormalization = (
   for (const [expectedName, group] of statusesByExpectedName) {
     const survivor =
       group.find((status) => status.currentName === expectedName) ?? group[0];
+
+    if (!isDefined(survivor)) {
+      continue;
+    }
 
     if (survivor.currentName !== expectedName) {
       operations.push({

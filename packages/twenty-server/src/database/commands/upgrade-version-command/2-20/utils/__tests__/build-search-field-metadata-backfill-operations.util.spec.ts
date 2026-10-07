@@ -209,16 +209,16 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       ];
 
     expect(createdRows).toHaveLength(1);
-    expect(createdRows?.[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(createdRows?.[0]?.fieldMetadataUniversalIdentifier).toBe(
       nameFlatFieldMetadata.universalIdentifier,
     );
-    expect(createdRows?.[0].objectMetadataUniversalIdentifier).toBe(
+    expect(createdRows?.[0]?.objectMetadataUniversalIdentifier).toBe(
       flatObjectMetadata.universalIdentifier,
     );
-    expect(createdRows?.[0].tsVectorFieldMetadataUniversalIdentifier).toBe(
+    expect(createdRows?.[0]?.tsVectorFieldMetadataUniversalIdentifier).toBe(
       searchVectorFlatFieldMetadata.universalIdentifier,
     );
-    expect(createdRows?.[0].universalIdentifier).toBe(
+    expect(createdRows?.[0]?.universalIdentifier).toBe(
       getSearchFieldUniversalIdentifier({
         applicationUniversalIdentifier: INSTALLED_APPLICATION_UID,
         fieldMetadataUniversalIdentifier:
