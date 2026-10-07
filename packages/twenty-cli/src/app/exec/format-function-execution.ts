@@ -1,5 +1,7 @@
 import { type AppFunctionExecution } from '@/app/exec/execute-app-function';
 import { formatDataValue } from '@/data/format-data-value';
+import { formatDetails } from '@/output/format-details';
+import { boldText, colorText, dimText } from '@/output/style';
 
 const formatExecutionValue = (value: unknown) =>
   JSON.stringify(value, null, 2).replace(
@@ -8,18 +10,37 @@ const formatExecutionValue = (value: unknown) =>
       `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
   );
 
-export const formatFunctionExecution = (result: AppFunctionExecution) =>
+export const formatFunctionExecution = (
+  result: AppFunctionExecution,
+  stream: NodeJS.WriteStream = process.stdout,
+) =>
   [
-    `Function: ${formatDataValue(result.functionName)}`,
-    `Status: ${formatDataValue(result.status)}`,
-    `Duration: ${result.durationMilliseconds}ms`,
+    formatDetails(
+      [
+        ['Function', formatDataValue(result.functionName)],
+        [
+          'Status',
+          colorText(
+            result.status === 'SUCCESS' ? 'green' : 'red',
+            formatDataValue(result.status),
+            stream,
+          ),
+        ],
+        ['Duration', dimText(`${result.durationMilliseconds}ms`, stream)],
+      ],
+      stream,
+    ),
     ...(result.data !== null
-      ? ['Data:', formatExecutionValue(result.data)]
+      ? ['', boldText('Data:', stream), formatExecutionValue(result.data)]
       : []),
     ...(result.error !== null
-      ? ['Error:', formatExecutionValue(result.error)]
+      ? ['', boldText('Error:', stream), formatExecutionValue(result.error)]
       : []),
     ...(result.logs.length > 0
-      ? ['Logs:', ...result.logs.split('\n').map(formatDataValue)]
+      ? [
+          '',
+          boldText('Logs:', stream),
+          ...result.logs.split('\n').map(formatDataValue),
+        ]
       : []),
   ].join('\n');
