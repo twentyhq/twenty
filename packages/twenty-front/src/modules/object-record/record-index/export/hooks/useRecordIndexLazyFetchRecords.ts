@@ -23,13 +23,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-export const percentage = (part: number, whole: number): number => {
-  return Math.round((part / whole) * 100);
-};
-
 export type UseRecordDataOptions = {
   delayMs: number;
   maximumRequests?: number;
