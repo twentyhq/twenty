@@ -1,4 +1,4 @@
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 const buildService = ({
@@ -29,7 +29,7 @@ const buildService = ({
     closePendingQuestion: jest.fn().mockResolvedValue(undefined),
   };
 
-  const service = new AgentRunSuspensionService(
+  const service = new AgentRunService(
     {} as never,
     threadRepository as never,
     messagePartRepository as never,
@@ -42,7 +42,7 @@ const buildService = ({
   return { service, threadLifecycleService };
 };
 
-describe('AgentRunSuspensionService closeAwaitedCalls', () => {
+describe('AgentRunService closeAwaitedCalls', () => {
   it('closes the question a dropped run waited on, cancelling the turn that asked it', async () => {
     const { service, threadLifecycleService } = buildService();
 

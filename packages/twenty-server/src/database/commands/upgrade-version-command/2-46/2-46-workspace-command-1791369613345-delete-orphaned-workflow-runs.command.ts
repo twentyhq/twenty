@@ -104,9 +104,10 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
       `WITH deleted AS (
          DELETE FROM ${workflowRunTable} run WHERE ${ORPHANED_WORKFLOW_RUN_CONDITION} RETURNING run.id
        ), released AS (
-         DELETE FROM "core"."agentRunSuspension" suspension
+         DELETE FROM "core"."agentRun" suspension
          USING deleted
          WHERE suspension."workspaceId" = $1
+           AND suspension."status" = 'SUSPENDED'
            AND suspension.caller ->> 'type' = 'WORKFLOW_STEP'
            AND suspension.caller -> 'ref' ->> 'workflowRunId' = deleted.id::text
          RETURNING suspension."threadId"

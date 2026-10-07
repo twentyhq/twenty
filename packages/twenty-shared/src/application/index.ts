@@ -222,7 +222,9 @@ export type {
   RunAgentMessage,
   RunAgentThread,
   RunAgentInput,
+  AgentRunStatus,
   RunAgentResult,
+  AgentRunState,
 } from './runAgentType';
 export type { SendInboxMessageInput } from './sendInboxMessageInputType';
 export type { SendInboxMessageResult } from './sendInboxMessageResultType';

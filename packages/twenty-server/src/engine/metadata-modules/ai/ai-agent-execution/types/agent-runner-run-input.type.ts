@@ -10,6 +10,8 @@ import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entiti
 // the outcome to its caller's handler
 export type AgentRunnerRunInput = {
   workspaceId: string;
+  // set by a caller that must name the run even when it throws; generated otherwise
+  runId?: string;
   conversation: AgentRunConversation;
   caller: AgentRunCaller;
   spec: AgentRunSpec;

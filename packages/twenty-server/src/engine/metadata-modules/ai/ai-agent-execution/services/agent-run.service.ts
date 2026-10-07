@@ -1,42 +1,33 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  type OnModuleInit,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
-import { isNonEmptyString } from '@sniptt/guards';
-import {
-  type RunAgentMessage,
-  type RunAgentResult,
-  type RunAgentThread,
-} from 'twenty-shared/application';
-import { type ActorMetadata } from 'twenty-shared/types';
+import isEqual from 'lodash.isequal';
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, Raw } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
-import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
-import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
+import { AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
+import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
+import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
+import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
-import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
-import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
-import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
-import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
-import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
-import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
-import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
-import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
-import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
+import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
@@ -44,355 +35,350 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-type RunAgentServiceInput = {
-  agentUniversalIdentifier: string;
-  input?: RunAgentMessage[] | null;
-  prompt?: string | null;
-  messages?: RunAgentMessage[] | null;
-  additionalInstructions?: string | null;
-  thread?: RunAgentThread | null;
-  runAsWorkspaceMemberId?: string;
-};
-
-type AgentApiRunCaller = Extract<AgentRunCaller, { type: 'AGENT_API_RUN' }>;
-
-// Runs an agent for the runAgent API. A run that waits goes on later with the API call as its
-// caller, and its reply lands in its conversation
+// Agent runs from start to end: what continues a suspended one, and who gets its outcome
 @Injectable()
-export class AgentRunService
-  implements AgentRunCallerHandler<AgentApiRunCaller>, OnModuleInit
-{
-  private readonly logger = new Logger(AgentRunService.name);
-
+export class AgentRunService {
   constructor(
-    private readonly agentActorContextService: AgentActorContextService,
-    private readonly agentRunnerService: AgentRunnerService,
+    @InjectWorkspaceScopedRepository(AgentRunEntity)
+    private readonly runRepository: WorkspaceScopedRepository<AgentRunEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
-    private readonly applicationLookupService: ApplicationLookupService,
-    @InjectWorkspaceScopedRepository(AgentEntity)
-    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    @InjectMessageQueue(MessageQueue.aiQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  onModuleInit(): void {
-    this.callerHandlerRegistry.register('AGENT_API_RUN', this);
+  async findOne({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<AgentRunEntity | null> {
+    return this.runRepository.findOne(workspaceId, { where: { id } });
   }
 
-  async run({
-    workspace,
-    requestUserWorkspaceId,
-    requestWorkspaceMemberId,
-    callerApplication,
-    input,
+  async findSuspended({
+    workspaceId,
+    where,
   }: {
-    workspace: FlatWorkspace;
-    requestUserWorkspaceId: string | null;
-    requestWorkspaceMemberId: string | null;
-    callerApplication?: FlatApplication;
-    input: RunAgentServiceInput;
-  }): Promise<RunAgentResult> {
-    const messages = resolveRunAgentMessagesOrThrow({
-      input: input.input,
-      prompt: input.prompt,
-      messages: input.messages,
+    workspaceId: string;
+    where: { id: string } | { threadId: string };
+  }): Promise<AgentRunEntity | null> {
+    return this.runRepository.findOne(workspaceId, {
+      where: { ...where, status: 'SUSPENDED' },
     });
+  }
 
-    if (isDefined(input.thread) && !isNonEmptyString(input.thread.key.trim())) {
+  async suspend({
+    workspaceId,
+    threadId,
+    caller,
+    runSpec,
+    summary,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    caller: AgentRunCaller;
+    runSpec: AgentRunSpec | null;
+    summary: AgentRunSummary | null;
+  }): Promise<AgentRunEntity> {
+    return this.runRepository.insertAndReturnOne(workspaceId, {
+      threadId,
+      caller,
+      runSpec,
+      status: 'SUSPENDED',
+      summary,
+    } as QueryDeepPartialEntity<AgentRunEntity>);
+  }
+
+  // a new message must not slip in while a run waits in the conversation: the run would read it on continuing
+  async assertConversationNotSuspended({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const run = await this.findSuspended({ workspaceId, where: { threadId } });
+
+    if (isDefined(run)) {
       throw new AiException(
-        'thread.key must not be empty',
-        AiExceptionCode.INVALID_AGENT_INPUT,
+        'The conversation is waiting on an earlier run; send the next message once it has finished',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
     }
+  }
 
-    const thread = input.thread ?? null;
-
-    if (isDefined(thread) && !isDefined(callerApplication)) {
-      throw new AiException(
-        'Continuing a conversation requires an application access token',
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
-
-    if (
-      isDefined(thread) &&
-      messages.some((message) => message.role !== 'user')
-    ) {
-      throw new AiException(
-        'A conversation already holds its replies, so only user messages can be sent to it',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
-
-    const agent = await this.agentRepository.findOne(workspace.id, {
-      where: {
-        universalIdentifier: input.agentUniversalIdentifier,
-      },
-    });
-
-    if (!agent) {
-      throw new NotFoundException(
-        `Agent ${input.agentUniversalIdentifier} not found`,
-      );
-    }
-
-    if (
-      isDefined(callerApplication) &&
-      agent.applicationId !== callerApplication.id
-    ) {
-      throw new AiException(
-        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
-
-    const application = await this.applicationLookupService.findById({
-      id: agent.applicationId,
-      workspaceId: workspace.id,
-    });
-
-    if (!application) {
-      throw new NotFoundException(
-        `Application ${agent.applicationId} not found for agent ${input.agentUniversalIdentifier}`,
-      );
-    }
-
-    const runAsContext = await this.resolveRunAsContext({
-      runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
-      callerApplication,
-      requestUserWorkspaceId,
-      requestWorkspaceMemberId,
-      workspaceId: workspace.id,
-      application,
-    });
-
-    const threadId = isDefined(thread)
-      ? buildAgentRunThreadId({
-          applicationId: application.id,
-          agentId: agent.id,
-          threadKey: thread.key,
-        })
-      : randomUUID();
-
-    const caller: AgentApiRunCaller = {
-      type: 'AGENT_API_RUN',
-      ref: {
-        agentId: agent.id,
-        runAsWorkspaceMemberId: input.runAsWorkspaceMemberId ?? null,
-        requestUserWorkspaceId,
-        createdBy:
-          runAsContext?.actorContext ??
-          this.buildRunCreator({ callerApplication, application }),
-      },
-    };
-
+  // A call the caller posted itself, such as a workflow step asking for approval: there is no
+  // agent to continue, so the answer goes straight back to the caller. Posting again is a no-op
+  async awaitCallerCall({
+    workspaceId,
+    threadId,
+    caller,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    caller: AgentRunCaller;
+  }): Promise<void> {
     try {
-      const { outcome } = await this.agentRunnerService.run({
-        workspaceId: workspace.id,
-        conversation: { threadId, isCreated: !isDefined(thread) },
-        caller,
-        spec: {
-          agentId: agent.id,
-          title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
-          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-          // kept with the run rather than in its messages, so a run that waits still has them when it goes on
-          instructions: input.additionalInstructions ?? null,
-          // the call returns before anyone could answer, so the run can wait but not ask
-          capabilities: {
-            canAskHumans: false,
-          },
-          toolLoadingStrategy: 'lazy',
-        },
-        agent,
-        prompt: {
-          messages,
-          // a member calling without runAs still sent the input, while an app's call has no member behind it
-          senderUserWorkspaceId:
-            runAsContext?.authContext.userWorkspaceId ??
-            (isDefined(callerApplication) ? null : requestUserWorkspaceId),
-          senderApplicationId: callerApplication?.id ?? null,
-        },
-        executionContext: await this.buildExecutionContext({
-          workspaceId: workspace.id,
-          caller,
-        }),
-      });
-
-      return {
-        result: outcome.status === 'COMPLETED' ? outcome.result : null,
-        error: outcome.status === 'FAILED' ? outcome.error : null,
-        success: outcome.status !== 'FAILED',
-        isWaiting: outcome.status === 'SUSPENDED',
+      await this.suspend({
+        workspaceId,
         threadId,
-      };
+        caller,
+        runSpec: null,
+        summary: null,
+      });
     } catch (error) {
-      if (
-        error instanceof AiException &&
-        (error.code === AiExceptionCode.INVALID_AGENT_INPUT ||
-          error.code === AiExceptionCode.THREAD_AWAITING_ANSWER)
-      ) {
+      if (!isUniqueViolationError(error)) {
         throw error;
       }
 
-      this.logger.error(
-        `Agent execution failed for ${input.agentUniversalIdentifier}`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      return {
-        result: null,
-        error: 'Agent execution failed.',
-        success: false,
-        isWaiting: false,
-        threadId,
-      };
-    }
-  }
-
-  // The member a run acts as is looked up again, so a waiting run goes on with their current role
-  async buildExecutionContext({
-    workspaceId,
-    caller: { ref },
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<AgentRunExecutionContext> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: ref.agentId },
-    });
-    const agentContext = isDefined(agent)
-      ? await this.agentActorContextService.buildApplicationAgentContext({
-          workspaceId,
-          agent,
-        })
-      : null;
-
-    if (!isDefined(agentContext)) {
-      throw new AiException(
-        `Agent ${ref.agentId} or its application no longer exists`,
-        AiExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-
-    const runAsContext = isDefined(ref.runAsWorkspaceMemberId)
-      ? await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-          workspaceMemberId: ref.runAsWorkspaceMemberId,
-          workspaceId,
-          viaApplication: agentContext.application,
-        })
-      : undefined;
-
-    return {
-      authContext: runAsContext?.authContext ?? agentContext.authContext,
-      actorContext: runAsContext?.actorContext,
-      turnCreatedBy: ref.createdBy,
-      userWorkspaceId:
-        runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: agentContext.agentRoleId,
-        runAsRoleId: runAsContext?.roleId,
-      }),
-      runAsRoleId: runAsContext?.roleId,
-      conversationActor: isDefined(runAsContext)
-        ? {
-            type: 'user',
-            userWorkspaceId: runAsContext.authContext.userWorkspaceId,
-          }
-        : { type: 'application', applicationId: agentContext.application.id },
-      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-    };
-  }
-
-  async getWaitingState({
-    workspaceId,
-    caller,
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<AgentRunCallerWaitingState> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: caller.ref.agentId },
-      select: ['id'],
-    });
-
-    if (!isDefined(agent)) {
-      return 'GONE';
-    }
-
-    if (!isDefined(caller.ref.runAsWorkspaceMemberId)) {
-      return 'WAITING';
-    }
-
-    // a run acting as a member who left can never continue, so it must release its thread
-    try {
-      await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-        workspaceMemberId: caller.ref.runAsWorkspaceMemberId,
+      const existingRun = await this.findSuspended({
         workspaceId,
+        where: { threadId },
       });
 
-      return 'WAITING';
-    } catch (error) {
-      if (
-        error instanceof AiException &&
-        error.code === AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND
-      ) {
-        return 'GONE';
+      // jsonb stores keys in its own order, so the stored caller is compared by value
+      if (!isEqual(existingRun?.caller, caller)) {
+        throw new AiException(
+          'The conversation is waiting on another run',
+          AiExceptionCode.THREAD_AWAITING_ANSWER,
+        );
       }
-
-      throw error;
     }
   }
 
-  private buildRunCreator({
-    callerApplication,
-    application,
-  }: {
-    callerApplication?: FlatApplication;
-    application: FlatApplication;
-  }): ActorMetadata {
-    if (isDefined(callerApplication)) {
-      return buildCreatedByFromApplication({ application: callerApplication });
-    }
-
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
-
-    return isDefined(requestAuthContext)
-      ? buildActorMetadataFromAuthContext(requestAuthContext)
-      : buildCreatedByFromApplication({ application });
-  }
-
-  private async resolveRunAsContext({
-    runAsWorkspaceMemberId,
-    callerApplication,
-    requestUserWorkspaceId,
-    requestWorkspaceMemberId,
+  async scheduleContinuation({
     workspaceId,
-    application,
+    run,
   }: {
-    runAsWorkspaceMemberId?: string;
-    callerApplication?: FlatApplication;
-    requestUserWorkspaceId: string | null;
-    requestWorkspaceMemberId: string | null;
     workspaceId: string;
-    application: FlatApplication;
-  }): Promise<RunAsWorkspaceMemberContext | undefined> {
-    if (!isDefined(runAsWorkspaceMemberId)) {
-      return undefined;
+    run: Pick<AgentRunEntity, 'id' | 'resumeCount'>;
+  }): Promise<void> {
+    await this.messageQueueService.add<ContinueAgentRunJobData>(
+      CONTINUE_AGENT_RUN_JOB_NAME,
+      {
+        workspaceId,
+        runId: run.id,
+        resumeCount: run.resumeCount,
+      },
+    );
+  }
+
+  // The caller marks its call before it suspends the run, so a call without one is not ready yet
+  async findWaitingRun({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<
+    | { status: 'NOT_READY' }
+    | { status: 'WAITING' | 'GONE'; run: AgentRunEntity }
+  > {
+    const run = await this.findSuspended({ workspaceId, where: { threadId } });
+
+    if (!isDefined(run)) {
+      return { status: 'NOT_READY' };
     }
 
-    if (!isDefined(callerApplication)) {
-      throw new AiException(
-        'Running an agent as a workspace member requires an application access token',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
-      );
+    const status = await this.callerHandlerRegistry
+      .getHandlerOrThrow(run.caller.type)
+      .getWaitingState({ workspaceId, caller: run.caller });
+
+    return status === 'NOT_READY' ? { status } : { status, run };
+  }
+
+  // The last answer continues the agent, or is itself the outcome of the call the caller proposed
+  async deliverAnswer({
+    workspaceId,
+    run,
+    toolResult,
+  }: {
+    workspaceId: string;
+    run: AgentRunEntity;
+    toolResult: Record<string, unknown>;
+  }): Promise<void> {
+    if (isDefined(run.runSpec)) {
+      await this.scheduleContinuation({ workspaceId, run });
+
+      return;
     }
+
+    const answer = readProposedToolCallAnswer(toolResult);
+
+    await this.settle({
+      workspaceId,
+      run,
+      outcome: isDefined(answer)
+        ? {
+            status: 'COMPLETED',
+            result: { threadId: run.threadId, ...answer },
+          }
+        : {
+            status: 'FAILED',
+            error: 'The answer to the proposed call could not be read',
+          },
+    });
+  }
+
+  // kept on the run, so whoever started it can read how it ended
+  async recordOutcome({
+    workspaceId,
+    runId,
+    outcome,
+    summary,
+  }: {
+    workspaceId: string;
+    runId: string;
+    outcome: AgentRunCallerOutcome;
+    summary: AgentRunSummary | null;
+  }): Promise<void> {
+    await this.runRepository.update(workspaceId, { id: runId }, {
+      status: outcome.status,
+      outcome:
+        outcome.status === 'COMPLETED'
+          ? { result: outcome.result }
+          : { error: outcome.error },
+      summary,
+    } as QueryDeepPartialEntity<AgentRunEntity>);
+  }
+
+  // A run that ended, or could not go on, leaves nothing to wait on, and its caller gets the outcome
+  async settle({
+    workspaceId,
+    run,
+    outcome,
+    summary = run.summary,
+  }: {
+    workspaceId: string;
+    run: AgentRunEntity;
+    outcome: AgentRunCallerOutcome;
+    summary?: AgentRunSummary | null;
+  }): Promise<void> {
+    await this.pendingWakeUpService.cancel({
+      workspaceId,
+      owner: { type: 'AGENT_RUN', id: run.id },
+    });
+    await this.recordOutcome({ workspaceId, runId: run.id, outcome, summary });
+    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+
+    await this.callerHandlerRegistry
+      .getHandlerOrThrow(run.caller.type)
+      .onOutcome?.({
+        workspaceId,
+        caller: run.caller,
+        threadId: run.threadId,
+        outcome,
+        summary,
+      });
+  }
+
+  // A caller that stops waiting drops its suspended runs, such as every step of a run that ended
+  async releaseForCaller({
+    workspaceId,
+    caller,
+  }: {
+    workspaceId: string;
+    caller: {
+      type: AgentRunCaller['type'];
+      ref: Partial<AgentRunCaller['ref']>;
+    };
+  }): Promise<void> {
+    const runs = await this.runRepository.find(workspaceId, {
+      where: {
+        status: 'SUSPENDED',
+        caller: Raw((alias) => `${alias} @> :callerFilter::jsonb`, {
+          callerFilter: JSON.stringify(caller),
+        }),
+      },
+    });
+
+    for (const run of runs) {
+      await this.release({ workspaceId, run });
+    }
+  }
+
+  // The calls the run waits on are closed too, so they no longer look waiting
+  async release({
+    workspaceId,
+    run,
+  }: {
+    workspaceId: string;
+    run: Pick<AgentRunEntity, 'id' | 'threadId'>;
+  }): Promise<void> {
+    await this.pendingWakeUpService.cancel({
+      workspaceId,
+      owner: { type: 'AGENT_RUN', id: run.id },
+    });
+    await this.runRepository.update(
+      workspaceId,
+      { id: run.id },
+      { status: 'CANCELLED' },
+    );
+    await this.closeAwaitedCalls({ workspaceId, threadId: run.threadId });
+  }
+
+  // An answer holding the conversation's claim closes its calls itself once it finds its caller gone,
+  // and a question the member asked of their own in the conversation stays open
+  async closeAwaitedCalls({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
+    await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
+         FROM ${table('agentMessage')} message
+         WHERE message.id = part."messageId" AND message."threadId" = $1
+           AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
+        [
+          threadId,
+          JSON.stringify(buildWaitOutcomeToolOutput({ type: 'CANCELLED' })),
+          AGENT_WAIT_TOOL_NAMES,
+        ],
+      ),
+    );
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: {
+        id: threadId,
+        pendingQuestionMessageId: Not(IsNull()),
+        activeStreamId: IsNull(),
+      },
+      select: ['id', 'pendingQuestionMessageId'],
+    });
+    const pendingQuestionMessageId = thread?.pendingQuestionMessageId;
+
+    if (!isDefined(pendingQuestionMessageId)) {
+      return;
+    }
+
+    const pendingParts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId: pendingQuestionMessageId },
+      select: ['toolOutput'],
+    });
 
     if (
-      isDefined(requestUserWorkspaceId) &&
-      requestWorkspaceMemberId !== runAsWorkspaceMemberId
+      !pendingParts.some((part) => isToolOutputAwaitedByCaller(part.toolOutput))
     ) {
-      throw new AiException(
-        'An application token issued for a user can only run an agent as that user',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
-      );
+      return;
     }
 
-    return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-      workspaceMemberId: runAsWorkspaceMemberId,
+    await this.threadLifecycleService.closePendingQuestion({
       workspaceId,
-      viaApplication: application,
+      threadId,
+      messageId: pendingQuestionMessageId,
+      activeStreamId: null,
+      turnStatus: AgentTurnStatus.CANCELLED,
     });
   }
 }

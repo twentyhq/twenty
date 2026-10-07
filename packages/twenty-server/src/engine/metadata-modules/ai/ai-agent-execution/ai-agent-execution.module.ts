@@ -10,7 +10,7 @@ import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pen
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
+import { AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
 import { ContinueAgentRunJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/continue-agent-run.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
@@ -22,8 +22,8 @@ import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-module
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { RunAgentApiService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-api.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
@@ -55,7 +55,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ToolProviderModule,
     TypeOrmModule.forFeature([
       AgentEntity,
-      AgentRunSuspensionEntity,
+      AgentRunEntity,
       FileEntity,
       WorkspaceEntity,
     ]),
@@ -66,18 +66,18 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
-    AgentRunSuspensionService,
+    AgentRunService,
     AgentMessagePartResolver,
     AgentMessageResolver,
     AgentRunResolver,
-    AgentRunService,
     AgentRunnerService,
     // continues suspended runs once answered or woken up, on the server and the worker alike
     AgentRunPendingWakeUpHandlerService,
     ContinueAgentRunJob,
+    RunAgentApiService,
     RunAgentAttachmentService,
     provideWorkspaceScopedRepository(AgentEntity),
-    provideWorkspaceScopedRepository(AgentRunSuspensionEntity),
+    provideWorkspaceScopedRepository(AgentRunEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
@@ -85,7 +85,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
-    AgentRunSuspensionService,
+    AgentRunService,
     AgentRunnerService,
   ],
 })

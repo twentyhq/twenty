@@ -27,18 +27,18 @@ const buildService = ({ isCreated = true } = {}) => {
       }),
     ),
   };
-  const agentRunSuspensionService = {
+  const agentRunService = {
     findOne: jest.fn().mockResolvedValue(null),
   };
 
   const service = new AgentCallerConversationService(
     agentInboxService as never,
-    agentRunSuspensionService as never,
+    agentRunService as never,
     {} as never,
     {} as never,
   );
 
-  return { service, agentInboxService, agentRunSuspensionService };
+  return { service, agentInboxService, agentRunService };
 };
 
 describe('AgentCallerConversationService', () => {
@@ -171,14 +171,14 @@ describe('AgentCallerConversationService', () => {
     });
 
     it('starts its own conversation while the one its key names holds a suspended run', async () => {
-      const { service, agentInboxService, agentRunSuspensionService } =
+      const { service, agentInboxService, agentRunService } =
         buildService();
 
       agentInboxService.openThread.mockResolvedValueOnce({
         thread: { id: 'suspended-thread-id' },
         isCreated: false,
       });
-      agentRunSuspensionService.findOne.mockImplementation(
+      agentRunService.findOne.mockImplementation(
         async ({ where }: { where: { threadId: string } }) =>
           where.threadId === 'suspended-thread-id'
             ? { id: 'suspension-id' }

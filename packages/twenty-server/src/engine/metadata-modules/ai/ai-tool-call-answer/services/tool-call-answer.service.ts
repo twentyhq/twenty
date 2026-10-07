@@ -33,8 +33,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { type AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -67,7 +67,7 @@ export class ToolCallAnswerService {
     private readonly threadService: AgentChatThreadService,
     private readonly actorService: AgentChatActorService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
     private readonly permissionsService: PermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly agentActorContextService: AgentActorContextService,
@@ -153,7 +153,7 @@ export class ToolCallAnswerService {
       );
     }
 
-    let awaitingSuspension: AgentRunSuspensionEntity | null = null;
+    let awaitingRun: AgentRunEntity | null = null;
     let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
@@ -172,7 +172,7 @@ export class ToolCallAnswerService {
 
       if (isAwaitedByCaller) {
         const waitingState =
-          await this.agentRunSuspensionService.findWaitingSuspension({
+          await this.agentRunService.findWaitingRun({
             workspaceId,
             threadId,
           });
@@ -188,7 +188,7 @@ export class ToolCallAnswerService {
         }
 
         if (waitingState.status === 'GONE') {
-          // the run waiting on the call was dropped, as when its suspension is released
+          // the run waiting on the call was dropped, as when it is released
           await this.threadLifecycleService.closePendingQuestion({
             workspaceId,
             threadId,
@@ -197,15 +197,15 @@ export class ToolCallAnswerService {
             turnStatus: AgentTurnStatus.CANCELLED,
           });
 
-          await this.agentRunSuspensionService.release({
+          await this.agentRunService.release({
             workspaceId,
-            suspension: waitingState.suspension,
+            run: waitingState.run,
           });
 
           throw this.notPending();
         }
 
-        awaitingSuspension = waitingState.suspension;
+        awaitingRun = waitingState.run;
       }
 
       const runningToolResult = pausingToolCall.toRunningToolResult?.(
@@ -270,7 +270,7 @@ export class ToolCallAnswerService {
           threadId,
           workspaceId,
           streamId,
-          awaitingSuspension,
+          awaitingRun,
           error,
         });
       } else {
@@ -326,10 +326,10 @@ export class ToolCallAnswerService {
           streamId,
         });
 
-        if (isLastAnswer && isDefined(awaitingSuspension)) {
-          await this.agentRunSuspensionService.deliverAnswer({
+        if (isLastAnswer && isDefined(awaitingRun)) {
+          await this.agentRunService.deliverAnswer({
             workspaceId,
-            suspension: awaitingSuspension,
+            run: awaitingRun,
             toolResult,
           });
         }
@@ -354,7 +354,7 @@ export class ToolCallAnswerService {
         threadId,
         workspaceId,
         streamId,
-        awaitingSuspension,
+        awaitingRun,
         error,
       });
 
@@ -366,16 +366,16 @@ export class ToolCallAnswerService {
     threadId,
     workspaceId,
     streamId,
-    awaitingSuspension,
+    awaitingRun,
     error,
   }: {
     threadId: string;
     workspaceId: string;
     streamId: string;
-    awaitingSuspension: AgentRunSuspensionEntity | null;
+    awaitingRun: AgentRunEntity | null;
     error: unknown;
   }): Promise<void> {
-    if (!isDefined(awaitingSuspension)) {
+    if (!isDefined(awaitingRun)) {
       await this.streamRecoveryService.failStream({
         threadId,
         workspaceId,
@@ -391,9 +391,9 @@ export class ToolCallAnswerService {
       workspaceId,
       streamId,
     });
-    await this.agentRunSuspensionService.settle({
+    await this.agentRunService.settle({
       workspaceId,
-      suspension: awaitingSuspension,
+      run: awaitingRun,
       outcome: {
         status: 'FAILED',
         error: 'The run could not resume after its question was answered',

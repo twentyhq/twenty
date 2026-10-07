@@ -10,7 +10,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -40,7 +40,7 @@ export class WorkflowRunWorkspaceService {
     private readonly metricsService: MetricsService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -212,7 +212,7 @@ export class WorkflowRunWorkspaceService {
 
     // An ended run cannot consume answers or agent outcomes, so drop the runs its steps wait on and
     // close the calls they wait on. Best effort: a failure only leaves a call that looks waiting.
-    await this.agentRunSuspensionService
+    await this.agentRunService
       .releaseForCaller({
         workspaceId,
         caller: { type: 'WORKFLOW_STEP', ref: { workflowRunId } },

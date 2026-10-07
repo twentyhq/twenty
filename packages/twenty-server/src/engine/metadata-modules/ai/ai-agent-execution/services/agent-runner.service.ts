@@ -4,16 +4,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
+import { AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
@@ -33,15 +34,16 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
 
 type AgentRunnerResult = {
+  runId: string;
   threadId: string;
   outcome: AgentRunnerOutcome;
   // the run so far, across every segment of a continued run
   summary: AgentRunSummary;
 };
 
-// Runs an agent turn and records it in its conversation. A run that pauses on an answer or a wait
-// is suspended: the engine continues it on its own, through this same runner, and hands the
-// outcome to its caller's handler
+// Runs an agent turn and records it in its conversation and as an agent run. A run that pauses on
+// an answer or a wait is suspended: the engine continues it on its own, through this same runner,
+// and hands the outcome to its caller's handler
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
@@ -50,51 +52,87 @@ export class AgentRunnerService {
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly conversationReaderService: AgentConversationReaderService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
-    @InjectWorkspaceScopedRepository(AgentRunSuspensionEntity)
-    private readonly suspensionRepository: WorkspaceScopedRepository<AgentRunSuspensionEntity>,
+    @InjectWorkspaceScopedRepository(AgentRunEntity)
+    private readonly runRepository: WorkspaceScopedRepository<AgentRunEntity>,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
-  run(input: AgentRunnerRunInput): Promise<AgentRunnerResult> {
-    return this.runSegment({ input, suspension: null });
+  // The caller gets the outcome back, so it is recorded on the run without the caller's handler
+  async run(input: AgentRunnerRunInput): Promise<AgentRunnerResult> {
+    const runId = input.runId ?? v4();
+    let result: AgentRunnerResult;
+
+    try {
+      result = await this.runSegment({ input, runId, run: null });
+    } catch (error) {
+      await this.tryRecording(`record the failure of agent run ${runId}`, () =>
+        this.agentRunService.recordOutcome({
+          workspaceId: input.workspaceId,
+          runId,
+          outcome: {
+            status: 'FAILED',
+            error: error instanceof Error ? error.message : String(error),
+          },
+          summary: null,
+        }),
+      );
+
+      throw error;
+    }
+
+    if (result.outcome.status !== 'SUSPENDED') {
+      const { outcome, summary } = result;
+
+      await this.tryRecording(`record the outcome of agent run ${runId}`, () =>
+        this.agentRunService.recordOutcome({
+          workspaceId: input.workspaceId,
+          runId,
+          outcome,
+          summary,
+        }),
+      );
+    }
+
+    return result;
   }
 
   // Picks a suspended run up where it paused, with its answer or wait outcome already in its conversation
   async continue({
     workspaceId,
-    suspensionId,
+    runId,
     resumeCount,
   }: ContinueAgentRunJobData): Promise<void> {
-    const suspension = await this.agentRunSuspensionService.findOne({
+    const run = await this.agentRunService.findSuspended({
       workspaceId,
-      where: { id: suspensionId },
+      where: { id: runId },
     });
 
     if (
-      !isDefined(suspension) ||
-      !isDefined(suspension.runSpec) ||
-      suspension.resumeCount !== resumeCount
+      !isDefined(run) ||
+      !isDefined(run.runSpec) ||
+      run.resumeCount !== resumeCount
     ) {
       return;
     }
 
-    const { caller, runSpec, threadId } = suspension;
+    const { caller, runSpec, threadId } = run;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
     if ((await handler.getWaitingState({ workspaceId, caller })) === 'GONE') {
-      await this.agentRunSuspensionService.release({ workspaceId, suspension });
+      await this.agentRunService.release({ workspaceId, run });
 
       return;
     }
 
-    // each continuation moves the count on, so of two deliveries of one continuation only the first runs
-    const { affected } = await this.suspensionRepository.update(
+    // each continuation moves the count on, so of two deliveries of one continuation only the first
+    // runs. The run stays SUSPENDED while it goes on, so its conversation stays closed to new messages
+    const { affected } = await this.runRepository.update(
       workspaceId,
-      { id: suspensionId, resumeCount },
+      { id: runId, status: 'SUSPENDED', resumeCount },
       { resumeCount: resumeCount + 1 },
     );
 
@@ -131,12 +169,13 @@ export class AgentRunnerService {
             caller,
           }),
         },
-        suspension,
+        runId,
+        run,
       });
     } catch (error) {
-      await this.agentRunSuspensionService.settle({
+      await this.agentRunService.settle({
         workspaceId,
-        suspension,
+        run,
         outcome: {
           status: 'FAILED',
           error: error instanceof Error ? error.message : String(error),
@@ -147,9 +186,9 @@ export class AgentRunnerService {
     }
 
     if (result.outcome.status !== 'SUSPENDED') {
-      await this.agentRunSuspensionService.settle({
+      await this.agentRunService.settle({
         workspaceId,
-        suspension,
+        run,
         outcome: result.outcome,
         summary: result.summary,
       });
@@ -160,29 +199,34 @@ export class AgentRunnerService {
   // written, and a run that suspends would read a member's message once it goes on
   private runSegment({
     input,
-    suspension,
+    runId,
+    run,
   }: {
     input: AgentRunnerRunInput;
-    // the suspension a continued run resumes from
-    suspension: AgentRunSuspensionEntity | null;
+    runId: string;
+    // the suspended run a continued run resumes from
+    run: AgentRunEntity | null;
   }): Promise<AgentRunnerResult> {
     return this.agentRunConversationService.withThreadLock({
       workspaceId: input.workspaceId,
       threadId: input.conversation.threadId,
-      work: () => this.runTurn({ input, suspension }),
+      work: () => this.runTurn({ input, runId, run }),
     });
   }
 
   private async runTurn({
     input,
-    suspension,
+    runId,
+    run,
   }: {
     input: AgentRunnerRunInput;
-    suspension: AgentRunSuspensionEntity | null;
+    runId: string;
+    run: AgentRunEntity | null;
   }): Promise<AgentRunnerResult> {
     const {
       workspaceId,
       conversation: { threadId, isCreated },
+      caller,
       spec,
       agent,
       prompt,
@@ -190,11 +234,21 @@ export class AgentRunnerService {
     } = input;
     const agentId = agent?.id ?? null;
 
-    if (!isCreated && !isDefined(suspension)) {
-      await this.agentRunSuspensionService.assertConversationNotSuspended({
-        workspaceId,
+    if (!isDefined(run)) {
+      if (!isCreated) {
+        await this.agentRunService.assertConversationNotSuspended({
+          workspaceId,
+          threadId,
+        });
+      }
+
+      await this.runRepository.insert(workspaceId, {
+        id: runId,
         threadId,
-      });
+        caller,
+        runSpec: spec,
+        status: 'RUNNING',
+      } as QueryDeepPartialEntity<AgentRunEntity>);
     }
 
     const priorMessages = isCreated
@@ -280,11 +334,12 @@ export class AgentRunnerService {
       : null;
 
     const summary = sumAgentRunSummaries({
-      previousSummary: suspension?.summary ?? null,
+      previousSummary: run?.summary ?? null,
       nextSummary: buildAgentRunSummary({ execution, durationMs }),
     });
 
     return {
+      runId,
       threadId,
       summary,
       outcome: await this.settleTurn({
@@ -292,24 +347,27 @@ export class AgentRunnerService {
         execution,
         closedTurn,
         summary,
-        suspension,
+        runId,
+        run,
       }),
     };
   }
 
   private async settleTurn({
-    input: { workspaceId, conversation, caller, spec },
+    input: { workspaceId, conversation },
     execution,
     closedTurn,
     summary,
-    suspension,
+    runId,
+    run,
   }: {
     input: AgentRunnerRunInput;
     execution: AgentExecutionResult;
     // null when the turn could not be recorded
     closedTurn: { isAwaitingAnswer: boolean } | null;
     summary: AgentRunSummary;
-    suspension: AgentRunSuspensionEntity | null;
+    runId: string;
+    run: AgentRunEntity | null;
   }): Promise<AgentRunnerOutcome> {
     if (!execution.hasNoMoreAvailableCredits && !execution.isPaused) {
       return { status: 'COMPLETED', result: execution.result };
@@ -320,47 +378,33 @@ export class AgentRunnerService {
       execution.steps[execution.steps.length - 1]?.toolResults ?? [],
     );
     const hasPausedTooOften =
-      isDefined(suspension) &&
-      suspension.resumeCount + 1 >= AGENT_RUN_MAX_CONTINUATIONS;
+      isDefined(run) && run.resumeCount + 1 >= AGENT_RUN_MAX_CONTINUATIONS;
 
     // continuing reads the conversation, so a pause it does not hold could never be continued.
     // A failure to suspend only fails the run, like a pause that could not be recorded
-    const suspensionId =
+    const isSuspended =
       !execution.hasNoMoreAvailableCredits &&
       !hasPausedTooOften &&
       isDefined(closedTurn) &&
-      (closedTurn.isAwaitingAnswer || isDefined(wait))
-        ? await this.tryRecording(
-            `suspend the agent run in thread ${threadId}`,
-            async () => {
-              if (!isDefined(suspension)) {
-                return (
-                  await this.agentRunSuspensionService.suspend({
-                    workspaceId,
-                    threadId,
-                    caller,
-                    runSpec: spec,
-                    summary,
-                  })
-                ).id;
-              }
+      (closedTurn.isAwaitingAnswer || isDefined(wait)) &&
+      (await this.tryRecording(
+        `suspend the agent run in thread ${threadId}`,
+        async () => {
+          // a caller that stopped waiting while a continued run went on has released it
+          const { affected } = await this.runRepository.update(
+            workspaceId,
+            { id: runId, status: isDefined(run) ? 'SUSPENDED' : 'RUNNING' },
+            { status: 'SUSPENDED', summary } as QueryDeepPartialEntity<AgentRunEntity>,
+          );
 
-              // a caller that stopped waiting while the run went on has released it
-              const { affected } = await this.suspensionRepository.update(
-                workspaceId,
-                { id: suspension.id },
-                { summary } as QueryDeepPartialEntity<AgentRunSuspensionEntity>,
-              );
+          return affected !== 0;
+        },
+      )) === true;
 
-              return affected === 0 ? null : suspension.id;
-            },
-          )
-        : null;
-
-    if (!isDefined(suspensionId)) {
+    if (!isSuspended) {
       // a pause the run could not keep leaves nothing to answer
-      if (!isDefined(suspension)) {
-        await this.agentRunSuspensionService.closeAwaitedCalls({
+      if (!isDefined(run)) {
+        await this.agentRunService.closeAwaitedCalls({
           workspaceId,
           threadId,
         });
@@ -397,12 +441,12 @@ export class AgentRunnerService {
     if (isDefined(wait)) {
       await this.pendingWakeUpService.arm({
         workspaceId,
-        owner: { type: 'AGENT_RUN', id: suspensionId, key: wait.toolCallId },
+        owner: { type: 'AGENT_RUN', id: runId, key: wait.toolCallId },
         condition: wait.condition,
       });
     }
 
-    return { status: 'SUSPENDED', suspensionId };
+    return { status: 'SUSPENDED' };
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

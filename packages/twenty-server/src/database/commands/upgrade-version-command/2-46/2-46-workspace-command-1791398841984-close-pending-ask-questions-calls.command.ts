@@ -141,8 +141,9 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
         const suspensions: { id: string; resumeCount: number }[] =
           await manager.query(
             `SELECT suspension.id, suspension."resumeCount"
-             FROM "core"."agentRunSuspension" suspension
+             FROM "core"."agentRun" suspension
              WHERE suspension."workspaceId" = $1
+               AND suspension."status" = 'SUSPENDED'
                AND suspension."runSpec" IS NOT NULL
                AND EXISTS (
                  SELECT 1
@@ -175,7 +176,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
         CONTINUE_AGENT_RUN_JOB_NAME,
         {
           workspaceId,
-          suspensionId: suspension.id,
+          runId: suspension.id,
           resumeCount: suspension.resumeCount,
         },
       );

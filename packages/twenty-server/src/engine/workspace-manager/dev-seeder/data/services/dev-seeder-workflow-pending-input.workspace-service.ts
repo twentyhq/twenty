@@ -12,7 +12,7 @@ import {
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import {
   AiException,
   AiExceptionCode,
@@ -173,7 +173,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunConversationService: AgentRunConversationService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -287,7 +287,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
           });
 
-          await this.agentRunSuspensionService.suspend({
+          await this.agentRunService.suspend({
             workspaceId,
             threadId,
             caller: buildWorkflowStepCaller({

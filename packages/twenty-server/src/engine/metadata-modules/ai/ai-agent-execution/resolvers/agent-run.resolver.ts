@@ -1,9 +1,10 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
@@ -14,9 +15,10 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AgentRunStateDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-run-state.dto';
 import { RunAgentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent.input';
 import { RunAgentResultDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-result.dto';
-import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { RunAgentApiService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-api.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
@@ -45,7 +47,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 // empty assistant turns the Slack app replays, so those callers go first.
 @MetadataResolver()
 export class AgentRunResolver {
-  constructor(private readonly agentRunService: AgentRunService) {}
+  constructor(private readonly runAgentApiService: RunAgentApiService) {}
 
   @Mutation(() => RunAgentResultDTO)
   async runAgent(
@@ -58,12 +60,26 @@ export class AgentRunResolver {
     @AuthWorkspaceMemberId()
     workspaceMemberId: string | undefined,
   ): Promise<RunAgentResultDTO> {
-    return this.agentRunService.run({
+    return this.runAgentApiService.run({
       workspace,
       requestUserWorkspaceId: userWorkspaceId ?? null,
       requestWorkspaceMemberId: workspaceMemberId ?? null,
       callerApplication,
       input,
+    });
+  }
+
+  @Query(() => AgentRunStateDTO)
+  async agentRun(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
+  ): Promise<AgentRunStateDTO> {
+    return this.runAgentApiService.findRun({
+      workspaceId: workspace.id,
+      runId: id,
+      callerApplication,
     });
   }
 }

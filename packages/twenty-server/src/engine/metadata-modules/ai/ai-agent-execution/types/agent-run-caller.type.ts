@@ -1,6 +1,6 @@
 import { type ActorMetadata } from 'twenty-shared/types';
 
-// who started a run and waits on its outcome; stored with a suspended run, so the engine
+// who started a run and waits on its outcome; stored with its run, so the engine
 // can call it back without knowing what the ref means
 export type AgentRunCaller =
   | {

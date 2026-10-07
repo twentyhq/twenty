@@ -12,7 +12,7 @@ import { findMissingRequiredToolArguments } from 'src/engine/metadata-modules/ai
 import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-conversation.type';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
@@ -39,7 +39,7 @@ type AgentCallerAwaitedToolCall = {
 export class AgentCallerConversationService {
   constructor(
     private readonly agentInboxService: AgentInboxService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
@@ -111,7 +111,7 @@ export class AgentCallerConversationService {
       isDefined(keyedConversation.thread.deletedAt) ||
       isDefined(keyedConversation.thread.pendingQuestionMessageId) ||
       isDefined(
-        await this.agentRunSuspensionService.findOne({
+        await this.agentRunService.findSuspended({
           workspaceId,
           where: { threadId: keyedConversation.thread.id },
         }),
@@ -196,7 +196,7 @@ export class AgentCallerConversationService {
       }
 
       if (status === 'pending' || status === 'running') {
-        await this.agentRunSuspensionService.awaitCallerCall({
+        await this.agentRunService.awaitCallerCall({
           workspaceId,
           threadId,
           caller: awaitedToolCall.caller,

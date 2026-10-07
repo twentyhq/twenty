@@ -11,7 +11,7 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
       threadId: 'thread-id',
     } as Record<string, unknown>,
   } = {}) => {
-    const agentRunSuspensionService = {
+    const agentRunService = {
       releaseForCaller: jest.fn().mockResolvedValue(undefined),
     };
 
@@ -21,7 +21,7 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
       { incrementCounterForEvent: jest.fn() } as never,
       {} as never,
       { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
-      agentRunSuspensionService as never,
+      agentRunService as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -61,7 +61,7 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
       service,
       step,
       workflowRun,
-      agentRunSuspensionService,
+      agentRunService,
       updateWorkflowRun,
     };
   };
@@ -102,11 +102,11 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
       });
 
     it('drops the runs its steps wait on and closes the calls they wait on', async () => {
-      const { service, agentRunSuspensionService } = buildService();
+      const { service, agentRunService } = buildService();
 
       await endRun(service);
 
-      expect(agentRunSuspensionService.releaseForCaller).toHaveBeenCalledWith({
+      expect(agentRunService.releaseForCaller).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         caller: {
           type: 'WORKFLOW_STEP',
@@ -116,10 +116,10 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {
-      const { service, agentRunSuspensionService, updateWorkflowRun } =
+      const { service, agentRunService, updateWorkflowRun } =
         buildService();
 
-      agentRunSuspensionService.releaseForCaller.mockRejectedValue(
+      agentRunService.releaseForCaller.mockRejectedValue(
         new Error('db down'),
       );
 

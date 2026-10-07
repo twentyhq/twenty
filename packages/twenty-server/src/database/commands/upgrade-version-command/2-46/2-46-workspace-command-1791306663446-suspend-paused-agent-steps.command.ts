@@ -125,9 +125,9 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
 
         for (const pausedStep of suspendedSteps) {
           await manager.query(
-            `INSERT INTO "core"."agentRunSuspension" ("workspaceId", "threadId", "caller", "runSpec", "summary")
-             VALUES ($1, $2, $3, $4, $5)
-             ON CONFLICT ("threadId") DO NOTHING`,
+            `INSERT INTO "core"."agentRun" ("workspaceId", "threadId", "caller", "runSpec", "status", "summary")
+             VALUES ($1, $2, $3, $4, 'SUSPENDED', $5)
+             ON CONFLICT ("threadId") WHERE "status" = 'SUSPENDED' DO NOTHING`,
             [
               workspaceId,
               pausedStep.threadId,

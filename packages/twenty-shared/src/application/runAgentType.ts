@@ -38,11 +38,27 @@ export type RunAgentInput = {
     }
 );
 
+export type AgentRunStatus =
+  | 'RUNNING'
+  | 'SUSPENDED'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED';
+
 export type RunAgentResult = {
+  runId: string;
+  threadId: string;
+  // SUSPENDED: the agent paused on a wait and goes on by itself; getAgentRun reads its outcome later
+  status: Extract<AgentRunStatus, 'COMPLETED' | 'SUSPENDED' | 'FAILED'>;
   result: object | null;
   error: string | null;
   success: boolean;
-  // the agent paused on a wait and goes on by itself; its reply lands in the thread
-  isWaiting: boolean;
-  threadId: string | null;
+};
+
+export type AgentRunState = {
+  id: string;
+  threadId: string;
+  status: AgentRunStatus;
+  result: object | null;
+  error: string | null;
 };

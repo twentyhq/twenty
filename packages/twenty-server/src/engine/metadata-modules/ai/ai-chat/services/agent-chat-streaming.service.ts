@@ -32,7 +32,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -96,7 +96,7 @@ export class AgentChatStreamingService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly turnRecorderService: AgentTurnRecorderService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunService: AgentRunService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
@@ -655,7 +655,7 @@ export class AgentChatStreamingService {
     }
 
     // a run waiting on an event or a duration asks nothing, yet reads the conversation when it goes on
-    await this.agentRunSuspensionService.assertConversationNotSuspended({
+    await this.agentRunService.assertConversationNotSuspended({
       workspaceId,
       threadId: thread.id,
     });
