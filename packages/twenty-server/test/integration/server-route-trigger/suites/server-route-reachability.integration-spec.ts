@@ -16,6 +16,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const APP_UNIVERSAL_IDENTIFIER = '6e9c3a4b-1d5f-4c0a-8b4e-5f7a9b1c3d4e';
 const ROLE_UNIVERSAL_IDENTIFIER = '7f0d4b5c-2e6a-4d1b-9c5f-6a8b0c2d4e5f';
 const RESOLVER_UNIVERSAL_IDENTIFIER = '8a1e5c6d-3f7b-4e2c-8d6a-7b9c1d3e5f6a';
+const NEWER_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '9b2f6d7e-4a8c-4f3d-9e7b-8c0d2e4f6a7b';
 
 const buildResolverManifest = (): LogicFunctionManifest => ({
   universalIdentifier: RESOLVER_UNIVERSAL_IDENTIFIER,
@@ -92,6 +94,20 @@ describe('ServerRouteReachabilityService (integration)', () => {
     });
 
     expect(await findUnreachableRegistration()).toBeUndefined();
+  });
+
+  it('reports the workspaces relying on a route the owner workspace does not serve', async () => {
+    await seedApplicationInstallInForeignWorkspace({
+      applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      resolverUniversalIdentifier: NEWER_RESOLVER_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(await findUnreachableRegistration()).toEqual(
+      expect.objectContaining({
+        applicationRegistrationId,
+        unreachableWorkspaceCount: 1,
+      }),
+    );
   });
 
   it('reports the installed workspaces once ownership moves to a workspace without the application', async () => {

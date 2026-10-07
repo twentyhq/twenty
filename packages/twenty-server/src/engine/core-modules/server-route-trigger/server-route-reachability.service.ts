@@ -12,8 +12,8 @@ export class ServerRouteReachabilityService {
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
-  // Server routes only resolve through the owner workspace's resolver, so any
-  // workspace with a server route installed is unreachable without it
+  // A server route only resolves through the owner workspace's copy of the same
+  // resolver, so a route installed anywhere is unreachable when the owner lacks it
   async findUnreachableServerRouteRegistrations(): Promise<
     UnreachableServerRouteRegistration[]
   > {
@@ -50,6 +50,9 @@ export class ServerRouteReachabilityService {
           )
           .andWhere(
             'ownerResolver.workspaceId = applicationRegistration.ownerWorkspaceId',
+          )
+          .andWhere(
+            'ownerResolver.universalIdentifier = logicFunction.universalIdentifier',
           )
           .andWhere('ownerResolver.serverRouteTriggerSettings IS NOT NULL')
           .andWhere('ownerResolver.deletedAt IS NULL')
