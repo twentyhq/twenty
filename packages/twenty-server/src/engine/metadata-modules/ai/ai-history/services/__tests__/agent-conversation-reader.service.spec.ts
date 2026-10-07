@@ -63,6 +63,7 @@ const buildService = (messages: unknown[], failedTurnIds: string[] = []) => {
     messageRepository as never,
     turnRepository as never,
     fileUrlService as never,
+    {} as never,
   );
 
   return { service, messageRepository, fileUrlService };
@@ -247,5 +248,76 @@ describe('AgentConversationReaderService', () => {
 
     expect(getPartTypes(messages[0])).toEqual(['text']);
     expect(fileUrlService.signFileByIdUrl).not.toHaveBeenCalled();
+  });
+});
+
+describe('AgentConversationReaderService.findToolPart', () => {
+  const buildToolPartService = ({
+    parts,
+    threadMessageId,
+  }: {
+    parts: { id: string; messageId: string }[];
+    threadMessageId: string | null;
+  }) => {
+    const messagePartRepository = { find: jest.fn().mockResolvedValue(parts) };
+    const messageRepository = {
+      findOne: jest
+        .fn()
+        .mockResolvedValue(
+          threadMessageId === null ? null : { id: threadMessageId },
+        ),
+    };
+
+    return new AgentConversationReaderService(
+      messageRepository as never,
+      {} as never,
+      {} as never,
+      messagePartRepository as never,
+    );
+  };
+
+  it('returns the part of the call made in the given thread', async () => {
+    const service = buildToolPartService({
+      parts: [
+        { id: 'other-thread-part', messageId: 'other-thread-message' },
+        { id: 'thread-part', messageId: 'thread-message' },
+      ],
+      threadMessageId: 'thread-message',
+    });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part?.id).toBe('thread-part');
+  });
+
+  it('returns null when the call was made in another thread only', async () => {
+    const service = buildToolPartService({
+      parts: [{ id: 'other-thread-part', messageId: 'other-thread-message' }],
+      threadMessageId: null,
+    });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part).toBeNull();
+  });
+
+  it('returns null when no part carries the call', async () => {
+    const service = buildToolPartService({ parts: [], threadMessageId: null });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part).toBeNull();
   });
 });

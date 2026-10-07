@@ -24,6 +24,7 @@ import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -70,6 +71,7 @@ export class ToolCallAnswerService {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
+    private readonly conversationReaderService: AgentConversationReaderService,
   ) {}
 
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
@@ -81,7 +83,11 @@ export class ToolCallAnswerService {
         where: { id: threadId },
         select: ['id', 'activeStreamId', 'pendingQuestionMessageId'],
       }),
-      this.agentChatService.findToolPart({ threadId, toolCallId, workspaceId }),
+      this.conversationReaderService.findToolPart({
+        threadId,
+        toolCallId,
+        workspaceId,
+      }),
     ]);
     const pausingToolCall = parsePausingToolCall(toolPart);
 
