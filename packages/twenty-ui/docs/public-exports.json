@@ -778,6 +778,7 @@
       "AutocompleteRootProps": "primitives/input/Autocomplete/types/AutocompleteRootProps",
       "ButtonColor": "primitives/input/Button/types/ButtonColor",
       "ButtonGroupProps": "primitives/input/ButtonGroup/types/ButtonGroupProps",
+      "ButtonLoadingPosition": "primitives/input/Button/types/ButtonLoadingPosition",
       "ButtonProps": "primitives/input/Button/types/ButtonProps",
       "ButtonSize": "primitives/input/Button/types/ButtonSize",
       "ButtonVariant": "primitives/input/Button/types/ButtonVariant",
