@@ -1164,13 +1164,6 @@
         "description": "Semantic color of the button."
       },
       {
-        "name": "displayChildrenWhenLoading",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keeps the label and start icon visible while loading and shows the loading indicator in place of the end icon."
-      },
-      {
         "name": "elevated",
         "type": "boolean",
         "required": false,
@@ -1204,13 +1197,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Shows a loading indicator and disables activation while preserving the button width."
-      },
-      {
-        "name": "progress",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Percentage from 0 to 100 appended to the label while loading. Visible only with `displayChildrenWhenLoading`."
       },
       {
         "name": "render",
@@ -1311,13 +1297,6 @@
         "description": "Semantic color of the button."
       },
       {
-        "name": "displayChildrenWhenLoading",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keeps the label and start icon visible while loading and shows the loading indicator in place of the end icon."
-      },
-      {
         "name": "elevated",
         "type": "boolean",
         "required": false,
@@ -1344,13 +1323,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Shows a loading indicator and disables activation while preserving the button width."
-      },
-      {
-        "name": "progress",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Percentage from 0 to 100 appended to the label while loading. Visible only with `displayChildrenWhenLoading`."
       },
       {
         "name": "render",
@@ -9467,13 +9439,6 @@
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
       },
       {
-        "name": "displayChildrenWhenLoading",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keeps the label and start icon visible while loading and shows the loading indicator in place of the end icon."
-      },
-      {
         "name": "endIcon",
         "type": "ReactNode",
         "required": false,
@@ -9493,13 +9458,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Destination URL. Enables native link semantics instead of button semantics."
-      },
-      {
-        "name": "progress",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Percentage from 0 to 100 appended to the label while loading. Visible only with `displayChildrenWhenLoading`."
       },
       {
         "name": "render",

@@ -41,7 +41,7 @@ export const Button = ({
   const isInlineLoading = loading && displayChildrenWhenLoading;
   const resolvedEndIcon = isInlineLoading ? <Loader /> : endIcon;
   const progressLabel =
-    loading && isDefined(progress)
+    isInlineLoading && isDefined(progress)
       ? formatButtonProgressLabel(progress)
       : undefined;
 

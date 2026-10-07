@@ -7,6 +7,8 @@ export type TabButtonProps = Omit<
   | 'color'
   | 'fullWidth'
   | 'loading'
+  | 'displayChildrenWhenLoading'
+  | 'progress'
   | 'elevated'
   | 'shortcut'
   | 'shortcutJoinLabel'
