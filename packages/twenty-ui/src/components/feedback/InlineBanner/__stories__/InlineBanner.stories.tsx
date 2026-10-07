@@ -6,6 +6,12 @@ import { InlineBanner } from '@ui/components/feedback/InlineBanner/InlineBanner'
 import { IconExternalLink } from '@ui/icon';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
+const NO_AI_MODELS_MESSAGE = 'No AI models are enabled.';
+const MAILBOX_SYNC_LOST_MESSAGE =
+  'Sync lost with mailbox tim@apple.dev. Please reconnect for updates:';
+const CARD_PAYMENT_UNAVAILABLE_MESSAGE =
+  'Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.';
+
 const onAction = fn();
 const onLinkAction = fn((event) => event.preventDefault());
 
@@ -26,7 +32,7 @@ type Story = StoryObj<typeof InlineBanner>;
 export const Default: Story = {
   args: {
     status: 'error',
-    children: 'No AI models are enabled.',
+    children: NO_AI_MODELS_MESSAGE,
     action: (
       <Button size="sm" variant="outline" color="danger" onClick={onAction}>
         {'Configure models'}
@@ -37,18 +43,18 @@ export const Default: Story = {
 
 export const KeyboardAction: Story = {
   args: Default.args,
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
       name: /Configure models/,
     });
 
-    await userEvent.hover(canvas.getByText(args.children as string));
+    await userEvent.hover(canvas.getByText(NO_AI_MODELS_MESSAGE));
     await expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
     await userEvent.tab();
-    await expect(canvas.getByText(args.children as string)).toHaveFocus();
+    await expect(canvas.getByText(NO_AI_MODELS_MESSAGE)).toHaveFocus();
     await expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
@@ -114,7 +120,7 @@ export const DocumentationAction: Story = {
 export const Narrow: Story = {
   args: {
     status: 'error',
-    children: 'No AI models are enabled.',
+    children: NO_AI_MODELS_MESSAGE,
     action: (
       <Button size="sm" variant="outline" color="danger" onClick={onAction}>
         {'Configure models'}
@@ -127,7 +133,7 @@ export const Narrow: Story = {
 export const Embedded: Story = {
   args: {
     status: 'error',
-    children: 'No AI models are enabled.',
+    children: NO_AI_MODELS_MESSAGE,
     action: (
       <Button size="sm" variant="outline" color="danger" onClick={onAction}>
         {'Configure models'}
@@ -140,8 +146,7 @@ export const Embedded: Story = {
 export const TruncatedMessage: Story = {
   args: {
     status: 'info',
-    children:
-      'Sync lost with mailbox tim@apple.dev. Please reconnect for updates:',
+    children: MAILBOX_SYNC_LOST_MESSAGE,
     action: (
       <Button size="sm" variant="outline" color="accent" onClick={onAction}>
         {'Reconnect'}
@@ -149,27 +154,27 @@ export const TruncatedMessage: Story = {
     ),
   },
   parameters: { container: { width: 320 } },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const message = canvas.getByText(args.children as string);
+    const message = canvas.getByText(MAILBOX_SYNC_LOST_MESSAGE);
 
     await expect(message.scrollWidth).toBeGreaterThan(message.clientWidth);
     await expect(getComputedStyle(message).whiteSpace).toBe('nowrap');
     await userEvent.hover(message);
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
-    ).toHaveTextContent(args.children as string);
+    ).toHaveTextContent(MAILBOX_SYNC_LOST_MESSAGE);
     await userEvent.unhover(message);
     await userEvent.tab();
     await expect(message).toHaveFocus();
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
-    ).toHaveTextContent(args.children as string);
+    ).toHaveTextContent(MAILBOX_SYNC_LOST_MESSAGE);
     await userEvent.hover(message);
     await userEvent.unhover(message);
     await expect(
       within(canvasElement.ownerDocument.body).getByRole('tooltip'),
-    ).toHaveTextContent(args.children as string);
+    ).toHaveTextContent(MAILBOX_SYNC_LOST_MESSAGE);
     await userEvent.keyboard('{Escape}');
     await expect(message).toHaveFocus();
     await waitFor(() =>
@@ -184,7 +189,7 @@ export const TruncatedMessage: Story = {
     await userEvent.tab({ shift: true });
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
-    ).toHaveTextContent(args.children as string);
+    ).toHaveTextContent(MAILBOX_SYNC_LOST_MESSAGE);
     await userEvent.tab();
     await waitFor(() =>
       expect(
@@ -195,7 +200,7 @@ export const TruncatedMessage: Story = {
     await expect(message).toHaveFocus();
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
-    ).toHaveTextContent(args.children as string);
+    ).toHaveTextContent(MAILBOX_SYNC_LOST_MESSAGE);
     await userEvent.click(canvas.getByRole('button', { name: /Reconnect/ }));
     await expect(onAction).toHaveBeenCalledTimes(1);
   },
@@ -222,17 +227,16 @@ export const CompactDanger: Story = {
   args: {
     layout: 'compact',
     status: 'error',
-    children:
-      'Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.',
+    children: CARD_PAYMENT_UNAVAILABLE_MESSAGE,
   },
 };
 
 export const WrappingMessage: Story = {
   args: CompactDanger.args,
   parameters: { container: { width: 240 } },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const message = canvas.getByText(args.children as string);
+    const message = canvas.getByText(CARD_PAYMENT_UNAVAILABLE_MESSAGE);
 
     await expect(message.scrollWidth).toBeLessThanOrEqual(message.clientWidth);
     await expect(getComputedStyle(message).whiteSpace).toBe('normal');
