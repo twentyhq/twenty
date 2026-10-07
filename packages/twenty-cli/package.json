@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/twentyhq/twenty/issues"
   },
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "bin": "dist/cli.cjs",
   "files": [
     "dist",
