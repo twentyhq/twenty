@@ -1,17 +1,22 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecords';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -22,13 +27,21 @@ import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import {
+  IconCopy,
+  IconGoogle,
+  IconMail,
+  IconMicrosoft,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
+import channelSetupCoverDark from '~/pages/settings/communications/assets/channel-setup-cover-dark.png';
+import channelSetupCoverLight from '~/pages/settings/communications/assets/channel-setup-cover-light.png';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
@@ -42,6 +55,11 @@ const StyledInputContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledGuideActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledSendingDomainColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,6 +68,8 @@ const StyledSendingDomainColumn = styled.div`
 
 export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const navigateSettings = useNavigateSettings();
   const { messageChannelId } = useParams<{ messageChannelId: string }>();
   const { channels, loading } = useMyMessageChannels();
@@ -163,6 +183,51 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       }
     >
       <SettingsPageContainer>
+        <Section.Root>
+          <SettingsDiscoveryHeroCard
+            lightSrc={channelSetupCoverLight}
+            darkSrc={channelSetupCoverDark}
+            instanceIdPrefix="settings-email-channel-hero"
+            tabs={[]}
+            footer={
+              <SettingsDiscoveryHeroCardFooter
+                Icon={IconMail}
+                title={t`Set up forwarding and DNS`}
+                description={t`Follow the guide for your email provider.`}
+                action={
+                  <StyledGuideActions>
+                    <Button
+                      size="sm"
+                      startIcon={<IconGoogle size={theme.icon.size.md} />}
+                      onClick={() =>
+                        window.open(
+                          getDocumentationUrl({
+                            locale: currentWorkspaceMember?.locale,
+                            path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace',
+                          }),
+                          '_blank',
+                        )
+                      }
+                    >{t`Google Workspace`}</Button>
+                    <Button
+                      size="sm"
+                      startIcon={<IconMicrosoft size={theme.icon.size.md} />}
+                      onClick={() =>
+                        window.open(
+                          getDocumentationUrl({
+                            locale: currentWorkspaceMember?.locale,
+                            path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365',
+                          }),
+                          '_blank',
+                        )
+                      }
+                    >{t`Microsoft 365`}</Button>
+                  </StyledGuideActions>
+                }
+              />
+            }
+          />
+        </Section.Root>
         <Section.Root>
           <Section.Header
             title={t`Shared email`}
