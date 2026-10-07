@@ -195,6 +195,17 @@ const SidePanelRecordCreationForm = ({
 
       setValidationRuleViolations(draftViolations);
 
+      const isAnyViolationOnHiddenField = draftViolations.some((violation) =>
+        hiddenFieldMetadataItems.some(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === violation.fieldMetadataId,
+        ),
+      );
+
+      if (isAnyViolationOnHiddenField) {
+        setRecordCreationFormAreHiddenFieldsShown(true);
+      }
+
       if (draftViolations.length > 0) {
         return;
       }
