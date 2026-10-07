@@ -1,7 +1,8 @@
-import { isString } from '@sniptt/guards';
+import { isBoolean, isString } from '@sniptt/guards';
 
 import { MAX_SERIALIZED_EVENT_TEXT_LENGTH } from '@/host/events/constants/MaxSerializedEventTextLength';
 import { applyPasteClipboardText } from '@/host/events/utils/applyPasteClipboardText';
+import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyInputEventProperties = ({
@@ -11,11 +12,19 @@ export const applyInputEventProperties = ({
   serializedEvent: SerializedEventData;
   domEvent: Record<string, unknown>;
 }): void => {
-  if (isString(domEvent.inputType)) {
-    serializedEvent.inputType = domEvent.inputType;
+  const nativeEvent = resolveNativeHostEvent(domEvent) as Record<
+    string,
+    unknown
+  >;
+
+  if (isBoolean(nativeEvent.isComposing)) {
+    serializedEvent.isComposing = nativeEvent.isComposing;
   }
-  if (isString(domEvent.data)) {
-    serializedEvent.data = domEvent.data.slice(
+  if (isString(nativeEvent.inputType)) {
+    serializedEvent.inputType = nativeEvent.inputType;
+  }
+  if (isString(nativeEvent.data)) {
+    serializedEvent.data = nativeEvent.data.slice(
       0,
       MAX_SERIALIZED_EVENT_TEXT_LENGTH,
     );
