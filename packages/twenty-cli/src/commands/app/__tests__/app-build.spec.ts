@@ -308,6 +308,28 @@ describe('app build and typecheck', () => {
     expect(envelope.error.code).toBe('APP_NOT_FOUND');
   });
 
+  it('builds with a warning when this Node is newer than the SDK declares', async () => {
+    const { appPath } = await createApp();
+
+    await writeFixture({ appPath, requiredNode: '^1.0.0' });
+
+    const { envelope, exitCode } = await runJson([
+      'app',
+      'build',
+      '--path',
+      appPath,
+    ]);
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data).toMatchObject({ sdk: { version: '9.9.9' } });
+    expect(envelope.warnings).toEqual([
+      {
+        code: 'NODE_VERSION_UNTESTED',
+        message: `twenty-sdk 9.9.9 declares Node ^1.0.0; continuing on Node ${process.versions.node}, which is outside that range.`,
+      },
+    ]);
+  });
+
   describe('refuses before loading any SDK code', () => {
     it.each([
       [

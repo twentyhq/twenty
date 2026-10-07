@@ -13,7 +13,7 @@ Package boundaries are documented in the
 
 ## Compatibility
 
-- The app supplies its own `twenty-sdk`, version `>=1.23.0`, with resolvable `twenty-sdk/define` and `twenty-sdk/front-component` entry points. The installed SDK's Node requirement is checked: an older Node fails, a newer one outside the range only warns.
+- The app supplies its own `twenty-sdk`, version `>=1.23.0`, with resolvable `twenty-sdk/define` and `twenty-sdk/front-component` entry points. The installed SDK's Node requirement is checked: a Node below every version the range accepts fails, any other Node outside the range only warns.
 - There is no upper SDK version cap. Every evaluated definition must return the public `ValidationResult` shape: boolean `success`, object `config`, string-array `errors`, and optional string-array `warnings`. An incompatible shape fails with `SDK_SOURCE_UNSUPPORTED`. This validates the loader contract, not every future SDK behavior.
 - The CLI owns esbuild, its TypeScript parser and tinyglobby as runtime dependencies. These load only for source operations. The app does not need to install TypeScript for source loading. Build and typecheck use the project's compiler separately.
 - The pull writer separately checks the authoring exports its generated files use; this loader floor does not establish that every SDK since 1.23 supports all current manifest collections.
