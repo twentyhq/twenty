@@ -21,7 +21,7 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledIndexContainer = styled.div`
@@ -31,7 +31,7 @@ const StyledIndexContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordIndexContainerGater = () => {
+export const RecordIndexContainerGater = memo(() => {
   const setLastShowPageRecordId = useSetAtomComponentState(
     lastShowPageRecordIdState,
   );
@@ -121,4 +121,4 @@ export const RecordIndexContainerGater = () => {
       </ViewComponentInstanceContext.Provider>
     </RecordIndexContextProvider>
   );
-};
+});

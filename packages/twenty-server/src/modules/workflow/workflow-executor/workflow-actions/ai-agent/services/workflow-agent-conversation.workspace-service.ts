@@ -68,10 +68,7 @@ export class WorkflowAgentConversationWorkspaceService {
       );
     }
 
-    return {
-      threadId: openedConversation.threadId,
-      isCreated: openedConversation.isCreated,
-    };
+    return openedConversation;
   }
 
   async findTurnCreatedBy(runInfo: WorkflowRunInfo): Promise<ActorMetadata> {

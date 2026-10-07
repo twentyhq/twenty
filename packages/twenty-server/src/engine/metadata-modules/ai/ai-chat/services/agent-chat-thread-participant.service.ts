@@ -36,17 +36,19 @@ type BuildParticipantWriteQuery = (tables: {
 }) => string;
 
 // A snooze whose end is already due, which its queued end may have checked
-// before this write, is saved as ended
+// before this write, is saved as ended. A snoozed thread is meant to come
+// back, so snoozing follows it again
 const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
   `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")
    VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3)
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
      "archivedAt" = EXCLUDED."archivedAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
+     "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
      "updatedAt" = now()
    RETURNING *`;
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "updatedAt"`;
+const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -95,18 +97,55 @@ export class AgentChatThreadParticipantService {
   }
 
   // A mention brings the chat back unread for the mentioned member, who the
-  // caller has already checked can reply in it
+  // caller has already checked can reply in it, and follows it again for a
+  // member who had unsubscribed
   async markAsMentioned(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantRow | null> {
     return this.writeOne(
       args,
       ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
-         VALUES ($1, $2)
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastMentionedAt")
+         VALUES ($1, $2, clock_timestamp())
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = NULL,
            "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "isSubscribed" = true,
+           "lastMentionedAt" = EXCLUDED."lastMentionedAt",
+           "updatedAt" = now()
+         RETURNING *`,
+    );
+  }
+
+  async subscribe(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadParticipantDTO> {
+    return this.upsertOne(
+      args,
+      ({ participantTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+         VALUES ($1, $2)
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "isSubscribed" = true,
+           "updatedAt" = now()
+         RETURNING *`,
+    );
+  }
+
+  // Files the chat under done and keeps it there whatever happens in it,
+  // until the member is mentioned or writes in it again
+  async unsubscribe(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadParticipantDTO> {
+    return this.upsertOne(
+      args,
+      ({ participantTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "isSubscribed", "archivedAt")
+         VALUES ($1, $2, false, clock_timestamp())
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "isSubscribed" = false,
+           "archivedAt" = EXCLUDED."archivedAt",
            "snoozedUntil" = NULL,
            "updatedAt" = now()
          RETURNING *`,
@@ -226,13 +265,14 @@ export class AgentChatThreadParticipantService {
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "archivedAt" = NULL,
            "snoozedUntil" = NULL,
+           "isSubscribed" = true,
            "updatedAt" = now()
          RETURNING *`,
     );
   }
 
-  // A member who writes in a thread has read it and wants it back in their
-  // inbox, so their cursor follows the activity they just created
+  // A member who writes in a thread has read it and follows it again, so
+  // their cursor follows the activity they just created
   async recordMemberActivity({
     workspaceId,
     workspaceMemberId,
@@ -284,6 +324,7 @@ export class AgentChatThreadParticipantService {
                "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
                "archivedAt" = NULL,
                "snoozedUntil" = NULL,
+               "isSubscribed" = true,
                "updatedAt" = now()
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
