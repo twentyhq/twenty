@@ -79,6 +79,7 @@ export const PinnedCommandMenuItemButtons = ({
   const {
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
+    shouldShowHotKeys,
     onContainerDimensionChange,
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
@@ -117,6 +118,7 @@ export const PinnedCommandMenuItemButtons = ({
           <CommandMenuItemRenderer
             item={item}
             shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
+            shouldShowHotKey={shouldShowHotKeys}
             isPrimaryAction={
               item.engineComponentKey ===
                 EngineComponentKey.CREATE_NEW_RECORD ||
