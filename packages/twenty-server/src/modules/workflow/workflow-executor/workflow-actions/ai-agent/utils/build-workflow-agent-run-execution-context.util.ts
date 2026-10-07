@@ -19,6 +19,7 @@ export const buildWorkflowAgentRunExecutionContext = (
   rolePermissionConfig: executionContext.rolePermissionConfig,
   ...(isDefined(executionContext.application)
     ? {
+        application: executionContext.application,
         additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
           executionContext.rolePermissionConfig,
         ),

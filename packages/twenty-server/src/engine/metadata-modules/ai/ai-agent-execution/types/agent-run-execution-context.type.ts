@@ -1,5 +1,6 @@
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
@@ -17,4 +18,6 @@ export type AgentRunExecutionContext = {
   additionalRoleRestrictionIds?: string[];
   // who the continued conversation is read for, so turns others acted on read as theirs
   conversationActor?: AgentConversationActor;
+  // the application the caller is bound to, whose tools are the only ones a call it posts can propose
+  application?: FlatApplication;
 };

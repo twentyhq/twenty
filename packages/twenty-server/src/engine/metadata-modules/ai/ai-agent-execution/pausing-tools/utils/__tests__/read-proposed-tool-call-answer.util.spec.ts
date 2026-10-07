@@ -1,4 +1,4 @@
-import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
+import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 
 const EMAIL_ARGUMENTS = {
   recipients: { to: 'team@acme.com' },
@@ -6,24 +6,20 @@ const EMAIL_ARGUMENTS = {
   body: '<p>Recap</p>',
 };
 
-const buildResult = (result: Record<string, unknown>) =>
-  buildSendChatMessageAnswerResult({
-    threadId: 'thread-id',
-    toolResult: { success: true, result },
-  });
+const readAnswer = (result: Record<string, unknown>) =>
+  readProposedToolCallAnswer({ success: true, result });
 
-describe('buildSendChatMessageAnswerResult', () => {
+describe('readProposedToolCallAnswer', () => {
   it.each(['send_email', 'draft_email'])(
     'reports %s as executed once approved',
     (toolName) => {
       expect(
-        buildResult({
+        readAnswer({
           status: 'approved',
           proposal: { toolName, arguments: EMAIL_ARGUMENTS },
           output: { messageId: 'message-id' },
         }),
       ).toEqual({
-        threadId: 'thread-id',
         outcome: 'executed',
         toolName,
         arguments: EMAIL_ARGUMENTS,
@@ -36,7 +32,7 @@ describe('buildSendChatMessageAnswerResult', () => {
 
   it('keeps the error of an approved call that failed', () => {
     expect(
-      buildResult({
+      readAnswer({
         status: 'failed',
         proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
         error: 'No connected account',
@@ -51,7 +47,7 @@ describe('buildSendChatMessageAnswerResult', () => {
 
   it('keeps the latest values of a record that changed before approval', () => {
     expect(
-      buildResult({
+      readAnswer({
         status: 'conflict',
         proposal: { toolName: 'update_one_company', arguments: {} },
         output: { latestValues: { employees: 12 } },
@@ -64,7 +60,7 @@ describe('buildSendChatMessageAnswerResult', () => {
 
   it('keeps the feedback of a rejected call', () => {
     expect(
-      buildResult({
+      readAnswer({
         status: 'rejected',
         proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
         feedback: 'Not yet',
@@ -77,14 +73,14 @@ describe('buildSendChatMessageAnswerResult', () => {
   });
 
   it.each(['pending', 'running', 'skipped', undefined])(
-    'refuses to report a %s call',
+    'reads no answer from a %s call',
     (status) => {
-      expect(() =>
-        buildResult({
+      expect(
+        readAnswer({
           status,
           proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
         }),
-      ).toThrow('The answer to the action could not be read');
+      ).toBeUndefined();
     },
   );
 });
