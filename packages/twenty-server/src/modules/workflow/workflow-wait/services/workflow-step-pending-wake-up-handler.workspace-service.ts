@@ -28,7 +28,9 @@ import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils
 // A WORKFLOW_STEP wake-up is owned by a workflow run and keyed by the step that waits
 @Injectable()
 export class WorkflowStepPendingWakeUpHandlerWorkspaceService
-  implements PendingWakeUpOwnerHandler<WorkflowRunWorkspaceEntity>, OnModuleInit
+  implements
+    PendingWakeUpOwnerHandler<WorkflowRunWorkspaceEntity>,
+    OnModuleInit
 {
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,

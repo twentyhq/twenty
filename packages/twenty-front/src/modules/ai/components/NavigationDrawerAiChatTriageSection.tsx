@@ -13,10 +13,11 @@ import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
-// Needs input and Mentions narrow Open, so they hang under it
+// Needs input, Mentions and Assigned narrow Open, so they hang under it
 const OPEN_SUB_FILTER_STATUSES = [
   AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
   AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+  AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
 ];
 
 export const NavigationDrawerAiChatTriageSection = () => {
@@ -30,6 +31,7 @@ export const NavigationDrawerAiChatTriageSection = () => {
     hasUnreadOpenThread,
     needsInputThreadCount,
     hasUnreadMentionThread,
+    hasUnreadAssignedThread,
   } = useAtomStateValue(agentChatOpenThreadsSummarySelector);
 
   const getOpenSubItemState = (index: number) =>
@@ -63,6 +65,11 @@ export const NavigationDrawerAiChatTriageSection = () => {
           filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS}
           isUnread={hasUnreadMentionThread}
           subItemState={getOpenSubItemState(1)}
+        />
+        <NavigationDrawerAiChatTriageItem
+          filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED}
+          isUnread={hasUnreadAssignedThread}
+          subItemState={getOpenSubItemState(2)}
         />
       </NavigationDrawerItemGroup>
       <NavigationDrawerAiChatTriageItem

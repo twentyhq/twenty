@@ -5947,6 +5947,18 @@ export default {
                     ]
                 }
             ],
+            "assignAgentChatThread": [
+                4,
+                {
+                    "assigneeWorkspaceMemberId": [
+                        477
+                    ],
+                    "threadId": [
+                        477,
+                        "UUID!"
+                    ]
+                }
+            ],
             "assignRoleToAgent": [
                 4,
                 {
