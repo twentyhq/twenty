@@ -56,7 +56,7 @@ export const SectionHeader = ({
               {isString(description) ? (
                 <OverflowingTextWithTooltip
                   text={description}
-                  displayedMaxRows={descriptionLineClamp}
+                  lineClamp={descriptionLineClamp}
                   isTooltipMultiline
                   isFocusable
                 />

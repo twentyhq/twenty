@@ -70,7 +70,9 @@ export const Chip = ({
             (hasContent ? (
               typeof children === 'string' ? (
                 <OverflowingTextWithTooltip
-                  size={size === 'md' ? 'large' : 'small'}
+                  style={{
+                    height: size === 'md' ? 'var(--t-spacing-4)' : undefined,
+                  }}
                   text={children}
                   tooltipContent={tooltipLabel}
                   tooltipPlace={tooltipPlace}

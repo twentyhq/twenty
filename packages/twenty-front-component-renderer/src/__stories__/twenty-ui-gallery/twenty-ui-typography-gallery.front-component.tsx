@@ -2,6 +2,7 @@ import { useState } from 'react';
 import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Section } from 'twenty-ui/components/layout';
+import { TypographyCompositionExample } from './typography-composition-example';
 import { VisuallyHiddenExample } from './visually-hidden-example';
 import { Button } from 'twenty-ui/primitives/input';
 import {
@@ -37,6 +38,7 @@ const SectionExample = () => {
 };
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
+  { name: 'Typography composition', node: <TypographyCompositionExample /> },
   {
     name: 'Shortcut',
     node: (
