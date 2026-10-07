@@ -1,11 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
@@ -85,67 +83,6 @@ export class AgentChatThreadLifecycleService {
       this.releaseThreadSandboxBestEffort({
         workspaceId,
         threadId: deletedThread.id,
-      });
-    }
-  }
-
-  // owned threads are skipped so an upsert cannot reassign them
-  async assignCreatedThreadsToCreator({
-    authContext,
-    threadIds,
-  }: {
-    authContext: WorkspaceAuthContext;
-    threadIds: string[];
-  }): Promise<void> {
-    if (!isUserAuthContext(authContext) || !isNonEmptyArray(threadIds)) {
-      return;
-    }
-
-    const workspaceId = authContext.workspace.id;
-    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
-
-    const threadsBefore = await this.threadRepository.find(workspaceId, {
-      where: { id: In(threadIds), ...unassignedThreadCriteria },
-    });
-
-    if (!isNonEmptyArray(threadsBefore)) {
-      return;
-    }
-
-    const { generatedMaps: assignedThreads } =
-      await this.threadRepository.update(
-        workspaceId,
-        {
-          id: In(threadsBefore.map(({ id }) => id)),
-          ...unassignedThreadCriteria,
-        },
-        {
-          workspaceMemberId: authContext.workspaceMemberId,
-          userWorkspaceId: authContext.userWorkspaceId,
-        },
-      );
-
-    if (!isNonEmptyArray(assignedThreads)) {
-      return;
-    }
-
-    const threadsAfter = await this.threadRepository.find(workspaceId, {
-      where: { id: In(assignedThreads.map(({ id }) => id)) },
-    });
-
-    for (const threadAfter of threadsAfter) {
-      const threadBefore = threadsBefore.find(
-        ({ id }) => id === threadAfter.id,
-      );
-
-      if (!isDefined(threadBefore)) {
-        continue;
-      }
-
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-        threadAfter,
       });
     }
   }
