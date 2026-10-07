@@ -152,6 +152,10 @@ describe('AgentChatStreamingService claim & reap', () => {
         findLatestTurn: jest.fn().mockResolvedValue(null),
         markRunning: jest.fn().mockResolvedValue(true),
       } as never,
+      {
+        assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
+      } as never,
+      { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
     );
 
     return {
@@ -290,7 +294,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       });
 
       await expect(send()).rejects.toMatchObject({
-        code: AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
+        code: AiExceptionCode.THREAD_AWAITING_ANSWER,
       });
       expect(agentChatService.closePendingToolCalls).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();

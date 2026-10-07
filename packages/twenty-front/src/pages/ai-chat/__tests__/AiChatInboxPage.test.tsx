@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -13,6 +14,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -106,6 +109,10 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
+  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
@@ -115,9 +122,28 @@ jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
 }));
 
 jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
-  AiChatThreadPageContent: ({ threadId }: { threadId: string }) => (
-    <div>Chat page {threadId}</div>
+  AiChatThreadPageContent: ({
+    threadId,
+    headerTitlePrefix,
+    headerActions,
+  }: {
+    threadId: string;
+    headerTitlePrefix?: ReactNode;
+    headerActions?: ReactNode;
+  }) => (
+    <div>
+      {headerTitlePrefix}
+      Chat page {threadId}
+      {headerActions}
+    </div>
   ),
+}));
+
+let isMobile = false;
+
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => isMobile,
 }));
 
 jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
@@ -143,11 +169,11 @@ jest.mock(
 
 const [firstThread, secondThread, thirdThread] = THREADS;
 
-const renderInbox = () =>
+const renderInbox = (path = `/inbox/${firstThread.id}`) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter initialEntries={[`/inbox/${firstThread.id}`]}>
+        <MemoryRouter initialEntries={[path]}>
           <Routes>
             <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
           </Routes>
@@ -173,6 +199,7 @@ const getTargetedThreadIds = (contextStoreInstanceId: string) =>
 describe('AiChatInboxPage', () => {
   beforeEach(() => {
     resetJotaiStore();
+    isMobile = false;
   });
 
   it('opens the clicked chat', () => {
@@ -325,5 +352,115 @@ describe('AiChatInboxPage', () => {
 
     expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
     expect(getRowCheckbox('Second chat')).not.toBeChecked();
+  });
+
+  it('switches to the record page layout from the list header', async () => {
+    renderInbox();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Open chats in' }),
+    );
+    await userEvent.click(await screen.findByText('Record page'));
+
+    expect(jotaiStore.get(aiChatInboxLayoutState.atom)).toBe(
+      AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+    );
+    expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'First chat' }),
+    ).toBeInTheDocument();
+  });
+
+  describe('in record page layout', () => {
+    beforeEach(() => {
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+    });
+
+    it('shows the list alone, then the clicked chat alone', () => {
+      renderInbox('/inbox');
+
+      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('No conversation selected'),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Second chat' }));
+
+      expect(
+        screen.getByText(`Chat page ${secondThread.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: 'First chat' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('moves between chats and back to the list from the chat', () => {
+      renderInbox(`/inbox/${secondThread.id}`);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
+
+      expect(
+        screen.getByText(`Chat page ${thirdThread.id}`),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Next chat' })).toBeDisabled();
+
+      fireEvent.click(screen.getByRole('link', { name: /Open/ }));
+
+      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Third chat' }),
+      ).toBeInTheDocument();
+    });
+
+    it('selects chats in the list, with the command menu acting on them', () => {
+      renderInbox('/inbox');
+
+      fireEvent.click(screen.getByRole('button', { name: 'Second chat' }), {
+        metaKey: true,
+      });
+
+      expect(screen.getByText('1 selected')).toBeInTheDocument();
+      expect(screen.queryByText('1 chat selected')).not.toBeInTheDocument();
+      expect(getTargetedThreadIds(MAIN_CONTEXT_STORE_INSTANCE_ID)).toEqual({
+        mode: 'selection',
+        selectedRecordIds: [secondThread.id],
+      });
+    });
+  });
+
+  describe('on a phone', () => {
+    beforeEach(() => {
+      isMobile = true;
+    });
+
+    it('opens the tapped chat in place of the list', () => {
+      renderInbox('/inbox');
+
+      fireEvent.click(screen.getByRole('button', { name: 'First chat' }));
+
+      expect(
+        screen.getByText(`Chat page ${firstThread.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: 'Second chat' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('adds tapped chats to a selection started from a checkbox', () => {
+      renderInbox('/inbox');
+
+      fireEvent.click(
+        screen.getByRole('checkbox', { name: 'Select First chat' }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Third chat' }));
+
+      expect(screen.getByText('2 selected')).toBeInTheDocument();
+      expect(getRowCheckbox('First chat')).toBeChecked();
+      expect(getRowCheckbox('Third chat')).toBeChecked();
+      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+    });
   });
 });

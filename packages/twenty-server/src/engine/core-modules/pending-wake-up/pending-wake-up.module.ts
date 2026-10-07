@@ -6,7 +6,6 @@ import { PendingWakeUpSweepCronJob } from 'src/engine/core-modules/pending-wake-
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { ResumePendingWakeUpJob } from 'src/engine/core-modules/pending-wake-up/jobs/resume-pending-wake-up.job';
 import { PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pending-wake-up/listeners/pending-wake-up-database-event.listener';
-import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
@@ -25,7 +24,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     PendingWakeUpService,
     PendingWakeUpOwnerHandlerRegistryService,
-    PendingWakeUpEventRecordService,
     PendingWakeUpResolverService,
     ResumePendingWakeUpJob,
     PendingWakeUpDatabaseEventListener,
@@ -36,7 +34,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     PendingWakeUpService,
     PendingWakeUpOwnerHandlerRegistryService,
-    PendingWakeUpEventRecordService,
     PendingWakeUpSweepCronCommand,
   ],
 })

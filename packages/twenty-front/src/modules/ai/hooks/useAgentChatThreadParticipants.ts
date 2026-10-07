@@ -19,6 +19,8 @@ import {
   MarkAgentChatThreadAsUnreadDocument,
   MoveAgentChatThreadToInboxDocument,
   SnoozeAgentChatThreadDocument,
+  SubscribeToAgentChatThreadDocument,
+  UnsubscribeFromAgentChatThreadDocument,
 } from '~/generated-metadata/graphql';
 
 export const useAgentChatThreadParticipants = () => {
@@ -163,6 +165,7 @@ export const useAgentChatThreadParticipants = () => {
             optimisticParticipant: {
               archivedAt: new Date().toISOString(),
               snoozedUntil: snoozedUntil.toISOString(),
+              isSubscribed: true,
             },
           }),
         ),
@@ -176,7 +179,35 @@ export const useAgentChatThreadParticipants = () => {
       updateParticipant({
         mutation: MoveAgentChatThreadToInboxDocument,
         variables: { threadId },
-        optimisticParticipant: { archivedAt: null, snoozedUntil: null },
+        optimisticParticipant: {
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed: true,
+        },
+      }),
+    [updateParticipant],
+  );
+
+  const subscribeToAgentChatThread = useCallback(
+    (threadId: string) =>
+      updateParticipant({
+        mutation: SubscribeToAgentChatThreadDocument,
+        variables: { threadId },
+        optimisticParticipant: { isSubscribed: true },
+      }),
+    [updateParticipant],
+  );
+
+  const unsubscribeFromAgentChatThread = useCallback(
+    (threadId: string) =>
+      updateParticipant({
+        mutation: UnsubscribeFromAgentChatThreadDocument,
+        variables: { threadId },
+        optimisticParticipant: {
+          isSubscribed: false,
+          archivedAt: new Date().toISOString(),
+          snoozedUntil: null,
+        },
       }),
     [updateParticipant],
   );
@@ -187,5 +218,7 @@ export const useAgentChatThreadParticipants = () => {
     archiveAgentChatThread,
     snoozeAgentChatThreads,
     moveAgentChatThreadToInbox,
+    subscribeToAgentChatThread,
+    unsubscribeFromAgentChatThread,
   };
 };

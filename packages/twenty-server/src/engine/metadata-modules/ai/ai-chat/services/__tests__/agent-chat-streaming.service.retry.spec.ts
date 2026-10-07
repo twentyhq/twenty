@@ -110,6 +110,8 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         cancel: jest.fn().mockResolvedValue(false),
       } as never,
       turnRecorderService as never,
+      {} as never,
+      {} as never,
     );
 
     return {
