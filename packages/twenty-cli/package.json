@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
-    "prepublish": "node scripts/check-publish.mjs"
+    "prepublish": "node scripts/check-publish.mjs && node scripts/generate-template-lock.mjs"
   },
   "engines": {
     "node": "^24.5.0"

@@ -269,19 +269,21 @@ export const SettingsAdminNewAiProvider = () => {
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
             <InlineBanner
-              variant="compact"
-              color="danger"
-              message={customAiProviderGateDescription}
-              button={{
-                title: t`Activate`,
-                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
-                render: (
-                  <Link
-                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-                  />
-                ),
-              }}
-            />
+              layout="compact"
+              status="error"
+              action={
+                <InlineBanner.Action
+                  href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  render={
+                    <Link
+                      to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                    />
+                  }
+                >{t`Activate`}</InlineBanner.Action>
+              }
+            >
+              {customAiProviderGateDescription}
+            </InlineBanner>
           )}
 
           <Section.Root>
@@ -311,10 +313,9 @@ export const SettingsAdminNewAiProvider = () => {
 
           {isModelsDevWithoutNativeSdk && (
             <InlineBanner
-              variant="compact"
-              color="blue"
-              message={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
-            />
+              layout="compact"
+              status="info"
+            >{t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}</InlineBanner>
           )}
 
           {hasSelected && (
