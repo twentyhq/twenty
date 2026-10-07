@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
-import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
@@ -37,15 +37,12 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const namedRecordGrant =
-    environment.isRecordShareVisibilityGatingEnabled &&
-    isRecordGrantBeyondRoleAllowed({
-      flatObjectMetadata: target.flatObjectMetadata,
-      operationType: target.operationType,
-      isRecordSharingEnabled: environment.isRecordSharingEnabled,
-    })
-      ? buildNamedRecordGrantExpression(context, target)
-      : undefined;
+  const namedRecordGrant = resolveObjectSharing({
+    flatObjectMetadata: target.flatObjectMetadata,
+    featureFlagsMap: environment.featureFlagsMap,
+  }).operationTypesGrantedBeyondRole.includes(target.operationType)
+    ? buildNamedRecordGrantExpression(context, target)
+    : undefined;
 
   if (
     isDefined(subject.objectsPermissions) &&

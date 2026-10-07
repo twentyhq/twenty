@@ -1,4 +1,4 @@
-import { cp } from 'node:fs/promises';
+import { chmod, cp } from 'node:fs/promises';
 import { builtinModules } from 'node:module';
 import path from 'node:path';
 import { defineConfig } from 'vite';
@@ -11,6 +11,12 @@ const NODE_BUILTIN_MODULES = new Set([
 export default defineConfig({
   root: __dirname,
   plugins: [
+    {
+      name: 'make-cli-executable',
+      writeBundle: async () => {
+        await chmod(path.resolve(__dirname, 'dist/cli.cjs'), 0o755);
+      },
+    },
     {
       name: 'copy-app-template',
       closeBundle: async () => {
