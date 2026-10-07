@@ -61,28 +61,30 @@ const buildThreadReadersSql = ({
     AND share."principalType" = 'WORKSPACE_MEMBER'
     AND share."deletedAt" IS NULL`;
 
-// Every member who could read a thread before this upgrade starts with it
-// read, so the upgrade itself does not light up every existing conversation.
-// Chats 2.44 moved from archived to the trash become archived again. They
-// keep archivedAt, and were trashed no later than that move was recorded,
-// which tells them apart from chats a member restored and deleted again since.
-const backfillAgentChatThreadInboxState = async ({
+// Each batch commits on its own so a large workspace does not hold every
+// thread row lock, and blocks sends, until the whole backfill is done
+const THREAD_ACTIVITY_BATCH_SIZE = 500;
+
+// A user message without a sender predates multiplayer chats, when every
+// user message was the owner's. Runtime leaves lastActivityAt alone until
+// isSubscribed exists, so the NULL check is what tracks progress
+const backfillThreadActivityBatch = async ({
   manager,
   workspaceId,
-  threadObjectMetadataId,
-  participantObjectMetadataId,
 }: {
   manager: EntityManager;
   workspaceId: string;
-  threadObjectMetadataId: string;
-  participantObjectMetadataId: string;
-}) => {
+}): Promise<number> => {
   const tables = getBackfillTables(workspaceId);
 
-  // A user message without a sender predates multiplayer chats, when every
-  // user message was the owner's
   const [, threadCount]: [unknown[], number] = await manager.query(
-    `WITH activity AS (
+    `WITH batch AS (
+       SELECT thread.id FROM ${tables.thread} thread
+       WHERE thread."lastActivityAt" IS NULL
+       ORDER BY thread.id
+       LIMIT ${THREAD_ACTIVITY_BATCH_SIZE}
+       FOR UPDATE
+     ), activity AS (
        SELECT thread.id,
          COALESCE(last_message."createdAt", thread."createdAt") AS "lastActivityAt",
          left(last_text."textContent", ${LAST_MESSAGE_TEXT_MAX_LENGTH}) AS "lastMessageText",
@@ -121,7 +123,7 @@ const backfillAgentChatThreadInboxState = async ({
            AND message."isHidden" = false
            AND message.role = 'user'
        ) writer ON true
-       WHERE thread."lastActivityAt" IS NULL
+       WHERE thread.id IN (SELECT id FROM batch)
      )
      UPDATE ${tables.thread} thread
      SET "lastActivityAt" = activity."lastActivityAt",
@@ -131,6 +133,27 @@ const backfillAgentChatThreadInboxState = async ({
      FROM activity
      WHERE thread.id = activity.id`,
   );
+
+  return threadCount;
+};
+
+// Every member who could read a thread before this upgrade starts with it
+// read, so the upgrade itself does not light up every existing conversation.
+// Chats 2.44 moved from archived to the trash become archived again. They
+// keep archivedAt, and were trashed no later than that move was recorded,
+// which tells them apart from chats a member restored and deleted again since.
+const backfillAgentChatThreadParticipants = async ({
+  manager,
+  workspaceId,
+  threadObjectMetadataId,
+  participantObjectMetadataId,
+}: {
+  manager: EntityManager;
+  workspaceId: string;
+  threadObjectMetadataId: string;
+  participantObjectMetadataId: string;
+}) => {
+  const tables = getBackfillTables(workspaceId);
 
   const participants = await manager.query<{ threadId: string }[]>(
     `INSERT INTO ${tables.participant} ("threadId", "workspaceMemberId", "lastReadAt")
@@ -199,7 +222,6 @@ const backfillAgentChatThreadInboxState = async ({
   );
 
   return {
-    threadCount,
     participantCount: participants.length,
     archivedThreadCount: new Set(
       archivedThreads.map(({ threadId }) => threadId),
@@ -295,14 +317,30 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
       return;
     }
 
-    const { threadCount, participantCount, archivedThreadCount } =
-      await this.storage.run(workspaceId, ({ manager }) =>
-        backfillAgentChatThreadInboxState({
+    let threadCount = 0;
+
+    for (;;) {
+      const batchThreadCount = await this.storage.run(
+        workspaceId,
+        ({ manager }) => backfillThreadActivityBatch({ manager, workspaceId }),
+      );
+
+      threadCount += batchThreadCount;
+
+      if (batchThreadCount < THREAD_ACTIVITY_BATCH_SIZE) {
+        break;
+      }
+    }
+
+    const { participantCount, archivedThreadCount } = await this.storage.run(
+      workspaceId,
+      ({ manager }) =>
+        backfillAgentChatThreadParticipants({
           manager,
           workspaceId,
           ...objectMetadataIds,
         }),
-      );
+    );
 
     this.logger.log(
       `Workspace ${workspaceId}: backfilled last activity on ${threadCount} chat(s), created ${participantCount} participant(s), restored ${archivedThreadCount} chat(s) to their members' archive`,

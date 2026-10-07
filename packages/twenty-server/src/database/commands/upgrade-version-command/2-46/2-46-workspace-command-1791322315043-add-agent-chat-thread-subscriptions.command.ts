@@ -30,9 +30,9 @@ const SUBSCRIPTION_COMMAND_MENU_ITEM_NAMES = [
   'unsubscribeFromAiChat',
 ] as const;
 
-// Upgrades from 2.45 get the fields with the participant object, so this
-// only adds them where that object was created before they existed. Every
-// existing row is a subscription, which the default keeps.
+// The last 2.46 chat command, so runtime reads isSubscribed as the sign the
+// inbox backfill and the agentTurn run fields are in place. Every existing
+// row is a subscription, which the default keeps.
 @RegisteredWorkspaceCommand('2.46.0', 1791322315043)
 @Command({
   name: 'upgrade:2-46:add-agent-chat-thread-subscriptions',

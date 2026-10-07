@@ -214,6 +214,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         }),
       } as never,
     );
+    const upgradeFence = {
+      hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true),
+    };
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
@@ -227,9 +230,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         new AgentConversationWriterService(
           turns as never,
           new AgentHistoryTransactionService(workspaceStorage, orm as never),
+          upgradeFence as never,
         ),
         chatThreadService,
         {} as never,
+        upgradeFence as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
