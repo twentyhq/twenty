@@ -537,6 +537,17 @@ describe('Two-factor authentication recovery codes (integration)', () => {
         [],
       );
 
+      const { errors: loginTokenReplayErrors } =
+        await getAuthTokensFromLoginToken({
+          loginToken,
+          origin: buildAppleWorkspaceOrigin(),
+          expectToFail: true,
+        });
+
+      expect(loginTokenReplayErrors?.[0]?.extensions?.code).toBe(
+        'UNAUTHENTICATED',
+      );
+
       const revokedSessions = await global.testDataSource.query(
         `SELECT "revokedReason" FROM core."userSession" WHERE "userId" = $1 AND "workspaceId" = $2 AND "revokedAt" IS NOT NULL AND "revokedReason" = $3`,
         [

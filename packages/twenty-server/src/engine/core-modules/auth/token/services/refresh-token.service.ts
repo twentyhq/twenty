@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -17,6 +16,7 @@ import {
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { isRevokedRefreshTokenStillRenewable } from 'src/engine/core-modules/auth/utils/is-revoked-refresh-token-still-renewable.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -78,18 +78,14 @@ export class RefreshTokenService {
     }
 
     if (token.revokedAt) {
-      // A revocation with a recorded reason is a security action, not a renewal race between tabs
-      if (isDefined(token.context?.revokedReason)) {
-        throw new AuthException(
-          'This refresh token has been revoked.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
+      const isStillRenewable = isRevokedRefreshTokenStillRenewable({
+        revokedAt: token.revokedAt,
+        revokedReason: token.context?.revokedReason,
+        reuseGracePeriod,
+        now: new Date(),
+      });
 
-      const wasRevokedBeforeGracePeriod =
-        token.revokedAt.getTime() <= Date.now() - ms(reuseGracePeriod);
-
-      if (wasRevokedBeforeGracePeriod) {
+      if (!isStillRenewable) {
         // Reject the stale token but don't revoke all tokens — the most
         // common cause is a lost renewal response, not actual token theft.
         throw new AuthException(

@@ -491,6 +491,8 @@ export class AuthResolver {
       return { tokens: null, provisioningUri };
     }
 
+    await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
+
     const authTokens = await this.authService.verify(
       email,
       workspace.id,
