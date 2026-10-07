@@ -1,38 +1,34 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useShouldShowAiChatEmptyState = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatError = useAtomComponentFamilyStateValue(
-    agentChatErrorComponentFamilyState,
+  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
+    threadId: currentAiChatThread,
+  });
+  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
+    agentChatIsAwaitingFirstChunkFamilyState,
     { threadId: currentAiChatThread },
   );
-  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
-    agentChatIsAwaitingFirstChunkComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
     { threadId: currentAiChatThread },
   );
   const agentChatThreadsLoading = useAtomStateValue(
     agentChatThreadsLoadingState,
   );
 
-  const hasMessages = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
-  );
+  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
 
   const isMobile = useIsMobile();
 
@@ -41,7 +37,7 @@ export const useShouldShowAiChatEmptyState = () => {
   return (
     isOnNewAiChatSlot &&
     !isMobile &&
-    !hasMessages &&
+    !agentChatHasMessage &&
     !isDefined(agentChatError) &&
     !agentChatThreadsLoading &&
     !agentChatIsAwaitingFirstChunk &&

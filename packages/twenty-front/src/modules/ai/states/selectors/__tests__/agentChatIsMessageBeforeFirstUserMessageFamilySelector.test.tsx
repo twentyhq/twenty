@@ -2,17 +2,15 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-const INSTANCE_ID = 'agentChatIsMessageBeforeFirstUserMessageTest';
 const THREAD_ID = 'thread';
 
 const MESSAGES = [
@@ -23,24 +21,15 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector', () => {
+describe('agentChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: THREAD_ID },
-      }),
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       MESSAGES,
     );
   });
@@ -53,8 +42,8 @@ describe('agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector', () =
   ])('returns $expected for $messageId', ({ messageId, expected }) => {
     const { result } = renderHook(
       () =>
-        useAtomComponentFamilySelectorValue(
-          agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
+        useAtomFamilySelectorValue(
+          agentChatIsMessageBeforeFirstUserMessageFamilySelector,
           { messageId },
         ),
       { wrapper: Wrapper },

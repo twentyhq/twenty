@@ -1,8 +1,8 @@
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
-import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
+import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect } from 'react';
@@ -21,16 +21,16 @@ import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
-import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
+import { agentChatHandleEventCallbackFamilyState } from '@/ai/states/agentChatHandleEventCallbackFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
@@ -38,7 +38,6 @@ import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequence
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import {
@@ -127,41 +126,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     agentChatStreamResubscribeNonceState,
   );
 
-  const errorFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatErrorComponentFamilyState,
-  );
-  const isStreamingFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatIsStreamingComponentFamilyState,
-  );
-  const isAwaitingFirstChunkFamilyCallback =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatIsAwaitingFirstChunkComponentFamilyState,
-    );
-  const firstLiveSeqFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatFirstLiveSeqComponentFamilyState,
-  );
-  const isAwaitingPersistedRefetchFamilyCallback =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatIsAwaitingPersistedRefetchComponentFamilyState,
-    );
-  const handleEventCallbackFamilyCallback =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatHandleEventCallbackComponentFamilyState,
-    );
-  const fetchedMessagesFamilyCallback =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatFetchedMessagesComponentFamilyState,
-    );
-  const queuedMessagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatQueuedMessagesComponentFamilyState,
-  );
-  const messagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatMessagesComponentFamilyState,
-  );
-  const usageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
-  );
-
   useEffect(() => {
     if (!isDefined(threadId) || !isDefined(sseClient)) {
       return;
@@ -169,19 +133,23 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     const familyKey = { threadId };
 
-    const errorAtom = errorFamilyCallback(familyKey);
-    const isStreamingAtom = isStreamingFamilyCallback(familyKey);
+    const errorAtom = agentChatErrorFamilyState.atomFamily(familyKey);
+    const isStreamingAtom =
+      agentChatIsStreamingFamilyState.atomFamily(familyKey);
     const isAwaitingFirstChunkAtom =
-      isAwaitingFirstChunkFamilyCallback(familyKey);
-    const firstLiveSeqAtom = firstLiveSeqFamilyCallback(familyKey);
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey);
+    const firstLiveSeqAtom =
+      agentChatFirstLiveSeqFamilyState.atomFamily(familyKey);
     const isAwaitingPersistedRefetchAtom =
-      isAwaitingPersistedRefetchFamilyCallback(familyKey);
+      agentChatIsAwaitingPersistedRefetchFamilyState.atomFamily(familyKey);
     const handleEventCallbackAtom =
-      handleEventCallbackFamilyCallback(familyKey);
-    const messagesAtom = messagesFamilyCallback(familyKey);
-    const fetchedMessagesAtom = fetchedMessagesFamilyCallback(familyKey);
-    const queuedMessagesAtom = queuedMessagesFamilyCallback(familyKey);
-    const usageAtom = usageFamilyCallback(familyKey);
+      agentChatHandleEventCallbackFamilyState.atomFamily(familyKey);
+    const messagesAtom = agentChatMessagesFamilyState.atomFamily(familyKey);
+    const fetchedMessagesAtom =
+      agentChatFetchedMessagesFamilyState.atomFamily(familyKey);
+    const queuedMessagesAtom =
+      agentChatQueuedMessagesFamilyState.atomFamily(familyKey);
+    const usageAtom = agentChatUsageFamilyState.atomFamily(familyKey);
 
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -524,16 +492,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     sseClient,
     agentChatStreamResubscribeNonce,
     store,
-    errorFamilyCallback,
-    isStreamingFamilyCallback,
-    isAwaitingFirstChunkFamilyCallback,
-    firstLiveSeqFamilyCallback,
-    isAwaitingPersistedRefetchFamilyCallback,
-    handleEventCallbackFamilyCallback,
-    messagesFamilyCallback,
-    fetchedMessagesFamilyCallback,
-    queuedMessagesFamilyCallback,
-    usageFamilyCallback,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
     applyAgentChatThreadUpdate,
