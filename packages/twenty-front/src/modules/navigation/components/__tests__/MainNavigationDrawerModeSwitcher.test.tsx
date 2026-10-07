@@ -22,6 +22,12 @@ jest.mock(
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+}));
+
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
@@ -80,6 +86,7 @@ const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {
 describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAiChatInboxEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -180,6 +187,15 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     ).toBeInTheDocument();
 
     act(() => receiveOpenChat(store, LAST_ACTIVITY_AT));
+
+    expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
+
+  it('does not mark unread chats while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+    const { store } = renderModeSwitcher();
+
+    act(() => receiveOpenChat(store, null));
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });

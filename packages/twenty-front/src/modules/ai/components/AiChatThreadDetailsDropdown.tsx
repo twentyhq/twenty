@@ -35,6 +35,8 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -70,6 +72,9 @@ export const AiChatThreadDetailsDropdown = ({
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const { closeDropdown } = useCloseDropdown();
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
@@ -104,6 +109,10 @@ export const AiChatThreadDetailsDropdown = ({
       dropdownComponentInstanceIdFromProps: recordPickerDropdownId,
     });
   };
+
+  if (!isAiChatInboxEnabled && !areRecordTargetsAvailable) {
+    return null;
+  }
 
   return (
     <>
@@ -170,25 +179,36 @@ export const AiChatThreadDetailsDropdown = ({
                 )}
               </AiChatThreadDetailsRow>
             )}
-            <AiChatThreadDetailsRow Icon={IconUsers} label={t`Assignee`}>
-              {isDefined(assignee) ? (
-                <RecordChip
-                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
-                  record={{ ...assignee, __typename: 'WorkspaceMember' }}
-                />
-              ) : (
-                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
-              )}
-            </AiChatThreadDetailsRow>
-            <AiChatThreadDetailsRow Icon={IconBell} label={t`Following`}>
-              {followers.map((workspaceMember) => (
-                <RecordChip
-                  key={workspaceMember.id}
-                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
-                  record={{ ...workspaceMember, __typename: 'WorkspaceMember' }}
-                />
-              ))}
-            </AiChatThreadDetailsRow>
+            {isAiChatInboxEnabled && (
+              <>
+                <AiChatThreadDetailsRow Icon={IconUsers} label={t`Assignee`}>
+                  {isDefined(assignee) ? (
+                    <RecordChip
+                      objectNameSingular={
+                        CoreObjectNameSingular.WorkspaceMember
+                      }
+                      record={{ ...assignee, __typename: 'WorkspaceMember' }}
+                    />
+                  ) : (
+                    <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+                  )}
+                </AiChatThreadDetailsRow>
+                <AiChatThreadDetailsRow Icon={IconBell} label={t`Following`}>
+                  {followers.map((workspaceMember) => (
+                    <RecordChip
+                      key={workspaceMember.id}
+                      objectNameSingular={
+                        CoreObjectNameSingular.WorkspaceMember
+                      }
+                      record={{
+                        ...workspaceMember,
+                        __typename: 'WorkspaceMember',
+                      }}
+                    />
+                  ))}
+                </AiChatThreadDetailsRow>
+              </>
+            )}
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>
