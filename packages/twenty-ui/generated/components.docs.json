@@ -973,48 +973,162 @@
     "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
     "slug": "layout/collapsible",
-    "props": [
+    "props": [],
+    "parts": [
       {
-        "name": "animationDurations",
-        "type": "AnimationDurations",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default theme timing or separate opacity and size durations in seconds."
+        "name": "Root",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Initial uncontrolled expansion state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Default disabled state inherited by the triggers in this root."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the requested open state and cancelable Base UI event details."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled expansion state. Use defaultOpen for uncontrolled state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the root div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "children",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Content inside the expanding panel."
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables this trigger."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Set to false when render replaces the native button with another element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the linked trigger button. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "containAnimation",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Clips overflowing content during expansion and uses a column layout."
-      },
-      {
-        "name": "dimension",
-        "type": "\"height\" | \"width\"",
-        "required": false,
-        "defaultValue": "height",
-        "description": "Dimension animated when the panel opens and closes."
-      },
-      {
-        "name": "duration",
-        "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
-      },
-      {
-        "name": "isExpanded",
-        "type": "boolean",
-        "required": true,
-        "defaultValue": null,
-        "description": "Controlled visibility of the panel. The application owns the trigger and state."
+        "name": "Panel",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsiblePanelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "containAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Clips overflowing content during expansion and uses a column layout."
+          },
+          {
+            "name": "dimension",
+            "type": "\"height\" | \"width\"",
+            "required": false,
+            "defaultValue": "height",
+            "description": "Dimension animated when the panel opens and closes."
+          },
+          {
+            "name": "duration",
+            "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
+            "required": false,
+            "defaultValue": "normal",
+            "description": "Theme timing preset for both size and opacity. Native style can customize transition timing."
+          },
+          {
+            "name": "hiddenUntilFound",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Uses hidden until-found so browser page search can reveal the contents. Overrides keepMounted."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the closed panel mounted and hidden, preserving local content state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsiblePanelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the animated panel div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsiblePanelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
