@@ -446,7 +446,7 @@ export class ApplicationTarballService {
     const extractDir = join(tempDir, 'extracted');
 
     await fs.mkdir(extractDir, { recursive: true });
-    await extractTarballSecurely(tarballPath, extractDir);
+    await extractTarballSecurely({ tarballPath, targetDir: extractDir });
 
     const contentDir = await resolvePackageContentDir(extractDir);
 

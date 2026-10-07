@@ -9,17 +9,27 @@ import {
 
 export const MAX_EXTRACTED_SIZE_BYTES = 500 * 1024 * 1024;
 
-export const extractTarballSecurely = async (
-  tarballPath: string,
-  targetDir: string,
-): Promise<void> => {
+export const extractTarballSecurely = async ({
+  tarballPath,
+  targetDir,
+  maxExtractedSizeBytes = MAX_EXTRACTED_SIZE_BYTES,
+}: {
+  tarballPath: string;
+  targetDir: string;
+  maxExtractedSizeBytes?: number;
+}): Promise<void> => {
   let totalExtractedSize = 0;
+  let hasExceededMaxExtractedSize = false;
   const resolvedTarget = resolve(targetDir) + sep;
 
   await tar.extract({
     file: tarballPath,
     cwd: targetDir,
     filter: (entryPath, entry) => {
+      if (hasExceededMaxExtractedSize) {
+        return false;
+      }
+
       const resolvedEntry = resolve(targetDir, entryPath);
 
       if (!resolvedEntry.startsWith(resolvedTarget)) {
@@ -36,14 +46,20 @@ export const extractTarballSecurely = async (
 
       totalExtractedSize += entry.size ?? 0;
 
-      if (totalExtractedSize > MAX_EXTRACTED_SIZE_BYTES) {
-        throw new ApplicationException(
-          `Extracted size exceeds ${MAX_EXTRACTED_SIZE_BYTES} bytes`,
-          ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
-        );
+      if (totalExtractedSize > maxExtractedSizeBytes) {
+        hasExceededMaxExtractedSize = true;
+
+        return false;
       }
 
       return true;
     },
   });
+
+  if (hasExceededMaxExtractedSize) {
+    throw new ApplicationException(
+      `Extracted size exceeds ${maxExtractedSizeBytes} bytes`,
+      ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+    );
+  }
 };
