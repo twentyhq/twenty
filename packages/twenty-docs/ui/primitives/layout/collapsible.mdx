@@ -59,10 +59,6 @@ Panel's `duration` chooses a theme preset (`instant`, `fast`, `normal`, or `slow
 
 Panel unmounts after closing by default. Use `keepMounted` to preserve local content state while hiding the closed panel. `hiddenUntilFound` lets browser page search reveal closed content and takes precedence over `keepMounted`.
 
-## Migration
-
-Replace the former `<Collapsible isExpanded={expanded}>` assembly with `<Collapsible.Root open={expanded}><Collapsible.Panel>…</Collapsible.Panel></Collapsible.Root>`. Move `dimension`, `containAnimation`, and `duration` to Panel. Replace `animationDurations` with Panel's native transition style. Compose Trigger inside Root when the panel has a local toggle, so Base UI owns keyboard activation and linkage.
-
 ## Props
 
 <CollapsibleReference />
