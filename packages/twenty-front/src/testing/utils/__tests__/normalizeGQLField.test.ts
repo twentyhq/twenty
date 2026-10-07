@@ -1,4 +1,4 @@
-import { normalizeGQLField } from '~/utils/normalizeGQLField';
+import { normalizeGQLField } from '~/testing/utils/normalizeGQLField';
 
 describe('normalizeGQLField', () => {
   it('should produce consistent output for the same fields', () => {

@@ -1,4 +1,4 @@
-import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
+import { normalizeGQLQuery } from '~/testing/utils/normalizeGQLQuery';
 
 describe('normalizeGQLQuery', () => {
   it('should produce consistent output for the same query', () => {
