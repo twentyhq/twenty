@@ -978,8 +978,8 @@
         "name": "axis",
         "type": "\"x\" | \"y\"",
         "required": false,
-        "defaultValue": "y",
-        "description": "Pointer movement axis: `y` for height or `x` for width."
+        "defaultValue": "y without edge",
+        "description": "Pointer movement axis without `edge`: `y` for height or `x` for width."
       },
       {
         "name": "defaultValue",
@@ -989,11 +989,32 @@
         "description": "Initial size when the handle owns its state."
       },
       {
+        "name": "direction",
+        "type": "\"normal\" | \"reverse\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical increasing direction. Omit to follow the horizontal text direction; use `normal` or `reverse` for a fixed physical edge."
+      },
+      {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
         "description": "Disables resizing and removes the handle from the tab order."
+      },
+      {
+        "name": "dragThreshold",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5 with edge; 0 otherwise",
+        "description": "Physical pointer distance required before resizing starts. Movement below the threshold remains a click. Defaults to 5 with `edge` and 0 otherwise."
+      },
+      {
+        "name": "edge",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical panel edge. Determines the movement axis and increasing direction, independently of text direction."
       },
       {
         "name": "max",
@@ -1010,11 +1031,46 @@
         "description": "Minimum allowed size."
       },
       {
+        "name": "onActivate",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called for a click without dragging, Enter, or Space."
+      },
+      {
+        "name": "onResizeEnd",
+        "type": "((details: { cancelled: boolean; value: number; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called after a started drag ends, with its final value and whether it was cancelled. Cancellation restores the starting value within the current bounds."
+      },
+      {
+        "name": "onResizeStart",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called once with the first bounded drag value after the threshold is crossed."
+      },
+      {
         "name": "onValueChange",
         "type": "((value: number) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the bounded size after pointer or keyboard interaction."
+        "description": "Called with the bounded size during pointer or keyboard interaction and with the restored value on cancellation."
+      },
+      {
+        "name": "onValueCommitted",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit."
+      },
+      {
+        "name": "placement",
+        "type": "\"edge\" | \"gap\" | \"inline\"",
+        "required": false,
+        "defaultValue": "edge with edge; inline otherwise",
+        "description": "Layout mode: `inline` stays in normal flow, `edge` positions the handle on the panel edge, and `gap` sits between panels. Defaults to `edge` when `edge` is set and `inline` otherwise."
       },
       {
         "name": "render",
@@ -1022,6 +1078,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "scale",
+        "type": "number | (() => number)",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Pointer scale or resolver sampled at pointer down. Movement is divided by this positive scale; keyboard steps are unchanged."
       },
       {
         "name": "step",
@@ -1035,7 +1098,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Controlled size. Apply the value to the element being resized."
+        "description": "Current controlled size. Update it in `onValueChange` and apply it to the element being resized."
       }
     ]
   },
