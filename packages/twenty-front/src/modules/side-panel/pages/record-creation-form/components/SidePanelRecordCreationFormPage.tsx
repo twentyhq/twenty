@@ -185,6 +185,18 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const revealHiddenFieldsTargetedBy = (
+    fieldMetadataIds: (string | null)[],
+  ) => {
+    const isAnyHiddenFieldTargeted = hiddenFieldMetadataItems.some(
+      (fieldMetadataItem) => fieldMetadataIds.includes(fieldMetadataItem.id),
+    );
+
+    if (isAnyHiddenFieldTargeted) {
+      setRecordCreationFormAreHiddenFieldsShown(true);
+    }
+  };
+
   const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
@@ -195,16 +207,9 @@ const SidePanelRecordCreationForm = ({
 
       setValidationRuleViolations(draftViolations);
 
-      const isAnyViolationOnHiddenField = draftViolations.some((violation) =>
-        hiddenFieldMetadataItems.some(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === violation.fieldMetadataId,
-        ),
+      revealHiddenFieldsTargetedBy(
+        draftViolations.map((violation) => violation.fieldMetadataId),
       );
-
-      if (isAnyViolationOnHiddenField) {
-        setRecordCreationFormAreHiddenFieldsShown(true);
-      }
 
       if (draftViolations.length > 0) {
         return;
@@ -213,14 +218,17 @@ const SidePanelRecordCreationForm = ({
 
     setIsSubmitting(true);
     try {
-      await settleRecordCreationDraft({
-        requestId,
-        draftRecord: computeRecordFormCreateRecordInput({
-          draftRecord,
-          fieldMetadataItems: objectMetadataItem.fields,
-          objectMetadataItems,
-        }),
-      });
+      const { validationRuleViolationFieldMetadataIds } =
+        await settleRecordCreationDraft({
+          requestId,
+          draftRecord: computeRecordFormCreateRecordInput({
+            draftRecord,
+            fieldMetadataItems: objectMetadataItem.fields,
+            objectMetadataItems,
+          }),
+        });
+
+      revealHiddenFieldsTargetedBy(validationRuleViolationFieldMetadataIds);
     } finally {
       setIsSubmitting(false);
     }

@@ -225,6 +225,9 @@ describe('SidePanelRecordCreationFormPage', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     mockValidationRules = [];
+    settleRecordCreationDraft.mockResolvedValue({
+      validationRuleViolationFieldMetadataIds: [],
+    });
     seedRecordFormPageLayout();
     jotaiStore.set(
       recordCreationFormRequestComponentState.atomFamily({
@@ -334,5 +337,19 @@ describe('SidePanelRecordCreationFormPage', () => {
       'A company needs a nickname',
     );
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('reveals a hidden field the server rejected through a validation rule', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValue({
+      validationRuleViolationFieldMetadataIds: [NICKNAME_FIELD.id],
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
   });
 });

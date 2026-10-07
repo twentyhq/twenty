@@ -6,6 +6,7 @@ import {
   sidePanelNavigationStackState,
   type SidePanelNavigationStackItem,
 } from '@/side-panel/states/sidePanelNavigationStackState';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -62,7 +63,7 @@ it('removes the form from deeper in the history when the user moved on before cr
     });
   });
   const [formPage] = store.get(sidePanelNavigationStackState.atom);
-  let submission: Promise<void> | undefined;
+  let submission: Promise<unknown> | undefined;
   act(() => {
     submission = result.current.settleRecordCreationDraft({
       requestId: formPage.pageId,
@@ -88,4 +89,45 @@ it('removes the form from deeper in the history when the user moved on before cr
 
   expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([otherPage]);
+});
+
+it('resolves with the fields the server rejected through validation rules and keeps the form open', async () => {
+  const { result, store } = setup();
+  const createRecord = jest.fn(() =>
+    Promise.reject(
+      new CombinedGraphQLErrors({
+        data: null,
+        errors: [
+          {
+            message: 'A company needs an amount',
+            extensions: {
+              validationRuleViolations: [
+                { ruleId: 'amount-rule', fieldMetadataId: 'field-amount' },
+              ],
+            },
+          },
+        ],
+      }),
+    ),
+  );
+  act(() => {
+    void result.current.requestRecordCreation({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      createRecord,
+    });
+  });
+  const [formPage] = store.get(sidePanelNavigationStackState.atom);
+
+  let settlement: unknown;
+  await act(async () => {
+    settlement = await result.current.settleRecordCreationDraft({
+      requestId: formPage.pageId,
+      draftRecord: { name: 'Test' },
+    });
+  });
+
+  expect(settlement).toEqual({
+    validationRuleViolationFieldMetadataIds: ['field-amount'],
+  });
+  expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
 });
