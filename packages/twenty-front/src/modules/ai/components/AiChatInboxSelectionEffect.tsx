@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type AiChatInboxSelectionEffectProps = {
@@ -20,6 +24,16 @@ export const AiChatInboxSelectionEffect = ({
   shouldSelectFirstThread,
 }: AiChatInboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
+  const agentChatRecentThreads = useAtomStateValue(
+    agentChatRecentThreadsSelector,
+  );
+  const { scope: selectedThreadScope } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    selectedThreadId ?? '',
+  );
+  const isSelectedThreadInInbox =
+    selectedThreadScope === 'INBOX' &&
+    agentChatRecentThreads.some(({ id }) => id === selectedThreadId);
   const [lastListedSelection, setLastListedSelection] = useState<{
     threadId: string;
     index: number;
@@ -53,8 +67,13 @@ export const AiChatInboxSelectionEffect = ({
       return;
     }
 
-    // A chat opened from a link without being listed stays open
-    if (lastListedSelection?.threadId !== selectedThreadId) {
+    // A chat opened from a link without being listed stays open, and so does
+    // one that left the list by coming back to the inbox, as a done or
+    // snoozed chat does when the member writes in it
+    if (
+      lastListedSelection?.threadId !== selectedThreadId ||
+      isSelectedThreadInInbox
+    ) {
       return;
     }
 
@@ -63,6 +82,7 @@ export const AiChatInboxSelectionEffect = ({
 
     selectThread(nextThread?.id ?? null);
   }, [
+    isSelectedThreadInInbox,
     lastListedSelection,
     navigate,
     selectedThreadId,

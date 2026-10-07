@@ -16,9 +16,15 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import {
@@ -54,10 +60,6 @@ jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   objectMetadataItemFamilySelector: {
     selectorFamily: () => chatObjectMetadataItemAtom,
   },
-}));
-
-jest.mock('@/ai/hooks/useChatThreads', () => ({
-  useChatThreads: () => ({ threads: THREADS, loading: false }),
 }));
 
 jest.mock('@/ai/components/AiChatThreadList', () => ({
@@ -122,6 +124,7 @@ jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
   AiChatPageEffects: () => null,
 }));
 
+// Sending stands in for the composer with what a send applies right away
 jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
   AiChatThreadPageContent: ({
     threadId,
@@ -131,13 +134,27 @@ jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
     threadId: string;
     headerTitlePrefix?: ReactNode;
     headerActions?: ReactNode;
-  }) => (
-    <div>
-      {headerTitlePrefix}
-      Chat page {threadId}
-      {headerActions}
-    </div>
-  ),
+  }) => {
+    const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
+
+    return (
+      <div>
+        {headerTitlePrefix}
+        Chat page {threadId}
+        {headerActions}
+        <button
+          onClick={() =>
+            applyOptimisticRestore({
+              threadId,
+              optimisticUpdatedAt: '2026-09-09T00:00:00.000Z',
+            })
+          }
+        >
+          Send
+        </button>
+      </div>
+    );
+  },
 }));
 
 let isMobile = false;
@@ -211,7 +228,17 @@ const getTargetedThreadIds = (contextStoreInstanceId: string) =>
 
 describe('AiChatInboxPage', () => {
   beforeEach(() => {
+    // The list filter is kept in local storage
+    localStorage.clear();
     resetJotaiStore();
+    THREADS.forEach((thread) =>
+      jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
+    );
+    jotaiStore.set(agentChatThreadListState.atom, {
+      threadIds: THREADS.map(({ id }) => id),
+      hasNextPage: false,
+      endCursor: null,
+    });
     isMobile = false;
     mockIsAiChatInboxEnabled = true;
   });
@@ -229,6 +256,44 @@ describe('AiChatInboxPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Second chat' }));
 
+    expect(
+      screen.getByText(`Chat page ${secondThread.id}`),
+    ).toBeInTheDocument();
+  });
+
+  it('stays on a done chat the member writes in, though it leaves the done list', () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+    );
+    jotaiStore.set(
+      agentChatThreadParticipantsState.atom,
+      Object.fromEntries(
+        THREADS.map(({ id }) => [
+          id,
+          {
+            id: `participant-${id}`,
+            threadId: id,
+            lastReadAt: '2026-09-07T00:00:00.000Z',
+            archivedAt: '2026-09-08T00:00:00.000Z',
+            snoozedUntil: null,
+            isSubscribed: true,
+            lastMentionedAt: null,
+            updatedAt: '2026-09-08T00:00:00.000Z',
+          },
+        ]),
+      ),
+    );
+
+    renderInbox(`/inbox/${secondThread.id}`);
+
+    expect(isRowOpen('Second chat')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(
+      screen.queryByRole('button', { name: 'Second chat' }),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByText(`Chat page ${secondThread.id}`),
     ).toBeInTheDocument();
