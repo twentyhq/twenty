@@ -34,6 +34,7 @@ import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -56,6 +57,7 @@ export class AgentChatService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
   private getMessageSenderValues({
@@ -560,6 +562,9 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
+    const hasAgentTurnRunFields =
+      await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
+
     const isPendingQuestionCleared = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
@@ -585,10 +590,12 @@ export class AgentChatService {
           return false;
         }
 
-        await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
-          messageId,
-          AgentTurnStatus.COMPLETED,
-        ]);
+        if (hasAgentTurnRunFields) {
+          await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+            messageId,
+            AgentTurnStatus.COMPLETED,
+          ]);
+        }
 
         return true;
       },
