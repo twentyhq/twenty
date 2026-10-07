@@ -41,7 +41,9 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
   beforeEach: () => {
     jotaiStore.set(isAdvancedModeEnabledState.atom, true);
 
-    return () => jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+    return () => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+    };
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
