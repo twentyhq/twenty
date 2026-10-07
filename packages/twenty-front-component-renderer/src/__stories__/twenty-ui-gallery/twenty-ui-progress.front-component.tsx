@@ -21,12 +21,12 @@ const ProgressExample = () => {
         {progress} / 100
       </ProgressRing>
       <MetricRow
-        startIcon={IconDatabase}
+        startIcon={<IconDatabase size={14} />}
         value={<Text render={<bdi />}>{progress} / 100 GB</Text>}
         progress={progress}
         progressValueText={`${progress} of 100 gigabytes used`}
       >
-        Storage
+        <Text render={<strong />}>Storage</Text>
       </MetricRow>
       <MetricRow value={0}>Completed imports</MetricRow>
       <ProgressRing value={-10} size="sm" aria-label="Empty progress" />

@@ -113,10 +113,16 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
 
 import { BuildIndexDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/build-index-deferred-action-handler.service';
 import { DeleteLogicFunctionResourcesDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-logic-function-resources-deferred-action-handler.service';
+import { DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-workflow-runs-deferred-action-handler.workspace-service';
 import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/validate-foreign-key-deferred-action-handler.service';
+import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
 
 @Module({
-  imports: [WorkspaceSchemaManagerModule, MetricsModule],
+  imports: [
+    WorkspaceSchemaManagerModule,
+    MetricsModule,
+    WorkflowDeletionModule,
+  ],
   providers: [
     CreateWorkflowActionHandlerService,
     UpdateWorkflowActionHandlerService,
@@ -262,6 +268,7 @@ import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/works
     BuildIndexDeferredActionHandlerService,
     ValidateForeignKeyDeferredActionHandlerService,
     DeleteLogicFunctionResourcesDeferredActionHandlerService,
+    DeleteWorkflowRunsDeferredActionHandlerWorkspaceService,
   ],
   exports: [UpdateLogicFunctionActionHandlerService],
 })

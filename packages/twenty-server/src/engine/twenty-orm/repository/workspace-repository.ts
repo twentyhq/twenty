@@ -704,7 +704,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return updateResult;
   }
 
-  async delete(criteria: MutationCriteria): Promise<DeleteResult> {
+  async delete(
+    criteria: MutationCriteria,
+    options?: { columnsToReturn?: string[] },
+  ): Promise<DeleteResult> {
     const records = await this.runMutation({
       selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
         this.createQueryBuilder(),
@@ -712,7 +715,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       rowLevelPermissionsApplied: false,
       kind: 'delete',
-      columnsToReturn: ['id'],
+      columnsToReturn: options?.columnsToReturn ?? ['id'],
     });
 
     const deleteResult = new DeleteResult();
