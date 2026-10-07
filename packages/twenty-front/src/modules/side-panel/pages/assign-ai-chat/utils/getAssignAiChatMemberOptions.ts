@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
 export type AssignAiChatMemberOption = {
   workspaceMember: PartialWorkspaceMember;
@@ -23,9 +24,7 @@ export const getAssignAiChatMemberOptions = ({
   return workspaceMembers
     .map((workspaceMember) => ({
       workspaceMember,
-      label:
-        `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim() ||
-        workspaceMember.userEmail,
+      label: getWorkspaceMemberNameOrEmail(workspaceMember),
     }))
     .filter(
       ({ workspaceMember, label }) =>

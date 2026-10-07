@@ -26,6 +26,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledThreadItem = styled.div<{ $isSelected: boolean }>`
@@ -191,8 +192,7 @@ export const AiChatThreadListItem = ({
     (workspaceMember) => workspaceMember.id === thread.assigneeId,
   );
   const assigneeName = isDefined(assignee)
-    ? `${assignee.name.firstName} ${assignee.name.lastName}`.trim() ||
-      assignee.userEmail
+    ? getWorkspaceMemberNameOrEmail(assignee)
     : undefined;
   const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
   const isAwaitingAnswer =
