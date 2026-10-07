@@ -101,6 +101,7 @@ it('resolves with the fields the server rejected through validation rules and ke
           {
             message: 'A company needs an amount',
             extensions: {
+              subCode: 'VALIDATION_RULE_VIOLATION',
               validationRuleViolations: [
                 { ruleId: 'amount-rule', fieldMetadataId: 'field-amount' },
               ],

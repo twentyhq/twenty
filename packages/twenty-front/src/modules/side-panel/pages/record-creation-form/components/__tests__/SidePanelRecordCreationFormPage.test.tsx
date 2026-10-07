@@ -352,4 +352,18 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
   });
+
+  it('keeps hidden fields collapsed when the server rejects a visible field', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValue({
+      validationRuleViolationFieldMetadataIds: [NAME_FIELD.id],
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
 });

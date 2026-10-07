@@ -1,26 +1,27 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
+
+import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const getValidationRuleViolationFieldMetadataIdsFromError = (
   error: unknown,
 ): string[] => {
-  if (!CombinedGraphQLErrors.is(error)) {
+  if (!isGraphqlErrorOfType(error, 'VALIDATION_RULE_VIOLATION')) {
     return [];
   }
 
-  return error.errors.flatMap(({ extensions }) => {
-    const validationRuleViolations = extensions?.validationRuleViolations;
+  const validationRuleViolations =
+    getGraphqlErrorExtensionsFromError(error)?.validationRuleViolations;
 
-    if (!Array.isArray(validationRuleViolations)) {
-      return [];
-    }
+  if (!Array.isArray(validationRuleViolations)) {
+    return [];
+  }
 
-    return validationRuleViolations.flatMap((validationRuleViolation) =>
-      isPlainObject(validationRuleViolation) &&
-      isNonEmptyString(validationRuleViolation.fieldMetadataId)
-        ? [validationRuleViolation.fieldMetadataId]
-        : [],
-    );
-  });
+  return validationRuleViolations.flatMap((validationRuleViolation) =>
+    isPlainObject(validationRuleViolation) &&
+    isNonEmptyString(validationRuleViolation.fieldMetadataId)
+      ? [validationRuleViolation.fieldMetadataId]
+      : [],
+  );
 };

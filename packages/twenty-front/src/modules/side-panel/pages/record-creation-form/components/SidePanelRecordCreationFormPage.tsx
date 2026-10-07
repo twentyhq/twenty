@@ -185,11 +185,12 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
-  const revealHiddenFieldsTargetedBy = (
-    fieldMetadataIds: (string | null)[],
+  const revealHiddenFieldsIfTargeted = (
+    targetedFieldMetadataIds: (string | null)[],
   ) => {
     const isAnyHiddenFieldTargeted = hiddenFieldMetadataItems.some(
-      (fieldMetadataItem) => fieldMetadataIds.includes(fieldMetadataItem.id),
+      (fieldMetadataItem) =>
+        targetedFieldMetadataIds.includes(fieldMetadataItem.id),
     );
 
     if (isAnyHiddenFieldTargeted) {
@@ -207,7 +208,7 @@ const SidePanelRecordCreationForm = ({
 
       setValidationRuleViolations(draftViolations);
 
-      revealHiddenFieldsTargetedBy(
+      revealHiddenFieldsIfTargeted(
         draftViolations.map((violation) => violation.fieldMetadataId),
       );
 
@@ -228,7 +229,7 @@ const SidePanelRecordCreationForm = ({
           }),
         });
 
-      revealHiddenFieldsTargetedBy(validationRuleViolationFieldMetadataIds);
+      revealHiddenFieldsIfTargeted(validationRuleViolationFieldMetadataIds);
     } finally {
       setIsSubmitting(false);
     }
