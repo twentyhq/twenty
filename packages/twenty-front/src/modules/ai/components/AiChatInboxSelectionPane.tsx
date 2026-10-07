@@ -6,9 +6,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInboxSelectionPile } from '@/ai/components/AiChatInboxSelectionPile';
-import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -58,11 +56,6 @@ export const AiChatInboxSelectionPane = ({
         />
       }
     >
-      {/* The selection takes the place of the chat on screen, so the command
-      menu acts on it */}
-      <AiChatInboxSelectionToContextStoreEffect
-        contextStoreInstanceId={MAIN_CONTEXT_STORE_INSTANCE_ID}
-      />
       <StyledSelection>
         <AiChatInboxSelectionPile threads={selectedThreads} />
         <EmptyState.Content>

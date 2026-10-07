@@ -445,7 +445,10 @@ describe('browser sign-in and session refresh', () => {
     const { envelope, exitCode } = await runJson(['auth', 'status']);
 
     expect(exitCode).toBe(1);
-    expect(envelope.error).toMatchObject({ code: 'OAUTH_UNAVAILABLE' });
+    expect(envelope.error).toMatchObject({
+      code: 'OAUTH_UNAVAILABLE',
+      hint: expect.stringContaining('twenty auth login --with-token'),
+    });
     expect(state.refreshCalls).toBe(0);
     expect(await readConfigFile()).toEqual(configBefore);
     expect(openBrowser).not.toHaveBeenCalled();

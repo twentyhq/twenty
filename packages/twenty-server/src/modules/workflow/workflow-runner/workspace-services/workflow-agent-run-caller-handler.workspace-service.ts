@@ -17,8 +17,6 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-execution-context.util';
-import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
-import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
@@ -118,21 +116,19 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
       });
     }
 
+    // the member's answer already ran the call, so a Send Message step only reports it
+    const actionOutput =
+      outcome.status === 'FAILED'
+        ? { error: outcome.error }
+        : {
+            result:
+              outcome.status === 'ANSWERED'
+                ? { threadId, ...outcome.answer }
+                : outcome.result,
+          };
+
     // the step stays pending until the job claims it, so the run must not stay running without one
     try {
-      const actionOutput =
-        outcome.status === 'FAILED'
-          ? { error: outcome.error }
-          : {
-              result: await this.buildStepResult({
-                workspaceId,
-                workflowRunId,
-                stepId,
-                threadId,
-                result: outcome.result,
-              }),
-            };
-
       await this.messageQueueService.add<RunWorkflowJobData>(
         RUN_WORKFLOW_JOB_NAME,
         {
@@ -152,35 +148,5 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
 
       throw error;
     }
-  }
-
-  // the member's answer already ran the call, so a Send Message step only reports it
-  private async buildStepResult({
-    workspaceId,
-    workflowRunId,
-    stepId,
-    threadId,
-    result,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    threadId: string;
-    result: object;
-  }): Promise<object> {
-    const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
-      workflowRunId,
-      workspaceId,
-    });
-    const step = workflowRun?.state?.flow?.steps?.find(
-      (candidateStep) => candidateStep.id === stepId,
-    );
-
-    return isDefined(step) && isWorkflowSendChatMessageAction(step)
-      ? buildSendChatMessageAnswerResult({
-          threadId,
-          toolResult: result as Record<string, unknown>,
-        })
-      : result;
   }
 }
