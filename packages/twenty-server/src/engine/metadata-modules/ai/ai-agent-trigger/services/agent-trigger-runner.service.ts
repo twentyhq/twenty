@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { buildCreatedByFromAgent } from 'src/engine/core-modules/actor/utils/build-created-by-from-agent.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
@@ -42,8 +43,6 @@ type TriggeredRun = {
 export class AgentTriggerRunnerService
   implements AgentRunCallerHandler<AgentTriggerCaller>, OnModuleInit
 {
-  readonly callerType = 'AGENT_TRIGGER';
-
   private readonly logger = new Logger(AgentTriggerRunnerService.name);
 
   constructor(
@@ -55,7 +54,7 @@ export class AgentTriggerRunnerService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('AGENT_TRIGGER', this);
   }
 
   async run({
@@ -185,6 +184,7 @@ export class AgentTriggerRunnerService
         actorContext: createdBy,
         userWorkspaceId: null,
         rolePermissionConfig: buildAgentRolePermissionConfig({ agentRoleId }),
+        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };
   }

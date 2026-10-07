@@ -5,7 +5,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -23,7 +23,7 @@ import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/wo
 @Injectable()
 export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly agentCallerInboxService: AgentCallerInboxService,
+    private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
   ) {}
 
@@ -76,7 +76,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       stepExecutionKey: executionKey,
     });
 
-    const delivery = await this.agentCallerInboxService.sendMessage({
+    const delivery = await this.agentCallerConversationService.sendMessage({
       workspaceId: runInfo.workspaceId,
       sender,
       message: {
