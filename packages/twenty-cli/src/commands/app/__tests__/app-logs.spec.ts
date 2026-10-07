@@ -218,6 +218,31 @@ describe('twenty app logs', () => {
     }
   });
 
+  it('prints the SDK Node warning before watching starts in human output', async () => {
+    const message =
+      'twenty-sdk 2.45.0 declares Node ^22.0.0; continuing on Node 26.0.0, which is outside that range.';
+
+    vi.mocked(readAppIdentity).mockImplementation(async ({ warn }) => {
+      warn?.({ code: 'NODE_VERSION_UNTESTED', message });
+
+      return {
+        application: {
+          universalIdentifier: APPLICATION_IDENTIFIER,
+          displayName: 'Test app',
+        },
+        diagnostics: [],
+      };
+    });
+
+    const result = await run();
+    const warningIndex = result.stderr.indexOf(message);
+
+    expect(result.exitCode).toBe(0);
+    expect(warningIndex).toBeGreaterThanOrEqual(0);
+    expect(warningIndex).toBeLessThan(result.stderr.indexOf('Watching'));
+    expect(result.stderr.lastIndexOf(message)).toBe(warningIndex);
+  });
+
   it.each(['http', 'sse', 'sse-without-code'])(
     'falls back once for missing identity fields over %s, with an explicit warning',
     async (transport) => {
