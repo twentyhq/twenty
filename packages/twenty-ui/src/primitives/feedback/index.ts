@@ -15,3 +15,6 @@ export { ProgressBar } from './ProgressBar/ProgressBar';
 export type { ProgressBarProps } from './ProgressBar/types/ProgressBarProps';
 export { ProgressRing } from './ProgressRing/ProgressRing';
 export type { ProgressRingProps } from './ProgressRing/types/ProgressRingProps';
+export { SKELETON_HEIGHT_SIZES } from './Skeleton/constants/SKELETON_HEIGHT_SIZES';
+export { Skeleton } from './Skeleton/Skeleton';
+export type { SkeletonProps } from './Skeleton/types/SkeletonProps';

@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
@@ -14,7 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -27,7 +28,6 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { Temporal } from 'temporal-polyfill';
 
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
@@ -270,28 +270,10 @@ export const DateTimePicker = ({
           <Suspense
             fallback={
               <StyledDatePickerFallback>
-                <SkeletonTheme
-                  baseColor={theme.background.tertiary}
-                  highlightColor={theme.background.transparent.lighter}
-                  borderRadius={4}
-                >
-                  <Skeleton
-                    width={200}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  />
-                  <Skeleton
-                    width={240}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                  />
-                  <Skeleton
-                    width={220}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  />
-                  <Skeleton
-                    width={180}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                  />
-                </SkeletonTheme>
+                <SkeletonLine width={200} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={240} height={SKELETON_HEIGHT_SIZES.l} />
+                <SkeletonLine width={220} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={180} height={SKELETON_HEIGHT_SIZES.s} />
               </StyledDatePickerFallback>
             }
           >

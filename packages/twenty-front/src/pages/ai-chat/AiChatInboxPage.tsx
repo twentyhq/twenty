@@ -8,7 +8,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';

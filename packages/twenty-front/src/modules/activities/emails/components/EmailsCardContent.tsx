@@ -1,6 +1,6 @@
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';

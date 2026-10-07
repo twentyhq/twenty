@@ -2,7 +2,7 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/ui/feedback/skeleton-loader/components/SkeletonLoader';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { UpsertRecordsInStoreEffect } from '@/object-record/record-store/components/UpsertRecordsInStoreEffect';

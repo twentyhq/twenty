@@ -1,6 +1,8 @@
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+
 import { RECORD_BOARD_COLUMN_PADDING_AND_BORDER_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnPaddingAndBorderWidth';
 
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
@@ -16,7 +18,6 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/ui/feedback/skeleton-loader/constants/SkeletonLoaderHeightSizes';
 
 const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
   max-width: ${({ width }) => width}px;
@@ -27,8 +28,7 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 const BOARD_CARD_HEADER_HEIGHT = 32 + 8 + 4;
 
 // Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
-const BOARD_CARD_FIELD_ROW_HEIGHT =
-  SKELETON_LOADER_HEIGHT_SIZES.standard.s + 8 + 2;
+const BOARD_CARD_FIELD_ROW_HEIGHT = SKELETON_HEIGHT_SIZES.s + 8 + 2;
 
 // StyledBodyContainer padding (4+4) + card border (2×1px) + StyledSkeletonCardContainer margin-bottom spacing(2)
 const BOARD_CARD_CHROME_HEIGHT = 8 + 2 + 8;
