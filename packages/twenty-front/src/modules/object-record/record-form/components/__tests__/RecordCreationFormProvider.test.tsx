@@ -127,6 +127,8 @@ it('resolves with the fields the server rejected through validation rules and ke
     });
   });
 
+  expect(createRecord).toHaveBeenCalledTimes(1);
+  expect(createRecord).toHaveBeenCalledWith({ name: 'Test' });
   expect(settlement).toEqual({
     validationRuleViolationFieldMetadataIds: ['field-amount'],
   });

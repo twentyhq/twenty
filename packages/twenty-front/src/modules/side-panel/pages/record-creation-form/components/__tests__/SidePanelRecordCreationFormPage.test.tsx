@@ -350,6 +350,11 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: {},
+    });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
   });
 
@@ -364,6 +369,11 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: {},
+    });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 });
