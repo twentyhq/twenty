@@ -192,7 +192,7 @@ describe('AgentRunService', () => {
       turnCreatedBy: RUN_AS_ACTOR,
       userWorkspaceId: RUN_AS_USER_WORKSPACE_ID,
       runAsRoleId: 'role-id',
-      rolePermissionConfig: { intersectionOf: ['role-id'] },
+      rolePermissionConfig: { intersectionOf: ['agent-role-id', 'role-id'] },
       conversationActor: {
         type: 'user',
         workspaceMemberId: RUN_AS_ACTOR.workspaceMemberId,

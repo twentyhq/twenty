@@ -5,10 +5,12 @@ export const runAgentQueryFactory = ({
   agentUniversalIdentifier,
   prompt,
   thread,
+  runAsWorkspaceMemberId,
 }: {
   agentUniversalIdentifier: string;
   prompt: string;
   thread?: RunAgentThread;
+  runAsWorkspaceMemberId?: string;
 }) => ({
   query: gql`
     mutation RunAgent($input: RunAgentInput!) {
@@ -20,5 +22,7 @@ export const runAgentQueryFactory = ({
       }
     }
   `,
-  variables: { input: { agentUniversalIdentifier, prompt, thread } },
+  variables: {
+    input: { agentUniversalIdentifier, prompt, thread, runAsWorkspaceMemberId },
+  },
 });

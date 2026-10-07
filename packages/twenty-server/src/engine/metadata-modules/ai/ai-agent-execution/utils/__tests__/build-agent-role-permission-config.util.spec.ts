@@ -7,16 +7,16 @@ describe('buildAgentRolePermissionConfig', () => {
     ).toEqual({ intersectionOf: ['agent-role-id'] });
   });
 
-  it('uses the member role alone in run-as mode', () => {
+  it('bounds the agent role by the member role in run-as mode', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
         runAsRoleId: 'run-as-role-id',
       }),
-    ).toEqual({ intersectionOf: ['run-as-role-id'] });
+    ).toEqual({ intersectionOf: ['agent-role-id', 'run-as-role-id'] });
   });
 
-  it('does not involve the agent role even when the member holds it', () => {
+  it('does not repeat a role the agent and the member share', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
@@ -40,14 +40,20 @@ describe('buildAgentRolePermissionConfig', () => {
     });
   });
 
-  it('narrows the run-as role instead of replacing it with the additional restrictions', () => {
+  it('bounds the agent role by the run-as role and the additional restrictions', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
         runAsRoleId: 'member-role-id',
         additionalRoleRestrictionIds: ['application-role-id'],
       }),
-    ).toEqual({ intersectionOf: ['member-role-id', 'application-role-id'] });
+    ).toEqual({
+      intersectionOf: [
+        'agent-role-id',
+        'member-role-id',
+        'application-role-id',
+      ],
+    });
   });
 
   it('does not repeat a role shared by the agent and the run', () => {
@@ -64,6 +70,15 @@ describe('buildAgentRolePermissionConfig', () => {
       buildAgentRolePermissionConfig({
         agentRoleId: undefined,
         additionalRoleRestrictionIds: ['application-role-id'],
+      }),
+    ).toEqual({ intersectionOf: [] });
+  });
+
+  it('reads nothing for an agent without a role, even in run-as mode', () => {
+    expect(
+      buildAgentRolePermissionConfig({
+        agentRoleId: undefined,
+        runAsRoleId: 'member-role-id',
       }),
     ).toEqual({ intersectionOf: [] });
   });
