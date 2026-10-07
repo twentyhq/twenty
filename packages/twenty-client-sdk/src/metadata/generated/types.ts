@@ -715,6 +715,9 @@ export default {
             ]
         },
         "AppPreferencesApplication": {
+            "hasConnectionProviders": [
+                4
+            ],
             "id": [
                 478
             ],

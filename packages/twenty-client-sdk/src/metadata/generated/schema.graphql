@@ -313,6 +313,7 @@ input AppMessageParticipantInput {
 }
 
 type AppPreferencesApplication {
+  hasConnectionProviders: Boolean!
   id: UUID!
   logoUrl: String
   name: String!

@@ -1,5 +1,6 @@
 import { SettingsAppPreferencesRouteGuard } from '@/settings/app-preferences/components/SettingsAppPreferencesRouteGuard';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { isFunction } from '@sniptt/guards';
 import {
   Navigate,
   Route,
@@ -9,7 +10,7 @@ import {
 } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined, isPlainObject } from 'twenty-shared/utils';
 import { SettingsAppPreferences } from '~/pages/settings/app-preferences/SettingsAppPreferences';
 import { SettingsAppPreferencesApplication } from '~/pages/settings/app-preferences/SettingsAppPreferencesApplication';
 import { MOCKED_GOOGLE_CONNECTED_ACCOUNT } from '~/pages/settings/accounts/__stories__/mockedConnectedAccounts';
@@ -102,7 +103,12 @@ const meta: Meta<PageDecoratorArgs> = {
     routeParams: { ':applicationId': FATHOM_APPLICATION.id },
   },
   parameters: { layout: 'fullscreen', msw: getAppPreferencesConnectionMocks() },
-  beforeEach: async () => {
+  beforeEach: async ({ parameters }) => {
+    const connectionMocks: unknown = parameters.msw;
+    if (!isPlainObject(connectionMocks) || !isFunction(connectionMocks.reset)) {
+      throw new Error('Connection fixtures must reset before each story run');
+    }
+    connectionMocks.reset();
     disconnectAccount.mockClear();
     createTransientToken.mockClear();
     readConnectedAccounts.mockClear();

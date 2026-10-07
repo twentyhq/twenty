@@ -243,6 +243,7 @@ export interface AppKeyValue {
 export type AppKeyValueScope = 'SERVER' | 'WORKSPACE'
 
 export interface AppPreferencesApplication {
+    hasConnectionProviders: Scalars['Boolean']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -4127,6 +4128,7 @@ export interface AppMessageInput {externalId: Scalars['String'],participants: Ap
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
 
 export interface AppPreferencesApplicationGenqlSelection{
+    hasConnectionProviders?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number

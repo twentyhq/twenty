@@ -135,6 +135,10 @@ export const getAppPreferencesConnectionMocks = ({
 } = {}) => {
   let currentAccounts = accounts;
   const savedPreferences = new Map<string, string>();
+  const reset = () => {
+    currentAccounts = accounts;
+    savedPreferences.clear();
+  };
   const getUsableAccounts = (): UsableAccount[] => [
     ...builtInAccounts.map(
       (account): UsableAccount => ({
@@ -159,6 +163,7 @@ export const getAppPreferencesConnectionMocks = ({
     ),
   ];
   return {
+    reset,
     handlers: [
       graphql.query<
         MyAppPreferencesApplicationsQuery,
