@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -229,5 +230,63 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByLabelText('Domain')).toBeInTheDocument();
     expect(screen.queryByLabelText('Internal note')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('reveals the hidden fields the user can update on demand', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Collapse hidden fields' }),
+    );
+
+    expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('submits a value typed in a hidden field after collapsing it', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+    await user.type(screen.getByLabelText('Nickname'), 'Apple');
+    await user.click(
+      screen.getByRole('button', { name: 'Collapse hidden fields' }),
+    );
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { nickname: 'Apple' },
+    });
+  });
+
+  it('restores the draft and revealed fields when the form is shown again', async () => {
+    const user = userEvent.setup();
+
+    const { unmount } = renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'Apple');
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+    await user.type(screen.getByLabelText('Nickname'), 'Big Apple');
+
+    unmount();
+    renderPage();
+
+    expect(screen.getByLabelText('Name')).toHaveValue('Apple');
+    expect(screen.getByLabelText('Nickname')).toHaveValue('Big Apple');
   });
 });
