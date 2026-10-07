@@ -56,6 +56,7 @@ export const WorkflowCoreIndexPage = () => {
   const {
     displayedCoreWorkflows,
     selectedRowIds,
+    selectedCoreWorkflows,
     selectedRowCount,
     toggleRow,
     selectRows,
@@ -121,9 +122,7 @@ export const WorkflowCoreIndexPage = () => {
       onFetchNextPage={fetchNextPage}
     >
       <CoreWorkflowsSelectionToContextStoreEffect
-        selectedCoreWorkflows={displayedCoreWorkflows.filter((coreWorkflow) =>
-          selectedRowIds.includes(coreWorkflow.id),
-        )}
+        selectedCoreWorkflows={selectedCoreWorkflows}
       />
       <CoreObjectTable
         tableId={tableId}
