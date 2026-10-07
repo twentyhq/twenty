@@ -22,7 +22,6 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
-import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
@@ -130,7 +129,6 @@ export const slackAssistantWorkerHandler = async (
     }
 
     const accessDecision = await resolveSlackAccessDecision({
-      accessMode: await getSlackAccessMode(),
       client,
       slackClient,
       slackConnectionId,
@@ -147,7 +145,13 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    if (accessDecision.status === 'DENIED') {
+    // The agent carries no role of its own, so it can only run as the linked
+    // member who made the request. A request we allowed but could not attribute
+    // to a member is declined rather than answered without an identity.
+    if (
+      accessDecision.status === 'DENIED' ||
+      !isNonEmptyString(runAsWorkspaceMemberId)
+    ) {
       await stopStatusUpdates();
 
       const denialDelivery = await sendSlackMessage({
