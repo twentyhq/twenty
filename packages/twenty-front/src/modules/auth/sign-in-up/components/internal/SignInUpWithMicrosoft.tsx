@@ -5,7 +5,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
 import { useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/components/input';
