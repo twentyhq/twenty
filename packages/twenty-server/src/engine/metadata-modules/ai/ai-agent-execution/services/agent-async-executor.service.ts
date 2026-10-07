@@ -17,7 +17,6 @@ import {
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
 } from 'twenty-shared/ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 import {
   isDefined,
   isNonEmptyArray,
@@ -46,7 +45,6 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
@@ -57,6 +55,7 @@ import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
@@ -319,18 +318,20 @@ export class AgentAsyncExecutorService {
     agent,
     messages,
     baseSystemPrompt,
-    actorContext,
-    authContext,
     workspaceId,
-    userWorkspaceId,
-    runAsRoleId,
-    additionalRoleRestrictionIds,
+    executionContext: {
+      actorContext,
+      authContext,
+      userWorkspaceId,
+      runAsRoleId,
+      additionalRoleRestrictionIds,
+      usageOperationType,
+    },
     additionalExcludedToolNames,
     toolLoadingStrategy = 'preload',
     priorMessages = [],
     pausingTools = {},
     canProposeToolCalls = false,
-    usageOperationType,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
@@ -340,15 +341,10 @@ export class AgentAsyncExecutorService {
     // offers propose_tool_call over the registry tools the agent can call itself, or emails without an agent
     canProposeToolCalls?: boolean;
     baseSystemPrompt: string;
-    actorContext?: ActorMetadata;
-    authContext?: WorkspaceAuthContext;
     workspaceId: string;
-    userWorkspaceId?: string | null;
-    runAsRoleId?: string;
-    additionalRoleRestrictionIds?: string[];
+    executionContext: AgentRunExecutionContext;
     additionalExcludedToolNames?: readonly string[];
     toolLoadingStrategy?: AgentToolLoadingStrategy;
-    usageOperationType: UsageOperationType;
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
