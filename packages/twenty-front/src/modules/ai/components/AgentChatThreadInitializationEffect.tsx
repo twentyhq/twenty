@@ -5,9 +5,8 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
-import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -15,21 +14,15 @@ import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedA
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   // The record API builds chat queries from the chat object's fields.
   const areFieldMetadataItemsLoaded =
     useAtomFamilySelectorValue(
@@ -37,35 +30,21 @@ export const AgentChatThreadInitializationEffect = () => {
       'fieldMetadataItems',
     ) === 'up-to-date';
 
-  // The record API refuses a suspended workspace
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
+  const agentChatThreadsLoading = useAtomStateValue(
+    agentChatThreadsLoadingSelector,
   );
-  const canLoadAgentChatThreads = hasAiPermission && !isWorkspaceSuspended;
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
-  const setAgentChatThreadsLoading = useSetAtomState(
-    agentChatThreadsLoadingState,
-  );
-  const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
-  );
   const store = useStore();
   const agentChatVisibleThreads = useAtomStateValue(
     agentChatVisibleThreadsSelector,
   );
-  const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const areAgentChatThreadsLoaded = agentChatThreadList !== null;
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
-    if (
-      areAgentChatThreadsLoaded ||
-      !canLoadAgentChatThreads ||
-      !areFieldMetadataItemsLoaded
-    ) {
+    if (!agentChatThreadsLoading || !areFieldMetadataItemsLoaded) {
       return;
     }
 
@@ -95,27 +74,13 @@ export const AgentChatThreadInitializationEffect = () => {
       }
     };
   }, [
-    areAgentChatThreadsLoaded,
+    agentChatThreadsLoading,
     areFieldMetadataItemsLoaded,
-    canLoadAgentChatThreads,
     refreshAgentChatThreads,
   ]);
 
   useEffect(() => {
-    setAgentChatThreadsLoading(
-      !areAgentChatThreadsLoaded && canLoadAgentChatThreads,
-    );
-  }, [
-    areAgentChatThreadsLoaded,
-    canLoadAgentChatThreads,
-    setAgentChatThreadsLoading,
-  ]);
-
-  useEffect(() => {
-    if (
-      hasInitializedAgentChatThreads ||
-      (!areAgentChatThreadsLoaded && canLoadAgentChatThreads)
-    ) {
+    if (hasInitializedAgentChatThreads || agentChatThreadsLoading) {
       return;
     }
 
@@ -126,7 +91,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
       if (isDefined(selectedThread)) {
         store.set(
-          agentChatUsageFamilyCallback({ threadId: selectedThread.id }),
+          agentChatUsageFamilyState.atomFamily({ threadId: selectedThread.id }),
           getAgentChatUsageFromThread(selectedThread),
         );
       }
@@ -145,7 +110,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
       setCurrentAiChatThread(firstThread.id);
       store.set(
-        agentChatUsageFamilyCallback({ threadId: firstThread.id }),
+        agentChatUsageFamilyState.atomFamily({ threadId: firstThread.id }),
         getAgentChatUsageFromThread(firstThread),
       );
     } else {
@@ -155,13 +120,11 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatVisibleThreads,
     currentAiChatThread,
-    canLoadAgentChatThreads,
+    agentChatThreadsLoading,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
-    areAgentChatThreadsLoaded,
     setCurrentAiChatThread,
     store,
-    agentChatUsageFamilyCallback,
   ]);
 
   return null;
