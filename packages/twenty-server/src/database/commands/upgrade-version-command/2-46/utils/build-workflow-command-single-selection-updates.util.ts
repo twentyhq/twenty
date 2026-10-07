@@ -10,11 +10,6 @@ const PREVIOUS_WORKFLOW_COMMAND_EXPRESSIONS = {
     expression:
       'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
   },
-  discardDraftWorkflow: {
-    universalIdentifier: '4c227f2e-03bb-4a66-9b13-49f263264f4a',
-    expression:
-      'every(selectedRecords, "lastPublishedVersionId") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
-  },
   testWorkflow: {
     universalIdentifier: 'f85d552a-87a3-4667-99f7-71b47917539c',
     expression:

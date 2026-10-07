@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-46:limit-workflow-commands-to-single-selection',
   description:
-    'Offer Activate, Discard Draft, Test, See Runs and See Versions only when one workflow is selected',
+    'Offer Activate, Test, See Runs and See Versions only when one workflow is selected',
 })
 export class LimitWorkflowCommandsToSingleSelectionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

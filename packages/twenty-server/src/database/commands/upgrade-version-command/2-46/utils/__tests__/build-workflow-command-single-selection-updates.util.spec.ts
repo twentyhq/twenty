@@ -8,7 +8,6 @@ const NOW = '2026-10-07T12:00:00.000Z';
 const SINGLE_SELECTION_CONDITION = 'numberOfSelectedRecords == 1 and ';
 const WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS = [
   '44f19c85-0fd0-482f-a14e-da513c60b1b3',
-  '4c227f2e-03bb-4a66-9b13-49f263264f4a',
   'f85d552a-87a3-4667-99f7-71b47917539c',
   'e57efc2d-00a2-493a-b76c-f2dabd23a5eb',
   '92781d24-b875-4282-8cdb-d127f04a5c7d',
