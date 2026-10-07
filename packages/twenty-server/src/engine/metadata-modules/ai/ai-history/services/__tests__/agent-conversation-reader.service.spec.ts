@@ -63,6 +63,7 @@ const buildService = (messages: unknown[], failedTurnIds: string[] = []) => {
     messageRepository as never,
     turnRepository as never,
     fileUrlService as never,
+    {} as never,
   );
 
   return { service, messageRepository, fileUrlService };
