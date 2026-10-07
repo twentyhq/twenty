@@ -8,10 +8,12 @@ type CoreWorkflowNameCellProps = {
 export const CoreWorkflowNameCell = ({
   name,
   workflowId,
-}: CoreWorkflowNameCellProps) => (
-  <CoreObjectNameCell
-    name={name}
-    avatarColorSeed={workflowId}
-    avatarShape="circle"
-  />
-);
+}: CoreWorkflowNameCellProps) => {
+  return (
+    <CoreObjectNameCell
+      name={name}
+      avatarColorSeed={workflowId}
+      avatarShape="circle"
+    />
+  );
+};
