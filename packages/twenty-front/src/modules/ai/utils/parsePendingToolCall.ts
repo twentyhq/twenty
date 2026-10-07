@@ -2,7 +2,6 @@ import { isString } from '@sniptt/guards';
 import { getToolName, isToolUIPart } from 'ai';
 import {
   ASK_QUESTION_TOOL_NAME,
-  ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
   buildFallbackProposedToolCall,
   type ExtendedUIMessagePart,
@@ -41,14 +40,6 @@ export const parsePendingToolCall = (
             toolCallId,
             kind: 'question',
             question: input as AskQuestionItem,
-          }
-        : null;
-    case ASK_QUESTIONS_TOOL_NAME:
-      return Array.isArray(input.questions) && isNonEmptyArray(input.questions)
-        ? {
-            toolCallId,
-            kind: 'questions',
-            questions: input.questions as AskQuestionItem[],
           }
         : null;
     case REQUEST_FORM_TOOL_NAME:

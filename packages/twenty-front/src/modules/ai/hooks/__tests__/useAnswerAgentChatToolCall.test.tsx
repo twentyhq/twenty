@@ -35,8 +35,8 @@ const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
 const isAwaitingFirstChunkAtom =
   agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily(key);
 
-const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
-const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
+const PENDING_OUTPUT = { result: { status: 'pending' } };
+const ANSWERED_OUTPUT = { result: { status: 'answered' } };
 
 const readToolOutput = () =>
   (
@@ -79,10 +79,10 @@ describe('useAnswerAgentChatToolCall', () => {
         role: 'assistant',
         parts: [
           {
-            type: 'tool-ask_questions',
+            type: 'tool-ask_question',
             toolCallId: 'call-1',
             state: 'output-available',
-            input: { questions: [] },
+            input: { question: 'Which plan?', options: [] },
             output: PENDING_OUTPUT,
           },
         ],

@@ -42,36 +42,20 @@ const singleQuestion: AgentChatPendingQuestion = {
   question: EMAIL_TYPE_QUESTION,
 };
 
-const TONE_QUESTION = {
-  header: 'Tone',
-  question: 'Which tone should the email use?',
-  options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
-};
-
-// calls asked before ask_question took one question at a time
-const multipleQuestions: AgentChatPendingQuestion = {
-  toolCallId: 'call-2',
-  kind: 'questions',
-  questions: [EMAIL_TYPE_QUESTION, TONE_QUESTION],
-};
-
 const longQuestion: AgentChatPendingQuestion = {
   toolCallId: 'call-3',
-  kind: 'questions',
-  questions: [
-    {
-      header: 'Improvement',
-      question:
-        'What is the one improvement you would make to the "Send follow-up emails to stale opportunities" workflow before we roll it out to the whole team?',
-      options: [
-        { label: 'Wording clarity' },
-        { label: 'Better layout' },
-        { label: 'More flexibility', isRecommended: true },
-        { label: 'Fewer steps' },
-      ],
-    },
-    TONE_QUESTION,
-  ],
+  kind: 'question',
+  question: {
+    header: 'Improvement',
+    question:
+      'What is the one improvement you would make to the "Send follow-up emails to stale opportunities" workflow before we roll it out to the whole team?',
+    options: [
+      { label: 'Wording clarity' },
+      { label: 'Better layout' },
+      { label: 'More flexibility', isRecommended: true },
+      { label: 'Fewer steps' },
+    ],
+  },
 };
 
 const multiSelectQuestion: AgentChatPendingQuestion = {
@@ -128,10 +112,6 @@ type Story = StoryObj<typeof AiChatQuestionCard>;
 
 export const SingleQuestion: Story = {
   args: { pendingQuestion: singleQuestion },
-};
-
-export const MultipleQuestions: Story = {
-  args: { pendingQuestion: multipleQuestions },
 };
 
 export const LongQuestion: Story = {

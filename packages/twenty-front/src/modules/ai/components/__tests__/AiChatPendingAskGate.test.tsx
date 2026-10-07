@@ -26,9 +26,7 @@ jest.mock('@/ai/components/AiChatQuestionCard', () => ({
     pendingQuestion: AgentChatPendingQuestion;
   }) => (
     <div role="group" aria-label="Questions">
-      {pendingQuestion.kind === 'question'
-        ? pendingQuestion.question.question
-        : pendingQuestion.questions[0].question}
+      {pendingQuestion.question.question}
     </div>
   ),
 }));

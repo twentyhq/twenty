@@ -9,11 +9,11 @@ const messages = [
     parts: [
       { type: 'text', text: 'Before asking' },
       {
-        type: 'tool-ask_questions',
+        type: 'tool-ask_question',
         toolCallId: 'call-1',
         state: 'output-available',
-        input: { questions: [] },
-        output: { result: { questions: [], status: 'pending' } },
+        input: { question: 'Which plan?', options: [] },
+        output: { result: { status: 'pending' } },
       },
     ],
   },
@@ -26,7 +26,7 @@ const messages = [
 
 describe('updateToolPartOutput', () => {
   it('replaces the output of the matching tool call only', () => {
-    const answeredOutput = { result: { questions: [], status: 'answered' } };
+    const answeredOutput = { result: { status: 'answered' } };
 
     const result = updateToolPartOutput({
       messages,

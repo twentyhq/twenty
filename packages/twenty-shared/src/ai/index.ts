@@ -54,7 +54,6 @@ export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
 export type { AskQuestionResponse } from './types/AskQuestionResponse';
-export type { AskQuestionsToolInput } from './types/AskQuestionsToolInput';
 export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
 export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
 export type { AskQuestionToolResult } from './types/AskQuestionToolResult';

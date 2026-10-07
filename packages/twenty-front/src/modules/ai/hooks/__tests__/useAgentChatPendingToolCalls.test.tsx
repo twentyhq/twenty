@@ -18,14 +18,18 @@ const key = {
   familyKey: { threadId: 'thread-id' },
 };
 
-const QUESTIONS = [{ header: 'Plan', question: 'Which plan?', options: [] }];
+const QUESTION = {
+  header: 'Plan',
+  question: 'Which plan?',
+  options: [{ label: 'Pro' }, { label: 'Organization' }],
+};
 
-const questionsCall = (toolCallId: string, status: string) => ({
-  type: 'tool-ask_questions',
+const questionCall = (toolCallId: string, status: string) => ({
+  type: 'tool-ask_question',
   toolCallId,
   state: 'output-available',
-  input: { questions: QUESTIONS },
-  output: { success: true, result: { questions: QUESTIONS, status } },
+  input: QUESTION,
+  output: { success: true, result: { question: QUESTION, status } },
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -48,9 +52,9 @@ describe('useAgentChatPendingToolCalls', () => {
         role: 'assistant',
         parts: [
           { type: 'text', text: 'Two things first:' },
-          questionsCall('call-answered', 'answered'),
-          questionsCall('call-1', 'pending'),
-          questionsCall('call-2', 'pending'),
+          questionCall('call-answered', 'answered'),
+          questionCall('call-1', 'pending'),
+          questionCall('call-2', 'pending'),
         ],
       },
     ] as unknown as ExtendedUIMessage[]);

@@ -12,7 +12,6 @@ type AiChatAskCardProps = {
 export const AiChatAskCard = ({ pendingToolCall }: AiChatAskCardProps) => {
   switch (pendingToolCall.kind) {
     case 'question':
-    case 'questions':
       return <AiChatQuestionCard pendingQuestion={pendingToolCall} />;
     case 'form':
       return (

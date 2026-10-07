@@ -37,11 +37,6 @@ describe('parsePendingToolCall', () => {
       { toolCallId: 'call-1', kind: 'question', question: QUESTION },
     ],
     [
-      'questions asked before ask_question',
-      toolPart({ toolName: 'ask_questions', input: { questions: QUESTIONS } }),
-      { toolCallId: 'call-1', kind: 'questions', questions: QUESTIONS },
-    ],
-    [
       'a form',
       toolPart({ toolName: 'request_form', input: { fields: FIELDS } }),
       { toolCallId: 'call-1', kind: 'form', fields: FIELDS },
@@ -55,8 +50,8 @@ describe('parsePendingToolCall', () => {
     [
       'a call already answered',
       toolPart({
-        toolName: 'ask_questions',
-        input: { questions: QUESTIONS },
+        toolName: 'ask_question',
+        input: QUESTION,
         status: 'answered',
       }),
     ],
@@ -72,8 +67,8 @@ describe('parsePendingToolCall', () => {
       }),
     ],
     [
-      'questions without any question',
-      toolPart({ toolName: 'ask_questions', input: { questions: [] } }),
+      'a call to the retired ask_questions tool',
+      toolPart({ toolName: 'ask_questions', input: { questions: QUESTIONS } }),
     ],
     [
       'a form without fields',
