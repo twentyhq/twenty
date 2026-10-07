@@ -1,0 +1,11 @@
+export const APPLICATION_INSTALL_STEPS = [
+  'RESOLVE_PACKAGE',
+  'CREATE_APPLICATION',
+  'WRITE_FILES',
+  'PRE_INSTALL_HOOK',
+  'APPLY_MANIFEST',
+  'POST_INSTALL_HOOK',
+  'FINALIZE',
+] as const;
+
+export type ApplicationInstallStep = (typeof APPLICATION_INSTALL_STEPS)[number];

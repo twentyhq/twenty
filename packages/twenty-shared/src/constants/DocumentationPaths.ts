@@ -198,10 +198,10 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
   UI_PRIMITIVES_LAYOUT_COLLAPSIBLE: '/ui/primitives/layout/collapsible',
+  UI_PRIMITIVES_LAYOUT_DIRECTION_PROVIDER:
+    '/ui/primitives/layout/direction-provider',
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
   UI_PRIMITIVES_LAYOUT_SEPARATOR: '/ui/primitives/layout/separator',
-  UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
-    '/ui/primitives/layout/text-direction-provider',
   UI_PRIMITIVES_NAVIGATION_BREADCRUMB: '/ui/primitives/navigation/breadcrumb',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',

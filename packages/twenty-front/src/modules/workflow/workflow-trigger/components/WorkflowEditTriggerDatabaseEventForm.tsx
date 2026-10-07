@@ -2,7 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -35,7 +35,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const dropdownId = 'workflow-edit-trigger-record-type';
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const objectOptions = useWorkflowObjectSelectOptions();
+  const objectOptions = useObjectMetadataItemSelectOptions();
 
   const triggerEvent = splitWorkflowTriggerEventName(
     trigger.settings.eventName,

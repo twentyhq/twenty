@@ -10,7 +10,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
-import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
+import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useMutation } from '@apollo/client/react';
@@ -201,7 +201,7 @@ export const WorkflowAiAgentPromptTab = ({
         disabled={readonly}
       />
 
-      <WorkflowOutputSchemaBuilder
+      <AgentOutputSchemaBuilder
         fields={outputSchemaFields}
         onChange={handleOutputSchemaChange}
         readonly={readonly}

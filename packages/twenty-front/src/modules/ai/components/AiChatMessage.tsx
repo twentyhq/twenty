@@ -11,6 +11,7 @@ import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
+import { agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type AiChatError } from '@/ai/types/AiChatError';
@@ -190,6 +191,11 @@ export const AiChatMessage = ({
     { messageId },
   );
 
+  const isMessageBeforeFirstUserMessage = useAtomComponentFamilySelectorValue(
+    agentChatIsMessageBeforeFirstUserMessageComponentFamilySelector,
+    { messageId },
+  );
+
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const firstUnreadMessageId = useAtomComponentSelectorValue(
     agentChatFirstUnreadMessageIdComponentSelector,
@@ -218,6 +224,7 @@ export const AiChatMessage = ({
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
+      shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
     />
   );
 

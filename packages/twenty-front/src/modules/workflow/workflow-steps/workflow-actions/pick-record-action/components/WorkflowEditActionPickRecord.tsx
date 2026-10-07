@@ -14,7 +14,7 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -68,10 +68,10 @@ export const WorkflowEditActionPickRecord = ({
   }));
 
   const isFormDisabled = actionOptions.readonly ?? false;
-  const objectOptions = useWorkflowObjectSelectOptions({
+  const objectOptions = useObjectMetadataItemSelectOptions({
     selectedObjectNameSingular: formData.objectNameSingular,
   });
-  const loadBalanceObjectOptions = useWorkflowObjectSelectOptions({
+  const loadBalanceObjectOptions = useObjectMetadataItemSelectOptions({
     selectedObjectNameSingular: formData.loadBalance?.objectNameSingular,
   });
 

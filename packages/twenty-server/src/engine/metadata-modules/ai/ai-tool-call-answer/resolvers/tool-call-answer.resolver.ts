@@ -14,7 +14,6 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
-import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -28,7 +27,7 @@ import { AnswerToolCallInput } from 'src/engine/metadata-modules/ai/ai-tool-call
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
-// permission depends on whether the call waits in a chat or a workflow run, so no class guard
+// permission depends on whether the call waits in a chat or on a caller such as a workflow run, so no class guard
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
@@ -49,7 +48,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   UsageLimitGraphqlApiExceptionFilter,
   BillingGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
-  WorkflowVersionStepGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
 )

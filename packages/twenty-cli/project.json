@@ -1,0 +1,31 @@
+{
+  "name": "twenty-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-cli/src",
+  "projectType": "application",
+  "tags": ["scope:cli"],
+  "implicitDependencies": ["create-twenty-app"],
+  "targets": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "command": "node dist/cli.cjs"
+      }
+    },
+    "typecheck": {},
+    "lint": {},
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "config": "{projectRoot}/vitest.config.ts"
+      }
+    }
+  }
+}
