@@ -3,6 +3,7 @@ import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByD
 import { type SerializedRelation } from '../SerializedRelation';
 
 import { type ChartFilter } from './ChartFilter';
+import { type DashboardFilterBinding } from './DashboardFilter';
 import { type RatioAggregateConfig } from './RatioAggregateConfig';
 
 type BaseChartConfiguration = {
@@ -14,6 +15,8 @@ type BaseChartConfiguration = {
   filter?: ChartFilter;
   timezone?: string;
   firstDayOfTheWeek?: number;
+  // slotId -> binding; null means the slot is explicitly not applied to this widget
+  dashboardFilterBindings?: Record<string, DashboardFilterBinding | null>;
 };
 
 export type AggregateChartConfiguration = BaseChartConfiguration & {

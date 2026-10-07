@@ -1,6 +1,7 @@
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
+import { DashboardFilterBar } from '@/page-layout/dashboard-filters/components/DashboardFilterBar';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutPrerenderedTabIdsResetEffect } from '@/page-layout/components/PageLayoutPrerenderedTabIdsResetEffect';
 import { PageLayoutRecordIdentifierBar } from '@/page-layout/components/PageLayoutRecordIdentifierBar';
@@ -203,6 +204,9 @@ export const PageLayoutTabsRenderer = () => {
     workspaceSurface.type !== 'side-panel' &&
     !isMobile;
 
+  const shouldRenderDashboardFilterBar =
+    currentPageLayout.type === PageLayoutType.DASHBOARD;
+
   const shouldRenderTabList = sortedTabs.length > 1 || isPageLayoutInEditMode;
   const behaveAsLinks =
     workspaceSurface.type === 'main' && !isPageLayoutInEditMode;
@@ -265,6 +269,7 @@ export const PageLayoutTabsRenderer = () => {
                   undefined
                 }
               />
+              {shouldRenderDashboardFilterBar && <DashboardFilterBar />}
               {!shouldRenderRecordIdentifierBar && tabList}
 
               <StyledScrollWrapperContainer>

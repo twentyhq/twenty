@@ -8,7 +8,7 @@ import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/a
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { getChartValueFormatOptions } from '@/page-layout/widgets/graph/utils/getChartValueFormatOptions';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -26,9 +26,13 @@ const GraphWidgetPieChart = lazy(() =>
   ),
 );
 
-export const GraphWidgetPieChartRenderer = () => {
-  const widget = useCurrentWidget();
+type GraphWidgetPieChartRendererProps = {
+  widget: PageLayoutWidget;
+};
 
+export const GraphWidgetPieChartRenderer = ({
+  widget,
+}: GraphWidgetPieChartRendererProps) => {
   assertPieChartWidgetOrThrow(widget);
 
   const { userTimezone } = useUserTimezone();

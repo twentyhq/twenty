@@ -2,7 +2,7 @@ import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/P
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,9 +14,13 @@ const GraphWidgetAggregateChart = lazy(() =>
   ),
 );
 
-export const GraphWidgetAggregateChartRenderer = () => {
-  const widget = useCurrentWidget();
+type GraphWidgetAggregateChartRendererProps = {
+  widget: PageLayoutWidget;
+};
 
+export const GraphWidgetAggregateChartRenderer = ({
+  widget,
+}: GraphWidgetAggregateChartRendererProps) => {
   assertAggregateChartWidgetOrThrow(widget);
 
   const { value, loading, error } = useGraphWidgetAggregateQuery({
