@@ -1,3 +1,5 @@
+import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
+
 // What a suspended run needs to continue without its caller building it again.
 // Permissions are left out: the caller derives them anew on each continuation
 export type AgentRunSpec = {
@@ -12,8 +14,7 @@ export type AgentRunSpec = {
     canAskHumans: boolean;
     // propose_tool_call, for an action a person approves first
     canProposeToolCalls: boolean;
-    // wait_for_event and wait_for_duration, resolved by a wake-up
-    canWait: boolean;
   };
   additionalExcludedToolNames?: string[];
+  toolLoadingStrategy?: AgentToolLoadingStrategy;
 };

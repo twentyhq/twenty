@@ -1,4 +1,4 @@
-import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const lastAuthenticatedMethodState =

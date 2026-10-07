@@ -1,4 +1,4 @@
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 
 describe('getFingerprintedRestUrl', () => {
