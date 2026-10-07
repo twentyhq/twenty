@@ -14,7 +14,6 @@ import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/con
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledCurrencyIconContainer = styled.span`
   align-items: center;
@@ -40,7 +39,7 @@ export const CurrencyDisplay = ({
     ? CURRENCY_CODE_LABELS[currencyCode]?.label
     : undefined;
 
-  const amountToDisplay = isUndefinedOrNull(currencyValue?.amountMicros)
+  const amountToDisplay = !isDefined(currencyValue?.amountMicros)
     ? null
     : currencyValue?.amountMicros / 1000000;
 

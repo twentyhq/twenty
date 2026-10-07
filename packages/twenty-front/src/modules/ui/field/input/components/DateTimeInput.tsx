@@ -6,7 +6,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
 import { type Temporal } from 'temporal-polyfill';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-shared/types';
 
 type DateTimeInputProps = {
   instanceId: string;

@@ -27,8 +27,8 @@ const ButtonControls = () => {
         startIcon={
           <AnimatedIconCrossfade
             isActive={isEditing}
-            ActiveIcon={IconX}
-            InactiveIcon={IconPencil}
+            activeIcon={<IconX size={14} />}
+            inactiveIcon={<IconPencil size={14} />}
           />
         }
       >

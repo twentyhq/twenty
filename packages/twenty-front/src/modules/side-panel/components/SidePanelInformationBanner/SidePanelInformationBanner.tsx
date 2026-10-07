@@ -1,6 +1,5 @@
 import { css } from '@linaria/core';
 import { clsx } from 'clsx';
-import { isDefined } from 'twenty-ui/utilities';
 
 import { IconAlertTriangle, IconInfoCircle } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -43,8 +42,8 @@ const styles = {
     }
   `,
 };
-
 import { type SidePanelInformationBannerProps } from './types/SidePanelInformationBannerProps';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelInformationBanner = ({
   message,

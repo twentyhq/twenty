@@ -1,4 +1,8 @@
 import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -7,6 +11,13 @@ import {
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
+
+const CHART_CONFIGURATION_ERROR_CODES = new Set<CommonQueryRunnerExceptionCode>(
+  [
+    CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+  ],
+);
 
 export const wrapChartDataQueryError = (
   error: unknown,
@@ -26,6 +37,19 @@ export const wrapChartDataQueryError = (
         error.message,
       ),
       ChartDataExceptionCode.PERMISSION_DENIED,
+    );
+  }
+
+  if (
+    error instanceof CommonQueryRunnerException &&
+    CHART_CONFIGURATION_ERROR_CODES.has(error.code)
+  ) {
+    return new ChartDataException(
+      generateChartDataExceptionMessage(
+        ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+        `${contextPrefix}: ${error.message}`,
+      ),
+      ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
     );
   }
 

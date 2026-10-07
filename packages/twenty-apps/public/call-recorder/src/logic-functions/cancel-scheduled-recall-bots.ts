@@ -38,7 +38,7 @@ export default defineLogicFunction({
     CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cancel-scheduled-recall-bots',
   description:
-    'Deletes the Recall bots of canceled recording requests in bounded slices, re-enqueueing itself while more remain. The daily cancellation retry stays the backstop.',
+    'Deletes the Recall bots of canceled recording requests in bounded slices, re-enqueueing itself while more remain. The follow-up armed with each cancellation stays the backstop.',
   timeoutSeconds: 900,
   handler: cancelScheduledRecallBotsHandler,
 });

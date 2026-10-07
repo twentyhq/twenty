@@ -4,7 +4,7 @@ import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents'
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-shared/types';
 
 export type DateInputProps = {
   instanceId: string;

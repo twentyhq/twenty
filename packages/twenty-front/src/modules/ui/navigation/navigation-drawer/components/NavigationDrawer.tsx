@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
 import { isResizablePanelDraggingState } from '@/ui/layout/resizable-panel/states/isResizablePanelDraggingState';
-import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
-import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { useLingui } from '@lingui/react/macro';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
+import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedWidth';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -15,6 +17,7 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
+import { shouldFocusNavigationDrawerExpandButtonState } from '@/ui/navigation/navigation-drawer/states/shouldFocusNavigationDrawerExpandButtonState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -32,7 +35,7 @@ const StyledAnimatedContainer = styled.div<{
 }>`
   height: 100%;
   max-height: 100%;
-  overflow: hidden;
+  overflow: clip;
   position: relative;
   transition: ${({ isResizing }) =>
     isResizing
@@ -83,7 +86,10 @@ export const NavigationDrawer = ({
   className,
   header,
 }: NavigationDrawerProps) => {
+  const { t } = useLingui();
+  const resizeHandleRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
+  const [liveWidth, setLiveWidth] = useState<number | null>(null);
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
 
@@ -98,9 +104,16 @@ export const NavigationDrawer = ({
   const setIsResizablePanelDragging = useSetAtomState(
     isResizablePanelDraggingState,
   );
+  const setShouldFocusNavigationDrawerExpandButton = useSetAtomState(
+    shouldFocusNavigationDrawerExpandButtonState,
+  );
 
   const handleCollapse = () => {
+    setShouldFocusNavigationDrawerExpandButton(
+      resizeHandleRef.current === document.activeElement,
+    );
     setIsNavigationDrawerExpanded(false);
+    setLiveWidth(null);
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
     setIsResizablePanelDragging(false);
@@ -108,11 +121,26 @@ export const NavigationDrawer = ({
 
   const handleWidthChange = (width: number) => {
     setNavigationDrawerWidth(width);
+    setLiveWidth(null);
     setIsResizing(false);
     setIsResizablePanelDragging(false);
   };
 
-  const handleResizeStart = (_size: number) => {
+  const handleWidthPreview = (width: number) => {
+    setLiveWidth(width);
+    document.documentElement.style.setProperty(
+      NAVIGATION_DRAWER_WIDTH_VAR,
+      `${width}px`,
+    );
+  };
+
+  const handleResizeEnd = () => {
+    setLiveWidth(null);
+    setIsResizing(false);
+    setIsResizablePanelDragging(false);
+  };
+
+  const handleResizeStart = () => {
     setIsResizing(true);
     setIsResizablePanelDragging(true);
   };
@@ -132,14 +160,19 @@ export const NavigationDrawer = ({
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && (
-          <ResizablePanelEdge
-            side="right"
-            constraints={NAVIGATION_DRAWER_CONSTRAINTS}
-            currentSize={navigationDrawerWidth}
-            onSizeChange={handleWidthChange}
-            onCollapse={handleCollapse}
-            showHandle={false}
-            cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
+          <ResizeHandle
+            ref={resizeHandleRef}
+            edge="right"
+            min={NAVIGATION_DRAWER_CONSTRAINTS.min}
+            max={NAVIGATION_DRAWER_CONSTRAINTS.max}
+            value={liveWidth ?? navigationDrawerWidth}
+            onValueChange={handleWidthPreview}
+            onValueCommitted={handleWidthChange}
+            onActivate={handleCollapse}
+            children={null}
+            aria-label={t`Resize navigation drawer`}
+            scale={getUiZoom}
+            onResizeEnd={handleResizeEnd}
             onResizeStart={handleResizeStart}
           />
         )}

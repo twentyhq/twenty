@@ -8,7 +8,7 @@ import { useUploadWorkspaceLogo } from '@/workspace/hooks/useUploadWorkspaceLogo
 import { useMutation } from '@apollo/client/react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkspaceLogoUploader = () => {
   const { enqueueToast } = useToast();
@@ -22,7 +22,7 @@ export const WorkspaceLogoUploader = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onUpload = async (file: File) => {
-    if (isUndefinedOrNull(file)) {
+    if (!isDefined(file)) {
       return;
     }
 

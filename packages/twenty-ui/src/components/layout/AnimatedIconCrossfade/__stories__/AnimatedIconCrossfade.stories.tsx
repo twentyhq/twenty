@@ -12,7 +12,11 @@ const meta = {
   title: 'UI/Components/Layout/AnimatedIconCrossfade',
   component: AnimatedIconCrossfade,
   tags: ['!autodocs'],
-  args: { isActive: false, ActiveIcon: IconX, InactiveIcon: IconPencil },
+  args: {
+    isActive: false,
+    activeIcon: <IconX size={14} />,
+    inactiveIcon: <IconPencil size={14} />,
+  },
 } satisfies Meta<typeof AnimatedIconCrossfade>;
 
 export default meta;
@@ -32,8 +36,8 @@ export const AnimatedIcon: Story = {
         startIcon={
           <AnimatedIconCrossfade
             isActive={isEditing}
-            ActiveIcon={IconX}
-            InactiveIcon={IconPencil}
+            activeIcon={<IconX size={14} />}
+            inactiveIcon={<IconPencil size={14} />}
           />
         }
       >
