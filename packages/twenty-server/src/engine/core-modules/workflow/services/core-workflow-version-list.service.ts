@@ -41,8 +41,11 @@ export class CoreWorkflowVersionListService {
       { where: { workspaceWorkflowId }, select: { id: true } },
     );
 
+    if (!isDefined(parentCoreWorkflow)) {
+      return [];
+    }
+
     if (
-      !isDefined(parentCoreWorkflow) ||
       !(await this.coreWorkflowAccessService.isCoreWorkflowAccessible({
         workspaceId,
         userWorkspaceId,

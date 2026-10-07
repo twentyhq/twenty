@@ -86,6 +86,14 @@ const CORE_WORKFLOW_VERSION_QUERY = `
   }
 `;
 
+const CORE_WORKFLOW_VERSIONS_QUERY = `
+  query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+    coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+      workspaceWorkflowVersionId
+    }
+  }
+`;
+
 const COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION = `
   mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
     computeStepOutputSchema(input: $input)
@@ -551,29 +559,52 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
     });
 
-    it('refuses its version list to another member when the core workflow has no workspace alias', async () => {
+    it('returns no versions for a legacy id that no core workflow carries', async () => {
       await global.testDataSource.query(
         `UPDATE core."workflow" SET "workspaceWorkflowId" = NULL WHERE id = $1`,
         [coreWorkflowId],
       );
 
       try {
-        const response = await asOtherMember(
-          `
-            query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-              coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-                id
-              }
-            }
-          `,
-          { workspaceWorkflowId },
-        );
+        const response = await asOtherMember(CORE_WORKFLOW_VERSIONS_QUERY, {
+          workspaceWorkflowId,
+        });
 
         expect(response.body.errors).toBeUndefined();
         expect(response.body.data.coreWorkflowVersions).toEqual([]);
       } finally {
         await global.testDataSource.query(
           `UPDATE core."workflow" SET "workspaceWorkflowId" = $2 WHERE id = $1`,
+          [coreWorkflowId, workspaceWorkflowId],
+        );
+      }
+    });
+
+    it('lists versions through their core workflow, not their legacy workflow id', async () => {
+      await global.testDataSource.query(
+        `UPDATE core."workflowVersion" SET "workflowId" = NULL WHERE "coreWorkflowId" = $1`,
+        [coreWorkflowId],
+      );
+
+      try {
+        const response = await workflowGraphqlRequest(
+          CORE_WORKFLOW_VERSIONS_QUERY,
+          { workspaceWorkflowId },
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.coreWorkflowVersions.map(
+            ({
+              workspaceWorkflowVersionId,
+            }: {
+              workspaceWorkflowVersionId: string;
+            }) => workspaceWorkflowVersionId,
+          ),
+        ).toContain(workspaceWorkflowVersionId);
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."workflowVersion" SET "workflowId" = $2 WHERE "coreWorkflowId" = $1`,
           [coreWorkflowId, workspaceWorkflowId],
         );
       }
