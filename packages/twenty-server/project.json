@@ -28,6 +28,16 @@
       },
       "parallel": false
     },
+    "test:integration:billing": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset --excludeTaskDependencies > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration.config.ts --logHeapUsage --testPathPattern=test/integration/billing"
+        ]
+      },
+      "parallel": false
+    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {

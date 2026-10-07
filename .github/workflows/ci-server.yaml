@@ -329,14 +329,6 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Update .env.test for integrations tests
-        run: |
-          echo "" >> .env.test
-          echo "IS_BILLING_ENABLED=true" >> .env.test
-          echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
-          echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
-          echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
-          echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
       - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
@@ -385,6 +377,22 @@ jobs:
         with:
           tag: scope:backend
           tasks: 'test:integration:secure'
+      # Billing changes the seed and the boot, so its suites run on one shard
+      # after a reset of their own. The variables come from the environment
+      # because jest only loads packages/twenty-server/.env.test, which leaves
+      # variables it does not define untouched.
+      - name: Server / Run billing integration tests
+        if: matrix.shard == 1
+        uses: ./.github/actions/nx-affected
+        env:
+          IS_BILLING_ENABLED: true
+          BILLING_STRIPE_API_KEY: test-api-key
+          BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: test-base-plan-product-id
+          BILLING_STRIPE_WEBHOOK_SECRET: test-webhook-secret
+          BILLING_PLAN_REQUIRED_LINK: http://localhost:3001/stripe-redirection
+        with:
+          tag: scope:backend
+          tasks: 'test:integration:billing'
       - name: Print Test DB reset log
         if: failure()
         run: cat "${{ github.workspace }}/.cache/integration-db-reset.log" || true
