@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/usage-limit/constants/usage-spender-column-by-spender-type.constant';
+import { doesOperationTypeMatchScope } from 'src/engine/core-modules/usage-limit/utils/does-operation-type-match-scope.util';
 
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
@@ -24,8 +24,10 @@ const rowMatchesScope = (
   scope: QuotaConsumptionScope,
 ): boolean => {
   if (
-    scope.operationType !== UsageOperationType.ALL &&
-    row.operationType !== scope.operationType
+    !doesOperationTypeMatchScope({
+      scopeOperationType: scope.operationType,
+      operationType: row.operationType,
+    })
   ) {
     return false;
   }

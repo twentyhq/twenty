@@ -212,7 +212,7 @@ export class UsageLimitService {
     input: CreateUsageLimitInput;
     isOperator: boolean;
   }): Promise<void> {
-    validateUsageLimitAgainstDefinition(input);
+    validateUsageLimitAgainstDefinition({ input, isOperator });
     validateUsageLimitAgainstKindRule(input);
 
     if (

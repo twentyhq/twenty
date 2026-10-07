@@ -7283,6 +7283,7 @@ export type UsageLimitOperationDefinition = {
 };
 
 export enum UsageOperationType {
+  AI_CHAT_INCLUDED = 'AI_CHAT_INCLUDED',
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
   ALL = 'ALL',

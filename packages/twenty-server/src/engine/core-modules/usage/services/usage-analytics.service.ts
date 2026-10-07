@@ -15,6 +15,8 @@ import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.e
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
+import { buildBillableOperationTypeCondition } from 'src/engine/core-modules/usage/utils/build-billable-operation-type-condition.util';
+import { buildBillableOperationTypeFilter } from 'src/engine/core-modules/usage/utils/build-billable-operation-type-filter.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
@@ -34,6 +36,10 @@ export type UsageApplicationBreakdownItem = {
   creditsUsed: number;
 };
 
+export type AdminAiUsageByWorkspaceItem = UsageBreakdownItem & {
+  includedCreditsUsed: number;
+};
+
 export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
@@ -46,6 +52,12 @@ type BreakdownRowMicro<TColumn extends string> = Record<TColumn, string> & {
 type TimeSeriesRowMicro = {
   date: string;
   creditsUsedMicro: number;
+};
+
+type AdminAiUsageRowMicro = {
+  key: string;
+  billableCreditsUsedMicro: string | number;
+  includedCreditsUsedMicro: string | number;
 };
 
 type PeriodParams = {
@@ -169,7 +181,9 @@ export class UsageAnalyticsService {
     workspaceId: string;
     periodStart: Date;
   }): Promise<number> {
-    // The grouping only exists to match the billing_by_workspace_period projection; it still returns one row.
+    const billableOperationTypeFilter = buildBillableOperationTypeFilter();
+
+    // The grouping only exists to match the billing_by_workspace_operation_period projection; it still returns one row.
     const rows = await this.clickHouseService.selectOrThrow<{
       total: string | number | null;
     }>(
@@ -177,8 +191,13 @@ export class UsageAnalyticsService {
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND periodStart = {periodStart:DateTime64(3)}
+         ${billableOperationTypeFilter.clause}
        GROUP BY workspaceId, periodStart`,
-      { workspaceId, periodStart: formatDateTimeForClickHouse(periodStart) },
+      {
+        workspaceId,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        ...billableOperationTypeFilter.params,
+      },
     );
 
     return Number(rows[0]?.total ?? 0);
@@ -188,36 +207,49 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
     useDollarMode?: boolean;
-  }): Promise<UsageBreakdownItem[]> {
-    const aiOperationTypes = ['AI_CHAT_TOKEN', 'AI_WORKFLOW_TOKEN'];
+  }): Promise<AdminAiUsageByWorkspaceItem[]> {
+    const aiOperationTypes = [
+      UsageOperationType.AI_CHAT_TOKEN,
+      UsageOperationType.AI_WORKFLOW_TOKEN,
+      UsageOperationType.WEB_SEARCH,
+      UsageOperationType.AI_CHAT_INCLUDED,
+    ];
 
     const convert = params.useDollarMode ? toDollars : toDisplayCredits;
 
+    const billableOperationTypeCondition =
+      buildBillableOperationTypeCondition();
+
+    // Included chat is real cost for staff but never part of what the workspace was billed, so it stays a separate figure.
     const query = `
       SELECT
         workspaceId AS key,
-        sum(creditsUsedMicro) AS creditsUsedMicro
+        sumIf(creditsUsedMicro, ${billableOperationTypeCondition.condition}) AS billableCreditsUsedMicro,
+        sumIf(creditsUsedMicro, operationType = {includedOperationType:String}) AS includedCreditsUsedMicro
       FROM usageEvent
       WHERE timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
         AND operationType IN ({operationTypes:Array(String)})
       GROUP BY workspaceId
-      ORDER BY creditsUsedMicro DESC
+      ORDER BY billableCreditsUsedMicro + includedCreditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BreakdownRowMicro<'key'>>(
+    const rows = await this.clickHouseService.select<AdminAiUsageRowMicro>(
       query,
       {
         periodStart: formatDateTimeForClickHouse(params.periodStart),
         periodEnd: formatDateTimeForClickHouse(params.periodEnd),
         operationTypes: aiOperationTypes,
+        includedOperationType: UsageOperationType.AI_CHAT_INCLUDED,
+        ...billableOperationTypeCondition.params,
       },
     );
 
     return rows.map((row) => ({
       key: row.key,
-      creditsUsed: convert(row.creditsUsedMicro),
+      creditsUsed: convert(Number(row.billableCreditsUsedMicro)),
+      includedCreditsUsed: convert(Number(row.includedCreditsUsedMicro)),
     }));
   }
 
@@ -401,6 +433,8 @@ export class UsageAnalyticsService {
         ? 'AND operationType IN ({operationTypes:Array(String)})'
         : '';
 
+    const billableOperationTypeFilter = buildBillableOperationTypeFilter();
+
     const query = `
       SELECT
         ${groupByField} AS key,
@@ -410,6 +444,7 @@ export class UsageAnalyticsService {
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
         ${opTypeFilter}
+        ${billableOperationTypeFilter.clause}
         ${extraWhere}
       GROUP BY ${groupByField}
       ORDER BY creditsUsedMicro DESC
@@ -425,6 +460,7 @@ export class UsageAnalyticsService {
         ...(operationTypes && operationTypes.length > 0
           ? { operationTypes }
           : {}),
+        ...billableOperationTypeFilter.params,
         ...(extraParams ?? {}),
       },
     );
@@ -451,6 +487,8 @@ export class UsageAnalyticsService {
         ? 'AND operationType IN ({operationTypes:Array(String)})'
         : '';
 
+    const billableOperationTypeFilter = buildBillableOperationTypeFilter();
+
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
@@ -460,6 +498,7 @@ export class UsageAnalyticsService {
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
         ${opTypeFilter}
+        ${billableOperationTypeFilter.clause}
         ${extraWhere}
       GROUP BY date
       ORDER BY date ASC
@@ -474,6 +513,7 @@ export class UsageAnalyticsService {
         ...(operationTypes && operationTypes.length > 0
           ? { operationTypes }
           : {}),
+        ...billableOperationTypeFilter.params,
         ...(extraParams ?? {}),
       },
     );

@@ -11,6 +11,7 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { buildBillableOperationTypeCondition } from 'src/engine/core-modules/usage/utils/build-billable-operation-type-condition.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 import {
@@ -61,6 +62,15 @@ export class EventLogsService {
     ) {
       whereClauses.push('"applicationId" = {callingApplicationId:String}');
       params.callingApplicationId = callingApplicationId;
+    }
+
+    // Non-billable usage is never shown to the workspace, so the audit log must not expose its cost either
+    if (input.table === EventLogTable.USAGE_EVENT) {
+      const billableOperationTypeCondition =
+        buildBillableOperationTypeCondition();
+
+      whereClauses.push(billableOperationTypeCondition.condition);
+      Object.assign(params, billableOperationTypeCondition.params);
     }
 
     await this.applyFilters(

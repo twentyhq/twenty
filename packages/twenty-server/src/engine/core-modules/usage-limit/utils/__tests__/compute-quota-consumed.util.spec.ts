@@ -196,6 +196,43 @@ describe('computeQuotaConsumed', () => {
     });
   });
 
+  describe('when included chat rows sit next to billable ones', () => {
+    const rowsWithIncludedChat = [
+      ...rows,
+      buildRow({
+        operationType: UsageOperationType.AI_CHAT_INCLUDED,
+        creditsUsedMicro: '500',
+        quantity: '50',
+      }),
+      buildRow({
+        operationType: UsageOperationType.AI_CHAT_INCLUDED,
+        unit: UsageUnit.INVOCATION,
+        creditsUsedMicro: '30',
+        quantity: '1',
+      }),
+    ];
+
+    it('leaves them out of a credit counter on every operation', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: rowsWithIncludedChat,
+          scope: buildCounter({}),
+        }),
+      ).toBe(147);
+    });
+
+    it('sums the credits of every unit on a counter that names included chat', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: rowsWithIncludedChat,
+          scope: buildCounter({
+            operationType: UsageOperationType.AI_CHAT_INCLUDED,
+          }),
+        }),
+      ).toBe(530);
+    });
+  });
+
   it('counts the credits of a credit-unit row, never its quantity', () => {
     expect(
       computeQuotaConsumed({

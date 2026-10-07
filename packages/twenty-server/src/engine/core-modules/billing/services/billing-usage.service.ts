@@ -33,6 +33,7 @@ import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usa
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
+import { buildBillableOperationTypeFilter } from 'src/engine/core-modules/usage/utils/build-billable-operation-type-filter.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -280,15 +281,19 @@ export class BillingUsageService {
     from: Date;
     to: Date;
   }): Promise<number | null> {
+    const billableOperationTypeFilter = buildBillableOperationTypeFilter();
+
     const rows = await this.clickHouseService.select<UsageSumRow>(
       `SELECT sum(creditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
-         AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}`,
+         AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}
+         ${billableOperationTypeFilter.clause}`,
       {
         workspaceId,
         from: formatDateTimeForClickHouse(from),
         to: formatDateTimeForClickHouse(to),
+        ...billableOperationTypeFilter.params,
       },
     );
 

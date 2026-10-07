@@ -19,6 +19,7 @@ import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limi
 import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
+import { isBillableOperationType } from 'src/engine/core-modules/usage/utils/is-billable-operation-type.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -59,7 +60,10 @@ export class UsageLimitResolver {
   ): Promise<UsageLimitDTO[]> {
     const usageLimits = await this.usageLimitService.findAll(workspace.id);
 
-    return usageLimits.map(fromUsageLimitEntityToDto);
+    // Limits on non-billable usage are operator-only and invisible to the workspace
+    return usageLimits
+      .filter((usageLimit) => isBillableOperationType(usageLimit.operationType))
+      .map(fromUsageLimitEntityToDto);
   }
 
   @Query(() => [UsageQuotaWithConsumptionDTO])

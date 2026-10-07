@@ -7,6 +7,7 @@ import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { isBillableOperationType } from 'src/engine/core-modules/usage/utils/is-billable-operation-type.util';
 
 const buildAllowedOperations = ({
   limitKind,
@@ -44,8 +45,12 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
               definition,
             }),
             allowedSpenderTypes: definition.allowedSpenderTypes,
+            // A default on non-billable usage stays out: the workspace must not learn such a limit exists
             operatorOnlyScopes: definition.defaults
-              .filter(({ isOverridable }) => isOverridable)
+              .filter(
+                ({ isOverridable, operationType }) =>
+                  isOverridable && isBillableOperationType(operationType),
+              )
               .map(({ operationType, spenderType, unit, periodUnit }) => ({
                 operationType,
                 spenderType,

@@ -12,6 +12,7 @@ export const GET_ADMIN_AI_USAGE_BY_WORKSPACE = gql`
       key
       label
       creditsUsed
+      includedCreditsUsed
     }
   }
 `;

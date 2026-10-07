@@ -24,6 +24,7 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
 > = {
   [UsageOperationType.ALL]: IconPlayerPlay,
   [UsageOperationType.AI_CHAT_TOKEN]: IconMessage,
+  [UsageOperationType.AI_CHAT_INCLUDED]: IconMessage,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: IconLego,
   [UsageOperationType.WORKFLOW_EXECUTION]: IconSettingsAutomation,
   [UsageOperationType.CODE_EXECUTION]: IconCode,

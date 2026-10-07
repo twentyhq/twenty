@@ -21,6 +21,7 @@ import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/no
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { isBillableOperationType } from 'src/engine/core-modules/usage/utils/is-billable-operation-type.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -64,7 +65,10 @@ export class UsageQuotaConsumptionService {
   }): Promise<UsageQuotaScopeConsumption | null> {
     const periodUnit = scope.periodUnit;
 
-    if (!isAnchoredPeriodUnit(periodUnit)) {
+    if (
+      !isAnchoredPeriodUnit(periodUnit) ||
+      !isBillableOperationType(scope.operationType)
+    ) {
       return null;
     }
 
@@ -118,7 +122,11 @@ export class UsageQuotaConsumptionService {
   ): Promise<UsageQuotaWithConsumption[]> {
     const usageLimits = (
       await this.usageLimitService.findAll(workspaceId)
-    ).filter((usageLimit) => usageLimit.limitKind === 'quota');
+    ).filter(
+      (usageLimit) =>
+        usageLimit.limitKind === 'quota' &&
+        isBillableOperationType(usageLimit.operationType),
+    );
 
     if (usageLimits.length === 0) {
       return [];

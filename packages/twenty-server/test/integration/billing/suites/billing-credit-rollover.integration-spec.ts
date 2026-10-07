@@ -1,4 +1,14 @@
-import { addMonths, startOfMonth, subMonths } from 'date-fns';
+import { randomUUID } from 'node:crypto';
+
+import {
+  addHours,
+  addMinutes,
+  addMonths,
+  startOfHour,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from 'date-fns';
 import request from 'supertest';
 import { createMockStripeInvoiceFinalizedData } from 'test/integration/billing/utils/create-mock-stripe-invoice-finalized-data.util';
 import {
@@ -12,10 +22,21 @@ import {
   TEST_STRIPE_CUSTOMER_ID,
   warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient as createClickHouseClient,
+} from '@clickhouse/client';
+
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -258,6 +279,125 @@ describe('Billing credit rollover (integration)', () => {
         workspaceId,
         from: TRUE_CLOSING_PERIOD_START,
         to: MONTH_END_BOUNDARY,
+      });
+    });
+  });
+
+  describe('reading the closing period usage from ClickHouse', () => {
+    // A past hour no other suite writes to, so the usage read is exactly the rows seeded here
+    const SEEDED_PERIOD_START = addMinutes(
+      startOfHour(subDays(new Date(), 300)),
+      17,
+    );
+    const SEEDED_PERIOD_END = addHours(SEEDED_PERIOD_START, 1);
+    const PAID_CHAT_CREDITS_MICRO = 300_000;
+    const INCLUDED_CHAT_CREDITS_MICRO = 400_000;
+    const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
+
+    const resourceId = randomUUID();
+    let clickHouseClient: ClickHouseClient;
+
+    const countSeededRows = async (): Promise<number> => {
+      const result = await clickHouseClient.query({
+        query: `SELECT count() AS rowCount
+                FROM usageEvent
+                WHERE workspaceId = {workspaceId:String}
+                  AND resourceId = {resourceId:String}`,
+        query_params: { workspaceId, resourceId },
+        format: 'JSONEachRow',
+      });
+
+      const [row] = await result.json<{ rowCount: string }>();
+
+      return Number(row?.rowCount ?? 0);
+    };
+
+    beforeAll(async () => {
+      clickHouseClient = createClickHouseClient({
+        url: process.env.CLICKHOUSE_URL,
+        clickhouse_settings: {
+          allow_experimental_json_type: 1,
+        },
+        log: { level: ClickHouseLogLevel.OFF },
+      });
+
+      const baseRow = {
+        timestamp: formatDateTimeForClickHouse(
+          addMinutes(SEEDED_PERIOD_START, 10),
+        ),
+        workspaceId,
+        periodStart: formatDateTimeForClickHouse(SEEDED_PERIOD_START),
+        resourceType: UsageResourceType.AI,
+        resourceId,
+        unit: UsageUnit.TOKEN,
+        metadata: {},
+      };
+
+      await clickHouseClient.insert({
+        table: 'usageEvent',
+        values: [
+          {
+            ...baseRow,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            quantity: 30,
+            creditsUsedMicro: PAID_CHAT_CREDITS_MICRO,
+          },
+          {
+            ...baseRow,
+            operationType: UsageOperationType.AI_CHAT_INCLUDED,
+            quantity: 40,
+            creditsUsedMicro: INCLUDED_CHAT_CREDITS_MICRO,
+          },
+        ],
+        format: 'JSONEachRow',
+      });
+
+      await expectEventually(
+        async () => {
+          expect(await countSeededRows()).toBe(2);
+        },
+        { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+      );
+    });
+
+    afterAll(async () => {
+      await clickHouseClient.command({
+        query: `ALTER TABLE usageEvent DELETE
+                WHERE workspaceId = {workspaceId:String}
+                  AND resourceId = {resourceId:String}`,
+        query_params: { workspaceId, resourceId },
+        clickhouse_settings: { mutations_sync: '2' },
+      });
+
+      await clickHouseClient.close();
+    });
+
+    // The spy is left unstubbed: the rows are already flushed, so the real ClickHouse read is what this covers
+    it('carries over the allowance minus paid usage, ignoring included chat', async () => {
+      await setupResourceCreditSubscription({
+        workspaceId,
+        periodStart: SEEDED_PERIOD_START,
+        periodEnd: SEEDED_PERIOD_END,
+        creditAmountMicro: ALLOWANCE_MICRO,
+      });
+
+      await postInvoiceFinalized('in_test_included_chat', {
+        periodStart: SEEDED_PERIOD_END,
+        periodEnd: addMonths(SEEDED_PERIOD_END, 1),
+      }).expect(200);
+
+      expect(usageSpy).toHaveBeenCalledWith({
+        workspaceId,
+        from: SEEDED_PERIOD_START,
+        to: SEEDED_PERIOD_END,
+      });
+
+      const grants = await listCreditGrants(workspaceId);
+
+      expect(grants).toHaveLength(1);
+      expect(grants[0]).toMatchObject({
+        amountMicro: ALLOWANCE_MICRO - PAID_CHAT_CREDITS_MICRO,
+        type: BillingCreditGrantType.ROLLOVER,
       });
     });
   });

@@ -16,6 +16,7 @@ import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/u
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
+import { AdminAiUsageByWorkspaceItemDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-ai-usage-by-workspace-item.dto';
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
@@ -86,7 +87,6 @@ import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
-import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -568,13 +568,13 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => [UsageBreakdownItemDTO])
+  @Query(() => [AdminAiUsageByWorkspaceItemDTO])
   async getAdminAiUsageByWorkspace(
     @Args('periodStart', { type: () => Date, nullable: true })
     periodStart?: Date,
     @Args('periodEnd', { type: () => Date, nullable: true })
     periodEnd?: Date,
-  ): Promise<UsageBreakdownItemDTO[]> {
+  ): Promise<AdminAiUsageByWorkspaceItemDTO[]> {
     const defaultEnd = new Date();
     const defaultStart = new Date();
 

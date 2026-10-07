@@ -2,8 +2,15 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
 
+const BILLABLE_OPERATION_TYPE_CLAUSE =
+  'AND operationType NOT IN ({nonBillableOperationTypes:Array(String)})';
+
+const BILLABLE_OPERATION_TYPE_PARAMS = {
+  nonBillableOperationTypes: [UsageOperationType.AI_CHAT_INCLUDED],
+};
+
 describe('buildUsageScopeFilter', () => {
-  it('narrows nothing for a workspace scope over every operation', () => {
+  it('narrows a workspace scope over every operation to billable operations', () => {
     const filter = buildUsageScopeFilter({
       operationType: UsageOperationType.ALL,
       unit: null,
@@ -11,7 +18,24 @@ describe('buildUsageScopeFilter', () => {
       spenderId: null,
     });
 
-    expect(filter).toEqual({ clause: '', params: {} });
+    expect(filter).toEqual({
+      clause: BILLABLE_OPERATION_TYPE_CLAUSE,
+      params: BILLABLE_OPERATION_TYPE_PARAMS,
+    });
+  });
+
+  it('reads a named non-billable operation without the billable narrowing', () => {
+    const filter = buildUsageScopeFilter({
+      operationType: UsageOperationType.AI_CHAT_INCLUDED,
+      unit: null,
+      spenderType: 'workspace',
+      spenderId: null,
+    });
+
+    expect(filter.clause).not.toContain('NOT IN');
+    expect(filter.params).toEqual({
+      operationType: UsageOperationType.AI_CHAT_INCLUDED,
+    });
   });
 
   it('pins the operation when the scope names one', () => {
@@ -54,7 +78,10 @@ describe('buildUsageScopeFilter', () => {
     });
 
     expect(filter.clause).toContain('AND apiKeyId = {spenderId:String}');
-    expect(filter.params).toEqual({ spenderId: 'api-key-1' });
+    expect(filter.params).toEqual({
+      ...BILLABLE_OPERATION_TYPE_PARAMS,
+      spenderId: 'api-key-1',
+    });
   });
 
   it('sums every spender of the type when the scope carries no id', () => {
@@ -66,7 +93,7 @@ describe('buildUsageScopeFilter', () => {
     });
 
     expect(filter.clause).toContain("AND userWorkspaceId != ''");
-    expect(filter.params).toEqual({});
+    expect(filter.params).toEqual(BILLABLE_OPERATION_TYPE_PARAMS);
   });
 
   it.each([
@@ -84,6 +111,8 @@ describe('buildUsageScopeFilter', () => {
       spenderId: 'spender-1',
     });
 
-    expect(filter.clause).toBe(`AND ${column} = {spenderId:String}`);
+    expect(filter.clause).toBe(
+      `${BILLABLE_OPERATION_TYPE_CLAUSE}\nAND ${column} = {spenderId:String}`,
+    );
   });
 });

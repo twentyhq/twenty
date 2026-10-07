@@ -19,6 +19,7 @@ describe('Event Logs (integration)', () => {
   const testWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
   const testUserWorkspaceId = '20202020-3957-45c9-be39-337dc4d9100a';
   const otherUserWorkspaceId = '20202020-0000-4000-8000-0000000000ff';
+  const includedChatUserWorkspaceId = '20202020-0000-4000-8000-0000000000ee';
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -99,6 +100,28 @@ describe('Event Logs (integration)', () => {
       ),
     }));
 
+    const includedChatUserUsageEventRecords = Array.from(
+      { length: 4 },
+      (_, i) => ({
+        workspaceId: testWorkspaceId,
+        userWorkspaceId: includedChatUserWorkspaceId,
+        resourceType: UsageResourceType.AI,
+        operationType:
+          i === 0
+            ? UsageOperationType.AI_CHAT_TOKEN
+            : UsageOperationType.AI_CHAT_INCLUDED,
+        quantity: 1_000,
+        unit: UsageUnit.TOKEN,
+        creditsUsedMicro: 9_000,
+        resourceId: `included-agent-${i}`,
+        resourceContext: 'included-model',
+        metadata: {},
+        timestamp: formatDateTimeForClickHouse(
+          new Date(now.getTime() - i * 60000 - 30000),
+        ),
+      }),
+    );
+
     const applicationLogRecords = Array.from({ length: 8 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       applicationId: 'app-1',
@@ -132,7 +155,7 @@ describe('Event Logs (integration)', () => {
 
     await clickHouseClient.insert({
       table: 'usageEvent',
-      values: usageEventRecords,
+      values: [...usageEventRecords, ...includedChatUserUsageEventRecords],
       format: 'JSONEachRow',
     });
 
@@ -512,6 +535,29 @@ describe('Event Logs (integration)', () => {
             },
           );
         }
+      });
+    });
+
+    describe('included chat usage', () => {
+      it('should leave included chat rows out of the records and the count', async () => {
+        const response = await makeEventLogsQuery({
+          table: 'USAGE_EVENT',
+          first: 50,
+          filters: {
+            userWorkspaceId: includedChatUserWorkspaceId,
+          },
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body.errors).toBeUndefined();
+
+        const { records, totalCount } = response.body.data.eventLogs;
+
+        expect(totalCount).toBe(1);
+        expect(records).toHaveLength(1);
+        expect(records[0].properties.operationType).toBe(
+          UsageOperationType.AI_CHAT_TOKEN,
+        );
       });
     });
 

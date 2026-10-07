@@ -7,6 +7,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EVENT_LOG_LIVE_TTL_MS } from 'src/engine/core-modules/event-logs/live/event-log-live-ttl.constant';
+import { isWorkspaceEventEnvelopePublishable } from 'src/engine/core-modules/event-logs/utils/is-workspace-event-envelope-publishable.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
@@ -53,6 +54,10 @@ export class EventLogLiveService {
       const workspaceId = event.row.workspaceId;
 
       if (!isDefined(workspaceId)) {
+        continue;
+      }
+
+      if (!isWorkspaceEventEnvelopePublishable(event)) {
         continue;
       }
 

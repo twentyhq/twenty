@@ -5,6 +5,8 @@ import { registerEnumType } from '@nestjs/graphql';
 export enum UsageOperationType {
   ALL = 'ALL',
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
+  // Out of twenty-shared's USAGE_OPERATION_TYPES: its rows skip the credit allowance, so an app billing under it would charge nothing.
+  AI_CHAT_INCLUDED = 'AI_CHAT_INCLUDED',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',

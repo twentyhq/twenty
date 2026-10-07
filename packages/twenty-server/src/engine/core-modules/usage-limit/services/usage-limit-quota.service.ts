@@ -60,6 +60,7 @@ import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/recor
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
+import { isBillableOperationType } from 'src/engine/core-modules/usage/utils/is-billable-operation-type.util';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -635,9 +636,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }
 
   private async buildCounters(args: QuotaConsumeArgs): Promise<QuotaCounter[]> {
+    // A non-billable operation must never read, warm or exhaust the allowance.
     const [limitCounters, allowanceCounter] = await Promise.all([
       this.buildLimitCounters(args),
-      this.buildAllowanceCounter(args.workspaceId),
+      isBillableOperationType(args.operationType)
+        ? this.buildAllowanceCounter(args.workspaceId)
+        : null,
     ]);
 
     return isDefined(allowanceCounter)

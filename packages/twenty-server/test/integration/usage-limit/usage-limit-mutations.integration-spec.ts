@@ -50,6 +50,14 @@ const USAGE_QUOTAS_WITH_CONSUMPTION = gql`
   }
 `;
 
+const USAGE_LIMITS = gql`
+  query UsageLimits {
+    usageLimits {
+      id
+    }
+  }
+`;
+
 const buildPayload = (
   overrides: Partial<CreateUsageLimitInput> = {},
 ): CreateUsageLimitInput => ({
@@ -325,6 +333,71 @@ describe('Usage limit mutations', () => {
         expect.stringContaining(OPERATOR_ROW_MESSAGE),
       );
       expect(await usageLimitRepository.countBy({ id: usageLimit.id })).toBe(1);
+    });
+  });
+
+  describe('non-billable operations', () => {
+    const includedChatPayload = buildPayload({
+      operationType: UsageOperationType.AI_CHAT_INCLUDED,
+      periodUnit: 'day',
+    });
+
+    it('refuses a workspace limit on included chat', async () => {
+      const response = await createUsageLimitRequest(includedChatPayload);
+
+      expect(response.body.errors?.[0]?.message).toBe(
+        'AI quota limits cannot target the AI_CHAT_INCLUDED operation',
+      );
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('hides an operator limit on included chat from the workspace', async () => {
+      const billableUsageLimitId = await createUsageLimit();
+
+      await usageLimitRepository.insert({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        ...includedChatPayload,
+        spenderId: '',
+        burstValue: null,
+        isInstanceOverride: true,
+      });
+
+      const includedChatUsageLimit = await usageLimitRepository.findOneByOrFail(
+        {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          operationType: UsageOperationType.AI_CHAT_INCLUDED,
+        },
+      );
+
+      const usageLimitsResponse = await makeMetadataApiRequest({
+        query: USAGE_LIMITS,
+      });
+      const quotasResponse = await makeMetadataApiRequest({
+        query: USAGE_QUOTAS_WITH_CONSUMPTION,
+      });
+
+      expect(usageLimitsResponse.body.errors).toBeUndefined();
+      expect(quotasResponse.body.errors).toBeUndefined();
+
+      const usageLimits = usageLimitsResponse.body.data.usageLimits;
+      const quotas = quotasResponse.body.data.usageQuotasWithConsumption;
+
+      expect(usageLimits).toContainEqual(
+        expect.objectContaining({ id: billableUsageLimitId }),
+      );
+      expect(usageLimits).not.toContainEqual(
+        expect.objectContaining({ id: includedChatUsageLimit.id }),
+      );
+      expect(quotas).toContainEqual(
+        expect.objectContaining({ id: billableUsageLimitId }),
+      );
+      expect(quotas).not.toContainEqual(
+        expect.objectContaining({ id: includedChatUsageLimit.id }),
+      );
     });
   });
 

@@ -64,6 +64,38 @@ describe('findLimitsForSpender', () => {
     ).toEqual([wildcard, specific]);
   });
 
+  it('keeps a limit covering every operation off included chat', () => {
+    const workspaceSpender = {
+      spenderType: 'workspace' as const,
+      spenderId: 'workspace-1',
+    };
+    const wildcard = buildLimit({
+      id: 'wildcard',
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.ALL,
+      spenderType: 'workspace',
+      limitKind: 'quota',
+      periodCount: 1,
+      periodUnit: 'month',
+      unit: UsageUnit.CREDIT,
+    });
+
+    expect(
+      findLimitsForSpender({
+        limits: [wildcard],
+        spender: workspaceSpender,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+      }),
+    ).toEqual([wildcard]);
+    expect(
+      findLimitsForSpender({
+        limits: [wildcard],
+        spender: workspaceSpender,
+        operationType: UsageOperationType.AI_CHAT_INCLUDED,
+      }),
+    ).toEqual([]);
+  });
+
   it('ignores a limit belonging to another spender', () => {
     const otherKey = buildLimit({ id: 'other', spenderId: 'key-2' });
 

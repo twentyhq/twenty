@@ -7,6 +7,41 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
+// No shipped default sits on an operation the workspace cannot limit yet, so the spec declares one
+jest.mock(
+  'src/engine/core-modules/usage-limit/constants/usage-limit-definitions.constant',
+  () => {
+    const { USAGE_LIMIT_DEFINITIONS } = jest.requireActual(
+      'src/engine/core-modules/usage-limit/constants/usage-limit-definitions.constant',
+    );
+
+    return {
+      USAGE_LIMIT_DEFINITIONS: {
+        ...USAGE_LIMIT_DEFINITIONS,
+        AI: {
+          quota: {
+            ...USAGE_LIMIT_DEFINITIONS.AI.quota,
+            defaults: [
+              {
+                resourceType: 'AI',
+                operationType: 'AI_CHAT_INCLUDED',
+                limitKind: 'quota',
+                spenderType: 'workspace',
+                spenderId: '',
+                unit: 'CREDIT',
+                periodUnit: 'day',
+                periodCount: 1,
+                limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
+                isOverridable: true,
+              },
+            ],
+          },
+        },
+      },
+    };
+  },
+);
+
 const validSpeedLimit: CreateUsageLimitInput = {
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
@@ -49,16 +84,37 @@ const validCodeExecutionQuotaLimit: CreateUsageLimitInput = {
   operationType: UsageOperationType.CODE_EXECUTION,
 };
 
-const rejects = (input: CreateUsageLimitInput, message?: string) =>
-  expect(() => validateUsageLimitAgainstDefinition(input)).toThrow(
+const includedChatDefaultScope: CreateUsageLimitInput = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_INCLUDED,
+  spenderType: 'workspace',
+  spenderId: null,
+  limitKind: 'quota',
+  periodCount: 1,
+  periodUnit: 'day',
+  unit: UsageUnit.CREDIT,
+  limitValue: 5_000_000,
+};
+
+const validate =
+  (input: CreateUsageLimitInput, { isOperator = false } = {}) =>
+  () =>
+    validateUsageLimitAgainstDefinition({ input, isOperator });
+
+const rejects = (
+  input: CreateUsageLimitInput,
+  message?: string,
+  { isOperator = false } = {},
+) =>
+  expect(validate(input, { isOperator })).toThrow(
     expect.objectContaining({
       code: UsageLimitExceptionCode.LIMIT_INVALID,
       ...(isDefined(message) ? { message } : {}),
     }),
   );
 
-const accepts = (input: CreateUsageLimitInput) =>
-  expect(() => validateUsageLimitAgainstDefinition(input)).not.toThrow();
+const accepts = (input: CreateUsageLimitInput, { isOperator = false } = {}) =>
+  expect(validate(input, { isOperator })).not.toThrow();
 
 describe('validateUsageLimitAgainstDefinition', () => {
   it('accepts a limit the definition allows', () => {
@@ -164,5 +220,48 @@ describe('validateUsageLimitAgainstDefinition', () => {
 
   it('rejects a storage stock counted in credits', () => {
     rejects({ ...validStockLimit, unit: UsageUnit.CREDIT });
+  });
+
+  describe('on an operation the workspace cannot limit', () => {
+    it('accepts an operator override at the exact scope of its default', () => {
+      accepts(includedChatDefaultScope, { isOperator: true });
+    });
+
+    it('refuses a workspace limit at the scope of the default', () => {
+      rejects(
+        includedChatDefaultScope,
+        'AI quota limits cannot target the AI_CHAT_INCLUDED operation',
+      );
+    });
+
+    it.each([
+      ['a token unit', { unit: UsageUnit.TOKEN }],
+      ['a monthly period', { periodUnit: 'month' as const }],
+      [
+        'a member spender',
+        {
+          spenderType: 'userWorkspace' as const,
+          spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        },
+      ],
+    ])(
+      'refuses an operator limit on %s, which no default covers',
+      (_, overrides) => {
+        rejects({ ...includedChatDefaultScope, ...overrides }, undefined, {
+          isOperator: true,
+        });
+      },
+    );
+
+    it('refuses an operator limit on an operation of another resource', () => {
+      rejects(
+        {
+          ...includedChatDefaultScope,
+          operationType: UsageOperationType.EMAIL_SEND,
+        },
+        undefined,
+        { isOperator: true },
+      );
+    });
   });
 });

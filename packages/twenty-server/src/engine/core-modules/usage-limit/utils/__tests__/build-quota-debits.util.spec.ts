@@ -48,6 +48,22 @@ const workflowEvent: RecordUsageInput = {
   unit: UsageUnit.INVOCATION,
 };
 
+const paidChatEvent: RecordUsageInput = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  creditsUsedMicro: 200,
+  quantity: 20,
+  unit: UsageUnit.TOKEN,
+};
+
+const includedChatEvent: RecordUsageInput = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_INCLUDED,
+  creditsUsedMicro: 700,
+  quantity: 70,
+  unit: UsageUnit.TOKEN,
+};
+
 describe('buildQuotaDebits', () => {
   it('debits a limit counter with the events of its resource type only', () => {
     const creditCounter = buildLimitCounter(UsageUnit.CREDIT);
@@ -67,6 +83,36 @@ describe('buildQuotaDebits', () => {
         events: [logicFunctionEvent, workflowEvent],
       }),
     ).toEqual([{ counter: allowanceCounter, amount: 400 }]);
+  });
+
+  it('debits the allowance with paid chat only in a batch mixing paid and included chat', () => {
+    const includedChatCounter: LimitQuotaCounter = {
+      ...buildLimitCounter(UsageUnit.CREDIT),
+      key: 'included-chat',
+      isDefault: true,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_INCLUDED,
+      periodUnit: 'day',
+    };
+
+    expect(
+      buildQuotaDebits({
+        counters: [allowanceCounter, includedChatCounter],
+        events: [paidChatEvent, includedChatEvent],
+      }),
+    ).toEqual([
+      { counter: allowanceCounter, amount: 200 },
+      { counter: includedChatCounter, amount: 700 },
+    ]);
+  });
+
+  it('debits nothing from the allowance for included chat alone', () => {
+    expect(
+      buildQuotaDebits({
+        counters: [allowanceCounter],
+        events: [includedChatEvent],
+      }),
+    ).toEqual([]);
   });
 
   it('drops a counter the events consume nothing of', () => {

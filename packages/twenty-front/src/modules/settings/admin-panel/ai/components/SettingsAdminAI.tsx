@@ -46,16 +46,11 @@ import {
   type AdminAiModelConfig,
   type AdminAiModelTierDefault,
   AiModelTier as GraphqlAiModelTier,
+  type GetAdminAiUsageByWorkspaceQuery,
 } from '~/generated-admin/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
-const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
-
-type UsageBreakdownItem = {
-  key: string;
-  label?: string | null;
-  creditsUsed: number;
-};
+const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px 120px';
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -93,16 +88,15 @@ export const SettingsAdminAI = () => {
       client: apolloAdminClient,
     });
 
-  const { data: usageData, previousData: previousUsageData } = useQuery<{
-    getAdminAiUsageByWorkspace: UsageBreakdownItem[];
-  }>(GET_ADMIN_AI_USAGE_BY_WORKSPACE, {
-    client: apolloAdminClient,
-    variables: {
-      periodStart: usageDates.periodStart,
-      periodEnd: usageDates.periodEnd,
-    },
-    skip: !hasEnterpriseAccess,
-  });
+  const { data: usageData, previousData: previousUsageData } =
+    useQuery<GetAdminAiUsageByWorkspaceQuery>(GET_ADMIN_AI_USAGE_BY_WORKSPACE, {
+      client: apolloAdminClient,
+      variables: {
+        periodStart: usageDates.periodStart,
+        periodEnd: usageDates.periodEnd,
+      },
+      skip: !hasEnterpriseAccess,
+    });
 
   const effectiveUsageData = usageData ?? previousUsageData;
   const usageByWorkspace = effectiveUsageData?.getAdminAiUsageByWorkspace ?? [];
@@ -274,6 +268,7 @@ export const SettingsAdminAI = () => {
               <TableRow gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}>
                 <TableHeader>{t`Workspace`}</TableHeader>
                 <TableHeader align="right">{t`Usage`}</TableHeader>
+                <TableHeader align="right">{t`Included chat`}</TableHeader>
               </TableRow>
               {usageByWorkspace.map((item) => (
                 <TableRow
@@ -288,6 +283,9 @@ export const SettingsAdminAI = () => {
                   </TableCell>
                   <TableCell align="right">
                     {formatUsageValue(item.creditsUsed)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {formatUsageValue(item.includedCreditsUsed)}
                   </TableCell>
                 </TableRow>
               ))}
