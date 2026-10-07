@@ -1,7 +1,5 @@
-import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -10,6 +8,8 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { FindOneSkillDocument } from '~/generated-metadata/graphql';
 import { SettingsSkillFormContent } from '~/pages/settings/ai/components/SettingsSkillFormContent';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
@@ -55,8 +55,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section.Root>
-            <Skeleton
-              layout="line"
+            <SkeletonLine
               baseColor={LEGACY_SKELETON_COLORS.base}
               highlightColor={LEGACY_SKELETON_COLORS.highlight}
               height={400}

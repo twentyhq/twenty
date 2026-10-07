@@ -716,20 +716,6 @@
         "description": "CSS class merged with the placeholder class."
       },
       {
-        "name": "containerClassName",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the wrapper in line layout."
-      },
-      {
-        "name": "count",
-        "type": "number",
-        "required": false,
-        "defaultValue": "1",
-        "description": "Number of placeholders in line layout. Defaults to one."
-      },
-      {
         "name": "height",
         "type": "Height<string | number>",
         "required": false,
@@ -742,13 +728,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Animated highlight color. Defaults to the theme lighter transparent background."
-      },
-      {
-        "name": "layout",
-        "type": "\"line\" | \"shape\"",
-        "required": false,
-        "defaultValue": "shape",
-        "description": "Use shape for a standalone element or line for a wrapper with a line break after each placeholder."
       },
       {
         "name": "ref",

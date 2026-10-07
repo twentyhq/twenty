@@ -58,36 +58,6 @@ export const Default: Story = {
   },
 };
 
-export const Lines: Story = {
-  args: { layout: 'line', count: 4, height: 32 },
-  render: (args) => (
-    <Text
-      render={<div />}
-      data-testid="rows"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        lineHeight: 0,
-      }}
-    >
-      <Skeleton {...args} data-testid="placeholder" />
-    </Text>
-  ),
-  play: async ({ canvas }) => {
-    const placeholders = canvas.getAllByTestId('placeholder');
-
-    await expect(placeholders).toHaveLength(4);
-    await expect(
-      canvas.getByTestId('rows').getBoundingClientRect().height,
-    ).toBe(128);
-
-    for (const placeholder of placeholders) {
-      await expect(placeholder.getBoundingClientRect().height).toBe(32);
-    }
-  },
-};
-
 export const Shapes: Story = {
   render: (args) => (
     <Text

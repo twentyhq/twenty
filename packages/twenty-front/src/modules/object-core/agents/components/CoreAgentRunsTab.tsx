@@ -1,9 +1,7 @@
-import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -13,6 +11,8 @@ import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/cons
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -79,8 +79,7 @@ export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
         <Table>
           {header}
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton
-              layout="line"
+            <SkeletonLine
               baseColor={LEGACY_SKELETON_COLORS.base}
               highlightColor={LEGACY_SKELETON_COLORS.highlight}
               height={32}
