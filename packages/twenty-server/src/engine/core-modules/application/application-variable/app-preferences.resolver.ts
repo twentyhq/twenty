@@ -52,7 +52,7 @@ export class AppPreferencesResolver {
   async myAppPreferencesApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AppPreferencesApplicationDTO[]> {
-    return this.appPreferencesService.findApplicationsWithUserVariables({
+    return this.appPreferencesService.findApplicationsWithPreferences({
       workspaceId,
     });
   }

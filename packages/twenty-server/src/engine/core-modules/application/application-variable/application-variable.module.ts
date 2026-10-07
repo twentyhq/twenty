@@ -13,6 +13,7 @@ import { ApplicationVariableEntity } from 'src/engine/core-modules/application/a
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { WorkspaceUserApplicationVariableValueMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-user-application-variable-value-map-cache.service';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -27,6 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([
       ApplicationEntity,
       ApplicationVariableEntity,
+      ConnectionProviderEntity,
       UserApplicationVariableValueEntity,
       UserWorkspaceEntity,
     ]),
@@ -42,6 +44,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     provideWorkspaceScopedRepository(ApplicationEntity),
     provideWorkspaceScopedRepository(ApplicationVariableEntity),
+    provideWorkspaceScopedRepository(ConnectionProviderEntity),
     provideWorkspaceScopedRepository(UserApplicationVariableValueEntity),
     provideWorkspaceScopedRepository(UserWorkspaceEntity),
     ApplicationVariableEntityService,

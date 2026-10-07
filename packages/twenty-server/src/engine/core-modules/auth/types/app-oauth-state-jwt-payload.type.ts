@@ -5,6 +5,7 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
   workspaceId: string;
   connectionProviderId: string;
+  applicationId?: string;
   userId: string;
   userWorkspaceId: string;
   // 'user' scopes the credential to userWorkspaceId; 'workspace' makes it

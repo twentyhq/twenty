@@ -11,6 +11,7 @@ import {
 import { type AppPreferencesApplicationDTO } from 'src/engine/core-modules/application/application-variable/dtos/app-preferences-application.dto';
 import { type UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -22,20 +23,39 @@ export class AppPreferencesService {
   constructor(
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
+    private readonly connectionProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async findApplicationsWithUserVariables({
+  async findApplicationsWithPreferences({
     workspaceId,
   }: {
     workspaceId: string;
   }): Promise<AppPreferencesApplicationDTO[]> {
+    const connectionProviders = await this.connectionProviderRepository.find(
+      workspaceId,
+      { select: { applicationId: true } },
+    );
+    const applicationIdsWithConnectionProviders = new Set(
+      connectionProviders.map(({ applicationId }) => applicationId),
+    );
+    const installedApplicationStates = In([
+      ApplicationState.INSTALLED,
+      ApplicationState.UPGRADING,
+    ]);
     const applications = await this.applicationRepository.find(workspaceId, {
-      where: {
-        state: In([ApplicationState.INSTALLED, ApplicationState.UPGRADING]),
-        applicationVariables: { scope: 'USER' },
-      },
+      where: [
+        {
+          state: installedApplicationStates,
+          applicationVariables: { scope: 'USER' },
+        },
+        {
+          state: installedApplicationStates,
+          id: In([...applicationIdsWithConnectionProviders]),
+        },
+      ],
       relations: { applicationVariables: true },
       select: {
         id: true,
@@ -51,6 +71,7 @@ export class AppPreferencesService {
       id,
       universalIdentifier,
       name,
+      hasConnectionProviders: applicationIdsWithConnectionProviders.has(id),
       logoUrl: buildPublicAssetLogoUrl({
         applicationId: id,
         workspaceId,

@@ -13,6 +13,9 @@ export class AppPreferencesApplicationDTO {
   @Field()
   name: string;
 
+  @Field()
+  hasConnectionProviders: boolean;
+
   @Field(() => String, { nullable: true })
   logoUrl: string | null;
 }

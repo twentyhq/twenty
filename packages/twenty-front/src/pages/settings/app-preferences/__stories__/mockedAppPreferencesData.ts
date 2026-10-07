@@ -76,6 +76,7 @@ export const getAppPreferencesMocks = ({
           myConnectedAccounts: accounts.map((account) => ({
             ...account,
             authFailedReason: null,
+            __typename: 'ConnectedAccountPublicDTO',
           })),
         },
       }),
@@ -100,6 +101,18 @@ export const getAppPreferencesMocks = ({
     ),
     graphql.query('MyAppPreferencesApplications', () =>
       HttpResponse.json({ data: { myAppPreferencesApplications: [] } }),
+    ),
+    graphql.query('MyAppPreferencesConnectedAccounts', () =>
+      HttpResponse.json({
+        data: {
+          myConnectedAccounts: accounts.map((account) => ({
+            ...account,
+            applicationId: null,
+            authFailedReason: null,
+            __typename: 'ConnectedAccountPublicDTO',
+          })),
+        },
+      }),
     ),
     ...graphqlMocks.handlers,
   ],

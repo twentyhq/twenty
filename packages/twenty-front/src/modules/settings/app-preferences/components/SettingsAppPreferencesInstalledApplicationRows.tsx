@@ -1,12 +1,14 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { APP_PREFERENCES_APPS_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsTable';
 import { useMyAppPreferencesApplications } from '@/settings/app-preferences/hooks/useMyAppPreferencesApplications';
+import { useMyAppPreferencesConnectedAccounts } from '@/settings/app-preferences/hooks/useMyAppPreferencesConnectedAccounts';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -16,6 +18,20 @@ export const SettingsAppPreferencesInstalledApplicationRows = () => {
   const theme = useTheme();
   const { applications, loading, error, refetch, isAppPreferencesEnabled } =
     useMyAppPreferencesApplications();
+  const {
+    accounts,
+    loading: accountsLoading,
+    error: accountsError,
+    canManageConnectedAccounts,
+  } = useMyAppPreferencesConnectedAccounts();
+  const connectedApplicationIds = new Set(
+    accounts
+      .filter(
+        (account) =>
+          !isDefined(account.archivedAt) && !isDefined(account.authFailedAt),
+      )
+      .map((account) => account.applicationId),
+  );
 
   if (!isAppPreferencesEnabled) {
     return null;
@@ -61,7 +77,15 @@ export const SettingsAppPreferencesInstalledApplicationRows = () => {
         />
         <OverflowingTextWithTooltip text={application.name} />
       </TableCell>
-      <TableCell />
+      <TableCell align="right">
+        {application.hasConnectionProviders &&
+          canManageConnectedAccounts &&
+          !accountsLoading &&
+          !isDefined(accountsError) &&
+          !connectedApplicationIds.has(application.id) && (
+            <Tag color="red" weight="medium">{t`Missing account`}</Tag>
+          )}
+      </TableCell>
       <TableCell align="right" padding="0">
         <IconChevronRight
           size={theme.icon.size.md}

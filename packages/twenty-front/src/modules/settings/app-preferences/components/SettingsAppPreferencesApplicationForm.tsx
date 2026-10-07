@@ -11,7 +11,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
@@ -26,12 +26,14 @@ type SettingsAppPreferencesApplicationFormProps = {
   application: AppPreferencesApplication;
   applicationVariables: AppPreferenceVariable[];
   onRefetch: () => Promise<unknown>;
+  children?: ReactNode;
 };
 
 export const SettingsAppPreferencesApplicationForm = ({
   application,
   applicationVariables,
   onRefetch,
+  children,
 }: SettingsAppPreferencesApplicationFormProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
@@ -166,7 +168,8 @@ export const SettingsAppPreferencesApplicationForm = ({
         {isDefined(saveError) && (
           <InlineBanner color="danger" variant="compact" message={saveError} />
         )}
-        {displayedVariables.length === 0 && (
+        {children}
+        {displayedVariables.length === 0 && !isDefined(children) && (
           <InlineBanner
             color="blue"
             variant="compact"

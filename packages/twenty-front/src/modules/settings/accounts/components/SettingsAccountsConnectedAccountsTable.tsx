@@ -10,7 +10,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -18,7 +20,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const ACCOUNTS_GRID_TEMPLATE_COLUMNS =
+export const ACCOUNTS_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) auto minmax(80px, max-content) 28px';
 
 const StyledUsageHeader = styled(TableHeader)`
@@ -31,7 +33,7 @@ const StyledStatusHeader = styled(TableHeader)`
   }
 `;
 
-const StyledAccountsTableRow = styled(TableRow)`
+export const StyledAccountsTableRow = styled(TableRow)`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     && {
       grid-template-columns: minmax(0, 1fr) minmax(80px, max-content) 28px;
@@ -75,16 +77,18 @@ const StyledAddAccountSectionContainer = styled.div`
 
 type SettingsAccountsConnectedAccountsTableProps = {
   accounts: ConnectedAccount[];
+  children?: ReactNode;
 };
 
 export const SettingsAccountsConnectedAccountsTable = ({
   accounts,
+  children,
 }: SettingsAccountsConnectedAccountsTableProps) => {
   const theme = useTheme();
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
 
-  if (!accounts.length) {
+  if (!accounts.length && !isDefined(children)) {
     return <SettingsAccountsListEmptyStateCard />;
   }
 
@@ -136,6 +140,7 @@ export const SettingsAccountsConnectedAccountsTable = ({
               </StyledAccountsTableRow>
             );
           })}
+          {children}
         </StyledTableRows>
       </Table>
       <StyledAddAccountSectionContainer>

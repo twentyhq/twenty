@@ -24,12 +24,14 @@ const APPLICATIONS: AppPreferencesApplication[] = [
     universalIdentifier: '20202020-0000-4000-8000-00000000a002',
     name: 'Stripe',
     logoUrl: null,
+    hasConnectionProviders: false,
   },
   {
     id: '20202020-0000-4000-8000-00000000a003',
     universalIdentifier: '20202020-0000-4000-8000-00000000a004',
     name: 'LinkedIn scroller',
     logoUrl: null,
+    hasConnectionProviders: false,
   },
 ];
 

@@ -10,6 +10,7 @@ import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/appl
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { getAppPreferencesOAuthRedirectPath } from 'src/engine/core-modules/application/connection-provider/utils/get-app-preferences-oauth-redirect-path.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -56,6 +57,7 @@ export class ConnectionProviderOAuthController {
   ) {
     // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
+    let personalRedirectPath: string | null = null;
 
     try {
       if (!applicationId || !providerName || !transientToken) {
@@ -97,6 +99,22 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { userId, workspaceId },
+      });
+
+      if (!isDefined(userWorkspace)) {
+        throw new AuthException(
+          `UserWorkspace not found for user ${userId} in workspace ${workspaceId}`,
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      personalRedirectPath = getAppPreferencesOAuthRedirectPath({
+        applicationId,
+        redirectLocation,
+      });
+
       const provider =
         await this.oauthProviderService.findOneByApplicationAndName({
           applicationId,
@@ -108,17 +126,6 @@ export class ConnectionProviderOAuthController {
         throw new ConnectionProviderException(
           `OAuth provider "${providerName}" not found for application ${applicationId}`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
-        );
-      }
-
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { userId, workspaceId },
-      });
-
-      if (!isDefined(userWorkspace)) {
-        throw new AuthException(
-          `UserWorkspace not found for user ${userId} in workspace ${workspaceId}`,
-          AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
       }
 
@@ -143,7 +150,12 @@ export class ConnectionProviderOAuthController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError({
+        res,
+        error,
+        workspace,
+        pathname: personalRedirectPath ?? undefined,
+      });
     }
   }
 
@@ -156,44 +168,49 @@ export class ConnectionProviderOAuthController {
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
-
-    if (errorParam) {
-      return this.redirectToError(
-        res,
-        new Error(
-          `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
-        ),
-        workspace,
-      );
-    }
-
-    if (!code || !state) {
-      return this.redirectToError(
-        res,
-        new Error(
-          'OAuth callback is missing the `code` or `state` query parameter',
-        ),
-        workspace,
-      );
-    }
+    let personalRedirectPath: string | null = null;
 
     try {
-      const { workspaceId, applicationId, redirectLocation } =
-        await this.oauthProviderFlowService.completeAuthorizationFlow({
-          code,
-          state,
-        });
+      const statePayload =
+        await this.oauthProviderFlowService.verifyStateOrThrow({ state });
 
       workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
+        id: statePayload.workspaceId,
       });
 
       if (!workspace) {
         throw new ConnectionProviderException(
-          `Workspace ${workspaceId} not found after OAuth callback`,
+          `Workspace ${statePayload.workspaceId} not found for OAuth callback`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
         );
       }
+
+      if (isDefined(statePayload.applicationId)) {
+        personalRedirectPath = getAppPreferencesOAuthRedirectPath({
+          applicationId: statePayload.applicationId,
+          redirectLocation: statePayload.redirectLocation,
+        });
+      }
+
+      if (errorParam) {
+        throw new ConnectionProviderException(
+          `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      if (!code) {
+        throw new ConnectionProviderException(
+          'OAuth callback is missing the `code` query parameter',
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const { applicationId, redirectLocation } =
+        await this.oauthProviderFlowService.completeAuthorizationFlow({
+          code,
+          state,
+        });
 
       const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
@@ -214,15 +231,26 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError({
+        res,
+        error,
+        workspace,
+        pathname: personalRedirectPath ?? undefined,
+      });
     }
   }
 
-  private redirectToError(
-    res: Response,
-    error: unknown,
-    workspace: WorkspaceEntity | null,
-  ) {
+  private redirectToError({
+    res,
+    error,
+    workspace,
+    pathname = getSettingsPath(SettingsPath.Accounts),
+  }: {
+    res: Response;
+    error: unknown;
+    workspace: WorkspaceEntity | null;
+    pathname?: string;
+  }) {
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error: error instanceof Error ? error : new Error(String(error)),
@@ -233,7 +261,7 @@ export class ConnectionProviderOAuthController {
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: workspace?.customDomain ?? null,
         },
-        pathname: getSettingsPath(SettingsPath.Accounts),
+        pathname,
       }),
     );
   }

@@ -7,6 +7,7 @@ export const MY_APP_PREFERENCES_APPLICATIONS = gql`
       universalIdentifier
       name
       logoUrl
+      hasConnectionProviders
     }
   }
 `;

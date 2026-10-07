@@ -30,6 +30,7 @@ const APPLICATION: AppPreferencesApplication = {
   universalIdentifier: '20202020-0000-4000-8000-00000000a002',
   name: 'Stripe',
   logoUrl: null,
+  hasConnectionProviders: false,
 };
 
 const DISPLAY_PREFERENCE: AppPreferenceVariable = {

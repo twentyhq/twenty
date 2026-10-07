@@ -123,6 +123,7 @@ export class ConnectionProviderOAuthFlowService {
       sub: connectionProvider.id,
       type: JwtTokenTypeEnum.APP_OAUTH_STATE,
       connectionProviderId: connectionProvider.id,
+      applicationId: connectionProvider.applicationId,
       workspaceId,
       userId,
       userWorkspaceId,
@@ -158,7 +159,7 @@ export class ConnectionProviderOAuthFlowService {
   }
 
   async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
-    const statePayload = await this.verifyState(args.state);
+    const statePayload = await this.verifyStateOrThrow({ state: args.state });
 
     const provider = await this.oauthProviderService.findOneByIdOrThrow({
       id: statePayload.connectionProviderId,
@@ -227,11 +228,14 @@ export class ConnectionProviderOAuthFlowService {
     });
   }
 
-  private async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
+  async verifyStateOrThrow({
+    state,
+  }: {
+    state: string;
+  }): Promise<AppOAuthStateJwtPayload> {
     try {
-      const verified = (await this.jwtWrapperService.verifyJwtToken(
-        state,
-      )) as AppOAuthStateJwtPayload;
+      const verified: AppOAuthStateJwtPayload =
+        await this.jwtWrapperService.verifyJwtToken(state);
 
       if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
         throw new Error('Wrong JWT type for OAuth state');
@@ -319,6 +323,7 @@ export class ConnectionProviderOAuthFlowService {
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
       authFailedReason: null,
+      archivedAt: null,
       visibility,
       handle,
     };

@@ -1,5 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsAppPreferencesApplicationForm } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationForm';
+import { SettingsAppPreferencesApplicationConnections } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationConnections';
 import { useMyAppPreferencesApplicationVariables } from '@/settings/app-preferences/hooks/useMyAppPreferencesApplicationVariables';
 import { useMyAppPreferencesApplications } from '@/settings/app-preferences/hooks/useMyAppPreferencesApplications';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -40,7 +41,13 @@ export const SettingsAppPreferencesApplication = () => {
         application={application}
         applicationVariables={applicationVariables}
         onRefetch={refetchVariables}
-      />
+      >
+        {application.hasConnectionProviders ? (
+          <SettingsAppPreferencesApplicationConnections
+            application={application}
+          />
+        ) : undefined}
+      </SettingsAppPreferencesApplicationForm>
     );
   }
 
