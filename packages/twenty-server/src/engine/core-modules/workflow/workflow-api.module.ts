@@ -12,7 +12,6 @@ import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolv
 import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
 import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
@@ -57,7 +56,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
-    provideWorkspaceScopedRepository(WorkflowEntity),
   ],
 })
 export class WorkflowApiModule {}

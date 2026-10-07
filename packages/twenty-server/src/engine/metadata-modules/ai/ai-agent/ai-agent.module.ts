@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { AgentResolver } from './agent.resolver';
@@ -31,8 +29,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   providers: [
     AgentResolver,
     AgentService,
-    WorkspaceMigrationGraphqlApiExceptionInterceptor,
-    AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(AgentEntity),
   ],
   exports: [AgentService, TypeOrmModule.forFeature([AgentEntity])],

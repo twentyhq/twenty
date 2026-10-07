@@ -9,8 +9,6 @@ import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/imp
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -19,11 +17,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ImpersonationAuthorizationModule,
     PermissionsModule,
     EventLogEmitterModule,
-    TypeOrmModule.forFeature([
-      UserWorkspaceEntity,
-      WorkspaceEntity,
-      UserEntity,
-    ]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspaceDomainsModule,
     PermissionsModule,
     UserSessionModule,

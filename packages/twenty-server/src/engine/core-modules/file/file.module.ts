@@ -5,7 +5,6 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
@@ -18,7 +17,7 @@ import { FileService } from './services/file.service';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
     FileUrlModule,
     FilesFieldModule,
     FileCorePictureModule,

@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
@@ -10,10 +8,7 @@ import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([FeatureFlagEntity]),
-    OAuth2ClientManagerModule,
-  ],
+  imports: [OAuth2ClientManagerModule],
   providers: [
     GmailGetHistoryService,
     GmailGetMessagesService,

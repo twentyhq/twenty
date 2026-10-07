@@ -2,7 +2,6 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
@@ -19,7 +18,7 @@ import { ImapSyncService } from 'src/modules/messaging/message-import-manager/dr
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity, ConnectedAccountEntity]),
+    TypeOrmModule.forFeature([ConnectedAccountEntity]),
     SecureHttpClientModule,
     ConnectedAccountTokenEncryptionModule,
   ],
