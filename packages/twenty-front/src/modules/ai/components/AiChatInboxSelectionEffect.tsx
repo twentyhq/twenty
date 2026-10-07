@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +19,7 @@ export const AiChatInboxSelectionEffect = ({
   threads,
 }: AiChatInboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
-  const lastListedSelection = useRef<{
+  const [lastListedSelection, setLastListedSelection] = useState<{
     threadId: string;
     index: number;
   } | null>(null);
@@ -32,17 +32,23 @@ export const AiChatInboxSelectionEffect = ({
     const index = threads.findIndex(({ id }) => id === selectedThreadId);
 
     if (index !== -1) {
-      lastListedSelection.current = { threadId: selectedThreadId, index };
+      if (
+        lastListedSelection?.threadId !== selectedThreadId ||
+        lastListedSelection.index !== index
+      ) {
+        setLastListedSelection({ threadId: selectedThreadId, index });
+      }
+
       return;
     }
 
     // A chat opened from a link without being listed stays open
-    if (lastListedSelection.current?.threadId !== selectedThreadId) {
+    if (lastListedSelection?.threadId !== selectedThreadId) {
       return;
     }
 
     const nextThread =
-      threads[Math.min(lastListedSelection.current.index, threads.length - 1)];
+      threads[Math.min(lastListedSelection.index, threads.length - 1)];
 
     // oxlint-disable-next-line twenty/no-navigate-prefer-link
     navigate(
@@ -51,7 +57,7 @@ export const AiChatInboxSelectionEffect = ({
       undefined,
       { replace: true },
     );
-  }, [navigate, selectedThreadId, threads]);
+  }, [lastListedSelection, navigate, selectedThreadId, threads]);
 
   return null;
 };
