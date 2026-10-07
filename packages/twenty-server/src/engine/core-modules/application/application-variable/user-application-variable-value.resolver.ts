@@ -5,7 +5,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
-import { UpdateMyApplicationUserVariableInput } from 'src/engine/core-modules/application/application-variable/dtos/update-my-application-user-variable.input';
+import { UpdateMyUserApplicationVariableInput } from 'src/engine/core-modules/application/application-variable/dtos/update-my-user-application-variable.input';
 import { WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -58,8 +58,8 @@ export class UserApplicationVariableValueResolver {
     }),
     ApplicationTargetGuard,
   )
-  async updateMyApplicationUserVariable(
-    @ApplicationTargetArgs<UpdateMyApplicationUserVariableInput>({
+  async updateMyUserApplicationVariable(
+    @ApplicationTargetArgs<UpdateMyUserApplicationVariableInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
       requireApplicationRegistrationOwnership: false,
@@ -68,11 +68,11 @@ export class UserApplicationVariableValueResolver {
       applicationUniversalIdentifier,
       key,
       value,
-    }: UpdateMyApplicationUserVariableInput,
+    }: UpdateMyUserApplicationVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<boolean> {
-    await this.userApplicationVariableValueService.updateMyApplicationUserVariable(
+    await this.userApplicationVariableValueService.updateMyUserApplicationVariable(
       {
         workspaceId,
         applicationUniversalIdentifier,
@@ -86,7 +86,7 @@ export class UserApplicationVariableValueResolver {
   }
 
   @Query(() => [WorkspaceMemberApplicationVariablesDTO])
-  async myApplicationUserVariables(
+  async myUserApplicationVariables(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthApplication() callingApplication: FlatApplication,
     @AuthUserWorkspaceId({ allowUndefined: true })

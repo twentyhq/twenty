@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-const DEFAULT_MY_APPLICATION_USER_VARIABLES_GQL_FIELDS = `
+const DEFAULT_MY_USER_APPLICATION_VARIABLES_GQL_FIELDS = `
   userWorkspaceId
   workspaceMemberId
   variables {
@@ -10,12 +10,12 @@ const DEFAULT_MY_APPLICATION_USER_VARIABLES_GQL_FIELDS = `
   }
 `;
 
-export const myApplicationUserVariablesQueryFactory = ({
-  gqlFields = DEFAULT_MY_APPLICATION_USER_VARIABLES_GQL_FIELDS,
+export const myUserApplicationVariablesQueryFactory = ({
+  gqlFields = DEFAULT_MY_USER_APPLICATION_VARIABLES_GQL_FIELDS,
 }: PerformMetadataQueryParams<Record<string, never>>) => ({
   query: gql`
-    query MyApplicationUserVariables {
-      myApplicationUserVariables {
+    query MyUserApplicationVariables {
+      myUserApplicationVariables {
         ${gqlFields}
       }
     }

@@ -5,12 +5,12 @@ import { type UserApplicationVariableValueEntity } from 'src/engine/core-modules
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 
 export const toUserApplicationVariableValues = ({
-  userFlatApplicationVariables,
+  flatUserApplicationVariables,
   userValues,
   shouldMaskSecret,
   getDisplayValue,
 }: {
-  userFlatApplicationVariables: Pick<
+  flatUserApplicationVariables: Pick<
     FlatApplicationVariable,
     | 'id'
     | 'key'
@@ -41,7 +41,7 @@ export const toUserApplicationVariableValues = ({
     ]),
   );
 
-  return userFlatApplicationVariables.map((flatApplicationVariable) => {
+  return flatUserApplicationVariables.map((flatApplicationVariable) => {
     const userValue = userValueByApplicationVariableId.get(
       flatApplicationVariable.id,
     );

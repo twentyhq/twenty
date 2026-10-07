@@ -1,22 +1,22 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-export type UpdateMyApplicationUserVariableFactoryInput = {
+export type UpdateMyUserApplicationVariableFactoryInput = {
   applicationUniversalIdentifier: string;
   key: string;
   value: string;
 };
 
-export const updateMyApplicationUserVariableQueryFactory = ({
+export const updateMyUserApplicationVariableQueryFactory = ({
   input,
-}: PerformMetadataQueryParams<UpdateMyApplicationUserVariableFactoryInput>) => ({
+}: PerformMetadataQueryParams<UpdateMyUserApplicationVariableFactoryInput>) => ({
   query: gql`
-    mutation UpdateMyApplicationUserVariable(
+    mutation UpdateMyUserApplicationVariable(
       $applicationUniversalIdentifier: String!
       $key: String!
       $value: String!
     ) {
-      updateMyApplicationUserVariable(
+      updateMyUserApplicationVariable(
         applicationUniversalIdentifier: $applicationUniversalIdentifier
         key: $key
         value: $value

@@ -1,11 +1,11 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { myApplicationUserVariables } from 'test/integration/metadata/suites/application/utils/my-application-user-variables.util';
+import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
-import { updateMyApplicationUserVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-user-variable.util';
+import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -50,7 +50,7 @@ describe('User application variable values should fail', () => {
   });
 
   it('should refuse to set a member value on a workspace variable', async () => {
-    const { errors } = await updateMyApplicationUserVariable({
+    const { errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
           workspaceVariableApplication.universalIdentifier,
@@ -64,7 +64,7 @@ describe('User application variable values should fail', () => {
   });
 
   it('should refuse a key the application does not declare', async () => {
-    const { errors } = await updateMyApplicationUserVariable({
+    const { errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
           userVariableApplication.universalIdentifier,
@@ -78,7 +78,7 @@ describe('User application variable values should fail', () => {
   });
 
   it('should refuse an application that is not installed', async () => {
-    const { errors } = await updateMyApplicationUserVariable({
+    const { errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
           NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -92,7 +92,7 @@ describe('User application variable values should fail', () => {
   });
 
   it('should refuse an application token writing a member value of its own application', async () => {
-    const { errors } = await updateMyApplicationUserVariable({
+    const { errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
           userVariableApplication.universalIdentifier,
@@ -107,7 +107,7 @@ describe('User application variable values should fail', () => {
   });
 
   it('should refuse to list every member value from a session', async () => {
-    const { errors } = await myApplicationUserVariables({
+    const { errors } = await myUserApplicationVariables({
       input: {},
       expectToFail: true,
     });

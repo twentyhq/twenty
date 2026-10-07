@@ -3,7 +3,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 @ArgsType()
-export class UpdateMyApplicationUserVariableInput {
+export class UpdateMyUserApplicationVariableInput {
   @Field(() => String)
   applicationUniversalIdentifier: string;
 

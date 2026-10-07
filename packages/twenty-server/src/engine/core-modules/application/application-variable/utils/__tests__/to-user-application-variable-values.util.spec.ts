@@ -4,7 +4,7 @@ import { toUserApplicationVariableValues } from 'src/engine/core-modules/applica
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 
-const buildUserFlatApplicationVariable = ({
+const buildFlatUserApplicationVariable = ({
   id,
   key,
   isSecret = false,
@@ -28,19 +28,19 @@ const buildUserFlatApplicationVariable = ({
     defaultValue,
   }) satisfies Partial<FlatApplicationVariable>;
 
-const USER_FLAT_APPLICATION_VARIABLES = [
-  buildUserFlatApplicationVariable({
+const FLAT_USER_APPLICATION_VARIABLES = [
+  buildFlatUserApplicationVariable({
     id: 'record-my-meetings-id',
     key: 'RECORD_MY_MEETINGS',
     defaultValue: 'off',
   }),
-  buildUserFlatApplicationVariable({
+  buildFlatUserApplicationVariable({
     id: 'language-id',
     key: 'LANGUAGE',
     defaultValue: 'en',
   }),
-  buildUserFlatApplicationVariable({ id: 'nickname-id', key: 'NICKNAME' }),
-  buildUserFlatApplicationVariable({
+  buildFlatUserApplicationVariable({ id: 'nickname-id', key: 'NICKNAME' }),
+  buildFlatUserApplicationVariable({
     id: 'personal-api-key-id',
     key: 'PERSONAL_API_KEY',
     isSecret: true,
@@ -69,7 +69,7 @@ const getDisplayValue = ({
 describe('toUserApplicationVariableValues', () => {
   it('should use the member value, else the default, else an empty string', () => {
     const values = toUserApplicationVariableValues({
-      userFlatApplicationVariables: USER_FLAT_APPLICATION_VARIABLES,
+      flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
       userValues: USER_VALUES,
       shouldMaskSecret: false,
       getDisplayValue,
@@ -85,7 +85,7 @@ describe('toUserApplicationVariableValues', () => {
 
   it('should mask secrets only when asked to', () => {
     const values = toUserApplicationVariableValues({
-      userFlatApplicationVariables: USER_FLAT_APPLICATION_VARIABLES,
+      flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
       userValues: USER_VALUES,
       shouldMaskSecret: true,
       getDisplayValue,

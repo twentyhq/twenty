@@ -55,8 +55,8 @@ export class UserApplicationVariableValueService {
     userWorkspaceId,
     flatApplicationVariableMaps,
   }: GetEnvVariablesArgs): Promise<Record<string, string>> {
-    const userFlatApplicationVariables =
-      await this.findUserFlatApplicationVariables({
+    const flatUserApplicationVariables =
+      await this.findFlatUserApplicationVariables({
         workspaceId,
         applicationId,
         flatApplicationVariableMaps,
@@ -65,7 +65,7 @@ export class UserApplicationVariableValueService {
     return this.toEnvVariables({
       workspaceId,
       userWorkspaceId,
-      userFlatApplicationVariables,
+      flatUserApplicationVariables,
     });
   }
 
@@ -75,8 +75,8 @@ export class UserApplicationVariableValueService {
     userWorkspaceId,
     flatApplicationVariableMaps,
   }: GetEnvVariablesArgs): Promise<Record<string, string>> {
-    const userFlatApplicationVariables = (
-      await this.findUserFlatApplicationVariables({
+    const flatUserApplicationVariables = (
+      await this.findFlatUserApplicationVariables({
         workspaceId,
         applicationId,
         flatApplicationVariableMaps,
@@ -86,7 +86,7 @@ export class UserApplicationVariableValueService {
     return this.toEnvVariables({
       workspaceId,
       userWorkspaceId,
-      userFlatApplicationVariables,
+      flatUserApplicationVariables,
     });
   }
 
@@ -97,13 +97,13 @@ export class UserApplicationVariableValueService {
   }: ApplicationVariableTarget & {
     requestUserWorkspaceId: string | undefined;
   }): Promise<WorkspaceMemberApplicationVariablesDTO[]> {
-    const userFlatApplicationVariables =
-      await this.findUserFlatApplicationVariables({
+    const flatUserApplicationVariables =
+      await this.findFlatUserApplicationVariables({
         workspaceId,
         applicationId,
       });
 
-    if (!isNonEmptyArray(userFlatApplicationVariables)) {
+    if (!isNonEmptyArray(flatUserApplicationVariables)) {
       return [];
     }
 
@@ -123,7 +123,7 @@ export class UserApplicationVariableValueService {
           },
           where: {
             applicationVariableId: In(
-              userFlatApplicationVariables.map(({ id }) => id),
+              flatUserApplicationVariables.map(({ id }) => id),
             ),
             ...(isDefined(requestUserWorkspaceId)
               ? { userWorkspaceId: requestUserWorkspaceId }
@@ -152,7 +152,7 @@ export class UserApplicationVariableValueService {
           userWorkspaceId,
           workspaceMemberId,
           variables: toUserApplicationVariableValues({
-            userFlatApplicationVariables,
+            flatUserApplicationVariables,
             userValues: userValuesByUserWorkspaceId[userWorkspaceId] ?? [],
             shouldMaskSecret: isDefined(requestUserWorkspaceId),
             getDisplayValue: ({ value, isSecret }) =>
@@ -167,7 +167,7 @@ export class UserApplicationVariableValueService {
     });
   }
 
-  async updateMyApplicationUserVariable({
+  async updateMyUserApplicationVariable({
     workspaceId,
     applicationUniversalIdentifier,
     userWorkspaceId,
@@ -186,7 +186,7 @@ export class UserApplicationVariableValueService {
     });
 
     const flatApplicationVariable =
-      await this.findUserFlatApplicationVariableOrThrow({
+      await this.findFlatUserApplicationVariableOrThrow({
         workspaceId,
         applicationId,
         key,
@@ -208,13 +208,13 @@ export class UserApplicationVariableValueService {
   private async toEnvVariables({
     workspaceId,
     userWorkspaceId,
-    userFlatApplicationVariables,
+    flatUserApplicationVariables,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
-    userFlatApplicationVariables: FlatApplicationVariable[];
+    flatUserApplicationVariables: FlatApplicationVariable[];
   }): Promise<Record<string, string>> {
-    if (!isNonEmptyArray(userFlatApplicationVariables)) {
+    if (!isNonEmptyArray(flatUserApplicationVariables)) {
       return {};
     }
 
@@ -222,13 +222,13 @@ export class UserApplicationVariableValueService {
       ? await this.findUserValues({
           workspaceId,
           userWorkspaceId,
-          userFlatApplicationVariables,
+          flatUserApplicationVariables,
         })
       : [];
 
     return Object.fromEntries(
       toUserApplicationVariableValues({
-        userFlatApplicationVariables,
+        flatUserApplicationVariables,
         userValues,
         shouldMaskSecret: false,
         getDisplayValue: ({ value, isSecret }) =>
@@ -244,11 +244,11 @@ export class UserApplicationVariableValueService {
   private async findUserValues({
     workspaceId,
     userWorkspaceId,
-    userFlatApplicationVariables,
+    flatUserApplicationVariables,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    userFlatApplicationVariables: FlatApplicationVariable[];
+    flatUserApplicationVariables: FlatApplicationVariable[];
   }): Promise<
     Pick<
       UserApplicationVariableValueEntity,
@@ -260,7 +260,7 @@ export class UserApplicationVariableValueService {
       where: {
         userWorkspaceId,
         applicationVariableId: In(
-          userFlatApplicationVariables.map(({ id }) => id),
+          flatUserApplicationVariables.map(({ id }) => id),
         ),
       },
     });
@@ -293,7 +293,7 @@ export class UserApplicationVariableValueService {
     return flatApplication.id;
   }
 
-  private async findUserFlatApplicationVariables({
+  private async findFlatUserApplicationVariables({
     workspaceId,
     applicationId,
     flatApplicationVariableMaps,
@@ -309,7 +309,7 @@ export class UserApplicationVariableValueService {
     ).filter(({ scope }) => scope === 'USER');
   }
 
-  private async findUserFlatApplicationVariableOrThrow({
+  private async findFlatUserApplicationVariableOrThrow({
     workspaceId,
     applicationId,
     key,

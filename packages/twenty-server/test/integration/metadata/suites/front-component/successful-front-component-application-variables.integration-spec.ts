@@ -2,7 +2,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateMyApplicationUserVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-user-variable.util';
+import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponent } from 'test/integration/metadata/suites/front-component/utils/find-front-component.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
@@ -133,7 +133,7 @@ describe('Front component application variables', () => {
   });
 
   it('should expose non-secret variables with the viewing member values of user variables', async () => {
-    await updateMyApplicationUserVariable({
+    await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier: TEST_APP_ID,
         key: 'RECORD_MY_MEETINGS',
@@ -142,7 +142,7 @@ describe('Front component application variables', () => {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
-    await updateMyApplicationUserVariable({
+    await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier: TEST_APP_ID,
         key: 'PERSONAL_API_KEY',
