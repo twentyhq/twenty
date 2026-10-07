@@ -26,6 +26,7 @@ import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { validateDashboardFilterBindingsAgainstSlotsOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-dashboard-filter-bindings-against-slots.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
@@ -165,6 +166,15 @@ export class PageLayoutUpdateService {
         }),
       flatPageLayoutTabMaps,
     );
+
+    for (const widgetInput of tabs.flatMap((tab) => tab.widgets)) {
+      validateDashboardFilterBindingsAgainstSlotsOrThrow({
+        widgetConfiguration: widgetInput.configuration,
+        widgetTitle: widgetInput.title,
+        dashboardFilters: flatPageLayoutToUpdate.dashboardFilters,
+        flatFieldMetadataMaps,
+      });
+    }
 
     const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
       this.computeWidgetOperationsForAllTabs({

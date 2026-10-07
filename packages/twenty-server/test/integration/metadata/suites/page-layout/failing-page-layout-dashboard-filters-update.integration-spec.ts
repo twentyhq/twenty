@@ -205,4 +205,64 @@ describe('Page layout dashboard filters persistence should fail', () => {
       }),
     ]);
   });
+  it('when a chart binds a DATE_TIME slot to a TEXT field', async () => {
+    const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: true,
+      input: {
+        id: testPageLayoutId,
+        name: 'Dashboard with invalid filters',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        dashboardFilters: [DATE_SLOT],
+        tabs: buildTabs({
+          date: {
+            fieldMetadataId: fieldMetadataIds.companyNameFieldMetadataId,
+          },
+        }),
+      },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors).toHaveLength(1);
+
+    const [firstError] = errors!;
+
+    expect(firstError.extensions.code).toBe('BAD_USER_INPUT');
+    expect(firstError.message).toContain(`Chart "${CHART_TITLE}":`);
+    expect(firstError.message).toContain(
+      'Dashboard filter "date" expects a DATE_TIME field but is bound to "Name" (TEXT).',
+    );
+    expect(String(firstError.extensions.userFriendlyMessage)).toContain(
+      `Chart "${CHART_TITLE}":`,
+    );
+  });
+
+  it('when a chart binds a slot that is not defined on the layout', async () => {
+    const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: true,
+      input: {
+        id: testPageLayoutId,
+        name: 'Dashboard with invalid filters',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: null,
+        dashboardFilters: [DATE_SLOT],
+        tabs: buildTabs({
+          owner: {
+            fieldMetadataId:
+              fieldMetadataIds.companyAccountOwnerFieldMetadataId,
+          },
+        }),
+      },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors).toHaveLength(1);
+
+    const [firstError] = errors!;
+
+    expect(firstError.extensions.code).toBe('BAD_USER_INPUT');
+    expect(firstError.message).toContain(
+      `Chart "${CHART_TITLE}": Dashboard filter "owner" is not defined on this layout.`,
+    );
+  });
 });

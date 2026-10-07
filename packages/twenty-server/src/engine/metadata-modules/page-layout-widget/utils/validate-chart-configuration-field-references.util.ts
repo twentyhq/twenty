@@ -1,6 +1,7 @@
-import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
+  FILTERABLE_FIELD_TYPES,
+  RelationType,
   type ChartRecordFilter,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -9,36 +10,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-effective-filter-field-type.util';
 import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
-import {
-  PageLayoutWidgetException,
-  PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { buildChartFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/utils/build-chart-field-validation-exception.util';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { validateGroupByFieldOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-const buildChartFieldValidationException = (
-  message: string,
-  widgetTitle?: string | null,
-): PageLayoutWidgetException => {
-  const prefix = isDefined(widgetTitle) ? `Chart "${widgetTitle}": ` : '';
-  const fullMessage = prefix + message;
-
-  return new PageLayoutWidgetException(
-    fullMessage,
-    PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    {
-      userFriendlyMessage: msg`${fullMessage}`,
-    },
-  );
-};
+const FILTERABLE_FIELD_TYPE_SET: ReadonlySet<string> = new Set(
+  FILTERABLE_FIELD_TYPES,
+);
 
 const validateGroupByFieldAsChartFieldOrThrow = (
   params: Parameters<typeof validateGroupByFieldOrThrow>[0],
@@ -309,6 +296,55 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
       if (boundField.objectMetadataId !== widgetObjectMetadataId) {
         throw buildChartFieldValidationException(
           `Dashboard filter "${slotId}" must be bound to a field of objectMetadataId "${widgetObjectMetadataId}".`,
+          widgetTitle,
+        );
+      }
+
+      let relationTargetField: FlatFieldMetadata | null = null;
+
+      if (isDefined(binding.relationTargetFieldMetadataId)) {
+        const isManyToOneRelation =
+          isFlatFieldMetadataOfType(boundField, FieldMetadataType.RELATION) &&
+          boundField.settings?.relationType === RelationType.MANY_TO_ONE;
+
+        if (!isManyToOneRelation) {
+          throw buildChartFieldValidationException(
+            `Dashboard filter "${slotId}" sets a relation target field on "${boundField.label}", which is not a many-to-one relation.`,
+            widgetTitle,
+          );
+        }
+
+        relationTargetField = findActiveFlatFieldMetadataById(
+          binding.relationTargetFieldMetadataId,
+          flatFieldMetadataMaps,
+        );
+
+        if (!isDefined(relationTargetField)) {
+          throw buildChartFieldValidationException(
+            `Dashboard filter "${slotId}" targets field id "${binding.relationTargetFieldMetadataId}" through "${boundField.label}", but it was deleted. Please remove or replace this binding.`,
+            widgetTitle,
+          );
+        }
+
+        if (
+          relationTargetField.objectMetadataId !==
+          boundField.relationTargetObjectMetadataId
+        ) {
+          throw buildChartFieldValidationException(
+            `Dashboard filter "${slotId}" targets field "${relationTargetField.label}", which does not belong to the object "${boundField.label}" points to.`,
+            widgetTitle,
+          );
+        }
+      }
+
+      const effectiveFieldType = getEffectiveFilterFieldType({
+        fieldType: boundField.type,
+        relationTargetFieldType: relationTargetField?.type,
+      });
+
+      if (!FILTERABLE_FIELD_TYPE_SET.has(effectiveFieldType)) {
+        throw buildChartFieldValidationException(
+          `Dashboard filter "${slotId}" is bound to a field of type ${effectiveFieldType}, which cannot be filtered.`,
           widgetTitle,
         );
       }

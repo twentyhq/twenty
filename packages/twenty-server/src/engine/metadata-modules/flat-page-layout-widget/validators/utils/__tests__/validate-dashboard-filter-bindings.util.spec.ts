@@ -24,6 +24,10 @@ const PERSON_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-4444-4444-8444-000000000004';
 const WORKSPACE_MEMBER_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-5555-4555-8555-000000000005';
+const COMPANY_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-6666-4666-8666-000000000006';
+const WORKSPACE_MEMBER_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-7777-4777-8777-000000000007';
 const UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-9999-4999-8999-000000000009';
 
@@ -83,6 +87,18 @@ const flatFieldMetadataMaps = {
       objectMetadataUniversalIdentifier:
         WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
       type: FieldMetadataType.FULL_NAME,
+    }),
+    [COMPANY_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata({
+      universalIdentifier: COMPANY_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.RICH_TEXT,
+    }),
+    [WORKSPACE_MEMBER_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: flatFieldMetadata({
+      universalIdentifier:
+        WORKSPACE_MEMBER_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.RICH_TEXT,
     }),
   },
 } as unknown as MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
@@ -260,5 +276,32 @@ describe('validateDashboardFilterBindings', () => {
       PERSON_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       UNKNOWN_FIELD_UNIVERSAL_IDENTIFIER,
     ]);
+  });
+  it('should reject a binding to a field whose type cannot be filtered', () => {
+    const errors = validateBindings({
+      notes: {
+        fieldMetadataUniversalIdentifier:
+          COMPANY_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      },
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('RICH_TEXT');
+    expect(errors[0].message).toContain('cannot be filtered');
+  });
+
+  it('should reject a relation traversal to a target field whose type cannot be filtered', () => {
+    const errors = validateBindings({
+      owner: {
+        fieldMetadataUniversalIdentifier:
+          COMPANY_ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+        relationTargetFieldMetadataUniversalIdentifier:
+          WORKSPACE_MEMBER_RICH_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      },
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('RICH_TEXT');
+    expect(errors[0].message).toContain('cannot be filtered');
   });
 });

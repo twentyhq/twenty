@@ -366,5 +366,31 @@ describe('Page layout widget update should succeed', () => {
         );
       },
     );
+
+    // The single-widget path validates with whitelist: true, so an
+    // undecorated property would be silently stripped
+    it('should keep dashboard filter bindings on update', async () => {
+      const dashboardFilterBindings = {
+        date: { fieldMetadataId: testSetup.fieldMetadataId2 },
+        owner: null,
+      };
+
+      const { data } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutWidgetId,
+          configuration: {
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+            aggregateFieldMetadataId: testSetup.fieldMetadataId1,
+            aggregateOperation: AggregateOperations.COUNT,
+            dashboardFilterBindings,
+          },
+        },
+      });
+
+      expect(data.updatePageLayoutWidget.configuration).toMatchObject({
+        dashboardFilterBindings,
+      });
+    });
   });
 });

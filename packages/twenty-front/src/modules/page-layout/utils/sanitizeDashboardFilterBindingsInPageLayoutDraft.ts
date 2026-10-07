@@ -12,6 +12,14 @@ export const sanitizeDashboardFilterBindingsInPageLayoutDraft = ({
   pageLayoutDraft: DraftPageLayout;
   validFieldMetadataIdsByObjectMetadataId: Map<string, Set<string>>;
 }): DraftPageLayout => {
+  // A field belongs to exactly one object, so a relation target field that is
+  // active on any object is still the one the binding was saved with
+  const allValidFieldMetadataIds = new Set(
+    Array.from(validFieldMetadataIdsByObjectMetadataId.values()).flatMap(
+      (fieldMetadataIds) => Array.from(fieldMetadataIds),
+    ),
+  );
+
   return {
     ...pageLayoutDraft,
     tabs: pageLayoutDraft.tabs.map((tab) => ({
@@ -40,12 +48,23 @@ export const sanitizeDashboardFilterBindingsInPageLayoutDraft = ({
         }
 
         const sanitizedDashboardFilterBindings = Object.fromEntries(
-          Object.entries(dashboardFilterBindings).filter(
-            ([, binding]) =>
-              // null is an explicit opt-out and never references a field
-              !isDefined(binding) ||
-              validFieldMetadataIds.has(binding.fieldMetadataId),
-          ),
+          Object.entries(dashboardFilterBindings).filter(([, binding]) => {
+            // null is an explicit opt-out and never references a field
+            if (!isDefined(binding)) {
+              return true;
+            }
+
+            if (!validFieldMetadataIds.has(binding.fieldMetadataId)) {
+              return false;
+            }
+
+            return (
+              !isDefined(binding.relationTargetFieldMetadataId) ||
+              allValidFieldMetadataIds.has(
+                binding.relationTargetFieldMetadataId,
+              )
+            );
+          }),
         );
 
         return {

@@ -7,7 +7,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { PageLayoutType } from 'twenty-shared/types';
+import { type DashboardFilterSlot, PageLayoutType } from 'twenty-shared/types';
 
 type TestContext = {
   input: {
@@ -73,4 +73,43 @@ describe('Page layout update should succeed', () => {
       );
     },
   );
+  it('should keep dashboard filters when omitted and clear them on an explicit null', async () => {
+    const dashboardFilters: DashboardFilterSlot[] = [
+      { id: 'date', label: 'Date', filterType: 'DATE_TIME' },
+    ];
+
+    const { data: createData } = await createOnePageLayout({
+      expectToFail: false,
+      input: {
+        name: 'Dashboard with filters',
+        type: PageLayoutType.DASHBOARD,
+        dashboardFilters,
+      },
+    });
+
+    const dashboardPageLayoutId = createData.createPageLayout.id;
+
+    try {
+      const { data: renamedData } = await updateOnePageLayout({
+        expectToFail: false,
+        input: { id: dashboardPageLayoutId, name: 'Renamed dashboard' },
+      });
+
+      expect(renamedData.updatePageLayout.dashboardFilters).toEqual(
+        dashboardFilters,
+      );
+
+      const { data: clearedData } = await updateOnePageLayout({
+        expectToFail: false,
+        input: { id: dashboardPageLayoutId, dashboardFilters: null },
+      });
+
+      expect(clearedData.updatePageLayout.dashboardFilters).toBeNull();
+    } finally {
+      await destroyOnePageLayout({
+        expectToFail: false,
+        input: { id: dashboardPageLayoutId },
+      });
+    }
+  });
 });

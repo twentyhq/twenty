@@ -9,12 +9,16 @@ import {
   TEST_FIELDS_CONFIGURATION,
   TEST_FIELD_METADATA_ID_1,
   TEST_FIELD_METADATA_ID_2,
+  TEST_FIELD_METADATA_ID_3,
   TEST_OBJECT_METADATA_ID,
   createTestWidget,
 } from '~/testing/mock-data/widget-configurations';
 
 const ACTIVE_FIELD_ID = TEST_FIELD_METADATA_ID_1;
 const DELETED_FIELD_ID = TEST_FIELD_METADATA_ID_2;
+const TARGET_OBJECT_METADATA_ID = '20202020-9999-4999-a999-999999999999';
+const ACTIVE_TARGET_FIELD_ID = TEST_FIELD_METADATA_ID_3;
+const DELETED_TARGET_FIELD_ID = '20202020-8888-4888-a888-888888888888';
 
 const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
   const tab: PageLayoutTab = {
@@ -146,5 +150,38 @@ describe('sanitizeDashboardFilterBindingsInPageLayoutDraft', () => {
     });
 
     expect(getBindings(result)).toEqual(dashboardFilterBindings);
+  });
+  it('should drop a binding whose relation target field no longer exists and keep one whose target is still active', () => {
+    const widget = createTestWidget({
+      id: 'chart-widget',
+      configuration: {
+        ...TEST_BAR_CHART_CONFIGURATION,
+        dashboardFilterBindings: {
+          owner: {
+            fieldMetadataId: ACTIVE_FIELD_ID,
+            relationTargetFieldMetadataId: ACTIVE_TARGET_FIELD_ID,
+          },
+          'owner-email': {
+            fieldMetadataId: ACTIVE_FIELD_ID,
+            relationTargetFieldMetadataId: DELETED_TARGET_FIELD_ID,
+          },
+        },
+      },
+    });
+
+    const result = sanitizeDashboardFilterBindingsInPageLayoutDraft({
+      pageLayoutDraft: buildDraft([widget]),
+      validFieldMetadataIdsByObjectMetadataId: new Map([
+        [TEST_OBJECT_METADATA_ID, new Set([ACTIVE_FIELD_ID])],
+        [TARGET_OBJECT_METADATA_ID, new Set([ACTIVE_TARGET_FIELD_ID])],
+      ]),
+    });
+
+    expect(getBindings(result)).toEqual({
+      owner: {
+        fieldMetadataId: ACTIVE_FIELD_ID,
+        relationTargetFieldMetadataId: ACTIVE_TARGET_FIELD_ID,
+      },
+    });
   });
 });

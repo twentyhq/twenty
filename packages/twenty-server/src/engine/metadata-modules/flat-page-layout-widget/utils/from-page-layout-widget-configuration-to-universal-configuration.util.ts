@@ -85,11 +85,13 @@ const convertChartFilterToUniversalFilter = ({
 const convertDashboardFilterBindingsToUniversalBindings = ({
   dashboardFilterBindings,
   fieldMetadataUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier,
 }: {
   dashboardFilterBindings:
     | Record<string, DashboardFilterBinding | null>
     | undefined;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier: boolean;
 }): Record<string, UniversalDashboardFilterBinding | null> | undefined => {
   if (!isDefined(dashboardFilterBindings)) {
     return undefined;
@@ -112,7 +114,7 @@ const convertDashboardFilterBindingsToUniversalBindings = ({
             {
               fieldMetadataId,
               fieldMetadataUniversalIdentifierById,
-              shouldThrowOnMissingIdentifier: false,
+              shouldThrowOnMissingIdentifier,
             },
           ),
           ...(isDefined(relationTargetFieldMetadataId)
@@ -121,7 +123,7 @@ const convertDashboardFilterBindingsToUniversalBindings = ({
                   getFieldMetadataUniversalIdentifier({
                     fieldMetadataId: relationTargetFieldMetadataId,
                     fieldMetadataUniversalIdentifierById,
-                    shouldThrowOnMissingIdentifier: false,
+                    shouldThrowOnMissingIdentifier,
                   }),
               }
             : {}),
@@ -189,6 +191,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           convertDashboardFilterBindingsToUniversalBindings({
             dashboardFilterBindings,
             fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           }),
       };
     }
@@ -229,6 +232,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           convertDashboardFilterBindingsToUniversalBindings({
             dashboardFilterBindings,
             fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           }),
       };
     }
@@ -281,6 +285,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           convertDashboardFilterBindingsToUniversalBindings({
             dashboardFilterBindings,
             fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           }),
       };
     }
@@ -333,6 +338,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
           convertDashboardFilterBindingsToUniversalBindings({
             dashboardFilterBindings,
             fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           }),
       };
     }

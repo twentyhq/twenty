@@ -52,7 +52,10 @@ export class FlatPageLayoutValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateDashboardFilters(flatPageLayout.dashboardFilters),
+      ...validateDashboardFilters({
+        dashboardFilters: flatPageLayout.dashboardFilters,
+        pageLayoutType: flatPageLayout.type,
+      }),
     );
 
     return validationResult;
@@ -125,8 +128,16 @@ export class FlatPageLayoutValidatorService {
       return validationResult;
     }
 
+    // Validate the layout as it will be after the update, so a type change
+    // away from DASHBOARD cannot keep stale slots around
     validationResult.errors.push(
-      ...validateDashboardFilters(flatEntityUpdate.dashboardFilters),
+      ...validateDashboardFilters({
+        dashboardFilters:
+          flatEntityUpdate.dashboardFilters === undefined
+            ? fromFlatPageLayout.dashboardFilters
+            : flatEntityUpdate.dashboardFilters,
+        pageLayoutType: flatEntityUpdate.type ?? fromFlatPageLayout.type,
+      }),
     );
 
     return validationResult;

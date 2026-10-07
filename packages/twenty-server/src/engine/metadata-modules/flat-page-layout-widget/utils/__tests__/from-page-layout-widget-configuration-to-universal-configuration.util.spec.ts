@@ -222,4 +222,22 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
       expect.anything(),
     );
   });
+  it('should throw on a deleted dashboard filter binding field when asked to', () => {
+    expect(() =>
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+          aggregateOperation: AggregateOperations.SUM,
+          dashboardFilterBindings: {
+            date: { fieldMetadataId: DELETED_FIELD_ID },
+          },
+        },
+        fieldMetadataUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier: true,
+      }),
+    ).toThrow(
+      `Field metadata universal identifier not found for id: ${DELETED_FIELD_ID}`,
+    );
+  });
 });
