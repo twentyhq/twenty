@@ -57,7 +57,7 @@ const postCreditTopUpInvoicePaid = ({
 const PRICE_QUERY = gql`
   query GetCreditOneTimeTopUpPrice {
     getCreditOneTimeTopUpPrice {
-      amountCentsPerCredit
+      unitPriceCents
       currency
       minimumCreditAmount
       maximumCreditAmount
@@ -200,7 +200,7 @@ describe('Billing credit top-up webhook (integration)', () => {
   });
 });
 
-describe('Billing one-time credit top-up offers and purchase (integration)', () => {
+describe('Billing one-time credit top-up price and purchase (integration)', () => {
   let workspaceId: string;
 
   beforeAll(async () => {
@@ -232,7 +232,7 @@ describe('Billing one-time credit top-up offers and purchase (integration)', () 
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.getCreditOneTimeTopUpPrice).toEqual({
-      amountCentsPerCredit: 1_000,
+      unitPriceCents: 1_000,
       currency: 'USD',
       minimumCreditAmount: 1,
       maximumCreditAmount: 1_000,

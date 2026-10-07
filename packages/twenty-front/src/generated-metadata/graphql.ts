@@ -796,11 +796,11 @@ export type BillingCreditOneTimeTopUp = {
 
 export type BillingCreditOneTimeTopUpPrice = {
   __typename?: 'BillingCreditOneTimeTopUpPrice';
-  /** Price of one credit before tax, in cents */
-  amountCentsPerCredit: Scalars['Int']['output'];
   currency: Scalars['String']['output'];
   maximumCreditAmount: Scalars['Int']['output'];
   minimumCreditAmount: Scalars['Int']['output'];
+  /** Price of one credit before tax, in cents, rounded up */
+  unitPriceCents: Scalars['Int']['output'];
 };
 
 export type BillingCustomer = {

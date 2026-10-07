@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
-import { computeCreditOneTimeTopUpAmountCentsPerCredit } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-amount-cents-per-credit.util';
+import { computeCreditOneTimeTopUpUnitPriceCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-unit-price-cents.util';
 
-describe('computeCreditOneTimeTopUpAmountCentsPerCredit', () => {
+describe('computeCreditOneTimeTopUpUnitPriceCents', () => {
   it('prices one credit at the rate of the given price', () => {
     expect(
-      computeCreditOneTimeTopUpAmountCentsPerCredit({
+      computeCreditOneTimeTopUpUnitPriceCents({
         unitAmount: 2_000,
         metadata: { credit_amount: '20000000' },
       }),
@@ -14,7 +14,7 @@ describe('computeCreditOneTimeTopUpAmountCentsPerCredit', () => {
 
   it('rounds a fraction of a cent up', () => {
     expect(
-      computeCreditOneTimeTopUpAmountCentsPerCredit({
+      computeCreditOneTimeTopUpUnitPriceCents({
         unitAmount: 1_000,
         metadata: { credit_amount: '3000000' },
       }),
@@ -23,7 +23,7 @@ describe('computeCreditOneTimeTopUpAmountCentsPerCredit', () => {
 
   it('stays exact where floating point would overcharge a cent', () => {
     expect(
-      computeCreditOneTimeTopUpAmountCentsPerCredit({
+      computeCreditOneTimeTopUpUnitPriceCents({
         unitAmount: 610_114_266_251,
         metadata: { credit_amount: '610114266251' },
       }),

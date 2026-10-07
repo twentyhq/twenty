@@ -4,7 +4,7 @@ import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 
-export const computeCreditOneTimeTopUpAmountCentsPerCredit = (
+export const computeCreditOneTimeTopUpUnitPriceCents = (
   price: Pick<BillingPriceEntity, 'unitAmount' | 'metadata'>,
 ): number => {
   const amount =

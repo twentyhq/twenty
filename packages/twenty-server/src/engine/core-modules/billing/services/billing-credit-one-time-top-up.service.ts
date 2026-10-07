@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,7 +23,7 @@ import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/ser
 import { type OneOffInvoicePayment } from 'src/engine/core-modules/billing/types/one-off-invoice-payment.type';
 import { buildCreditOneTimeTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/build-credit-one-time-top-up-invoice-metadata.util';
 import { canComputeAutomaticTax } from 'src/engine/core-modules/billing/utils/can-compute-automatic-tax.util';
-import { computeCreditOneTimeTopUpAmountCentsPerCredit } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-amount-cents-per-credit.util';
+import { computeCreditOneTimeTopUpUnitPriceCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-unit-price-cents.util';
 import { findCreditOneTimeTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-one-time-top-up-price.util';
 import { isCreditOneTimeTopUpAllowedForSubscription } from 'src/engine/core-modules/billing/utils/is-credit-one-time-top-up-allowed-for-subscription.util';
 import { isValidCreditOneTimeTopUpCreditAmount } from 'src/engine/core-modules/billing/utils/is-valid-credit-one-time-top-up-credit-amount.util';
@@ -57,8 +59,7 @@ export class BillingCreditOneTimeTopUpService {
     }
 
     return {
-      amountCentsPerCredit:
-        computeCreditOneTimeTopUpAmountCentsPerCredit(price),
+      unitPriceCents: computeCreditOneTimeTopUpUnitPriceCents(price),
       currency: subscription.currency,
       minimumCreditAmount: CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE.minimum,
       maximumCreditAmount: CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE.maximum,
@@ -77,9 +78,14 @@ export class BillingCreditOneTimeTopUpService {
     idempotencyKey: string;
   }): Promise<OneOffInvoicePayment> {
     if (!isValidCreditOneTimeTopUpCreditAmount(creditAmount)) {
+      const { minimum, maximum } = CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE;
+
       throw new BillingException(
-        `Cannot buy ${creditAmount} credits for workspace ${workspaceId}: not a whole number between ${CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE.minimum} and ${CREDIT_ONE_TIME_TOP_UP_CREDIT_AMOUNT_RANGE.maximum}`,
+        `Cannot buy ${creditAmount} credits for workspace ${workspaceId}: not a whole number between ${minimum} and ${maximum}`,
         BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
+        {
+          userFriendlyMessage: msg`Choose a whole number of credits between ${minimum} and ${maximum}.`,
+        },
       );
     }
 
@@ -126,10 +132,11 @@ export class BillingCreditOneTimeTopUpService {
       stripeCustomerId,
       stripeSubscriptionId,
       amountInCents:
-        creditAmount * computeCreditOneTimeTopUpAmountCentsPerCredit(price),
+        creditAmount * computeCreditOneTimeTopUpUnitPriceCents(price),
       currency,
       description: 'Credit top-up',
-      lineDescription: `${creditAmount} credits`,
+      lineDescription:
+        creditAmount === 1 ? '1 credit' : `${creditAmount} credits`,
       metadata: buildCreditOneTimeTopUpInvoiceMetadata({
         workspaceId,
         userId,
