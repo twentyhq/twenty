@@ -3117,6 +3117,20 @@ export interface SendChatMessageResult {
     __typename: 'SendChatMessageResult'
 }
 
+export interface AgentChatChannelListItem {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    icon?: Scalars['String']
+    color?: Scalars['String']
+    visibility: AgentChatChannelVisibility
+    isMember: Scalars['Boolean']
+    canManage: Scalars['Boolean']
+    memberCount: Scalars['Int']
+    __typename: 'AgentChatChannelListItem'
+}
+
+export type AgentChatChannelVisibility = 'PUBLIC' | 'PRIVATE'
+
 export interface AgentChatChannel {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -3125,8 +3139,6 @@ export interface AgentChatChannel {
     visibility: AgentChatChannelVisibility
     __typename: 'AgentChatChannel'
 }
-
-export type AgentChatChannelVisibility = 'PUBLIC' | 'PRIVATE'
 
 export interface AgentChatInboxChannelSummary {
     channelId: Scalars['UUID']
@@ -3532,6 +3544,7 @@ export interface Query {
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
+    agentChatChannels: AgentChatChannelListItem[]
     agentChatInboxThreadIds: AgentChatInboxThreadIds
     agentChatInboxSummary: AgentChatInboxSummary
     skills: Skill[]
@@ -7146,6 +7159,19 @@ export interface SendChatMessageResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentChatChannelListItemGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    icon?: boolean | number
+    color?: boolean | number
+    visibility?: boolean | number
+    isMember?: boolean | number
+    canManage?: boolean | number
+    memberCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentChatChannelGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -7578,6 +7604,7 @@ export interface QueryGenqlSelection{
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
+    agentChatChannels?: AgentChatChannelListItemGenqlSelection
     agentChatInboxThreadIds?: (AgentChatInboxThreadIdsGenqlSelection & { __args: {view: AgentChatInboxViewInput, first?: (Scalars['Int'] | null), after?: (Scalars['String'] | null)} })
     agentChatInboxSummary?: AgentChatInboxSummaryGenqlSelection
     skills?: SkillGenqlSelection
@@ -10734,6 +10761,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isSendChatMessageResult = (obj?: { __typename?: any } | null): obj is SendChatMessageResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
       return SendChatMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatChannelListItem_possibleTypes: string[] = ['AgentChatChannelListItem']
+    export const isAgentChatChannelListItem = (obj?: { __typename?: any } | null): obj is AgentChatChannelListItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelListItem"')
+      return AgentChatChannelListItem_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -11,12 +11,14 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AgentChatChannelListItemDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-list-item.dto';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
 import { AgentChatInboxSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-summary.dto';
 import { AgentChatInboxThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-thread-ids.dto';
 import { AgentChatInboxViewInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-inbox-view.input';
 import { CreateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/create-agent-chat-channel.input';
 import { UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
+import { AgentChatChannelListService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-list.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
 import { AgentChatInboxViewService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-view.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
@@ -43,10 +45,22 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 export class AgentChatChannelResolver {
   constructor(
     private readonly channelService: AgentChatChannelService,
+    private readonly channelListService: AgentChatChannelListService,
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
     private readonly inboxViewService: AgentChatInboxViewService,
   ) {}
+
+  @Query(() => [AgentChatChannelListItemDTO])
+  async agentChatChannels(
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatChannelListItemDTO[]> {
+    return this.channelListService.findChannels({
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
 
   @Query(() => AgentChatInboxThreadIdsDTO)
   async agentChatInboxThreadIds(

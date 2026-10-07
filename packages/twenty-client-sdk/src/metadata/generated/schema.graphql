@@ -3569,17 +3569,28 @@ type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
 }
 
+type AgentChatChannelListItem {
+  id: UUID!
+  name: String!
+  icon: String
+  color: String
+  visibility: AgentChatChannelVisibility!
+  isMember: Boolean!
+  canManage: Boolean!
+  memberCount: Int!
+}
+
+enum AgentChatChannelVisibility {
+  PUBLIC
+  PRIVATE
+}
+
 type AgentChatChannel {
   id: UUID!
   name: String!
   icon: String
   color: String
   visibility: AgentChatChannelVisibility!
-}
-
-enum AgentChatChannelVisibility {
-  PUBLIC
-  PRIVATE
 }
 
 type AgentChatInboxChannelSummary {
@@ -4055,6 +4066,7 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
+  agentChatChannels: [AgentChatChannelListItem!]!
   agentChatInboxThreadIds(view: AgentChatInboxViewInput!, first: Int, after: String): AgentChatInboxThreadIds!
   agentChatInboxSummary: AgentChatInboxSummary!
   skills: [Skill!]!

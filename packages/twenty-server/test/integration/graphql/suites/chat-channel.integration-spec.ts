@@ -90,6 +90,29 @@ const INBOX_THREAD_IDS = parse(
   `query Ids($view: AgentChatInboxViewInput!, $first: Int, $after: String) { agentChatInboxThreadIds(view: $view, first: $first, after: $after) { threadIds hasNextPage endCursor } }`,
 );
 
+const CHANNELS = parse(
+  `query Channels { agentChatChannels { id name visibility isMember canManage memberCount } }`,
+);
+
+const listChannels = async (
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+): Promise<
+  {
+    id: string;
+    name: string;
+    visibility: ChannelVisibility;
+    isMember: boolean;
+    canManage: boolean;
+    memberCount: number;
+  }[]
+> => {
+  const response = await makeMetadataApiRequest({ query: CHANNELS }, token);
+
+  expectNoErrors(response);
+
+  return response.body.data.agentChatChannels;
+};
+
 const INBOX_SUMMARY = parse(
   `query Summary { agentChatInboxSummary { openCount hasUnreadOpen needsInputCount hasUnreadMention hasUnreadAssigned channels { channelId openCount hasUnreadOpen } } }`,
 );
@@ -914,6 +937,32 @@ describe('Chat channels through the authenticated API', () => {
       ...createdThreadIds.filter(
         (threadId) => ![channelThreadId, ownThreadId].includes(threadId),
       ),
+    );
+  });
+
+  it('lists the channels a member can read, the joined ones first', async () => {
+    const publicChannelId = await createChannel('PUBLIC');
+    const privateChannelId = await createChannel('PRIVATE');
+    const sharedChannelId = await createChannel('PRIVATE', [JONY]);
+
+    const janeChannels = await listChannels();
+
+    expect(janeChannels.find(({ id }) => id === publicChannelId)).toMatchObject(
+      { isMember: true, canManage: true, memberCount: 1 },
+    );
+
+    const jonyChannels = await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    const jonyChannelIds = jonyChannels.map(({ id }) => id);
+
+    expect(jonyChannelIds).not.toContain(privateChannelId);
+    expect(jonyChannels.find(({ id }) => id === sharedChannelId)).toMatchObject(
+      { isMember: true, canManage: false, memberCount: 2 },
+    );
+    expect(jonyChannels.find(({ id }) => id === publicChannelId)).toMatchObject(
+      { isMember: false, canManage: false },
+    );
+    expect(jonyChannelIds.indexOf(sharedChannelId)).toBeLessThan(
+      jonyChannelIds.indexOf(publicChannelId),
     );
   });
 
