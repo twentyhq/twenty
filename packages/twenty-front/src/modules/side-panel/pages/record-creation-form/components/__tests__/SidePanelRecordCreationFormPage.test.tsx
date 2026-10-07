@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
@@ -61,7 +63,20 @@ const COMPANY_OBJECT = {
   ],
 };
 
+const NICKNAME_RULE: ValidationRule = {
+  id: 'nickname-rule',
+  objectMetadataId: OBJECT_METADATA_ID,
+  name: 'Nickname is required',
+  description: null,
+  icon: null,
+  errorFieldMetadataId: NICKNAME_FIELD.id,
+  expression: 'isNonEmptyString(nickname)',
+  message: 'A company needs a nickname',
+  isActive: true,
+};
+
 const settleRecordCreationDraft = jest.fn();
+let mockValidationRules: ValidationRule[] = [];
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
   useObjectMetadataItemById: () => ({ objectMetadataItem: COMPANY_OBJECT }),
@@ -88,7 +103,7 @@ jest.mock(
 );
 
 jest.mock('@/validation-rules/hooks/useValidationRules', () => ({
-  useValidationRules: () => ({ validationRules: [] }),
+  useValidationRules: () => ({ validationRules: mockValidationRules }),
 }));
 
 jest.mock('@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement', () => ({
@@ -209,6 +224,7 @@ describe('SidePanelRecordCreationFormPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
+    mockValidationRules = [];
     seedRecordFormPageLayout();
     jotaiStore.set(
       recordCreationFormRequestComponentState.atomFamily({
@@ -228,6 +244,95 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByLabelText('Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Domain')).toBeInTheDocument();
     expect(screen.queryByLabelText('Internal note')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('reveals the hidden fields the user can update on demand', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Collapse hidden fields' }),
+    );
+
+    expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('submits a value typed in a hidden field after collapsing it', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+    await user.type(screen.getByLabelText('Nickname'), 'Apple');
+    await user.click(
+      screen.getByRole('button', { name: 'Collapse hidden fields' }),
+    );
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { nickname: 'Apple' },
+    });
+  });
+
+  it('restores the draft and revealed fields when the form is shown again', async () => {
+    const user = userEvent.setup();
+
+    const { unmount } = renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'Apple');
+    await user.click(
+      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
+    );
+    await user.type(screen.getByLabelText('Nickname'), 'Big Apple');
+
+    unmount();
+    renderPage();
+
+    expect(screen.getByLabelText('Name')).toHaveValue('Apple');
+    expect(screen.getByLabelText('Nickname')).toHaveValue('Big Apple');
+  });
+
+  it('reveals a hidden field targeted by a validation error and keeps the message', async () => {
+    const user = userEvent.setup();
+
+    mockValidationRules = [NICKNAME_RULE];
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'A company needs a nickname',
+    );
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+    expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+  });
+
+  it('keeps hidden fields collapsed for a validation error on the whole record', async () => {
+    const user = userEvent.setup();
+
+    mockValidationRules = [{ ...NICKNAME_RULE, errorFieldMetadataId: null }];
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'A company needs a nickname',
+    );
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 });
