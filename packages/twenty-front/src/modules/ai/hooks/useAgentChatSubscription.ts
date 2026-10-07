@@ -14,10 +14,8 @@ import { useStore } from 'jotai';
 import {
   type AgentChatSubscriptionEvent,
   type ExtendedUIMessage,
-  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
@@ -32,9 +30,13 @@ import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStr
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
+import { createMidStreamAdapter } from '@/ai/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
+import { getAgentChatMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
+import { upsertAgentChatMessage } from '@/ai/utils/upsertAgentChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -47,71 +49,6 @@ import {
 
 const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
-
-// readUIMessageStream needs start chunks that a mid-stream reconnect missed, so inject synthetic ones.
-const createMidStreamAdapter = () => {
-  let hasSeenStart = false;
-  const knownTextPartIds = new Set<string>();
-  const knownReasoningPartIds = new Set<string>();
-  const knownToolCallIds = new Set<string>();
-
-  return new TransformStream<UIMessageChunk, UIMessageChunk>({
-    transform(chunk, controller) {
-      if (!hasSeenStart) {
-        hasSeenStart = true;
-        if (chunk.type !== 'start') {
-          controller.enqueue({ type: 'start', messageId: v4() });
-          controller.enqueue({ type: 'start-step' });
-        }
-      }
-
-      if (chunk.type === 'text-start') {
-        knownTextPartIds.add(chunk.id);
-      } else if (
-        (chunk.type === 'text-delta' || chunk.type === 'text-end') &&
-        !knownTextPartIds.has(chunk.id)
-      ) {
-        controller.enqueue({ type: 'text-start', id: chunk.id });
-        knownTextPartIds.add(chunk.id);
-      }
-
-      if (chunk.type === 'reasoning-start') {
-        knownReasoningPartIds.add(chunk.id);
-      } else if (
-        (chunk.type === 'reasoning-delta' || chunk.type === 'reasoning-end') &&
-        !knownReasoningPartIds.has(chunk.id)
-      ) {
-        controller.enqueue({ type: 'reasoning-start', id: chunk.id });
-        knownReasoningPartIds.add(chunk.id);
-      }
-
-      if (chunk.type === 'tool-input-start') {
-        knownToolCallIds.add(chunk.toolCallId);
-      } else if (
-        chunk.type === 'tool-input-delta' &&
-        !knownToolCallIds.has(chunk.toolCallId)
-      ) {
-        controller.enqueue({
-          type: 'tool-input-start',
-          toolCallId: chunk.toolCallId,
-          toolName: 'unknown',
-        });
-        knownToolCallIds.add(chunk.toolCallId);
-      }
-
-      controller.enqueue(chunk);
-    },
-  });
-};
-
-type ThreadTitleDataPart = Extract<
-  ExtendedUIMessagePart,
-  { type: 'data-thread-title' }
->;
-
-const isThreadTitleDataPart = (
-  part: ExtendedUIMessagePart,
-): part is ThreadTitleDataPart => part.type === 'data-thread-title';
 
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
@@ -184,20 +121,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         return;
       }
 
-      const currentMessages = store.get(messagesAtom);
-
-      const streamingMsgIndex = currentMessages.findIndex(
-        (message) => message.id === messageToFlush.id,
+      store.set(messagesAtom, (currentMessages) =>
+        upsertAgentChatMessage(currentMessages, messageToFlush),
       );
-
-      if (streamingMsgIndex >= 0) {
-        const updatedMessages = [...currentMessages];
-
-        updatedMessages[streamingMsgIndex] = messageToFlush;
-        store.set(messagesAtom, updatedMessages);
-      } else {
-        store.set(messagesAtom, [...currentMessages, messageToFlush]);
-      }
     };
 
     const scheduleAtomUpdate = (message: ExtendedUIMessage) => {
@@ -224,8 +150,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
         const extendedMessage = message as ExtendedUIMessage;
 
-        const title = extendedMessage.parts.find(isThreadTitleDataPart)?.data
-          .title;
+        const title = getAgentChatMessageThreadTitle(extendedMessage);
 
         const threadRecord = store.get(
           agentChatThreadRecordFamilySelector.selectorFamily(threadId),
@@ -249,23 +174,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         ) {
           lastUsageCountedMessageId = extendedMessage.id;
 
-          store.set(usageAtom, (prev) => ({
-            lastMessage: {
-              inputTokens: usage.inputTokens,
-              outputTokens: usage.outputTokens,
-              cachedInputTokens: usage.cachedInputTokens,
-              inputCredits: usage.inputCredits,
-              outputCredits: usage.outputCredits,
-            },
-            cachedInputTokens:
-              (prev?.cachedInputTokens ?? 0) + usage.cachedInputTokens,
-            conversationSize: usage.conversationSize,
-            contextWindowTokens: model.contextWindowTokens,
-            inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
-            outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
-            inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
-            outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
-          }));
+          store.set(usageAtom, (previousUsage) =>
+            accumulateAgentChatUsage(previousUsage, usage, model),
+          );
         }
 
         scheduleAtomUpdate(extendedMessage);
