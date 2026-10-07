@@ -2,6 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { type AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791385745099-add-agent-chat-thread-assignee.command';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -72,13 +73,19 @@ describe('2-46 workspace command - add agent chat thread assignee (integration)'
     return columns.length === 1;
   };
 
-  beforeAll(() => {
+  // An earlier suite may have rebuilt the chat objects without the
+  // Unsubscribe command, which the upgrade adds before this one
+  beforeAll(async () => {
     command = getAppProviderByClassName<AddAgentChatThreadAssigneeCommand>(
       'AddAgentChatThreadAssigneeCommand',
     );
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+
+    await getAppProviderByClassName<AddAgentChatThreadSubscriptionsCommand>(
+      'AddAgentChatThreadSubscriptionsCommand',
+    ).up(RUN_ON_WORKSPACE_ARGS);
   });
 
   it('removes the assignee, its index and the command on down', async () => {
