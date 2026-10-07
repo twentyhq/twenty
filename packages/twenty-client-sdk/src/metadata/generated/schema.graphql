@@ -4556,6 +4556,7 @@ input UpdatePageLayoutWidgetInput {
   configuration: JSON
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
+  isActive: Boolean
 }
 
 input CreatePageLayoutTabInput {
