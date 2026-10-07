@@ -24,6 +24,8 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
     lastReadAt: true,
     archivedAt: true,
     snoozedUntil: true,
+    isSubscribed: true,
+    lastMentionedAt: true,
     updatedAt: true,
   },
 };

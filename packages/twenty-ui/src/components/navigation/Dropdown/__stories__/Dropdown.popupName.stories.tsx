@@ -64,7 +64,8 @@ const SortPicker = () => (
 );
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Popup Name',
+  id: 'ui-components-dropdown-interactions-popup-name',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Popup Name',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

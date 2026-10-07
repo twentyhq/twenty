@@ -46,11 +46,11 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
-import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
-import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
+import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
+import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
@@ -66,6 +66,7 @@ import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -85,9 +86,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
   success: false,
@@ -138,25 +136,10 @@ export class AgentAsyncExecutorService {
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+    private readonly aiAgentRoleService: AiAgentRoleService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
-
-  private async getAgentRoleId(
-    agentId: string,
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
-      where: {
-        agentId,
-      },
-      select: ['roleId'],
-    });
-
-    return roleTarget?.roleId;
-  }
 
   private resolveUserIdentity(authContext?: WorkspaceAuthContext): {
     userId?: string;
@@ -194,10 +177,10 @@ export class AgentAsyncExecutorService {
     const tools = await this.toolRegistry.getToolsByCategories(
       { ...preloadedToolContext, requireExplicitObjectGrants: true },
       {
-        categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+        categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [
           ...OUTPUT_NAVIGATION_TOOL_NAMES,
-          ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+          ...AGENT_RUN_EXCLUDED_TOOL_NAMES,
           ...additionalExcludedToolNames,
         ],
       },
@@ -267,7 +250,7 @@ export class AgentAsyncExecutorService {
     );
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
-      ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+      ...AGENT_RUN_EXCLUDED_TOOL_NAMES,
       ...additionalExcludedToolNames,
     ]);
 
@@ -347,6 +330,7 @@ export class AgentAsyncExecutorService {
     priorMessages = [],
     pausingTools = {},
     canProposeToolCalls = false,
+    usageOperationType,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
@@ -364,6 +348,7 @@ export class AgentAsyncExecutorService {
     additionalRoleRestrictionIds?: string[];
     additionalExcludedToolNames?: readonly string[];
     toolLoadingStrategy?: AgentToolLoadingStrategy;
+    usageOperationType: UsageOperationType;
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
@@ -376,7 +361,7 @@ export class AgentAsyncExecutorService {
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      operationType: usageOperationType,
       spenders: { userWorkspaceId, agentId: agent?.id },
     });
 
@@ -416,10 +401,10 @@ export class AgentAsyncExecutorService {
       });
 
       if (agent) {
-        const agentRoleId = await this.getAgentRoleId(
-          agent.id,
-          agent.workspaceId,
-        );
+        const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
+          workspaceId: agent.workspaceId,
+          agentId: agent.id,
+        });
 
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
@@ -488,7 +473,7 @@ export class AgentAsyncExecutorService {
               ),
             },
             workspaceId,
-            operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            operationType: usageOperationType,
             spenders: { userWorkspaceId, agentId: agent?.id },
           });
 
@@ -605,7 +590,7 @@ export class AgentAsyncExecutorService {
               workspaceId,
               userWorkspaceId: userWorkspaceId ?? null,
               agentId: agent?.id ?? null,
-              operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+              operationType: usageOperationType,
             },
           });
         },
@@ -730,7 +715,7 @@ export class AgentAsyncExecutorService {
         creditsUsedMicro,
         totalTokens,
         modelId,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
+        usageOperationType,
         agent?.id ?? null,
         userWorkspaceId,
       );

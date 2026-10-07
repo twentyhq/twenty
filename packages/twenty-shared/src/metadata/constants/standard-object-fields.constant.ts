@@ -97,6 +97,12 @@ export const STANDARD_OBJECT_FIELDS = {
     snoozedUntil: {
       universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
     },
+    isSubscribed: {
+      universalIdentifier: '146b1d5e-6603-4493-944b-c3bd2817569b',
+    },
+    lastMentionedAt: {
+      universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
+    },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(

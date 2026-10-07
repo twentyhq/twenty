@@ -51,10 +51,14 @@ const DropdownMenuExample = () => (
 );
 
 const meta: Meta<typeof DropdownMenuExample> = {
-  title: 'UI/Components/Dropdown',
+  id: 'ui-components-dropdown',
+  title: 'UI/Components/Navigation/Dropdown',
   component: DropdownMenuExample,
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 320, height: 340 } },
+  parameters: {
+    container: { width: 320, height: 340 },
+    a11y: DROPDOWN_STORY_A11Y_PARAMETERS,
+  },
 };
 
 export default meta;
@@ -64,7 +68,6 @@ type Story = StoryObj<typeof DropdownMenuExample>;
 export const Documentation: Story = {};
 
 export const Menu: Story = {
-  parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);

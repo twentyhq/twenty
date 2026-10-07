@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ComponentProps } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { type InlineBanner } from 'twenty-ui/components';
+import { type InlineBanner } from 'twenty-ui/components/feedback';
 import { IconSettings } from 'twenty-ui/icon';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';

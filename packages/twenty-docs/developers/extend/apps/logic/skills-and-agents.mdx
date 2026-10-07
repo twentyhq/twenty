@@ -108,7 +108,7 @@ to `defineAgent()`, and pass what you want it to work on as `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, error, success } = await runAgent({
+const { result, error, success, isWaiting } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -121,6 +121,11 @@ Key points:
   `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
+- The agent can also pause until a record changes or some time has passed.
+  `runAgent()` then resolves with `success: true`, `isWaiting: true` and
+  `result: null`; the agent goes on by itself later, and its reply lands in the
+  `threadId` conversation. A call to a `thread` whose agent is still waiting
+  fails until it finishes.
 - Every call is stored with its input and status, plus its reply and usage
   when it completes, so it shows up in the agent's runs. Without a `thread`, a call gets a conversation of its
   own: `threadId` names it, and a later call never sees it.
@@ -131,9 +136,10 @@ Key points:
   Without it, `runAgent()` fails with a permission error.
 - Set a generous `timeoutSeconds` on the logic function — agent runs can take
   several seconds.
-- `success` is `true` and `result` is non-null when the run completes; on
-  failure `success` is `false`, `result` is `null`, and `error` holds the
-  reason (for example, when the workspace ran out of AI credits mid-run).
+- `success` is `true` and `result` is non-null when the run completes without
+  waiting; while it waits, `success` and `isWaiting` are `true` and `result` is
+  `null`; on failure `success` is `false`, `result` is `null`, and `error` holds
+  the reason (for example, when the workspace ran out of AI credits mid-run).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';

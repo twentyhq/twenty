@@ -25,7 +25,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
@@ -152,10 +152,11 @@ export const SettingsApplicationDetails = () => {
   const handleUninstallCompleted = useCallback(() => {
     navigate(SettingsPath.Applications);
   }, [navigate]);
-  const { uninstall, isUninstalling } = useUninstallApplication({
-    universalIdentifier: application?.universalIdentifier,
-    onCompleted: handleUninstallCompleted,
-  });
+  const { uninstall, isUninstalling, uninstallProgress } =
+    useUninstallApplication({
+      universalIdentifier: application?.universalIdentifier,
+      onCompleted: handleUninstallCompleted,
+    });
 
   const displayedApplicationVariables = getDisplayedApplicationVariables(
     application?.applicationVariables ?? [],
@@ -258,6 +259,7 @@ export const SettingsApplicationDetails = () => {
             isUpgrading={isUpgrading}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
+            uninstallProgress={uninstallProgress}
           />
         );
       case VARIABLES_TAB_ID:

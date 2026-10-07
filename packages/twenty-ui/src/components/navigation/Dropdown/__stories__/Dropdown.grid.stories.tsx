@@ -11,7 +11,8 @@ import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 const onSelect = fn();
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Grid',
+  id: 'ui-components-dropdown-interactions-grid',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Grid',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

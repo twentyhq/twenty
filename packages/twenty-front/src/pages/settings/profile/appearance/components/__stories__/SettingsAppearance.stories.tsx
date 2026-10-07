@@ -5,8 +5,8 @@ import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, within } from 'storybook/test';
-import { ToastProvider } from 'twenty-ui/components';
-import { TextDirectionProvider } from 'twenty-ui/primitives/layout';
+import { ToastProvider } from 'twenty-ui/components/feedback';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 
@@ -82,7 +82,7 @@ const meta = {
         colorScheme={parameters.colorScheme === 'Dark' ? 'dark' : 'light'}
         applyToRoot={false}
       >
-        <TextDirectionProvider direction={parameters.direction ?? 'ltr'}>
+        <DirectionProvider direction={parameters.direction ?? 'ltr'}>
           <ToastProvider>
             <div
               style={{
@@ -94,7 +94,7 @@ const meta = {
               <Story />
             </div>
           </ToastProvider>
-        </TextDirectionProvider>
+        </DirectionProvider>
       </ThemeProvider>
     ),
   ],

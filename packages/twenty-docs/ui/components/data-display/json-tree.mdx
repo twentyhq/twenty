@@ -1,0 +1,33 @@
+---
+title: JsonTree
+description: Explore JSON values with expandable nodes and custom labels.
+---
+
+import JsonTreeReference from '/snippets/ui/generated/components/data-display/json-tree.mdx';
+
+`JsonTree` displays either a JSON `value` or an array of named `entries`. Pass all empty-value and expand/collapse labels so your application controls the text.
+
+```tsx
+import { JsonTree } from 'twenty-ui/components/data-display';
+
+export const RecordDetails = () => (
+  <JsonTree
+    value={{ name: 'Acme', active: true, contacts: [] }}
+    emptyStringLabel="Empty text"
+    emptyArrayLabel="No items"
+    emptyObjectLabel="No properties"
+    arrowButtonCollapsedLabel="Expand node"
+    arrowButtonExpandedLabel="Collapse node"
+  />
+);
+```
+
+Each entry has an `id`, `label`, and JSON `value`. Use entries when display labels differ from stored keys. The default expands depths 0 and 1. Override `shouldExpandNodeInitially={({ depth }) => depth === 0}` to expand only the root; later expansion is owned by each node.
+
+`getNodeHighlighting(keyPath)` returns `blue`, `red`, `partial-blue`, or `undefined`. `onNodeValueClick` receives the displayed text: leaf values as strings, and the matching empty label for empty strings, arrays, and objects. The tree displays data and does not edit it.
+
+When `onNodeValueClick` is provided, values are native buttons named by their displayed text. Tab moves focus to a value; Enter, Space, or a pointer click activates it. Without the callback, values remain non-interactive text. Value buttons do not submit enclosing forms.
+
+## Props
+
+<JsonTreeReference />

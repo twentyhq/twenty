@@ -43784,10 +43784,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:^10.28.3":
-  version: 10.28.3
-  resolution: "preact@npm:10.28.3"
-  checksum: 10c0/e8854fae8d8d40c918538f7a90888dd4f8acd388b8ba8e0c612ed0eb1a7d2cc6c15a7dc0a7b7c7bb5c361d2df63aa283e501cf1d47f8eb1413979cee611a38ef
+"preact@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "preact@npm:11.0.0"
+  peerDependencies:
+    preact-render-to-string: ">=6.7.0"
+  peerDependenciesMeta:
+    preact-render-to-string:
+      optional: true
+  checksum: 10c0/3dfc797d46009e3ec8cf509662077a760301935cb9f5a4bdbdcb26fe69838cf621471742d87a125c6b1237ad78687d5d8fc0798a571038c35fe5e090c37ec502
   languageName: node
   linkType: hard
 
@@ -44892,15 +44897,6 @@ __metadata:
   version: 19.2.4
   resolution: "react-is@npm:19.2.4"
   checksum: 10c0/477a7cfc900f24194606e315fa353856a3a13487ea8eca841678817cad4daef64339ea0d1e84e58459fc75dbe0d9ba00bb0cc626db3d07e0cf31edc64cb4fa37
-  languageName: node
-  linkType: hard
-
-"react-loading-skeleton@npm:^3.3.1":
-  version: 3.5.0
-  resolution: "react-loading-skeleton@npm:3.5.0"
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: 10c0/a081f561c9700fead6ba98b91e3fe77a36a680e3fd69dbf4eecbaa5fabcb7173049c6d6fb7487355331a770bed432356edaa147702f3d46ddf0d6caa623e779f
   languageName: node
   linkType: hard
 
@@ -50514,7 +50510,6 @@ __metadata:
     react-hotkeys-hook: "npm:^4.4.4"
     react-imask: "npm:^7.6.0"
     react-intersection-observer: "npm:^9.15.1"
-    react-loading-skeleton: "npm:^3.3.1"
     react-markdown: "npm:^10.1.0"
     react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-qr-code: "npm:^2.0.18"
@@ -50596,7 +50591,7 @@ __metadata:
     ink: "npm:^6.8.0"
     inquirer: "npm:^14.0.0"
     jsonc-parser: "npm:^3.2.0"
-    preact: "npm:^10.28.3"
+    preact: "npm:^11.0.0"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -51035,6 +51030,25 @@ __metadata:
 "twenty@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty@workspace:packages/twenty-cli"
+  dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/node": "npm:^24.0.0"
+    "@types/semver": "npm:^7.5.8"
+    chokidar: "npm:^3.6.0"
+    cjs-module-lexer: "npm:^2.2.0"
+    commander: "npm:^14.0.3"
+    esbuild: "npm:^0.28.1"
+    semver: "npm:7.6.3"
+    tinyglobby: "npm:^0.2.15"
+    twenty-client-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.3"
+    undici: "npm:^7.29.0"
+    uuid: "npm:^13.0.2"
+    vite: "npm:^8.0.0"
+    vitest: "npm:^4.1.0"
+  bin:
+    twenty: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

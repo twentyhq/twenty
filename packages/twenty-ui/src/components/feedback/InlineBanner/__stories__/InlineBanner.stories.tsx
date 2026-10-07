@@ -6,7 +6,8 @@ import { IconExternalLink } from '@ui/icon';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof InlineBanner> = {
-  title: 'UI/Feedback/InlineBanner',
+  id: 'ui-feedback-inlinebanner',
+  title: 'UI/Components/Feedback/InlineBanner',
   component: InlineBanner,
   decorators: [ComponentDecorator],
   parameters: {

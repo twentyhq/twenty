@@ -18,7 +18,7 @@ import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { matchPath, useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   FindOnePageLayoutTypeDocument,
@@ -113,10 +113,16 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (isWorkspaceSuspended) {
-    if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
-      return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
-        SettingsPath.Billing
-      }`;
+    const isOnSuspendedWorkspaceAllowedPage = [
+      SettingsPath.Billing,
+      SettingsPath.BillingPlans,
+      SettingsPath.ProfilePage,
+    ].some((settingsPath) =>
+      isMatchingLocation(location, getSettingsPath(settingsPath)),
+    );
+
+    if (!isOnSuspendedWorkspaceAllowedPage) {
+      return getSettingsPath(SettingsPath.Billing);
     }
 
     return;
@@ -141,13 +147,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(location, AppPath.SyncEmails)
   ) {
     return AppPath.SyncEmails;
-  }
-
-  if (
-    onboardingStatus === OnboardingStatus.APPS_INSTALLATION &&
-    !isMatchingLocation(location, AppPath.InstallApps)
-  ) {
-    return AppPath.InstallApps;
   }
 
   if (

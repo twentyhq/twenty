@@ -6,7 +6,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ValidationRuleResolver } from 'src/engine/metadata-modules/validation-rule/validation-rule.resolver';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
-import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
@@ -17,11 +16,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceMigrationModule,
   ],
-  providers: [
-    ValidationRuleService,
-    ValidationRuleResolver,
-    WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  ],
-  exports: [ValidationRuleService],
+  providers: [ValidationRuleService, ValidationRuleResolver],
 })
 export class ValidationRuleModule {}
