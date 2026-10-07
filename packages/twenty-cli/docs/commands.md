@@ -257,8 +257,10 @@ The CLI owns manifest generation, bundling and typechecking. It uses the app's
 installed `twenty-sdk` authoring exports (`define` and `front-component`, SDK
 `>=1.23.0`). An app without an installed SDK fails with `SDK_NOT_INSTALLED`;
 missing or unsupported authoring
-exports fail with `SDK_SOURCE_UNSUPPORTED`; an incompatible SDK Node requirement
-fails with `NODE_VERSION_UNSUPPORTED`. The CLI never installs dependencies or
+exports fail with `SDK_SOURCE_UNSUPPORTED`. A Node version below the SDK's
+`engines.node` range fails with `NODE_VERSION_UNSUPPORTED`; a newer one outside
+that range continues with a `NODE_VERSION_UNTESTED` warning, which `doctor`
+also reports. The CLI never installs dependencies or
 substitutes another SDK. Yarn Plug'n'Play is not supported; use
 `nodeLinker: node-modules`.
 

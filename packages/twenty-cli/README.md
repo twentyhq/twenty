@@ -8,7 +8,7 @@ development-app deployment. Application publishing is not supported.
 
 ## Get started
 
-Use Node.js 24.5 or later within Node 24 and the repository's Yarn setup. From
+Use Node.js 24.5 or later and the repository's Yarn setup. From
 the repository root:
 
 ```bash

@@ -26,7 +26,11 @@ export const runAppLogsCommand: CommandRun<TargetCommandContext> = async (
     explicitPath: readStringOption(options, 'path'),
     workingDirectory: process.cwd(),
   });
-  const identity = await readAppIdentity({ appPath: project.path, signal });
+  const identity = await readAppIdentity({
+    appPath: project.path,
+    signal,
+    warn: output.warn,
+  });
   if (!isDefined(identity.application)) {
     throw new CliError({
       code: 'INVALID_INPUT',

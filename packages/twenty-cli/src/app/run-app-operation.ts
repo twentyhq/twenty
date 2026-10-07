@@ -66,6 +66,7 @@ const runAppOperation = async <TData>({
   });
   const sdk = await resolveSourceSdk({
     appPath: project.path,
+    warn: output.warn,
   });
 
   output.progress(
