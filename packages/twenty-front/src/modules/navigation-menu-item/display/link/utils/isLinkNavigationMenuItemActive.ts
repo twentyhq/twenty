@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isSafeInternalPath } from 'twenty-shared/utils';
 
 export const isLinkNavigationMenuItemActive = ({
@@ -15,6 +16,6 @@ export const isLinkNavigationMenuItemActive = ({
 
   return (
     link.pathname === location.pathname &&
-    (link.search === '' || link.search === location.search)
+    (!isNonEmptyString(link.search) || link.search === location.search)
   );
 };
