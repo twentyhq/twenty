@@ -123,7 +123,7 @@ export const NavigationDrawerAiChatChannelItem = ({
         subtitle={
           isDefined(destinationChannelName)
             ? t`Its chats move to ${destinationChannelName}. This cannot be undone.`
-            : t`This cannot be undone.`
+            : t`With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone.`
         }
         onConfirmClick={() =>
           void deleteAgentChatChannel(channel.id, deleteDestinationChannelId)

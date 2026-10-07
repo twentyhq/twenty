@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconSearch } from 'twenty-ui/icon';
@@ -23,7 +24,7 @@ export const NavigationDrawerAiChatBrowseChannelsDropdown = ({
   const { openAgentChatChannel } = useOpenAgentChatChannel();
 
   const handleJoin = async (channelId: string) => {
-    if ((await joinAgentChatChannel(channelId)) !== undefined) {
+    if (isDefined(await joinAgentChatChannel(channelId))) {
       openAgentChatChannel(channelId);
     }
   };

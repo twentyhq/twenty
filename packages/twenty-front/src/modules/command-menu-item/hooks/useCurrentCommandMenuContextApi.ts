@@ -1,5 +1,4 @@
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -39,11 +38,15 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
+import { useLocation } from 'react-router-dom';
+
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const workspaceSurface = useWorkspaceSurface();
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const contextStoreInstanceId = useContextStoreInstanceId();
+  const location = useLocation();
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -113,10 +116,11 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     agentChatThreadInboxStatusByThreadIdFamilySelector,
     {
       threadIds: inboxStatusThreadIds,
-      channelId:
-        contextStoreInstanceId === AI_CHAT_INBOX_INSTANCE_ID
-          ? (agentChatShownChannelView?.channelId ?? null)
-          : null,
+      // Every menu on the inbox page, the open chat's included, files the
+      // chats of the channel on screen for the channel
+      channelId: isAiChatInboxPath(location.pathname)
+        ? (agentChatShownChannelView?.channelId ?? null)
+        : null,
     },
   );
 

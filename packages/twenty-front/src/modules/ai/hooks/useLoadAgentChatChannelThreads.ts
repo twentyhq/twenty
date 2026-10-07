@@ -7,7 +7,9 @@ import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThread
 import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import {
   AgentChatInboxViewKind,
   GetAgentChatInboxThreadIdsDocument,
@@ -68,9 +70,14 @@ export const useLoadAgentChatChannelThreads = () => {
         store.get(agentChatThreadListState.atom)?.threadIds ?? [],
       );
 
-      await loadAgentChatThreadsByIds(
+      // The cursor only moves past chats that loaded, so none is skipped
+      const loadedThreads = await loadAgentChatThreadsByIds(
         page.threadIds.filter((threadId) => !listedThreadIds.has(threadId)),
       );
+
+      if (!isDefined(loadedThreads)) {
+        return;
+      }
 
       const currentChannelView = store.get(
         agentChatShownChannelViewSelector.atom,
@@ -90,6 +97,14 @@ export const useLoadAgentChatChannelThreads = () => {
       const previousThreadIds = isFetchMore
         ? (listBeforeRequest?.threadIds ?? [])
         : [];
+      const lastPageThreadId = page.threadIds.at(-1);
+      const lastPageThread = isDefined(lastPageThreadId)
+        ? store.get(
+            agentChatThreadRecordFamilySelector.selectorFamily(
+              lastPageThreadId,
+            ),
+          )
+        : null;
 
       store.set(agentChatChannelThreadListState.atom, {
         viewKey,
@@ -101,6 +116,9 @@ export const useLoadAgentChatChannelThreads = () => {
         ],
         hasNextPage: page.hasNextPage,
         endCursor: page.endCursor ?? null,
+        lastLoadedActivityAt: isDefined(lastPageThread)
+          ? getAgentChatThreadLastActivityAt(lastPageThread)
+          : (listBeforeRequest?.lastLoadedActivityAt ?? null),
       });
     },
     [apolloClient, loadAgentChatThreadsByIds, store],

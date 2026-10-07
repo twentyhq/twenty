@@ -5,6 +5,7 @@ import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentCh
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -43,13 +44,18 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
       return threads;
     }
 
-    const lastLoadedThreadId = channelThreadList.threadIds.at(-1);
-    const lastLoadedThreadIndex = threads.findIndex(
-      ({ id }) => id === lastLoadedThreadId,
-    );
+    const { lastLoadedActivityAt } = channelThreadList;
 
-    return lastLoadedThreadIndex === -1
-      ? threads
-      : threads.slice(0, lastLoadedThreadIndex + 1);
+    if (!isDefined(lastLoadedActivityAt)) {
+      return threads;
+    }
+
+    const lastLoadedActivityTime = new Date(lastLoadedActivityAt).getTime();
+
+    return threads.filter(
+      (thread) =>
+        new Date(getAgentChatThreadLastActivityAt(thread)).getTime() >=
+        lastLoadedActivityTime,
+    );
   },
 });
