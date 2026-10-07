@@ -4,7 +4,7 @@ description: How to develop an app that works and scales well across many worksp
 icon: "gauge-high"
 ---
 
-The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. Each practice below keeps an app inside that budget as its number of installs grows.
+The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. The practices below keep an app inside that budget as its number of installs grows, and inside the limits of the services it calls.
 
 - **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour. Job enqueues are also capped at 2,000 per minute per application registration, and a cron tick beyond that cap is skipped in the remaining workspaces, so keep a sweep idempotent and let the next tick catch up.
 
@@ -75,3 +75,7 @@ With a random delay over a one-hour window, the same runs are spread out:
 - **Retry a `429` with backoff, or re-enqueue with a delay.** The client SDK throws on any non-2xx response, and a run that waits inside spends its own timeout. Retry with exponential backoff and a cap on attempts, or hand the work back to the queue with a delay.
 
 - **Cache what does not change.** A lookup on every event costs a request for a value fixed at connection time, such as an identity or a team id. Store it in the [key-value store](/developers/extend/apps/logic/key-value-store) when the connection is registered.
+
+- **Batch requests to external APIs.** An external service has its own rate limit and a logic function has a timeout, so `n` requests per run multiply both. When the provider offers a batch endpoint, send one request for the whole batch instead of one per record, and chunk the batch to the provider's maximum.
+
+- **Make default parameters editable by the user.** A value hardcoded in a logic function or a workflow, such as a threshold, a batch size or a default option, fits one workspace and forces a new release for every other. Declare it as an application variable with a default and read it at run time, so workspace admins can adjust it from the app settings. See [Application config](/developers/extend/apps/config/application).
