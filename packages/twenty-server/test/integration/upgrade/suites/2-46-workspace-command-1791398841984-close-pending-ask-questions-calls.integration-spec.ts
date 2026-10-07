@@ -122,12 +122,8 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
       'WorkspaceOrmManager',
     );
     addJob = jest
-      .spyOn(
-        (command as unknown as { messageQueueService: { add: () => void } })
-          .messageQueueService,
-        'add',
-      )
-      .mockResolvedValue(undefined as never);
+      .spyOn(command['messageQueueService'], 'add')
+      .mockResolvedValue(undefined);
 
     for (const seededThread of seededThreads) {
       await seedThread(seededThread);
@@ -215,12 +211,17 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     });
   });
 
-  it('changes nothing when run again', async () => {
+  it('queues the continuation again on a rerun, as long as the run has not moved on', async () => {
     addJob.mockClear();
 
     await runCommand();
 
-    expect(addJob).not.toHaveBeenCalled();
+    expect(addJob).toHaveBeenCalledTimes(1);
+    expect(addJob).toHaveBeenCalledWith('ContinueAgentRunJob', {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      suspensionId,
+      resumeCount: 2,
+    });
     expect(await readThread(chatThread)).toEqual({
       pendingQuestionMessageId: null,
       turnStatus: 'completed',

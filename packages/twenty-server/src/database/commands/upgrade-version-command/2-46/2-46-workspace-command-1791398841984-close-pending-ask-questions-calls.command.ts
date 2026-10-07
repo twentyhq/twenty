@@ -38,7 +38,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { closedCallCount, suspensionsToContinue } = await this.storage.run(
+    const { closedThreadCount, suspensionsToContinue } = await this.storage.run(
       workspaceId,
       async ({ manager, table }) => {
         const pendingCalls: { threadId: string }[] = await manager.query(
@@ -49,9 +49,9 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
              AND part."toolOutput" -> 'result' ->> 'status' = 'pending'`,
         );
 
-        if (pendingCalls.length === 0 || isDryRun) {
+        if (isDryRun) {
           return {
-            closedCallCount: pendingCalls.length,
+            closedThreadCount: pendingCalls.length,
             suspensionsToContinue: [],
           };
         }
@@ -71,7 +71,6 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
           [threadIds, SKIPPED_MESSAGE],
         );
 
-        // a conversation that still has another call pending keeps waiting on it
         const settledThreads: { id: string }[] = await manager.query(
           `SELECT thread.id
            FROM ${table('agentChatThread')} thread
@@ -85,7 +84,6 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
              )`,
           [threadIds],
         );
-        const settledThreadIds = settledThreads.map(({ id }) => id);
 
         await manager.query(
           `WITH cleared AS (
@@ -102,24 +100,43 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
            FROM cleared
            JOIN ${table('agentMessage')} message ON message.id = cleared."messageId"
            WHERE turn.id = message."turnId" AND turn."status" = 'waiting_for_input'`,
-          [settledThreadIds],
+          [settledThreads.map(({ id }) => id)],
         );
 
+        // read from what is stored rather than from this run's closures, so a run whose
+        // continuation could not be queued last time is continued on the next one
         const suspensions: { id: string; resumeCount: number }[] =
           await manager.query(
-            `SELECT id, "resumeCount" FROM "core"."agentRunSuspension"
-             WHERE "workspaceId" = $1 AND "threadId" = ANY($2::uuid[])
-               AND "runSpec" IS NOT NULL`,
-            [workspaceId, settledThreadIds],
+            `SELECT suspension.id, suspension."resumeCount"
+             FROM "core"."agentRunSuspension" suspension
+             WHERE suspension."workspaceId" = $1
+               AND suspension."runSpec" IS NOT NULL
+               AND EXISTS (
+                 SELECT 1
+                 FROM ${table('agentMessagePart')} part
+                 JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+                 WHERE message."threadId" = suspension."threadId"
+                   AND part."toolName" = 'ask_questions'
+                   AND part."toolOutput" ->> 'message' = $2
+               )
+               AND NOT EXISTS (
+                 SELECT 1
+                 FROM ${table('agentMessagePart')} part
+                 JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+                 WHERE message."threadId" = suspension."threadId"
+                   AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+               )`,
+            [workspaceId, SKIPPED_MESSAGE],
           );
 
         return {
-          closedCallCount: pendingCalls.length,
+          closedThreadCount: pendingCalls.length,
           suspensionsToContinue: suspensions,
         };
       },
     );
 
+    // a duplicate finds the run moved on through its resume count, so continuing again is safe
     for (const suspension of suspensionsToContinue) {
       await this.messageQueueService.add<ContinueAgentRunJobData>(
         CONTINUE_AGENT_RUN_JOB_NAME,
@@ -132,7 +149,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] Would close' : 'Closed'} pending ask_questions calls in ${closedCallCount} thread(s) of workspace ${workspaceId}, continuing ${suspensionsToContinue.length} agent run(s)`,
+      `${isDryRun ? '[DRY RUN] Would close' : 'Closed'} pending ask_questions calls in ${closedThreadCount} thread(s) of workspace ${workspaceId}, continuing ${suspensionsToContinue.length} agent run(s)`,
     );
   }
 
