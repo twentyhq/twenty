@@ -2,6 +2,7 @@ import { NODE_TYPE_ELEMENT } from '@remote-dom/core';
 import {
   renderRemoteNode,
   useRemoteReceived,
+  type RemoteReceiverNode,
   type RemoteRootRendererProps as FrontComponentRemoteRootRendererProps,
 } from '@remote-dom/react/host';
 import { type CSSProperties } from 'react';
@@ -24,16 +25,11 @@ export const FrontComponentRemoteRootRenderer = (
 ) => {
   const root = useRemoteReceived(props.receiver.root, props.receiver);
   const children = root?.children ?? [];
-  const renderContainers = children.filter(
-    (child) =>
-      child.type === NODE_TYPE_ELEMENT &&
-      child.element === REMOTE_RENDER_CONTAINER_TAG,
-  );
-  const portalChildren = children.filter(
-    (child) =>
-      child.type !== NODE_TYPE_ELEMENT ||
-      child.element !== REMOTE_RENDER_CONTAINER_TAG,
-  );
+  const isRenderContainer = (child: RemoteReceiverNode) =>
+    child.type === NODE_TYPE_ELEMENT &&
+    child.element === REMOTE_RENDER_CONTAINER_TAG;
+  const renderContainers = children.filter(isRenderContainer);
+  const portalChildren = children.filter((child) => !isRenderContainer(child));
 
   return (
     <>
