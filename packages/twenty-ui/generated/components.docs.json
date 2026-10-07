@@ -325,10 +325,10 @@
     "props": [
       {
         "name": "children",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Required nonempty text label that also names the optional progress ring."
+        "description": "Label content whose accessible text also names the optional progress ring."
       },
       {
         "name": "className",
@@ -367,10 +367,10 @@
       },
       {
         "name": "startIcon",
-        "type": "IconComponent",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Decorative icon before the label, rendered at 14px."
+        "description": "Decorative node content before the label. The caller controls icon geometry."
       },
       {
         "name": "style",
@@ -9670,32 +9670,39 @@
     "slug": "components/data-display/tinted-icon-tile",
     "props": [
       {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the tile root."
+      },
+      {
         "name": "color",
         "type": "string | null",
         "required": false,
         "defaultValue": "gray",
-        "description": "Theme palette name used to derive the background and icon shades. Invalid names use the default theme color."
+        "description": "Theme palette name used to derive the background and foreground shades. Invalid names use the default theme color."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component rendered inside the tinted tile."
+        "description": "Decorative icon content. The caller controls its dimensions and stroke."
       },
       {
-        "name": "size",
-        "type": "number",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon and tile dimension in pixels. When omitted, the icon uses the medium theme size."
+        "description": "Replaces the div root while preserving icon content and native props."
       },
       {
-        "name": "stroke",
-        "type": "number",
+        "name": "style",
+        "type": "CSSProperties",
         "required": false,
         "defaultValue": null,
-        "description": "Icon stroke width. Defaults to the medium theme stroke."
+        "description": "Inline styles override tile geometry and palette defaults."
       }
     ]
   },
@@ -10125,32 +10132,46 @@
     "slug": "components/layout/animated-icon-crossfade",
     "props": [
       {
-        "name": "ActiveIcon",
-        "type": "IconComponent",
+        "name": "activeIcon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component for the active state."
+        "description": "Decorative node content for the active state."
       },
       {
-        "name": "InactiveIcon",
-        "type": "IconComponent",
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the inline span root."
+      },
+      {
+        "name": "inactiveIcon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component for the inactive state."
+        "description": "Decorative node content for the inactive state."
       },
       {
         "name": "isActive",
         "type": "boolean",
         "required": true,
         "defaultValue": null,
-        "description": "Shows ActiveIcon when true and InactiveIcon otherwise."
+        "description": "Shows activeIcon when true and inactiveIcon otherwise."
       },
       {
-        "name": "size",
-        "type": "number",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon dimension in pixels. Defaults to the small theme icon size."
+        "description": "Replaces the span root while preserving both transition layers."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root, including width and height."
       }
     ]
   },
@@ -10357,7 +10378,7 @@
       },
       {
         "name": "avatar",
-        "type": "Pick<AvatarProps, \"size\" | \"name\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
+        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
         "required": false,
         "defaultValue": null,
         "description": "Avatar name, source, color seed, size, and shape. Omit to hide the avatar."
