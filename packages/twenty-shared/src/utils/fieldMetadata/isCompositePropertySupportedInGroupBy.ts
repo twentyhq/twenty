@@ -1,4 +1,4 @@
-import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
+import { type CompositeProperty, FieldMetadataType } from '@/types';
 
 export const isCompositePropertySupportedInGroupBy = (
   property: CompositeProperty,
