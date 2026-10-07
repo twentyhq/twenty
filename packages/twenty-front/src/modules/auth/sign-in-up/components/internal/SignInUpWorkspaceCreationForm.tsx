@@ -9,13 +9,14 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MainButton } from 'twenty-ui/components';
+import { LightIconButton, MainButton } from 'twenty-ui/components/input';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -253,7 +254,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             <StyledLogoAvatar
               src={logoPreviewUrl}
               name={isNonEmptyString(workspaceName) ? workspaceName : '?'}
-              colorSeed={workspaceName}
+              colorSeed={getWorkspaceAvatarColorSeed(workspaceName)}
               shape="square"
               size="xl"
               onClick={openFilePicker}

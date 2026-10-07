@@ -9,8 +9,7 @@ const buildField = (name: string, type: FieldMetadataType) => ({
 });
 
 describe('generateRandomFieldValue', () => {
-  // The document is diffed against main's in CI, so two generations of the same
-  // field have to agree or every operation reads as changed.
+  // CI diffs the document against main's, so two generations of a field must agree.
   it.each([
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,

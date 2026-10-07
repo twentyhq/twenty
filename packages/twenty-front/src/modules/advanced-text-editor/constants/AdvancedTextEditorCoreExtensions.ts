@@ -23,5 +23,5 @@ export const buildAdvancedTextEditorCoreExtensions = ({
     keepMarks: false,
   }),
   UndoRedo,
-  Dropcursor,
+  Dropcursor.configure({ color: false, width: 2, class: 'drop-cursor' }),
 ];

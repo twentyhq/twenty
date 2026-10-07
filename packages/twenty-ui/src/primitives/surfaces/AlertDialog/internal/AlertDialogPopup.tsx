@@ -1,6 +1,6 @@
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
-import { useDirection } from '@base-ui/react/direction-provider';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -15,7 +15,7 @@ export const AlertDialogPopup = ({
   ...props
 }: AlertDialogPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
 
   return (
     <AlertDialogPrimitive.Portal

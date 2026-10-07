@@ -16,8 +16,9 @@ export class AdminChatThreadListItemDTO {
   @Field(() => String, { nullable: true })
   workspaceDisplayName: string | null;
 
-  @Field(() => UUIDScalarType)
-  userWorkspaceId: string;
+  // A workflow run's conversation belongs to the run, not to a member.
+  @Field(() => UUIDScalarType, { nullable: true })
+  userWorkspaceId: string | null;
 
   @Field(() => String, { nullable: true })
   userEmail: string | null;

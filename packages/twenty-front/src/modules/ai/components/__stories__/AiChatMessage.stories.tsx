@@ -13,7 +13,6 @@ import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
@@ -239,6 +238,37 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   },
 };
 
+const mockAnsweredForm: ExtendedUIMessage = {
+  id: 'msg-answered-form',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-request_form',
+      toolCallId: 'tool-request-form',
+      input: {
+        fields: [
+          { name: 'callDate', label: 'Call date', type: 'DATE' },
+          { name: 'summary', label: 'Summary', type: 'TEXT' },
+        ],
+      },
+      output: {
+        success: true,
+        result: {
+          status: 'answered',
+          values: {
+            callDate: '2026-09-29',
+            summary: 'Pipeline import first, SSO the week after.',
+          },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockAssistantWithCodeExecution,
@@ -248,6 +278,7 @@ const allMockMessages = [
   mockCodeExecutionError,
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
+  mockAnsweredForm,
 ];
 
 const AgentChatMessagesSetterEffect = ({
@@ -269,16 +300,6 @@ const AgentChatMessagesSetterEffect = ({
       }),
       messages,
     );
-
-    for (const message of messages) {
-      store.set(
-        agentChatMessageComponentFamilyState.atomFamily({
-          instanceId: INSTANCE_ID,
-          familyKey: message.id,
-        }),
-        message,
-      );
-    }
   }, [messages, store]);
 
   return null;
@@ -359,4 +380,8 @@ export const ThinkingStepsDoneExpanded: Story = {
 
     await userEvent.click(summaryButton);
   },
+};
+
+export const AnsweredForm: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };

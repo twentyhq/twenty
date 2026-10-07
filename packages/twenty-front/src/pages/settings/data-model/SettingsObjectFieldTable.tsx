@@ -25,7 +25,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -171,7 +173,7 @@ export const SettingsObjectFieldTable = ({
         <SearchInput
           placeholder={t`Search a field...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"

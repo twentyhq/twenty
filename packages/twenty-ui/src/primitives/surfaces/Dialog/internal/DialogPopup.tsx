@@ -1,7 +1,7 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { isBoolean } from '@sniptt/guards';
-import { useDirection } from '@base-ui/react/direction-provider';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -18,7 +18,7 @@ export const DialogPopup = ({
   ...props
 }: DialogPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
   const backdropProps = isBoolean(backdrop) ? {} : backdrop;
 
   return (

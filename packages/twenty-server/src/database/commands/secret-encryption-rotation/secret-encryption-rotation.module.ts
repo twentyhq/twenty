@@ -41,9 +41,5 @@ const DEDICATED_ROTATION_HANDLERS = [
     SecretEncryptionRotationRunnerService,
     RotateSecretEncryptionCommand,
   ],
-  exports: [
-    SecretEncryptionRotationRunnerService,
-    RotateSecretEncryptionCommand,
-  ],
 })
 export class SecretEncryptionRotationModule {}

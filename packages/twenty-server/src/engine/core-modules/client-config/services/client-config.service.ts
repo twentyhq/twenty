@@ -37,8 +37,6 @@ export class ClientConfigService {
     private maintenanceModeService: MaintenanceModeService,
   ) {}
 
-  // A variant carries only the reading taken at its own effort, so until the
-  // sync measures it the base model's reading is shown, flagged as such.
   private resolveBenchmark(modelConfig: AiModelConfig | undefined): {
     benchmark?: AiModelBenchmark;
     isInherited: boolean;
@@ -158,8 +156,6 @@ export class ClientConfigService {
           isDeprecated: modelConfig.isDeprecated,
         }));
 
-    // A tier with no model is left out; the client shows its "configure a
-    // provider" state from the empty list rather than an error.
     const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
       const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
 
@@ -246,15 +242,24 @@ export class ClientConfigService {
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
               ),
             ),
-            upgradeCreditsReward: toDisplayCredits(
+            createProfileCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
-                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
               ),
             ),
-            installAppsCreditsRewardPerApp: toDisplayCredits(
-              this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+            upgradeCreditsReward: toDisplayCredits(
+              Math.max(
+                0,
+                this.twentyConfigService.get(
+                  'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                ) -
+                  this.twentyConfigService.get(
+                    'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+                  ),
               ),
+            ),
+            inviteTeamMaxInvites: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_MAX_INVITES',
             ),
           }
         : null,

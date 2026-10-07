@@ -1,16 +1,11 @@
-// Single source of truth for standard object universal identifiers: an object
-// identifier is referenced from its own STANDARD_OBJECTS entry, from its
-// STANDARD_OBJECT_FIELDS entry (system fields and INDEX view derivation), and
-// sometimes from another object's declaration (default relation builders need
-// both the host and the source object identifiers, and an object literal
-// cannot reference its sibling keys).
+// Separate from STANDARD_OBJECTS because an object literal cannot reference its sibling keys.
 export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   agentChatThread: 'fab0fff8-0c90-4116-9bb0-7dbc07392633',
   agentChatThreadTarget: '9f2a5bf4-3a57-4e61-b561-eaf5a5b86973',
+  agentChatThreadParticipant: 'a043622a-48ef-426f-b55d-3fdcf4ae52f2',
   agentTurn: '63697477-8606-415e-86cb-be078d7fcf7e',
   agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
   agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',
-  agentTurnEvaluation: '73741409-7835-426f-8425-9de13af22302',
   campaignDelivery: '0c76066d-26f7-4f57-b0bd-0eb61465fb1a',
   messageSuppression: '41410724-723c-48ab-8312-9b85131b4d84',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
@@ -42,6 +37,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   messageList: '826561ea-4816-411c-baa0-eec5e6ca8866',
   messageListMember: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
   messageCampaign: '238acb94-dd4c-4036-bc55-19b99d821efd',
+  shortLink: '22c96608-d1b1-49a2-b328-3e738d61d82d',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
   messageThreadTarget: '378ad1b0-592d-4084-80ee-86fef44725b9',

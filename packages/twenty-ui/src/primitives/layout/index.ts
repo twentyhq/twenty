@@ -7,13 +7,13 @@
  *                              |___/
  */
 
-export { AnimatedExpandableContainer } from './AnimatedExpandableContainer/AnimatedExpandableContainer';
-export type { AnimationDimension } from './AnimatedExpandableContainer/types/AnimationDimension';
-export type { AnimationDurationObject } from './AnimatedExpandableContainer/types/AnimationDurationObject';
-export type { AnimationDurations } from './AnimatedExpandableContainer/types/AnimationDurations';
-export type { AnimationMode } from './AnimatedExpandableContainer/types/AnimationMode';
-export type { AnimationSize } from './AnimatedExpandableContainer/types/AnimationSize';
-export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
+export { Collapsible } from './Collapsible/Collapsible';
+export type { AnimationDimension } from './Collapsible/types/AnimationDimension';
+export type { AnimationDurationObject } from './Collapsible/types/AnimationDurationObject';
+export type { AnimationDurations } from './Collapsible/types/AnimationDurations';
+export { DirectionProvider } from './DirectionProvider/DirectionProvider';
+export type { DirectionProviderProps } from './DirectionProvider/types/DirectionProviderProps';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
 export type { ResizeHandleProps } from './ResizeHandle/types/ResizeHandleProps';
-export { TextDirectionProvider } from './TextDirectionProvider/TextDirectionProvider';
+export { Separator } from './Separator/Separator';
+export type { SeparatorProps } from './Separator/types/SeparatorProps';

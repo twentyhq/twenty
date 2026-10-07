@@ -17,7 +17,8 @@ import {
 } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Callout, Section, useToast } from 'twenty-ui/components';
+import { Callout, useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -241,6 +242,7 @@ export const SettingsClaimApplicationSection = () => {
                 ),
             }}
             isClosable
+            closeLabel={t`Close`}
             onClose={dismissClaimError}
           />
         </StyledCalloutContainer>

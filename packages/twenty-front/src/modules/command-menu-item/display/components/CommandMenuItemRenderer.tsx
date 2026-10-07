@@ -1,10 +1,12 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemButtonHotkeyEffect } from '@/command-menu-item/display/components/CommandMenuItemButtonHotkeyEffect';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
+import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
+import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -14,7 +16,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -28,6 +30,7 @@ type CommandMenuItemRendererProps = {
   item: CommandMenuItemDefinition;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
+  shouldShowHotKey?: boolean;
 };
 
 type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
@@ -36,6 +39,7 @@ const CommandMenuItemButtonRenderer = ({
   item,
   isPrimaryAction = false,
   shouldHideLabel = false,
+  shouldShowHotKey = false,
 }: CommandMenuItemButtonRendererProps) => {
   const { isInPreviewMode } = useContext(CommandMenuContext);
   const {
@@ -56,11 +60,14 @@ const CommandMenuItemButtonRenderer = ({
     hotKeys: item.hotKeys,
   };
 
+  const buttonHotKey = getCommandMenuItemButtonHotKey(item);
+
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
         <CommandMenuButton
           command={command}
+          hotKey={shouldShowHotKey ? buttonHotKey : undefined}
           isPrimaryAction={isPrimaryAction}
           shouldHideLabel={shouldHideLabel}
         />
@@ -69,24 +76,36 @@ const CommandMenuItemButtonRenderer = ({
   }
 
   return (
-    <CommandMenuButton
-      command={command}
-      onClick={disabled ? undefined : handleClick}
-      disabled={disabled}
-      progress={progress}
-      loading={isLoading}
-      isPrimaryAction={isPrimaryAction}
-      shouldHideLabel={shouldHideLabel}
-    />
+    <>
+      {isDefined(buttonHotKey) && (
+        <CommandMenuItemButtonHotkeyEffect
+          hotKey={buttonHotKey}
+          disabled={disabled}
+          onHotkeyTriggered={handleClick}
+        />
+      )}
+      <CommandMenuButton
+        command={command}
+        hotKey={shouldShowHotKey ? buttonHotKey : undefined}
+        onClick={disabled ? undefined : handleClick}
+        disabled={disabled}
+        progress={progress}
+        loading={isLoading}
+        isPrimaryAction={isPrimaryAction}
+        shouldHideLabel={shouldHideLabel}
+      />
+    </>
   );
 };
 
+type CommandMenuItemSelectableRendererProps = Pick<
+  CommandMenuItemRendererProps,
+  'item'
+>;
+
 const CommandMenuItemSelectableRenderer = ({
   item,
-  displayType,
-}: CommandMenuItemRendererProps & {
-  displayType: 'listItem' | 'dropdownItem';
-}) => {
+}: CommandMenuItemSelectableRendererProps) => {
   const { Icon, label, handleClick, disabled, progress, isLoading } =
     useCommandMenuItemDisplay(item);
 
@@ -128,33 +147,17 @@ const CommandMenuItemSelectableRenderer = ({
     );
   }
 
-  if (displayType === 'listItem') {
-    return (
-      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-        <CommandMenuItem
-          id={item.id}
-          Icon={Icon}
-          label={label}
-          onClick={disabled ? undefined : handleClick}
-          hotKeys={item.hotKeys}
-          disabled={disabled}
-          RightComponent={loaderComponent}
-        />
-      </SelectableListItem>
-    );
-  }
-
   return (
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <ListItem
-        focused={isSelectedItemId}
-        startIcon={<Icon />}
-        onClick={onItemClick}
-        endIcon={loaderComponent}
+      <CommandMenuItem
+        id={item.id}
+        Icon={Icon}
+        label={label}
+        onClick={disabled ? undefined : handleClick}
+        hotKeys={item.hotKeys}
         disabled={disabled}
-      >
-        {label}
-      </ListItem>
+        RightComponent={loaderComponent}
+      />
     </SelectableListItem>
   );
 };
@@ -164,6 +167,7 @@ export const CommandMenuItemRenderer = ({
   item,
   isPrimaryAction,
   shouldHideLabel,
+  shouldShowHotKey,
 }: CommandMenuItemRendererProps) => {
   const { displayType } = useContext(CommandMenuContext);
 
@@ -173,17 +177,17 @@ export const CommandMenuItemRenderer = ({
         item={item}
         isPrimaryAction={isPrimaryAction}
         shouldHideLabel={shouldHideLabel}
+        shouldShowHotKey={shouldShowHotKey}
       />
     );
   }
 
-  if (displayType === 'listItem' || displayType === 'dropdownItem') {
-    return (
-      <CommandMenuItemSelectableRenderer
-        item={item}
-        displayType={displayType}
-      />
-    );
+  if (displayType === 'listItem') {
+    return <CommandMenuItemSelectableRenderer item={item} />;
+  }
+
+  if (displayType === 'dropdownItem') {
+    return <CommandMenuDropdownActionItem item={item} />;
   }
 
   return assertUnreachable(displayType, 'Unsupported display type');

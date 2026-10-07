@@ -4,7 +4,7 @@ import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortS
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';

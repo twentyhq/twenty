@@ -24,8 +24,7 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
 // oxlint-disable-next-line no-restricted-imports
 import { UserContext } from '../src/modules/users/contexts/UserContext';
-// Stories rendering CodeEditor / GraphiQL need Monaco's worker factory, which
-// the app normally sets up in src/index.tsx.
+// Monaco's worker factory for CodeEditor / GraphiQL stories, normally set up in src/index.tsx.
 // oxlint-disable-next-line no-restricted-imports
 import '../src/modules/app/utils/setupMonacoEnvironment';
 
@@ -33,7 +32,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
-import { ThemeProvider } from 'twenty-ui/theme';
+import { GRAY_SCALE_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -42,8 +41,7 @@ i18n.activate(SOURCE_LOCALE);
 // oxlint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
-const MOCK_IMAGE_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="#d9d9d9"/></svg>';
+const MOCK_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" fill="${GRAY_SCALE_LIGHT.gray6}"/></svg>`;
 
 const respondWithMockImage = () =>
   new HttpResponse(MOCK_IMAGE_SVG, {
@@ -97,10 +95,7 @@ initialize(
   remoteImageMockHandlers,
 );
 
-// Mirrors production's MinimalMetadataGater so any story rendering a
-// date-aware component (DateTimeDisplay, etc.) sees a real IANA timeZone
-// instead of UserContext's default `{}`. Stories needing a specific timezone
-// can still override by nesting their own UserContext.Provider.
+// Date-aware components need a real IANA timeZone, not UserContext's default `{}`; nest a UserContext.Provider to override.
 const STORYBOOK_DEFAULT_USER_CONTEXT = {
   dateFormat: DateFormat.DAY_FIRST,
   timeFormat: TimeFormat.HOUR_24,

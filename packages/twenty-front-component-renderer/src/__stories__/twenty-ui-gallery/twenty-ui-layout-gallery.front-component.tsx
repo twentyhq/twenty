@@ -1,13 +1,10 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import 'twenty-ui/style.css';
-import { AnimatedIconCrossfade } from 'twenty-ui/components';
-import { IconHeart, IconStar } from 'twenty-ui/icon';
-import {
-  AnimatedExpandableContainer,
-  HorizontalSeparator,
-} from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { SeparatorExample } from './separator-example';
 import { ResizeHandleExample } from './resize-handle-example';
+import { AnimatedIconCrossfadeExample } from './animated-icon-crossfade-example';
 
 import {
   ComponentGallery,
@@ -16,27 +13,16 @@ import {
 
 const LAYOUT_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AnimatedExpandableContainer',
-    node: (
-      <AnimatedExpandableContainer isExpanded={true}>
-        Expandable
-      </AnimatedExpandableContainer>
-    ),
+    name: 'Collapsible',
+    node: <Collapsible isExpanded={true}>Expandable</Collapsible>,
   },
   {
     name: 'AnimatedIconCrossfade',
-    node: (
-      <AnimatedIconCrossfade
-        isActive={true}
-        ActiveIcon={IconStar}
-        InactiveIcon={IconHeart}
-        size={16}
-      />
-    ),
+    node: <AnimatedIconCrossfadeExample />,
   },
   {
-    name: 'HorizontalSeparator',
-    node: <HorizontalSeparator text="or" />,
+    name: 'Separator',
+    node: <SeparatorExample />,
   },
   {
     name: 'ResizeHandle',

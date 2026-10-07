@@ -33,6 +33,10 @@ export const Resizable: Story = {
   },
 };
 
+export const ResizableDocumentation: Story = {
+  render: Resizable.render,
+};
+
 export const Horizontal: Story = {
   render: () => <ResizableDemo axis="x" />,
   play: async ({ canvasElement }) => {

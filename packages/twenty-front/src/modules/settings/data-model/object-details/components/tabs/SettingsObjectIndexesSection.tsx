@@ -7,17 +7,19 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SearchInput, SettingsRow, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -163,27 +165,25 @@ export const SettingsObjectIndexesSection = ({
       <SearchInput
         placeholder={t`Search an index...`}
         value={searchTerm}
-        onChange={setSearchTerm}
-        filterDropdown={(filterButton: ReactNode) => (
-          <Dropdown
+        onValueChange={setSearchTerm}
+        filterDropdown={(filterButton) => (
+          <DropdownRoot
             dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={filterButton}
-            dropdownComponents={
-              <LegacyDropdownContent>
-                <DropdownMenuItemsContainer>
-                  <SettingsRow
-                    startIcon={<IconEyeOff />}
-                    onCheckedChange={() =>
-                      setHideSystemIndexes(!hideSystemIndexes)
-                    }
-                    checked={hideSystemIndexes}
-                  >{t`Hide system indexes`}</SettingsRow>
-                </DropdownMenuItemsContainer>
-              </LegacyDropdownContent>
-            }
-          />
+            type="panel"
+          >
+            <Dropdown.Trigger render={filterButton} />
+            <DropdownContent align="end" sideOffset={8}>
+              <Dropdown.Section>
+                <SettingsRow
+                  startIcon={<IconEyeOff />}
+                  onCheckedChange={() =>
+                    setHideSystemIndexes(!hideSystemIndexes)
+                  }
+                  checked={hideSystemIndexes}
+                >{t`Hide system indexes`}</SettingsRow>
+              </Dropdown.Section>
+            </DropdownContent>
+          </DropdownRoot>
         )}
       />
       <SettingsObjectIndexTable

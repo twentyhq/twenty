@@ -10,13 +10,13 @@ import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.m
 `ResizeHandle` manages a numeric size and exposes a focusable separator. The application applies that size to the panel; the handle does not resize another element automatically.
 
 <StoryEmbed
-  storyId="ui-layout-resizehandle--resizable"
+  storyId="ui-layout-resizehandle--resizable-documentation"
   title="ResizeHandle example"
 />
 
 ## Usage
 
-Use `axis="y"` for height or `axis="x"` for width. Give the handle a specific accessible name and use `aria-controls` to identify the panel.
+Use `edge` for a panel boundary, or `axis="y"` for inline height resizing and `axis="x"` for inline width resizing. Give the handle a specific accessible name and use `aria-controls` to identify the panel.
 
 ## Uncontrolled state
 
@@ -80,19 +80,90 @@ export const ResizableNotes = () => {
 };
 ```
 
-The application owns the value and can update it from other controls. Keep `value` and `defaultValue` separate and retain the same ownership mode throughout the component's lifetime.
+The application owns the value and can update it from other controls. Reflect live changes in `value`; use `onValueCommitted` to save the final size. Keep `value` and `defaultValue` separate and retain the same ownership mode throughout the component's lifetime.
+
+## Panel edges and gaps
+
+`edge="left"`, `"right"`, `"top"` or `"bottom"` determines both the axis and the physical increasing direction. Leftward movement grows a left edge, upward movement grows a top edge, and the opposite applies to right and bottom edges. This behavior stays the same in right-to-left content. Use either `edge` or `axis` and `direction`.
+
+With `edge`, placement defaults to `"edge"`. Put the handle inside a panel with `position: 'relative'` to position it along that boundary. `placement="inline"` keeps it in normal flow. Use `placement="gap"` between sibling panels and set its width or height through `style` when the layout needs a gap. Gap handles have no visible grip by default.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed
+  storyId="ui-layout-resizehandle-panels--documentation"
+  title="ResizeHandle panel edge example"
+/>
+
+<StoryEmbed
+  storyId="ui-layout-resizehandle-panels--gap"
+  title="ResizeHandle panel gap example"
+/>
+
+The application owns the layout, saved size, collapse state and focus destination when collapsing removes the handle. Use `onActivate` for an optional collapse action.
 
 ## Keyboard and bounds
 
-For `axis="y"`, Down increases the size and Up decreases it. For `axis="x"`, Right increases and Left decreases in left-to-right content; the directions reverse under [TextDirectionProvider](/ui/primitives/layout/text-direction-provider) with `direction="rtl"`.
+For `axis="y"`, Down increases the size and Up decreases it. For `axis="x"`, Right increases and Left decreases in left-to-right content; the directions reverse under [DirectionProvider](/ui/primitives/layout/direction-provider) with `direction="rtl"`.
 
-Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End moves to `max`. Pointer dragging uses the pixel movement and is not snapped to `step`. Both interactions stay within the bounds. `disabled` prevents resizing and removes the handle from the tab order.
+Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End moves to `max`. Keys pressed with Alt, Control or Meta are ignored. Pointer dragging uses the pixel movement and is not snapped to `step`. Both interactions stay within the bounds. Pointer presses do not move focus; keyboard users reach the handle with Tab. `disabled` prevents resizing and removes the handle from the tab order.
 
 The separator orientation describes the dividing edge: horizontal for height resizing and vertical for width resizing.
 
+## Physical directions and zoom
+
+Set `direction="normal"` or `direction="reverse"` when increasing size must follow a fixed physical direction, regardless of text direction. Normal increases with rightward or downward movement. Reverse increases with leftward or upward movement. Omit `direction` to retain the text-direction behavior described above.
+
+`scale` accepts a positive zoom factor or a function returning one. The handle samples it at pointer down and divides pointer movement by that value. Keyboard steps remain unchanged.
+
+## Gesture lifecycle
+
+`onValueChange` reports live values. `onValueCommitted` reports the final value after a successful pointer drag or an effective keyboard change. Home, End and arrow keys commit immediately when they change the size.
+
+`onResizeStart` receives the first bounded candidate after the pointer passes `dragThreshold`. The threshold defaults to `5` with `edge` and `0` otherwise, measured in physical pixels. `onResizeEnd` receives `{ cancelled, value }` for a started drag. Escape, pointer cancellation, lost pointer capture and unmounting cancel the gesture without committing; disabling the handle cancels it on its next pointer event. Cancellation calls `onValueChange` with the starting value, clamped to the current bounds. `onResizeEnd` receives that restored value.
+
+Supply `onActivate` to handle a click without dragging, Enter or Space. Crossing the threshold prevents the following pointer click from activating, even when the pointer returns to its starting position. Native event handlers can prevent the default interaction.
+
 ## Custom handle
 
-`children` replaces the visible grip; it does not replace the separator behavior. `render` can replace the root element. Custom wrappers must [forward the supplied props and ref](/ui/primitives/overview#custom-components) so focus, pointer capture, keyboard handlers, and accessibility attributes reach the same element.
+`children` replaces the visible grip, and `children={null}` hides it; it does not replace the separator behavior. `render` can replace the root element. Custom wrappers must [forward the supplied props and ref](/ui/primitives/overview#custom-components) so focus, pointer capture, keyboard handlers, and accessibility attributes reach the same element.
 
 ## Props
 

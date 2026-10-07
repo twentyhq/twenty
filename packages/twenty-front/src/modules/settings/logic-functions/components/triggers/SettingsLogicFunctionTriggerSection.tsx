@@ -1,16 +1,6 @@
-import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
 
 type SettingsLogicFunctionTriggerSectionProps = {
   title: string;
@@ -38,17 +28,20 @@ export const SettingsLogicFunctionTriggerSection = ({
 
   return (
     <Section.Root>
-      <StyledHeader>
-        <Section.Header title={title} description={description} />
-        {!readonly && (
-          <Switch
-            aria-label={title}
-            checked={enabled}
-            onCheckedChange={onEnabledChange}
-            size="sm"
-          />
-        )}
-      </StyledHeader>
+      <Section.Header
+        title={title}
+        description={description}
+        adornment={
+          readonly ? undefined : (
+            <Switch
+              aria-label={title}
+              checked={enabled}
+              onCheckedChange={onEnabledChange}
+              size="sm"
+            />
+          )
+        }
+      />
       {enabled && children}
     </Section.Root>
   );

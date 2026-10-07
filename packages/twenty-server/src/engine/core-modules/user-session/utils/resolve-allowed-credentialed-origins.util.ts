@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Opaque schemes (file:, data:) serialise to the literal "null" origin, which
-// would otherwise allowlist every sandboxed document that sends Origin: null.
+// Opaque schemes (file:, data:) serialise to "null", which would allowlist every sandboxed document.
 const toOrigin = (url: string): string | undefined => {
   try {
     const parsedUrl = new URL(url);
@@ -19,8 +19,7 @@ const toOrigin = (url: string): string | undefined => {
   }
 };
 
-// URL canonicalises [::ffff:127.0.0.1] to [::ffff:7f00:1], so only the hex
-// spelling reaches here. All of 127.0.0.0/8 is loopback.
+// URL canonicalises [::ffff:127.0.0.1] to hex, so only that spelling reaches here; all of 127.0.0.0/8 is loopback.
 const IPV4_LOOPBACK_REGEX = /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const IPV4_MAPPED_HEX_REGEX = /^::ffff:([0-9a-f]{1,4}):[0-9a-f]{1,4}$/;
 
@@ -53,26 +52,44 @@ const isLoopbackOrigin = (origin: string): boolean => {
   }
 };
 
-export const resolveAllowedCredentialedOrigins = (
-  twentyConfigService: TwentyConfigService,
-): Set<string> => {
+type AllowedOriginsSettings = {
+  serverUrl: string;
+  frontendUrl: string;
+  authCookieAllowedOrigins: string;
+  nodeEnvironment: NodeEnvironment;
+};
+
+let cachedAllowedOriginsSettings: AllowedOriginsSettings | undefined;
+let cachedComputedAllowedOrigins: ReadonlySet<string> | undefined;
+
+const isSameAllowedOriginsSettings = (
+  allowedOriginsSettings: AllowedOriginsSettings,
+  otherAllowedOriginsSettings: AllowedOriginsSettings,
+): boolean =>
+  allowedOriginsSettings.serverUrl === otherAllowedOriginsSettings.serverUrl &&
+  allowedOriginsSettings.frontendUrl ===
+    otherAllowedOriginsSettings.frontendUrl &&
+  allowedOriginsSettings.authCookieAllowedOrigins ===
+    otherAllowedOriginsSettings.authCookieAllowedOrigins &&
+  allowedOriginsSettings.nodeEnvironment ===
+    otherAllowedOriginsSettings.nodeEnvironment;
+
+const computeAllowedCredentialedOrigins = ({
+  serverUrl,
+  frontendUrl,
+  authCookieAllowedOrigins,
+  nodeEnvironment,
+}: AllowedOriginsSettings): ReadonlySet<string> => {
   const allowedOrigins = new Set<string>();
 
-  const derivedUrls = [
-    twentyConfigService.get('SERVER_URL'),
-    twentyConfigService.get('FRONTEND_URL'),
-  ];
+  const derivedUrls = [serverUrl, frontendUrl];
 
-  const explicitUrls = twentyConfigService
-    .get('AUTH_COOKIE_ALLOWED_ORIGINS')
+  const explicitUrls = authCookieAllowedOrigins
     .split(',')
     .map((allowedOrigin) => allowedOrigin.trim());
 
-  // SERVER_URL defaults to http://localhost:3000, so a deployment that never
-  // set it would hand any local page on that port a credentialed origin.
-  // Explicit entries are still honoured, so dev setups keep working.
-  const isProduction =
-    twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION;
+  // SERVER_URL defaults to http://localhost:3000, which would hand any local page on that port a credentialed origin.
+  const isProduction = nodeEnvironment === NodeEnvironment.PRODUCTION;
 
   for (const candidateUrl of [...derivedUrls, ...explicitUrls]) {
     if (!isNonEmptyString(candidateUrl)) {
@@ -95,6 +112,39 @@ export const resolveAllowedCredentialedOrigins = (
 
     allowedOrigins.add(origin);
   }
+
+  return allowedOrigins;
+};
+
+export const resolveAllowedCredentialedOrigins = (
+  twentyConfigService: Pick<TwentyConfigService, 'get'>,
+): ReadonlySet<string> => {
+  const allowedOriginsSettings: AllowedOriginsSettings = {
+    serverUrl: twentyConfigService.get('SERVER_URL'),
+    frontendUrl: twentyConfigService.get('FRONTEND_URL'),
+    authCookieAllowedOrigins: twentyConfigService.get(
+      'AUTH_COOKIE_ALLOWED_ORIGINS',
+    ),
+    nodeEnvironment: twentyConfigService.get('NODE_ENV'),
+  };
+
+  if (
+    isDefined(cachedAllowedOriginsSettings) &&
+    isDefined(cachedComputedAllowedOrigins) &&
+    isSameAllowedOriginsSettings(
+      cachedAllowedOriginsSettings,
+      allowedOriginsSettings,
+    )
+  ) {
+    return cachedComputedAllowedOrigins;
+  }
+
+  const allowedOrigins = computeAllowedCredentialedOrigins(
+    allowedOriginsSettings,
+  );
+
+  cachedAllowedOriginsSettings = allowedOriginsSettings;
+  cachedComputedAllowedOrigins = allowedOrigins;
 
   return allowedOrigins;
 };

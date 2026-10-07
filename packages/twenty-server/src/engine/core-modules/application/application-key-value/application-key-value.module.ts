@@ -21,6 +21,5 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationKeyValueResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
-  exports: [ApplicationKeyValueService],
 })
 export class ApplicationKeyValueModule {}

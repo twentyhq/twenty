@@ -13,7 +13,8 @@ import { LightIconButton } from '../LightIconButton';
 import { type LightIconButtonProps } from '../types/LightIconButtonProps';
 
 const meta: Meta<typeof LightIconButton> = {
-  title: 'UI/Input/Button/LightIconButton',
+  id: 'ui-input-button-lighticonbutton',
+  title: 'UI/Components/Input/LightIconButton',
   component: LightIconButton,
   args: { children: <IconSearch />, 'aria-label': 'Search' },
 };
@@ -34,8 +35,8 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
+  args: Default.args,
 };
 
 export const Appearance: Story = {
@@ -128,7 +129,7 @@ export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'emphasis',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolExecuteFunction, type ToolSet } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
@@ -83,9 +83,7 @@ export class McpToolExecutorService {
     const executionStartedAt = performance.now();
 
     try {
-      // ToolSet widens execute to a union no argument satisfies. The client's
-      // arguments arrive as raw JSON-RPC input and the output shape is checked by
-      // isToolOutputSuccessful, so both sides stay unknown here.
+      // ToolSet widens execute to a union no argument satisfies
       const execute = tool.execute as ToolExecuteFunction<
         unknown,
         unknown,
@@ -166,14 +164,16 @@ export class McpToolExecutorService {
       .filter(([, def]) => !!def.inputSchema)
       .map(([name, def]) => {
         const toolDefinition = def as McpToolDefinition;
-        // Unwrap the AI SDK's jsonSchema wrapper if present
-        // The AI SDK serializes schemas as { jsonSchema: {...} } but MCP expects {...} directly
+        // The AI SDK wraps schemas as { jsonSchema } but MCP expects the bare schema
         const inputSchema = unwrapJsonSchema(toolDefinition.inputSchema);
 
         return {
           name,
           description: toolDefinition.description,
-          inputSchema,
+          inputSchema: {
+            ...(isPlainObject(inputSchema) ? inputSchema : {}),
+            type: 'object',
+          },
           ...(isDefined(toolDefinition.annotations) && {
             annotations: toolDefinition.annotations,
           }),

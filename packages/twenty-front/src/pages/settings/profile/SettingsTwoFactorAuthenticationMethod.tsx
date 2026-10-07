@@ -15,7 +15,7 @@ import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/ut
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme';

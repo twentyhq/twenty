@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import {
   AiException,
   AiExceptionCode,
@@ -15,10 +13,6 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -29,148 +23,71 @@ type RecordReference = {
   recordId: string;
 };
 
-type ThreadRecordArgs = RecordReference & {
-  workspaceId: string;
-  userWorkspaceId: string;
-  threadId: string;
-};
-
 @Injectable()
 export class AgentChatThreadTargetService {
   constructor(
-    private readonly agentChatSharingService: AgentChatSharingService,
-    private readonly agentHistoryStorageService: AgentHistoryStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async attachThreadToRecord(args: ThreadRecordArgs): Promise<void> {
-    const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
-
-    await this.assertThreadIsEditableOrThrow(args);
-    // A record in the trash keeps its links, which can still be listed and
-    // removed, but nothing new is filed under it.
-    await this.assertRecordIsReadableOrThrow({ ...args, withDeleted: false });
-
-    const link = { threadId: args.threadId, [joinColumnName]: args.recordId };
-
-    await this.withTargetRepository(args.workspaceId, async (repository) => {
-      // As on noteTarget, only the standard legs carry a unique index, so a
-      // link to a custom object is deduplicated by looking for it first.
-      if (await repository.existsBy(link)) {
-        return;
-      }
-
-      await repository.insert(link, { onConflictDoNothing: true });
-    });
-  }
-
-  async detachThreadFromRecord(args: ThreadRecordArgs): Promise<void> {
-    const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
-
-    await this.assertThreadIsEditableOrThrow(args);
-    await this.assertRecordIsReadableOrThrow({ ...args, withDeleted: true });
-
-    await this.withTargetRepository(args.workspaceId, (repository) =>
-      repository.delete({
-        threadId: args.threadId,
-        [joinColumnName]: args.recordId,
-      }),
-    );
-  }
-
-  // Resolving the record is the whole of the list path here: the attachment
-  // predicate itself lives in the ranked thread query, so paging applies to the
-  // ranked conversations rather than to an arbitrary prefix of the links.
-  async resolveAuthorizedRecordOrThrow({
+  // chat turns run in a queue worker, so the sender's context is passed to write the link as them
+  async attachThreadToRecord({
     workspaceId,
+    threadId,
     objectNameSingular,
     recordId,
-  }: RecordReference & { workspaceId: string }): Promise<string> {
+    authContext,
+  }: RecordReference & {
+    workspaceId: string;
+    threadId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
       objectNameSingular,
     });
 
-    await this.assertRecordIsReadableOrThrow({
-      objectNameSingular,
-      recordId,
-      withDeleted: true,
-    });
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      // A record in the trash keeps its links, but nothing new is filed under it.
+      await this.assertRecordIsReadableOrThrow({
+        objectNameSingular,
+        recordId,
+      });
 
-    return joinColumnName;
+      const link = { threadId, [joinColumnName]: recordId };
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+        );
+
+      // only standard legs have a unique index, so custom-object links are deduplicated by lookup
+      if (await repository.existsBy(link)) {
+        return;
+      }
+
+      await repository.insert(link, { onConflictDoNothing: true });
+    }, authContext);
   }
 
-  // Filing a conversation under a record changes the conversation, so it takes
-  // the access renaming it does. A conversation the caller cannot edit reads as
-  // not found, so no one can probe for conversations they do not share.
-  private async assertThreadIsEditableOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    await this.agentChatSharingService.getThreadWithAccess({
-      workspaceId,
-      userWorkspaceId,
-      threadId,
-      operationType: 'update',
-    });
-  }
-
-  // Once the conversation is authorized, the link is written in system context,
-  // so this lookup is the only point where the caller's own record grants are
-  // consulted. It runs before the storage fence, which reserves a core pool
-  // connection for the duration of the write.
   private async assertRecordIsReadableOrThrow({
     objectNameSingular,
     recordId,
-    withDeleted,
-  }: RecordReference & { withDeleted: boolean }): Promise<void> {
-    const record = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const { authContext, userWorkspaceRoleMap, apiKeyRoleMap } =
-          getWorkspaceContext();
-
-        // The ORM does not fall back to the caller's role: with no config it
-        // resolves to an empty permission map and no bypass, which denies
-        // every object rather than consulting the grants this check exists for.
-        const rolePermissionConfig = resolveRolePermissionConfig({
-          authContext,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap,
-        });
-
-        if (!isDefined(rolePermissionConfig)) {
+  }: RecordReference): Promise<void> {
+    const record = await this.workspaceOrmManager
+      .getRepositoryWithContextPermissions(objectNameSingular)
+      .findOne({ where: { id: recordId }, select: { id: true } })
+      .catch((error: unknown) => {
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.PERMISSION_DENIED
+        ) {
           return null;
         }
 
-        try {
-          return await this.workspaceOrmManager
-            .getRepository(objectNameSingular, rolePermissionConfig)
-            .findOne({
-              where: { id: recordId },
-              select: { id: true },
-              withDeleted,
-            });
-        } catch (error) {
-          if (
-            error instanceof PermissionsException &&
-            error.code === PermissionsExceptionCode.PERMISSION_DENIED
-          ) {
-            return null;
-          }
+        throw error;
+      });
 
-          throw error;
-        }
-      },
-    );
-
-    // Not-found rather than forbidden, so a member cannot probe for records
-    // outside their grants.
+    // not-found rather than forbidden so members cannot probe for records outside their grants
     if (!isDefined(record)) {
       throw new AiException(
         'Record not found',
@@ -225,25 +142,5 @@ export class AgentChatThreadTargetService {
     }
 
     return joinColumnName;
-  }
-
-  private withTargetRepository<TResult>(
-    workspaceId: string,
-    work: (repository: WorkspaceRepository<ObjectRecord>) => Promise<TResult>,
-  ): Promise<TResult> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        // Holding the storage fence keeps the route from flipping mid-write.
-        this.agentHistoryStorageService.run(workspaceId, async () =>
-          work(
-            this.workspaceOrmManager.getRepository(
-              AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-              { shouldBypassPermissionChecks: true },
-              { shouldSkipEventEmission: true },
-            ),
-          ),
-        ),
-      buildSystemAuthContext(workspaceId),
-    );
   }
 }

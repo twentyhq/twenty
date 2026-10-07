@@ -25,6 +25,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -43,6 +44,7 @@ import { RoleValidationService } from 'src/engine/metadata-modules/role-validati
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
@@ -69,6 +71,8 @@ export class UserWorkspaceService {
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -242,6 +246,10 @@ export class UserWorkspaceService {
 
     await this.createWorkspaceMember(workspace.id, user);
 
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'flatWorkspaceMemberMaps',
+    ]);
+
     await this.userRoleService.assignRoleToManyUserWorkspace({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
@@ -357,12 +365,26 @@ export class UserWorkspaceService {
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      // roleTarget has no deletedAt column, so its rows cannot be soft deleted.
-      // Access stays gated by the soft-deleted userWorkspace.
+      // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
+      // The delete nulls the creator of this member's workflows, making them workspace-visible, so their runs' grants must follow.
+      const createdCoreWorkflowIds =
+        await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
+          workspaceId,
+          userWorkspaceId,
+        });
+
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatRoleTargetMaps',
+      ]);
+
+      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
+        workspaceId,
+        coreWorkflowIds: createdCoreWorkflowIds,
+      });
     }
   }
 
@@ -381,8 +403,7 @@ export class UserWorkspaceService {
       },
     });
 
-    // HIDDEN workspaces are never advertised in the root-domain picker, even to
-    // their own members — they must sign in from the workspace URL directly.
+    // HIDDEN workspaces are never advertised in the root-domain picker, even to members: they sign in from the workspace URL.
     const alreadyMemberWorkspaces = user
       ? user.userWorkspaces
           .map(({ workspace }) => ({ workspace }))
@@ -413,8 +434,7 @@ export class UserWorkspaceService {
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
-    // HIDDEN removes the picker convenience only; invited users can still join
-    // through the direct invitation link, which carries its own token.
+    // HIDDEN only removes the picker; invitation links carry their own token.
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )

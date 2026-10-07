@@ -11,18 +11,14 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TargetModule } from 'src/engine/core-modules/target/target.module';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
     FileUrlModule,
     UserModule,
     ConnectedAccountModule,
-    FeatureFlagModule,
     PermissionsModule,
     RelatedPersonIdsModule,
     TargetModule,

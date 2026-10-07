@@ -30,7 +30,8 @@ const getAvatars = (commonProps: Partial<AvatarProps> = {}) => [
 const meta: Meta<
   AvatarGroupProps & AvatarProps & { numberOfAvatars?: number }
 > = {
-  title: 'UI/Data Display/AvatarGroup',
+  id: 'ui-data-display-avatargroup',
+  title: 'UI/Components/Data display/AvatarGroup',
   component: AvatarGroup,
   render: ({ numberOfAvatars = 5, ...args }) => (
     <AvatarGroup avatars={getAvatars(args).slice(0, numberOfAvatars)} />
@@ -60,6 +61,25 @@ export const WithOverflowCount: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('+9')).toBeVisible();
+  },
+};
+
+export const WithRing: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle', size: 'lg', ring: true })}
+      maxVisible={5}
+      overlap="left"
+      overlapOffset="4px"
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('S')).toBeVisible();
+    await expect(canvas.getByText('L')).toBeVisible();
+    await expect(canvas.getAllByText('J')).toHaveLength(2);
   },
 };
 

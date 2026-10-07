@@ -1,9 +1,9 @@
 import { Button } from '@ui/primitives/input/Button/Button';
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 

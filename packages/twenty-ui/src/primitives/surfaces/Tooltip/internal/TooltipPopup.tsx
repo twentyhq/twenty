@@ -1,6 +1,7 @@
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { isNumber, isString } from '@sniptt/guards';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
@@ -24,6 +25,7 @@ export const TooltipPopup = ({
   sticky,
   disableAnchorTracking,
   arrow = false,
+  withExitAnimation = false,
   maxWidth = DEFAULT_MAX_WIDTH,
   container,
   keepMounted,
@@ -32,6 +34,7 @@ export const TooltipPopup = ({
   ...props
 }: TooltipPopupProps) => {
   const themeContainer = useThemeContainer();
+  const direction = useProvidedTextDirection();
   const hasPlainTextContent = isString(children) || isNumber(children);
 
   return (
@@ -40,6 +43,7 @@ export const TooltipPopup = ({
       keepMounted={keepMounted}
     >
       <TooltipPrimitive.Positioner
+        dir={direction}
         side={side}
         align={align}
         sideOffset={sideOffset}
@@ -57,6 +61,7 @@ export const TooltipPopup = ({
         <TooltipPrimitive.Popup
           role="tooltip"
           {...props}
+          data-with-exit-animation={withExitAnimation || undefined}
           className={mergeClassNames(styles.popup, className)}
         >
           {hasPlainTextContent ? (

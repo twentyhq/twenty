@@ -1,6 +1,7 @@
 import { useCallback, useContext, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
+import { preventDismissingClickActivation } from '@ui/utilities/internal/preventDismissingClickActivation';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';
@@ -9,7 +10,8 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
-import { preventDismissingClickActivation } from './preventDismissingClickActivation';
+import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
+import { useRegisteredElementId } from './useRegisteredElementId';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -19,6 +21,8 @@ export const DropdownRoot = ({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
   multiple = false,
   defaultPage = 'root',
   isSubmenu = false,
@@ -51,18 +55,26 @@ export const DropdownRoot = ({
   );
   const [focusOnOpen, setFocusOnOpen] = useState(true);
   const [searchTargetId, setSearchTargetId] = useState<string>();
+  const [triggerId, registerTrigger] = useRegisteredElementId();
+  const [titleId, registerTitle] = useRegisteredElementId();
 
-  if (previousOpen !== open) {
+  const isOpening = open && !previousOpen;
+  const isClosing = !open && previousOpen;
+
+  if (isOpening || isClosing) {
     setPreviousOpen(open);
+  }
 
-    if (!open) {
-      setPageHistory([{ id: defaultPage }]);
-      setActivePage(undefined);
-      setPageFocusRequest(undefined);
-      setInitialFocusEdge('first');
-      setFocusOnOpen(true);
-      setSearchTargetId(undefined);
-    }
+  if (isOpening) {
+    setPageHistory([{ id: defaultPage }]);
+    setActivePage(undefined);
+    setPageFocusRequest(undefined);
+  }
+
+  if (isClosing) {
+    setInitialFocusEdge('first');
+    setFocusOnOpen(true);
+    setSearchTargetId(undefined);
   }
 
   const setOpen = (nextOpen: boolean) => {
@@ -86,18 +98,19 @@ export const DropdownRoot = ({
     trigger,
   }: {
     id: string;
-    trigger: DropdownFocusTarget;
+    trigger?: DropdownFocusTarget;
   }) => {
     setPageFocusRequest({ pageId: id });
     setPageHistory((history) => [...history, { id, trigger }]);
   };
 
   const goBack = () => {
-    if (pageHistory.length < 2) {
+    const previousPage = pageHistory[pageHistory.length - 2];
+
+    if (!isDefined(previousPage)) {
       return;
     }
 
-    const previousPage = pageHistory[pageHistory.length - 2];
     const trigger = pageHistory[pageHistory.length - 1]?.trigger;
 
     setPageFocusRequest({
@@ -133,6 +146,24 @@ export const DropdownRoot = ({
           eventDetails.reason === 'focus-out';
 
         if (isOutsideDismissal && openNestedRootCountRef.current > 0) {
+          eventDetails.cancel();
+          return;
+        }
+
+        const isEscapeDismissPrevented =
+          eventDetails.reason === 'escape-key' &&
+          isDropdownDismissPrevented({
+            onDismiss: onEscapeKeyDown,
+            event: eventDetails.event,
+          });
+        const isOutsideDismissPrevented =
+          isOutsideDismissal &&
+          isDropdownDismissPrevented({
+            onDismiss: onInteractOutside,
+            event: eventDetails.event,
+          });
+
+        if (isEscapeDismissPrevented || isOutsideDismissPrevented) {
           eventDetails.cancel();
           return;
         }
@@ -176,6 +207,10 @@ export const DropdownRoot = ({
           registerOpenNestedRoot,
           searchTargetId,
           setSearchTargetId,
+          triggerId,
+          registerTrigger,
+          titleId,
+          registerTitle,
         }}
       >
         <DropdownNestedRootEffect

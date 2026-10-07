@@ -851,6 +851,36 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentMessages: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentMessages',
+      label: i18nLabel(
+        msg({ message: `Chat messages`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `AI chat messages sent by the workspace member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentMessage',
+      targetFieldName: 'senderWorkspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   agentChatThreads: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -871,6 +901,39 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'agentChatThread',
+      targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  agentChatThreadParticipants: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentChatThreadParticipants',
+      label: i18nLabel(
+        msg({
+          message: `Chat thread participations`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Read and inbox state of the workspace member in AI chat threads`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentChatThreadParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

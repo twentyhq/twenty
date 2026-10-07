@@ -7,7 +7,8 @@ import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof Section.Header> = {
-  title: 'UI/Components/Section',
+  id: 'ui-components-section',
+  title: 'UI/Components/Layout/Section',
   component: Section.Header,
   args: { title: 'Workspace settings' },
 };
@@ -34,8 +35,8 @@ export const WithDescription: Story = {
 };
 
 export const Documentation: Story = {
-  ...WithDescription,
-  play: undefined,
+  decorators: WithDescription.decorators,
+  args: WithDescription.args,
   render: (args) => (
     <Section.Root>
       <Section.Header {...args} />

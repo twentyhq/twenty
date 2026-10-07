@@ -58,12 +58,6 @@ const SyncEmails = lazyWithPreload(() =>
   })),
 );
 
-const InstallApps = lazyWithPreload(() =>
-  import('~/pages/onboarding/InstallApps').then((module) => ({
-    default: module.InstallApps,
-  })),
-);
-
 const InviteTeam = lazyWithPreload(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -92,7 +86,6 @@ const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();
   SyncEmails.preload();
-  InstallApps.preload();
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
@@ -102,16 +95,13 @@ const preloadOnboardingPages = () => {
 
 type CreateWorkspaceAppRouterArgs = {
   isAdminPageEnabled?: boolean;
-  isWorkflowCoreIndexPageEnabled?: boolean;
 };
 
 const createWorkspaceAppRouter = ({
   isAdminPageEnabled,
-  isWorkflowCoreIndexPageEnabled,
 }: CreateWorkspaceAppRouterArgs) => {
   const workspaceRouteObjects = createWorkspaceRouteObjects({
     isAdminPageEnabled,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   return createBrowserRouter([
@@ -224,14 +214,6 @@ const createWorkspaceAppRouter = ({
                       ),
                     },
                     {
-                      path: AppPath.InstallApps,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InstallApps />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
                       path: AppPath.InviteTeam,
                       element: (
                         <LazyRoute fallback={<OnboardingStepPageLoader />}>
@@ -276,13 +258,8 @@ const createWorkspaceAppRouter = ({
 
 export const useCreateWorkspaceAppRouter = ({
   isAdminPageEnabled,
-  isWorkflowCoreIndexPageEnabled,
 }: CreateWorkspaceAppRouterArgs) =>
   useMemo(
-    () =>
-      createWorkspaceAppRouter({
-        isAdminPageEnabled,
-        isWorkflowCoreIndexPageEnabled,
-      }),
-    [isAdminPageEnabled, isWorkflowCoreIndexPageEnabled],
+    () => createWorkspaceAppRouter({ isAdminPageEnabled }),
+    [isAdminPageEnabled],
   );

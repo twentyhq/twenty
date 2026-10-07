@@ -136,7 +136,7 @@
   Alignment of the popup along the anchor.
 </ParamField>
 
-<ParamField body="Popup.alignOffset" type="number">
+<ParamField body="Popup.alignOffset" type="number | OffsetFunction">
   Offset in pixels along the alignment axis.
 </ParamField>
 
@@ -151,6 +151,11 @@
 <ParamField body="Popup.className" type="string | ((state: PopoverPopupState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Popup.collisionPadding" type="Padding">
+  Space in pixels kept between the popup and the edges of its collision
+  boundary, for all sides or per side. Defaults to 5.
 </ParamField>
 
 <ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
@@ -195,7 +200,7 @@
   Side of the anchor the popup is placed on.
 </ParamField>
 
-<ParamField body="Popup.sideOffset" type="number" default="8">
+<ParamField body="Popup.sideOffset" type="number | OffsetFunction" default="8">
   Distance in pixels between the anchor and the popup.
 </ParamField>
 

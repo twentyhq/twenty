@@ -17,18 +17,16 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  RoundedLink,
-  SearchInput,
-  Section,
-  useToast,
-} from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import {
   type IconComponent,
   IconFlag,
@@ -350,7 +348,7 @@ export const SettingsAdminAiProviderDetail = () => {
             <SearchInput
               placeholder={t`Search a model...`}
               value={searchQuery}
-              onChange={setSearchQuery}
+              onValueChange={setSearchQuery}
             />
           )}
 

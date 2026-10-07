@@ -12,7 +12,10 @@ export const DropdownBack = ({
   className,
   onClick,
   ...props
-}: Omit<DropdownActionItemProps, 'page' | 'closeOnClick'>) => {
+}: Omit<
+  DropdownActionItemProps,
+  'page' | 'closeOnClick' | 'actions' | 'actionsVisibility'
+>) => {
   const { goBack, canGoBack } = useDropdownContext();
 
   return (
@@ -21,7 +24,7 @@ export const DropdownBack = ({
       className={clsx(styles.back, className)}
       data-dropdown-back=""
       disabled={props.disabled || !canGoBack}
-      startIcon={<IconChevronLeft />}
+      startIcon={<IconChevronLeft className={styles.backIcon} />}
       closeOnClick={false}
       onClick={(event) => {
         onClick?.(event);

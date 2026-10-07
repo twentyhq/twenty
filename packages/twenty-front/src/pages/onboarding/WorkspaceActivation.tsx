@@ -5,9 +5,10 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
+import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
+import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
@@ -17,7 +18,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
@@ -54,7 +56,8 @@ export const WorkspaceActivation = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setOnboardingFreeCredits =
+    useSetCurrentWorkspaceOnboardingFreeCredits();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );
@@ -107,11 +110,7 @@ export const WorkspaceActivation = () => {
     }
 
     hasTriggeredRef.current = true;
-    setOnboardingFreeCredits({
-      importContacts: 0,
-      inviteTeam: 0,
-      installApps: 0,
-    });
+    setOnboardingFreeCredits(ONBOARDING_FREE_CREDITS_DEFAULT_VALUE);
     void activate();
   }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 

@@ -31,6 +31,7 @@ import {
   IconArrowUpRight,
   IconBox,
   IconCheckbox,
+  IconCommand,
   IconLifebuoy,
   IconPlus,
   IconSearch,
@@ -50,6 +51,7 @@ const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
   CREATE_RECORD: IconPlus,
   WORKSPACE: IconApps,
   GO_TO: IconArrowUpRight,
+  DEVELOPER: IconCommand,
   FALLBACK: IconLifebuoy,
 };
 
@@ -62,8 +64,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
-  const { coreViewCommandIds, coreSelectionCommandIds } =
-    useCoreObjectsCommands();
+  const {
+    coreObjectCommandIds,
+    coreSelectionCommandIds,
+    coreSelectionSectionContext,
+  } = useCoreObjectsCommands();
 
   const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
   const currentViewSectionContext =
@@ -129,6 +134,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         return t`Workspace`;
       case 'GO_TO':
         return t`Go to`;
+      case 'DEVELOPER':
+        return t`Developer`;
       case 'FALLBACK':
         return t`Fallback`;
     }
@@ -137,7 +144,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const getSectionContext = (section: CommandMenuItemSection) => {
     switch (section) {
       case 'SELECTION':
-        return selectionSectionContext;
+        return coreSelectionSectionContext ?? selectionSectionContext;
       case 'CURRENT_VIEW':
         return currentViewSectionContext;
       case 'THIS_OBJECT':
@@ -149,26 +156,28 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     }
   };
 
+  const getSectionAppActions = (section: CommandMenuItemSection) =>
+    appActions.filter((item) => item.section === section);
+
   const getSectionExtraItemIds = (section: CommandMenuItemSection) => {
-    if (section === 'CURRENT_VIEW') {
-      return coreViewCommandIds;
+    if (section === 'THIS_OBJECT') {
+      return [
+        ...coreObjectCommandIds,
+        ...getSectionAppActions(section).map((item) => item.id),
+      ];
     }
 
     if (section === 'SELECTION') {
       return coreSelectionCommandIds;
     }
 
-    if (section === 'WORKSPACE') {
-      return appActions.map((item) => item.id);
-    }
-
-    return [];
+    return getSectionAppActions(section).map((item) => item.id);
   };
 
   const hasNoMatchingItems =
     !matchingItems.length &&
     appActions.length === 0 &&
-    coreViewCommandIds.length === 0 &&
+    coreObjectCommandIds.length === 0 &&
     coreSelectionCommandIds.length === 0;
 
   const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
@@ -218,31 +227,30 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
             {sectionCommandMenuItems.map((item) => (
               <CommandMenuItemRenderer item={item} key={item.id} />
             ))}
-            {(section === 'CURRENT_VIEW' || section === 'SELECTION') && (
+            {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
               <CoreObjectsCommands section={section} />
             )}
-            {section === 'WORKSPACE' &&
-              appActions.map((item) => {
-                const handleClick = () => {
-                  item.onClick();
-                  closeSidePanelMenu();
-                };
+            {getSectionAppActions(section).map((item) => {
+              const handleClick = () => {
+                item.onClick();
+                closeSidePanelMenu();
+              };
 
-                return (
-                  <SelectableListItem
-                    key={item.id}
-                    itemId={item.id}
-                    onEnter={handleClick}
-                  >
-                    <CommandMenuItem
-                      id={item.id}
-                      label={item.label}
-                      Icon={item.Icon}
-                      onClick={handleClick}
-                    />
-                  </SelectableListItem>
-                );
-              })}
+              return (
+                <SelectableListItem
+                  key={item.id}
+                  itemId={item.id}
+                  onEnter={handleClick}
+                >
+                  <CommandMenuItem
+                    id={item.id}
+                    label={item.label}
+                    Icon={item.Icon}
+                    onClick={handleClick}
+                  />
+                </SelectableListItem>
+              );
+            })}
           </CommandMenuItemSectionGroup>
         );
       })}

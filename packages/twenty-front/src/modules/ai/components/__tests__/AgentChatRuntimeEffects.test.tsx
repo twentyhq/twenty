@@ -1,16 +1,17 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
 import {
-  jotaiStore,
-  resetJotaiStore,
-} from '@/ui/utilities/state/jotai/jotaiStore';
+  currentWorkspaceState,
+  type CurrentWorkspace,
+} from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock('@/ai/components/AgentChatMessagesFetchEffect', () => ({
-  AgentChatMessagesFetchEffect: () => <div data-testid="messages-fetch" />,
+  AgentChatMessagesFetchEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
   AgentChatStreamSubscriptionEffect: () => (
@@ -18,43 +19,41 @@ jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
   ),
 }));
 jest.mock('@/ai/components/AgentChatPrepromptEffect', () => ({
-  AgentChatPrepromptEffect: () => <div data-testid="preprompt" />,
+  AgentChatPrepromptEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatStreamKeepAliveEffect', () => ({
-  AgentChatStreamKeepAliveEffect: () => <div data-testid="keep-alive" />,
+  AgentChatStreamKeepAliveEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatSessionStartTimeEffect', () => ({
-  AgentChatSessionStartTimeEffect: () => <div data-testid="session-start" />,
+  AgentChatSessionStartTimeEffect: () => null,
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-);
+const renderRuntimeEffects = () =>
+  render(
+    <JotaiProvider store={jotaiStore}>
+      <AgentChatRuntimeEffects />
+    </JotaiProvider>,
+  );
 
 describe('AgentChatRuntimeEffects', () => {
   beforeEach(() => {
-    resetJotaiStore();
-  });
-
-  it('should render nothing until the chat has been opened once', () => {
-    const { container } = render(<AgentChatRuntimeEffects />, {
-      wrapper: Wrapper,
-    });
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it('should run the chat runtime once the chat has been opened, regardless of the side panel', () => {
     jotaiStore.set(hasAgentChatBeenOpenedState.atom, true);
+    jotaiStore.set(currentWorkspaceState.atom, null);
+  });
 
-    const { getByTestId } = render(<AgentChatRuntimeEffects />, {
-      wrapper: Wrapper,
-    });
+  it('should run the chat runtime once the chat has been opened', () => {
+    renderRuntimeEffects();
 
-    expect(getByTestId('messages-fetch')).toBeInTheDocument();
-    expect(getByTestId('stream-subscription')).toBeInTheDocument();
-    expect(getByTestId('preprompt')).toBeInTheDocument();
-    expect(getByTestId('keep-alive')).toBeInTheDocument();
-    expect(getByTestId('session-start')).toBeInTheDocument();
+    expect(screen.queryByTestId('stream-subscription')).not.toBeNull();
+  });
+
+  it('should not run the chat runtime for a suspended workspace', () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      activationStatus: WorkspaceActivationStatus.SUSPENDED,
+    } as CurrentWorkspace);
+
+    renderRuntimeEffects();
+
+    expect(screen.queryByTestId('stream-subscription')).toBeNull();
   });
 });

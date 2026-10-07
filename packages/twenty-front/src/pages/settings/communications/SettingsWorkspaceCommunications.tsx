@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
 import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
@@ -11,7 +12,7 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconBrandWhatsapp,
   IconMail,
@@ -89,6 +90,15 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section.Root>
         <SettingsWorkspaceEmailGroupSection />
+        {isMessageCampaignFeatureEnabled && (
+          <Section.Root>
+            <Section.Header
+              title={t`Tracking`}
+              description={t`Measure engagement on the campaigns this workspace sends`}
+            />
+            <ClickTrackingSwitch />
+          </Section.Root>
+        )}
         {isMessageCampaignFeatureEnabled && (
           <Section.Root>
             <Section.Header

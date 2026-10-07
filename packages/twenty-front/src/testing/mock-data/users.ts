@@ -65,6 +65,8 @@ export const mockCurrentWorkspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
+  isCampaignClickTrackingEnabled: false,
+  isCampaignOpenTrackingEnabled: false,
   workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -234,22 +236,21 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock()
-      .filter(
-        (objectMetadata) =>
-          objectMetadata.nameSingular !== 'task' &&
-          objectMetadata.nameSingular !== 'opportunity',
-      )
-      .map((item) => ({
+    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map((item) => {
+      const hasAccess =
+        item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
+
+      return {
         objectMetadataId: item.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canReadObjectRecords: hasAccess,
+        canUpdateObjectRecords: hasAccess,
+        canSoftDeleteObjectRecords: hasAccess,
+        canDestroyObjectRecords: hasAccess,
         restrictedFields: {},
         rowLevelPermissionPredicates: [],
         rowLevelPermissionPredicateGroups: [],
-      })),
+      };
+    }),
   },
 };
 

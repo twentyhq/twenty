@@ -20,7 +20,9 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { Dropdown, SearchInput, Section } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconArrowUpRight,
   IconChevronRight,
@@ -167,7 +169,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
       <StyledSearchContainer>
         <SearchInput
           value={searchFilter}
-          onChange={handleSearchChange}
+          onValueChange={handleSearchChange}
           placeholder={t`Search a team member...`}
         />
         <DropdownRoot type="menu" dropdownId="workspace-members-open-dropdown">

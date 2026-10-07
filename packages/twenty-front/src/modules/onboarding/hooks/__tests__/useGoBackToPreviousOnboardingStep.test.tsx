@@ -20,8 +20,8 @@ import { mockedUserData } from '~/testing/mock-data/users';
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -61,15 +61,15 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     localStorage.clear();
     jotaiStore.set(currentUserState.atom, {
       ...mockedUserData,
-      onboardingStatus: OnboardingStatus.PROFILE_CREATION,
-      previousOnboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+      onboardingStatus: OnboardingStatus.INVITE_TEAM,
+      previousOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
     });
   });
 
   it('should apply the statuses returned by the server and flip the motion direction', async () => {
     const { result } = renderGoBackHook([
       buildGoBackMock({
-        onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+        onboardingStatus: OnboardingStatus.PROFILE_CREATION,
         previousOnboardingStatus: OnboardingStatus.SYNC_EMAIL,
       }),
     ]);
@@ -81,7 +81,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     const currentUser = jotaiStore.get(currentUserState.atom);
 
     expect(currentUser?.onboardingStatus).toBe(
-      OnboardingStatus.APPS_INSTALLATION,
+      OnboardingStatus.PROFILE_CREATION,
     );
     expect(currentUser?.previousOnboardingStatus).toBe(
       OnboardingStatus.SYNC_EMAIL,
@@ -121,11 +121,11 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     });
 
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.INVITE_TEAM,
     );
     expect(
       jotaiStore.get(currentUserState.atom)?.previousOnboardingStatus,
-    ).toBe(OnboardingStatus.APPS_INSTALLATION);
+    ).toBe(OnboardingStatus.PROFILE_CREATION);
     expect(jotaiStore.get(onboardingNavigationDirectionState.atom)).toBe(
       'forward',
     );
@@ -168,7 +168,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
       jotaiStore.get(currentUserState.atom)?.previousOnboardingStatus,
     ).toBeNull();
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.INVITE_TEAM,
     );
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });

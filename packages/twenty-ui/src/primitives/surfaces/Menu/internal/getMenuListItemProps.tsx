@@ -16,23 +16,27 @@ type MenuListItemProps<TState> = MenuItemSlotProps & {
 export const getMenuListItemProps = <
   TState,
   TProps extends MenuListItemProps<TState>,
->(
-  {
+>({
+  props: {
     color = 'neutral',
     startIcon,
     endIcon,
     description,
     descriptionPlacement,
-    hotkeys,
+    shortcut,
+    shortcutJoinLabel,
     disabled = false,
     children,
     render,
     ...props
-  }: TProps,
+  },
+  getListItemState,
+}: {
+  props: TProps;
   getListItemState?: (
     state: TState,
-  ) => Pick<ListItemProps, 'indicator' | 'selected' | 'hasSubmenu'>,
-) => ({
+  ) => Pick<ListItemProps, 'indicator' | 'selected' | 'hasSubmenu'>;
+}) => ({
   ...props,
   disabled,
   render: (renderProps: HTMLProps, state: TState) => (
@@ -49,7 +53,8 @@ export const getMenuListItemProps = <
       endIcon={endIcon}
       description={description}
       descriptionPlacement={descriptionPlacement}
-      hotkeys={hotkeys}
+      shortcut={shortcut}
+      shortcutJoinLabel={shortcutJoinLabel}
       {...getListItemState?.(state)}
     >
       {children}

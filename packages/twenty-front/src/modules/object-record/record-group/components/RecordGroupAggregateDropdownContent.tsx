@@ -1,98 +1,77 @@
-import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
-import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordGroupAggregateDropdownFieldsContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownFieldsContent';
-import { RecordGroupAggregateDropdownMenuContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuContent';
 import { RecordGroupAggregateDropdownOptionsContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownOptionsContent';
-import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
-import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
-import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
-import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
-import { type AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
+import { RECORD_GROUP_AGGREGATE_FIELDS_PAGE_ID } from '@/object-record/record-group/constants/RecordGroupAggregateFieldsPageId';
+import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/CountAggregateOperationOptions';
+import { DATE_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/DateAggregateOperationOptions';
+import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/PercentAggregateOperationOptions';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
-export const RecordGroupAggregateDropdownContent = () => {
-  const { currentContentId, objectMetadataItem } =
-    useDropdownContextStateManagement({
-      context: RecordGroupAggregateDropdownContext,
-    });
+type RecordGroupAggregateDropdownContentProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+};
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+export const RecordGroupAggregateDropdownContent = ({
+  objectMetadataItem,
+}: RecordGroupAggregateDropdownContentProps) => {
+  const { readableFields } = objectMetadataItem;
 
-  const restrictedFieldMetadataIds =
-    getNonReadableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
-        objectPermissionsByObjectMetadataId,
-        objectMetadataId: objectMetadataItem.id,
-      }),
-    });
+  const pages = [
+    {
+      id: 'countAggregateOperationsOptions',
+      title: t`Count`,
+      operations: COUNT_AGGREGATE_OPERATION_OPTIONS,
+    },
+    {
+      id: 'percentAggregateOperationsOptions',
+      title: t`Percent`,
+      operations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
+    },
+    {
+      id: 'datesAggregateOperationOptions',
+      title: t`Date`,
+      operations: DATE_AGGREGATE_OPERATION_OPTIONS,
+    },
+    {
+      id: 'moreAggregateOperationOptions',
+      title: t`More options`,
+      operations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
+    },
+  ];
 
-  const readableFields = objectMetadataItem.fields.filter(
-    (field) => !restrictedFieldMetadataIds.includes(field.id),
+  return (
+    <>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          {pages.map((page) => (
+            <Dropdown.ActionItem key={page.id} page={page.id}>
+              {page.title}
+            </Dropdown.ActionItem>
+          ))}
+        </Dropdown.Section>
+      </Dropdown.Page>
+      {pages.map((page) => (
+        <Dropdown.Page key={page.id} id={page.id}>
+          <RecordGroupAggregateDropdownOptionsContent
+            objectMetadataItem={objectMetadataItem}
+            availableAggregations={getAvailableFieldsIdsForAggregationFromObjectFields(
+              {
+                fields: readableFields,
+                targetAggregateOperations: page.operations,
+              },
+            )}
+            title={page.title}
+          />
+        </Dropdown.Page>
+      ))}
+      <Dropdown.Page id={RECORD_GROUP_AGGREGATE_FIELDS_PAGE_ID}>
+        <RecordGroupAggregateDropdownFieldsContent
+          objectMetadataItem={objectMetadataItem}
+        />
+      </Dropdown.Page>
+    </>
   );
-
-  switch (currentContentId) {
-    case 'countAggregateOperationsOptions': {
-      const availableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields({
-          fields: readableFields,
-          targetAggregateOperations: COUNT_AGGREGATE_OPERATION_OPTIONS,
-        });
-      return (
-        <RecordGroupAggregateDropdownOptionsContent
-          availableAggregations={availableAggregations}
-          title={t`Count`}
-        />
-      );
-    }
-    case 'percentAggregateOperationsOptions': {
-      const availableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields({
-          fields: readableFields,
-          targetAggregateOperations: PERCENT_AGGREGATE_OPERATION_OPTIONS,
-        });
-      return (
-        <RecordGroupAggregateDropdownOptionsContent
-          availableAggregations={availableAggregations}
-          title={t`Percent`}
-        />
-      );
-    }
-    case 'datesAggregateOperationOptions': {
-      const datesAvailableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields({
-          fields: readableFields,
-          targetAggregateOperations: [
-            DateAggregateOperations.EARLIEST,
-            DateAggregateOperations.LATEST,
-          ],
-        });
-      return (
-        <RecordGroupAggregateDropdownOptionsContent
-          availableAggregations={datesAvailableAggregations}
-          title={t`Date`}
-        />
-      );
-    }
-    case 'moreAggregateOperationOptions': {
-      const availableAggregationsWithoutDates: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields({
-          fields: readableFields,
-          targetAggregateOperations: NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-        });
-      return (
-        <RecordGroupAggregateDropdownOptionsContent
-          availableAggregations={availableAggregationsWithoutDates}
-          title={t`More options`}
-        />
-      );
-    }
-    case 'aggregateFields':
-      return <RecordGroupAggregateDropdownFieldsContent />;
-    default:
-      return <RecordGroupAggregateDropdownMenuContent />;
-  }
 };

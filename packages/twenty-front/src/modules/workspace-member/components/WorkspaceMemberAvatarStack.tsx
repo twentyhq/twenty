@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { AvatarGroup } from 'twenty-ui/components';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 

@@ -7,7 +7,6 @@ import {
 import {
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
-  SLACK_CHANNEL_RULE_OBJECT_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
@@ -15,7 +14,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
   description:
-    'Tools only forward requests to Slack using the configured connected account. Tracks assistant requests, links Slack accounts to workspace members (which needs read access on workspace members for the email match), keeps per-channel rules for the assistant, reads CRM records to render record link previews in Slack, and runs the assistant agent; write access to the CRM is granted separately through the role assigned to the agent.',
+    'Everything the Slack app can do in the CRM. Tools only forward requests to Slack using the configured connected account. Tracks assistant requests, links Slack accounts to workspace members (which needs read access on workspace members for the email match), reads CRM records to render record link previews in Slack, and runs the assistant agent, which creates, updates and soft-deletes people, companies, opportunities, notes and tasks through the narrower Slack Assistant role.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -41,13 +40,6 @@ export default defineApplicationRole({
       canDestroyObjectRecords: true,
     },
     {
-      objectUniversalIdentifier: SLACK_CHANNEL_RULE_OBJECT_UNIVERSAL_IDENTIFIER,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: true,
-    },
-    {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
           .universalIdentifier,
@@ -62,13 +54,15 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget.universalIdentifier,
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget.universalIdentifier,
       ] as const
     ).map((objectUniversalIdentifier) => ({
       objectUniversalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
-      canSoftDeleteObjectRecords: false,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: false,
     })),
   ],
