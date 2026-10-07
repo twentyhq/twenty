@@ -21,7 +21,7 @@ export function SupportDocument() {
       <p>
         If you&rsquo;re on{' '}
         <ExternalLink href={SITE_URLS.appWelcome}>Twenty Cloud</ExternalLink>,
-        reach us from inside the app, or email{' '}
+        open Settings and select Support to reach us, or email{' '}
         <a href="mailto:contact@twenty.com">contact@twenty.com</a> with your
         workspace URL so we can find your account.
       </p>
