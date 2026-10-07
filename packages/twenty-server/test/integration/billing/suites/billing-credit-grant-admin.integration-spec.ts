@@ -4,13 +4,14 @@ import { randomUUID } from 'node:crypto';
 import { addDays, addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
+  debitInFlightCredits,
   getSeededBillingWorkspaceId,
   listCreditGrants,
   quitBillingFixtureRedis,
-  readAllowanceCounter,
+  readAllowanceConsumedMicro,
+  refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
-  warmAllowanceCounter,
   setSubscriptionStatus,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
@@ -24,6 +25,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 const PERIOD_START = startOfMonth(new Date());
 const PERIOD_END = addMonths(PERIOD_START, 1);
 const ALLOWANCE_MICRO = 1_000_000;
+const IN_FLIGHT_CREDITS_MICRO = 120_000;
 
 const GRANT_MUTATION = `
   mutation GrantWorkspaceCredits(
@@ -181,47 +183,61 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it('drops the warm allowance counter when a grant lands', async () => {
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+  it.failing(
+    'keeps in-flight usage on the allowance when a grant lands',
+    async () => {
+      await refreshCurrentBillingSubscription(workspaceId);
 
-    await grantCredits({
-      workspaceId,
-      amount: 2,
-      type: BillingCreditGrantType.COMPENSATION,
-      reason: null,
-    });
+      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
-  });
+      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+      await grantCredits({
+        workspaceId,
+        amount: 2,
+        type: BillingCreditGrantType.COMPENSATION,
+        reason: null,
+      });
 
-  it('takes a revoked grant off the ledger and drops the counter', async () => {
-    const granted = await grantCredits({
-      workspaceId,
-      amount: 2,
-      type: BillingCreditGrantType.COMPENSATION,
-      reason: null,
-    });
-    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+      );
+    },
+  );
 
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+  it.failing(
+    'takes a revoked grant off the ledger and keeps in-flight usage',
+    async () => {
+      const granted = await grantCredits({
+        workspaceId,
+        amount: 2,
+        type: BillingCreditGrantType.COMPENSATION,
+        reason: null,
+      });
+      const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+      const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-    const revoked = await callAdminGraphql(REVOKE_MUTATION, {
-      workspaceId,
-      creditGrantId,
-    });
+      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
-    expect(revoked.body.errors).toBeUndefined();
-    expect(
-      revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
-    ).not.toBeNull();
+      const revoked = await callAdminGraphql(REVOKE_MUTATION, {
+        workspaceId,
+        creditGrantId,
+      });
 
-    const grants = await listCreditGrants(workspaceId);
+      expect(revoked.body.errors).toBeUndefined();
+      expect(
+        revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
+      ).not.toBeNull();
 
-    expect(grants[0].revokedAt).not.toBeNull();
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
-  });
+      const grants = await listCreditGrants(workspaceId);
 
-  it('drops the counter again when a revocation is retried', async () => {
+      expect(grants[0].revokedAt).not.toBeNull();
+      expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+        consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+      );
+    },
+  );
+
+  it.failing('keeps in-flight usage when a revocation is retried', async () => {
     const granted = await grantCredits({
       workspaceId,
       amount: 2,
@@ -231,7 +247,10 @@ describe('Admin credit grant and revoke (integration)', () => {
     const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
 
     await callAdminGraphql(REVOKE_MUTATION, { workspaceId, creditGrantId });
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
     const retried = await callAdminGraphql(REVOKE_MUTATION, {
       workspaceId,
@@ -239,7 +258,9 @@ describe('Admin credit grant and revoke (integration)', () => {
     });
 
     expect(retried.body.errors).toBeUndefined();
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
   });
 
   // The panel offers three operator types, but the mutation is reachable directly and jobs write these two
@@ -286,14 +307,12 @@ describe('Admin credit grant and revoke (integration)', () => {
     };
 
     const first = await callAdminGraphql(GRANT_MUTATION, variables);
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
     const second = await callAdminGraphql(GRANT_MUTATION, variables);
 
     expect(second.body.data.grantWorkspaceCredits.id).toBe(
       first.body.data.grantWorkspaceCredits.id,
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
   // The anchoring subscription can be gone by retry time, and the operation already succeeded

@@ -9,8 +9,12 @@ import {
 import { addDays, subDays } from 'date-fns';
 import request from 'supertest';
 import {
+  debitInFlightCredits,
+  flushQuotaCounters,
   getSeededBillingWorkspaceId,
   quitBillingFixtureRedis,
+  readAllowanceConsumedMicro,
+  refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
   TEST_STRIPE_SUBSCRIPTION_ITEM_ID,
@@ -26,13 +30,13 @@ import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 const PERIOD_START = subDays(new Date(), 1);
 const PERIOD_END = addDays(PERIOD_START, 30);
 const ALLOWANCE_MICRO = 5 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+const IN_FLIGHT_CREDITS_MICRO = 100;
 const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
 
 const GRANT_MUTATION = `
@@ -75,24 +79,24 @@ describe('Credit allowance enforcement (integration)', () => {
   let workspaceId: string;
   let clickHouseClient: ClickHouseClient;
 
-  const refreshBillingSubscriptionCache = () =>
-    getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, ['currentBillingSubscription']);
+  const getQuotaService = () =>
+    getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
 
-  const findAllowanceRefusal = () =>
-    getAppProviderByClassName<UsageLimitQuotaService>(
-      'UsageLimitQuotaService',
-    ).findExhaustedScope({
+  const findAllowanceRefusal = (costMicro = 0) =>
+    getQuotaService().findExhaustedScope({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: {},
+      cost: { [UsageUnit.CREDIT]: costMicro },
     });
 
-  const countLedgerRows = async (): Promise<number> => {
+  const readLedger = async (): Promise<{
+    rowCount: number;
+    creditsUsedMicro: number;
+  }> => {
     const result = await clickHouseClient.query({
-      query: `SELECT count() AS rowCount
+      query: `SELECT count() AS rowCount, sum(creditsUsedMicro) AS creditsUsedMicro
               FROM usageEvent
               WHERE workspaceId = {workspaceId:String}
                 AND periodStart = {periodStart:DateTime64(3)}`,
@@ -103,10 +107,19 @@ describe('Credit allowance enforcement (integration)', () => {
       format: 'JSONEachRow',
     });
 
-    const [row] = await result.json<{ rowCount: string }>();
+    const [row] = await result.json<{
+      rowCount: string;
+      creditsUsedMicro: string;
+    }>();
 
-    return Number(row?.rowCount ?? 0);
+    return {
+      rowCount: Number(row?.rowCount ?? 0),
+      creditsUsedMicro: Number(row?.creditsUsedMicro ?? 0),
+    };
   };
+
+  const countLedgerRows = async (): Promise<number> =>
+    (await readLedger()).rowCount;
 
   const recordAiUsage = async (creditsUsedMicro: number) => {
     const rowCountBefore = await countLedgerRows();
@@ -160,7 +173,7 @@ describe('Credit allowance enforcement (integration)', () => {
       creditAmountMicro: ALLOWANCE_MICRO,
       ...overrides,
     });
-    await refreshBillingSubscriptionCache();
+    await refreshCurrentBillingSubscription(workspaceId);
   };
 
   beforeAll(async () => {
@@ -266,9 +279,66 @@ describe('Credit allowance enforcement (integration)', () => {
       `DELETE FROM core."billingSubscriptionItem" WHERE "stripeSubscriptionItemId" = $1`,
       [TEST_STRIPE_SUBSCRIPTION_ITEM_ID],
     );
-    await refreshBillingSubscriptionCache();
+    await refreshCurrentBillingSubscription(workspaceId);
     await recordAiUsage(ALLOWANCE_MICRO);
 
     expect(await findAllowanceRefusal()).toBeNull();
   });
+
+  it('keeps the allowance counter equal to the period ledger', async () => {
+    const workflowRunCreditsMicro = [600, 300];
+
+    for (const creditsUsedMicro of workflowRunCreditsMicro) {
+      await getQuotaService().charge({
+        workspaceId,
+        events: [
+          {
+            resourceType: UsageResourceType.WORKFLOW,
+            operationType: UsageOperationType.WORKFLOW_EXECUTION,
+            unit: UsageUnit.INVOCATION,
+            quantity: 1,
+            creditsUsedMicro,
+          },
+        ],
+      });
+    }
+
+    await expectEventually(
+      async () => {
+        expect(await readLedger()).toEqual({
+          rowCount: workflowRunCreditsMicro.length,
+          creditsUsedMicro: 900,
+        });
+      },
+      { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+    );
+
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(900);
+
+    await flushQuotaCounters(workspaceId);
+
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(900);
+  });
+
+  it.failing(
+    'keeps in-flight usage when a grant lifts the refusal',
+    async () => {
+      const grantMicro = INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+
+      await recordAiUsage(ALLOWANCE_MICRO - IN_FLIGHT_CREDITS_MICRO);
+      await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
+
+      expect(await findAllowanceRefusal()).toMatchObject({
+        exhaustedKind: 'allowance',
+      });
+
+      await grantCredits(1);
+
+      expect(await findAllowanceRefusal(grantMicro)).toBeNull();
+      expect(await findAllowanceRefusal(grantMicro + 1)).toMatchObject({
+        exhaustedKind: 'allowance',
+        limitValue: ALLOWANCE_MICRO + grantMicro,
+      });
+    },
+  );
 });
