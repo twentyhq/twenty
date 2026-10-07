@@ -39,8 +39,6 @@ twenty remote use dev
 
 A remote is a named workspace connection. Browser login requires an interactive
 terminal and saves a user OAuth session after verifying it with the server.
-Workspace commands do not require an app project or register an application in
-that workspace. Application deployment is a separate operation.
 
 For scripts, pass an API key through standard input:
 
@@ -87,8 +85,8 @@ twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
 twenty api graphql --metadata --query '{ currentWorkspace { displayName } }'
 ```
 
-Both commands use the selected connection without an app project. REST paths
-stay inside its API URL; credentials are not sent to an arbitrary host. REST
+Both commands use the selected connection. REST paths stay inside its API URL;
+credentials are not sent to an arbitrary host. REST
 uses GET by default. `--body` accepts JSON inline, `@file.json`, or `-` for stdin
 and requires an explicit `--method`.
 
@@ -100,8 +98,8 @@ twenty api graphql --query @query.graphql --variables @variables.json
 GraphQL uses the core endpoint by default and the metadata endpoint with
 `--metadata`. `--query` accepts a document inline, `@file.graphql` or `-`;
 `--variables` accepts a JSON object through the same input forms. Only one option
-can read stdin. Mutations and REST writes execute directly, without the app
-plan/apply confirmation flow. Server permissions still apply.
+can read stdin. Mutations and REST writes execute directly, without a
+confirmation step. Server permissions still apply.
 
 Human output displays the response body. In JSON mode, REST returns status,
 selected response headers and body in `data`; GraphQL returns its data there.
