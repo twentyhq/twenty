@@ -2,9 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { CURRENCY_MICROS_DECIMAL_PLACES } from '@/ui/field/input/constants/CurrencyMicrosDecimalPlaces';
 import { IMaskInput } from 'react-imask';

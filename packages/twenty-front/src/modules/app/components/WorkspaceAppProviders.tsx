@@ -34,9 +34,9 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
-import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
-import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
+import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
+import { PageFavicon } from '@/app/components/PageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 

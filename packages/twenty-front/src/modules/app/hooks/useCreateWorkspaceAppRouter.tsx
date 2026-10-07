@@ -17,8 +17,8 @@ import { OnboardingStepPageLoader } from '@/onboarding/components/OnboardingStep
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/app/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
