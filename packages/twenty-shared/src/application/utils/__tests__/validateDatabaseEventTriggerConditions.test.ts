@@ -24,7 +24,7 @@ describe('validateDatabaseEventTriggerConditions', () => {
     ).toEqual([]);
   });
 
-  it('accepts and, or and not nested in a composite field', () => {
+  it('rejects and, or and not inside a field', () => {
     expect(
       validateDatabaseEventTriggerConditions({
         eventName: EVENT_NAME,
@@ -35,12 +35,15 @@ describe('validateDatabaseEventTriggerConditions', () => {
                 { primaryEmail: { eq: 'a@example.com' } },
                 { primaryEmail: { eq: 'b@example.com' } },
               ],
-              not: { primaryEmail: { like: '%@spam.com' } },
             },
+            personId: { not: { eq: 'person-1' } },
           },
         },
       }),
-    ).toEqual([]);
+    ).toEqual([
+      'record condition on "emails" uses "or" inside a field, combine whole field conditions instead',
+      'record condition on "personId" uses "not" inside a field, combine whole field conditions instead',
+    ]);
   });
 
   it('rejects eq and neq against null', () => {

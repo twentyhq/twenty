@@ -135,11 +135,18 @@ const validateRecordCondition = (
 
     const keys = Object.keys(value);
     const operatorKeys = keys.filter(isOperatorKey);
+    const logicalKey = keys.find(isLogicalKey);
+
+    if (isDefined(logicalKey)) {
+      walk.errors.push(
+        `record condition on "${childPath}" uses "${logicalKey}" inside a field, combine whole field conditions instead`,
+      );
+      continue;
+    }
 
     if (operatorKeys.length === 0) {
       const unknownOperator = Object.entries(value).find(
-        ([childKey, childValue]) =>
-          !isLogicalKey(childKey) && !isPlainObject(childValue),
+        ([, childValue]) => !isPlainObject(childValue),
       )?.[0];
 
       if (isDefined(unknownOperator)) {

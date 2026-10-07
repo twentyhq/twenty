@@ -63,18 +63,6 @@ const cases: [string, DatabaseEventTriggerRecordCondition, boolean][] = [
     },
     false,
   ],
-  [
-    'or nested in a composite field',
-    {
-      emails: {
-        or: [
-          { primaryEmail: { eq: 'grace@twenty.com' } },
-          { primaryEmail: { eq: 'ada@twenty.com' } },
-        ],
-      },
-    },
-    true,
-  ],
   ['startsWith', { handle: { startsWith: 'Ada' } }, true],
   ['two operators on one field', { score: { gt: 5, lt: 10 } }, true],
   [
