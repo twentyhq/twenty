@@ -2,7 +2,7 @@
 
 import type Stripe from 'stripe';
 
-import { CREDIT_TOP_UP_INVOICE_KIND } from 'src/engine/core-modules/billing/constants/credit-top-up-invoice-kind.constant';
+import { CREDIT_TOP_UP } from 'src/engine/core-modules/billing/constants/credit-top-up.constant';
 
 export const buildCreditTopUpInvoiceMetadata = ({
   workspaceId,
@@ -13,7 +13,7 @@ export const buildCreditTopUpInvoiceMetadata = ({
   userId: string;
   creditAmountMicro: number;
 }): Stripe.MetadataParam => ({
-  kind: CREDIT_TOP_UP_INVOICE_KIND,
+  kind: CREDIT_TOP_UP,
   workspaceId,
   userId,
   creditAmountMicro: String(creditAmountMicro),
