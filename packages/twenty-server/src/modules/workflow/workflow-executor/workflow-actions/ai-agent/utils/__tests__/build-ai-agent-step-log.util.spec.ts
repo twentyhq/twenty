@@ -20,9 +20,11 @@ const SUMMARY: AgentRunSummary = {
 };
 
 describe('buildAiAgentStepLog', () => {
-  it('logs the run summary as the AI_AGENT step details', () => {
-    expect(buildAiAgentStepLog(SUMMARY)).toEqual({
-      details: { type: 'AI_AGENT', ...SUMMARY },
+  it('logs the run summary and its conversation as the AI_AGENT step details', () => {
+    expect(
+      buildAiAgentStepLog({ summary: SUMMARY, threadId: 'thread-id' }),
+    ).toEqual({
+      details: { type: 'AI_AGENT', ...SUMMARY, threadId: 'thread-id' },
       entries: [],
       sizeBytes: 0,
     });

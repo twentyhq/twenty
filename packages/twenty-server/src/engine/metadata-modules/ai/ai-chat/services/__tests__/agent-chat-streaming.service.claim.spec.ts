@@ -280,17 +280,17 @@ describe('AgentChatStreamingService claim & reap', () => {
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
     });
 
-    it('refuses a message while a workflow step waits on the pending call', async () => {
+    it('refuses a message while a caller waits on the pending call', async () => {
       const { send, agentChatService, messageQueueService } = buildService({
         thread: waitingThread,
         pendingToolOutput: {
           result: { questions: QUESTIONS, status: 'pending' },
-          workflowStep: { workflowRunId: 'workflow-run-id', stepId: 'step-id' },
+          awaitedByCaller: true,
         },
       });
 
       await expect(send()).rejects.toMatchObject({
-        code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
+        code: AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
       });
       expect(agentChatService.closePendingToolCalls).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
