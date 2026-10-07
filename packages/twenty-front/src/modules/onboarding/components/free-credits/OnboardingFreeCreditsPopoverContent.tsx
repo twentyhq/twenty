@@ -103,7 +103,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
       <StyledSection>
         <StyledSectionTitle>{t`Free credits`}</StyledSectionTitle>
         <MetricRow
-          startIcon={<IconCoins size={14} />}
+          startIcon={<IconCoins size={theme.icon.size.sm} />}
           value={plural(earnedCredits, {
             one: `${formattedEarnedCredits} credit`,
             other: `${formattedEarnedCredits} credits`,
@@ -123,7 +123,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
               return (
                 <MetricRow
                   key={step}
-                  startIcon={<Icon size={14} />}
+                  startIcon={<Icon size={theme.icon.size.sm} />}
                   value={
                     credits < rewardCredits
                       ? `${formatOnboardingCredits(credits, numberFormat)}/${formatOnboardingCredits(rewardCredits, numberFormat)}`
@@ -145,25 +145,25 @@ export const OnboardingFreeCreditsPopoverContent = ({
             : t`1 credit is enough for one of these on average`}
         </StyledSectionTitle>
         <MetricRow
-          startIcon={<IconSparkles size={14} />}
+          startIcon={<IconSparkles size={theme.icon.size.sm} />}
           value={formatNumber(aiActions)}
         >
           {t`AI actions`}
         </MetricRow>
         <MetricRow
-          startIcon={<IconSettingsAutomation size={14} />}
+          startIcon={<IconSettingsAutomation size={theme.icon.size.sm} />}
           value={formatNumber(workflowSteps)}
         >
           {t`Workflow steps`}
         </MetricRow>
         <MetricRow
-          startIcon={<IconWand size={14} />}
+          startIcon={<IconWand size={theme.icon.size.sm} />}
           value={formatNumber(enrichments)}
         >
           {t`Enrichments`}
         </MetricRow>
         <MetricRow
-          startIcon={<IconVideo size={14} />}
+          startIcon={<IconVideo size={theme.icon.size.sm} />}
           value={plural(callRecordingHours, {
             one: `${formattedCallRecordingHours} hour`,
             other: `${formattedCallRecordingHours} hours`,
@@ -172,7 +172,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           {t`Call recording`}
         </MetricRow>
         <MetricRow
-          startIcon={<IconMail size={14} />}
+          startIcon={<IconMail size={theme.icon.size.sm} />}
           value={formatNumber(emailsSent)}
         >
           {t`Shared inbox emails`}

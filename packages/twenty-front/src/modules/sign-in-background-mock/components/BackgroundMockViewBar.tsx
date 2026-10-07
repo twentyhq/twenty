@@ -37,7 +37,7 @@ export const BackgroundMockViewBar = () => {
       leftComponent={
         <StyledViewPicker>
           <TintedIconTile
-            icon={<IconBuildingSkyscraper size={16} />}
+            icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
             color="blue"
           />
           <span>All Companies</span>

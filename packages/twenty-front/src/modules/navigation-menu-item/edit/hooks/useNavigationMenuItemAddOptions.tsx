@@ -13,6 +13,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 import {
   FindAllStandalonePageLayoutsDocument,
   type NavigationMenuItem,
@@ -62,6 +63,7 @@ export const useNavigationMenuItemAddOptions = ({
   selectObject,
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const {
@@ -115,14 +117,16 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'object',
           label: t`Object`,
-          icon: <TintedIconTile icon={<IconBox size={16} />} />,
+          icon: <TintedIconTile icon={<IconBox size={theme.icon.size.md} />} />,
           onClick: () => navigateToStep('object'),
           hasSubMenu: true,
         },
         {
           id: 'view',
           label: t`View`,
-          icon: <TintedIconTile icon={<IconTable size={16} />} />,
+          icon: (
+            <TintedIconTile icon={<IconTable size={theme.icon.size.md} />} />
+          ),
           onClick: () => navigateToStep('view'),
           hasSubMenu: true,
         },
@@ -176,7 +180,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'page',
           label: t`Page`,
-          icon: <TintedIconTile icon={<IconPerspective size={16} />} />,
+          icon: (
+            <TintedIconTile
+              icon={<IconPerspective size={theme.icon.size.md} />}
+            />
+          ),
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
@@ -255,7 +263,7 @@ export const useNavigationMenuItemAddOptions = ({
           return {
             id: view.id,
             label: view.name,
-            icon: <TintedIconTile icon={<Icon size={16} />} />,
+            icon: <TintedIconTile icon={<Icon size={theme.icon.size.md} />} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
             isAlreadyInSidebar: viewIdsAlreadyAdded.has(view.id),
             onClick: () =>
@@ -289,7 +297,9 @@ export const useNavigationMenuItemAddOptions = ({
             icon: isDefined(navigationItem) ? (
               <NavigationMenuItemIcon navigationMenuItem={navigationItem} />
             ) : (
-              <TintedIconTile icon={<IconPerspective size={16} />} />
+              <TintedIconTile
+                icon={<IconPerspective size={theme.icon.size.md} />}
+              />
             ),
             isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
             isAlreadyInSidebar: pageLayoutIdsAlreadyAdded.has(page.id),
