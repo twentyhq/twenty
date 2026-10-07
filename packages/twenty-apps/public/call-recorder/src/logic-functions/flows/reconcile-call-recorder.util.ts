@@ -228,16 +228,17 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
     ).map((callRecording) => [callRecording.id, callRecording]),
   );
 
-  const canceledMeetingReconciliations = await reconcileCanceledMeetings({
-    client,
-    meetingPolicyResults: meetingPolicyResults.filter(
-      (meetingPolicyResult) => !meetingPolicyResult.shouldRequestBot,
-    ),
-    removedCalendarEventIdsByMeetingKey,
-    callRecordingsByCalendarEventId,
-    policyManagedCallRecordingsById,
-    activeMeetingCallRecordingIds: new Set(activeMeetingCallRecordingIds),
-  });
+  const { canceledMeetingReconciliations, callRecordingIdsToFollowUp } =
+    await reconcileCanceledMeetings({
+      client,
+      meetingPolicyResults: meetingPolicyResults.filter(
+        (meetingPolicyResult) => !meetingPolicyResult.shouldRequestBot,
+      ),
+      removedCalendarEventIdsByMeetingKey,
+      callRecordingsByCalendarEventId,
+      policyManagedCallRecordingsById,
+      activeMeetingCallRecordingIds: new Set(activeMeetingCallRecordingIds),
+    });
 
   await clearCanceledMeetingsRecordingOn(
     client,
@@ -250,11 +251,14 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
   // Armed before creating or re-enabling requests, so a run that dies mid-batch still leaves every
   // new or re-enabled request its follow-up.
   await enqueueCallRecordingRequestFollowUps({
-    callRecordingIds: activeMeetingCallRecordingIds.filter((callRecordingId) =>
-      isUndefined(
-        policyManagedCallRecordingsById.get(callRecordingId)?.externalBotId,
+    callRecordingIds: [
+      ...callRecordingIdsToFollowUp,
+      ...activeMeetingCallRecordingIds.filter((callRecordingId) =>
+        isUndefined(
+          policyManagedCallRecordingsById.get(callRecordingId)?.externalBotId,
+        ),
       ),
-    ),
+    ],
   });
 
   const activeMeetingReconciliations = await reconcileActiveMeetings({
@@ -294,7 +298,11 @@ const reconcileCanceledMeetings = async ({
   callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
   policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
   activeMeetingCallRecordingIds: Set<string>;
-}): Promise<CanceledMeetingReconciliation[]> => {
+}): Promise<{
+  canceledMeetingReconciliations: CanceledMeetingReconciliation[];
+  callRecordingIdsToFollowUp: string[];
+}> => {
+  const callRecordingIdsToFollowUp: string[] = [];
   const callRecordingIdsCanceledInBatch = new Set<string>();
   const canceledMeetingReconciliations: CanceledMeetingReconciliation[] = [];
 
@@ -314,6 +322,20 @@ const reconcileCanceledMeetings = async ({
     });
     const cancellableCallRecordings = meetingCallRecordings.filter(
       isCancellableCallRecording,
+    );
+
+    // A redelivery must also arm requests whose cancellation was already persisted.
+    callRecordingIdsToFollowUp.push(
+      ...meetingCallRecordings
+        .filter(
+          (callRecording) =>
+            isCancellableCallRecording(callRecording) ||
+            (callRecording.recordingRequestStatus ===
+              CallRecordingRequestStatus.CANCELED &&
+              (!isUndefined(callRecording.externalBotId) ||
+                !isUndefined(callRecording.botScheduleAttemptedAt))),
+        )
+        .map((callRecording) => callRecording.id),
     );
 
     try {
@@ -337,7 +359,7 @@ const reconcileCanceledMeetings = async ({
     }
   }
 
-  return canceledMeetingReconciliations;
+  return { canceledMeetingReconciliations, callRecordingIdsToFollowUp };
 };
 
 const reconcileActiveMeetings = async ({

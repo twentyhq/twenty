@@ -10,7 +10,7 @@ import {
 } from 'src/logic-functions/flows/follow-up-call-recording-request.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
-import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
+import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const followUpCallRecordingRequestHandler = async (
@@ -35,7 +35,7 @@ export const followUpCallRecordingRequestHandler = async (
       // borrow that run's user.
       client: new CoreApiClient({
         runAs: 'application',
-        fetch: fetchWithTimeout,
+        fetch: fetchWithRateLimitRetry,
       }),
       callRecordingId,
       attempt,
@@ -65,6 +65,6 @@ export default defineLogicFunction({
   name: 'follow-up-call-recording-request',
   description:
     'Checks a call recording request a while after it changed and finishes what Recall left undone: books a missing bot, cancels a leftover one, or marks the recording failed once its meeting is over.',
-  timeoutSeconds: 120,
+  timeoutSeconds: 300,
   handler: followUpCallRecordingRequestHandler,
 });

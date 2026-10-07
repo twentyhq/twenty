@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -32,5 +33,5 @@ export const updatePendingCallRecording = async ({
     },
   });
 
-  return (result.updateCallRecordings ?? []).length > 0;
+  return isNonEmptyArray(result.updateCallRecordings);
 };

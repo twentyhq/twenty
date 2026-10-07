@@ -2381,6 +2381,19 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   describe('cancellation', () => {
+    const cancelThroughCalendar = async (calendarEventId: string) => {
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: { id: calendarEventId, data: { isCanceled: true } },
+          id: true,
+        },
+      });
+      return reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+    };
+
     it('cancels the request and deletes the Recall bot', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -2399,16 +2412,11 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     it('persists cancellation and deletes the bot even when follow-up enqueueing fails', async () => {
-      const { callRecordingId, botId } =
+      const { calendarEventId, callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
       recall.failFollowUpEnqueue = true;
 
-      await expect(
-        cancelCallRecordingRequest({
-          client,
-          callRecording: { id: callRecordingId, externalBotId: botId },
-        }),
-      ).rejects.toThrow();
+      await expect(cancelThroughCalendar(calendarEventId)).rejects.toThrow();
 
       const callRecording = await fetchCallRecording(callRecordingId);
       expect(callRecording.recordingRequestStatus).toBe('CANCELED');
@@ -2446,14 +2454,11 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     it('cancels the bot in the follow-up when the inline Recall cancellation failed', async () => {
-      const { callRecordingId, botId } =
+      const { calendarEventId, callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
 
       recall.failNextDelete = true;
-      await cancelCallRecordingRequest({
-        client,
-        callRecording: { id: callRecordingId, externalBotId: botId },
-      });
+      await cancelThroughCalendar(calendarEventId);
 
       // The Recall half failed, so the bot id must survive for the follow-up.
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
@@ -2480,10 +2485,7 @@ describe('call recorder app lifecycle (integration)', () => {
         metadata: buildBotMetadata(callRecordingId, workspaceId),
       });
 
-      await cancelCallRecordingRequest({
-        client,
-        callRecording: { id: callRecordingId },
-      });
+      await cancelThroughCalendar(calendarEventId);
       await runArmedFollowUps();
 
       expect(recall.deletedBotIds).toEqual([
@@ -4148,6 +4150,29 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
     });
+
+    it.each(['known bot', 'uncertain booking'])(
+      're-arms a canceled %s after workspace-disable enqueueing fails',
+      async (booking) => {
+        const callRecordingId = await createPendingCallRecording({
+          ...(booking === 'known bot'
+            ? { externalBotId: 'recall-bot-awaiting-cancellation' }
+            : { botScheduleAttemptedAt: new Date().toISOString() }),
+        });
+        turnRecordingOff();
+        recall.failFollowUpEnqueue = true;
+
+        await expect(syncCalendarBotSchedulingHandler()).rejects.toThrow();
+        expect(
+          (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+        ).toBe('CANCELED');
+        expect(followUpsArmedFor(callRecordingId)).toHaveLength(0);
+
+        recall.failFollowUpEnqueue = false;
+        await syncCalendarBotSchedulingHandler();
+        expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
+      },
+    );
 
     it('stops the cancellation chain when Recall is down, leaving the bot to its follow-up', async () => {
       const { callRecordingId, botId } =

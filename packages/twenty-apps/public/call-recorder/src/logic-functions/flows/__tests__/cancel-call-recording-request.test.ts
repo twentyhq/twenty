@@ -3,77 +3,64 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 
-const { enqueueJobsMock, cancelRecallBotMock } = vi.hoisted(() => ({
-  enqueueJobsMock: vi.fn(),
+const { cancelRecallBotMock, mutationMock } = vi.hoisted(() => ({
+  mutationMock: vi.fn(),
   cancelRecallBotMock: vi.fn(),
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({ enqueueJobs: enqueueJobsMock }));
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: class {
+    mutation = mutationMock;
+  },
+}));
+
 vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
   cancelRecallBot: cancelRecallBotMock,
 }));
 
 describe('cancelCallRecordingRequest', () => {
   beforeEach(() => {
-    enqueueJobsMock.mockReset().mockResolvedValue({ enqueued: true });
+    mutationMock.mockReset().mockResolvedValue({
+      updateCallRecording: { id: 'recording' },
+      updateCallRecordings: [{ id: 'recording' }],
+    });
     cancelRecallBotMock.mockReset().mockResolvedValue({ ok: true });
   });
 
   it.each([undefined, 'recall-bot'])(
-    'persists cancellation despite an enqueue failure with bot %s',
+    'persists cancellation and deletes the bot when present: %s',
     async (externalBotId) => {
-      const fetchMock = vi.fn().mockImplementation(
-        async () =>
-          new Response(
-            JSON.stringify({
-              data: {
-                updateCallRecording: { id: 'recording' },
-                updateCallRecordings: [{ id: 'recording' }],
-              },
-            }),
-          ),
-      );
-      const client = new CoreApiClient({
-        url: 'https://example.test/graphql',
-        fetch: fetchMock,
-      });
-      const enqueueError = new Error('queue unavailable');
-      enqueueJobsMock.mockRejectedValue(enqueueError);
+      const client = new CoreApiClient();
 
       await expect(
         cancelCallRecordingRequest({
           client,
           callRecording: { id: 'recording', externalBotId },
         }),
-      ).rejects.toBe(enqueueError);
+      ).resolves.toBeUndefined();
 
-      expect(fetchMock).toHaveBeenCalledWith(
-        'https://example.test/graphql',
-        expect.objectContaining({
-          body: expect.stringContaining('CANCELED'),
-        }),
-      );
+      expect(mutationMock).toHaveBeenCalledWith({
+        updateCallRecording: {
+          __args: {
+            id: 'recording',
+            data: { recordingRequestStatus: 'CANCELED' },
+          },
+          id: true,
+        },
+      });
       if (externalBotId) {
         expect(cancelRecallBotMock).toHaveBeenCalledExactlyOnceWith({
           externalBotId,
         });
-        expect(fetchMock).toHaveBeenCalledTimes(2);
+        expect(mutationMock).toHaveBeenCalledTimes(2);
       } else {
         expect(cancelRecallBotMock).not.toHaveBeenCalled();
       }
     },
   );
 
-  it('still arms recovery when inline cancellation throws', async () => {
-    const client = new CoreApiClient({
-      url: 'https://example.test/graphql',
-      fetch: async () =>
-        new Response(
-          JSON.stringify({
-            data: { updateCallRecording: { id: 'recording' } },
-          }),
-        ),
-    });
+  it('preserves cancellation intent when inline cancellation throws', async () => {
+    const client = new CoreApiClient();
     const cancellationError = new Error('Recall unavailable');
     cancelRecallBotMock.mockRejectedValue(cancellationError);
 
@@ -83,6 +70,6 @@ describe('cancelCallRecordingRequest', () => {
         callRecording: { id: 'recording', externalBotId: 'recall-bot' },
       }),
     ).rejects.toBe(cancellationError);
-    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledOnce();
   });
 });
