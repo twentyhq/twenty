@@ -18,6 +18,7 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_ACTION_FEATURE_FLAGS } from 'twenty-shared/workflow';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -49,6 +50,11 @@ export const SidePanelWorkflowSelectAction = ({
   const featureFlagsMap = useWorkspaceFeatureFlagsMap();
 
   const isActionEnabled = ({ type }: { type: WorkflowActionType }) => {
+    // Hidden from the picker only, so the AI workflow tools can still add it
+    if (type === 'WAIT_FOR_EVENT') {
+      return featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED] === true;
+    }
+
     const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
 
     return !isDefined(featureFlag) || featureFlagsMap[featureFlag] === true;

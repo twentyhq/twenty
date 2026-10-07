@@ -32,12 +32,14 @@ const buildService = ({
   storedWait = STORED_WAIT,
   runStatus = WorkflowRunStatus.RUNNING,
   stepStatus = StepStatus.PENDING,
+  stepError,
   readableRecords = [READABLE_RECORD],
   isRecordReadFailing = false,
 }: {
   storedWait?: object | null;
   runStatus?: WorkflowRunStatus;
   stepStatus?: StepStatus;
+  stepError?: string;
   readableRecords?: object[];
   isRecordReadFailing?: boolean;
 } = {}) => {
@@ -51,7 +53,7 @@ const buildService = ({
       status: runStatus,
       state: {
         flow: { steps: [{ id: STEP_ID, type: 'WAIT_FOR_EVENT' }] },
-        stepInfos: { [STEP_ID]: { status: stepStatus } },
+        stepInfos: { [STEP_ID]: { status: stepStatus, error: stepError } },
       },
     }),
     updateStepInfoIfPending: jest
@@ -293,6 +295,23 @@ describe('WorkflowStepPendingWakeUpHandlerWorkspaceService', () => {
     await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
 
     expect(pendingWakeUpService.claim).toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('removes the wait of a step that now waits on a retry without resuming it', async () => {
+    const {
+      service,
+      pendingWakeUpService,
+      workflowRunWorkspaceService,
+      messageQueueService,
+    } = buildService({ stepError: 'Step failed' });
+
+    await service.resolve({ workspaceId: WORKSPACE_ID, wakeUpId: WAIT_ID });
+
+    expect(pendingWakeUpService.claim).toHaveBeenCalled();
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 

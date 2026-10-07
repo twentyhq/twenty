@@ -1834,6 +1834,7 @@ enum EngineComponentKey {
   ADD_NODE_WORKFLOW
   ADD_TO_FAVORITES
   ASK_AI
+  ASSIGN_AI_CHAT
   CANCEL_DASHBOARD_LAYOUT
   CANCEL_MESSAGE_CAMPAIGN
   COMPOSE_CAMPAIGN
@@ -2048,6 +2049,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_INBOX_ENABLED
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_APPLICATION_WORKFLOWS_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
@@ -2933,6 +2935,7 @@ type Mutation {
   addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!

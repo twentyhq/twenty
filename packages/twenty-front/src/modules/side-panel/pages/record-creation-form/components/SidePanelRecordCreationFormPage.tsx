@@ -14,6 +14,7 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { recordCreationFormAreHiddenFieldsShownComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormAreHiddenFieldsShownComponentState';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
@@ -21,6 +22,7 @@ import { useValidationRules } from '@/validation-rules/hooks/useValidationRules'
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
+import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -29,7 +31,8 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
+import { LightButton } from 'twenty-ui/components/input';
+import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -65,6 +68,10 @@ const StyledContent = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledHiddenFieldsToggle = styled.div`
+  display: flex;
 `;
 
 export const SidePanelRecordCreationFormPage = () => {
@@ -106,6 +113,13 @@ const SidePanelRecordCreationForm = ({
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
 
+  const [
+    recordCreationFormAreHiddenFieldsShown,
+    setRecordCreationFormAreHiddenFieldsShown,
+  ] = useAtomComponentState(
+    recordCreationFormAreHiddenFieldsShownComponentState,
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationRuleViolations, setValidationRuleViolations] = useState<
     DraftValidationRuleViolation[]
@@ -132,6 +146,12 @@ const SidePanelRecordCreationForm = ({
   const visibleFieldMetadataItems = editableRecordFormFields
     .filter((recordFormField) => recordFormField.isVisible)
     .map((recordFormField) => recordFormField.fieldMetadataItem);
+
+  const hiddenFieldMetadataItems = editableRecordFormFields
+    .filter((recordFormField) => !recordFormField.isVisible)
+    .map((recordFormField) => recordFormField.fieldMetadataItem);
+
+  const hiddenFieldsCount = hiddenFieldMetadataItems.length;
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -166,6 +186,19 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const revealHiddenFieldsIfTargeted = (
+    targetedFieldMetadataIds: (string | null)[],
+  ) => {
+    const isAnyHiddenFieldTargeted = hiddenFieldMetadataItems.some(
+      (fieldMetadataItem) =>
+        targetedFieldMetadataIds.includes(fieldMetadataItem.id),
+    );
+
+    if (isAnyHiddenFieldTargeted) {
+      setRecordCreationFormAreHiddenFieldsShown(true);
+    }
+  };
+
   const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
@@ -176,6 +209,10 @@ const SidePanelRecordCreationForm = ({
 
       setValidationRuleViolations(draftViolations);
 
+      revealHiddenFieldsIfTargeted(
+        draftViolations.map((violation) => violation.fieldMetadataId),
+      );
+
       if (draftViolations.length > 0) {
         return;
       }
@@ -183,7 +220,7 @@ const SidePanelRecordCreationForm = ({
 
     setIsSubmitting(true);
     try {
-      await settleRecordCreationDraft({
+      const { error } = await settleRecordCreationDraft({
         requestId,
         draftRecord: computeRecordFormCreateRecordInput({
           draftRecord,
@@ -191,6 +228,10 @@ const SidePanelRecordCreationForm = ({
           objectMetadataItems,
         }),
       });
+
+      revealHiddenFieldsIfTargeted(
+        getValidationRuleViolationFieldMetadataIdsFromError(error),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -227,6 +268,37 @@ const SidePanelRecordCreationForm = ({
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
         />
+        {hiddenFieldsCount > 0 && (
+          <StyledHiddenFieldsToggle>
+            <LightButton
+              startIcon={
+                recordCreationFormAreHiddenFieldsShown ? (
+                  <IconChevronUp />
+                ) : (
+                  <IconChevronDown />
+                )
+              }
+              onClick={() =>
+                setRecordCreationFormAreHiddenFieldsShown(
+                  !recordCreationFormAreHiddenFieldsShown,
+                )
+              }
+            >
+              {recordCreationFormAreHiddenFieldsShown
+                ? t`Collapse hidden fields`
+                : t`Show hidden fields (${hiddenFieldsCount})`}
+            </LightButton>
+          </StyledHiddenFieldsToggle>
+        )}
+        {recordCreationFormAreHiddenFieldsShown && hiddenFieldsCount > 0 && (
+          <RecordFormFieldInputs
+            objectMetadataItem={objectMetadataItem}
+            fieldMetadataItems={hiddenFieldMetadataItems}
+            draftRecord={draftRecord}
+            onFieldValueChange={handleFieldValueChange}
+            onFieldValueClear={handleFieldValueClear}
+          />
+        )}
       </StyledContent>
       {validationRuleViolations.length > 0 && (
         <StyledValidationRuleErrors>
