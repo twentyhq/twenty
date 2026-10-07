@@ -170,15 +170,15 @@ export class AgentChatDefaultChannelService {
     });
   }
 
-  // A member joining the workspace joins General, if it is still there.
+  // Members joining the workspace join General, if it is still there.
   // Their role may not be set yet, and General without AI access shows
   // nothing, so no permission is checked
-  async addMemberToGeneral({
+  async addMembersToGeneral({
     workspaceId,
-    workspaceMemberId,
+    workspaceMemberIds,
   }: {
     workspaceId: string;
-    workspaceMemberId: string;
+    workspaceMemberIds: string[];
   }): Promise<void> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
       return;
@@ -208,7 +208,7 @@ export class AgentChatDefaultChannelService {
           manager,
           workspaceId,
           channelId: generalChannel.id,
-          memberIds: [workspaceMemberId],
+          memberIds: workspaceMemberIds,
           channelObjectMetadataId,
         });
       },

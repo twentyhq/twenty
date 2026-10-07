@@ -20,11 +20,9 @@ export class AgentChatDefaultChannelWorkspaceMemberListener {
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
     >,
   ): Promise<void> {
-    for (const event of payload.events) {
-      await this.defaultChannelService.addMemberToGeneral({
-        workspaceId: payload.workspaceId,
-        workspaceMemberId: event.recordId,
-      });
-    }
+    await this.defaultChannelService.addMembersToGeneral({
+      workspaceId: payload.workspaceId,
+      workspaceMemberIds: payload.events.map(({ recordId }) => recordId),
+    });
   }
 }

@@ -179,9 +179,9 @@ describe('Default chat channels', () => {
       )?.isMember,
     ).toBe(false);
 
-    await defaultChannelService.addMemberToGeneral({
+    await defaultChannelService.addMembersToGeneral({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: JONY,
+      workspaceMemberIds: [JONY],
     });
 
     expect(

@@ -13,7 +13,11 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { AgentChatDefaultChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-default-channel.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
+import {
+  mapErrorToStreamError,
+  type StreamErrorPayload,
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
+import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import {
@@ -173,7 +177,11 @@ export class AgentRunConversationService {
             ...turn,
             error: mapErrorToStreamError(error),
           });
-          await this.recordFailureActivity({ workspaceId, threadId, error });
+          await this.recordFailureActivity({
+            workspaceId,
+            threadId,
+            failure: mapErrorToStreamError(error),
+          });
 
           throw error;
         });
@@ -182,6 +190,15 @@ export class AgentRunConversationService {
       ...turn,
       isAwaitingAnswer,
     });
+
+    // The turn fails without throwing when the workspace ran out of credits
+    if (execution.hasNoMoreAvailableCredits === true) {
+      await this.recordFailureActivity({
+        workspaceId,
+        threadId,
+        failure: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
+      });
+    }
 
     if (isAwaitingAnswer) {
       await this.recordWaitingActivity({
@@ -211,7 +228,11 @@ export class AgentRunConversationService {
       status: AgentTurnStatus.FAILED,
       error: mapErrorToStreamError(error),
     });
-    await this.recordFailureActivity({ workspaceId, threadId, error });
+    await this.recordFailureActivity({
+      workspaceId,
+      threadId,
+      failure: mapErrorToStreamError(error),
+    });
   }
 
   // A failed run in a channel comes back for its members, where a chat
@@ -219,11 +240,11 @@ export class AgentRunConversationService {
   private async recordFailureActivity({
     workspaceId,
     threadId,
-    error,
+    failure,
   }: {
     workspaceId: string;
     threadId: string;
-    error: unknown;
+    failure: StreamErrorPayload;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -236,7 +257,7 @@ export class AgentRunConversationService {
     await this.recordWaitingActivity({
       workspaceId,
       threadId,
-      text: mapErrorToStreamError(error).message,
+      text: failure.message,
       threadBefore: thread,
     });
   }

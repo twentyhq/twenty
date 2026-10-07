@@ -244,6 +244,25 @@ describe('AgentRunConversationService', () => {
     });
   });
 
+  it('brings back a conversation in a channel whose run ran out of credits', async () => {
+    const thread = { id: 'thread-id', channelId: 'system-channel-id' };
+    const { service, threadService } = buildService({ thread });
+
+    await service.closeTurn({
+      ...turn,
+      title: 'Draft the quote',
+      agentId: 'agent-id',
+      execution: { ...execution, hasNoMoreAvailableCredits: true },
+    });
+
+    expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      text: 'The workspace ran out of credits.',
+      threadBefore: thread,
+    });
+  });
+
   it('leaves a failed conversation outside channels as it is', async () => {
     const { service, threadService } = buildService({
       thread: { id: 'thread-id', channelId: null },
