@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
-// A scheduled cancellation would end the subscription the purchased credits depend on
 export const isCreditTopUpAllowedForSubscription = (
   subscription: Pick<
     BillingSubscriptionEntity,

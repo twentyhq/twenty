@@ -12,7 +12,6 @@ import {
 import { CREDIT_TOP_UP_CREDIT_AMOUNTS } from 'src/engine/core-modules/billing/constants/credit-top-up-credit-amounts.constant';
 import { type BillingCreditTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up-offer.dto';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -56,8 +55,8 @@ export class BillingCreditOneTimeTopUpService {
 
     return CREDIT_TOP_UP_CREDIT_AMOUNTS.map((creditAmount) => ({
       creditAmount,
-      amountCents: computeCreditTopUpAmountCentsForPrice({
-        creditAmount,
+      amountCents: computeCreditTopUpAmountCents({
+        creditAmountMicro: creditAmount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
         price,
       }),
       currency: subscription.currency,
@@ -124,8 +123,8 @@ export class BillingCreditOneTimeTopUpService {
     const payment = await this.stripeInvoiceService.chargeOneOffInvoice({
       stripeCustomerId,
       stripeSubscriptionId,
-      amountInCents: computeCreditTopUpAmountCentsForPrice({
-        creditAmount,
+      amountInCents: computeCreditTopUpAmountCents({
+        creditAmountMicro,
         price,
       }),
       currency,
@@ -179,16 +178,3 @@ export class BillingCreditOneTimeTopUpService {
 
 const buildCreditTopUpIdempotencyKey = (stripeInvoiceId: string): string =>
   `credit-top-up:${stripeInvoiceId}`;
-
-const computeCreditTopUpAmountCentsForPrice = ({
-  creditAmount,
-  price,
-}: {
-  creditAmount: number;
-  price: BillingPriceEntity;
-}): number =>
-  computeCreditTopUpAmountCents({
-    creditAmountMicro: creditAmount * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-    unitAmountCents: Number(price.unitAmount),
-    priceCreditAmountMicro: Number(price.metadata.credit_amount),
-  });
