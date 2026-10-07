@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -76,6 +77,22 @@ const NICKNAME_RULE: ValidationRule = {
 };
 
 const settleRecordCreationDraft = jest.fn();
+
+const buildValidationRuleViolationError = (fieldMetadataId: string) =>
+  new CombinedGraphQLErrors({
+    data: null,
+    errors: [
+      {
+        message: 'A company needs a nickname',
+        extensions: {
+          subCode: 'VALIDATION_RULE_VIOLATION',
+          validationRuleViolations: [
+            { ruleId: 'nickname-rule', fieldMetadataId },
+          ],
+        },
+      },
+    ],
+  });
 let mockValidationRules: ValidationRule[] = [];
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
@@ -225,6 +242,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     mockValidationRules = [];
+    settleRecordCreationDraft.mockResolvedValue({});
     seedRecordFormPageLayout();
     jotaiStore.set(
       recordCreationFormRequestComponentState.atomFamily({
@@ -333,6 +351,44 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(
       'A company needs a nickname',
     );
+    expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('reveals a hidden field the server rejected through a validation rule', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValue({
+      error: buildValidationRuleViolationError(NICKNAME_FIELD.id),
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: {},
+    });
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+  });
+
+  it('keeps hidden fields collapsed when the server rejects a visible field', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValue({
+      error: buildValidationRuleViolationError(NAME_FIELD.id),
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: {},
+    });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 });

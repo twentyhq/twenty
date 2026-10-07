@@ -53,6 +53,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     {} as never,
     {} as never,
     turnRecorderService as never,
+    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
 
   return {

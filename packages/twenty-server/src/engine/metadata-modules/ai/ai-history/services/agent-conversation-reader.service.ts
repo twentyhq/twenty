@@ -15,6 +15,7 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-hi
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
@@ -31,6 +32,7 @@ export class AgentConversationReaderService {
     private readonly fileUrlService: FileUrlService,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
   // tool call ids are only unique within a conversation
@@ -86,10 +88,16 @@ export class AgentConversationReaderService {
         },
         relations: ['parts', 'parts.file'],
       }),
-      this.turnRepository.find(workspaceId, {
-        where: { threadId, status: AgentTurnStatus.FAILED },
-        select: ['id'],
-      }),
+      this.upgradeFenceService
+        .hasUpgradedAgentHistory(workspaceId)
+        .then((hasAgentTurnRunFields) =>
+          hasAgentTurnRunFields
+            ? this.turnRepository.find(workspaceId, {
+                where: { threadId, status: AgentTurnStatus.FAILED },
+                select: ['id'],
+              })
+            : [],
+        ),
     ]);
 
     // a failed run is kept on record but leaves the conversation as it was

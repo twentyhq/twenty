@@ -26,6 +26,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   align-items: ${({ isUser }) => (isUser ? 'flex-end' : 'flex-start')};
@@ -200,6 +202,9 @@ export const AiChatMessage = ({
   const firstUnreadMessageId = useAtomComponentSelectorValue(
     agentChatFirstUnreadMessageIdComponentSelector,
   );
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   if (!isDefined(agentChatMessage)) {
     return null;
@@ -230,7 +235,7 @@ export const AiChatMessage = ({
 
   return (
     <>
-      {firstUnreadMessageId === messageId && (
+      {isAiChatInboxEnabled && firstUnreadMessageId === messageId && (
         <LabeledDivider
           textPosition="end"
           color={themeCssVariables.tag.text.red}
