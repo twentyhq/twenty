@@ -31,6 +31,10 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 // Runs in the participant write's transaction, after the participant row is
@@ -54,6 +58,14 @@ const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
      "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
      "updatedAt" = now()
    RETURNING *`;
+
+const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
+  openThreadCount: 0,
+  needsInputThreadCount: 0,
+  hasUnreadOpenThread: false,
+  hasUnreadMentionThread: false,
+  hasUnreadAssignedThread: false,
+};
 
 const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
 
@@ -431,17 +443,11 @@ export class AgentChatThreadParticipantService {
     });
 
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return {
-        openThreadCount: 0,
-        needsInputThreadCount: 0,
-        hasUnreadOpenThread: false,
-        hasUnreadMentionThread: false,
-        hasUnreadAssignedThread: false,
-      };
+      return EMPTY_OPEN_THREADS_SUMMARY;
     }
 
-    const [summary] = await this.workspaceOrmManager.executeInWorkspaceContext(
-      () => {
+    const [summary] = await this.workspaceOrmManager
+      .executeInWorkspaceContext(() => {
         const repository =
           this.workspaceOrmManager.getRepositoryWithContextPermissions(
             'agentChatThread',
@@ -486,9 +492,18 @@ export class AgentChatThreadParticipantService {
             summaryWorkspaceMemberId: workspaceMemberId,
           },
         );
-      },
-      authContext,
-    );
+      }, authContext)
+      .catch((error: unknown) => {
+        // A role that cannot read chats has none open
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.PERMISSION_DENIED
+        ) {
+          return [EMPTY_OPEN_THREADS_SUMMARY];
+        }
+
+        throw error;
+      });
 
     return summary;
   }
