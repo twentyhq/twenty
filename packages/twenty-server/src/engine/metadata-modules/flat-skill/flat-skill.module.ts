@@ -4,6 +4,5 @@ import { WorkspaceFlatSkillMapCacheService } from 'src/engine/metadata-modules/f
 
 @Module({
   providers: [WorkspaceFlatSkillMapCacheService],
-  exports: [WorkspaceFlatSkillMapCacheService],
 })
 export class FlatSkillModule {}

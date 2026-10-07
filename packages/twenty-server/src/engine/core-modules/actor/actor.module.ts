@@ -17,12 +17,6 @@ import { ActorFromAuthContextService } from './services/actor-from-auth-context.
     UpdatedByUpdateOnePreQueryHook,
     ActorFromAuthContextService,
   ],
-  exports: [
-    CreatedByCreateManyPreQueryHook,
-    CreatedByCreateOnePreQueryHook,
-    UpdatedByUpdateManyPreQueryHook,
-    UpdatedByUpdateOnePreQueryHook,
-    ActorFromAuthContextService,
-  ],
+  exports: [ActorFromAuthContextService],
 })
 export class ActorModule {}

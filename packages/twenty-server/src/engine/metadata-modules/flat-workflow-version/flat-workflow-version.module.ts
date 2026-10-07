@@ -4,6 +4,5 @@ import { WorkspaceFlatWorkflowVersionMapCacheService } from 'src/engine/metadata
 
 @Module({
   providers: [WorkspaceFlatWorkflowVersionMapCacheService],
-  exports: [WorkspaceFlatWorkflowVersionMapCacheService],
 })
 export class FlatWorkflowVersionModule {}
