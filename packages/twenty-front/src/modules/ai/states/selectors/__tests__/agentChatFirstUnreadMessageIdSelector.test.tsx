@@ -2,23 +2,21 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   type AgentChatThreadVisit,
   agentChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
+import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const INSTANCE_ID = 'agentChatFirstUnreadMessageIdTest';
 const THREAD_ID = 'thread';
 const ME = 'my-user-workspace-id';
 const TEAMMATE = 'teammate-user-workspace-id';
@@ -44,13 +42,7 @@ const MESSAGES = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 const getFirstUnreadMessageId = (
@@ -62,23 +54,17 @@ const getFirstUnreadMessageId = (
     isKeptUnread: false,
   });
   jotaiStore.set(
-    agentChatMessagesComponentFamilyState.atomFamily({
-      instanceId: INSTANCE_ID,
-      familyKey: { threadId: THREAD_ID },
-    }),
+    agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     messages,
   );
 
   return renderHook(
-    () =>
-      useAtomComponentSelectorValue(
-        agentChatFirstUnreadMessageIdComponentSelector,
-      ),
+    () => useAtomStateValue(agentChatFirstUnreadMessageIdSelector),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('agentChatFirstUnreadMessageIdComponentSelector', () => {
+describe('agentChatFirstUnreadMessageIdSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
