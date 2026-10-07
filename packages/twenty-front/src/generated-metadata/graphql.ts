@@ -6863,6 +6863,7 @@ export type UpdatePageLayoutWidgetInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['JSON']['input']>;

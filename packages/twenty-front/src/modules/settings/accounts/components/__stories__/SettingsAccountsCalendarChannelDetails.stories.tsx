@@ -2,9 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { CalendarChannelVisibility } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   title:

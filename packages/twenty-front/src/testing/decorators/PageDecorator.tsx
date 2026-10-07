@@ -15,7 +15,7 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
-import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 

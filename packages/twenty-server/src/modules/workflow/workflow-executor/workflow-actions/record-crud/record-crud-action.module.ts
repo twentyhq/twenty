@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
@@ -13,17 +9,11 @@ import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
-import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
     WorkflowExecutionContextModule,
-    ApplicationModule,
     RecordCrudModule,
-    WorkflowRunModule,
-    UserWorkspaceModule,
-    UserRoleModule,
-    RoleModule,
     WorkflowCommonModule,
   ],
   providers: [
