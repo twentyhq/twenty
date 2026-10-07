@@ -148,6 +148,8 @@ describe('useRefreshAgentChatThreads', () => {
       lastReadAt: '2026-10-01T10:00:00.000Z',
       archivedAt: null,
       snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
       updatedAt,
     });
     const streamedParticipant = {
@@ -156,6 +158,8 @@ describe('useRefreshAgentChatThreads', () => {
       lastReadAt: null,
       archivedAt: null,
       snoozedUntil: null,
+      isSubscribed: true,
+      lastMentionedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
     store.set(agentChatThreadStreamedParticipantsState.atom, {
@@ -213,6 +217,8 @@ describe('useRefreshAgentChatThreads', () => {
         lastReadAt: '2026-10-01T10:00:00.000Z',
         archivedAt: null,
         snoozedUntil: null,
+        isSubscribed: true,
+        lastMentionedAt: null,
         updatedAt: '2026-10-01T10:00:00.000Z',
       },
       'thread-2': streamedParticipant,

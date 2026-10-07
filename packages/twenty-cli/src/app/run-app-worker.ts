@@ -196,7 +196,7 @@ export const runAppWorker = async ({
             code: 'WORKER_FAILED',
             message: isDefined(failureResponse)
               ? `The app worker failed: ${failureResponse.message}`
-              : `The app worker stopped before finishing (${stopReason}). The app or the SDK may have exited the process.`,
+              : `The app worker stopped before finishing (${stopReason}). App code or a dependency may have exited the process.`,
             hint: failureResponse?.hint,
             details: {
               ...failureResponse?.details,

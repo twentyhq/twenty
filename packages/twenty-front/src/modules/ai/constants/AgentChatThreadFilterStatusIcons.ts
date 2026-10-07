@@ -1,7 +1,9 @@
 import {
   type IconComponent,
+  IconAt,
   IconCircleDashed,
   IconClock,
+  IconHandClick,
   IconProgressCheck,
 } from 'twenty-ui/icon';
 
@@ -12,6 +14,8 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   IconComponent
 > = {
   active: IconCircleDashed,
+  needsInput: IconHandClick,
+  mentions: IconAt,
   snoozed: IconClock,
   done: IconProgressCheck,
 };

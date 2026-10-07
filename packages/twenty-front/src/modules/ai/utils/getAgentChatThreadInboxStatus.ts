@@ -8,7 +8,8 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // folded into a status, so a message landing right after an archive brings the
 // thread back whichever write committed last. Snooze is an archive with a
 // wake-up time; the server unarchives the thread when it passes and keeps the
-// snooze as what brought it back
+// snooze as what brought it back. A member who unsubscribed keeps the thread
+// under done whatever happens in it.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
@@ -20,13 +21,29 @@ export const getAgentChatThreadInboxStatus = ({
     isDefined(lastActivityAt) &&
     (!isDefined(participant?.lastReadAt) ||
       isAfter(lastActivityAt, participant.lastReadAt));
+  const isSubscribed = participant?.isSubscribed ?? true;
+  const isMentioned = isDefined(participant?.lastMentionedAt);
   const archivedAt = participant?.archivedAt;
   const snoozedUntil = participant?.snoozedUntil;
+
+  if (!isSubscribed) {
+    return {
+      scope: 'ARCHIVED',
+      isUnread,
+      isSubscribed,
+      isMentioned,
+      event: isDefined(archivedAt)
+        ? { type: 'UNSUBSCRIBED', at: archivedAt }
+        : null,
+    };
+  }
 
   if (!isDefined(archivedAt)) {
     return {
       scope: 'INBOX',
       isUnread,
+      isSubscribed,
+      isMentioned,
       event:
         isDefined(snoozedUntil) &&
         !(isDefined(lastActivityAt) && isAfter(lastActivityAt, snoozedUntil))
@@ -36,13 +53,21 @@ export const getAgentChatThreadInboxStatus = ({
   }
 
   if (isDefined(lastActivityAt) && isAfter(lastActivityAt, archivedAt)) {
-    return { scope: 'INBOX', isUnread, event: null };
+    return {
+      scope: 'INBOX',
+      isUnread,
+      isSubscribed,
+      isMentioned,
+      event: null,
+    };
   }
 
   if (!isDefined(snoozedUntil)) {
     return {
       scope: 'ARCHIVED',
       isUnread,
+      isSubscribed,
+      isMentioned,
       event: { type: 'DONE', at: archivedAt },
     };
   }
@@ -50,6 +75,8 @@ export const getAgentChatThreadInboxStatus = ({
   return {
     scope: 'SNOOZED',
     isUnread,
+    isSubscribed,
+    isMentioned,
     event: { type: 'SNOOZED', at: snoozedUntil },
   };
 };

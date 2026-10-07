@@ -113,6 +113,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "13ba446f-db00-5635-888e-c2b11299e34b",
       },
+      "isSubscribed": {
+        "universalIdentifier": "146b1d5e-6603-4493-944b-c3bd2817569b",
+      },
+      "lastMentionedAt": {
+        "universalIdentifier": "52a54602-633f-496a-966a-9a70437fa887",
+      },
       "lastReadAt": {
         "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
       },

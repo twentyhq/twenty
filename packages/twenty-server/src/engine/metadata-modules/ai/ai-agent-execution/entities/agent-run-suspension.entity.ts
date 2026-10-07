@@ -1,3 +1,4 @@
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +12,6 @@ import { CREATE_AGENT_RUN_SUSPENSION_TABLE_UPGRADE_COMMAND_NAME } from 'src/data
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 // A run paused on an answer or a wait, kept until the engine continues it and hands its

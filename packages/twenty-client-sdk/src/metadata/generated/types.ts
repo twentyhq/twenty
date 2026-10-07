@@ -256,6 +256,12 @@ export default {
             "id": [
                 477
             ],
+            "isSubscribed": [
+                4
+            ],
+            "lastMentionedAt": [
+                184
+            ],
             "lastReadAt": [
                 184
             ],
@@ -7545,6 +7551,10 @@ export default {
                         251,
                         "[FileAttachmentInput!]"
                     ],
+                    "mentionedWorkspaceMemberIds": [
+                        477,
+                        "[UUID!]"
+                    ],
                     "messageId": [
                         477,
                         "UUID!"
@@ -7812,6 +7822,15 @@ export default {
             "stopImpersonation": [
                 458
             ],
+            "subscribeToAgentChatThread": [
+                10,
+                {
+                    "threadId": [
+                        477,
+                        "UUID!"
+                    ]
+                }
+            ],
             "switchBillingPlan": [
                 103
             ],
@@ -7891,6 +7910,15 @@ export default {
                     "universalIdentifier": [
                         1,
                         "String!"
+                    ]
+                }
+            ],
+            "unsubscribeFromAgentChatThread": [
+                10,
+                {
+                    "threadId": [
+                        477,
+                        "UUID!"
                     ]
                 }
             ],
@@ -11187,6 +11215,9 @@ export default {
             ]
         },
         "SendChatMessageResult": {
+            "mentionedParticipantWorkspaceMemberIds": [
+                477
+            ],
             "messageId": [
                 1
             ],
