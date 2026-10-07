@@ -1,12 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
+import { type UserApplicationVariableValueMaps } from 'src/engine/core-modules/application/application-variable/types/user-application-variable-value-maps.type';
 import { type UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 
 export const toUserApplicationVariableValues = ({
   flatUserApplicationVariables,
-  userValues,
+  userApplicationVariableValueMaps,
+  userWorkspaceId,
   shouldMaskSecret,
   getDisplayValue,
 }: {
@@ -23,28 +25,20 @@ export const toUserApplicationVariableValues = ({
     | 'isDeprecated'
     | 'defaultValue'
   >[];
-  userValues: Pick<
-    UserApplicationVariableValueEntity,
-    'applicationVariableId' | 'value'
-  >[];
+  userApplicationVariableValueMaps: UserApplicationVariableValueMaps;
+  userWorkspaceId: string;
   shouldMaskSecret: boolean;
   getDisplayValue: (
     userValue: Pick<UserApplicationVariableValueEntity, 'value'> & {
       isSecret: boolean;
     },
   ) => string;
-}): UserApplicationVariableValueDTO[] => {
-  const userValueByApplicationVariableId = new Map(
-    userValues.map(({ applicationVariableId, value }) => [
-      applicationVariableId,
-      value,
-    ]),
-  );
-
-  return flatUserApplicationVariables.map((flatApplicationVariable) => {
-    const userValue = userValueByApplicationVariableId.get(
-      flatApplicationVariable.id,
-    );
+}): UserApplicationVariableValueDTO[] =>
+  flatUserApplicationVariables.map((flatApplicationVariable) => {
+    const userValue =
+      userApplicationVariableValueMaps.byApplicationVariableId[
+        flatApplicationVariable.id
+      ]?.[userWorkspaceId];
 
     return {
       key: flatApplicationVariable.key,
@@ -64,4 +58,3 @@ export const toUserApplicationVariableValues = ({
         : (flatApplicationVariable.defaultValue ?? ''),
     };
   });
-};
