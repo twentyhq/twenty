@@ -159,7 +159,7 @@ describe('AgentRunnerService', () => {
           /^base prompt\n\n.*wait_for_event/,
         ),
         priorMessages: PRIOR_MESSAGES,
-        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        executionContext: RUN_INPUT.executionContext,
       }),
     );
     expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(

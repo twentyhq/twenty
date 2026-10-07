@@ -256,16 +256,10 @@ export class AgentRunnerService {
               : {}),
           },
           canProposeToolCalls: spec.capabilities.canAskHumans,
-          actorContext: executionContext.actorContext,
-          authContext: executionContext.authContext,
           workspaceId,
-          userWorkspaceId: executionContext.userWorkspaceId,
-          runAsRoleId: executionContext.runAsRoleId,
-          additionalRoleRestrictionIds:
-            executionContext.additionalRoleRestrictionIds,
+          executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
           toolLoadingStrategy: spec.toolLoadingStrategy,
-          usageOperationType: executionContext.usageOperationType,
         }),
       );
     } catch (error) {
