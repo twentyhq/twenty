@@ -16,6 +16,8 @@ export type ButtonProps = Omit<
     size?: ButtonSize;
     fullWidth?: boolean;
     loading?: boolean;
+    displayChildrenWhenLoading?: boolean;
+    progress?: number;
     elevated?: boolean;
     startIcon?: ReactNode;
     endIcon?: ReactNode;

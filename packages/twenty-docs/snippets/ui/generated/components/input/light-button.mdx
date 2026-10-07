@@ -20,6 +20,10 @@
   Semantic color of the button.
 </ParamField>
 
+<ParamField body="displayChildrenWhenLoading" type="boolean">
+  Keeps the label and start icon visible while loading and shows the loading indicator in place of the end icon.
+</ParamField>
+
 <ParamField body="elevated" type="boolean">
   Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.
 </ParamField>
@@ -46,6 +50,10 @@
 
 <ParamField body="loading" type="boolean">
   Shows a loading indicator and disables activation while preserving the button width.
+</ParamField>
+
+<ParamField body="progress" type="number">
+  Percentage from 0 to 100 appended to the label while loading. Visible only with `displayChildrenWhenLoading`.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">

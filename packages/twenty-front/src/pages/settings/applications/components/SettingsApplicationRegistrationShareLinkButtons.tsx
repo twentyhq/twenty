@@ -4,7 +4,6 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
-import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
@@ -15,7 +14,6 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
@@ -65,24 +63,19 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const displayedInstallProgress = formatQueueJobProgressLabel(
-    installProgress ?? 0,
-  );
-
   return (
     <StyledButtonGroup>
       {installable && (
         <>
           <Button
             startIcon={<IconDownload />}
-            endIcon={isInstalling ? <Loader /> : undefined}
             onClick={requestInstall}
-            disabled={isInstalling}
+            loading={isInstalling}
+            displayChildrenWhenLoading
+            progress={installProgress ?? 0}
             variant="outline"
           >
-            {isInstalling
-              ? t`Installing ${displayedInstallProgress}`
-              : t`Install`}
+            {isInstalling ? t`Installing` : t`Install`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}

@@ -9,6 +9,7 @@ import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Button.module.scss';
+import { formatButtonProgressLabel } from './internal/formatButtonProgressLabel';
 import { type ButtonProps } from './types/ButtonProps';
 
 export const Button = ({
@@ -17,6 +18,8 @@ export const Button = ({
   size = 'md',
   fullWidth = false,
   loading = false,
+  displayChildrenWhenLoading = false,
+  progress,
   elevated = false,
   startIcon,
   endIcon,
@@ -35,6 +38,12 @@ export const Button = ({
   const resolvedSize = buttonGroup?.size ?? size;
   const isLink = isDefined(href);
   const linkProps = isLink ? { href } : undefined;
+  const isInlineLoading = loading && displayChildrenWhenLoading;
+  const resolvedEndIcon = isInlineLoading ? <Loader /> : endIcon;
+  const progressLabel =
+    loading && isDefined(progress)
+      ? formatButtonProgressLabel(progress)
+      : undefined;
 
   return (
     <ButtonPrimitive
@@ -53,18 +62,27 @@ export const Button = ({
       nativeButton={!isLink}
       render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
     >
-      <span className={clsx(styles.content, loading && styles.hidden)}>
+      <span
+        className={clsx(
+          styles.content,
+          loading && !isInlineLoading && styles.hidden,
+        )}
+      >
         {isDefined(startIcon) && (
           <span className={styles.icon} aria-hidden>
             {startIcon}
           </span>
         )}
-        {isDefined(children) && (
-          <span className={styles.label}>{children}</span>
+        {(isDefined(children) || isDefined(progressLabel)) && (
+          <span className={styles.label}>
+            {children}
+            {isDefined(children) && isDefined(progressLabel) && ' '}
+            {progressLabel}
+          </span>
         )}
-        {isDefined(endIcon) && (
+        {isDefined(resolvedEndIcon) && (
           <span className={styles.icon} aria-hidden>
-            {endIcon}
+            {resolvedEndIcon}
           </span>
         )}
         {isDefined(shortcut) && (
@@ -77,7 +95,7 @@ export const Button = ({
           />
         )}
       </span>
-      {loading && (
+      {loading && !isInlineLoading && (
         <span className={styles.loader} aria-hidden>
           <Loader />
         </span>

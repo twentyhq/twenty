@@ -1,10 +1,8 @@
-import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconSettings } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationActionButtonProps = {
@@ -44,21 +42,18 @@ export const SettingsApplicationActionButton = ({
     return null;
   }
 
-  const displayedInstallProgress = formatQueueJobProgressLabel(
-    installProgress ?? 0,
-  );
-
   return (
     <Button
       startIcon={<IconDownload />}
-      endIcon={isInstalling ? <Loader /> : undefined}
       variant="solid"
       color="accent"
       size="sm"
       onClick={onInstall}
-      disabled={isInstalling}
+      loading={isInstalling}
+      displayChildrenWhenLoading
+      progress={installProgress ?? 0}
     >
-      {isInstalling ? t`Installing ${displayedInstallProgress}` : t`Install`}
+      {isInstalling ? t`Installing` : t`Install`}
     </Button>
   );
 };
