@@ -45,12 +45,14 @@ type DashboardFilterChipDropdownProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
   widgetCounts: DashboardFilterSlotWidgetCounts;
+  onEdit?: () => void;
 };
 
 export const DashboardFilterChipDropdown = ({
   slot,
   representativeBinding,
   widgetCounts,
+  onEdit,
 }: DashboardFilterChipDropdownProps) => {
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     ObjectFilterDropdownComponentInstanceContext,
@@ -179,6 +181,11 @@ export const DashboardFilterChipDropdown = ({
     clearSlotValue();
   };
 
+  const handleEditClick = () => {
+    closeDropdown(dropdownId);
+    onEdit?.();
+  };
+
   const handleDropdownClose = () => {
     const [currentRecordFilter] = store.get(currentRecordFilters);
 
@@ -234,6 +241,7 @@ export const DashboardFilterChipDropdown = ({
         <DashboardFilterChipDropdownContent
           slotLabel={slot.label}
           dropdownId={dropdownId}
+          onEditClick={isDefined(onEdit) ? handleEditClick : undefined}
         />
       }
       dropdownOffset={{ y: 8, x: 0 }}

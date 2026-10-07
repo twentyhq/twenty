@@ -23,6 +23,8 @@ export const getPageLayoutPageTitle = (page: PageLayoutSidePanelPage) => {
       return t`Record Table Settings`;
     case SidePanelPages.PageLayoutRecordPageWidgetTypeSelect:
       return t`New widget`;
+    case SidePanelPages.PageLayoutDashboardFilters:
+      return t`Dashboard filters`;
     default:
       assertUnreachable(page);
   }

@@ -3,6 +3,8 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { computeBindingsForNewWidget } from '@/page-layout/dashboard-filters/utils/computeBindingsForNewWidget';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -20,10 +22,13 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
+import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItem } from 'twenty-ui/primitives/navigation';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartDataSourceDropdownContent = () => {
@@ -33,6 +38,15 @@ export const ChartDataSourceDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const isJsonFilterEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_JSON_FILTER_ENABLED,
+  );
 
   const currentObjectMetadataItemId = widgetInEditMode?.objectMetadataId as
     | string
@@ -80,6 +94,22 @@ export const ChartDataSourceDropdownContent = () => {
 
   const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId !== newObjectMetadataItemId) {
+      // Bindings point at fields of the previous object, so they are rebuilt for the new one or dropped.
+      const dashboardFilters = pageLayoutDraft.dashboardFilters as
+        | DashboardFilterSlot[]
+        | null
+        | undefined;
+
+      const dashboardFilterBindings = isDefined(dashboardFilters)
+        ? computeBindingsForNewWidget({
+            widget: { objectMetadataId: newObjectMetadataItemId },
+            slots: dashboardFilters,
+            existingWidgets: pageLayoutDraft.tabs.flatMap((tab) => tab.widgets),
+            objectMetadataItems,
+            isJsonFilterEnabled,
+          })
+        : undefined;
+
       updateCurrentWidgetConfig({
         objectMetadataId: newObjectMetadataItemId,
         configToUpdate: {
@@ -94,6 +124,7 @@ export const ChartDataSourceDropdownContent = () => {
           groupBySubFieldName: undefined,
           filter: {},
           ratioAggregateConfig: undefined,
+          dashboardFilterBindings,
         },
       });
 

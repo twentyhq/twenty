@@ -4,4 +4,5 @@ export enum SidePanelSubPages {
   PageLayoutRecordTableFilter = 'page-layout-record-table-filter',
   PageLayoutRecordTableSort = 'page-layout-record-table-sort',
   PageLayoutFieldRelationTableFields = 'page-layout-field-relation-table-fields',
+  PageLayoutDashboardFilterDetail = 'page-layout-dashboard-filter-detail',
 }

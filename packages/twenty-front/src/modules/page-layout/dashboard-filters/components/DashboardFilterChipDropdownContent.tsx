@@ -2,18 +2,26 @@ import { ObjectFilterDropdownContentWrapper } from '@/object-record/object-filte
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { IconX } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components/navigation';
+import { IconPencil, IconX } from 'twenty-ui/icon';
 
 type DashboardFilterChipDropdownContentProps = {
   slotLabel: string;
   dropdownId: string;
+  onEditClick?: () => void;
 };
 
 export const DashboardFilterChipDropdownContent = ({
   slotLabel,
   dropdownId,
+  onEditClick,
 }: DashboardFilterChipDropdownContentProps) => {
+  const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
   const handleCloseClick = () => {
@@ -35,6 +43,18 @@ export const DashboardFilterChipDropdownContent = ({
         {slotLabel}
       </DropdownMenuHeader>
       <ObjectFilterDropdownFilterInput filterDropdownId={dropdownId} />
+      {isDefined(onEditClick) && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              LeftIcon={IconPencil}
+              text={t`Edit`}
+              onClick={onEditClick}
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </ObjectFilterDropdownContentWrapper>
   );
 };

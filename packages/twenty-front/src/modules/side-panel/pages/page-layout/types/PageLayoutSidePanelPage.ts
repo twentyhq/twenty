@@ -9,4 +9,5 @@ export type PageLayoutSidePanelPage =
   | SidePanelPages.DashboardRecordTableSettings
   | SidePanelPages.RecordPageFieldsSettings
   | SidePanelPages.RecordPageFieldSettings
-  | SidePanelPages.PageLayoutRecordPageWidgetTypeSelect;
+  | SidePanelPages.PageLayoutRecordPageWidgetTypeSelect
+  | SidePanelPages.PageLayoutDashboardFilters;

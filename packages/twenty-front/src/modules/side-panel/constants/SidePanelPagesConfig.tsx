@@ -17,6 +17,7 @@ import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
+import { SidePanelDashboardFiltersPage } from '@/side-panel/pages/page-layout/components/dashboard-filters/SidePanelDashboardFiltersPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
 import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings';
@@ -65,6 +66,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     <SidePanelPageLayoutDashboardWidgetTypeSelect />,
   ],
   [SidePanelPages.DashboardChartSettings, <SidePanelDashboardChartSettings />],
+  [
+    SidePanelPages.PageLayoutDashboardFilters,
+    <SidePanelDashboardFiltersPage />,
+  ],
   [
     SidePanelPages.DashboardIframeSettings,
     <SidePanelDashboardIframeSettings />,

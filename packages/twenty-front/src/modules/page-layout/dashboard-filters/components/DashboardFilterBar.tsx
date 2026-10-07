@@ -1,12 +1,20 @@
 import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
+import { useOpenDashboardFilterEditor } from '@/page-layout/dashboard-filters/hooks/useOpenDashboardFilterEditor';
 import { countDashboardFilterSlotWidgets } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotWidgets';
 import { getDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBinding';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledBar = styled.div`
   align-items: center;
@@ -23,10 +31,27 @@ const StyledBar = styled.div`
 `;
 
 export const DashboardFilterBar = () => {
+  const { t } = useLingui();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const { slots, bindingsByWidgetId } = useDashboardFilterSlots();
+  const { slots, bindingsByWidgetId, isUsingBuiltInSlots } =
+    useDashboardFilterSlots();
 
-  if (slots.length === 0) {
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const isDashboardFiltersEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
+  );
+
+  const { openDashboardFiltersEditor, openDashboardFilterSlotEditor } =
+    useOpenDashboardFilterEditor(currentPageLayout.id);
+
+  // In edit mode the bar stays even without slots so the editor entry point is reachable.
+  const canEditDashboardFilters =
+    isPageLayoutInEditMode &&
+    isDashboardFiltersEnabled &&
+    currentPageLayout.type === PageLayoutType.DASHBOARD;
+
+  if (slots.length === 0 && !canEditDashboardFilters) {
     return null;
   }
 
@@ -56,10 +81,20 @@ export const DashboardFilterBar = () => {
     ];
   });
 
+  // Built-ins are not on the draft, so their chips lead to the list where a custom filter can replace them.
+  const handleEditSlot = (slot: DashboardFilterSlot) => {
+    if (isUsingBuiltInSlots) {
+      openDashboardFiltersEditor();
+      return;
+    }
+
+    openDashboardFilterSlotEditor(slot);
+  };
+
   return (
     <>
-      <DashboardFilterUrlSyncEffect slots={slots} />
-      {chips.length > 0 && (
+      {slots.length > 0 && <DashboardFilterUrlSyncEffect slots={slots} />}
+      {(chips.length > 0 || canEditDashboardFilters) && (
         <StyledBar className="page-layout-tab-list-print-hidden">
           {chips.map(({ slot, representativeBinding, widgetCounts }) => (
             <DashboardFilterChip
@@ -67,8 +102,18 @@ export const DashboardFilterBar = () => {
               slot={slot}
               representativeBinding={representativeBinding}
               widgetCounts={widgetCounts}
+              onEdit={
+                canEditDashboardFilters ? () => handleEditSlot(slot) : undefined
+              }
             />
           ))}
+          {canEditDashboardFilters && (
+            <LightButton
+              emphasis="subtle"
+              onClick={openDashboardFiltersEditor}
+              startIcon={<IconPlus />}
+            >{t`Add filter`}</LightButton>
+          )}
         </StyledBar>
       )}
     </>

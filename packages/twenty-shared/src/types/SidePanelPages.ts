@@ -19,6 +19,7 @@ export enum SidePanelPages {
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
+  PageLayoutDashboardFilters = 'page-layout-dashboard-filters',
   PageLayoutTabSettings = 'page-layout-tab-settings',
   PageLayoutWidgetSettings = 'page-layout-widget-settings',
   DashboardChartSettings = 'dashboard-chart-settings',

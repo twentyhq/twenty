@@ -4,6 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   IconAppWindow,
   IconChartPie,
+  IconFilter,
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
@@ -33,6 +34,8 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
       return IconTable;
     case SidePanelPages.PageLayoutRecordPageWidgetTypeSelect:
       return IconPlus;
+    case SidePanelPages.PageLayoutDashboardFilters:
+      return IconFilter;
     default:
       assertUnreachable(page);
   }

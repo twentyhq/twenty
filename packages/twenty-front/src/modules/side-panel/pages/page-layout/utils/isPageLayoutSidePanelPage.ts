@@ -12,6 +12,7 @@ const PAGE_LAYOUT_SIDE_PANEL_PAGES: PageLayoutSidePanelPage[] = [
   SidePanelPages.RecordPageFieldsSettings,
   SidePanelPages.RecordPageFieldSettings,
   SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+  SidePanelPages.PageLayoutDashboardFilters,
 ];
 
 export const isPageLayoutSidePanelPage = (

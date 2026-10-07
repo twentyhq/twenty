@@ -1,5 +1,7 @@
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
+import { PREFERRED_OWNER_FIELD_NAMES } from '@/page-layout/dashboard-filters/constants/PreferredOwnerFieldNames';
+import { compareFieldMetadataItemNames } from '@/page-layout/dashboard-filters/utils/compareFieldMetadataItemNames';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   CoreObjectNameSingular,
@@ -11,8 +13,6 @@ import {
   type RelationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-
-const PREFERRED_OWNER_FIELD_NAMES = ['accountOwner', 'owner', 'assignee'];
 
 type OwnerBindingCandidateField = {
   id: string;
@@ -33,18 +33,6 @@ export type ComputeBuiltInOwnerBindingsArgs = {
   }[];
 };
 
-// Metadata field order is not stable across workspaces, so ties fall back to a locale-independent name order.
-const compareFieldNames = (
-  fieldA: OwnerBindingCandidateField,
-  fieldB: OwnerBindingCandidateField,
-) => {
-  if (fieldA.name < fieldB.name) {
-    return -1;
-  }
-
-  return fieldA.name > fieldB.name ? 1 : 0;
-};
-
 const findOwnerField = (fields: OwnerBindingCandidateField[]) => {
   const ownerFieldCandidates = fields.filter(
     (field) =>
@@ -60,7 +48,8 @@ const findOwnerField = (fields: OwnerBindingCandidateField[]) => {
   ).find(isDefined);
 
   return (
-    preferredOwnerField ?? [...ownerFieldCandidates].sort(compareFieldNames)[0]
+    preferredOwnerField ??
+    [...ownerFieldCandidates].sort(compareFieldMetadataItemNames)[0]
   );
 };
 

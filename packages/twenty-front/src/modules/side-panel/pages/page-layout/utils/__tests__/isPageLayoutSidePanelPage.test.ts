@@ -12,6 +12,7 @@ describe('isPageLayoutSidePanelPage', () => {
     SidePanelPages.RecordPageFieldsSettings,
     SidePanelPages.RecordPageFieldSettings,
     SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+    SidePanelPages.PageLayoutDashboardFilters,
   ];
 
   it.each(pageLayoutPages)(

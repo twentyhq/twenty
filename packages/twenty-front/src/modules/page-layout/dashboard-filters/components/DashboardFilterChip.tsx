@@ -16,6 +16,7 @@ type DashboardFilterChipProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
   widgetCounts: DashboardFilterSlotWidgetCounts;
+  onEdit?: () => void;
 };
 
 // Each chip owns a filter instance so the existing filter inputs upsert a single scratch RecordFilter there.
@@ -23,6 +24,7 @@ export const DashboardFilterChip = ({
   slot,
   representativeBinding,
   widgetCounts,
+  onEdit,
 }: DashboardFilterChipProps) => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -44,6 +46,7 @@ export const DashboardFilterChip = ({
             slot={slot}
             representativeBinding={representativeBinding}
             widgetCounts={widgetCounts}
+            onEdit={onEdit}
           />
           <DashboardFilterChipValueSyncEffect slotId={slot.id} />
         </ObjectFilterDropdownComponentInstanceContext.Provider>

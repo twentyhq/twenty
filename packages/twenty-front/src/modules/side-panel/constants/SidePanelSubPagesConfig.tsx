@@ -1,3 +1,4 @@
+import { SidePanelDashboardFilterDetailSubPage } from '@/side-panel/pages/page-layout/components/dashboard-filters/SidePanelDashboardFilterDetailSubPage';
 import { SidePanelChartFilterSubPage } from '@/side-panel/pages/page-layout/components/SidePanelChartFilterSubPage';
 import { SidePanelFieldRelationTableFieldsSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldRelationTableFieldsSubPage';
 import { SidePanelFieldsLayoutSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldsLayoutSubPage';
@@ -23,5 +24,9 @@ export const SIDE_PANEL_SUB_PAGES_CONFIG = new Map<
   [
     SidePanelSubPages.PageLayoutFieldRelationTableFields,
     <SidePanelFieldRelationTableFieldsSubPage />,
+  ],
+  [
+    SidePanelSubPages.PageLayoutDashboardFilterDetail,
+    <SidePanelDashboardFilterDetailSubPage />,
   ],
 ]);

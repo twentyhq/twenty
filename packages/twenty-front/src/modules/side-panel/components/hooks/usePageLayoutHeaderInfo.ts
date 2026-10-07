@@ -9,6 +9,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconFilter,
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
@@ -239,6 +240,20 @@ export const usePageLayoutHeaderInfo = ({
         headerIconColor: iconColor,
         headerType: '',
         title: t`New widget`,
+        isReadonly: true,
+        tab: undefined,
+        widgetInEditMode: undefined,
+        isIconEditable: false,
+        selectedIconKey: null,
+      };
+    }
+
+    case SidePanelPages.PageLayoutDashboardFilters: {
+      return {
+        headerIcon: IconFilter,
+        headerIconColor: iconColor,
+        headerType: '',
+        title: t`Dashboard filters`,
         isReadonly: true,
         tab: undefined,
         widgetInEditMode: undefined,
