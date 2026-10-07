@@ -4,17 +4,12 @@ import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 
-const CALLER = {
-  type: 'WORKFLOW_STEP' as const,
-  ref: { workflowRunId: 'run-id', stepId: 'step-id' },
-};
-
 const CREATED_BY = {
   source: 'WORKFLOW',
   name: 'New deals',
   workspaceMemberId: null,
   context: {},
-} as Awaited<ReturnType<AgentRunnerRunInput['turn']['resolveCreatedBy']>>;
+} as Awaited<ReturnType<AgentRunnerRunInput['resolveCreatedBy']>>;
 
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
@@ -51,20 +46,33 @@ const buildExecution = (
 const RUN_INPUT: AgentRunnerRunInput = {
   workspaceId: 'workspace-id',
   conversation: { threadId: 'thread-id', isCreated: false },
-  caller: CALLER,
-  turn: {
+  caller: {
+    type: 'WORKFLOW_STEP',
+    ref: { workflowRunId: 'run', stepId: 'step' },
+  },
+  spec: {
+    agentId: null,
     title: 'Draft the quote',
+    baseSystemPrompt: 'base prompt',
+    instructions: null,
+    capabilities: {
+      canAskHumans: false,
+      canProposeToolCalls: false,
+    },
+  },
+  agent: null,
+  prompt: {
+    messages: MESSAGES,
     senderUserWorkspaceId: 'user-workspace-id',
     senderApplicationId: null,
-    messages: MESSAGES,
-    resolveCreatedBy: async () => CREATED_BY,
   },
-  execution: {
-    agent: null,
-    messages: MESSAGES,
-    baseSystemPrompt: 'base prompt',
-    workspaceId: 'workspace-id',
+  executionContext: {
+    authContext: {} as never,
+    userWorkspaceId: 'user-workspace-id',
+    rolePermissionConfig: { intersectionOf: [] },
+    conversationActor: { type: 'application', applicationId: 'app-id' },
   },
+  resolveCreatedBy: async () => CREATED_BY,
 };
 
 const buildService = (execution = buildExecution()) => {
@@ -87,6 +95,13 @@ const buildService = (execution = buildExecution()) => {
     agentAsyncExecutorService as never,
     agentRunConversationService as never,
     conversationReaderService as never,
+    {
+      findOne: jest.fn().mockResolvedValue(null),
+      closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
+    } as never,
+    {} as never,
+    {} as never,
+    {} as never,
   );
 
   return {
@@ -97,22 +112,6 @@ const buildService = (execution = buildExecution()) => {
   };
 };
 
-const pausedOnWait = buildExecution({
-  isPaused: true,
-  steps: [
-    { content: [], toolResults: [{ toolName: 'search', output: {} }] },
-    {
-      content: [],
-      toolResults: [
-        {
-          toolName: 'wait_for_event',
-          output: { result: { status: 'pending' } },
-        },
-      ],
-    },
-  ] as unknown as AgentExecutionResult['steps'],
-});
-
 describe('AgentRunnerService', () => {
   it('continues a conversation under its lock and records the turn', async () => {
     const {
@@ -122,10 +121,7 @@ describe('AgentRunnerService', () => {
       conversationReaderService,
     } = buildService();
 
-    const { threadId, outcome, summary } = await service.run({
-      ...RUN_INPUT,
-      conversationActor: { type: 'application', applicationId: 'app-id' },
-    });
+    const { threadId, outcome, summary } = await service.run(RUN_INPUT);
 
     expect(threadId).toBe('thread-id');
     expect(outcome).toEqual({
@@ -154,15 +150,19 @@ describe('AgentRunnerService', () => {
       createdBy: CREATED_BY,
       messages: MESSAGES,
     });
-    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith({
-      ...RUN_INPUT.execution,
-      priorMessages: PRIOR_MESSAGES,
-    });
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: MESSAGES,
+        baseSystemPrompt: expect.stringMatching(
+          /^base prompt\n\n.*wait_for_event/,
+        ),
+        priorMessages: PRIOR_MESSAGES,
+      }),
+    );
     expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
       expect.objectContaining({
         turnId: 'turn-id',
         title: 'Draft the quote',
-        caller: CALLER,
       }),
     );
   });
@@ -200,7 +200,7 @@ describe('AgentRunnerService', () => {
     ],
   ])(
     'still runs the agent when %s',
-    async (_, turnOverrides, conversationOverrides) => {
+    async (_, inputOverrides, conversationOverrides) => {
       const {
         service,
         agentAsyncExecutorService,
@@ -211,7 +211,7 @@ describe('AgentRunnerService', () => {
 
       const { outcome } = await service.run({
         ...RUN_INPUT,
-        turn: { ...RUN_INPUT.turn, ...turnOverrides },
+        ...inputOverrides,
       });
 
       expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();
@@ -239,56 +239,16 @@ describe('AgentRunnerService', () => {
     expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
   });
 
-  it('reports a run that ran out of credits', async () => {
+  it('fails a run that ran out of credits', async () => {
     const { service } = buildService(
       buildExecution({ hasNoMoreAvailableCredits: true }),
     );
 
     await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
-      outcome: { status: 'NO_CREDITS' },
-    });
-  });
-
-  it('reports a run awaiting an answer once its question is recorded', async () => {
-    const { service, agentRunConversationService } = buildService(
-      buildExecution({ isPaused: true }),
-    );
-
-    agentRunConversationService.closeTurn.mockResolvedValue({
-      isAwaitingAnswer: true,
-    });
-
-    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
-      outcome: { status: 'AWAITING_ANSWER' },
-    });
-  });
-
-  it('hands back the calls of the last step a run paused on', async () => {
-    const { service } = buildService(pausedOnWait);
-
-    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
       outcome: {
-        status: 'PAUSED',
-        isResumable: true,
-        pausedToolResults: [
-          {
-            toolName: 'wait_for_event',
-            output: { result: { status: 'pending' } },
-          },
-        ],
+        status: 'FAILED',
+        error: 'Agent stopped: no more available credits.',
       },
-    });
-  });
-
-  it('cannot resume a pause it failed to record', async () => {
-    const { service, agentRunConversationService } = buildService(pausedOnWait);
-
-    agentRunConversationService.closeTurn.mockRejectedValue(
-      new Error('db down'),
-    );
-
-    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
-      outcome: { status: 'PAUSED', isResumable: false },
     });
   });
 });
