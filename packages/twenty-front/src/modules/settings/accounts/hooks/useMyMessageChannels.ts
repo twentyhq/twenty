@@ -9,6 +9,7 @@ export const useMyMessageChannels = () => {
     myMessageChannels: MessageChannel[];
   }>(GET_MY_MESSAGE_CHANNELS, {
     client: apolloClient,
+    notifyOnNetworkStatusChange: false,
   });
 
   return {

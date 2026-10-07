@@ -104,21 +104,22 @@ export class MessageChannelResolver {
       `messages-to-import-total:${workspace.id}:${messageChannel.id}`,
     );
 
-    if (!isDefined(totalMessagesToImportCount)) {
+    if (
+      !isDefined(totalMessagesToImportCount) ||
+      totalMessagesToImportCount === 0
+    ) {
       return null;
     }
 
-    const remainingMessagesToImportCount = await this.cacheStorage.getSetLength(
-      `messages-to-import:${workspace.id}:${messageChannel.id}`,
-    );
-
-    const importedMessagesCount = Math.max(
-      totalMessagesToImportCount - remainingMessagesToImportCount,
-      0,
-    );
+    const importedMessagesCount =
+      (await this.cacheStorage.get<number>(
+        `messages-imported:${workspace.id}:${messageChannel.id}`,
+      )) ?? 0;
 
     return Math.floor(
-      (importedMessagesCount / totalMessagesToImportCount) * 100,
+      (Math.min(importedMessagesCount, totalMessagesToImportCount) /
+        totalMessagesToImportCount) *
+        100,
     );
   }
 

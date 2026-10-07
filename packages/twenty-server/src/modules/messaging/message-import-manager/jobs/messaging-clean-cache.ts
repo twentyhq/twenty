@@ -19,11 +19,10 @@ export class MessagingCleanCacheJob {
 
   @Process(MessagingCleanCacheJob.name)
   async handle(data: MessagingCleanCacheJobData): Promise<void> {
-    await this.cacheStorage.del(
+    await this.cacheStorage.mdel([
       `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
-    );
-    await this.cacheStorage.del(
       `messages-to-import-total:${data.workspaceId}:${data.messageChannelId}`,
-    );
+      `messages-imported:${data.workspaceId}:${data.messageChannelId}`,
+    ]);
   }
 }

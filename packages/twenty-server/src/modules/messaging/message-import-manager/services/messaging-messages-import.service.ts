@@ -210,6 +210,11 @@ export class MessagingMessagesImportService {
             );
           }
 
+          await this.cacheStorage.incrBy(
+            `messages-imported:${workspaceId}:${messageChannel.id}`,
+            messageIdsToFetch.length,
+          );
+
           if (messageIdsToFetch.length < messagesGetBatchSize) {
             await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
               [messageChannel.id],

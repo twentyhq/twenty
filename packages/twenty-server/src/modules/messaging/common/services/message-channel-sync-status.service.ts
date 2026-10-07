@@ -88,12 +88,11 @@ export class MessageChannelSyncStatusService {
     }
 
     for (const messageChannelId of messageChannelIds) {
-      await this.cacheStorage.del(
+      await this.cacheStorage.mdel([
         `messages-to-import:${workspaceId}:${messageChannelId}`,
-      );
-      await this.cacheStorage.del(
         `messages-to-import-total:${workspaceId}:${messageChannelId}`,
-      );
+        `messages-imported:${workspaceId}:${messageChannelId}`,
+      ]);
     }
 
     const authContext = buildSystemAuthContext(workspaceId);
