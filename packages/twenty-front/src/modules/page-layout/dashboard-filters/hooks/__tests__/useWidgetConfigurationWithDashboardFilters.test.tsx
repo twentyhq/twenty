@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
+import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
 import { useWidgetConfigurationWithDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useWidgetConfigurationWithDashboardFilters';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import {
@@ -45,27 +46,42 @@ const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const opportunityObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('opportunity');
+const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
+const noteObjectMetadataItem = getMockObjectMetadataItemOrThrow('note');
 
-const getCreatedAtFieldOrThrow = (
+const getFieldByNameOrThrow = (
   objectMetadataItem: EnrichedObjectMetadataItem,
+  fieldName: string,
 ) => {
-  const createdAtField = objectMetadataItem.fields.find(
-    (field) => field.name === 'createdAt',
+  const field = objectMetadataItem.fields.find(
+    (field) => field.name === fieldName,
   );
 
-  if (!isDefined(createdAtField)) {
+  if (!isDefined(field)) {
     throw new Error(
-      `Expected the ${objectMetadataItem.nameSingular} mock to have a createdAt field`,
+      `Expected the ${objectMetadataItem.nameSingular} mock to have a ${fieldName} field`,
     );
   }
 
-  return createdAtField;
+  return field;
 };
 
-const companyCreatedAtField = getCreatedAtFieldOrThrow(
+const companyCreatedAtField = getFieldByNameOrThrow(
   companyObjectMetadataItem,
+  'createdAt',
 );
-const personCreatedAtField = getCreatedAtFieldOrThrow(personObjectMetadataItem);
+const personCreatedAtField = getFieldByNameOrThrow(
+  personObjectMetadataItem,
+  'createdAt',
+);
+const companyAccountOwnerField = getFieldByNameOrThrow(
+  companyObjectMetadataItem,
+  'accountOwner',
+);
+const taskAssigneeField = getFieldByNameOrThrow(
+  taskObjectMetadataItem,
+  'assignee',
+);
 
 // Opportunities lose createdAt so one chart has nothing to bind the date slot to.
 const opportunityWithoutCreatedAt: EnrichedObjectMetadataItem = {
@@ -145,6 +161,16 @@ const opportunityWidget = buildBarChartWidget({
   objectMetadataId: opportunityObjectMetadataItem.id,
 });
 
+const taskWidget = buildBarChartWidget({
+  id: 'task-widget',
+  objectMetadataId: taskObjectMetadataItem.id,
+});
+
+const noteWidget = buildBarChartWidget({
+  id: 'note-widget',
+  objectMetadataId: noteObjectMetadataItem.id,
+});
+
 const getChartFilter = (configuration: PageLayoutWidget['configuration']) => {
   if (!isWidgetConfigurationOfTypeGraph(configuration)) {
     throw new Error('Expected a chart configuration');
@@ -159,6 +185,18 @@ const DATE_VALUE: DashboardFilterValue = {
 };
 
 const DATE_VALUES = { [BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID]: DATE_VALUE };
+
+const OWNER_ME_VALUE: DashboardFilterValue = {
+  operand: ViewFilterOperand.IS,
+  value: JSON.stringify({
+    isCurrentWorkspaceMemberSelected: true,
+    selectedRecordIds: [],
+  }),
+};
+
+const OWNER_ME_VALUES = {
+  [BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID]: OWNER_ME_VALUE,
+};
 
 const renderWithDashboard = async <THookResult,>({
   isDashboardFiltersEnabled = true,
@@ -302,6 +340,69 @@ describe('useWidgetConfigurationWithDashboardFilters', () => {
       personCreatedAtField.id,
     );
     expect(result.current.opportunity).toBe(opportunityWidget.configuration);
+  });
+
+  it('appends the date and owner filters as two ungrouped root filters so they combine with AND', async () => {
+    const { result } = await renderWithDashboard({
+      dashboardFilterValues: { ...DATE_VALUES, ...OWNER_ME_VALUES },
+      useHookUnderTest: () =>
+        useWidgetConfigurationWithDashboardFilters(companyWidget),
+    });
+
+    const recordFilters = getChartFilter(result.current).recordFilters;
+
+    expect(recordFilters).toEqual([
+      existingRecordFilter,
+      expect.objectContaining({
+        id: `dashboard-filter-${BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID}`,
+        fieldMetadataId: companyCreatedAtField.id,
+        type: 'DATE_TIME',
+        operand: ViewFilterOperand.IS_AFTER,
+        value: DATE_VALUE.value,
+      }),
+      expect.objectContaining({
+        id: `dashboard-filter-${BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID}`,
+        fieldMetadataId: companyAccountOwnerField.id,
+        type: 'RELATION',
+        operand: ViewFilterOperand.IS,
+        value: OWNER_ME_VALUE.value,
+        relationTargetFieldMetadataId: null,
+      }),
+    ]);
+    expect(
+      recordFilters
+        ?.slice(1)
+        .every(
+          (recordFilter: RecordFilter) =>
+            !isDefined(recordFilter.recordFilterGroupId),
+        ),
+    ).toBe(true);
+  });
+
+  it('binds owner to accountOwner on companies and assignee on tasks and leaves notes untouched', async () => {
+    const { result } = await renderWithDashboard({
+      dashboardFilterValues: OWNER_ME_VALUES,
+      widgets: [companyWidget, taskWidget, noteWidget],
+      useHookUnderTest: () => ({
+        company: useWidgetConfigurationWithDashboardFilters(companyWidget),
+        task: useWidgetConfigurationWithDashboardFilters(taskWidget),
+        note: useWidgetConfigurationWithDashboardFilters(noteWidget),
+      }),
+    });
+
+    const companyRecordFilters = getChartFilter(
+      result.current.company,
+    ).recordFilters;
+    const taskRecordFilters = getChartFilter(result.current.task).recordFilters;
+
+    expect(companyRecordFilters).toHaveLength(2);
+    expect(companyRecordFilters?.[1]?.fieldMetadataId).toBe(
+      companyAccountOwnerField.id,
+    );
+    expect(taskRecordFilters).toHaveLength(1);
+    expect(taskRecordFilters?.[0]?.fieldMetadataId).toBe(taskAssigneeField.id);
+    expect(taskRecordFilters?.[0]?.value).toBe(OWNER_ME_VALUE.value);
+    expect(result.current.note).toBe(noteWidget.configuration);
   });
 
   it('returns the widget configuration untouched when the feature flag is off', async () => {

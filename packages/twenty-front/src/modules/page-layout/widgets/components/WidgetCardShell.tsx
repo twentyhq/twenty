@@ -1,4 +1,5 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { DashboardFilterUnaffectedWidgetIndicator } from '@/page-layout/dashboard-filters/components/DashboardFilterUnaffectedWidgetIndicator';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
@@ -107,6 +108,9 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            indicator={
+              <DashboardFilterUnaffectedWidgetIndicator widget={widget} />
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay

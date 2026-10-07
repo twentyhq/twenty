@@ -20,6 +20,32 @@ describe('applyDashboardFilterValuesToSearchParams', () => {
     expect(nextSearchParams.has('dashboardFilter[owner][operand]')).toBe(false);
   });
 
+  it('writes both slots when two slots have a value', () => {
+    const ownerValue = JSON.stringify({
+      isCurrentWorkspaceMemberSelected: true,
+      selectedRecordIds: [],
+    });
+
+    const nextSearchParams = applyDashboardFilterValuesToSearchParams({
+      searchParams: new URLSearchParams(),
+      dashboardFilterValues: {
+        date: { operand: ViewFilterOperand.IS_AFTER, value: '2026-01-01' },
+        owner: { operand: ViewFilterOperand.IS, value: ownerValue },
+      },
+    });
+
+    expect(Array.from(nextSearchParams.keys())).toEqual([
+      'dashboardFilter[date][operand]',
+      'dashboardFilter[date][value]',
+      'dashboardFilter[owner][operand]',
+      'dashboardFilter[owner][value]',
+    ]);
+    expect(nextSearchParams.get('dashboardFilter[owner][operand]')).toBe('IS');
+    expect(nextSearchParams.get('dashboardFilter[owner][value]')).toBe(
+      ownerValue,
+    );
+  });
+
   it('removes the params of a cleared slot and keeps other query params', () => {
     const searchParams = new URLSearchParams();
     searchParams.set('viewId', 'view-id');

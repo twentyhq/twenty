@@ -8,13 +8,11 @@ import { IconX } from 'twenty-ui/icon';
 type DashboardFilterChipDropdownContentProps = {
   slotLabel: string;
   dropdownId: string;
-  recordFilterId: string;
 };
 
 export const DashboardFilterChipDropdownContent = ({
   slotLabel,
   dropdownId,
-  recordFilterId,
 }: DashboardFilterChipDropdownContentProps) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -22,6 +20,8 @@ export const DashboardFilterChipDropdownContent = ({
     closeDropdown();
   };
 
+  // The chip's instance holds one ungrouped scratch filter whose id is only fixed once a value exists,
+  // so the inputs find it by field like the view bar's add-filter flow instead of by id.
   return (
     <ObjectFilterDropdownContentWrapper>
       <DropdownMenuHeader
@@ -34,10 +34,7 @@ export const DashboardFilterChipDropdownContent = ({
       >
         {slotLabel}
       </DropdownMenuHeader>
-      <ObjectFilterDropdownFilterInput
-        filterDropdownId={dropdownId}
-        recordFilterId={recordFilterId}
-      />
+      <ObjectFilterDropdownFilterInput filterDropdownId={dropdownId} />
     </ObjectFilterDropdownContentWrapper>
   );
 };

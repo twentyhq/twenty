@@ -3,6 +3,7 @@ import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetada
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
@@ -10,16 +11,19 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
+import { DashboardFilterChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterChipButton';
 import { DashboardFilterChipDropdownContent } from '@/page-layout/dashboard-filters/components/DashboardFilterChipDropdownContent';
+import { DashboardFilterRelationChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterRelationChipButton';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
+import { type DashboardFilterSlotWidgetCounts } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotWidgetCounts';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
+import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import {
   type DashboardFilterBinding,
@@ -33,24 +37,27 @@ import {
   removePropertiesFromRecord,
 } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type DashboardFilterChipDropdownProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
+  widgetCounts: DashboardFilterSlotWidgetCounts;
 };
 
 export const DashboardFilterChipDropdown = ({
   slot,
   representativeBinding,
+  widgetCounts,
 }: DashboardFilterChipDropdownProps) => {
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     ObjectFilterDropdownComponentInstanceContext,
   );
 
+  const { t } = useLingui();
   const store = useStore();
   const { getIcon } = useIcons();
   const { closeDropdown } = useCloseDropdown();
-  const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
 
   const [dashboardFilterValues, setDashboardFilterValues] =
     useAtomComponentState(dashboardFilterValuesComponentState);
@@ -73,6 +80,10 @@ export const DashboardFilterChipDropdown = ({
     useAtomComponentStateCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
+
+  const objectFilterDropdownSearchInput = useAtomComponentStateCallbackState(
+    objectFilterDropdownSearchInputComponentState,
+  );
 
   const subFieldNameUsedInDropdown = useAtomComponentStateCallbackState(
     subFieldNameUsedInDropdownComponentState,
@@ -116,11 +127,9 @@ export const DashboardFilterChipDropdown = ({
     relationTargetFieldMetadataId,
   });
 
-  const labelValue = isDefined(slotValue)
-    ? getRecordFilterChipLabelValue({
-        recordFilter: buildRecordFilterFromSlotValue(slotValue),
-      })
-    : '';
+  const recordFilter = isDefined(slotValue)
+    ? buildRecordFilterFromSlotValue(slotValue)
+    : null;
 
   const clearSlotValue = () => {
     setDashboardFilterValues((previousDashboardFilterValues) =>
@@ -134,10 +143,6 @@ export const DashboardFilterChipDropdown = ({
 
   // The reused filter inputs read the dropdown states, so they are seeded from the slot value on each open.
   const handleChipClick = () => {
-    const recordFilter = isDefined(slotValue)
-      ? buildRecordFilterFromSlotValue(slotValue)
-      : null;
-
     const operand =
       recordFilter?.operand ??
       slot.defaultOperand ??
@@ -154,6 +159,7 @@ export const DashboardFilterChipDropdown = ({
     );
     store.set(selectedOperandInDropdown, operand);
     store.set(objectFilterDropdownCurrentRecordFilter, recordFilter);
+    store.set(objectFilterDropdownSearchInput, '');
     store.set(subFieldNameUsedInDropdown, subFieldName);
     store.set(
       relationTargetFieldMetadataIdUsedInDropdown,
@@ -177,25 +183,47 @@ export const DashboardFilterChipDropdown = ({
     }
   };
 
+  const ChipIcon = getIcon(representativeFieldMetadataItem.icon);
+
+  const { boundWidgetCount, graphWidgetCount } = widgetCounts;
+
   return (
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <SortOrFilterChip
-          testId={recordFilterId}
-          labelKey={slot.label}
-          labelValue={labelValue}
-          Icon={getIcon(representativeFieldMetadataItem.icon)}
-          onRemove={handleRemove}
-          onClick={handleChipClick}
-          type="filter"
-        />
+        <Tooltip
+          delay={TooltipDelay.mediumDelay}
+          content={t`Applies to ${boundWidgetCount} of ${graphWidgetCount} widgets`}
+          side="bottom"
+          closeOnClick
+        >
+          <div>
+            {slot.filterType === 'RELATION' ? (
+              <DashboardFilterRelationChipButton
+                slot={slot}
+                recordFilter={recordFilter}
+                Icon={ChipIcon}
+                testId={recordFilterId}
+                onClick={handleChipClick}
+                onRemove={handleRemove}
+              />
+            ) : (
+              <DashboardFilterChipButton
+                slot={slot}
+                recordFilter={recordFilter}
+                Icon={ChipIcon}
+                testId={recordFilterId}
+                onClick={handleChipClick}
+                onRemove={handleRemove}
+              />
+            )}
+          </div>
+        </Tooltip>
       }
       dropdownComponents={
         <DashboardFilterChipDropdownContent
           slotLabel={slot.label}
           dropdownId={dropdownId}
-          recordFilterId={recordFilterId}
         />
       }
       dropdownOffset={{ y: 8, x: 0 }}

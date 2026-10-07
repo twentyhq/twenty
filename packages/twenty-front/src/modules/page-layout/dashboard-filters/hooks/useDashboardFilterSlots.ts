@@ -1,6 +1,6 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { BUILT_IN_DASHBOARD_FILTER_SLOTS } from '@/page-layout/dashboard-filters/constants/BuiltInDashboardFilterSlots';
-import { computeBuiltInDateBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInDateBindings';
+import { computeBuiltInBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInBindings';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -47,7 +47,7 @@ export const useDashboardFilterSlots = (): UseDashboardFilterSlotsResult => {
   const bindingsByWidgetId = useMemo(
     () =>
       hasDashboardFilters
-        ? computeBuiltInDateBindings({
+        ? computeBuiltInBindings({
             widgets: currentPageLayout.tabs.flatMap((tab) => tab.widgets),
             objectMetadataItems,
           })

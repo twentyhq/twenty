@@ -3,6 +3,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { DashboardFilterChipDropdown } from '@/page-layout/dashboard-filters/components/DashboardFilterChipDropdown';
 import { DashboardFilterChipValueSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterChipValueSyncEffect';
+import { type DashboardFilterSlotWidgetCounts } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotWidgetCounts';
 import { getDashboardFilterChipInstanceId } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChipInstanceId';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
@@ -14,12 +15,14 @@ import {
 type DashboardFilterChipProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
+  widgetCounts: DashboardFilterSlotWidgetCounts;
 };
 
 // Each chip owns a filter instance so the existing filter inputs upsert a single scratch RecordFilter there.
 export const DashboardFilterChip = ({
   slot,
   representativeBinding,
+  widgetCounts,
 }: DashboardFilterChipProps) => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -40,6 +43,7 @@ export const DashboardFilterChip = ({
           <DashboardFilterChipDropdown
             slot={slot}
             representativeBinding={representativeBinding}
+            widgetCounts={widgetCounts}
           />
           <DashboardFilterChipValueSyncEffect slotId={slot.id} />
         </ObjectFilterDropdownComponentInstanceContext.Provider>

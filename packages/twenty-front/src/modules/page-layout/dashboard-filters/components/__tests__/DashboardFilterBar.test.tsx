@@ -100,12 +100,13 @@ describe('DashboardFilterBar', () => {
     mockIsFeatureEnabled.mockReturnValue(true);
   });
 
-  it('renders a Date chip on a dashboard when the feature flag is on', async () => {
+  it('renders Date and Owner chips on a dashboard when the feature flag is on', async () => {
     await renderDashboardFilterBar({
       pageLayoutType: PageLayoutType.DASHBOARD,
     });
 
     expect(screen.getByText('Date')).toBeVisible();
+    expect(screen.getByText('Owner')).toBeVisible();
   });
 
   it('renders nothing when the feature flag is off', async () => {
@@ -116,6 +117,7 @@ describe('DashboardFilterBar', () => {
     });
 
     expect(screen.queryByText('Date')).not.toBeInTheDocument();
+    expect(screen.queryByText('Owner')).not.toBeInTheDocument();
   });
 
   it('renders nothing when the layout is not a dashboard', async () => {
@@ -124,5 +126,6 @@ describe('DashboardFilterBar', () => {
     });
 
     expect(screen.queryByText('Date')).not.toBeInTheDocument();
+    expect(screen.queryByText('Owner')).not.toBeInTheDocument();
   });
 });

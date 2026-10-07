@@ -1,4 +1,5 @@
 import { BUILT_IN_DATE_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInDateDashboardFilterSlotId';
+import { BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID } from '@/page-layout/dashboard-filters/constants/BuiltInOwnerDashboardFilterSlotId';
 import { type BuiltInDashboardFilterSlot } from '@/page-layout/dashboard-filters/types/BuiltInDashboardFilterSlot';
 import { msg } from '@lingui/core/macro';
 import { ViewFilterOperand } from 'twenty-shared/types';
@@ -9,5 +10,11 @@ export const BUILT_IN_DASHBOARD_FILTER_SLOTS: BuiltInDashboardFilterSlot[] = [
     label: msg`Date`,
     filterType: 'DATE_TIME',
     defaultOperand: ViewFilterOperand.IS_RELATIVE,
+  },
+  {
+    id: BUILT_IN_OWNER_DASHBOARD_FILTER_SLOT_ID,
+    label: msg`Owner`,
+    filterType: 'RELATION',
+    defaultOperand: ViewFilterOperand.IS,
   },
 ];
