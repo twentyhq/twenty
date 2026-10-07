@@ -100,18 +100,28 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
           return pausedSteps.length;
         }
 
-        await manager.query(
+        // an answer settled between the select and this update leaves its
+        // thread unmarked, and that thread gets no suspension
+        const [markedThreads]: [{ threadId: string }[], number] =
+          await manager.query(
           `UPDATE ${table('agentMessagePart')} part
            SET "toolOutput" = part."toolOutput" || '{"awaitedByCaller": true}'::jsonb
            FROM ${table('agentMessage')} message
            WHERE part."messageId" = message.id
              AND message."threadId" = ANY($1::uuid[])
              AND jsonb_typeof(part."toolOutput") = 'object'
-             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'`,
+             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+           RETURNING message."threadId" AS "threadId"`,
           [pausedSteps.map(({ threadId }) => threadId)],
         );
+        const markedThreadIds = new Set(
+          markedThreads.map(({ threadId }) => threadId),
+        );
+        const suspendedSteps = pausedSteps.filter(({ threadId }) =>
+          markedThreadIds.has(threadId),
+        );
 
-        for (const pausedStep of pausedSteps) {
+        for (const pausedStep of suspendedSteps) {
           await manager.query(
             `INSERT INTO "core"."agentRunSuspension" ("workspaceId", "threadId", "caller", "runSpec", "summary")
              VALUES ($1, $2, $3, $4, $5)
@@ -139,7 +149,7 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
           );
         }
 
-        return pausedSteps.length;
+        return suspendedSteps.length;
       },
     );
 

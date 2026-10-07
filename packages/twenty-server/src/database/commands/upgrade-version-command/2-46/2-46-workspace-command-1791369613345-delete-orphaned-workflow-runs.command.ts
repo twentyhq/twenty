@@ -78,8 +78,28 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
       return;
     }
 
+    const [{ hasChatHistory }]: [{ hasChatHistory: boolean }] =
+      await dataSource.query(
+        `SELECT to_regclass($1) IS NOT NULL AS "hasChatHistory"`,
+        [`${escapeIdentifier(schemaName)}."agentMessagePart"`],
+      );
+
     // suspend-paused-agent-steps runs first and may have suspended an agent
-    // step of these runs, which would then block its conversation for good
+    // step of these runs. Its suspension would block the conversation for
+    // good, and its pending calls would keep waiting on a caller that is
+    // gone, so an answer goes back to being a chat reply
+    const unmarkAwaitedCallsSql = hasChatHistory
+      ? `, unmarked AS (
+           UPDATE ${escapeIdentifier(schemaName)}."agentMessagePart" part
+           SET "toolOutput" = part."toolOutput" - 'awaitedByCaller'
+           FROM ${escapeIdentifier(schemaName)}."agentMessage" message, released
+           WHERE part."messageId" = message.id
+             AND message."threadId" = released."threadId"
+             AND jsonb_typeof(part."toolOutput") = 'object'
+             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+         )`
+      : '';
+
     const deletedRuns: { id: string }[] = await dataSource.query(
       `WITH deleted AS (
          DELETE FROM ${workflowRunTable} run WHERE ${ORPHANED_WORKFLOW_RUN_CONDITION} RETURNING run.id
@@ -89,7 +109,8 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
          WHERE suspension."workspaceId" = $1
            AND suspension.caller ->> 'type' = 'WORKFLOW_STEP'
            AND suspension.caller -> 'ref' ->> 'workflowRunId' = deleted.id::text
-       ) SELECT id FROM deleted`,
+         RETURNING suspension."threadId"
+       )${unmarkAwaitedCallsSql} SELECT id FROM deleted`,
       [workspaceId],
     );
 
