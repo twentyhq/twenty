@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { ensureAbsoluteUrl, isSafeInternalPath } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -6,9 +7,15 @@ export const getLinkNavigationMenuItemComputedLink = (
 ): string => {
   const linkUrl = (item.link ?? '').trim();
 
-  if (linkUrl === '') {
+  if (!isNonEmptyString(linkUrl)) {
     return '';
   }
 
-  return isSafeInternalPath(linkUrl) ? linkUrl : ensureAbsoluteUrl(linkUrl);
+  if (isSafeInternalPath(linkUrl)) {
+    return linkUrl;
+  }
+
+  return ensureAbsoluteUrl(linkUrl).replace(/^https?:\/\//i, (scheme) =>
+    scheme.toLowerCase(),
+  );
 };

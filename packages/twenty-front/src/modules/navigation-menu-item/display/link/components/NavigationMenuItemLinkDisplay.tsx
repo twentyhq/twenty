@@ -7,6 +7,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
+import { isLinkNavigationMenuItemActive } from '@/navigation-menu-item/display/link/utils/isLinkNavigationMenuItemActive';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -53,7 +54,7 @@ export const NavigationMenuItemLinkDisplay = ({
           : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
-      active={isInternalLink && location.pathname === computedLink}
+      active={isLinkNavigationMenuItemActive({ computedLink, location })}
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"

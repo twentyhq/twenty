@@ -31,6 +31,12 @@ describe('getLinkNavigationMenuItemComputedLink', () => {
     ).toBe('https:///\t/evil.com');
   });
 
+  it('lowercases an uppercase scheme so the link stays external', () => {
+    expect(
+      getLinkNavigationMenuItemComputedLink({ link: 'HTTPS://twenty.com' }),
+    ).toBe('https://twenty.com');
+  });
+
   it('returns an empty string without a link', () => {
     expect(getLinkNavigationMenuItemComputedLink({ link: null })).toBe('');
   });
