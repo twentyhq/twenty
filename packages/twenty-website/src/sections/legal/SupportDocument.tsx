@@ -7,8 +7,7 @@ export function SupportDocument() {
     <>
       <p>
         Twenty is an open-source CRM. This page explains how to get help,
-        whether you run Twenty on our cloud or host it yourself, including help
-        with the Twenty app for Slack.
+        whether you run Twenty on our cloud or host it yourself.
       </p>
 
       <h2>Getting help</h2>
