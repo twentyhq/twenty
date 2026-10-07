@@ -77,16 +77,11 @@ if (command === 'version') {
 
 const createPackage = async (cliOptions = {}) => {
   const packageDirectory = join(root, 'twenty-cli');
-  const templateDirectory = join(
-    root,
-    'create-twenty-app/src/constants/template',
-  );
-  const overlayDirectory = join(packageDirectory, 'app-template-overlay');
+  const templateDirectory = join(packageDirectory, 'app-template');
   const executable = join(packageDirectory, 'dist/cli.cjs');
 
   await mkdir(join(packageDirectory, 'dist/chunks'), { recursive: true });
-  await mkdir(join(overlayDirectory, 'src/__tests__'), { recursive: true });
-  await mkdir(templateDirectory, { recursive: true });
+  await mkdir(join(templateDirectory, 'src/__tests__'), { recursive: true });
   await writeFile(
     join(packageDirectory, 'package.json'),
     JSON.stringify({
@@ -107,19 +102,12 @@ const createPackage = async (cliOptions = {}) => {
   );
   await writeFile(join(templateDirectory, 'package.json'), '{}');
   await writeFile(
-    join(overlayDirectory, 'src/__tests__/run-twenty.ts'),
+    join(templateDirectory, 'src/__tests__/run-twenty.ts'),
     'export {};',
   );
   await cp(templateDirectory, join(packageDirectory, 'dist/app-template'), {
     recursive: true,
   });
-  await cp(
-    overlayDirectory,
-    join(packageDirectory, 'dist/app-template-overlay'),
-    {
-      recursive: true,
-    },
-  );
 
   return packageDirectory;
 };

@@ -4,7 +4,7 @@
   "sourceRoot": "packages/twenty-cli/src",
   "projectType": "application",
   "tags": ["scope:cli"],
-  "implicitDependencies": ["create-twenty-app"],
+  "implicitDependencies": ["twenty-sdk"],
   "targets": {
     "build": {
       "dependsOn": ["^build"],
