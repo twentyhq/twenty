@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -55,6 +55,8 @@ type FetchRecordShares = () => Promise<RecordShare[]>;
 
 @Injectable()
 export class RecordAccessPolicyService {
+  private readonly logger = new Logger(RecordAccessPolicyService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -145,15 +147,23 @@ export class RecordAccessPolicyService {
         ])
       ).flatFieldMetadataMapsOrm;
 
-    return snapshots.filter((snapshot) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: snapshot,
-        filter: rowLevelPermissionRecordFilter,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter: true,
-      }),
-    );
+    return snapshots.filter((snapshot) => {
+      try {
+        return isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: snapshot,
+          filter: rowLevelPermissionRecordFilter,
+          flatObjectMetadata: objectMetadata,
+          flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter: true,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to evaluate row-level permission predicate for record "${snapshot.id}" on "${objectMetadata.nameSingular}": ${error instanceof Error ? error.message : error}`,
+        );
+
+        return false;
+      }
+    });
   }
 
   private async resolveSnapshotIdsAdmittedByRecordShareGate(

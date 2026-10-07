@@ -110,4 +110,78 @@ describe('mandatory event visibility', () => {
     ).toEqual(new Set());
     await module.close();
   });
+
+  it('gracefully degrades and filters out records whose RLS predicate evaluation throws', async () => {
+    const { module } = await Test.createTestingModule({
+      providers: [
+        RecordAccessPolicyService,
+        { provide: WorkspaceOrmManager, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatFieldMetadataMapsOrm: {},
+            }),
+          },
+        },
+        {
+          provide: RecordShareStorageService,
+          useValue: {
+            findByRecordIds: jest.fn().mockResolvedValue([
+              {
+                recordId: 'valid-record',
+                principalId: 'member',
+                rowCause: RecordShareRowCause.OWNER,
+                accessLevel: RecordShareAccessLevel.FULL,
+              },
+            ]),
+          },
+        },
+      ],
+    }).compile();
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const predicateModule = require('src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util');
+    const isRecordMatchingSpy = jest
+      .spyOn(predicateModule, 'isRecordMatchingRLSRowLevelPermissionPredicate')
+      .mockImplementation(({ record }: { record: { id: string } }) => {
+        if (record.id === 'throwing-record') {
+          throw new TypeError('e.split is not a function');
+        }
+
+        return true;
+      });
+
+    const gate = module
+      .get(RecordAccessPolicyService)
+      .buildEventRecordAccessGate({
+        name: 'company.created',
+        workspaceId: COMPANY_FLAT_OBJECT_MOCK.workspaceId,
+        objectMetadata: {
+          ...COMPANY_FLAT_OBJECT_MOCK,
+          readability: MetadataReadability.PRIVATE,
+        },
+        events: [
+          {
+            recordId: 'throwing-record',
+            properties: { after: { id: 'throwing-record' } },
+          },
+          {
+            recordId: 'valid-record',
+            properties: { after: { id: 'valid-record' } },
+          },
+        ],
+      });
+
+    const admitted = await gate.resolveAdmittedRecordIds({
+      ...subject,
+      resolveRowLevelPermissionRecordFilter: () => ({
+        status: { eq: 'active' },
+      }),
+    });
+
+    expect(admitted).toEqual(new Set(['valid-record']));
+    isRecordMatchingSpy.mockRestore();
+    await module.close();
+  });
 });
