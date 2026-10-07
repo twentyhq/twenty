@@ -1,6 +1,7 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -60,10 +61,7 @@ export const LeftPanelSkeletonLoader = () => {
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
-          <Skeleton
-            layout="line"
-            highlightColor={themeCssVariables.background.transparent.lighter}
-            borderRadius={4}
+          <SkeletonLine
             width={96}
             height={SKELETON_HEIGHT_SIZES.s}
             baseColor={themeCssVariables.background.quaternary}

@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -17,7 +18,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -195,14 +196,7 @@ export const SidePanelSearchRecordPreviewCard = ({
               </FieldContext.Provider>
             </RecordFieldComponentInstanceContext.Provider>
           ) : (
-            <Skeleton
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
-              borderRadius={4}
-              width={120}
-              height={SKELETON_HEIGHT}
-            />
+            <SkeletonLine width={120} height={SKELETON_HEIGHT} />
           )}
         </StyledFieldValue>
       </StyledFieldRow>

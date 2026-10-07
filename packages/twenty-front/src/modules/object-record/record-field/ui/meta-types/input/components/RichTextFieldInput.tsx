@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
@@ -8,7 +9,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
@@ -58,10 +59,7 @@ const StyledCollapseButton = styled.div`
 
 const LoadingSkeleton = () => {
   return (
-    <Skeleton
-      layout="line"
-      baseColor={themeCssVariables.background.tertiary}
-      highlightColor={themeCssVariables.background.transparent.lighter}
+    <SkeletonLine
       height={SKELETON_HEIGHT_SIZES.s}
       borderRadius={themeCssVariables.border.radius.md}
     />

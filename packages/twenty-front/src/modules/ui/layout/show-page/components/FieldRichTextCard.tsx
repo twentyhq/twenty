@@ -1,10 +1,11 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -33,10 +34,7 @@ const StyledSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledSkeletonContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         height={SKELETON_HEIGHT_SIZES.s}
         borderRadius={themeCssVariables.border.radius.md}
       />

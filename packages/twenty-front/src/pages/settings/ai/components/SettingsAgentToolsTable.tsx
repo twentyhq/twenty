@@ -1,4 +1,4 @@
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -56,14 +56,7 @@ export const SettingsAgentToolsTable = ({
       </StyledTableHeaderRowContainer>
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
-              height={32}
-              borderRadius={4}
-              key={index}
-            />
+            <SkeletonLine height={32} key={index} />
           ))
         : tools.map((tool) => {
             const application = isDefined(tool.applicationId)

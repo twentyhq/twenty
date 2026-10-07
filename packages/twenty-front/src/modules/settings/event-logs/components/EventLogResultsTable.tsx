@@ -1,9 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
 
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -186,18 +186,7 @@ export const EventLogResultsTable = ({
               <TableRow gridTemplateColumns={gridTemplateColumns}>
                 {baseColumns.map((column, index) => (
                   <TableCell key={column.id}>
-                    {index === 0 && (
-                      <Skeleton
-                        layout="line"
-                        baseColor={themeCssVariables.background.tertiary}
-                        highlightColor={
-                          themeCssVariables.background.transparent.lighter
-                        }
-                        borderRadius={4}
-                        width={120}
-                        height={16}
-                      />
-                    )}
+                    {index === 0 && <SkeletonLine width={120} height={16} />}
                   </TableCell>
                 ))}
               </TableRow>

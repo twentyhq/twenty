@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Logo } from '@/auth/components/Logo';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -26,7 +27,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -220,8 +221,8 @@ export const PasswordReset = () => {
           <Title animate>{passwordActionLabel}</Title>
           <StyledOnboardingContentContainer>
             {!email ? (
-              <Skeleton
-                layout="line"
+              <SkeletonLine
+                borderRadius="0.25rem"
                 height={SKELETON_HEIGHT_SIZES.m}
                 count={2}
                 style={{

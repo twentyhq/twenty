@@ -1,7 +1,8 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -208,42 +209,22 @@ export const DatePicker = ({
         <Suspense
           fallback={
             <StyledDatePickerFallback>
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
+              <SkeletonLine
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
+              <SkeletonLine
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
+              <SkeletonLine
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
               />
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
+              <SkeletonLine
                 width={DATE_PICKER_CONTAINER_WIDTH - 16}
                 height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}

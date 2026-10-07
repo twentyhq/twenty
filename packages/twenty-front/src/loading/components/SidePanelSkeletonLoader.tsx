@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelContainer = styled.div`
@@ -12,14 +13,7 @@ const StyledSidePanelContainer = styled.div`
 export const SidePanelSkeletonLoader = () => {
   return (
     <StyledSidePanelContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
-        borderRadius={4}
-        height={SKELETON_HEIGHT_SIZES.m}
-        width={140}
-      />
+      <SkeletonLine height={SKELETON_HEIGHT_SIZES.m} width={140} />
     </StyledSidePanelContainer>
   );
 };

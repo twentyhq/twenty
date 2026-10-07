@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsSectionSkeletonLoaderProps = {
@@ -18,14 +19,7 @@ export const SettingsSectionSkeletonLoader = ({
 }: SettingsSectionSkeletonLoaderProps) => {
   return (
     <StyledRows>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
-        borderRadius={4}
-        count={rowCount}
-        height={SKELETON_HEIGHT_SIZES.l}
-      />
+      <SkeletonLine count={rowCount} height={SKELETON_HEIGHT_SIZES.l} />
     </StyledRows>
   );
 };

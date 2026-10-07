@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,71 +36,25 @@ export const CoreAgentDetailSkeletonLoader = () => {
       <StyledFormSection>
         <StyledIconNameRow>
           <StyledIconContainer>
-            <Skeleton
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
-              borderRadius={4}
+            <SkeletonLine
               width={SKELETON_HEIGHT_SIZES.l}
               height={SKELETON_HEIGHT_SIZES.l}
             />
           </StyledIconContainer>
           <StyledNameContainer>
-            <Skeleton
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
-              borderRadius={4}
-              height={SKELETON_HEIGHT_SIZES.l}
-              width="100%"
-            />
+            <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
           </StyledNameContainer>
         </StyledIconNameRow>
 
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          highlightColor={themeCssVariables.background.transparent.lighter}
-          borderRadius={4}
-          height={SKELETON_HEIGHT_SIZES.l}
-          width="100%"
-        />
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          highlightColor={themeCssVariables.background.transparent.lighter}
-          borderRadius={4}
-          height={SKELETON_HEIGHT_SIZES.l}
-          width="100%"
-        />
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          highlightColor={themeCssVariables.background.transparent.lighter}
-          borderRadius={4}
-          height={SKELETON_HEIGHT_SIZES.l}
-          width="100%"
-        />
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          highlightColor={themeCssVariables.background.transparent.lighter}
-          borderRadius={4}
-          height={SKELETON_HEIGHT_SIZES.l}
-          width="100%"
-        />
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
 
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          highlightColor={themeCssVariables.background.transparent.lighter}
-          borderRadius={4}
-          height={120}
-          width="100%"
-        />
+        <SkeletonLine height={120} width="100%" />
       </StyledFormSection>
     </StyledSkeletonContainer>
   );

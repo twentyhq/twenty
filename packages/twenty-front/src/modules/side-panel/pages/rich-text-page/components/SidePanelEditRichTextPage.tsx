@@ -1,8 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { viewableRichTextComponentState } from '@/side-panel/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -29,10 +30,7 @@ const StyledContainer = styled.div`
 
 const LoadingSkeleton = () => {
   return (
-    <Skeleton
-      layout="line"
-      baseColor={themeCssVariables.background.tertiary}
-      highlightColor={themeCssVariables.background.transparent.lighter}
+    <SkeletonLine
       borderRadius={themeCssVariables.border.radius.smRound}
       height={SKELETON_HEIGHT_SIZES.s}
     />

@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -15,10 +16,7 @@ const StyledContainer = styled.div`
 export const FrontComponentSkeletonLoader = () => {
   return (
     <StyledContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         height="100%"
         borderRadius={themeCssVariables.border.radius.mdRound}
       />

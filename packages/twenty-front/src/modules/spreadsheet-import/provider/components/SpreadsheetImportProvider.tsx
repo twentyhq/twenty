@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import React from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
@@ -17,10 +18,7 @@ const SpreadsheetImport = React.lazy(() =>
 
 const LoadingSkeleton = () => {
   return (
-    <Skeleton
-      layout="line"
-      baseColor={themeCssVariables.background.tertiary}
-      highlightColor={themeCssVariables.background.transparent.lighter}
+    <SkeletonLine
       borderRadius={themeCssVariables.border.radius.smRound}
       height={SKELETON_HEIGHT_SIZES.s}
     />

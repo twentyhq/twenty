@@ -1,8 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -190,16 +191,7 @@ export const LogConsoleTable = ({
               >
                 {columns.map((column) => (
                   <TableCell key={column.id}>
-                    <Skeleton
-                      layout="line"
-                      baseColor={themeCssVariables.background.tertiary}
-                      highlightColor={
-                        themeCssVariables.background.transparent.lighter
-                      }
-                      borderRadius={4}
-                      width={80}
-                      height={16}
-                    />
+                    <SkeletonLine width={80} height={16} />
                   </TableCell>
                 ))}
               </TableRow>

@@ -1,5 +1,6 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
@@ -25,7 +26,7 @@ const StyledSkeletonSubSectionContent = styled.div`
   justify-content: center;
 `;
 
-const StyledSkeletonColumn = styled(Skeleton)`
+const StyledSkeletonColumn = styled(SkeletonLine)`
   corner-shape: round;
 `;
 
@@ -45,21 +46,11 @@ export const SkeletonLoader = ({
 
   return (
     <StyledSkeletonContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
-        borderRadius={4}
-        width={440}
-        height={SKELETON_HEIGHT_SIZES.s}
-      />
+      <SkeletonLine width={440} height={SKELETON_HEIGHT_SIZES.s} />
       {withSubSections &&
         skeletonItems.map(({ id }, index) => (
           <StyledSkeletonSubSection key={id}>
             <StyledSkeletonColumn
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
               width={24}
               borderRadius={80}
               height={
@@ -69,37 +60,10 @@ export const SkeletonLoader = ({
               }
             />
             <StyledSkeletonSubSectionContent>
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
-                borderRadius={4}
-                width={400}
-                height={SKELETON_HEIGHT_SIZES.m}
-              />
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
-                borderRadius={4}
-                width={400}
-                height={SKELETON_HEIGHT_SIZES.m}
-              />
+              <SkeletonLine width={400} height={SKELETON_HEIGHT_SIZES.m} />
+              <SkeletonLine width={400} height={SKELETON_HEIGHT_SIZES.m} />
               {index === 1 && (
-                <Skeleton
-                  layout="line"
-                  baseColor={themeCssVariables.background.tertiary}
-                  highlightColor={
-                    themeCssVariables.background.transparent.lighter
-                  }
-                  borderRadius={4}
-                  width={400}
-                  height={SKELETON_HEIGHT_SIZES.m}
-                />
+                <SkeletonLine width={400} height={SKELETON_HEIGHT_SIZES.m} />
               )}
             </StyledSkeletonSubSectionContent>
           </StyledSkeletonSubSection>

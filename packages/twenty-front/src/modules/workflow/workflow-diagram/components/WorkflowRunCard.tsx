@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
@@ -7,7 +8,7 @@ import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workfl
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { styled } from '@linaria/react';
 import { Suspense, useId } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
@@ -21,24 +22,15 @@ const StyledLoadingSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledLoadingSkeletonContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />

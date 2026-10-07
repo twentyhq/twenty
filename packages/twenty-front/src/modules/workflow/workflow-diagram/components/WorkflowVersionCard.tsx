@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
@@ -5,7 +6,7 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/com
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { styled } from '@linaria/react';
 import { Suspense } from 'react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
@@ -19,24 +20,15 @@ const StyledLoadingSkeletonContainer = styled.div`
 const LoadingSkeleton = () => {
   return (
     <StyledLoadingSkeletonContainer>
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />
-      <Skeleton
-        layout="line"
-        baseColor={themeCssVariables.background.tertiary}
-        highlightColor={themeCssVariables.background.transparent.lighter}
+      <SkeletonLine
         borderRadius={themeCssVariables.border.radius.smRound}
         height={SKELETON_HEIGHT_SIZES.m}
       />

@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { RestPlaygroundSchemaFetchEffect } from '@/settings/mcp-and-apis/components/RestPlaygroundSchemaFetchEffect';
 import {
   isPlaygroundApiKeyFresh,
@@ -7,7 +8,7 @@ import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/Playground
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -63,16 +64,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     return null;
   }
 
-  const fallback = (
-    <Skeleton
-      layout="line"
-      baseColor={themeCssVariables.background.tertiary}
-      highlightColor={themeCssVariables.background.transparent.lighter}
-      borderRadius={4}
-      width="100%"
-      height="100%"
-    />
-  );
+  const fallback = <SkeletonLine width="100%" height="100%" />;
 
   return (
     <StyledContainer>

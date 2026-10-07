@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,7 +11,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Skeleton } from 'twenty-ui/primitives/feedback';
+
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -90,35 +91,10 @@ export const SettingsUsageUserDetail = () => {
       <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
         <SettingsPageContainer>
           <StyledUserHeader>
-            <Skeleton
-              layout="line"
-              baseColor={themeCssVariables.background.tertiary}
-              highlightColor={themeCssVariables.background.transparent.lighter}
-              width={40}
-              height={40}
-              borderRadius={8}
-            />
+            <SkeletonLine width={40} height={40} borderRadius={8} />
             <StyledUserInfo>
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
-                borderRadius={4}
-                width={160}
-                height={16}
-              />
-              <Skeleton
-                layout="line"
-                baseColor={themeCssVariables.background.tertiary}
-                highlightColor={
-                  themeCssVariables.background.transparent.lighter
-                }
-                borderRadius={4}
-                width={100}
-                height={13}
-              />
+              <SkeletonLine width={160} height={16} />
+              <SkeletonLine width={100} height={13} />
             </StyledUserInfo>
           </StyledUserHeader>
           <UsageSectionSkeleton />

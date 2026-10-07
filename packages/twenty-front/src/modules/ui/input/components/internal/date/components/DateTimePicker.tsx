@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
@@ -14,7 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -269,46 +270,10 @@ export const DateTimePicker = ({
           <Suspense
             fallback={
               <StyledDatePickerFallback>
-                <Skeleton
-                  layout="line"
-                  baseColor={themeCssVariables.background.tertiary}
-                  highlightColor={
-                    themeCssVariables.background.transparent.lighter
-                  }
-                  borderRadius={4}
-                  width={200}
-                  height={SKELETON_HEIGHT_SIZES.m}
-                />
-                <Skeleton
-                  layout="line"
-                  baseColor={themeCssVariables.background.tertiary}
-                  highlightColor={
-                    themeCssVariables.background.transparent.lighter
-                  }
-                  borderRadius={4}
-                  width={240}
-                  height={SKELETON_HEIGHT_SIZES.l}
-                />
-                <Skeleton
-                  layout="line"
-                  baseColor={themeCssVariables.background.tertiary}
-                  highlightColor={
-                    themeCssVariables.background.transparent.lighter
-                  }
-                  borderRadius={4}
-                  width={220}
-                  height={SKELETON_HEIGHT_SIZES.m}
-                />
-                <Skeleton
-                  layout="line"
-                  baseColor={themeCssVariables.background.tertiary}
-                  highlightColor={
-                    themeCssVariables.background.transparent.lighter
-                  }
-                  borderRadius={4}
-                  width={180}
-                  height={SKELETON_HEIGHT_SIZES.s}
-                />
+                <SkeletonLine width={200} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={240} height={SKELETON_HEIGHT_SIZES.l} />
+                <SkeletonLine width={220} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={180} height={SKELETON_HEIGHT_SIZES.s} />
               </StyledDatePickerFallback>
             }
           >

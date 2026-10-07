@@ -1,7 +1,8 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitleSkeleton = styled.div`
@@ -30,36 +31,24 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
   return (
     <NavigationDrawerSection>
       <StyledTitleSkeleton>
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          borderRadius={4}
+        <SkeletonLine
           width={72}
           height={SKELETON_HEIGHT_SIZES.xs}
           highlightColor={themeCssVariables.background.transparent.light}
         />
       </StyledTitleSkeleton>
       <StyledRowsContainer>
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          borderRadius={4}
+        <SkeletonLine
           containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          borderRadius={4}
+        <SkeletonLine
           containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
-        <Skeleton
-          layout="line"
-          baseColor={themeCssVariables.background.tertiary}
-          borderRadius={4}
+        <SkeletonLine
           containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
