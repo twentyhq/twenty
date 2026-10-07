@@ -46,7 +46,7 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 
 ## Scaffolding entities
 
-`yarn twenty dev:add` generates the file, a valid `universalIdentifier` and the right imports. Prefer it over writing entity files by hand. It prompts for names and options, so it needs an interactive terminal.
+`yarn twenty dev:add` generates the file, a valid `universalIdentifier` and the right imports. Prefer it over writing entity files by hand. It prompts for names and options, so it needs an interactive terminal. Without one, use the standalone `twenty` CLI when it is installed: `twenty app add object --name invoice --name-plural invoices --no-input`, or `twenty app add field --name amount --type NUMBER --object <uuid> --no-input`. It covers objects, fields, logic functions and front components, never prompts with `--no-input` or `--json`, and exits with code 2 when a required value is missing.
 
 | Entity type            | Command                                    | Generated file                          |
 | ---------------------- | ------------------------------------------ | --------------------------------------- |
