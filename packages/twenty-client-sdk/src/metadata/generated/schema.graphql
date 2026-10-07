@@ -745,6 +745,7 @@ type BillingEntitlement {
 enum BillingEntitlementKey {
   AUDIT_LOGS
   CUSTOM_DOMAIN
+  INCLUDED_FAST_MODEL
   RECORD_SHARING
   RLS
   SSO
@@ -1085,6 +1086,7 @@ type ClientAiModelTierConfig {
 
 type ClientConfig {
   aiEvaluationModels: [ClientAiEvaluationModelConfig!]!
+  aiIncludedChatModelId: String
   aiModelTiers: [ClientAiModelTierConfig!]!
   aiModels: [ClientAiModelConfig!]!
   allowRequestsToTwentyIcons: Boolean!

@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -52,6 +53,22 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
       periodStart: new Date(currentBillingSubscription.currentPeriodStart),
       periodEnd: new Date(currentBillingSubscription.currentPeriodEnd),
     };
+  }
+
+  async isInTrialPeriod(workspaceId: string): Promise<boolean> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return false;
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    return (
+      currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
+      currentBillingSubscription.status === SubscriptionStatus.Trialing
+    );
   }
 
   async getCreditAllowance(

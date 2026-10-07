@@ -33,14 +33,19 @@ type SettingsAdminWorkspaceUsageLimitsSectionProps = {
 
 const EDIT_LIMIT_DIALOG_ID = 'settings-admin-usage-limit-edit';
 
-const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
+const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 110px 100px 100px 100px 90px 36px';
 
 const getStatus = (
   row: AdminUsageLimitRow,
-): { label: MessageDescriptor; color: ThemeColor } =>
-  row.isOverridden
-    ? { label: msg`Override`, color: 'blue' }
+): { label: MessageDescriptor; color: ThemeColor } => {
+  if (row.isOverridden) {
+    return { label: msg`Override`, color: 'blue' };
+  }
+
+  return row.isTrialDefaultValue
+    ? { label: msg`Trial default`, color: 'orange' }
     : { label: msg`Default`, color: 'green' };
+};
 
 export const SettingsAdminWorkspaceUsageLimitsSection = ({
   workspaceId,
@@ -118,6 +123,19 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
                   unit: item.unit,
                   operationType: item.operationType,
                 })}
+              </>
+            ),
+          },
+          {
+            label: t`Used`,
+            Cell: ({ item }) => (
+              <>
+                {isDefined(item.consumedValue) &&
+                  formatLimitValue({
+                    value: item.consumedValue,
+                    unit: item.unit,
+                    operationType: item.operationType,
+                  })}
               </>
             ),
           },

@@ -14,4 +14,8 @@ export class NoCreditAllowanceProvider extends CreditAllowanceProvider {
   async getCreditAllowance(): Promise<CreditAllowance | null> {
     return null;
   }
+
+  async isInTrialPeriod(): Promise<boolean> {
+    return false;
+  }
 }

@@ -239,6 +239,7 @@ export class BillingSubscriptionService {
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
       value: isEntitlementActive({
+        key,
         hasValidEnterprisePlan,
         isBillingEnabled,
         stripeEntitlementValue: billingEntitlements[key] ?? false,
@@ -265,12 +266,12 @@ export class BillingSubscriptionService {
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
-    const stripeEntitlementValue =
-      hasValidEnterprisePlan && isBillingEnabled
-        ? await this.getWorkspaceEntitlementByKey(workspaceId, key)
-        : false;
+    const stripeEntitlementValue = isBillingEnabled
+      ? await this.getWorkspaceEntitlementByKey(workspaceId, key)
+      : false;
 
     return isEntitlementActive({
+      key,
       hasValidEnterprisePlan,
       isBillingEnabled,
       stripeEntitlementValue,

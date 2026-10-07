@@ -5,6 +5,7 @@ export const mockedClientConfig: ClientConfig = {
   aiModels: [],
   aiEvaluationModels: [],
   aiModelTiers: [],
+  aiIncludedChatModelId: null,
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,

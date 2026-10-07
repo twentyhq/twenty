@@ -660,7 +660,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT'
+export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'INCLUDED_FAST_MODEL' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT'
 
 export interface BillingLicensedProduct {
     description: Scalars['String']
@@ -980,6 +980,7 @@ export interface ClientAiModelTierConfig {
 
 export interface ClientConfig {
     aiEvaluationModels: ClientAiEvaluationModelConfig[]
+    aiIncludedChatModelId?: Scalars['String']
     aiModelTiers: ClientAiModelTierConfig[]
     aiModels: ClientAiModelConfig[]
     allowRequestsToTwentyIcons: Scalars['Boolean']
@@ -4898,6 +4899,7 @@ export interface ClientAiModelTierConfigGenqlSelection{
 
 export interface ClientConfigGenqlSelection{
     aiEvaluationModels?: ClientAiEvaluationModelConfigGenqlSelection
+    aiIncludedChatModelId?: boolean | number
     aiModelTiers?: ClientAiModelTierConfigGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
     allowRequestsToTwentyIcons?: boolean | number
@@ -11059,6 +11061,7 @@ export const enumBarChartLayout = {
 export const enumBillingEntitlementKey = {
    AUDIT_LOGS: 'AUDIT_LOGS' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
+   INCLUDED_FAST_MODEL: 'INCLUDED_FAST_MODEL' as const,
    RECORD_SHARING: 'RECORD_SHARING' as const,
    RLS: 'RLS' as const,
    SSO: 'SSO' as const,

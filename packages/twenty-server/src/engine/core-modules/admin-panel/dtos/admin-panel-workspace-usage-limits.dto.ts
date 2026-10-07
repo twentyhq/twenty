@@ -37,6 +37,12 @@ export class AdminPanelUsageLimitDefaultDTO {
   @Field(() => GraphQLBigInt)
   limitValue: number;
 
+  @Field(() => GraphQLBigInt, { nullable: true })
+  consumedValue: number | null;
+
+  @Field(() => Boolean)
+  isTrialLimitValue: boolean;
+
   @Field(() => Boolean)
   isOverridable: boolean;
 

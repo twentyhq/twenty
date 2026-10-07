@@ -12,6 +12,8 @@ export const WORKSPACE_USAGE_LIMITS = gql`
         periodUnit
         unit
         limitValue
+        consumedValue
+        isTrialLimitValue
         isOverridable
         overriddenByUsageLimitId
       }

@@ -812,6 +812,7 @@ export type BillingEntitlement = {
 export enum BillingEntitlementKey {
   AUDIT_LOGS = 'AUDIT_LOGS',
   CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
+  INCLUDED_FAST_MODEL = 'INCLUDED_FAST_MODEL',
   RECORD_SHARING = 'RECORD_SHARING',
   RLS = 'RLS',
   SSO = 'SSO',
@@ -1186,6 +1187,7 @@ export type ClientAiModelTierConfig = {
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
+  aiIncludedChatModelId?: Maybe<Scalars['String']['output']>;
   aiModelTiers: Array<ClientAiModelTierConfig>;
   aiModels: Array<ClientAiModelConfig>;
   allowRequestsToTwentyIcons: Scalars['Boolean']['output'];

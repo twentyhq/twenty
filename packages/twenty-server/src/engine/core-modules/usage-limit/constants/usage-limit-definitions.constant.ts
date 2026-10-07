@@ -78,7 +78,23 @@ export const USAGE_LIMIT_DEFINITIONS = {
         'apiKey',
         'application',
       ],
-      defaults: [],
+      defaults: [
+        {
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.AI_CHAT_INCLUDED,
+          limitKind: 'quota',
+          spenderType: 'workspace',
+          spenderId: '',
+          unit: UsageUnit.CREDIT,
+          periodUnit: 'day',
+          periodCount: 1,
+          limitValueConfigVariable:
+            'AI_CHAT_INCLUDED_WORKSPACE_DAILY_CREDIT_LIMIT',
+          trialLimitValueConfigVariable:
+            'AI_CHAT_INCLUDED_TRIAL_WORKSPACE_DAILY_CREDIT_LIMIT',
+          isOverridable: true,
+        },
+      ],
     },
   },
   [UsageResourceType.WORKFLOW]: {

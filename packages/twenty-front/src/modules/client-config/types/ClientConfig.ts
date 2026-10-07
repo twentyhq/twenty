@@ -19,6 +19,7 @@ export type ClientConfig = {
   aiModels: Array<ClientAiModelConfig>;
   aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
   aiModelTiers: Array<ClientAiModelTierConfig>;
+  aiIncludedChatModelId?: string | null;
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;

@@ -556,6 +556,15 @@ export class AiModelRegistryService {
     );
   }
 
+  // Free for entitled workspaces, so never borrow another tier's chain or fall back to any allowed model
+  findIncludedChatModel(): RegisteredAiModel | null {
+    return (
+      this.getFirstAvailableModelFromList(
+        this.preferencesService.getDefaultModelIdsForTier('fast'),
+      ) ?? null
+    );
+  }
+
   getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
     const model = this.findDefaultModelForTier(tier);
 

@@ -68,7 +68,7 @@ describe('buildQuotaDefinitions', () => {
     ]);
   });
 
-  it('lists no operator-only scope for a resource without quota defaults', () => {
+  it('keeps the included chat ceiling out of the operator-only scopes customers see', () => {
     expect(
       findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
     ).toEqual([]);

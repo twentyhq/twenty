@@ -17,5 +17,6 @@ export type QuotaLimitDefaultDefinition<
   periodUnit: AnchoredPeriodUnit;
   periodCount: 1;
   limitValueConfigVariable: NumericConfigVariableKey;
+  trialLimitValueConfigVariable?: NumericConfigVariableKey;
   isOverridable: boolean;
 };

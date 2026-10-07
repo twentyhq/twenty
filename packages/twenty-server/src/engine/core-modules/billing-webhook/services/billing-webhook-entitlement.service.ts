@@ -13,6 +13,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
 
 @Injectable()
 export class BillingWebhookEntitlementService {
@@ -22,6 +23,7 @@ export class BillingWebhookEntitlementService {
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     private readonly billingEntitlementSyncService: BillingEntitlementSyncService,
+    private readonly stripeEntitlementService: StripeEntitlementService,
   ) {}
 
   async processStripeEvent(
@@ -38,12 +40,19 @@ export class BillingWebhookEntitlementService {
       );
     }
 
+    // The summary carries at most 10 entitlements, and a key missing from the list is written as revoked
+    const activeLookupKeys = data.object.entitlements.has_more
+      ? await this.stripeEntitlementService.getActiveEntitlementLookupKeys(
+          data.object.customer,
+        )
+      : data.object.entitlements.data.map(
+          (entitlement) => entitlement.lookup_key,
+        );
+
     await this.billingEntitlementSyncService.syncEntitlements({
       workspaceId: billingCustomer.workspaceId,
       stripeCustomerId: data.object.customer,
-      activeLookupKeys: data.object.entitlements.data.map(
-        (entitlement) => entitlement.lookup_key,
-      ),
+      activeLookupKeys,
     });
 
     return {

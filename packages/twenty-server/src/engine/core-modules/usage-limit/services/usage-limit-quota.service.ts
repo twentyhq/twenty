@@ -39,11 +39,15 @@ import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaDefaultCounter } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
+import { buildQuotaLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/build-quota-limit-defaults.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
+import { type UsageLimitDefaultScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-default-scopes.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
+import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -202,9 +206,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return;
     }
 
-    const quotaLimitDefaults = this.buildQuotaLimitDefaults(
-      usageLimit.resourceType,
-    );
+    const quotaLimitDefaults = await this.findQuotaLimitDefaults({
+      workspaceId: usageLimit.workspaceId,
+      resourceType: usageLimit.resourceType,
+      operationType: usageLimit.operationType,
+    });
 
     const periodByUnit = await this.usagePeriodService.findCurrentPeriodsByUnit(
       {
@@ -375,6 +381,86 @@ export class UsageLimitQuotaService implements OnModuleInit {
           },
         ] as const;
       }),
+    );
+  }
+
+  async isInTrialPeriod(workspaceId: string): Promise<boolean> {
+    return this.creditAllowanceProvider.isInTrialPeriod(workspaceId);
+  }
+
+  async readDefaultConsumedValues({
+    workspaceId,
+    usageLimitDefaults,
+    usageLimits,
+  }: {
+    workspaceId: string;
+    usageLimitDefaults: UsageLimitDefaultScope[];
+    usageLimits: FlatUsageLimit[];
+  }): Promise<(number | null)[]> {
+    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
+      return usageLimitDefaults.map(() => null);
+    }
+
+    const quotaLimits = usageLimits.filter(isQuotaLimit);
+
+    const periodByUnit = await this.usagePeriodService.findCurrentPeriodsByUnit(
+      {
+        workspaceId,
+        periodUnits: usageLimitDefaults
+          .filter(
+            (usageLimitDefault) => usageLimitDefault.limitKind === 'quota',
+          )
+          .map((usageLimitDefault) => usageLimitDefault.periodUnit),
+      },
+    );
+
+    const counters = usageLimitDefaults.map((usageLimitDefault) => {
+      const period = periodByUnit[usageLimitDefault.periodUnit];
+
+      if (usageLimitDefault.limitKind !== 'quota' || !isDefined(period)) {
+        return null;
+      }
+
+      // The engine debits the override, so its counter is the warm one; the default's was dropped
+      const overridingQuotaLimit = quotaLimits.find((quotaLimit) =>
+        doesUsageLimitRowSuppressDefault({
+          scope: quotaLimit,
+          usageLimitDefault,
+        }),
+      );
+
+      return isDefined(overridingQuotaLimit)
+        ? buildLimitQuotaCounter({
+            workspaceId,
+            limit: overridingQuotaLimit,
+            period,
+          })
+        : buildQuotaDefaultCounter({
+            workspaceId,
+            quotaLimitDefault: usageLimitDefault,
+            period,
+          });
+    });
+
+    const definedCounters = counters.filter(isDefined);
+
+    const consumedValues =
+      definedCounters.length > 0
+        ? await this.readConsumedValuesAdmittingOnFailure({
+            workspaceId,
+            counters: definedCounters,
+          })
+        : [];
+
+    const consumedValueByKey = new Map(
+      definedCounters.map((counter, index) => [
+        counter.key,
+        consumedValues[index] ?? null,
+      ]),
+    );
+
+    return counters.map((counter) =>
+      isDefined(counter) ? (consumedValueByKey.get(counter.key) ?? null) : null,
     );
   }
 
@@ -664,12 +750,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return [];
     }
 
-    const quotaLimitDefaults = this.buildQuotaLimitDefaults(resourceType);
-
-    const quotaLimits = await this.findQuotaLimits({
-      workspaceId,
-      resourceType,
-    });
+    const [quotaLimitDefaults, quotaLimits] = await Promise.all([
+      this.findQuotaLimitDefaults({ workspaceId, resourceType, operationType }),
+      this.findQuotaLimits({ workspaceId, resourceType }),
+    ]);
 
     if (quotaLimits.length === 0 && quotaLimitDefaults.length === 0) {
       return [];
@@ -693,24 +777,40 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
-  private buildQuotaLimitDefaults(
-    resourceType: UsageResourceType,
-  ): QuotaLimitDefault[] {
+  // A default applies to its exact operation only, so other operations never pay for the trial status read
+  private async findQuotaLimitDefaults({
+    workspaceId,
+    resourceType,
+    operationType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+    operationType: UsageOperationType;
+  }): Promise<QuotaLimitDefault[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }
 
-    const definition = findUsageLimitDefinition({
-      resourceType,
-      limitKind: 'quota',
-    });
-
-    return (definition?.defaults ?? []).map(
-      ({ limitValueConfigVariable, ...quotaLimitDefaultDefinition }) => ({
-        ...quotaLimitDefaultDefinition,
-        limitValue: this.twentyConfigService.get(limitValueConfigVariable),
-      }),
+    const quotaLimitDefaultDefinitions = (
+      findUsageLimitDefinition({ resourceType, limitKind: 'quota' })
+        ?.defaults ?? []
+    ).filter(
+      (quotaLimitDefaultDefinition) =>
+        quotaLimitDefaultDefinition.operationType === operationType,
     );
+
+    const hasTrialLimitValue = quotaLimitDefaultDefinitions.some(
+      (quotaLimitDefaultDefinition) =>
+        isDefined(quotaLimitDefaultDefinition.trialLimitValueConfigVariable),
+    );
+
+    return buildQuotaLimitDefaults({
+      quotaLimitDefaultDefinitions,
+      getConfigValue: (key) => this.twentyConfigService.get(key),
+      isInTrialPeriod:
+        hasTrialLimitValue &&
+        (await this.creditAllowanceProvider.isInTrialPeriod(workspaceId)),
+    });
   }
 
   private async buildAllowanceCounter(

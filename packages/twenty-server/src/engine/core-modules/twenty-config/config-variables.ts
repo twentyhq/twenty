@@ -1061,6 +1061,28 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Maximum credits (in microCredits) a single workspace may spend per UTC day on the included chat model before included chat pauses. An operator limit set for the workspace in the admin panel replaces it',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  AI_CHAT_INCLUDED_WORKSPACE_DAILY_CREDIT_LIMIT = 5_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Maximum credits (in microCredits) a single trialing workspace may spend per UTC day on the included chat model before included chat pauses. An operator limit set for the workspace in the admin panel replaces it',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  AI_CHAT_INCLUDED_TRIAL_WORKSPACE_DAILY_CREDIT_LIMIT = 1_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Cap on the credits available in a period, as a multiple of the plan allowance. 2 means a workspace can hold at most its allowance plus one full allowance rolled over',
     type: ConfigVariableType.NUMBER,
   })

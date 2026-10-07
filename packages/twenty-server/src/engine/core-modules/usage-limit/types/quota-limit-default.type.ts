@@ -2,7 +2,7 @@ import { type QuotaLimitDefaultDefinition } from 'src/engine/core-modules/usage-
 
 export type QuotaLimitDefault = Omit<
   QuotaLimitDefaultDefinition,
-  'limitValueConfigVariable'
+  'limitValueConfigVariable' | 'trialLimitValueConfigVariable'
 > & {
   limitValue: number;
 };

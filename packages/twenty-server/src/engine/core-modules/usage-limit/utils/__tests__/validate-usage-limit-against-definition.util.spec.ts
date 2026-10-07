@@ -7,41 +7,6 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-// No shipped default sits on an operation the workspace cannot limit yet, so the spec declares one
-jest.mock(
-  'src/engine/core-modules/usage-limit/constants/usage-limit-definitions.constant',
-  () => {
-    const { USAGE_LIMIT_DEFINITIONS } = jest.requireActual(
-      'src/engine/core-modules/usage-limit/constants/usage-limit-definitions.constant',
-    );
-
-    return {
-      USAGE_LIMIT_DEFINITIONS: {
-        ...USAGE_LIMIT_DEFINITIONS,
-        AI: {
-          quota: {
-            ...USAGE_LIMIT_DEFINITIONS.AI.quota,
-            defaults: [
-              {
-                resourceType: 'AI',
-                operationType: 'AI_CHAT_INCLUDED',
-                limitKind: 'quota',
-                spenderType: 'workspace',
-                spenderId: '',
-                unit: 'CREDIT',
-                periodUnit: 'day',
-                periodCount: 1,
-                limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
-                isOverridable: true,
-              },
-            ],
-          },
-        },
-      },
-    };
-  },
-);
-
 const validSpeedLimit: CreateUsageLimitInput = {
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,

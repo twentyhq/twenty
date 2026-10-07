@@ -1,3 +1,4 @@
+import { aiIncludedChatModelIdState } from '@/client-config/states/aiIncludedChatModelIdState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -58,6 +59,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setAiModels = useSetAtomState(aiModelsState);
   const setAiEvaluationModels = useSetAtomState(aiEvaluationModelsState);
   const setAiModelTiers = useSetAtomState(aiModelTiersState);
+  const setAiIncludedChatModelId = useSetAtomState(aiIncludedChatModelIdState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
@@ -187,6 +189,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         setAiModels(clientConfig.aiModels ?? []);
         setAiEvaluationModels(clientConfig.aiEvaluationModels ?? []);
         setAiModelTiers(clientConfig.aiModelTiers ?? []);
+        setAiIncludedChatModelId(clientConfig.aiIncludedChatModelId ?? null);
         setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
         setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
         setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
@@ -277,6 +280,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setAiModels,
       setAiEvaluationModels,
       setAiModelTiers,
+      setAiIncludedChatModelId,
       setApiConfig,
       setOnboardingConfig,
       setAppVersion,

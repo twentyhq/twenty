@@ -1,6 +1,9 @@
+import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
+import { USAGE_LIMIT_DEFINITIONS } from 'src/engine/core-modules/usage-limit/constants/usage-limit-definitions.constant';
 import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/build-quota-limit-defaults.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -13,6 +16,11 @@ const MONTH_PERIOD = {
 const WEEK_PERIOD = {
   periodStart: new Date('2026-08-24T00:00:00.000Z'),
   periodEnd: new Date('2026-08-31T00:00:00.000Z'),
+};
+
+const DAY_PERIOD = {
+  periodStart: new Date('2026-08-26T00:00:00.000Z'),
+  periodEnd: new Date('2026-08-27T00:00:00.000Z'),
 };
 
 const buildLimit = (overrides: Partial<FlatQuotaLimit>): FlatQuotaLimit => ({
@@ -233,5 +241,89 @@ describe('buildQuotaCounters', () => {
       expect.objectContaining({ isDefault: true, periodUnit: 'month' }),
     ]);
     expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
+  });
+
+  describe('included chat daily default', () => {
+    const CONFIG_VALUES: Partial<Record<NumericConfigVariableKey, number>> = {
+      AI_CHAT_INCLUDED_WORKSPACE_DAILY_CREDIT_LIMIT: 5_000_000,
+      AI_CHAT_INCLUDED_TRIAL_WORKSPACE_DAILY_CREDIT_LIMIT: 1_000_000,
+    };
+
+    const buildIncludedChatCounters = ({
+      isInTrialPeriod = false,
+      limits = [],
+      operationType = UsageOperationType.AI_CHAT_INCLUDED,
+    }: {
+      isInTrialPeriod?: boolean;
+      limits?: FlatQuotaLimit[];
+      operationType?: UsageOperationType;
+    } = {}) =>
+      buildQuotaCounters({
+        limits,
+        quotaLimitDefaults: buildQuotaLimitDefaults({
+          quotaLimitDefaultDefinitions:
+            USAGE_LIMIT_DEFINITIONS[UsageResourceType.AI].quota.defaults,
+          getConfigValue: (key) => CONFIG_VALUES[key] ?? 0,
+          isInTrialPeriod,
+        }),
+        usageSpenders: { userWorkspaceId: 'user-1' },
+        workspaceId: 'workspace-1',
+        operationType,
+        periodByUnit: { month: MONTH_PERIOD, day: DAY_PERIOD },
+      });
+
+    it('caps included chat per workspace per UTC day', () => {
+      expect(buildIncludedChatCounters()).toEqual([
+        {
+          kind: 'limit',
+          isDefault: true,
+          key: `{workspace-1}:quota:AI:AI_CHAT_INCLUDED:workspace:-:CREDIT:day:${DAY_PERIOD.periodStart.getTime()}:5000000:default`,
+          limitValue: 5_000_000,
+          unit: UsageUnit.CREDIT,
+          resourceType: UsageResourceType.AI,
+          periodUnit: 'day',
+          periodStart: DAY_PERIOD.periodStart,
+          periodEnd: DAY_PERIOD.periodEnd,
+          spenderType: 'workspace',
+          spenderId: null,
+          operationType: UsageOperationType.AI_CHAT_INCLUDED,
+        },
+      ]);
+    });
+
+    it('uses the trial value while the workspace is trialing, under its own key', () => {
+      const [trialCounter] = buildIncludedChatCounters({
+        isInTrialPeriod: true,
+      });
+      const [paidCounter] = buildIncludedChatCounters();
+
+      expect(trialCounter.limitValue).toBe(1_000_000);
+      expect(trialCounter.key).not.toBe(paidCounter.key);
+    });
+
+    it('lets an operator override replace the daily default', () => {
+      const counters = buildIncludedChatCounters({
+        limits: [
+          buildLimit({
+            operationType: UsageOperationType.AI_CHAT_INCLUDED,
+            periodUnit: 'day',
+            limitValue: 20_000_000,
+            isInstanceOverride: true,
+          }),
+        ],
+      });
+
+      expect(counters).toEqual([
+        expect.objectContaining({ isDefault: false, limitValue: 20_000_000 }),
+      ]);
+    });
+
+    it('does not cap billable chat with the included ceiling', () => {
+      expect(
+        buildIncludedChatCounters({
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+        }),
+      ).toEqual([]);
+    });
   });
 });

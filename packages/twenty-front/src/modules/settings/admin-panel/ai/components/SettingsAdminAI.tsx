@@ -205,6 +205,11 @@ export const SettingsAdminAI = () => {
                 <SettingsOptionCardContentSelect
                   key={tier}
                   title={getAiModelTierLabel(tier)}
+                  description={
+                    isBillingEnabled && tier === 'fast'
+                      ? t`Free in chat for workspaces with the included fast model`
+                      : undefined
+                  }
                   divider={index < AI_MODEL_TIERS.length - 1}
                 >
                   <AiModelPinSelect

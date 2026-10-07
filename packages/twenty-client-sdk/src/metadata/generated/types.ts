@@ -2332,6 +2332,9 @@ export default {
             "aiEvaluationModels": [
                 127
             ],
+            "aiIncludedChatModelId": [
+                1
+            ],
             "aiModelTiers": [
                 129
             ],

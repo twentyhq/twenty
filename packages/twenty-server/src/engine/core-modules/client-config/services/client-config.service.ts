@@ -162,6 +162,10 @@ export class ClientConfigService {
       return isDefined(model) ? [{ tier, modelId: model.modelId }] : [];
     });
 
+    const aiIncludedChatModelId = isBillingEnabled
+      ? (this.aiModelRegistryService.findIncludedChatModel()?.modelId ?? null)
+      : null;
+
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),
       billing: {
@@ -188,6 +192,7 @@ export class ClientConfigService {
       aiModels,
       aiEvaluationModels,
       aiModelTiers,
+      aiIncludedChatModelId,
       authProviders: {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,

@@ -37,9 +37,13 @@ export const buildAdminUsageLimitRows = (
         periodUnit: override?.periodUnit ?? usageLimitDefault.periodUnit,
         unit: usageLimitDefault.unit,
         defaultValue,
+        isTrialDefaultValue: usageLimitDefault.isTrialLimitValue,
         limitValue: isDefined(override)
           ? Number(override.limitValue)
           : defaultValue,
+        consumedValue: isDefined(usageLimitDefault.consumedValue)
+          ? Number(usageLimitDefault.consumedValue)
+          : null,
         burstValue:
           isDefined(override) && isDefined(override.burstValue)
             ? Number(override.burstValue)

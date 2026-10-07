@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -86,6 +86,14 @@ export class BillingService {
     return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
       workspaceId,
       entitlementKey,
+    );
+  }
+
+  // Not hasEntitlement: it grants every key when billing is off
+  async hasIncludedFastModelEntitlement(workspaceId: string): Promise<boolean> {
+    return this.billingSubscriptionService.getWorkspaceEntitlementValue(
+      workspaceId,
+      BillingEntitlementKey.INCLUDED_FAST_MODEL,
     );
   }
 

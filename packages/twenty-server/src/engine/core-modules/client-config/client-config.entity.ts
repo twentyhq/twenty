@@ -347,6 +347,9 @@ export class ClientConfig {
   @Field(() => [ClientAiModelTierConfig])
   aiModelTiers: ClientAiModelTierConfig[];
 
+  @Field(() => String, { nullable: true })
+  aiIncludedChatModelId: string | null;
+
   @Field(() => Boolean)
   signInPrefilled: boolean;
 

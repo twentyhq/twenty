@@ -1,5 +1,5 @@
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
-import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
+import { type QuotaDefaultKeyScope } from 'src/engine/core-modules/usage-limit/types/quota-default-key-scope.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 
@@ -9,7 +9,12 @@ export const buildQuotaDefaultCounter = ({
   period,
 }: {
   workspaceId: string;
-  quotaLimitDefault: QuotaLimitDefault;
+  quotaLimitDefault: Omit<
+    QuotaDefaultKeyScope,
+    'workspaceId' | 'periodStart'
+  > & {
+    limitValue: number;
+  };
   period: UsagePeriod;
 }): LimitQuotaCounter => ({
   kind: 'limit',

@@ -20,6 +20,8 @@ const buildDefault = (
   periodUnit: 'lifetime',
   unit: UsageUnit.BYTE,
   limitValue: 100,
+  consumedValue: null,
+  isTrialLimitValue: false,
   isOverridable: true,
   overriddenByUsageLimitId: null,
   ...overrides,
@@ -126,6 +128,45 @@ describe('buildAdminUsageLimitRows', () => {
         }),
       ),
     ).toEqual([]);
+  });
+
+  it('carries what the workspace consumed on a quota default', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [
+          buildDefault({
+            resourceType: UsageResourceType.AI,
+            operationType: UsageOperationType.AI_CHAT_INCLUDED,
+            limitKind: 'quota',
+            unit: UsageUnit.CREDIT,
+            periodUnit: 'day',
+            limitValue: '5000000',
+            consumedValue: '1250000',
+          }),
+        ],
+      }),
+    );
+
+    expect(row.consumedValue).toBe(1_250_000);
+    expect(row.defaultValue).toBe(5_000_000);
+  });
+
+  it('flags a default the workspace gets at its trial value', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [buildDefault({ isTrialLimitValue: true })],
+      }),
+    );
+
+    expect(row.isTrialDefaultValue).toBe(true);
+  });
+
+  it('reports no consumption when the server read none', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
+    );
+
+    expect(row.consumedValue).toBeNull();
   });
 
   it('carries the burst value of a speed override', () => {
