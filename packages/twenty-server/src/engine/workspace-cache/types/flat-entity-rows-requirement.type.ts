@@ -12,7 +12,9 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 export type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
-  [TRelationProperty in keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]]: (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
+  [
+    TRelationProperty in keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]
+  ]: (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
     metadataName: infer TChildMetadataName extends AllMetadataName;
   }
     ? TChildMetadataName
@@ -20,7 +22,9 @@ export type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
 }[keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]];
 
 export type ManyToOneTargetNames<TMetadataName extends AllMetadataName> = {
-  [TRelationProperty in keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]]: (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
+  [
+    TRelationProperty in keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]
+  ]: (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
     metadataName: infer TTargetMetadataName extends AllMetadataName;
   }
     ? TTargetMetadataName
@@ -44,13 +48,14 @@ type OwnEntityRowsRequirement<TName extends CacheFetchableEntityName> =
 export type FlatEntityRowsRequirement<TMetadataName extends AllMetadataName> = {
   [TName in TMetadataName]: OwnEntityRowsRequirement<TName>;
 } & {
-  [TName in Exclude<
-    RequiredFetchNames<TMetadataName>,
-    TMetadataName
-  >]: EntityRowsRequirement<TName>;
+  [
+    TName in Exclude<RequiredFetchNames<TMetadataName>, TMetadataName>
+  ]: EntityRowsRequirement<TName>;
 } & {
-  [TName in Exclude<
-    CacheFetchableEntityName,
-    RequiredFetchNames<TMetadataName>
-  >]?: EntityRowsRequirement<TName>;
+  [
+    TName in Exclude<
+      CacheFetchableEntityName,
+      RequiredFetchNames<TMetadataName>
+    >
+  ]?: EntityRowsRequirement<TName>;
 };

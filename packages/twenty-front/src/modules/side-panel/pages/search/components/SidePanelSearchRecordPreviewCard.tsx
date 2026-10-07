@@ -221,18 +221,17 @@ export const SidePanelSearchRecordPreviewCard = ({
 
       <StyledFieldList>
         {displayedFields.map(renderFieldRow)}
-        {!areAllFieldsVisible &&
-          remainingFieldCount > 0 && (
-            // Keeping focus on the search input so arrow keys still move through results
-            <StyledShowMoreContainer
-              onMouseDown={(event) => event.preventDefault()}
-            >
-              <FieldWidgetShowMoreButton
-                remainingCount={remainingFieldCount}
-                onClick={() => setAreAllFieldsVisible(true)}
-              />
-            </StyledShowMoreContainer>
-          )}
+        {!areAllFieldsVisible && remainingFieldCount > 0 && (
+          // Keeping focus on the search input so arrow keys still move through results
+          <StyledShowMoreContainer
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <FieldWidgetShowMoreButton
+              remainingCount={remainingFieldCount}
+              onClick={() => setAreAllFieldsVisible(true)}
+            />
+          </StyledShowMoreContainer>
+        )}
       </StyledFieldList>
     </StyledCard>
   );

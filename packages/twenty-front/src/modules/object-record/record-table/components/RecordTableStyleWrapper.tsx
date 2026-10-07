@@ -92,10 +92,8 @@ const StyledTable = styled.div<{
     ${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR}: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR}) -
-        (
-          var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) -
-            ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_PINNED_WIDTH_ON_MOBILE}px
-        )
+        (var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) -
+          ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_PINNED_WIDTH_ON_MOBILE}px)
     );
   }
 
@@ -206,9 +204,9 @@ const StyledTable = styled.div<{
     // clip, not hidden: hidden makes the cell a scroll container the sticky anchor would stick to.
     // The clip margin keeps the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.table-cell-0-0 {
+    div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
+    div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
+    div.table-cell-0-0 {
       overflow: clip;
       overflow-clip-margin: 4px;
     }
@@ -216,9 +214,9 @@ const StyledTable = styled.div<{
     // Pins the content at the table's left edge so the name holds still and truncates from the right.
     // Must stay zero-width, or sticky's containing-block constraint drags it along with the cell.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
-      div.table-cell-0-0
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+    div.table-cell-0-0
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
       left: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
@@ -230,27 +228,27 @@ const StyledTable = styled.div<{
 
     // Absolute so the chip gets its full width without widening the anchor.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
-      > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
-      div.table-cell-0-0
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
-      > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+    > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
+    div.table-cell-0-0
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+    > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
       height: 100%;
       left: 0;
       position: absolute;
       top: 0;
       width: calc(
-        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) - var(
-            ${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}
-          ) - var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) -
+          var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) -
+          var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
     }
 
     // Shrink-wrapped: at full column width sticky's containing-block constraint would drag these off with the cell.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
-      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
+    .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+    div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
+    .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
       left: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})

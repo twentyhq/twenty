@@ -349,11 +349,9 @@ const StackedTabCard = styled.div`
 
   &[data-measured] {
     width: calc(
-      (
-          var(--hero-stack-base-width, 0) +
-            (var(--card-target-width, 0) - var(--hero-stack-base-width, 0)) *
-            var(--hero-stack-spread-eased, 0)
-        ) *
+      (var(--hero-stack-base-width, 0) +
+          (var(--card-target-width, 0) - var(--hero-stack-base-width, 0)) *
+          var(--hero-stack-spread-eased, 0)) *
         1px
     );
   }

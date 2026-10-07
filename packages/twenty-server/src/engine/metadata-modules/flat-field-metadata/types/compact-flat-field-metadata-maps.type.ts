@@ -5,9 +5,11 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 type ShortCodeByKey = typeof FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY;
 
 export type CompactFlatFieldMetadata = {
-  [Key in keyof FlatFieldMetadata as Key extends keyof ShortCodeByKey
-    ? ShortCodeByKey[Key]
-    : Key]?: FlatFieldMetadata[Key];
+  [
+    Key in keyof FlatFieldMetadata as Key extends keyof ShortCodeByKey
+      ? ShortCodeByKey[Key]
+      : Key
+  ]?: FlatFieldMetadata[Key];
 };
 
 export type CompactFlatFieldMetadataMaps = {

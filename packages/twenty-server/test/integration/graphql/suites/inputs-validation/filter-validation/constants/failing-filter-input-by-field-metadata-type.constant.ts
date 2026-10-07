@@ -5,10 +5,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
 export const failingFilterInputByFieldMetadataType: {
-  [K in Exclude<
-    FieldMetadataTypesToTestForFilterInputValidation,
-    CompositeFieldMetadataType
-  >]: {
+  [
+    K in Exclude<
+      FieldMetadataTypesToTestForFilterInputValidation,
+      CompositeFieldMetadataType
+    >
+  ]: {
     gqlFilterInput: any;
     restFilterInput: string;
   }[];

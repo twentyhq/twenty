@@ -488,26 +488,27 @@ describe('resolveReverseJunctionConfig', () => {
           }
         : item,
     );
-    const metadataWithInvalidSourceOwnership = objectMetadataItems.map((item) =>
-      item.id === taskTargetMetadata.id
-        ? {
-            ...item,
-            fields: item.fields.map((field) =>
-              field.id === taskTargetSourceFieldId && field.relation
-                ? {
-                    ...field,
-                    relation: {
-                      ...field.relation,
-                      sourceObjectMetadata: {
-                        ...field.relation.sourceObjectMetadata,
-                        id: 'misowned-junction-object-id',
+    const metadataWithInvalidSourceOwnership = objectMetadataItems.map(
+      (item) =>
+        item.id === taskTargetMetadata.id
+          ? {
+              ...item,
+              fields: item.fields.map((field) =>
+                field.id === taskTargetSourceFieldId && field.relation
+                  ? {
+                      ...field,
+                      relation: {
+                        ...field.relation,
+                        sourceObjectMetadata: {
+                          ...field.relation.sourceObjectMetadata,
+                          id: 'misowned-junction-object-id',
+                        },
                       },
-                    },
-                  }
-                : field,
-            ),
-          }
-        : item,
+                    }
+                  : field,
+              ),
+            }
+          : item,
     );
     const metadataWithInvalidTargetEndpoint = objectMetadataItems.map((item) =>
       item.id === taskTargetMetadata.id

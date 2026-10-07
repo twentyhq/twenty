@@ -80,6 +80,8 @@ export const ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY =
         computeUniversalFlatEntityPropertiesToCompareAndStringify(metadataName),
     }),
     {} as {
-      [P in AllMetadataName]: UniversalFlatEntityPropertiesToCompareAndStringify<P>;
+      [
+        P in AllMetadataName
+      ]: UniversalFlatEntityPropertiesToCompareAndStringify<P>;
     },
   );

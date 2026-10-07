@@ -25,14 +25,16 @@ export type FormatRecordSerializedRelationProperties<T> = T extends unknown
         : T
       : T extends object
         ? {
-            [P in keyof T as ShouldTransformToUniversalIdentifier<
-              T,
-              P
-            > extends true
-              ? P extends string
-                ? `${RemoveSuffix<P, 'Id'>}UniversalIdentifier`
+            [
+              P in keyof T as ShouldTransformToUniversalIdentifier<
+                T,
+                P
+              > extends true
+                ? P extends string
+                  ? `${RemoveSuffix<P, 'Id'>}UniversalIdentifier`
+                  : P
                 : P
-              : P]: FormatRecordSerializedRelationProperties<T[P]>;
+            ]: FormatRecordSerializedRelationProperties<T[P]>;
           }
         : T
   : never;

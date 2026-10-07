@@ -67,10 +67,15 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
               participants,
             ),
         );
-        store.set(agentChatThreadParticipantsState.atom, (loadedParticipants) =>
-          isDefined(loadedParticipants)
-            ? mergeAgentChatThreadParticipants(loadedParticipants, participants)
-            : loadedParticipants,
+        store.set(
+          agentChatThreadParticipantsState.atom,
+          (loadedParticipants) =>
+            isDefined(loadedParticipants)
+              ? mergeAgentChatThreadParticipants(
+                  loadedParticipants,
+                  participants,
+                )
+              : loadedParticipants,
         );
       };
 

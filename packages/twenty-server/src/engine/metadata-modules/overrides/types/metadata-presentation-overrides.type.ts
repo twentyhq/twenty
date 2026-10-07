@@ -18,10 +18,12 @@ type OverridesTranslationEntry<T extends AllMetadataName> = {
 export type MetadataPresentationOverrides<T extends AllMetadataName> = {
   [P in MetadataEntityTranslatablePropertyName<T>]?: string | null;
 } & {
-  [P in Exclude<
-    MetadataEntityOverridablePropertyName<T>,
-    MetadataEntityTranslatablePropertyName<T>
-  >]?: unknown;
+  [
+    P in Exclude<
+      MetadataEntityOverridablePropertyName<T>,
+      MetadataEntityTranslatablePropertyName<T>
+    >
+  ]?: unknown;
 } & {
   translations?: Partial<
     Record<keyof typeof APP_LOCALES, OverridesTranslationEntry<T>>

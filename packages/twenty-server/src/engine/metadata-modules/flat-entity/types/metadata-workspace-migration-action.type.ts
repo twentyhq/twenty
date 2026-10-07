@@ -9,10 +9,9 @@ export type WorkspaceMigrationActionType =
 export type MetadataUniversalWorkspaceMigrationActionsRecord<
   T extends AllMetadataName,
 > = {
-  [K in WorkspaceMigrationActionType]: MetadataUniversalWorkspaceMigrationAction<
-    T,
-    K
-  >[];
+  [
+    K in WorkspaceMigrationActionType
+  ]: MetadataUniversalWorkspaceMigrationAction<T, K>[];
 };
 
 export type MetadataUniversalWorkspaceMigrationAction<

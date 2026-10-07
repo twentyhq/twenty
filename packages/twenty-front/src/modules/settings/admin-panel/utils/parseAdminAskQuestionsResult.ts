@@ -116,7 +116,9 @@ const parseAnswers = (
   return answers.length === value.length ? answers : null;
 };
 
-const getStoredResult = (toolOutput: unknown): Record<string, unknown> | null =>
+const getStoredResult = (
+  toolOutput: unknown,
+): Record<string, unknown> | null =>
   isPlainObject(toolOutput) && isPlainObject(toolOutput.result)
     ? toolOutput.result
     : null;

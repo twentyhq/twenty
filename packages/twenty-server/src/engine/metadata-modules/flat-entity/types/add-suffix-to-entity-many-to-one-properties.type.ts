@@ -8,6 +8,8 @@ export type AddSuffixToEntityManyToOneProperties<
   TMetadataName extends AllMetadataName,
   TSuffix extends string,
 > = {
-  [P in Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity> &
-    string as `${RemoveSuffix<P, 'Id'>}${Capitalize<TSuffix>}`]: TEntity[P];
+  [
+    P in Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity> &
+      string as `${RemoveSuffix<P, 'Id'>}${Capitalize<TSuffix>}`
+  ]: TEntity[P];
 };

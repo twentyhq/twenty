@@ -20,7 +20,9 @@ type ExpectedGenericFlatEntityInformation = {
 };
 
 type ExpectedGenericAllFlatEntityInformationByMetadataEngine = {
-  [P in keyof AllFlatEntityTypesByMetadataName]: ExpectedGenericFlatEntityInformation;
+  [
+    P in keyof AllFlatEntityTypesByMetadataName
+  ]: ExpectedGenericFlatEntityInformation;
 };
 
 // oxlint-disable-next-line unused-imports/no-unused-vars

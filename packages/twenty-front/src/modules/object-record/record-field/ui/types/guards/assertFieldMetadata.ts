@@ -32,7 +32,7 @@ import {
 
 type AssertFieldMetadataFunction = <
   E extends FieldMetadataType,
-  T extends E extends 'BOOLEAN'
+  T extends (E extends 'BOOLEAN'
     ? FieldBooleanMetadata
     : E extends 'CURRENCY'
       ? FieldCurrencyMetadata
@@ -82,7 +82,7 @@ type AssertFieldMetadataFunction = <
                                                   ? FieldArrayMetadata
                                                   : E extends 'PHONES'
                                                     ? FieldPhonesMetadata
-                                                    : never,
+                                                    : never),
 >(
   fieldType: E,
   fieldTypeGuard: (

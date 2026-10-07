@@ -25,8 +25,9 @@ const StyledContainer = styled.div`
     --scalar-background-1: ${themeCssVariables.background.primary};
     --scalar-background-2: ${themeCssVariables.background.secondary};
     --scalar-background-3: ${themeCssVariables.background.tertiary};
-    --scalar-background-accent: ${themeCssVariables.background.transparent
-      .lighter};
+    --scalar-background-accent: ${
+      themeCssVariables.background.transparent.lighter
+    };
     --scalar-border-color: ${themeCssVariables.border.color.medium};
     --scalar-color-1: ${themeCssVariables.font.color.primary};
     --scalar-color-2: ${themeCssVariables.font.color.secondary};

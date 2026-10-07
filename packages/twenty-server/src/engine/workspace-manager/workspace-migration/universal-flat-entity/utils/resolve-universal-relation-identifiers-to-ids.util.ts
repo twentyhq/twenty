@@ -31,7 +31,9 @@ type TargetMetadataNamesForUniversalForeignKeys<
   T extends AllMetadataName,
   TProvidedKeys extends string,
 > = {
-  [K in keyof ManyToOneRelationsConfig<T>]: ManyToOneRelationsConfig<T>[K] extends {
+  [
+    K in keyof ManyToOneRelationsConfig<T>
+  ]: ManyToOneRelationsConfig<T>[K] extends {
     universalForeignKey: infer _UFK extends TProvidedKeys;
     metadataName: infer MN extends AllMetadataName;
   }
@@ -56,14 +58,16 @@ type ResolvedForeignKeyIds<
     string
   >,
 > = {
-  [K in keyof ManyToOneRelationsConfig<T> as ManyToOneRelationsConfig<T>[K] extends {
-    universalForeignKey: infer UFK extends string;
-    foreignKey: infer FK extends string;
-  }
-    ? UFK extends TProvidedKeys
-      ? FK
+  [
+    K in keyof ManyToOneRelationsConfig<T> as ManyToOneRelationsConfig<T>[K] extends {
+      universalForeignKey: infer UFK extends string;
+      foreignKey: infer FK extends string;
+    }
+      ? UFK extends TProvidedKeys
+        ? FK
+        : never
       : never
-    : never]: ManyToOneRelationsConfig<T>[K] extends { isNullable: true }
+  ]: ManyToOneRelationsConfig<T>[K] extends { isNullable: true }
     ? string | null
     : string;
 };

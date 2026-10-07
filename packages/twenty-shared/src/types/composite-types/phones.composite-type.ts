@@ -44,7 +44,9 @@ export type AdditionalPhoneMetadata = {
 type PrimaryPhoneMetadata<
   T extends AdditionalPhoneMetadata = AdditionalPhoneMetadata,
 > = {
-  [Property in keyof AdditionalPhoneMetadata as `primaryPhone${Capitalize<string & Property>}`]: T[Property];
+  [
+    Property in keyof AdditionalPhoneMetadata as `primaryPhone${Capitalize<string & Property>}`
+  ]: T[Property];
 };
 
 export type PhonesMetadata = PrimaryPhoneMetadata & {

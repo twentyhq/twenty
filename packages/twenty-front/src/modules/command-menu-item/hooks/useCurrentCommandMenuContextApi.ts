@@ -110,17 +110,15 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   );
 
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record
-  const selectedRecords = storedSelectedRecords.map(
-    (record): ObjectRecord => ({
-      ...record,
-      ...(isDefined(recordPermissionsByRecordId[record.id]) && {
-        recordPermissions: recordPermissionsByRecordId[record.id],
-      }),
-      ...(isDefined(agentChatThreadInboxStatusByThreadId[record.id]) && {
-        inboxStatus: agentChatThreadInboxStatusByThreadId[record.id],
-      }),
+  const selectedRecords = storedSelectedRecords.map((record): ObjectRecord => ({
+    ...record,
+    ...(isDefined(recordPermissionsByRecordId[record.id]) && {
+      recordPermissions: recordPermissionsByRecordId[record.id],
     }),
-  );
+    ...(isDefined(agentChatThreadInboxStatusByThreadId[record.id]) && {
+      inboxStatus: agentChatThreadInboxStatusByThreadId[record.id],
+    }),
+  }));
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
