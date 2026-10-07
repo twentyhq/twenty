@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  ASK_QUESTION_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
-  type AgentRunSummary,
-} from 'twenty-shared/ai';
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -25,8 +21,6 @@ import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
@@ -244,18 +238,8 @@ export class AgentRunnerService {
             AGENT_WAIT_PROMPT,
             ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
           ].join('\n\n'),
-          pausingTools: {
-            ...createAgentWaitTools(),
-            ...(spec.capabilities.canAskHumans
-              ? {
-                  [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                    isWorkspaceSetupThread: false,
-                  }),
-                  [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-                }
-              : {}),
-          },
-          canProposeToolCalls: spec.capabilities.canAskHumans,
+          pausingTools: createAgentWaitTools(),
+          canAskHumans: spec.capabilities.canAskHumans,
           workspaceId,
           executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
