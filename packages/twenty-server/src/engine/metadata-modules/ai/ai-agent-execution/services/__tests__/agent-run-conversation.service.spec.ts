@@ -129,12 +129,45 @@ describe('AgentRunConversationService', () => {
     expect(turnRecorderService.finishExecutedTurn).toHaveBeenCalledWith({
       ...turn,
       execution,
-      isAwaitingAnswer: true,
+      isWaiting: true,
     });
     expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       text: 'Which plan?',
+    });
+  });
+
+  it('leaves the turn waiting without asking anything when the run paused on a wait', async () => {
+    const { service, conversationWriterService, turnRecorderService } =
+      buildService();
+    const pausedExecution = { ...execution, isPaused: true };
+
+    conversationWriterService.insertExecutionReply.mockResolvedValue({
+      isAwaitingAnswer: false,
+      replyParts: [
+        {
+          type: 'tool-wait_for_duration',
+          toolCallId: 'wait-call-id',
+          state: 'output-available',
+          input: { minutes: 5 },
+          output: { success: true, result: { status: 'pending' } },
+        },
+      ],
+    });
+
+    await expect(
+      service.closeTurn({
+        ...turn,
+        title: 'Draft the quote',
+        agentId: 'agent-id',
+        execution: pausedExecution,
+      }),
+    ).resolves.toEqual({ isAwaitingAnswer: false });
+    expect(turnRecorderService.finishExecutedTurn).toHaveBeenCalledWith({
+      ...turn,
+      execution: pausedExecution,
+      isWaiting: true,
     });
   });
 

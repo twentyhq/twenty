@@ -14,7 +14,9 @@ import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-module
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import {
@@ -32,6 +34,7 @@ export class AgentRunPendingWakeUpHandlerService
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly conversationReaderService: AgentConversationReaderService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
@@ -160,5 +163,11 @@ export class AgentRunPendingWakeUpHandlerService
       { id: pendingPart.id },
       { toolOutput: buildWaitOutcomeToolOutput(outcome) },
     );
+
+    await this.turnRecorderService.endWaitingTurn({
+      workspaceId,
+      messageId: pendingPart.messageId,
+      status: AgentTurnStatus.COMPLETED,
+    });
   }
 }

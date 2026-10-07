@@ -292,18 +292,37 @@ export class AgentRunSuspensionService {
     threadId: string;
   }): Promise<void> {
     // a wait call is not a question, so it stays pending until its wake-up resolves it or its run is dropped
-    await this.messagePartRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
-         FROM ${table('agentMessage')} message
-         WHERE message.id = part."messageId" AND message."threadId" = $1
-           AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
-        [
-          threadId,
-          JSON.stringify(buildWaitOutcomeToolOutput({ type: 'CANCELLED' })),
-          AGENT_WAIT_TOOL_NAMES,
-        ],
-      ),
+    await this.messagePartRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        await manager.query(
+          `UPDATE ${table('agentTurn')} turn SET "status" = $3, "endedAt" = now(), "updatedAt" = now()
+           FROM ${table('agentMessage')} message
+           WHERE turn.id = message."turnId" AND message."threadId" = $1 AND turn."status" = $4
+             AND EXISTS (
+               SELECT 1 FROM ${table('agentMessagePart')} part
+               WHERE part."messageId" = message.id AND part."toolName" = ANY($2)
+                 AND part."toolOutput"->'result'->>'status' = 'pending'
+             )`,
+          [
+            threadId,
+            AGENT_WAIT_TOOL_NAMES,
+            AgentTurnStatus.CANCELLED,
+            AgentTurnStatus.WAITING_FOR_INPUT,
+          ],
+        );
+        await manager.query(
+          `UPDATE ${table('agentMessagePart')} part SET "toolOutput" = $2::jsonb, "updatedAt" = now()
+           FROM ${table('agentMessage')} message
+           WHERE message.id = part."messageId" AND message."threadId" = $1
+             AND part."toolName" = ANY($3) AND part."toolOutput"->'result'->>'status' = 'pending'`,
+          [
+            threadId,
+            JSON.stringify(buildWaitOutcomeToolOutput({ type: 'CANCELLED' })),
+            AGENT_WAIT_TOOL_NAMES,
+          ],
+        );
+      },
     );
 
     const thread = await this.threadRepository.findOne(workspaceId, {
