@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsEnum,
   IsObject,
   IsOptional,
@@ -58,4 +59,9 @@ export class UpdatePageLayoutWidgetInput {
   @IsString()
   @IsOptional()
   conditionalAvailabilityExpression?: string | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

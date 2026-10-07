@@ -103,6 +103,57 @@ describe('auth and remote commands', () => {
     });
   });
 
+  it('saves an unnamed connection as default and reuses its URL on the next login', async () => {
+    const first = await login(['--url', server.url]);
+    const again = await login([]);
+
+    expect(first.exitCode).toBe(0);
+    expect(first.envelope.data).toMatchObject({
+      remote: 'default',
+      isDefault: true,
+    });
+    expect(again.exitCode).toBe(0);
+    expect(again.envelope.data).toEqual(first.envelope.data);
+    expect(await readConfigFile()).toMatchObject({
+      defaultRemote: 'default',
+      remotes: { default: { apiUrl: server.url, apiKey: VALID_KEY } },
+    });
+  });
+
+  it('asks for a URL when no connections have been saved', async () => {
+    const { envelope, exitCode } = await runJson(['auth', 'login']);
+
+    expect(exitCode).toBe(2);
+    expect(envelope.error).toMatchObject({
+      code: 'USAGE',
+      message: 'No saved connections yet.',
+      hint: 'Run twenty auth login --url <url> to save a connection.',
+    });
+    await expect(readFile(configPath)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('keeps a selected named remote and protects the unnamed connection from URL replacement', async () => {
+    await login(['--url', server.url, '--name', 'prod']);
+    const unnamed = await login(['--url', server.url]);
+    const refused = await login(['--url', secondServerUrl]);
+
+    expect(unnamed.envelope.data).toMatchObject({
+      remote: 'default',
+      isDefault: false,
+    });
+    expect(refused.exitCode).toBe(2);
+    expect(refused.envelope.error.code).toBe('CONFIRMATION_REQUIRED');
+    expect(await readConfigFile()).toMatchObject({
+      defaultRemote: 'prod',
+      remotes: {
+        prod: { apiUrl: server.url },
+        default: { apiUrl: server.url },
+      },
+    });
+  });
+
   it('saves nothing when the server rejects the key', async () => {
     const { envelope, exitCode } = await login(
       ['--url', server.url, '--name', 'prod'],

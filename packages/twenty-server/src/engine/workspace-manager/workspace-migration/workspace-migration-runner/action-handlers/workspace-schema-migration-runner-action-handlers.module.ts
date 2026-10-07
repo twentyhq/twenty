@@ -5,11 +5,8 @@ import { CreateWorkflowActionHandlerService } from 'src/engine/workspace-manager
 import { DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
 import { UpdateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/update-workflow-action-handler.service';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -121,13 +118,7 @@ import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/works
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ApplicationEntity]),
-    WorkspaceSchemaManagerModule,
-    SecretEncryptionModule,
-    MetricsModule,
-    WorkflowDeletionModule,
-  ],
+  imports: [WorkspaceSchemaManagerModule, MetricsModule, WorkflowDeletionModule],
   providers: [
     CreateWorkflowActionHandlerService,
     UpdateWorkflowActionHandlerService,

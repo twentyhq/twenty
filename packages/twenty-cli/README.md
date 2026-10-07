@@ -21,7 +21,7 @@ The examples below use `twenty` for the built executable. Run it as
 
 ```bash
 twenty doctor --offline
-twenty auth login --url https://acme.twenty.com --name dev --use
+twenty auth login --url https://acme.twenty.com
 twenty metadata object list
 twenty data list companies --limit 5
 twenty open

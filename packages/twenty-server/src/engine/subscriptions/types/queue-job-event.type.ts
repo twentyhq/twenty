@@ -5,6 +5,7 @@ export type QueueJobEvent = {
   state: JobStateEnum;
   attemptsMade: number;
   failedReason?: string;
+  progress?: number;
   enqueuedAt: number;
   startedAt?: number;
   finishedAt?: number;
