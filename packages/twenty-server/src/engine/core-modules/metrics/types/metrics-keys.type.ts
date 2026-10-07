@@ -64,6 +64,7 @@ export enum MetricsKeys {
   UsageLimitQuotaAdmittedOnFailure = 'usage-limit-quota/admitted-on-failure',
   UsageLimitQuotaAdmittedOnFailureCreditsMicro = 'usage-limit-quota/admitted-on-failure-credits-micro',
   UsageLimitStockAdmittedOnFailure = 'usage-limit-stock/admitted-on-failure',
+  UsageLimitPlanDefaultsSkippedOnFailure = 'usage-limit/plan-defaults-skipped-on-failure',
   JobCompleted = 'job/completed',
   JobFailed = 'job/failed',
   JobStalled = 'job/stalled',

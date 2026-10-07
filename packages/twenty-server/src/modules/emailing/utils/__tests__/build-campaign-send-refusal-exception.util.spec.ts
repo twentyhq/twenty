@@ -13,7 +13,13 @@ const buildException = (sendRefusal: UsageRefusal) =>
     sendRefusal,
   });
 
-const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
+const buildQuotaRefusal = ({
+  exhaustedKind,
+  isDefault,
+}: {
+  exhaustedKind: ExhaustedKind;
+  isDefault?: boolean;
+}): UsageRefusal => ({
   kind: 'quotaExhausted',
   exhaustedScope: {
     resourceType: UsageResourceType.EMAIL,
@@ -27,12 +33,15 @@ const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
     periodCount: 1,
     periodUnit: 'month',
     retryAfterMs: 0,
+    isDefault,
   } satisfies ExhaustedScope,
 });
 
 describe('buildCampaignSendRefusalException', () => {
   it('advises topping up credits only when the allowance is what ran out', () => {
-    const exception = buildException(buildQuotaRefusal('allowance'));
+    const exception = buildException(
+      buildQuotaRefusal({ exhaustedKind: 'allowance' }),
+    );
 
     expect(exception.code).toBe(
       EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
@@ -43,13 +52,31 @@ describe('buildCampaignSendRefusalException', () => {
   });
 
   it('names the limit rather than the credits when a configured cap is reached', () => {
-    const exception = buildException(buildQuotaRefusal('limit'));
+    const exception = buildException(
+      buildQuotaRefusal({ exhaustedKind: 'limit' }),
+    );
 
     expect(exception.code).toBe(
       EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
     );
     expect(exception.message).toBe(
       'Campaign campaign-1 cannot be sent to 12 recipient(s): an email usage limit of 1000 for userWorkspace is reached',
+    );
+  });
+
+  it('does not tell the customer to raise a default limit only an operator can change', () => {
+    const configuredLimitException = buildException(
+      buildQuotaRefusal({ exhaustedKind: 'limit' }),
+    );
+    const defaultLimitException = buildException(
+      buildQuotaRefusal({ exhaustedKind: 'limit', isDefault: true }),
+    );
+
+    expect(defaultLimitException.code).toBe(
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
+    );
+    expect(defaultLimitException.userFriendlyMessage).not.toEqual(
+      configuredLimitException.userFriendlyMessage,
     );
   });
 
@@ -70,8 +97,8 @@ describe('buildCampaignSendRefusalException', () => {
 
   it('gives each refusal its own user facing advice', () => {
     const userFriendlyMessages = [
-      buildException(buildQuotaRefusal('allowance')),
-      buildException(buildQuotaRefusal('limit')),
+      buildException(buildQuotaRefusal({ exhaustedKind: 'allowance' })),
+      buildException(buildQuotaRefusal({ exhaustedKind: 'limit' })),
       buildException({
         kind: 'subscriptionInactive',
         reason: 'NO_SUBSCRIPTION',
@@ -82,9 +109,9 @@ describe('buildCampaignSendRefusalException', () => {
   });
 
   it('never leaks the refusal discriminator', () => {
-    expect(buildException(buildQuotaRefusal('limit')).message).not.toContain(
-      'quotaExhausted',
-    );
+    expect(
+      buildException(buildQuotaRefusal({ exhaustedKind: 'limit' })).message,
+    ).not.toContain('quotaExhausted');
     expect(
       buildException({
         kind: 'subscriptionInactive',

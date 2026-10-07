@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -22,6 +23,7 @@ export type FlatBillingSubscription = {
   trialStart: Date | null;
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
+  planKey: BillingPlanKey | null;
 };
 
 export type CurrentBillingSubscription =

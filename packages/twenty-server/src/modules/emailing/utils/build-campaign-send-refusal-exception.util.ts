@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { SUBSCRIPTION_INACTIVE_REASON_USER_FRIENDLY_MESSAGE } from 'src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import {
@@ -27,7 +29,8 @@ export const buildCampaignSendRefusalException = ({
     );
   }
 
-  const { exhaustedKind, spenderType, limitValue } = sendRefusal.exhaustedScope;
+  const { exhaustedKind, spenderType, limitValue, isDefault } =
+    sendRefusal.exhaustedScope;
 
   if (exhaustedKind === 'allowance') {
     return new EmailingDomainException(
@@ -39,5 +42,10 @@ export const buildCampaignSendRefusalException = ({
   return new EmailingDomainException(
     `Campaign ${campaignId} cannot be sent to ${recipientCount} recipient(s): an email usage limit of ${limitValue} for ${spenderType} is reached`,
     EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
+    isDefault
+      ? {
+          userFriendlyMessage: msg`This workspace has reached its daily email sending limit, which resets at midnight UTC. Contact support to raise it.`,
+        }
+      : {},
   );
 };

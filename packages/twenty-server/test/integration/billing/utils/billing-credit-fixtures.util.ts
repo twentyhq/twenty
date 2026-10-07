@@ -2,6 +2,7 @@ import { createClient, type RedisClientType } from 'redis';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
@@ -13,6 +14,11 @@ export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
 const TEST_STRIPE_PRICE_ID = 'price_resource_credit_test';
 const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
+
+const TEST_BASE_PRODUCT_SUBSCRIPTION_ITEM_ID = 'si_base_product_test';
+
+const buildTestBaseProductId = (planKey: BillingPlanKey): string =>
+  `prod_base_${planKey.toLowerCase()}_test`;
 
 export type CreditGrantRow = {
   id: string;
@@ -126,6 +132,58 @@ export const setupResourceCreditSubscription = async ({
   return { subscriptionId: subscription.id };
 };
 
+export const setSubscriptionPlan = async ({
+  subscriptionId,
+  planKey,
+}: {
+  subscriptionId: string;
+  planKey: BillingPlanKey;
+}): Promise<void> => {
+  await query(
+    `INSERT INTO core."billingProduct"
+       ("stripeProductId", active, name, description, metadata)
+     VALUES ($1, true, 'Test base product', '', $2)
+     ON CONFLICT ("stripeProductId") DO UPDATE SET metadata = EXCLUDED.metadata`,
+    [
+      buildTestBaseProductId(planKey),
+      JSON.stringify({
+        productKey: 'BASE_PRODUCT',
+        planKey,
+        priceUsageBased: 'LICENSED',
+      }),
+    ],
+  );
+
+  await query(
+    `INSERT INTO core."billingSubscriptionItem"
+       ("billingSubscriptionId", "stripeSubscriptionId", "stripeProductId",
+        "stripePriceId", "stripeSubscriptionItemId", quantity)
+     VALUES ($1, $2, $3, 'price_base_product_test', $4, 1)
+     ON CONFLICT ("stripeSubscriptionItemId") DO UPDATE
+       SET "stripeProductId" = EXCLUDED."stripeProductId"`,
+    [
+      subscriptionId,
+      TEST_STRIPE_SUBSCRIPTION_ID,
+      buildTestBaseProductId(planKey),
+      TEST_BASE_PRODUCT_SUBSCRIPTION_ITEM_ID,
+    ],
+  );
+};
+
+// Plans are listed by product metadata, so a leftover test base product would show up as a sellable plan
+export const removeSubscriptionPlans = async (
+  planKeys: BillingPlanKey[],
+): Promise<void> => {
+  await query(
+    `DELETE FROM core."billingSubscriptionItem" WHERE "stripeSubscriptionItemId" = $1`,
+    [TEST_BASE_PRODUCT_SUBSCRIPTION_ITEM_ID],
+  );
+  await query(
+    `DELETE FROM core."billingProduct" WHERE "stripeProductId" = ANY($1)`,
+    [planKeys.map(buildTestBaseProductId)],
+  );
+};
+
 export const insertCreditGrant = async ({
   workspaceId,
   amountMicro,
@@ -223,7 +281,8 @@ export const resetBillingCreditState = async (
 
   const redis = await getRedisClient();
   const staleKeys = [
-    ...(await redis.keys(`*{${workspaceId}}:quota:allowance:*`)),
+    ...(await redis.keys(`*{${workspaceId}}:quota:*`)),
+    ...(await redis.keys(`*{${workspaceId}}:stock:*`)),
     ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
   ];
 

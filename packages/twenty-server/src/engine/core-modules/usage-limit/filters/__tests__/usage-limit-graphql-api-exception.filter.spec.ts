@@ -49,7 +49,7 @@ describe('UsageLimitGraphqlApiExceptionFilter', () => {
   it('surfaces an operator-only default as a forbidden error carrying its own message', () => {
     const graphqlError = catchAsGraphQLError(
       new UsageLimitException(
-        'The STORAGE stock default is set for this instance and only an operator can replace it',
+        'The STORAGE stock default is not set by the workspace and only an operator can replace it',
         UsageLimitExceptionCode.LIMIT_FORBIDDEN,
       ),
     );

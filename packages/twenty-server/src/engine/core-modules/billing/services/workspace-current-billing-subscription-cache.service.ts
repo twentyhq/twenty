@@ -8,6 +8,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
+import { getSubscriptionPlanKey } from 'src/engine/core-modules/billing/utils/get-subscription-plan-key.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -50,6 +51,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialStart: subscription.trialStart,
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
+      planKey: getSubscriptionPlanKey(subscription),
     };
   }
 }

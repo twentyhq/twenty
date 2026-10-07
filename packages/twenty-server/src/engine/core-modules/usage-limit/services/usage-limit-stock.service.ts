@@ -13,20 +13,18 @@ import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/ca
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
 import { RELEASE_STOCK_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/release-stock-counters-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitDefaultsService } from 'src/engine/core-modules/usage-limit/services/usage-limit-defaults.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
-import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/types/stock-limit-default.type';
-import { type StockResourceType } from 'src/engine/core-modules/usage-limit/types/stock-resource-type.type';
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/build-stock-counters.util';
 import { buildStockDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-default-counter-key.util';
@@ -35,7 +33,6 @@ import { buildStockWarmedEntries } from 'src/engine/core-modules/usage-limit/uti
 import { buildStockScopeKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-scope-key.util';
 import { buildStockWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-warm-lock-key.util';
 import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-stock-counter.util';
-import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { getStockExhaustedUserFriendlyMessage } from 'src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { isStockResourceType } from 'src/engine/core-modules/usage-limit/utils/is-stock-resource-type.util';
@@ -65,8 +62,8 @@ export class UsageLimitStockService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usageLimitDefaultsService: UsageLimitDefaultsService,
     private readonly metricsService: MetricsService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async assertStockAvailable({
@@ -78,7 +75,10 @@ export class UsageLimitStockService {
     computeUsedStock: ComputeUsedStock;
   }): Promise<void> {
     try {
-      const counters = await this.buildCounters(args);
+      const counters = await this.buildCounters({
+        ...args,
+        defaultLimitValues: 'plan',
+      });
 
       if (counters.length === 0) {
         return;
@@ -173,7 +173,8 @@ export class UsageLimitStockService {
 
     if (isStockResourceType(resourceType)) {
       keys.push(
-        ...this.buildStockLimitDefaults({ resourceType, operationType })
+        ...this.usageLimitDefaultsService
+          .findStockLimitDefaultCandidates({ resourceType, operationType })
           .filter(
             (stockLimitDefault) =>
               stockLimitDefault.spenderType === spenderType,
@@ -196,7 +197,10 @@ export class UsageLimitStockService {
 
   async invalidateStock(args: StockArgs): Promise<void> {
     try {
-      const counters = await this.buildCounters(args);
+      const counters = await this.buildCounters({
+        ...args,
+        defaultLimitValues: 'candidates',
+      });
 
       if (counters.length === 0) {
         return;
@@ -251,9 +255,9 @@ export class UsageLimitStockService {
     buildArgs: (counters: StockCounter[]) => string[];
   }): Promise<void> {
     try {
-      const counters = (await this.buildCounters(args)).filter(
-        (counter) => (cost[counter.unit] ?? 0) > 0,
-      );
+      const counters = (
+        await this.buildCounters({ ...args, defaultLimitValues: 'candidates' })
+      ).filter((counter) => (cost[counter.unit] ?? 0) > 0);
 
       if (counters.length === 0) {
         return;
@@ -269,12 +273,16 @@ export class UsageLimitStockService {
     }
   }
 
+  // Only admission reads the plan value. Writes touch the default counter of every candidate value, so they need no billing read and a failed plan read cannot leave the live counter uncredited
   private async buildCounters({
     workspaceId,
     resourceType,
     operationType,
     spenders,
-  }: StockArgs): Promise<StockCounter[]> {
+    defaultLimitValues,
+  }: StockArgs & {
+    defaultLimitValues: 'plan' | 'candidates';
+  }): Promise<StockCounter[]> {
     if (!isStockResourceType(resourceType)) {
       return [];
     }
@@ -298,38 +306,18 @@ export class UsageLimitStockService {
       operationType,
       spenders,
       limits: enforceableLimits,
-      stockLimitDefaults: this.buildStockLimitDefaults({
-        resourceType,
-        operationType,
-      }),
+      stockLimitDefaults:
+        defaultLimitValues === 'plan'
+          ? await this.usageLimitDefaultsService.findStockLimitDefaults({
+              workspaceId,
+              resourceType,
+              operationType,
+            })
+          : this.usageLimitDefaultsService.findStockLimitDefaultCandidates({
+              resourceType,
+              operationType,
+            }),
     });
-  }
-
-  private buildStockLimitDefaults({
-    resourceType,
-    operationType,
-  }: {
-    resourceType: StockResourceType;
-    operationType: UsageOperationType;
-  }): StockLimitDefault[] {
-    const definition = findUsageLimitDefinition({
-      resourceType,
-      limitKind: 'stock',
-    });
-
-    return (definition?.defaults ?? [])
-      .filter(
-        (stockLimitDefaultDefinition) =>
-          stockLimitDefaultDefinition.operationType === operationType,
-      )
-      .map((stockLimitDefaultDefinition) => ({
-        spenderType: stockLimitDefaultDefinition.spenderType,
-        unit: stockLimitDefaultDefinition.unit,
-        isOverridable: stockLimitDefaultDefinition.isOverridable,
-        limitValue: this.twentyConfigService.get(
-          stockLimitDefaultDefinition.limitValueConfigVariable,
-        ),
-      }));
   }
 
   private async readRemainings({

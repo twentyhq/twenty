@@ -31,7 +31,7 @@ const getUsageLimitExceptionUserFriendlyMessage = (
     case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
       return msg`Limits scoped below the workspace require the Organization plan.`;
     case UsageLimitExceptionCode.LIMIT_FORBIDDEN:
-      return msg`Only an operator can replace an instance default.`;
+      return msg`Only an operator can replace a default limit.`;
     case UsageLimitExceptionCode.LIMIT_CONFLICT:
       return msg`This limit changed while you were editing it. Reload and try again.`;
     default:
