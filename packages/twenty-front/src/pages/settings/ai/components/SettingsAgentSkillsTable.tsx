@@ -1,3 +1,4 @@
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Skeleton } from 'twenty-ui/primitives/feedback';
@@ -59,7 +60,14 @@ export const SettingsAgentSkillsTable = ({
       </StyledTableHeaderRowContainer>
       {showSkeleton
         ? Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton layout="line" height={32} borderRadius={4} key={index} />
+            <Skeleton
+              layout="line"
+              baseColor={LEGACY_SKELETON_COLORS.base}
+              highlightColor={LEGACY_SKELETON_COLORS.highlight}
+              height={32}
+              borderRadius={4}
+              key={index}
+            />
           ))
         : skills.map((skill) => (
             <SettingsSkillTableRow

@@ -699,7 +699,7 @@
         "type": "BackgroundColor",
         "required": false,
         "defaultValue": null,
-        "description": "Placeholder background color. Defaults to #ebebeb. Pass a theme background token for themed placeholders."
+        "description": "Placeholder background color. Defaults to the theme tertiary background."
       },
       {
         "name": "borderRadius",
@@ -741,7 +741,7 @@
         "type": "BackgroundColor",
         "required": false,
         "defaultValue": null,
-        "description": "Animated highlight color. Defaults to #f5f5f5. Pass a theme color token for themed placeholders."
+        "description": "Animated highlight color. Defaults to the theme lighter transparent background."
       },
       {
         "name": "layout",

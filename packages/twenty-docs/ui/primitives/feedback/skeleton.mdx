@@ -16,14 +16,13 @@ import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
 ```tsx
 import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 export const LoadingProfile = () => (
   <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
-    <Skeleton baseColor={themeCssVariables.background.tertiary} highlightColor={themeCssVariables.background.transparent.lighter} width={40} height={40} borderRadius="50%" />
+    <Skeleton width={40} height={40} borderRadius="50%" />
     <Text render={<div />} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <Skeleton baseColor={themeCssVariables.background.tertiary} highlightColor={themeCssVariables.background.transparent.lighter} borderRadius={4} width={180} height={SKELETON_HEIGHT_SIZES.s} />
-      <Skeleton baseColor={themeCssVariables.background.tertiary} highlightColor={themeCssVariables.background.transparent.lighter} borderRadius={4} width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+      <Skeleton borderRadius={4} width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton borderRadius={4} width={120} height={SKELETON_HEIGHT_SIZES.xs} />
     </Text>
   </Text>
 );
@@ -47,7 +46,7 @@ The highlight moves from left to right on a 1.5-second ease-in-out loop and is h
 
 Native props, `className`, `style` and `ref` target the placeholder span. Use `render` to compose another element. Explicit native styles override dimension and color props.
 
-Pass theme tokens through `baseColor`, `highlightColor` and `borderRadius` for themed placeholders. Without overrides, the colors are `#ebebeb` and `#f5f5f5`, the radius is `0.25rem` and the corner shape follows the surrounding styles. No skeleton-specific provider or stylesheet import is needed after loading `twenty-ui/style.css` and the UI theme.
+The base and highlight colors default to the theme tertiary background and lighter transparent background. Use `baseColor`, `highlightColor` and `borderRadius` to override them. The default radius is `0.25rem` and the corner shape follows the surrounding styles. No skeleton-specific provider or stylesheet import is needed after loading `twenty-ui/style.css` and the UI theme.
 
 ## Props
 

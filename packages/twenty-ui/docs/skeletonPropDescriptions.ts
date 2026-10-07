@@ -8,9 +8,9 @@ export const SKELETON_PROP_DESCRIPTIONS = {
   borderRadius:
     'Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape.',
   baseColor:
-    'Placeholder background color. Defaults to #ebebeb. Pass a theme background token for themed placeholders.',
+    'Placeholder background color. Defaults to the theme tertiary background.',
   highlightColor:
-    'Animated highlight color. Defaults to #f5f5f5. Pass a theme color token for themed placeholders.',
+    'Animated highlight color. Defaults to the theme lighter transparent background.',
   layout:
     'Use shape for a standalone element or line for a wrapper with a line break after each placeholder.',
   count: 'Number of placeholders in line layout. Defaults to one.',

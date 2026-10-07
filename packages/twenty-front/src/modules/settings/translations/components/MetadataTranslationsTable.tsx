@@ -1,3 +1,4 @@
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
 import { type MetadataTranslationLanguageRow } from '@/settings/translations/types/MetadataTranslationLanguageRow';
@@ -71,6 +72,8 @@ export const MetadataTranslationsTable = ({
                 ? Array.from({ length: 3 }).map((_, index) => (
                     <Skeleton
                       layout="line"
+                      baseColor={LEGACY_SKELETON_COLORS.base}
+                      highlightColor={LEGACY_SKELETON_COLORS.highlight}
                       height={32}
                       borderRadius={4}
                       key={index}

@@ -1,6 +1,6 @@
 .root {
-  --skeleton-base-color: #ebebeb;
-  --skeleton-highlight-color: #f5f5f5;
+  --skeleton-base-color: var(--t-background-tertiary);
+  --skeleton-highlight-color: var(--t-background-transparent-lighter);
 
   background-color: var(--skeleton-base-color);
   border-radius: 0.25rem;

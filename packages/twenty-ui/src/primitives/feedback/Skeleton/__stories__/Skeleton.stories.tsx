@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { Skeleton } from '@ui/primitives/feedback';
 import { Text } from '@ui/primitives/typography';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider, themeCssVariables } from '@ui/theme';
+import { ThemeProvider } from '@ui/theme';
 
 const meta: Meta<typeof Skeleton> = {
   title: 'UI/Feedback/Skeleton',
@@ -13,8 +13,6 @@ const meta: Meta<typeof Skeleton> = {
   args: {
     width: 240,
     height: 16,
-    baseColor: themeCssVariables.background.tertiary,
-    highlightColor: themeCssVariables.background.transparent.lighter,
     borderRadius: 4,
   },
   render: (args) => <Skeleton {...args} data-testid="placeholder" />,
@@ -45,6 +43,12 @@ export const Default: Story = {
       .getPropertyValue('--skeleton-highlight-color')
       .trim();
 
+    await expect(shapeStyle.backgroundColor).toBe(
+      shapeStyle.getPropertyValue('--t-background-tertiary').trim(),
+    );
+    await expect(highlightColor).toBe(
+      shapeStyle.getPropertyValue('--t-background-transparent-lighter').trim(),
+    );
     await expect(highlight.backgroundImage).toBe(
       `linear-gradient(90deg, ${shapeStyle.backgroundColor} 0%, ${highlightColor} 50%, ${shapeStyle.backgroundColor} 100%)`,
     );
@@ -119,6 +123,7 @@ export const StaticBehavior: Story = {
 };
 
 export const Dark: Story = {
+  play: Default.play,
   decorators: [
     (Story) => (
       <ThemeProvider colorScheme="dark">

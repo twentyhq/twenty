@@ -1,3 +1,4 @@
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -78,7 +79,14 @@ export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
         <Table>
           {header}
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton layout="line" height={32} borderRadius={4} key={index} />
+            <Skeleton
+              layout="line"
+              baseColor={LEGACY_SKELETON_COLORS.base}
+              highlightColor={LEGACY_SKELETON_COLORS.highlight}
+              height={32}
+              borderRadius={4}
+              key={index}
+            />
           ))}
         </Table>
       </StyledTableContainer>

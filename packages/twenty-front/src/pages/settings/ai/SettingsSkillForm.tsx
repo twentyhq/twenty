@@ -1,3 +1,4 @@
+import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { Skeleton } from 'twenty-ui/primitives/feedback';
@@ -54,7 +55,13 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section.Root>
-            <Skeleton layout="line" height={400} borderRadius={4} />
+            <Skeleton
+              layout="line"
+              baseColor={LEGACY_SKELETON_COLORS.base}
+              highlightColor={LEGACY_SKELETON_COLORS.highlight}
+              height={400}
+              borderRadius={4}
+            />
           </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
