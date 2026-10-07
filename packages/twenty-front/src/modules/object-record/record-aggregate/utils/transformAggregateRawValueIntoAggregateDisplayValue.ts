@@ -4,8 +4,8 @@ import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type NumberFormat } from '@/localization/constants/NumberFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
+import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/CountAggregateOperationOptions';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/PercentAggregateOperationOptions';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
 import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
