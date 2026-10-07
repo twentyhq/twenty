@@ -108,6 +108,6 @@ export const selectTarget = async ({
     code: 'TARGET_REQUIRED',
     exitCode: EXIT_CODE.USAGE,
     message: 'No workspace selected.',
-    hint: `Sign in with: twenty auth login --with-token --url <url> --name <name>. Or set ${TARGET_ENVIRONMENT_VARIABLE.API_URL} and ${TARGET_ENVIRONMENT_VARIABLE.API_KEY}.`,
+    hint: `Sign in with: twenty auth login --url <url>. Or set ${TARGET_ENVIRONMENT_VARIABLE.API_URL} and ${TARGET_ENVIRONMENT_VARIABLE.API_KEY}.`,
   });
 };
