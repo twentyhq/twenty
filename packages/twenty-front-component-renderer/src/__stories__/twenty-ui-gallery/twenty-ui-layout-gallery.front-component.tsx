@@ -2,8 +2,9 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import 'twenty-ui/style.css';
 import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 import { IconHeart, IconStar } from 'twenty-ui/icon';
-import { Collapsible, HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { SeparatorExample } from './separator-example';
 import { ResizeHandleExample } from './resize-handle-example';
 
 import {
@@ -28,8 +29,8 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'HorizontalSeparator',
-    node: <HorizontalSeparator text="or" />,
+    name: 'Separator',
+    node: <SeparatorExample />,
   },
   {
     name: 'ResizeHandle',
