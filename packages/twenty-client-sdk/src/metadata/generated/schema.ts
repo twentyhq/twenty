@@ -242,6 +242,14 @@ export interface AppKeyValue {
 /** WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key. */
 export type AppKeyValueScope = 'SERVER' | 'WORKSPACE'
 
+export interface AppPreferencesApplication {
+    id: Scalars['UUID']
+    logoUrl?: Scalars['String']
+    name: Scalars['String']
+    universalIdentifier: Scalars['UUID']
+    __typename: 'AppPreferencesApplication'
+}
+
 export interface Application {
     agents: Agent[]
     applicationRegistration?: ApplicationRegistrationSummary
@@ -2787,6 +2795,8 @@ export interface Query {
     metadataTranslations: MetadataTranslation[]
     minimalMetadata: MinimalMetadata
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
+    myAppPreferencesApplicationVariables: UserApplicationVariableValue[]
+    myAppPreferencesApplications: AppPreferencesApplication[]
     myCalendarChannels: CalendarChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
@@ -4115,6 +4125,15 @@ export interface AppKeyValueGenqlSelection{
 export interface AppMessageInput {externalId: Scalars['String'],participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
+
+export interface AppPreferencesApplicationGenqlSelection{
+    id?: boolean | number
+    logoUrl?: boolean | number
+    name?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection
@@ -6962,6 +6981,8 @@ export interface QueryGenqlSelection{
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
+    myAppPreferencesApplicationVariables?: (UserApplicationVariableValueGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['UUID']} })
+    myAppPreferencesApplications?: AppPreferencesApplicationGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -8510,6 +8531,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
       return AppKeyValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AppPreferencesApplication_possibleTypes: string[] = ['AppPreferencesApplication']
+    export const isAppPreferencesApplication = (obj?: { __typename?: any } | null): obj is AppPreferencesApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAppPreferencesApplication"')
+      return AppPreferencesApplication_possibleTypes.includes(obj.__typename)
     }
     
 

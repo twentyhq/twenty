@@ -312,6 +312,13 @@ input AppMessageParticipantInput {
   workspaceMemberId: UUID
 }
 
+type AppPreferencesApplication {
+  id: UUID!
+  logoUrl: String
+  name: String!
+  universalIdentifier: UUID!
+}
+
 type Application {
   agents: [Agent!]!
   applicationRegistration: ApplicationRegistrationSummary
@@ -3822,6 +3829,8 @@ type Query {
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
+  myAppPreferencesApplicationVariables(applicationUniversalIdentifier: UUID!): [UserApplicationVariableValue!]!
+  myAppPreferencesApplications: [AppPreferencesApplication!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!

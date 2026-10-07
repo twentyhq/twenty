@@ -70,6 +70,24 @@ const getDisplayValue = ({
 }) => (isSecret ? `masked ${value}` : `plaintext of ${value}`);
 
 describe('toUserApplicationVariableValues', () => {
+  it.each(['', 'false', '0'])(
+    'should preserve an explicit %j member value instead of the default',
+    (memberValue) => {
+      const values = toUserApplicationVariableValues({
+        flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
+        userApplicationVariableValueMaps: USER_APPLICATION_VARIABLE_VALUE_MAPS,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        shouldMaskSecret: true,
+        getDisplayValue: () => memberValue,
+      });
+
+      expect(
+        values.find(({ key }) => key === 'RECORD_MY_MEETINGS')?.value,
+      ).toBe(memberValue);
+      expect(values.find(({ key }) => key === 'LANGUAGE')?.value).toBe('en');
+    },
+  );
+
   it('should use the member value, else the default, else an empty string', () => {
     const values = toUserApplicationVariableValues({
       flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,

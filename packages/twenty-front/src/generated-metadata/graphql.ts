@@ -350,6 +350,14 @@ export type AppMessageParticipantInput = {
   workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type AppPreferencesApplication = {
+  __typename?: 'AppPreferencesApplication';
+  id: Scalars['UUID']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  universalIdentifier: Scalars['UUID']['output'];
+};
+
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -2050,6 +2058,8 @@ export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  /** @deprecated Use jobs instead. */
+  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -4638,6 +4648,7 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -5375,6 +5386,8 @@ export type Query = {
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
   mostlyEmptyFieldMetadataIds: Array<Scalars['UUID']['output']>;
+  myAppPreferencesApplicationVariables: Array<UserApplicationVariableValue>;
+  myAppPreferencesApplications: Array<AppPreferencesApplication>;
   myCalendarChannels: Array<CalendarChannel>;
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
@@ -5814,6 +5827,11 @@ export type QueryMostlyEmptyFieldMetadataIdsArgs = {
 };
 
 
+export type QueryMyAppPreferencesApplicationVariablesArgs = {
+  applicationUniversalIdentifier: Scalars['UUID']['input'];
+};
+
+
 export type QueryMyCalendarChannelsArgs = {
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
 };
@@ -6164,6 +6182,10 @@ export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
   input?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  messages?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  prompt?: InputMaybe<Scalars['String']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
 };
@@ -6968,6 +6990,8 @@ export type UpdateViewFieldGroupInput = {
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
+  /** @deprecated Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead. */
+  deletedAt?: InputMaybe<Scalars['String']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;

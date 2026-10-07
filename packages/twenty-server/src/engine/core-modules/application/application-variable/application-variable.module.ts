@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { AppPreferencesResolver } from 'src/engine/core-modules/application/application-variable/app-preferences.resolver';
+import { AppPreferencesService } from 'src/engine/core-modules/application/application-variable/app-preferences.service';
 import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { UserApplicationVariableValueResolver } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.resolver';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
@@ -10,6 +13,7 @@ import { ApplicationVariableEntity } from 'src/engine/core-modules/application/a
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { WorkspaceUserApplicationVariableValueMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-user-application-variable-value-map-cache.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { FlatApplicationVariableModule } from 'src/engine/metadata-modules/flat-application-variable/flat-application-variable.module';
@@ -21,12 +25,14 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      ApplicationEntity,
       ApplicationVariableEntity,
       UserApplicationVariableValueEntity,
       UserWorkspaceEntity,
     ]),
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
+    FeatureFlagModule,
     PermissionsModule,
     WorkspaceCacheModule,
     SecretEncryptionModule,
@@ -34,6 +40,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(ApplicationEntity),
     provideWorkspaceScopedRepository(ApplicationVariableEntity),
     provideWorkspaceScopedRepository(UserApplicationVariableValueEntity),
     provideWorkspaceScopedRepository(UserWorkspaceEntity),
@@ -42,6 +49,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserApplicationVariableValueService,
     UserApplicationVariableValueResolver,
     WorkspaceUserApplicationVariableValueMapCacheService,
+    AppPreferencesService,
+    AppPreferencesResolver,
   ],
   exports: [
     ApplicationVariableEntityService,
