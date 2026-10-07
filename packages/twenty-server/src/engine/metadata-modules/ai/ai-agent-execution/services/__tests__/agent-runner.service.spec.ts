@@ -170,6 +170,28 @@ describe('AgentRunnerService', () => {
     );
   });
 
+  it.each([true, false])(
+    'offers every human-input tool only to a run that can ask humans (%s)',
+    async (canAskHumans) => {
+      const { service, agentAsyncExecutorService } = buildService();
+
+      await service.run({
+        ...RUN_INPUT,
+        spec: { ...RUN_INPUT.spec, capabilities: { canAskHumans } },
+      });
+
+      const [{ pausingTools, canProposeToolCalls }] =
+        agentAsyncExecutorService.executeAgent.mock.calls[0];
+
+      expect(canProposeToolCalls).toBe(canAskHumans);
+      expect(Object.keys(pausingTools)).toEqual(
+        canAskHumans
+          ? expect.arrayContaining(['ask_question', 'request_form'])
+          : expect.not.arrayContaining(['ask_question', 'request_form']),
+      );
+    },
+  );
+
   it('locks a conversation it just created without reading it', async () => {
     const {
       service,
