@@ -108,6 +108,30 @@ registry access is required for installation; the commands do not contact a
 Twenty workspace. Temporary files are removed afterward, and nothing is
 published. CI runs the same target for CLI and dependency changes.
 
+## Releases
+
+The CLI has its own release line. A `cli/vX.Y.Z` tag publishes the `twenty`
+package at that version, which must match `package.json`.
+
+`app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
+`create-twenty-app` version of the commit the CLI was built from. `main` moves
+to the next, unpublished SDK version right after each SDK release, so a CLI
+release must be built from the commit of an SDK release:
+
+1. Merge the CLI version bump before that SDK release is tagged.
+2. Once the `sdk/vA.B.C` packages are on npm, tag the same commit `cli/vX.Y.Z`.
+
+`yarn npm publish` first runs `scripts/check-publish.mjs`, which needs a fresh
+build and npm registry access. It fails when the executable, worker, lazy chunks
+or templates are missing, when `dist` was built for another version, or when
+`app init` would pin versions that are not on npm. An unreachable registry is
+reported separately from a missing version. To run it before tagging:
+
+```bash
+yarn nx build twenty-cli
+node packages/twenty-cli/scripts/check-publish.mjs
+```
+
 ## App integration tests
 
 `app-template-overlay` supplies the integration-test setup for CLI-created apps.

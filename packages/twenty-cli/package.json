@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The Twenty command line.",
   "homepage": "https://twenty.com",
   "repository": {
@@ -20,7 +20,8 @@
     "src/app/**/README.md"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build"
+    "build": "npx rimraf dist && npx vite build",
+    "prepublish": "node scripts/check-publish.mjs"
   },
   "engines": {
     "node": "^24.5.0"
