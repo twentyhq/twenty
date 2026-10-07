@@ -162,17 +162,13 @@ export class AgentRunnerService {
     // the suspension a continued run resumes from
     suspension: AgentRunSuspensionEntity | null;
   }): Promise<AgentRunnerResult> {
-    const { workspaceId, conversation } = input;
-    const work = () => this.runTurn({ input, suspension });
-
-    // a continued conversation is read before the run, so two runs on it must not interleave
-    return conversation.isCreated
-      ? work()
-      : this.agentRunConversationService.withThreadLock({
-          workspaceId,
-          threadId: conversation.threadId,
-          work,
-        });
+    // nothing else writes to the conversation while the run goes on: another run would read it half
+    // written, and a run that suspends would read a member's message once it goes on
+    return this.agentRunConversationService.withThreadLock({
+      workspaceId: input.workspaceId,
+      threadId: input.conversation.threadId,
+      work: () => this.runTurn({ input, suspension }),
+    });
   }
 
   private async runTurn({
@@ -194,7 +190,10 @@ export class AgentRunnerService {
     } = input;
 
     if (!isCreated && !isDefined(suspension)) {
-      await this.assertConversationNotSuspended({ workspaceId, threadId });
+      await this.agentRunSuspensionService.assertConversationNotSuspended({
+        workspaceId,
+        threadId,
+      });
     }
 
     const priorMessages = isCreated
@@ -282,27 +281,6 @@ export class AgentRunnerService {
         suspension,
       }),
     };
-  }
-
-  // a new message must not slip in while a run waits in the conversation: the run would read it on continuing
-  private async assertConversationNotSuspended({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const suspension = await this.agentRunSuspensionService.findOne({
-      workspaceId,
-      where: { threadId },
-    });
-
-    if (isDefined(suspension)) {
-      throw new AiException(
-        'The conversation is waiting on an earlier run; send the next message once it has finished',
-        AiExceptionCode.THREAD_AWAITING_ANSWER,
-      );
-    }
   }
 
   private async settleTurn({

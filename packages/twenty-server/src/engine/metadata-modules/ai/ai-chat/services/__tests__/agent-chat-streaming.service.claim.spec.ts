@@ -152,6 +152,10 @@ describe('AgentChatStreamingService claim & reap', () => {
         findLatestTurn: jest.fn().mockResolvedValue(null),
         markRunning: jest.fn().mockResolvedValue(true),
       } as never,
+      {
+        assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
+      } as never,
+      { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
     );
 
     return {
