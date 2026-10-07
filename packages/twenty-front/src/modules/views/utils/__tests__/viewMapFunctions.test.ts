@@ -3,7 +3,6 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ViewField } from '@/views/types/ViewField';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { ViewFilterOperand } from 'twenty-shared/types';
@@ -167,51 +166,5 @@ describe('mapViewFieldsToColumnDefinitions', () => {
     });
 
     expect(actualColumnDefinitions).toEqual(expectedColumnDefinitions);
-  });
-});
-
-describe('mapColumnDefinitionsToViewFields', () => {
-  it('should map ColumnDefinitions to ViewFields, setting defaults and using viewFieldId if present', () => {
-    const columnDefinitions = [
-      {
-        fieldMetadataId: 1,
-        position: 1,
-        isVisible: true,
-        viewFieldId: 'custom-id-1',
-      },
-      {
-        fieldMetadataId: 2,
-        position: 2,
-        size: 200,
-        isVisible: false,
-      },
-    ];
-
-    const expectedViewFields = [
-      {
-        id: 'custom-id-1',
-        fieldMetadataId: 1,
-        position: 1,
-        isVisible: true,
-        isActive: true,
-        definition: columnDefinitions[0],
-        size: undefined,
-      },
-      {
-        id: '',
-        fieldMetadataId: 2,
-        position: 2,
-        size: 200,
-        isVisible: false,
-        isActive: true,
-        definition: columnDefinitions[1],
-      },
-    ];
-
-    const actualViewFields = mapColumnDefinitionsToViewFields(
-      columnDefinitions as unknown as ColumnDefinition<FieldMetadata>[],
-    );
-
-    expect(actualViewFields).toEqual(expectedViewFields);
   });
 });

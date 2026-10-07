@@ -6347,6 +6347,7 @@ export enum RunAgentMessageRole {
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
+  isWaiting: Scalars['Boolean']['output'];
   result?: Maybe<Scalars['JSON']['output']>;
   success: Scalars['Boolean']['output'];
   threadId?: Maybe<Scalars['UUID']['output']>;
@@ -7032,6 +7033,7 @@ export type UpdatePageLayoutWidgetInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['JSON']['input']>;
