@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import { computeCreditTopUpAmountCents } from 'src/engine/core-modules/billing/utils/compute-credit-top-up-amount-cents.util';
+import { computeCreditOneTimeTopUpAmountCents } from 'src/engine/core-modules/billing/utils/compute-credit-one-time-top-up-amount-cents.util';
 
 const ONE_CREDIT_MICRO = 1_000_000;
 
-describe('computeCreditTopUpAmountCents', () => {
+describe('computeCreditOneTimeTopUpAmountCents', () => {
   it('prices the pack at the rate of the given price', () => {
     expect(
-      computeCreditTopUpAmountCents({
+      computeCreditOneTimeTopUpAmountCents({
         creditAmountMicro: 50 * ONE_CREDIT_MICRO,
         price: {
           unitAmount: 2_000,
@@ -19,7 +19,7 @@ describe('computeCreditTopUpAmountCents', () => {
 
   it('rounds a fraction of a cent up', () => {
     expect(
-      computeCreditTopUpAmountCents({
+      computeCreditOneTimeTopUpAmountCents({
         creditAmountMicro: 10 * ONE_CREDIT_MICRO,
         price: {
           unitAmount: 1_000,
@@ -31,7 +31,7 @@ describe('computeCreditTopUpAmountCents', () => {
 
   it('stays exact where floating point would undercharge a cent', () => {
     expect(
-      computeCreditTopUpAmountCents({
+      computeCreditOneTimeTopUpAmountCents({
         creditAmountMicro: 500 * ONE_CREDIT_MICRO,
         price: {
           unitAmount: 181_818_181_998,

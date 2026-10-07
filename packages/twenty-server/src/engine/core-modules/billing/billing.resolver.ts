@@ -13,8 +13,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingCreditTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up-offer.dto';
-import { BillingCreditTopUpDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up.dto';
+import { BillingCreditOneTimeTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up-offer.dto';
+import { BillingCreditOneTimeTopUpDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-one-time-top-up.dto';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
@@ -22,7 +22,7 @@ import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/bi
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
-import { BillingPurchaseCreditTopUpInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-purchase-credit-top-up.input';
+import { BillingPurchaseCreditOneTimeTopUpInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-purchase-credit-one-time-top-up.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -545,7 +545,7 @@ export class BillingResolver {
     };
   }
 
-  @Query(() => [BillingCreditTopUpOfferDTO])
+  @Query(() => [BillingCreditOneTimeTopUpOfferDTO])
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -560,13 +560,13 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async getCreditTopUpOffers(
+  async getCreditOneTimeTopUpOffers(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<BillingCreditTopUpOfferDTO[]> {
+  ): Promise<BillingCreditOneTimeTopUpOfferDTO[]> {
     return this.billingCreditOneTimeTopUpService.getOffers(workspace.id);
   }
 
-  @Mutation(() => BillingCreditTopUpDTO)
+  @Mutation(() => BillingCreditOneTimeTopUpDTO)
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -581,11 +581,14 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async purchaseCreditTopUp(
+  async purchaseCreditOneTimeTopUp(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
-    @Args() { creditAmount, idempotencyKey }: BillingPurchaseCreditTopUpInput,
-  ): Promise<BillingCreditTopUpDTO> {
+    @Args() {
+      creditAmount,
+      idempotencyKey,
+    }: BillingPurchaseCreditOneTimeTopUpInput,
+  ): Promise<BillingCreditOneTimeTopUpDTO> {
     const { status, hostedInvoiceUrl } =
       await this.billingCreditOneTimeTopUpService.purchase({
         workspaceId: workspace.id,

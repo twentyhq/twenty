@@ -24,7 +24,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
-    case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_ALLOWED:
+    case BillingExceptionCode.BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_INVOICE_PAYMENT_FAILED:

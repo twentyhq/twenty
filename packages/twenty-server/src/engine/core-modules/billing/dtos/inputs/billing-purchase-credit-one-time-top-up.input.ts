@@ -7,7 +7,7 @@ import { IsNotEmpty, IsPositive, IsUUID } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
-export class BillingPurchaseCreditTopUpInput {
+export class BillingPurchaseCreditOneTimeTopUpInput {
   @Field(() => Float)
   @IsPositive()
   creditAmount: number;

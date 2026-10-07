@@ -2,8 +2,8 @@
 
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('BillingCreditTopUpOffer')
-export class BillingCreditTopUpOfferDTO {
+@ObjectType('BillingCreditOneTimeTopUpOffer')
+export class BillingCreditOneTimeTopUpOfferDTO {
   @Field(() => Float, { description: 'Credits added to the workspace' })
   creditAmount: number;
 

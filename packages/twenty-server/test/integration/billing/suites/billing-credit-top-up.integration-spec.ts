@@ -55,8 +55,8 @@ const postCreditTopUpInvoicePaid = ({
     );
 
 const OFFERS_QUERY = gql`
-  query GetCreditTopUpOffers {
-    getCreditTopUpOffers {
+  query GetCreditOneTimeTopUpOffers {
+    getCreditOneTimeTopUpOffers {
       creditAmount
       amountCents
       currency
@@ -65,8 +65,11 @@ const OFFERS_QUERY = gql`
 `;
 
 const PURCHASE_MUTATION = gql`
-  mutation PurchaseCreditTopUp($creditAmount: Float!, $idempotencyKey: UUID!) {
-    purchaseCreditTopUp(
+  mutation PurchaseCreditOneTimeTopUp(
+    $creditAmount: Float!
+    $idempotencyKey: UUID!
+  ) {
+    purchaseCreditOneTimeTopUp(
       creditAmount: $creditAmount
       idempotencyKey: $idempotencyKey
     ) {
@@ -76,7 +79,10 @@ const PURCHASE_MUTATION = gql`
   }
 `;
 
-const purchaseCreditTopUp = (creditAmount: number, accessToken?: string) =>
+const purchaseCreditOneTimeTopUp = (
+  creditAmount: number,
+  accessToken?: string,
+) =>
   makeMetadataApiRequest(
     {
       query: PURCHASE_MUTATION,
@@ -190,7 +196,7 @@ describe('Billing credit top-up webhook (integration)', () => {
   });
 });
 
-describe('Billing credit top-up offers and purchase (integration)', () => {
+describe('Billing one-time credit top-up offers and purchase (integration)', () => {
   let workspaceId: string;
 
   beforeAll(async () => {
@@ -221,7 +227,7 @@ describe('Billing credit top-up offers and purchase (integration)', () => {
     const response = await makeMetadataApiRequest({ query: OFFERS_QUERY });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.getCreditTopUpOffers).toEqual([
+    expect(response.body.data.getCreditOneTimeTopUpOffers).toEqual([
       { creditAmount: 10, amountCents: 10_000, currency: 'USD' },
       { creditAmount: 50, amountCents: 50_000, currency: 'USD' },
       { creditAmount: 100, amountCents: 100_000, currency: 'USD' },
@@ -241,11 +247,11 @@ describe('Billing credit top-up offers and purchase (integration)', () => {
     const response = await makeMetadataApiRequest({ query: OFFERS_QUERY });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.getCreditTopUpOffers).toEqual([]);
+    expect(response.body.data.getCreditOneTimeTopUpOffers).toEqual([]);
   });
 
   it('refuses an amount that is not offered', async () => {
-    const response = await purchaseCreditTopUp(7);
+    const response = await purchaseCreditOneTimeTopUp(7);
 
     expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
       'BILLING_CREDIT_AMOUNT_INVALID',
@@ -262,19 +268,19 @@ describe('Billing credit top-up offers and purchase (integration)', () => {
       status: 'trialing',
     });
 
-    const response = await purchaseCreditTopUp(10);
+    const response = await purchaseCreditOneTimeTopUp(10);
 
     expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-      'BILLING_CREDIT_TOP_UP_NOT_ALLOWED',
+      'BILLING_CREDIT_ONE_TIME_TOP_UP_NOT_ALLOWED',
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
   it('refuses an API key', async () => {
-    const response = await purchaseCreditTopUp(10, API_KEY_ACCESS_TOKEN);
+    const response = await purchaseCreditOneTimeTopUp(10, API_KEY_ACCESS_TOKEN);
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.data?.purchaseCreditTopUp ?? null).toBeNull();
+    expect(response.body.data?.purchaseCreditOneTimeTopUp ?? null).toBeNull();
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 });

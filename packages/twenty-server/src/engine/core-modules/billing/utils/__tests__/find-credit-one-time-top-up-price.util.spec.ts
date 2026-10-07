@@ -4,7 +4,7 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { findCreditTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-top-up-price.util';
+import { findCreditOneTimeTopUpPrice } from 'src/engine/core-modules/billing/utils/find-credit-one-time-top-up-price.util';
 
 const buildPrice = (
   overrides: Partial<BillingPriceEntity> & { creditAmountMicro?: string },
@@ -34,9 +34,9 @@ const buildSubscription = (
     ],
   }) as unknown as BillingSubscriptionEntity;
 
-describe('findCreditTopUpPrice', () => {
+describe('findCreditOneTimeTopUpPrice', () => {
   it('takes the cheapest rate per credit, not the cheapest tier', () => {
-    const price = findCreditTopUpPrice(
+    const price = findCreditOneTimeTopUpPrice(
       buildSubscription([
         buildPrice({ stripePriceId: 'price_small', unitAmount: 2_000 }),
         buildPrice({
@@ -51,7 +51,7 @@ describe('findCreditTopUpPrice', () => {
   });
 
   it('never prices at the free tier', () => {
-    const price = findCreditTopUpPrice(
+    const price = findCreditOneTimeTopUpPrice(
       buildSubscription([
         buildPrice({
           stripePriceId: 'price_free',
@@ -66,7 +66,7 @@ describe('findCreditTopUpPrice', () => {
   });
 
   it('skips archived, legacy, other-interval and other-currency prices', () => {
-    const price = findCreditTopUpPrice(
+    const price = findCreditOneTimeTopUpPrice(
       buildSubscription([
         buildPrice({
           stripePriceId: 'price_archived',
@@ -96,7 +96,7 @@ describe('findCreditTopUpPrice', () => {
   });
 
   it('matches the currency whatever its case', () => {
-    const price = findCreditTopUpPrice(
+    const price = findCreditOneTimeTopUpPrice(
       buildSubscription([
         buildPrice({ stripePriceId: 'price_20', currency: 'usd' }),
       ]),
@@ -107,7 +107,7 @@ describe('findCreditTopUpPrice', () => {
 
   it('finds nothing without a resource credit item', () => {
     expect(
-      findCreditTopUpPrice(
+      findCreditOneTimeTopUpPrice(
         buildSubscription([buildPrice({})], BillingProductKey.BASE_PRODUCT),
       ),
     ).toBeUndefined();
@@ -115,7 +115,9 @@ describe('findCreditTopUpPrice', () => {
 
   it('finds nothing when every tier is free', () => {
     expect(
-      findCreditTopUpPrice(buildSubscription([buildPrice({ unitAmount: 0 })])),
+      findCreditOneTimeTopUpPrice(
+        buildSubscription([buildPrice({ unitAmount: 0 })]),
+      ),
     ).toBeUndefined();
   });
 });

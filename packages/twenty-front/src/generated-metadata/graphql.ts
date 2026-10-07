@@ -783,8 +783,8 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriod>;
 };
 
-export type BillingCreditTopUp = {
-  __typename?: 'BillingCreditTopUp';
+export type BillingCreditOneTimeTopUp = {
+  __typename?: 'BillingCreditOneTimeTopUp';
   /** All billing subscriptions */
   billingSubscriptions: Array<BillingSubscription>;
   /** Current billing subscription */
@@ -794,8 +794,8 @@ export type BillingCreditTopUp = {
   status: BillingInvoicePaymentStatus;
 };
 
-export type BillingCreditTopUpOffer = {
-  __typename?: 'BillingCreditTopUpOffer';
+export type BillingCreditOneTimeTopUpOffer = {
+  __typename?: 'BillingCreditOneTimeTopUpOffer';
   /** Price before tax, in cents */
   amountCents: Scalars['Float']['output'];
   /** Credits added to the workspace */
@@ -3268,7 +3268,7 @@ export type Mutation = {
   markAgentChatThreadAsRead: AgentChatThreadParticipant;
   markAgentChatThreadAsUnread: AgentChatThreadParticipant;
   moveAgentChatThreadToInbox: AgentChatThreadParticipant;
-  purchaseCreditTopUp: BillingCreditTopUp;
+  purchaseCreditOneTimeTopUp: BillingCreditOneTimeTopUp;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -4137,7 +4137,7 @@ export type MutationMoveAgentChatThreadToInboxArgs = {
 };
 
 
-export type MutationPurchaseCreditTopUpArgs = {
+export type MutationPurchaseCreditOneTimeTopUpArgs = {
   creditAmount: Scalars['Float']['input'];
   idempotencyKey: Scalars['UUID']['input'];
 };
@@ -5387,7 +5387,7 @@ export type Query = {
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
-  getCreditTopUpOffers: Array<BillingCreditTopUpOffer>;
+  getCreditOneTimeTopUpOffers: Array<BillingCreditOneTimeTopUpOffer>;
   getEmailingDomains: Array<EmailingDomain>;
   getInviteSuggestions: Array<InviteSuggestion>;
   getJobs: Array<JobStatus>;
