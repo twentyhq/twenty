@@ -2995,6 +2995,7 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 
 export interface RunAgentResult {
     error?: Scalars['String']
+    isWaiting: Scalars['Boolean']
     result?: Scalars['JSON']
     success: Scalars['Boolean']
     threadId?: Scalars['UUID']
@@ -7188,6 +7189,7 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
+    isWaiting?: boolean | number
     result?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
