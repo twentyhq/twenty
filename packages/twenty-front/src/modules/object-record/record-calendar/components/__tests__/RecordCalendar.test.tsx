@@ -22,8 +22,8 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/object-record/record-calendar/components/RecordCalendarEscapeHotkeyEffect',
-  () => ({ RecordCalendarEscapeHotkeyEffect: () => null }),
+  '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect',
+  () => ({ RecordSelectionEscapeHotkeyEffect: () => null }),
 );
 jest.mock(
   '@/object-record/record-calendar/components/RecordCalendarAddNew',
@@ -89,10 +89,10 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection',
+  '@/object-record/record-selection/hooks/useResetRecordSelection',
   () => ({
-    useRecordCalendarSelection: jest.fn(() => ({
-      resetRecordCalendarSelection: jest.fn(),
+    useResetRecordSelection: jest.fn(() => ({
+      resetRecordSelection: jest.fn(),
     })),
   }),
 );

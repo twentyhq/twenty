@@ -16,6 +16,9 @@ export class JobStatusDTO {
   @Field(() => String, { nullable: true })
   failedReason?: string;
 
+  @Field(() => Int, { nullable: true })
+  progress?: number;
+
   @Field(() => Number)
   enqueuedAt: number;
 

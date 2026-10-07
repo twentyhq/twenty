@@ -30,7 +30,7 @@
 </ParamField>
 
 <ParamField body="Root.onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
-  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.
+  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open.
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean) =&gt; void)">
@@ -98,7 +98,7 @@
   Alignment of the popup along the anchor.
 </ParamField>
 
-<ParamField body="Content.alignOffset" type="number">
+<ParamField body="Content.alignOffset" type="number | OffsetFunction">
   Offset in pixels along the alignment axis.
 </ParamField>
 
@@ -158,7 +158,7 @@
   Side of the anchor the popup is placed on.
 </ParamField>
 
-<ParamField body="Content.sideOffset" type="number" default="0">
+<ParamField body="Content.sideOffset" type="number | OffsetFunction" default="0">
   Distance in pixels between the anchor and the popup.
 </ParamField>
 
@@ -172,6 +172,14 @@
 </ParamField>
 
 ### Dropdown.ActionItem
+
+<ParamField body="ActionItem.actions" type="ReactNode">
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
+</ParamField>
+
+<ParamField body="ActionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
+  Whether trailing actions appear on hover or remain visible. Defaults to `hover`.
+</ParamField>
 
 <ParamField body="ActionItem.className" type="string">
   CSS class applied to the row.
@@ -238,6 +246,14 @@
 </ParamField>
 
 ### Dropdown.OptionItem
+
+<ParamField body="OptionItem.actions" type="ReactNode">
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
+</ParamField>
+
+<ParamField body="OptionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
+  Whether trailing actions appear on hover or remain visible. Defaults to `hover`.
+</ParamField>
 
 <ParamField body="OptionItem.className" type="string">
   CSS class applied to the row.

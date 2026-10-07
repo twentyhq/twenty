@@ -47,6 +47,7 @@ export const DropdownSubmenuTrigger = ({
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({
     id: itemId,
+    disabled,
     isSubmenuTrigger: true,
   });
   const registerTriggerElement =
