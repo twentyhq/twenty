@@ -148,6 +148,7 @@ const buildContext = ({
     {} as never,
     {} as never,
     workspaceOrmManager as never,
+    {} as never,
   );
 
   jest

@@ -8,7 +8,6 @@ import { Editor } from '@tiptap/react';
 import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -50,11 +49,7 @@ const renderEditorSectionOnNewChat = () => {
   return render(
     <MetadataAndApolloWrapper>
       <I18nProvider i18n={i18n}>
-        <AgentChatComponentInstanceContext.Provider
-          value={{ instanceId: 'agentChatComponentInstance' }}
-        >
-          <AiChatEditorSection />
-        </AgentChatComponentInstanceContext.Provider>
+        <AiChatEditorSection />
       </I18nProvider>
     </MetadataAndApolloWrapper>,
   );

@@ -22,6 +22,7 @@ import { useValidationRules } from '@/validation-rules/hooks/useValidationRules'
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
+import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -185,6 +186,19 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const revealHiddenFieldsIfTargeted = (
+    targetedFieldMetadataIds: (string | null)[],
+  ) => {
+    const isAnyHiddenFieldTargeted = hiddenFieldMetadataItems.some(
+      (fieldMetadataItem) =>
+        targetedFieldMetadataIds.includes(fieldMetadataItem.id),
+    );
+
+    if (isAnyHiddenFieldTargeted) {
+      setRecordCreationFormAreHiddenFieldsShown(true);
+    }
+  };
+
   const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
@@ -195,16 +209,9 @@ const SidePanelRecordCreationForm = ({
 
       setValidationRuleViolations(draftViolations);
 
-      const isAnyViolationOnHiddenField = draftViolations.some((violation) =>
-        hiddenFieldMetadataItems.some(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === violation.fieldMetadataId,
-        ),
+      revealHiddenFieldsIfTargeted(
+        draftViolations.map((violation) => violation.fieldMetadataId),
       );
-
-      if (isAnyViolationOnHiddenField) {
-        setRecordCreationFormAreHiddenFieldsShown(true);
-      }
 
       if (draftViolations.length > 0) {
         return;
@@ -213,7 +220,7 @@ const SidePanelRecordCreationForm = ({
 
     setIsSubmitting(true);
     try {
-      await settleRecordCreationDraft({
+      const { error } = await settleRecordCreationDraft({
         requestId,
         draftRecord: computeRecordFormCreateRecordInput({
           draftRecord,
@@ -221,6 +228,10 @@ const SidePanelRecordCreationForm = ({
           objectMetadataItems,
         }),
       });
+
+      revealHiddenFieldsIfTargeted(
+        getValidationRuleViolationFieldMetadataIdsFromError(error),
+      );
     } finally {
       setIsSubmitting(false);
     }

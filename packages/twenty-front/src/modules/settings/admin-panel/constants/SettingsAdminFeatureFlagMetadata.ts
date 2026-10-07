@@ -80,4 +80,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
+    label: msg`AI chat inbox`,
+    description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, and let workflows route agent questions to a member.`,
+  },
 };
