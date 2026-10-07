@@ -25,6 +25,39 @@ describe('isLinkNavigationMenuItemActive', () => {
     ).toBe(false);
   });
 
+  it('stays active when the page adds other query params', () => {
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '/objects/companies?viewId=1',
+        location: {
+          pathname: '/objects/companies',
+          search: '?viewId=1&panel=%2Fobject%2Fcompany%2F2',
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('matches a query whether or not it is percent-encoded', () => {
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '/objects/companies?filter=Acme Corp',
+        location: {
+          pathname: '/objects/companies',
+          search: '?filter=Acme Corp',
+        },
+      }),
+    ).toBe(true);
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '/objects/companies?filter=Acme Corp',
+        location: {
+          pathname: '/objects/companies',
+          search: '?filter=Acme%20Corp',
+        },
+      }),
+    ).toBe(true);
+  });
+
   it('is never active for another page or an external link', () => {
     expect(
       isLinkNavigationMenuItemActive({
@@ -35,6 +68,12 @@ describe('isLinkNavigationMenuItemActive', () => {
     expect(
       isLinkNavigationMenuItemActive({
         computedLink: 'https://twenty.com',
+        location: { pathname: '/', search: '' },
+      }),
+    ).toBe(false);
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '#section',
         location: { pathname: '/', search: '' },
       }),
     ).toBe(false);

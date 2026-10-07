@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { parsePath } from 'react-router-dom';
 import { isSafeInternalPath } from 'twenty-shared/utils';
 
 export const isLinkNavigationMenuItemActive = ({
@@ -12,10 +12,15 @@ export const isLinkNavigationMenuItemActive = ({
     return false;
   }
 
-  const link = new URL(computedLink, 'https://twenty.invalid');
+  const link = parsePath(computedLink);
 
-  return (
-    link.pathname === location.pathname &&
-    (!isNonEmptyString(link.search) || link.search === location.search)
+  if (link.pathname !== location.pathname) {
+    return false;
+  }
+
+  const currentSearchParams = new URLSearchParams(location.search);
+
+  return [...new URLSearchParams(link.search)].every(
+    ([key, value]) => currentSearchParams.get(key) === value,
   );
 };
