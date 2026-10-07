@@ -1123,7 +1123,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Preferred side of the tooltip."
@@ -1249,7 +1249,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Preferred placement of the tooltip relative to the button."
@@ -1375,7 +1375,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": "bottom",
         "description": "Preferred placement of the tooltip relative to the button."
@@ -6738,7 +6738,7 @@
         "name": "align",
         "type": "\"center\" | \"end\" | \"start\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "center",
         "description": "Alignment relative to the trigger. Defaults to center."
       },
       {
@@ -6761,6 +6761,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Displays an arrow pointing to the trigger. Defaults to false."
+      },
+      {
+        "name": "arrowPadding",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Minimum distance from the arrow to the popup edges."
       },
       {
         "name": "children",
@@ -6820,10 +6827,10 @@
       },
       {
         "name": "content",
-        "type": "ReactNode",
+        "type": "ReactNode | PayloadChildRenderFunction<TPayload>",
         "required": true,
         "defaultValue": null,
-        "description": "Supplementary content displayed in the tooltip."
+        "description": "Supplementary content, or a function receiving the active trigger payload. Strings and numbers use the shorthand title layout."
       },
       {
         "name": "defaultOpen",
@@ -6847,6 +6854,13 @@
         "description": "Delay in milliseconds before opening on hover. Defaults to 600."
       },
       {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional secondary text below the shorthand title."
+      },
+      {
         "name": "disableAnchorTracking",
         "type": "boolean",
         "required": false,
@@ -6868,6 +6882,13 @@
         "description": "Prevents hovering over the popup from keeping it open."
       },
       {
+        "name": "handle",
+        "type": "TooltipHandle<TPayload>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Connects detached triggers and preserves their typed payloads."
+      },
+      {
         "name": "keepMounted",
         "type": "boolean",
         "required": false,
@@ -6886,7 +6907,7 @@
         "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when an interaction requests a visibility change."
+        "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel()."
       },
       {
         "name": "onOpenChangeComplete",
@@ -6901,6 +6922,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Controlled visibility of the tooltip."
+      },
+      {
+        "name": "portalProps",
+        "type": "TooltipPortalProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Portal props, including native props, ref and render. Overrides shorthand portal defaults."
+      },
+      {
+        "name": "positionerProps",
+        "type": "TooltipPositionerProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults."
       },
       {
         "name": "positionMethod",
@@ -6925,9 +6960,9 @@
       },
       {
         "name": "side",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "top",
         "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
       },
       {
@@ -6936,6 +6971,13 @@
         "required": false,
         "defaultValue": "10",
         "description": "Distance from the trigger in pixels. Defaults to 10."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional node before the shorthand title."
       },
       {
         "name": "sticky",
@@ -6966,6 +7008,13 @@
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
       },
       {
+        "name": "triggerProps",
+        "type": "TooltipTriggerProps<TPayload>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Trigger props, including native props, ref, render and payload. Overrides the shorthand trigger defaults."
+      },
+      {
         "name": "withExitAnimation",
         "type": "boolean",
         "required": false,
@@ -6989,7 +7038,7 @@
             "type": "ReactNode | PayloadChildRenderFunction<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "The content of the tooltip.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+            "description": "Parts or a render function receiving the active trigger payload. Root renders no DOM node."
           },
           {
             "name": "defaultOpen",
@@ -7024,14 +7073,14 @@
             "type": "TooltipHandle<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "A handle to associate the tooltip with a trigger.\nIf specified, allows external triggers to control the tooltip's open state.\nCan be created with the Tooltip.createHandle() method."
+            "description": "Connects detached triggers and imperative open/close actions."
           },
           {
             "name": "onOpenChange",
             "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Event handler called when the tooltip is opened or closed."
+            "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel()."
           },
           {
             "name": "onOpenChangeComplete",
@@ -7099,7 +7148,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": "If `true`, the tooltip will not open when interacting with this trigger.\nNote that this doesn't apply the `disabled` attribute to the trigger element.\nIf you want to disable the trigger element itself, you can pass the `disabled` prop to the trigger element via the `render` prop."
+            "description": "Disables tooltip interaction for this trigger without disabling its native element."
           },
           {
             "name": "handle",
@@ -7116,11 +7165,18 @@
             "description": "A payload to pass to the tooltip when it is opened."
           },
           {
+            "name": "ref",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the rendered trigger element, a button by default."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipTriggerState>",
             "required": false,
             "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+            "description": "Composes a native element or a component that forwards attributes, handlers and ref."
           },
           {
             "name": "style",
@@ -7132,49 +7188,89 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipPortalState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Portal destination. Defaults to the current theme container, then the document body."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the portal mounted in the DOM while the popup is hidden."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the portal div."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Positioner",
         "props": [
           {
             "name": "align",
             "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "center",
-            "description": "Alignment relative to the trigger. Defaults to center."
+            "description": "How to align the popup relative to the specified side."
           },
           {
             "name": "alignOffset",
             "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
-            "description": "Offset along the alignment axis in pixels."
+            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": "An explicit positioning anchor for the popup."
+            "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
           },
           {
-            "name": "arrow",
-            "type": "boolean",
+            "name": "arrowPadding",
+            "type": "number",
             "required": false,
-            "defaultValue": "false",
-            "description": "Displays an arrow pointing to the trigger. Defaults to false."
-          },
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Content displayed inside the popup."
+            "defaultValue": "5",
+            "description": "Minimum distance to maintain between the arrow and the edges of the popup.\n\nUse it to prevent the arrow element from hanging out of the rounded corners of a popup."
           },
           {
             "name": "className",
-            "type": "string | ((state: TooltipPopupState) => string | undefined)",
+            "type": "string | ((state: TooltipPositionerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Additional CSS class for the popup."
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "collisionAvoidance",
@@ -7198,20 +7294,6 @@
             "description": "Additional space to maintain from the edge of the collision boundary."
           },
           {
-            "name": "container",
-            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "Portal destination. Defaults to the current theme container."
-          },
-          {
-            "name": "content",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supplementary content displayed in the tooltip."
-          },
-          {
             "name": "disableAnchorTracking",
             "type": "boolean",
             "required": false,
@@ -7219,53 +7301,39 @@
             "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keeps the popup mounted while closed."
-          },
-          {
-            "name": "maxWidth",
-            "type": "MaxWidth<string | number>",
-            "required": false,
-            "defaultValue": "300px",
-            "description": "Maximum popup width. Defaults to 300 pixels."
-          },
-          {
             "name": "positionMethod",
             "type": "\"absolute\" | \"fixed\"",
             "required": false,
             "defaultValue": "absolute",
-            "description": "CSS positioning method for the popup."
+            "description": "Determines which CSS `position` property to use."
           },
           {
             "name": "ref",
             "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Ref forwarded to the popup element."
+            "description": "Ref to the positioning div. Native props, styles and render target this element."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPositionerState>",
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
             "name": "side",
-            "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": "top",
-            "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
+            "description": "Preferred physical or logical side of the anchor. Defaults to top."
           },
           {
             "name": "sideOffset",
             "type": "number | OffsetFunction",
             "required": false,
-            "defaultValue": "10",
-            "description": "Distance from the trigger in pixels. Defaults to 10."
+            "defaultValue": "0",
+            "description": "Distance from the anchor. Defaults to 0 in compound usage. Accepts a number or positioning function."
           },
           {
             "name": "sticky",
@@ -7276,56 +7344,143 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+            "type": "CSSProperties | ((state: TooltipPositionerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Inline styles for the popup."
-          },
-          {
-            "name": "withExitAnimation",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
       {
-        "name": "Content",
+        "name": "Popup",
         "props": [
           {
             "name": "children",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Primary text displayed in the tooltip."
+            "description": "Content rendered as supplied. Does not create a portal, positioner, title layout or arrow."
           },
           {
-            "name": "description",
-            "type": "ReactNode",
+            "name": "className",
+            "type": "string | ((state: TooltipPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Secondary explanation beneath the primary text."
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the popup div. Native props, styles and render target this element."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
-            "name": "startIcon",
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Enables the optional Twenty exit transition."
+          }
+        ]
+      },
+      {
+        "name": "Arrow",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipArrowState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the arrow div. Compose inside Popup."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipArrowState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipArrowState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "children",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "An icon displayed before the text."
+            "description": "The content to render inside the transition container."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the content-transition div. Useful when several triggers share changing content."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipViewportState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
       {
         "name": "Provider",
         "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Tooltips sharing delay, closeDelay and timeout configuration. Provider renders no DOM node."
+          },
           {
             "name": "closeDelay",
             "type": "number",
@@ -7715,7 +7870,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Position of the string-label tooltip."

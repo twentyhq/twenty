@@ -97,23 +97,16 @@ export const SettingsAiModelTiersPreview = () => {
               <TableCell color={themeCssVariables.font.color.primary}>
                 <Tooltip
                   delay={TooltipDelay.shortDelay}
-                  content={
-                    <Tooltip.Content
-                      startIcon={
-                        isDefined(ModelIcon) ? <ModelIcon /> : undefined
-                      }
-                      description={
-                        !isDefined(tier.model)
-                          ? t`No model is available for this mode.`
-                          : tier.isPinned
-                            ? t`Manually selected for this mode.`
-                            : t`Automatically selected by Twenty for this mode.`
-                      }
-                    >
-                      {getAiModelModeDescription(tier, {
-                        showAutomatic: false,
-                      })}
-                    </Tooltip.Content>
+                  content={getAiModelModeDescription(tier, {
+                    showAutomatic: false,
+                  })}
+                  startIcon={isDefined(ModelIcon) ? <ModelIcon /> : undefined}
+                  description={
+                    !isDefined(tier.model)
+                      ? t`No model is available for this mode.`
+                      : tier.isPinned
+                        ? t`Manually selected for this mode.`
+                        : t`Automatically selected by Twenty for this mode.`
                   }
                 >
                   <StyledMode tabIndex={0}>

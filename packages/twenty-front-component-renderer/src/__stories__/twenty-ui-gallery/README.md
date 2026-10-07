@@ -95,10 +95,11 @@ attributes so React and Preact forward `true`/`false` instead of empty strings
 and remove the attribute when the prop is cleared. `getAttribute` and the
 selector engine read the remote properties React and Preact set, and the
 selector engine matches the sandbox's custom element tags by their HTML tag
-names and reads live control properties. `TooltipPreact` therefore covers hover
-opening and Escape dismissal. Pointer leave still needs
-`mousemove` delivery from outside the component for the safe polygon, and the
-compound tooltip's title and description are not covered yet.
+names and reads live control properties. `TooltipReact` and `TooltipPreact` cover
+hover opening, keyboard focus,
+Escape dismissal, compound title and description content, and typed detached
+handle payloads through the public Tooltip interface. Pointer leave still needs
+`mousemove` delivery from outside the component for the safe polygon.
 
 A page event crosses to the worker when the element it targets, or one of that
 element's ancestors in the component, listens for that event type. It crosses

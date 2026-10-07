@@ -1,19 +1,24 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type ReactNode, useState } from 'react';
+import { createRef, type ReactNode, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
 import { Tooltip } from '../Tooltip';
 import styles from '../Tooltip.module.scss';
+import { type TooltipRootActions } from '../types/TooltipRootActions';
 
 const TooltipRootWrapper = ({ children }: { children: ReactNode }) => (
   <Tooltip.Root>{children}</Tooltip.Root>
 );
 
 const OpenTooltipWrapper = ({ children }: { children: ReactNode }) => (
-  <Tooltip.Root open>{children}</Tooltip.Root>
+  <Tooltip.Root open>
+    <Tooltip.Portal>
+      <Tooltip.Positioner>{children}</Tooltip.Positioner>
+    </Tooltip.Portal>
+  </Tooltip.Root>
 );
 
 runComponentConformance({
@@ -32,11 +37,44 @@ runComponentConformance({
   ownClassName: styles.popup,
 });
 
+const PopupWrapper = ({ children }: { children: ReactNode }) => (
+  <OpenTooltipWrapper>
+    <Tooltip.Popup>{children}</Tooltip.Popup>
+  </OpenTooltipWrapper>
+);
+
 runComponentConformance({
-  name: 'Tooltip.Content',
-  element: <Tooltip.Content>Details</Tooltip.Content>,
+  name: 'Tooltip.Portal',
+  element: <Tooltip.Portal />,
   refInstanceOf: HTMLDivElement,
-  ownClassName: styles.content,
+  wrapper: ({ children }) => <Tooltip.Root open>{children}</Tooltip.Root>,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Positioner',
+  element: <Tooltip.Positioner />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: ({ children }) => (
+    <Tooltip.Root open>
+      <Tooltip.Portal>{children}</Tooltip.Portal>
+    </Tooltip.Root>
+  ),
+  ownClassName: styles.positioner,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Arrow',
+  element: <Tooltip.Arrow />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
+  ownClassName: styles.arrow,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Viewport',
+  element: <Tooltip.Viewport>Details</Tooltip.Viewport>,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
 });
 
 runComponentConformance({
@@ -138,7 +176,13 @@ describe('Tooltip interactions', () => {
           Second
         </Tooltip.Trigger>
         <Tooltip.Root handle={handle}>
-          {({ payload }) => <Tooltip.Popup>{payload}</Tooltip.Popup>}
+          {({ payload }) => (
+            <Tooltip.Portal>
+              <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+                <Tooltip.Popup>{payload}</Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          )}
         </Tooltip.Root>
       </>,
     );
@@ -169,5 +213,117 @@ describe('Tooltip interactions', () => {
 
     expect(onClick).toHaveBeenCalledOnce();
     expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+});
+
+describe('Tooltip shorthand configuration', () => {
+  it('shares typed payloads with detached triggers and exposes imperative actions', async () => {
+    const user = userEvent.setup();
+    const handle = Tooltip.createHandle<string>();
+    const actionsRef = createRef<TooltipRootActions>();
+    render(
+      <>
+        <Tooltip.Trigger handle={handle} payload="Detached hint">
+          Detached
+        </Tooltip.Trigger>
+        <Tooltip<string>
+          handle={handle}
+          actionsRef={actionsRef}
+          content={({ payload }) => payload}
+          triggerProps={{ payload: 'Local hint' }}
+        >
+          <button type="button">Local</button>
+        </Tooltip>
+      </>,
+    );
+    await user.tab();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Detached hint',
+    );
+    await user.tab();
+    await waitFor(() =>
+      expect(screen.getByRole('tooltip')).toHaveTextContent('Local hint'),
+    );
+    expect(handle.isOpen).toBe(true);
+    act(() => actionsRef.current?.close());
+    await waitFor(() => expect(screen.queryByRole('tooltip')).toBeNull());
+    expect(handle.isOpen).toBe(false);
+  });
+
+  it('preserves event details and cancellation in both forms', async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn((...changeArguments) => {
+      const [, details] = changeArguments;
+      details.cancel();
+    });
+    render(
+      <>
+        <Tooltip content="Shorthand hint" onOpenChange={onOpenChange}>
+          <button type="button">Shorthand</button>
+        </Tooltip>
+        <Tooltip.Root onOpenChange={onOpenChange}>
+          <Tooltip.Trigger>Compound</Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Positioner>
+              <Tooltip.Popup>Compound hint</Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+      </>,
+    );
+    await user.tab();
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      true,
+      expect.objectContaining({
+        reason: 'trigger-focus',
+        trigger: screen.getByRole('button', { name: 'Shorthand' }),
+        event: expect.any(Object),
+        cancel: expect.any(Function),
+      }),
+    );
+    await user.tab();
+    expect(onOpenChange).toHaveBeenCalledWith(
+      true,
+      expect.objectContaining({
+        reason: 'trigger-focus',
+        trigger: screen.getByRole('button', { name: 'Compound' }),
+      }),
+    );
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it('targets native props, render composition and refs at each shorthand part', () => {
+    const triggerRef = createRef<HTMLButtonElement>();
+    const positionerRef = createRef<HTMLDivElement>();
+    const portalRef = createRef<HTMLDivElement>();
+    const popupRef = createRef<HTMLDivElement>();
+    render(
+      <Tooltip
+        content="Hint"
+        open
+        ref={popupRef}
+        render={<section />}
+        aria-label="Popup"
+        triggerProps={{
+          ref: triggerRef,
+          'aria-label': 'Trigger',
+          render: (props) => <button {...props} type="button" />,
+        }}
+        positionerProps={{
+          ref: positionerRef,
+          'aria-label': 'Positioner',
+          style: { maxWidth: 240 },
+        }}
+        portalProps={{ ref: portalRef, 'aria-label': 'Portal' }}
+      >
+        <button type="button">Original</button>
+      </Tooltip>,
+    );
+    expect(triggerRef.current).toBe(screen.getByLabelText('Trigger'));
+    expect(positionerRef.current).toBe(screen.getByLabelText('Positioner'));
+    expect(positionerRef.current).toHaveStyle({ maxWidth: '240px' });
+    expect(portalRef.current).toBe(screen.getByLabelText('Portal'));
+    expect(popupRef.current).toBe(screen.getByLabelText('Popup'));
+    expect(popupRef.current?.localName).toBe('section');
   });
 });
