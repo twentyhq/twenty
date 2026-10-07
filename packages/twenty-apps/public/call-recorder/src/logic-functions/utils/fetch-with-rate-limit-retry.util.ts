@@ -13,15 +13,25 @@ const MAX_ATTEMPTS = 8;
 const MAX_TOTAL_WAIT_MS = 120_000;
 const MAX_RETRY_AFTER_MS = 60_000;
 
+const parseRetryAfterHeaderMs = (retryAfter: string | null): number => {
+  if (!isString(retryAfter)) {
+    return 0;
+  }
+
+  if (Number.isFinite(Number(retryAfter))) {
+    return Math.max(0, Number(retryAfter) * 1_000);
+  }
+
+  const delayMs = Date.parse(retryAfter) - Date.now();
+
+  return Number.isFinite(delayMs) ? Math.max(0, delayMs) : 0;
+};
+
 const getRateLimitDelayMs = async (
   response: Response,
 ): Promise<number | undefined> => {
   const retryAfter = response.headers.get('retry-after');
-  const headerDelayMs = isString(retryAfter)
-    ? Number.isFinite(Number(retryAfter))
-      ? Number(retryAfter) * 1_000
-      : Date.parse(retryAfter) - Date.now()
-    : 0;
+  const headerDelayMs = parseRetryAfterHeaderMs(retryAfter);
 
   try {
     const body = asRecord(await response.clone().json());
@@ -49,9 +59,7 @@ const getRateLimitDelayMs = async (
     // An HTTP 429 may contain a proxy's plain-text body instead of GraphQL errors.
   }
 
-  return response.status === 429
-    ? Math.max(0, Number.isFinite(headerDelayMs) ? headerDelayMs : 0)
-    : undefined;
+  return response.status === 429 ? headerDelayMs : undefined;
 };
 
 export const fetchWithRateLimitRetry: typeof fetch = async (input, options) => {
