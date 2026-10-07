@@ -1,6 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { type RecordFormField } from '@/object-record/record-form/types/RecordFormField';
+import { isFieldMetadataItemEligibleForRecordForm } from '@/object-record/record-form/utils/isFieldMetadataItemEligibleForRecordForm';
 import { useUpdatePageLayoutWidgetsIsActive } from '@/page-layout/hooks/useUpdatePageLayoutWidgetsIsActive';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
@@ -64,6 +65,10 @@ const SidePanelRecordCreationFormSettings = ({
     objectId: objectMetadataId,
   });
   const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
+  const eligibleRecordFormFields = recordFormFields.filter(
+    ({ fieldMetadataItem }) =>
+      isFieldMetadataItemEligibleForRecordForm(fieldMetadataItem),
+  );
   const { goBackFromSidePanel, removePageFromSidePanelHistory } =
     useSidePanelHistory();
   const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
@@ -100,7 +105,7 @@ const SidePanelRecordCreationFormSettings = ({
 
     const pageLayoutWidgetIsActiveUpdates =
       computePageLayoutWidgetIsActiveUpdates({
-        recordFormFields,
+        recordFormFields: eligibleRecordFormFields,
         isVisibleByFieldMetadataId,
       });
 
@@ -121,7 +126,7 @@ const SidePanelRecordCreationFormSettings = ({
     <StyledContainer>
       <StyledContent>
         <SidePanelGroup heading={t`Fields`}>
-          {recordFormFields.map((recordFormField) => {
+          {eligibleRecordFormFields.map((recordFormField) => {
             const { fieldMetadataItem } = recordFormField;
             const isVisible = isRecordFormFieldVisible(recordFormField);
 
