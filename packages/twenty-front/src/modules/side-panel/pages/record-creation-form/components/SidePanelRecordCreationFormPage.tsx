@@ -9,7 +9,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
-import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
+import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
@@ -114,9 +114,15 @@ const SidePanelRecordCreationForm = ({
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
-  const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
-    objectMetadataItem,
-  });
+  const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
+
+  const recordFormFieldMetadataItems = recordFormFields.map(
+    (recordFormField) => recordFormField.fieldMetadataItem,
+  );
+
+  const visibleFieldMetadataItems = recordFormFields
+    .filter((recordFormField) => recordFormField.isVisible)
+    .map((recordFormField) => recordFormField.fieldMetadataItem);
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -207,7 +213,7 @@ const SidePanelRecordCreationForm = ({
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
-          fieldMetadataItems={recordFormFieldMetadataItems}
+          fieldMetadataItems={visibleFieldMetadataItems}
           draftRecord={draftRecord}
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
