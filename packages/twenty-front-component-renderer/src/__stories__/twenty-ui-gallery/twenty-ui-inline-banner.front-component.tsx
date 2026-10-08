@@ -46,6 +46,8 @@ const InlineBannerExample = () => {
         layout="compact"
         action={
           <InlineBanner.Action
+            nativeButton={false}
+            role="link"
             href={'https://twenty.com'}
             target={'_blank'}
             rel={'noopener noreferrer'}

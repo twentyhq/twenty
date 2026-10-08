@@ -240,6 +240,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/light-icon-button',
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'IconButton',
@@ -247,6 +248,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'MainButton',
@@ -254,6 +261,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'solid' },
   },
   {
     name: 'LightButton',
@@ -261,6 +269,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
     name: 'Button',
@@ -268,6 +277,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'ButtonGroup',

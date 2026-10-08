@@ -1,7 +1,5 @@
-import {
-  convertCurrencyAmountToCurrencyMicros,
-  convertCurrencyMicrosToCurrencyAmount,
-} from '~/utils/convertCurrencyToCurrencyMicros';
+import { convertCurrencyAmountToCurrencyMicros } from '@/utils/currency/convertCurrencyAmountToCurrencyMicros';
+import { convertCurrencyMicrosToCurrencyAmount } from '@/utils/currency/convertCurrencyMicrosToCurrencyAmount';
 
 describe('convertCurrencyAmountToCurrencyMicros', () => {
   it('should convert currencyAmount to micros', () => {

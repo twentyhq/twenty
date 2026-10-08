@@ -40,7 +40,7 @@ const StyledRoleSelector = styled.div`
 `;
 
 type MemberPermissionsTabProps = {
-  member: WorkspaceMember;
+  member: Pick<WorkspaceMember, 'id'>;
   roles: RoleWithPartialMembers[];
   allRoles: RoleWithPartialMembers[];
 };

@@ -801,6 +801,77 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         revenue: { amountMicros: { neq: 1000000000 } },
       });
     });
+
+    it('should convert a decimal amount to integer micros for IS', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-currency',
+          RecordFilterOperand.IS,
+          '2.01',
+          'CURRENCY',
+          'amountMicros',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        revenue: { amountMicros: { eq: 2010000 } },
+      });
+    });
+
+    it('should convert a decimal amount to integer micros for IS_NOT', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-currency',
+          RecordFilterOperand.IS_NOT,
+          '4.03',
+          'CURRENCY',
+          'amountMicros',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        revenue: { amountMicros: { neq: 4030000 } },
+      });
+    });
+
+    it('should convert a decimal amount to integer micros for range operands', () => {
+      const lessThanOrEqualResult =
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter(
+            'f-currency',
+            RecordFilterOperand.LESS_THAN_OR_EQUAL,
+            '2.01',
+            'CURRENCY',
+            'amountMicros',
+          ),
+          fieldMetadataItemById,
+        });
+
+      const greaterThanOrEqualResult =
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter(
+            'f-currency',
+            RecordFilterOperand.GREATER_THAN_OR_EQUAL,
+            '4.03',
+            'CURRENCY',
+            'amountMicros',
+          ),
+          fieldMetadataItemById,
+        });
+
+      expect(lessThanOrEqualResult).toEqual({
+        revenue: { amountMicros: { lte: 2010000 } },
+      });
+      expect(greaterThanOrEqualResult).toEqual({
+        revenue: { amountMicros: { gte: 4030000 } },
+      });
+    });
   });
 
   describe('FULL_NAME filter', () => {

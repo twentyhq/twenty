@@ -13,10 +13,7 @@ import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
@@ -34,7 +31,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     oauthClient: true,
     application: true,
   }),
-  FeatureFlagGuard,
+  FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 @UseFilters(
@@ -50,7 +47,6 @@ export class UnsubscribeTopicResolver {
   ) {}
 
   @Query(() => [UnsubscribeTopicDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async unsubscribeTopics(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<UnsubscribeTopicDTO[]> {
@@ -62,7 +58,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => UnsubscribeTopicDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async createUnsubscribeTopic(
     @Args('input') input: CreateUnsubscribeTopicInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -76,7 +71,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => UnsubscribeTopicDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async updateUnsubscribeTopic(
     @Args('input') input: UpdateUnsubscribeTopicInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -90,7 +84,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async deleteUnsubscribeTopic(
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

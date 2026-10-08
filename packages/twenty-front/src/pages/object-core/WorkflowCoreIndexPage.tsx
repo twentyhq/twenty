@@ -18,6 +18,7 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
+import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
   CORE_WORKFLOWS_INITIAL_SORT,
@@ -53,6 +54,7 @@ export const WorkflowCoreIndexPage = () => {
   const {
     displayedCoreWorkflows,
     selectedRowIds,
+    selectedCoreWorkflows,
     selectedRowCount,
     toggleRow,
     selectRows,
@@ -117,6 +119,9 @@ export const WorkflowCoreIndexPage = () => {
       isFetchingNextPage={loading}
       onFetchNextPage={fetchNextPage}
     >
+      <CoreWorkflowsSelectionToContextStoreEffect
+        selectedCoreWorkflows={selectedCoreWorkflows}
+      />
       <CoreObjectTable
         tableId={tableId}
         columns={WORKFLOW_CORE_TABLE_COLUMNS}
