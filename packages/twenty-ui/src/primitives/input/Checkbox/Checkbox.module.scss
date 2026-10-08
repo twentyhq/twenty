@@ -136,10 +136,10 @@
 .indicator {
   display: block;
   block-size: var(--tw-checkbox-icon-size);
+  inset-block: 0;
   inset-inline-start: var(--tw-checkbox-padding);
+  margin-block: auto;
   position: absolute;
-  inset-block-start: 50%;
-  transform: translateY(-50%);
   inline-size: var(--tw-checkbox-icon-size);
 }
 

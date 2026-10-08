@@ -150,22 +150,27 @@ export const TallChildren: Story = {
   render: () => (
     <>
       {(['sm', 'md'] as const).map((size) =>
-        [false, true].map((hoverable) => (
-          <Checkbox.Root
-            key={`${size}-${hoverable}`}
-            size={size}
-            hoverable={hoverable}
-            defaultChecked
-            aria-label={`${size} ${hoverable ? 'with hover' : 'without hover'}`}
-          >
-            <Checkbox.Indicator data-testid="selection-indicator">
-              <IconCheck aria-hidden />
-            </Checkbox.Indicator>
-            <Text render={<span />} style={{ lineHeight: '48px' }}>
-              Tall content
-            </Text>
-          </Checkbox.Root>
-        )),
+        [false, true].flatMap((hoverable) =>
+          [false, true].map((isScaled) => (
+            <Checkbox.Root
+              key={`${size}-${hoverable}-${isScaled}`}
+              size={size}
+              hoverable={hoverable}
+              defaultChecked
+              aria-label={`${size} ${hoverable ? 'with hover' : 'without hover'} ${isScaled ? 'scaled indicator' : 'default indicator'}`}
+            >
+              <Checkbox.Indicator
+                data-testid="selection-indicator"
+                style={isScaled ? { transform: 'scale(0.75)' } : undefined}
+              >
+                <IconCheck aria-hidden />
+              </Checkbox.Indicator>
+              <Text render={<span />} style={{ lineHeight: '48px' }}>
+                Tall content
+              </Text>
+            </Checkbox.Root>
+          )),
+        ),
       )}
     </>
   ),
