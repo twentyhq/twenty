@@ -136,9 +136,11 @@ export const Controlled: Story = {
       name: 'Account name',
     });
 
+    onValueChange.mockClear();
     await userEvent.type(account, 'a');
     await expect(account).toHaveValue('Locked');
-    await expect(onValueChange).toHaveBeenLastCalledWith(
+    await expect(onValueChange).toHaveBeenCalledTimes(1);
+    await expect(onValueChange).toHaveBeenCalledWith(
       'Lockeda',
       expect.objectContaining({
         reason: 'none',

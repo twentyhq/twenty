@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { clearAllMocks, expect, fn, userEvent, within } from 'storybook/test';
 
 import { Field } from '@ui/primitives/input/Field/Field';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -309,11 +309,13 @@ export const ControlledRange: StoryObj<typeof Slider.Root<readonly number[]>> =
       const minimum = canvas.getByRole('slider', { name: 'Minimum price' });
       const maximum = canvas.getByRole('slider', { name: 'Maximum price' });
 
+      clearAllMocks();
       minimum.focus();
       await userEvent.keyboard('{ArrowRight}');
       await expect(minimum).toHaveValue('26');
       await expect(maximum).toHaveValue('75');
-      await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+      await expect(args.onValueChange).toHaveBeenCalledWith(
         [26, 75],
         expect.objectContaining({
           activeThumbIndex: 0,
@@ -321,7 +323,8 @@ export const ControlledRange: StoryObj<typeof Slider.Root<readonly number[]>> =
           event: expect.objectContaining({ type: 'keydown' }),
         }),
       );
-      await expect(args.onValueCommitted).toHaveBeenLastCalledWith(
+      await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+      await expect(args.onValueCommitted).toHaveBeenCalledWith(
         [26, 75],
         expect.objectContaining({
           reason: 'keyboard',
