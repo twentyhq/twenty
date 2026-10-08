@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   BillingCreditGrantType,
   CAPPED_BILLING_CREDIT_GRANT_TYPES,
+  PAID_BILLING_CREDIT_GRANT_TYPES,
 } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 
 export type CarryForwardGrantInput = {
@@ -33,6 +34,12 @@ type CreditBucket = {
 const isCappedType = (type: BillingCreditGrantType): boolean =>
   CAPPED_BILLING_CREDIT_GRANT_TYPES.includes(type);
 
+const isPaidType = (type: BillingCreditGrantType): boolean =>
+  PAID_BILLING_CREDIT_GRANT_TYPES.includes(type);
+
+const getExpiryTime = (expiresAt: Date | null): number =>
+  isDefined(expiresAt) ? expiresAt.getTime() : Number.POSITIVE_INFINITY;
+
 const hasLapsedBy = ({
   expiresAt,
   boundary,
@@ -48,6 +55,21 @@ const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
 
   if (isACapped !== isBCapped) {
     return isACapped ? -1 : 1;
+  }
+
+  const [aExpiryTime, bExpiryTime] = [
+    getExpiryTime(a.expiresAt),
+    getExpiryTime(b.expiresAt),
+  ];
+
+  if (aExpiryTime !== bExpiryTime) {
+    return aExpiryTime < bExpiryTime ? -1 : 1;
+  }
+
+  const [isAPaid, isBPaid] = [isPaidType(a.type), isPaidType(b.type)];
+
+  if (isAPaid !== isBPaid) {
+    return isAPaid ? 1 : -1;
   }
 
   const byCreatedAt = a.createdAt.getTime() - b.createdAt.getTime();
