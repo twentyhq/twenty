@@ -35,6 +35,14 @@ type AgentChatEvent {
   threadId: String!
 }
 
+type AgentChatOpenThreadsSummary {
+  hasUnreadAssignedThread: Boolean!
+  hasUnreadMentionThread: Boolean!
+  hasUnreadOpenThread: Boolean!
+  needsInputThreadCount: Int!
+  openThreadCount: Int!
+}
+
 type AgentChatThread {
   contextWindowTokens: Int
   conversationSize: Int!
@@ -3709,6 +3717,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   apiKey(input: GetApiKeyInput!): ApiKey

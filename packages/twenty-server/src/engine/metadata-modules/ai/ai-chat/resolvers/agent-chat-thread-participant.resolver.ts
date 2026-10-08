@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -11,6 +11,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -38,6 +39,17 @@ export class AgentChatThreadParticipantResolver {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
   ) {}
+
+  @Query(() => AgentChatOpenThreadsSummaryDTO)
+  async agentChatOpenThreadsSummary(
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatOpenThreadsSummaryDTO> {
+    return this.participantService.findOpenThreadsSummary({
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
 
   @Mutation(() => AgentChatThreadParticipantDTO)
   async markAgentChatThreadAsRead(

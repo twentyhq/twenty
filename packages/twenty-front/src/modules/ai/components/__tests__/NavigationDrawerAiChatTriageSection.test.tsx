@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -10,15 +11,23 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  FeatureFlagKey,
+  GetAgentChatOpenThreadsSummaryDocument,
+  type GetAgentChatOpenThreadsSummaryQuery,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -29,29 +38,41 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigate,
 }));
 
-const THREAD_IDS = ['thread-1', 'thread-2'];
+type OpenThreadsSummary =
+  GetAgentChatOpenThreadsSummaryQuery['agentChatOpenThreadsSummary'];
 
-const buildThread = (
-  id: string,
-  overrides: Partial<AgentChatThreadRecord> = {},
-): AgentChatThreadRecord => ({
-  __typename: 'AgentChatThread',
-  id,
-  title: null,
-  deletedAt: null,
-  createdAt: '2026-10-01T09:00:00.000Z',
-  updatedAt: '2026-10-01T10:00:00.000Z',
-  lastActivityAt: '2026-10-01T10:00:00.000Z',
-  ...overrides,
-});
+const READ_SUMMARY: OpenThreadsSummary = {
+  __typename: 'AgentChatOpenThreadsSummary',
+  openThreadCount: 2,
+  needsInputThreadCount: 0,
+  hasUnreadOpenThread: false,
+  hasUnreadMentionThread: false,
+  hasUnreadAssignedThread: false,
+};
 
-const renderTriage = (path = '/') =>
+const renderTriage = ({
+  path = '/',
+  summary = READ_SUMMARY,
+}: {
+  path?: string;
+  summary?: OpenThreadsSummary;
+} = {}) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter initialEntries={[path]}>
-          <NavigationDrawerAiChatTriageSection />
-        </MemoryRouter>
+        <MockedProvider
+          mocks={[
+            {
+              request: { query: GetAgentChatOpenThreadsSummaryDocument },
+              delay: 0,
+              result: { data: { agentChatOpenThreadsSummary: summary } },
+            },
+          ]}
+        >
+          <MemoryRouter initialEntries={[path]}>
+            <NavigationDrawerAiChatTriageSection />
+          </MemoryRouter>
+        </MockedProvider>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -62,46 +83,34 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     resetJotaiStore();
     navigate.mockClear();
 
-    setAgentChatThreadList(
-      jotaiStore,
-      THREAD_IDS.map((threadId) => buildThread(threadId)),
-    );
-    jotaiStore.set(agentChatThreadParticipantsState.atom, {});
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: true },
+      ],
+    });
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.AI],
+    });
   });
 
-  const markThreadAsRead = (threadId: string) =>
-    jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
-      ...participants,
-      [threadId]: {
-        threadId,
-        lastReadAt: '2026-10-01T10:00:00.000Z',
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: null,
-        id: 'participant-id',
-        updatedAt: '2026-10-01T10:00:00.000Z',
-      },
-    }));
-
-  it('counts every open chat and flags Open when one is unread', () => {
-    markThreadAsRead('thread-1');
-
-    renderTriage();
+  it('counts every open chat and flags Open when one is unread', async () => {
+    renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
 
     expect(
-      screen.getByRole('button', { name: /^Open\s*, unread · 2$/ }),
+      await screen.findByRole('button', { name: /^Open\s*, unread · 2$/ }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
 
-  it('shows Open as read when every open chat is read', () => {
-    THREAD_IDS.forEach(markThreadAsRead);
-
+  it('shows Open as read when every open chat is read', async () => {
     renderTriage();
 
-    expect(screen.getByRole('button', { name: 'Open · 2' })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: 'Open · 2' }),
+    ).toBeVisible();
   });
 
   it('marks the status the inbox shows as current', () => {
@@ -110,7 +119,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage('/inbox');
+    renderTriage({ path: '/inbox' });
 
     expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
       'aria-current',
@@ -134,40 +143,21 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     });
   });
 
-  it('counts the open chats waiting on an answer under Needs input', () => {
-    setAgentChatThreadList(jotaiStore, [
-      buildThread('thread-1', { pendingQuestionMessageId: 'question' }),
-      buildThread('thread-2', { pendingQuestionMessageId: null }),
-    ]);
-    THREAD_IDS.forEach(markThreadAsRead);
-
-    renderTriage();
+  it('counts the open chats waiting on an answer under Needs input', async () => {
+    renderTriage({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
 
     expect(
-      screen.getByRole('button', { name: 'Needs input · 1' }),
+      await screen.findByRole('button', { name: 'Needs input · 1' }),
     ).toBeVisible();
   });
 
-  it('flags Mentions when a chat the member was mentioned in is unread', () => {
-    markThreadAsRead('thread-2');
-    jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
-      ...participants,
-      'thread-1': {
-        id: 'mention',
-        threadId: 'thread-1',
-        lastReadAt: null,
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: '2026-10-01T10:00:00.000Z',
-        updatedAt: '2026-10-01T10:00:00.000Z',
-      },
-    }));
-
-    renderTriage();
+  it('flags Mentions when a chat the member was mentioned in is unread', async () => {
+    renderTriage({
+      summary: { ...READ_SUMMARY, hasUnreadMentionThread: true },
+    });
 
     expect(
-      screen.getByRole('button', { name: /^Mentions\s*, unread$/ }),
+      await screen.findByRole('button', { name: /^Mentions\s*, unread$/ }),
     ).toBeVisible();
   });
 
@@ -181,16 +171,13 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     );
   });
 
-  it('flags Assigned when a chat assigned to the member is unread', () => {
-    jotaiStore.set(currentWorkspaceMemberState.atom, { id: 'jane' } as never);
-    setAgentChatThreadList(jotaiStore, [
-      buildThread('thread-1', { assigneeId: 'jane' }),
-    ]);
-
-    renderTriage();
+  it('flags Assigned when a chat assigned to the member is unread', async () => {
+    renderTriage({
+      summary: { ...READ_SUMMARY, hasUnreadAssignedThread: true },
+    });
 
     expect(
-      screen.getByRole('button', { name: /^Assigned\s*, unread$/ }),
+      await screen.findByRole('button', { name: /^Assigned\s*, unread$/ }),
     ).toBeVisible();
   });
 });

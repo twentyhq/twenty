@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
   type AgentChatThreadVisit,
@@ -27,6 +28,8 @@ export const useAgentChatThreadParticipants = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
+  const { refreshAgentChatOpenThreadsSummary } =
+    useRefreshAgentChatOpenThreadsSummary();
 
   // The change shows right away, and is put back if the server refuses it
   const updateParticipant = useCallback(
@@ -73,6 +76,7 @@ export const useAgentChatThreadParticipants = () => {
 
       try {
         await client.mutate({ mutation, variables });
+        refreshAgentChatOpenThreadsSummary();
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
@@ -100,7 +104,7 @@ export const useAgentChatThreadParticipants = () => {
         });
       }
     },
-    [client, enqueueToast, store],
+    [client, enqueueToast, refreshAgentChatOpenThreadsSummary, store],
   );
 
   const markAgentChatThreadAsRead = useCallback(
