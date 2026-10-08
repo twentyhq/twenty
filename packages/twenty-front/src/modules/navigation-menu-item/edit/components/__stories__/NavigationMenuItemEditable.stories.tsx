@@ -241,8 +241,10 @@ export const TooltipsStayOutOfActionMenus: Story = {
     const status = await canvas.findByText('Status');
 
     await user.hover(docs);
-    await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
+    const docsTooltip = await body.findByRole('tooltip');
+    await expect(docsTooltip).toHaveTextContent('Link');
     await user.hover(status);
+    await waitFor(() => expect(docsTooltip).not.toBeInTheDocument());
     await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
     await expect(body.getAllByRole('tooltip')).toHaveLength(1);
 

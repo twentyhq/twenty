@@ -47,7 +47,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { alertDialogTest } from '@/__stories__/twenty-ui-gallery/utils/alertDialogTest';
 import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
@@ -440,17 +439,6 @@ export const ToastCountdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-toast-countdown',
   runtime: 'preact',
   play: toastCountdownTest,
-});
-
-export const AlertDialogReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'react',
-  play: alertDialogTest,
-});
-export const AlertDialogPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'preact',
-  play: alertDialogTest,
 });
 
 export const SwitchReact: Story = createGalleryStory({
