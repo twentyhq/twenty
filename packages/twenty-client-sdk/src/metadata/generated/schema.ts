@@ -40,6 +40,17 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export type AgentChatInboxAction = 'ARCHIVE' | 'MOVE_TO_INBOX' | 'READ' | 'SNOOZE' | 'SUBSCRIBE' | 'UNREAD' | 'UNSUBSCRIBE'
+
+export interface AgentChatOpenThreadsSummary {
+    hasUnreadAssignedThread: Scalars['Boolean']
+    hasUnreadMentionThread: Scalars['Boolean']
+    hasUnreadOpenThread: Scalars['Boolean']
+    needsInputThreadCount: Scalars['Int']
+    openThreadCount: Scalars['Int']
+    __typename: 'AgentChatOpenThreadsSummary'
+}
+
 export interface AgentChatThread {
     contextWindowTokens?: Scalars['Int']
     conversationSize: Scalars['Int']
@@ -1983,7 +1994,6 @@ export interface Mutation {
     activateWorkspace: Workspace
     addAgentChatThreadParticipants: Scalars['UUID'][]
     addQueryToEventStream: Scalars['Boolean']
-    archiveAgentChatThread: AgentChatThreadParticipant
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
@@ -2130,9 +2140,6 @@ export interface Mutation {
     installApplication: Application
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
-    markAgentChatThreadAsRead: AgentChatThreadParticipant
-    markAgentChatThreadAsUnread: AgentChatThreadParticipant
-    moveAgentChatThreadToInbox: AgentChatThreadParticipant
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     removeQueryFromEventStream: Scalars['Boolean']
@@ -2175,12 +2182,10 @@ export interface Mutation {
     signUpInNewWorkspace: SignUp
     signUpInWorkspace: SignUp
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    snoozeAgentChatThread: AgentChatThreadParticipant
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
     stopImpersonation: StopImpersonation
-    subscribeToAgentChatThread: AgentChatThreadParticipant
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
     syncApplication: WorkspaceMigration
@@ -2190,7 +2195,7 @@ export interface Mutation {
     triggerInstallApplicationJob: TriggerInstallApplicationJobResult
     triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
     uninstallApplication: Scalars['Boolean']
-    unsubscribeFromAgentChatThread: AgentChatThreadParticipant
+    updateAgentChatThreadInboxState: AgentChatThreadParticipant[]
     updateApiKey?: ApiKey
     updateAppMessageChannel: MessageChannel
     updateApplication: Application
@@ -2683,6 +2688,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     apiKey?: ApiKey
@@ -3004,10 +3010,10 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 
 export interface RunAgentResult {
     error?: Scalars['String']
-    isWaiting: Scalars['Boolean']
     result?: Scalars['JSON']
+    status: Scalars['String']
     success: Scalars['Boolean']
-    threadId?: Scalars['UUID']
+    threadId: Scalars['UUID']
     __typename: 'RunAgentResult'
 }
 
@@ -3924,6 +3930,16 @@ export interface AgentGenqlSelection{
 export interface AgentChatEventGenqlSelection{
     event?: boolean | number
     threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatOpenThreadsSummaryGenqlSelection{
+    hasUnreadAssignedThread?: boolean | number
+    hasUnreadMentionThread?: boolean | number
+    hasUnreadOpenThread?: boolean | number
+    needsInputThreadCount?: boolean | number
+    openThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6141,7 +6157,6 @@ export interface MutationGenqlSelection{
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatThreadParticipants?: { __args: {threadId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
-    archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -6288,9 +6303,6 @@ export interface MutationGenqlSelection{
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    markAgentChatThreadAsRead?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    markAgentChatThreadAsUnread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    moveAgentChatThreadToInbox?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
@@ -6333,12 +6345,10 @@ export interface MutationGenqlSelection{
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null), workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null)} })
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
-    snoozeAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {snoozedUntil: Scalars['DateTime'], threadId: Scalars['UUID']} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     stopImpersonation?: StopImpersonationGenqlSelection
-    subscribeToAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     switchBillingPlan?: BillingUpdateGenqlSelection
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null), manifest: Scalars['JSON']} })
@@ -6348,7 +6358,7 @@ export interface MutationGenqlSelection{
     triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
     triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
-    unsubscribeFromAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    updateAgentChatThreadInboxState?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, snoozedUntil?: (Scalars['DateTime'] | null), threadIds: Scalars['UUID'][]} })
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
@@ -6876,6 +6886,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -7227,8 +7238,8 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
-    isWaiting?: boolean | number
     result?: boolean | number
+    status?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
     __typename?: boolean | number
@@ -8433,6 +8444,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatOpenThreadsSummary_possibleTypes: string[] = ['AgentChatOpenThreadsSummary']
+    export const isAgentChatOpenThreadsSummary = (obj?: { __typename?: any } | null): obj is AgentChatOpenThreadsSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatOpenThreadsSummary"')
+      return AgentChatOpenThreadsSummary_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11003,6 +11022,16 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       return WorkspaceUrlsAndId_possibleTypes.includes(obj.__typename)
     }
     
+
+export const enumAgentChatInboxAction = {
+   ARCHIVE: 'ARCHIVE' as const,
+   MOVE_TO_INBOX: 'MOVE_TO_INBOX' as const,
+   READ: 'READ' as const,
+   SNOOZE: 'SNOOZE' as const,
+   SUBSCRIBE: 'SUBSCRIBE' as const,
+   UNREAD: 'UNREAD' as const,
+   UNSUBSCRIBE: 'UNSUBSCRIBE' as const
+}
 
 export const enumAgentTurnStatus = {
    CANCELLED: 'CANCELLED' as const,

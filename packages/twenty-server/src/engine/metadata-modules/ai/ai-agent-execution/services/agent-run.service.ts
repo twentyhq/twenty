@@ -217,11 +217,11 @@ export class AgentRunService
       });
 
       return {
+        threadId,
+        status: outcome.status,
         result: outcome.status === 'COMPLETED' ? outcome.result : null,
         error: outcome.status === 'FAILED' ? outcome.error : null,
         success: outcome.status !== 'FAILED',
-        isWaiting: outcome.status === 'SUSPENDED',
-        threadId,
       };
     } catch (error) {
       if (
@@ -238,11 +238,11 @@ export class AgentRunService
       );
 
       return {
+        threadId,
+        status: 'FAILED',
         result: null,
         error: 'Agent execution failed.',
         success: false,
-        isWaiting: false,
-        threadId,
       };
     }
   }

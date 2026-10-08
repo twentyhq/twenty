@@ -87,6 +87,7 @@ const buildService = ({
   new WorkflowWaitingStepWorkspaceService(
     new AgentRunCallerHandlerRegistryService(),
     registry,
+    pendingWakeUpService as never,
     workflowRunWorkspaceService as never,
     {} as never,
     workflowExecutionContextService as never,
@@ -149,6 +150,62 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
         lastExecutedStepId: STEP_ID,
       },
       expect.anything(),
+    );
+  });
+
+  it('ends the step with the answer to the call it posted through the run job', async () => {
+    const { service, workflowRunWorkspaceService, messageQueueService } =
+      buildService({
+        storedWait: {
+          ...STORED_WAIT,
+          condition: {
+            type: 'ANSWER',
+            threadId: 'thread-id',
+            toolCallId: 'call-id',
+          },
+        },
+      });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      wakeUpId: WAIT_ID,
+      answer: { result: { threadId: 'thread-id', outcome: 'executed' } },
+    });
+
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      RUN_WORKFLOW_JOB_NAME,
+      {
+        workspaceId: WORKSPACE_ID,
+        workflowRunId: WORKFLOW_RUN_ID,
+        awaitedStepOutput: {
+          stepId: STEP_ID,
+          actionOutput: {
+            result: { threadId: 'thread-id', outcome: 'executed' },
+          },
+        },
+      },
+      expect.anything(),
+    );
+  });
+
+  it('keeps an answer for later when the step does not wait yet', async () => {
+    const { service, pendingWakeUpService } = buildService({
+      stepStatus: StepStatus.RUNNING,
+    });
+    const answer = { error: 'The answer could not be delivered' };
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      wakeUpId: WAIT_ID,
+      answer,
+    });
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+    expect(pendingWakeUpService.scheduleResolution).toHaveBeenCalledWith(
+      expect.objectContaining({ answer, attempt: 1 }),
     );
   });
 

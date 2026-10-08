@@ -9,6 +9,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import {
@@ -35,8 +36,8 @@ import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils
 
 type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
 
-// A pending step waits either on a CALLBACK, as the caller of an agent run or of a call it posted itself,
-// or on a TIME or EVENT, as the owner of a wake-up keyed by its run and step. Both resume the run
+// A pending step waits either on a CALLBACK, as the caller of an agent run the engine continued,
+// or on a TIME, EVENT or ANSWER, as the owner of a wake-up keyed by its run and step. Both resume the run
 @Injectable()
 export class WorkflowWaitingStepWorkspaceService
   implements
@@ -47,6 +48,7 @@ export class WorkflowWaitingStepWorkspaceService
   constructor(
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
@@ -181,20 +183,46 @@ export class WorkflowWaitingStepWorkspaceService
   }
 
   async resolve({
-    claimedWakeUp: { workspaceId, ownerId: workflowRunId, ownerKey: stepId },
+    wakeUp,
     outcome,
     isOwnerGone,
   }: {
-    claimedWakeUp: PendingWakeUpEntity;
+    wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
     isOwnerGone: boolean;
   }): Promise<void> {
-    if (isOwnerGone) {
+    const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
+
+    if (
+      !isDefined(
+        await this.pendingWakeUpService.claim({
+          workspaceId,
+          wakeUpId: wakeUp.id,
+        }),
+      ) ||
+      isOwnerGone
+    ) {
       return;
     }
 
     // the claimed wait is gone, so a step that cannot resume would wait forever
     try {
+      // an answered call ends the step through the executor's usual path, so a failure is retried
+      // or continues on failure like any failed step
+      if (outcome.type === 'ANSWERED') {
+        await this.messageQueueService.add<RunWorkflowJobData>(
+          RUN_WORKFLOW_JOB_NAME,
+          {
+            workspaceId,
+            workflowRunId,
+            awaitedStepOutput: { stepId, actionOutput: outcome.answer },
+          },
+          buildRunWorkflowJobOptions(workflowRunId),
+        );
+
+        return;
+      }
+
       const hasCompletedStep =
         await this.workflowRunWorkspaceService.updateStepInfoIfPending({
           stepId,

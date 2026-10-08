@@ -834,8 +834,14 @@
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
-      "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
-      "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
+      "CollapsiblePanelProps": "primitives/layout/Collapsible/types/CollapsiblePanelProps",
+      "CollapsiblePanelState": "primitives/layout/Collapsible/types/CollapsiblePanelState",
+      "CollapsibleRootChangeEventDetails": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventDetails",
+      "CollapsibleRootChangeEventReason": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventReason",
+      "CollapsibleRootProps": "primitives/layout/Collapsible/types/CollapsibleRootProps",
+      "CollapsibleRootState": "primitives/layout/Collapsible/types/CollapsibleRootState",
+      "CollapsibleTriggerProps": "primitives/layout/Collapsible/types/CollapsibleTriggerProps",
+      "CollapsibleTriggerState": "primitives/layout/Collapsible/types/CollapsibleTriggerState",
       "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps",
       "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
       "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"

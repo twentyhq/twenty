@@ -55,7 +55,9 @@ export const FieldsWidgetGroupContainer = ({
           />
         </StyledChevronWrapper>
       </StyledHeader>
-      <Collapsible isExpanded={isExpanded}>{children}</Collapsible>
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel>{children}</Collapsible.Panel>
+      </Collapsible.Root>
     </Section.Root>
   );
 };
