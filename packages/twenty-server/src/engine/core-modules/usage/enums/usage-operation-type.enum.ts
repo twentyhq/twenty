@@ -12,15 +12,12 @@ export enum UsageOperationType {
   CALL_RECORDING = 'CALL_RECORDING',
   EMAIL_SEND = 'EMAIL_SEND',
   MESSAGE_CAMPAIGN_SEND = 'MESSAGE_CAMPAIGN_SEND',
-  // Raised by the query runner and read back by the API rate limit, so it is
-  // out of twenty-shared's USAGE_OPERATION_TYPES: an app billing under it
-  // would spend the workspace's request budget.
+  // Out of twenty-shared's USAGE_OPERATION_TYPES: the API rate limit reads it, so an app billing under it would spend the request budget.
   API_REQUEST = 'API_REQUEST',
   WEBHOOK_CALL = 'WEBHOOK_CALL',
   STORAGE_FILE = 'STORAGE_FILE',
   RECORD_WRITE = 'RECORD_WRITE',
-  // Platform-raised, once per billing period. Also out of
-  // USAGE_OPERATION_TYPES: an app declares the amount, it never charges this.
+  // Platform-raised once per billing period; also out of USAGE_OPERATION_TYPES since apps only declare the amount.
   SUBSCRIPTION = 'SUBSCRIPTION',
 }
 

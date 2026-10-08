@@ -47,9 +47,7 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
-// Rows are a fixed height, so the description has to give way rather than wrap
-// out of the row. A zero basis means it only ever takes the space the label
-// leaves, so the label stays readable and the description truncates first.
+// Rows are fixed-height, so the description truncates first rather than wrapping or squeezing the label
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex: 1 1 0;

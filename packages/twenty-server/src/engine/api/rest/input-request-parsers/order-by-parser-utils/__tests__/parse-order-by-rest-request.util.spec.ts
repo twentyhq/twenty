@@ -8,7 +8,7 @@ describe('parseOrderByRestRequest', () => {
 
     expect(parseOrderByRestRequest(request)).toEqual([
       {},
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 
@@ -22,7 +22,7 @@ describe('parseOrderByRestRequest', () => {
     expect(parseOrderByRestRequest(request)).toEqual([
       { fieldNumber: OrderByDirection.AscNullsFirst },
       { fieldText: OrderByDirection.DescNullsLast },
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 
@@ -35,7 +35,7 @@ describe('parseOrderByRestRequest', () => {
 
     expect(parseOrderByRestRequest(request)).toEqual([
       { fieldNumber: OrderByDirection.AscNullsFirst },
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 
@@ -48,7 +48,7 @@ describe('parseOrderByRestRequest', () => {
 
     expect(parseOrderByRestRequest(request)).toEqual([
       { fieldCurrency: { amountMicros: OrderByDirection.AscNullsFirst } },
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 
@@ -61,7 +61,7 @@ describe('parseOrderByRestRequest', () => {
 
     expect(parseOrderByRestRequest(request)).toEqual([
       { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 
@@ -76,7 +76,7 @@ describe('parseOrderByRestRequest', () => {
     expect(parseOrderByRestRequest(request)).toEqual([
       { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
       { fieldText: { label: OrderByDirection.AscNullsLast } },
-      { id: OrderByDirection.AscNullsFirst },
+      { id: OrderByDirection.AscNullsLast },
     ]);
   });
 

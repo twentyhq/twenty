@@ -9,6 +9,12 @@ export const MenuCheckboxItem = (props: MenuCheckboxItemProps) => (
     {...getMenuListItemProps<
       MenuPrimitive.CheckboxItem.State,
       MenuCheckboxItemProps
-    >(props, (state) => ({ indicator: 'checkbox', selected: state.checked }))}
+    >({
+      props,
+      getListItemState: (state) => ({
+        indicator: 'checkbox',
+        selected: state.checked,
+      }),
+    })}
   />
 );

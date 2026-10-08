@@ -5,15 +5,11 @@ import {
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import {
-  getOrderByForFieldMetadataType,
-  getOrderByForRelationField,
-} from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForRelationField';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { isDefined } from 'twenty-shared/utils';
+import { getOrderByForFieldMetadataType, isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   ViewSortDirection,
@@ -32,7 +28,7 @@ export const turnSortsIntoOrderBy = (
     .map((sort) => {
       const correspondingField = fieldsById[sort.fieldMetadataId];
 
-      if (isUndefinedOrNull(correspondingField)) {
+      if (!isDefined(correspondingField)) {
         return undefined;
       }
 
@@ -56,7 +52,6 @@ export const turnSortsIntoOrderBy = (
             orderByDirection: direction,
           });
         }
-        // Fallback if related object not found - sort by FK
         return [{ [`${correspondingField.name}Id`]: direction }];
       }
 

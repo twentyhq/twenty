@@ -1,0 +1,57 @@
+name: CI CLI
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-cli/**
+        packages/twenty-shared/**
+        packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
+        packages/twenty-ui/**
+        .github/actions/yarn-install/**
+        .github/workflows/ci-cli.yaml
+        package.json
+        yarn.lock
+        nx.json
+        tsconfig.base.json
+        .yarnrc.yml
+        .yarn/**
+  cli-package-test:
+    needs: changed-files-check
+    if: >-
+      !cancelled() &&
+      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build and test the CLI package
+        run: npx nx run twenty-cli:test:package
+  ci-cli-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, cli-package-test]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

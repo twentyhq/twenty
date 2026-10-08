@@ -15,8 +15,7 @@ describe('buildPendingUploadResourcePath', () => {
     ).toBe(`.pending/${fileId}/field-universal-identifier/document.pdf`);
   });
 
-  // The presigned PUT targets the quarantine path, so it has to survive the
-  // same storage validation as the final path for every folder shape.
+  // The presigned PUT targets the quarantine path, so it must pass the same validation for every folder shape.
   it.each([
     { fileFolder: FileFolder.FilesField, resourcePath: 'field-uid/file.png' },
     { fileFolder: FileFolder.Workflow, resourcePath: 'attachment.pdf' },

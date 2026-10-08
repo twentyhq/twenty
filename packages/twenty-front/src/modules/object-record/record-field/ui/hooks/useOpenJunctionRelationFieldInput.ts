@@ -1,18 +1,13 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useOpenJunctionRelationPicker } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationPicker';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldRelationFromManyValue,
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
-import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
-import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -21,8 +16,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useOpenJunctionRelationFieldInput = () => {
-  const { performSearch } = useMultipleRecordPickerPerformSearch();
-  const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
+  const { openJunctionRelationPicker } = useOpenJunctionRelationPicker();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const store = useStore();
 
@@ -60,8 +54,6 @@ export const useOpenJunctionRelationFieldInput = () => {
         return;
       }
 
-      const { targetFields } = junctionConfig;
-
       const resolvedRecordPickerInstanceId =
         recordPickerInstanceId ??
         getRecordFieldInputInstanceId({
@@ -77,41 +69,10 @@ export const useOpenJunctionRelationFieldInput = () => {
         }),
       ) as FieldRelationValue<FieldRelationFromManyValue>;
 
-      const { pickableMorphItems, searchableObjectMetadataItems } =
-        getJunctionRelationPickerData({
-          junctionRecords,
-          targetFields,
-          objectMetadataItems,
-        });
-
-      store.set(
-        multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-          instanceId: resolvedRecordPickerInstanceId,
-        }),
-        pickableMorphItems,
-      );
-
-      store.set(
-        multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-          { instanceId: resolvedRecordPickerInstanceId },
-        ),
-        searchableObjectMetadataItems,
-      );
-
-      store.set(
-        multipleRecordPickerSearchFilterComponentState.atomFamily({
-          instanceId: resolvedRecordPickerInstanceId,
-        }),
-        '',
-      );
-
-      openMultipleRecordPicker(resolvedRecordPickerInstanceId);
-
-      performSearch({
-        multipleRecordPickerInstanceId: resolvedRecordPickerInstanceId,
-        forceSearchFilter: '',
-        forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
-        forcePickableMorphItems: pickableMorphItems,
+      openJunctionRelationPicker({
+        recordPickerInstanceId: resolvedRecordPickerInstanceId,
+        junctionRecords,
+        targetFields: junctionConfig.targetFields,
       });
 
       pushFocusItemToFocusStack({
@@ -125,7 +86,7 @@ export const useOpenJunctionRelationFieldInput = () => {
         },
       });
     },
-    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack, store],
+    [openJunctionRelationPicker, pushFocusItemToFocusStack, store],
   );
 
   return { openJunctionRelationFieldInput };

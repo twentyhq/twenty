@@ -9,6 +9,7 @@ import * as Sentry from '@sentry/node';
 import {
   type Job,
   type JobsOptions,
+  type JobType,
   MetricsTime,
   Queue,
   type QueueOptions,
@@ -42,7 +43,9 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
+import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
@@ -80,32 +83,52 @@ export class BullMQDriver
   onModuleInit() {
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_queue_jobs_waiting_total',
-      options: { description: 'Current number of jobs waiting in queue' },
-      callback: async () => {
-        const observations: Array<{
-          value: number;
-          attributes: { queue: string };
-        }> = [];
-
-        for (const [queueName, queue] of Object.entries(this.queueMap)) {
-          try {
-            const waitingCount = await queue.count();
-
-            observations.push({
-              value: waitingCount,
-              attributes: { queue: queueName },
-            });
-          } catch (error) {
-            this.logger.error(
-              `Failed to collect waiting jobs metrics for queue ${queueName}`,
-              error,
-            );
-          }
-        }
-
-        return observations;
+      options: {
+        description:
+          'Current number of jobs waiting in queue, scheduled (delayed) jobs excluded',
       },
+      callback: () =>
+        this.collectJobCountsByQueue([
+          'waiting',
+          'prioritized',
+          'paused',
+          'waiting-children',
+        ]),
     });
+
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_jobs_delayed_total',
+      options: {
+        description:
+          'Current number of jobs waiting for their scheduled time (delay or retry backoff)',
+      },
+      callback: () => this.collectJobCountsByQueue(['delayed']),
+    });
+  }
+
+  private async collectJobCountsByQueue(
+    jobTypes: JobType[],
+  ): Promise<Array<{ value: number; attributes: { queue: string } }>> {
+    const observations: Array<{
+      value: number;
+      attributes: { queue: string };
+    }> = [];
+
+    for (const [queueName, queue] of Object.entries(this.queueMap)) {
+      try {
+        observations.push({
+          value: await queue.getJobCountByTypes(...jobTypes),
+          attributes: { queue: queueName },
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to collect ${jobTypes.join('/')} jobs metrics for queue ${queueName}`,
+          error,
+        );
+      }
+    }
+
+    return observations;
   }
 
   register(queueName: MessageQueue): void {
@@ -181,6 +204,21 @@ export class BullMQDriver
     }
   }
 
+  private async writeGlobalConcurrency(
+    queueName: MessageQueue,
+    globalConcurrency: number | undefined,
+  ): Promise<void> {
+    const queue = this.queueMap[queueName];
+
+    if (isDefined(globalConcurrency)) {
+      await queue.setGlobalConcurrency(globalConcurrency);
+
+      return;
+    }
+
+    await queue.removeGlobalConcurrency();
+  }
+
   work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
@@ -205,20 +243,25 @@ export class BullMQDriver
 
     this.workerOptionsMap[queueName] = options;
 
+    void this.writeGlobalConcurrency(queueName, options?.globalConcurrency);
+
     this.workerMap[queueName] = new Worker(
       queueName,
       async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
-          const queueLatency = Math.max(0, Date.now() - job.timestamp);
+          const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.JobLatencyMs,
-            value: queueLatency,
-            unit: 'ms',
-            attributes: { queue: queueName, job_name: job.name },
-          });
+          if (isDefined(queueWaitMs)) {
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.JobLatencyMs,
+              value: queueWaitMs,
+              unit: 'ms',
+              attributes: { queue: queueName, job_name: job.name },
+              bucketBoundaries: JOB_LATENCY_MS_BUCKET_BOUNDARIES,
+            });
+          }
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
@@ -250,6 +293,9 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('active', (job) =>
+      this.emitJobChange({ queueName, job, state: 'active' }),
+    );
+    this.workerMap[queueName].on('progress', (job) =>
       this.emitJobChange({ queueName, job, state: 'active' }),
     );
     this.workerMap[queueName].on('completed', (job) =>
@@ -431,7 +477,6 @@ export class BullMQDriver
       );
     }
 
-    // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 

@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -10,8 +9,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 describe('workspace context sharing enforcement', () => {
   it.each([true, false])(
-    'uses the same rollout decision (%s) in lite and full contexts',
-    async (isLegacyRecordAccessOpen) => {
+    'loads the authenticated workspace without a sharing rollout lookup (lite=%s)',
+    async (lite) => {
       const module = await Test.createTestingModule({
         providers: [
           WorkspaceOrmManager,
@@ -21,29 +20,23 @@ describe('workspace context sharing enforcement', () => {
             useValue: {
               getOrRecompute: jest.fn().mockResolvedValue({
                 flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+                featureFlagsMap: {},
               }),
-            },
-          },
-          {
-            provide: RecordSharingFeatureService,
-            useValue: {
-              isLegacyRecordAccessOpen: jest
-                .fn()
-                .mockResolvedValue(isLegacyRecordAccessOpen),
             },
           },
         ],
       }).compile();
       const manager = module.get(WorkspaceOrmManager);
       const authContext = buildSystemAuthContext('workspace');
-      for (const lite of [true, false]) {
-        const decision = await manager.executeInWorkspaceContext(
-          () => getWorkspaceContext().isLegacyRecordAccessOpen,
-          authContext,
-          { lite },
-        );
-        expect(decision).toBe(isLegacyRecordAccessOpen);
-      }
+      const context = await manager.executeInWorkspaceContext(
+        () => getWorkspaceContext(),
+        authContext,
+        { lite },
+      );
+      expect(context.authContext).toBe(authContext);
+      expect(
+        module.get(WorkspaceCacheService).getOrRecompute,
+      ).toHaveBeenCalledTimes(1);
       await module.close();
     },
   );

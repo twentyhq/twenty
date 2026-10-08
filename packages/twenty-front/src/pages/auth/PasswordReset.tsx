@@ -1,4 +1,4 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Logo } from '@/auth/components/Logo';
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -27,11 +27,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton, useToast } from 'twenty-ui/components';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import {
   UpdatePasswordViaResetTokenDocument,
@@ -81,7 +82,6 @@ const StyledMainButtonContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -221,18 +221,16 @@ export const PasswordReset = () => {
           <Title animate>{passwordActionLabel}</Title>
           <StyledOnboardingContentContainer>
             {!email ? (
-              <SkeletonTheme
-                baseColor={theme.background.quaternary}
-                highlightColor={theme.background.secondary}
-              >
-                <Skeleton
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  count={2}
-                  style={{
-                    marginBottom: themeCssVariables.spacing[2],
-                  }}
-                />
-              </SkeletonTheme>
+              <SkeletonLine
+                borderRadius="0.25rem"
+                height={SKELETON_HEIGHT_SIZES.m}
+                count={2}
+                style={{
+                  marginBottom: themeCssVariables.spacing[2],
+                }}
+                baseColor={themeCssVariables.background.quaternary}
+                highlightColor={themeCssVariables.background.secondary}
+              />
             ) : (
               <StyledForm onSubmit={handleSubmit(onSubmit)}>
                 <StyledFullWidthContainer>

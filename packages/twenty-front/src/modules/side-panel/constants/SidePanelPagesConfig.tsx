@@ -5,13 +5,19 @@ import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versio
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
+import { SidePanelEmailDesignPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailDesignPage';
+import { SidePanelEmailPageStylePage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailPageStylePage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
 import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
+import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
+import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
+import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
@@ -93,10 +99,19 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.CreateRelatedRecord, <SidePanelCreateRelatedRecordPage />],
   [SidePanelPages.SendCampaign, <SidePanelSendCampaignPage />],
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
+  [
+    SidePanelPages.RecordCreationFormSettings,
+    <SidePanelRecordCreationFormSettingsPage />,
+  ],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
-  [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
+  [SidePanelPages.EmailBlockSettings, <SidePanelEmailDesignPage />],
+  [SidePanelPages.EmailBlockStyle, <SidePanelEmailBlockSettingsPage />],
+  [SidePanelPages.EmailPageStyle, <SidePanelEmailPageStylePage />],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
+  [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
+  [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
+  [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
 ]);

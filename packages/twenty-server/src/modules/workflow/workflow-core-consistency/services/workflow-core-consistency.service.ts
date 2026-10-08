@@ -8,8 +8,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   type BaseDatabaseEventTriggerSettings,
   type CronTriggerSettings,
@@ -89,7 +89,7 @@ export class WorkflowCoreConsistencyService {
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NULL)::int AS unlinked,
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NOT NULL AND c.id IS NULL)::int AS "missingCore",
          count(*) FILTER (WHERE c.id IS NOT NULL AND (
-           wf.name IS DISTINCT FROM c.name
+           COALESCE(wf.name, '') IS DISTINCT FROM COALESCE(c.name, '')
            OR NULLIF(wf."lastPublishedVersionId", '') IS DISTINCT FROM c."lastPublishedVersionId"::text
          ))::int AS "fieldMismatch"
        FROM "${schema}"."workflow" wf

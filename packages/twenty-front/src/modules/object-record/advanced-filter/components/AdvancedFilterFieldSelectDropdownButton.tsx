@@ -1,10 +1,13 @@
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';
 import { AdvancedFilterFieldSelectDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownContent';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 const StyledContainer = styled.div`
   flex: 2;
@@ -22,21 +25,26 @@ export const AdvancedFilterFieldSelectDropdownButton = ({
 
   return (
     <StyledContainer>
-      <Dropdown
+      <DropdownRoot
         dropdownId={advancedFilterFieldSelectDropdownId}
-        clickableComponent={
+        type="picker"
+      >
+        <Dropdown.Trigger render={<div />} nativeButton={false}>
           <AdvancedFilterFieldSelectDropdownButtonClickableSelect
             recordFilterId={recordFilterId}
           />
-        }
-        dropdownComponents={
+        </Dropdown.Trigger>
+        <DropdownContent
+          aria-label={t`Select field`}
+          width={GenericDropdownContentWidth.ExtraLarge}
+          sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
+          align="start"
+        >
           <AdvancedFilterFieldSelectDropdownContent
             recordFilterId={recordFilterId}
           />
-        }
-        dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
-        dropdownPlacement="bottom-start"
-      />
+        </DropdownContent>
+      </DropdownRoot>
     </StyledContainer>
   );
 };

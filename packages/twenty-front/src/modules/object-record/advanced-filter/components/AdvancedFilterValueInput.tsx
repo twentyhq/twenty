@@ -1,7 +1,7 @@
 import { AdvancedFilterDropdownFilterInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownFilterInput';
 import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { shouldShowFilterTextInput } from '@/object-record/advanced-filter/utils/shouldShowFilterTextInput';
@@ -76,7 +76,7 @@ export const AdvancedFilterValueInput = ({
   const dropdownContentOffset =
     filterType === 'DATE' || filterType === 'DATE_TIME'
       ? ({ y: -33, x: 0 } satisfies DropdownOffset)
-      : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
+      : { y: DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET };
 
   const showFilterTextInputInsteadOfDropdown = shouldShowFilterTextInput({
     recordFilter,

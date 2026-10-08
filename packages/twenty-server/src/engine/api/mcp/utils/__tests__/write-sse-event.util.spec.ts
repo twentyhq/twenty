@@ -27,9 +27,7 @@ describe('writeSseEvent', () => {
 
     const written = mockResponse.write.mock.calls[0][0] as string;
 
-    // Must start with "event: message\n"
     expect(written.startsWith('event: message\n')).toBe(true);
-    // Must contain "data: " followed by valid JSON
     const dataLine = written.split('\n')[1];
 
     expect(dataLine).toBeDefined();

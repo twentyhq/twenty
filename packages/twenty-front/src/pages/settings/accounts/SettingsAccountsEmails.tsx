@@ -14,7 +14,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useLingui();
@@ -27,9 +27,7 @@ export const SettingsAccountsEmails = () => {
         (channel) =>
           channel.isSyncEnabled &&
           channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
-          // Every setting on this page is a mailbox setting, so it lists
-          // mailboxes only: group inboxes have their own page, and app-owned
-          // channels are configured by the app that created them.
+          // Mailboxes only: group inboxes have their own page and app-owned channels are configured by their app
           channel.type === MessageChannelType.EMAIL,
       ),
     [allMessageChannels],

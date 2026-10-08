@@ -23,6 +23,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -46,8 +47,11 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -76,25 +80,24 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
+    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
     const isGatedThroughRecordShares =
-      isPrivateObject ||
-      queryRunnerContext.flatObjectMetadata.readability ===
-        MetadataReadability.INHERITED;
+      sharingMode === RecordSharingMode.PRIVATE ||
+      sharingMode === RecordSharingMode.INHERITED;
 
-    // An inherited record is reachable through its parent, so shareWith stays
-    // optional there and is checked only when given
+    // An inherited record is reachable through its parent, so shareWith is optional there
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnforced:
-          this.isRecordSharingEnforced(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
 
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
-      (isGatedThroughRecordShares ||
+      (isDefined(
+        resolveShareWithToWrite({ sharingMode, shareWith: args.shareWith }),
+      ) ||
         containsNestedRelationCreate(
           args.data,
           getNestedRelationFieldNames({
@@ -611,42 +614,33 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
+    const objectSharing = resolveObjectSharing(queryRunnerContext);
+    const shareWithToWrite = resolveShareWithToWrite({
+      sharingMode: objectSharing.sharingMode,
+      shareWith,
+    });
 
-    if (!this.shouldInsertRecordSharesForCreatedRecords(queryRunnerContext)) {
+    if (!isDefined(shareWithToWrite)) {
       return;
+    }
+
+    if (!isDefined(transactionScope)) {
+      throw new CommonQueryRunnerException(
+        'Record shares of created records must be written in their transaction',
+        CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
     }
 
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
-      objectMetadataId: flatObjectMetadata.id,
-      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
+      flatObjectMetadata,
+      objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      shareWith,
+      shareWith: shareWithToWrite,
       transactionScope,
     });
-  }
-
-  private shouldInsertRecordSharesForCreatedRecords(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): boolean {
-    switch (queryRunnerContext.flatObjectMetadata.readability) {
-      case MetadataReadability.PRIVATE:
-        return true;
-      // Legacy inherited records must keep following their parent after
-      // activation instead of receiving an EVERYONE compatibility grant.
-      case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnforced(queryRunnerContext);
-      default:
-        return false;
-    }
-  }
-
-  private isRecordSharingEnforced(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): boolean {
-    return !queryRunnerContext.repository.internalContext
-      .isLegacyRecordAccessOpen;
   }
 
   private resolveNestedRelationsForCreate({
@@ -810,5 +804,28 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return recordWithoutCreatedByUpdate;
+  }
+
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    return (
+      args.data.length *
+      computeMaxFieldCountPerRecord({
+        selectedFieldsResult,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        recordLimitPerOneToManyRelation: args.upsert ? QUERY_MAX_RECORDS : 0,
+      })
+    );
   }
 }

@@ -8,7 +8,7 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueToast } = useToast();
@@ -55,6 +55,7 @@ export const useMetadataErrorHandler = () => {
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
     settingsMenuItem: t`settings menu item`,
+    validationRule: t`validation rule`,
     workflow: t`workflow`,
     workflowVersion: t`workflow version`,
   } as const satisfies Record<AllMetadataName, string>;

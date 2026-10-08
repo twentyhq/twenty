@@ -1,5 +1,4 @@
-// Deliberately not extensible: a field a route cannot restate is a field it
-// cannot drift on, which is the property this pipeline is for.
+// Deliberately not extensible: a field a route cannot restate is one it cannot drift on
 export type CatalogSpecModelOverrides = {
   label?: string;
   isDeprecated?: boolean;
@@ -13,13 +12,11 @@ export type CatalogSpecModelOverrides = {
 
 export type CatalogSpecModel = CatalogSpecModelOverrides & {
   model: string;
-  // `eu.anthropic.claude-opus-4-7` for a Bedrock deployment of
-  // `claude-opus-4-7`.
+  // e.g. `eu.anthropic.claude-opus-4-7` for a Bedrock deployment of `claude-opus-4-7`
   as?: string;
 };
 
-// Every model the vendor publishes, so a route that serves a whole vendor
-// picks up new models with the daily sync instead of waiting for an edit here.
+// A route serving a whole vendor picks up new models with the daily sync
 export type CatalogSpecModelSelector = {
   vendor: string;
 };

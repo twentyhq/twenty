@@ -22,8 +22,7 @@ export const FieldWidgetJunctionRelationCard = ({
     junctionConfig,
   });
 
-  // Detach/delete in RecordDetailRelationRecordsListItem assumes a direct
-  // relation, so junction cards are forced read-only to prevent data corruption.
+  // Forced read-only: detach/delete in RecordDetailRelationRecordsListItem assumes a direct relation and would corrupt junction data.
   return (
     <FieldWidgetRelationRecordsCard
       fieldDefinition={fieldDefinition}

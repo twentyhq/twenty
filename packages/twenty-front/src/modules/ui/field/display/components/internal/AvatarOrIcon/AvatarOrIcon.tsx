@@ -1,11 +1,10 @@
 import { css } from '@linaria/core';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { handleClickableElementKeyDown } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
-import { isDefined } from 'twenty-ui/utilities';
 import { type AvatarOrIconProps } from './types/AvatarOrIconProps';
+import { isDefined } from 'twenty-shared/utils';
 
 const styles = {
   iconWithBackgroundContainer: css`
@@ -28,7 +27,21 @@ const styles = {
       display: flex;
     }
     &[data-clickable] {
+      background: none;
+      border: 0;
+      border-radius: var(--t-border-radius-sm);
+      color: inherit;
       cursor: pointer;
+      font: inherit;
+      margin: 0;
+      padding: 0;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--t-color-blue);
+      outline-offset: 1px;
+    }
+    &:disabled {
+      cursor: inherit;
     }
   `,
 };
@@ -63,7 +76,7 @@ export const AvatarOrIcon = ({
 
   const iconContent =
     isIconInverted || isDefined(IconBackgroundColor) ? (
-      <div
+      <span
         className={styles.iconWithBackgroundContainer}
         style={
           isDefined(IconBackgroundColor)
@@ -79,7 +92,7 @@ export const AvatarOrIcon = ({
           stroke={theme.icon.stroke.sm}
           aria-hidden
         />
-      </div>
+      </span>
     ) : (
       <Icon
         size={theme.icon.size.sm}
@@ -91,17 +104,15 @@ export const AvatarOrIcon = ({
 
   if (isDefined(onClick)) {
     return (
-      <div
+      <button
+        type="button"
         className={styles.wrapper}
         data-clickable={true}
-        role="button"
-        tabIndex={0}
         aria-label={accessibleLabel}
         onClick={onClick}
-        onKeyDown={handleClickableElementKeyDown}
       >
         {iconContent}
-      </div>
+      </button>
     );
   }
 

@@ -1,14 +1,14 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useContext } from 'react';
 import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, getAppPath } from 'twenty-shared/utils';
+
+import { AppNavigatorContext } from '@/app/contexts/AppNavigatorContext';
 
 type NavigateAppOptions = NavigateOptions;
 
-// Stable across renders so an effect can list it as a dependency without
-// re-running every time the caller renders.
+// Stable across renders so effects can depend on it.
 export const useNavigateApp = () => {
-  const navigate = useNavigate();
+  const appNavigator = useContext(AppNavigatorContext);
 
   return useCallback(
     <T extends AppPath>(
@@ -17,10 +17,18 @@ export const useNavigateApp = () => {
       queryParams?: Record<string, any>,
       options?: NavigateAppOptions,
     ) => {
+      assertIsDefinedOrThrow(appNavigator);
+
       const path = getAppPath(to, params, queryParams);
 
-      return navigate(path, options);
+      if (options?.replace === true) {
+        appNavigator.replace(path, options.state, options);
+
+        return;
+      }
+
+      appNavigator.push(path, options?.state, options);
     },
-    [navigate],
+    [appNavigator],
   );
 };

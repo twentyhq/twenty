@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -105,8 +105,7 @@ export const WorkspaceSection = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        // Customising the menu is a desktop job, so mobile shows neither the
-        // entry point nor the add button it turns into.
+        // Customising the menu is desktop-only.
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (

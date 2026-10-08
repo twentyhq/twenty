@@ -1,0 +1,1 @@
+export const BATCH_HANDLER_TIMEOUT_SECONDS = 300;

@@ -1,6 +1,1 @@
-export type CalloutVariant =
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'neutral'
-  | 'success';
+export type CalloutVariant = 'soft';

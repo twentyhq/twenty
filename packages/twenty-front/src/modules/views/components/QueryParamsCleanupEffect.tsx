@@ -35,6 +35,7 @@ export const QueryParamsCleanupEffect = () => {
     Array.from(newParams.keys()).forEach((key) => {
       if (
         key.startsWith('filter[') ||
+        key.startsWith('filterDisplayValue[') ||
         key.startsWith('filterGroup[') ||
         key.startsWith('sort[')
       ) {

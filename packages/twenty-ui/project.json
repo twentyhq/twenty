@@ -9,14 +9,18 @@
     "check:ownership": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["generateBarrels"],
       "inputs": [
         "{projectRoot}/src/**/*",
         "{projectRoot}/docs/module-ownership.json",
-        "{projectRoot}/scripts/checkModuleOwnership.ts"
+        "{projectRoot}/docs/public-exports.json",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/project.json",
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/yarn.lock"
       ],
       "options": {
-        "command": "tsx {projectRoot}/scripts/checkModuleOwnership.ts"
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts --check && tsx {projectRoot}/scripts/checkModuleOwnership.ts"
       }
     },
     "generateTokens": {
@@ -122,7 +126,7 @@
     "lint": {},
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {
-      "dependsOn": ["check:ownership"],
+      "dependsOn": ["check:ownership", "test:exports"],
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["default", "^default"],
@@ -133,6 +137,7 @@
       "configurations": { "watch": { "command": "npx vitest --project unit" } }
     },
     "typecheck": {},
+    "knip": {},
     "storybook:build": {
       "configurations": {
         "test": {},
@@ -156,12 +161,12 @@
     },
     "storybook:test": {
       "options": {
-        "command": "vitest run --coverage --shard={args.shard} --project storybook"
+        "command": "vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:test:no-coverage": {
       "options": {
-        "command": "vitest run --shard={args.shard} --project storybook"
+        "command": "vitest run --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:visual-diff": {
@@ -172,6 +177,19 @@
         "command": "bash scripts/visual-diff.sh"
       }
     },
-    "storybook:coverage": {}
+    "storybook:coverage": {},
+    "test:exports": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/src/utilities/utils/isDefined.ts",
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "command": "node --import tsx --test {projectRoot}/scripts/__tests__/*.test.ts"
+      }
+    }
   }
 }

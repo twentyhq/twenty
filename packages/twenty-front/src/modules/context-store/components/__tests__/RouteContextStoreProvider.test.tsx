@@ -45,6 +45,11 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             namePlural: 'workflows',
             nameSingular: 'workflow',
           },
+          {
+            id: 'chat-object',
+            namePlural: 'agentChatThreads',
+            nameSingular: 'agentChatThread',
+          },
         ]
       : [
           {
@@ -75,16 +80,19 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
     viewId,
     objectMetadataItem,
     isRecordIndexPage,
+    isRecordShowPage,
   }: {
     viewId?: string;
     objectMetadataItem?: { id: string };
     isRecordIndexPage: boolean;
+    isRecordShowPage: boolean;
   }) => (
     <div
       data-testid="route-context-store"
       data-view-id={viewId}
       data-object-metadata-id={objectMetadataItem?.id}
       data-is-record-index-page={isRecordIndexPage}
+      data-is-record-show-page={isRecordShowPage}
     />
   ),
 }));
@@ -103,7 +111,12 @@ const routeObjects: WorkspaceRouteObject[] = [
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
   {
-    path: AppPath.WorkflowCoreIndexPage,
+    path: AppPath.WorkflowCoreShowPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.AiChat,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -177,8 +190,8 @@ describe('RouteContextStoreProvider', () => {
     );
   });
 
-  it('provides workflow index context on the standalone core route', () => {
-    renderAt('/workflow-core', <MainSurfaceRoutes />);
+  it('provides workflow context on the core workflow show page', () => {
+    renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-object-metadata-id',
@@ -186,8 +199,24 @@ describe('RouteContextStoreProvider', () => {
     );
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-is-record-index-page',
+      'false',
+    );
+  });
+
+  it('treats the chat page as the record page of a chat', () => {
+    renderAt('/chat/chat-id', <MainSurfaceRoutes />);
+
+    const routeContextStore = screen.getByTestId('route-context-store');
+
+    expect(routeContextStore).toHaveAttribute(
+      'data-object-metadata-id',
+      'chat-object',
+    );
+    expect(routeContextStore).toHaveAttribute(
+      'data-is-record-show-page',
       'true',
     );
+    expect(routeContextStore).not.toHaveAttribute('data-view-id');
   });
 
   it('resolves the object on settings object pages', () => {

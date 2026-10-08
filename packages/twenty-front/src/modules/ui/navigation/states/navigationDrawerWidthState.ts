@@ -1,4 +1,4 @@
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const NAVIGATION_DRAWER_WIDTH_VAR = '--navigation-drawer-width';

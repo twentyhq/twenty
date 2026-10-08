@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -25,7 +23,6 @@ export class CodeStepBuildService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createCodeStepLogicFunction({
@@ -125,16 +122,6 @@ export class CodeStepBuildService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<void> {
-    const isPrebuiltModeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        workspaceId,
-      );
-
-    if (!isPrebuiltModeEnabled) {
-      return;
-    }
-
     const logicFunctionIds =
       extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps);
 

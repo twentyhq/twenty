@@ -12,18 +12,13 @@
  */}
 
 <ParamField body="lineClamp" type="number">
-  Maximum number of lines before the text is truncated with an ellipsis.
-  Cannot be combined with `truncate`.
+  Positive integer limiting the number of visible lines. Cannot be combined with `truncate`.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Replaces the default div. Native props and the ref target the rendered text element.
 </ParamField>
 
 <ParamField body="truncate" type="boolean">
-  Truncates overflowing text on one line with an ellipsis. Cannot be
-  combined with `lineClamp`.
+  Truncates one line with an ellipsis. Cannot be combined with `lineClamp`.
 </ParamField>

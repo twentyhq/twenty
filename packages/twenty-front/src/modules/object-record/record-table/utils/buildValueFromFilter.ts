@@ -17,13 +17,13 @@ import {
 } from 'twenty-shared/types';
 import {
   assertUnreachable,
+  convertCurrencyAmountToCurrencyMicros,
   FILTER_OPERANDS_MAP,
   parseJson,
   parseToInstantOrThrow,
   parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
-import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
 type FilterOption = {
   label: string;

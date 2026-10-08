@@ -58,23 +58,24 @@ describe('isMatchingMultiSelectFilter', () => {
   });
 
   describe('isEmptyArray', () => {
-    it('should return true for empty array', () => {
-      expect(
-        isMatchingMultiSelectFilter({
-          multiSelectFilter: { isEmptyArray: true },
-          value: [],
-        }),
-      ).toBe(true);
-    });
-
-    it('should return false for non-empty array', () => {
-      expect(
-        isMatchingMultiSelectFilter({
-          multiSelectFilter: { isEmptyArray: true },
-          value: ['A'],
-        }),
-      ).toBe(false);
-    });
+    it.each([
+      { isEmptyArray: true, value: [], expected: true },
+      { isEmptyArray: true, value: null, expected: true },
+      { isEmptyArray: true, value: ['A'], expected: false },
+      { isEmptyArray: false, value: [], expected: false },
+      { isEmptyArray: false, value: null, expected: false },
+      { isEmptyArray: false, value: ['A'], expected: true },
+    ])(
+      'should return $expected for isEmptyArray $isEmptyArray on $value',
+      ({ isEmptyArray, value, expected }) => {
+        expect(
+          isMatchingMultiSelectFilter({
+            multiSelectFilter: { isEmptyArray },
+            value,
+          }),
+        ).toBe(expected);
+      },
+    );
   });
 
   describe('is', () => {

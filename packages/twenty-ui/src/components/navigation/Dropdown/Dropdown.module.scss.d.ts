@@ -5,9 +5,14 @@ declare const classNames: {
   readonly section: 'section';
   readonly separator: 'separator';
   readonly back: 'back';
+  readonly backIcon: 'backIcon';
   readonly searchContainer: 'searchContainer';
   readonly search: 'search';
   readonly status: 'status';
   readonly title: 'title';
+  readonly itemWithActions: 'itemWithActions';
+  readonly itemWithActionsPrimary: 'itemWithActionsPrimary';
+  readonly itemActions: 'itemActions';
+  readonly itemDecoration: 'itemDecoration';
 };
 export default classNames;

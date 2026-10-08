@@ -50,6 +50,7 @@ export class ImapSmtpCaldavService {
         pass: params.password,
       },
       logger: false,
+      disableIMAP4rev2: true,
       tls: {
         rejectUnauthorized: false,
       },

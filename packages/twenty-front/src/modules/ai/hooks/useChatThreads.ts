@@ -1,22 +1,24 @@
-import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
 
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type Selector } from '@/ui/utilities/state/jotai/types/Selector';
 
-export const useChatThreads = () => {
-  const agentChatVisibleThreads = useAtomStateValue(
-    agentChatVisibleThreadsSelector,
-  );
-  const storeEntry = useAtomValue(
-    metadataStoreState.atomFamily('agentChatThreads'),
+export const useChatThreads = (
+  threadsSelector: Selector<AgentChatThreadRecord[]>,
+) => {
+  const threads = useAtomStateValue(threadsSelector);
+  const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
+
+  const sortedThreads = useMemo(
+    () => sortChatThreadsByLastActivityDesc(threads),
+    [threads],
   );
 
   return {
-    threads: sortChatThreadsByLastActivityDesc(agentChatVisibleThreads),
-    hasNextPage: false,
-    loading: storeEntry.status === 'empty',
-    fetchMoreRef: undefined,
+    threads: sortedThreads,
+    loading: agentChatThreadList === null,
   };
 };

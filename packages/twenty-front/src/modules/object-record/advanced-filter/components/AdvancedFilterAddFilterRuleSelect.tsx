@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -11,10 +11,9 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -46,8 +45,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const newPositionInRecordFilterGroup = lastChildPosition + 1;
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { getDefaultFieldMetadataItemForFilter } =
     useGetDefaultFieldMetadataItemForFilter();
 
@@ -63,8 +60,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');
     }
-
-    closeDropdown(dropdownId);
 
     const filterType = getFilterTypeFromFieldType(
       defaultFieldMetadataItemForFilter.type,
@@ -94,8 +89,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const handleAddFilterGroup = () => {
     const { defaultFieldMetadataItemForFilter } =
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
-
-    closeDropdown(dropdownId);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');
@@ -156,36 +149,35 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   }
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <CommandMenuButton
-          command={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
-        />
-      }
-      dropdownComponents={
-        <LegacyDropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
-              startIcon={<IconPlus />}
-              onClick={handleAddFilter}
-            >{t`Add rule`}</ListItem>
-            {isFilterRuleGroupOptionVisible && (
-              <ListItem
-                startIcon={<IconLibraryPlus />}
-                onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</ListItem>
-            )}
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
-      }
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-    />
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <Dropdown.Trigger
+        render={
+          <NavigationButton
+            size="sm"
+            variant="outline"
+            color="neutral"
+            startIcon={<IconPlus />}
+          >
+            {t`Add filter rule`}
+          </NavigationButton>
+        }
+      />
+      <DropdownContent sideOffset={8}>
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconPlus />}
+            onClick={handleAddFilter}
+          >
+            {t`Add rule`}
+          </Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconLibraryPlus />}
+            onClick={handleAddFilterGroup}
+          >
+            {t`Add rule group`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

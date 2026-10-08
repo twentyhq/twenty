@@ -1,13 +1,25 @@
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
+import { isFunction, isNumber, isString } from '@sniptt/guards';
+import { type ReactNode } from 'react';
 
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type TooltipProps } from '../types/TooltipProps';
+import { TooltipArrow } from './TooltipArrow';
+import { TooltipBody } from './TooltipBody';
 import { TooltipPopup } from './TooltipPopup';
+import { TooltipPortal } from './TooltipPortal';
+import { TooltipPositioner } from './TooltipPositioner';
 
-export const TooltipComponent = ({
+const DEFAULT_SIDE_OFFSET = 10;
+const DEFAULT_MAX_WIDTH = '300px';
+
+export const TooltipComponent = <TPayload,>({
   content,
   children,
+  description,
+  startIcon,
   open,
   defaultOpen,
   onOpenChange,
@@ -16,15 +28,100 @@ export const TooltipComponent = ({
   disableHoverablePopup,
   trackCursorAxis,
   actionsRef,
+  handle,
   triggerId,
   defaultTriggerId,
   delay,
   closeDelay,
   closeOnClick,
-  ...props
-}: TooltipProps) => {
+  side = 'top',
+  align = 'center',
+  sideOffset = DEFAULT_SIDE_OFFSET,
+  alignOffset,
+  anchor,
+  positionMethod,
+  collisionBoundary,
+  collisionPadding,
+  collisionAvoidance,
+  sticky,
+  arrowPadding,
+  disableAnchorTracking,
+  arrow = false,
+  maxWidth = DEFAULT_MAX_WIDTH,
+  container,
+  keepMounted,
+  triggerProps,
+  positionerProps,
+  portalProps,
+  ...popupProps
+}: TooltipProps<TPayload>) => {
+  const hasDescription = isRenderableSlot(description);
   const isDisabled =
-    disabled || !isDefined(content) || content === '' || content === false;
+    disabled ||
+    (!isFunction(content) && !isRenderableSlot(content) && !hasDescription);
+
+  const trigger = (
+    <TooltipPrimitive.Trigger
+      render={children}
+      delay={delay}
+      closeDelay={closeDelay}
+      closeOnClick={closeOnClick}
+      {...triggerProps}
+    />
+  );
+
+  const renderContent = (resolvedContent: ReactNode) => {
+    const hasContent = isRenderableSlot(resolvedContent) || hasDescription;
+
+    if (!hasContent) {
+      return <>{trigger}</>;
+    }
+
+    const hasTextLayout =
+      isString(resolvedContent) ||
+      isNumber(resolvedContent) ||
+      hasDescription ||
+      isRenderableSlot(startIcon);
+
+    return (
+      <>
+        {trigger}
+        <TooltipPortal
+          container={container}
+          keepMounted={keepMounted}
+          {...portalProps}
+        >
+          <TooltipPositioner
+            side={side}
+            align={align}
+            sideOffset={sideOffset}
+            alignOffset={alignOffset}
+            anchor={anchor}
+            positionMethod={positionMethod}
+            collisionBoundary={collisionBoundary}
+            collisionPadding={collisionPadding}
+            collisionAvoidance={collisionAvoidance}
+            sticky={sticky}
+            arrowPadding={arrowPadding}
+            disableAnchorTracking={disableAnchorTracking}
+            style={{ maxWidth }}
+            {...positionerProps}
+          >
+            <TooltipPopup {...popupProps}>
+              {hasTextLayout ? (
+                <TooltipBody description={description} startIcon={startIcon}>
+                  {resolvedContent}
+                </TooltipBody>
+              ) : (
+                resolvedContent
+              )}
+              {arrow && <TooltipArrow />}
+            </TooltipPopup>
+          </TooltipPositioner>
+        </TooltipPortal>
+      </>
+    );
+  };
 
   return (
     <TooltipPrimitive.Root
@@ -36,16 +133,13 @@ export const TooltipComponent = ({
       disableHoverablePopup={disableHoverablePopup}
       trackCursorAxis={trackCursorAxis}
       actionsRef={actionsRef}
+      handle={handle}
       triggerId={triggerId}
       defaultTriggerId={defaultTriggerId}
     >
-      <TooltipPrimitive.Trigger
-        render={children}
-        delay={delay}
-        closeDelay={closeDelay}
-        closeOnClick={closeOnClick}
-      />
-      <TooltipPopup {...props}>{content}</TooltipPopup>
+      {isFunction(content)
+        ? (payloadState) => renderContent(content(payloadState))
+        : renderContent(content)}
     </TooltipPrimitive.Root>
   );
 };

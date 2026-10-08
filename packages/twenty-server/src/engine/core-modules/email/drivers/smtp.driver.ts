@@ -8,13 +8,13 @@ import {
 
 import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
-import type SMTPConnection from 'nodemailer/lib/smtp-connection';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 export class SmtpDriver implements EmailDriverInterface {
   private readonly logger = new Logger(SmtpDriver.name);
   private transport: Transporter;
 
-  constructor(options: SMTPConnection.Options) {
+  constructor(options: SMTPTransport.Options) {
     this.transport = createTransport({ ...options, pool: true });
   }
 

@@ -17,7 +17,8 @@ import {
 } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Callout, Section, useToast } from 'twenty-ui/components';
+import { Callout, useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -28,6 +29,7 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
@@ -226,22 +228,24 @@ export const SettingsClaimApplicationSection = () => {
       {isDefined(claimError) && (
         <StyledCalloutContainer>
           <Callout
-            variant="error"
+            status="error"
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}
-            action={{
-              label: t`Read documentation`,
-              onClick: () =>
-                window.open(
-                  getDocumentationUrl({
-                    locale: currentWorkspaceMember?.locale,
-                    path: claimError.docPath,
-                  }),
-                  '_blank',
-                ),
-            }}
-            isClosable
-            onClose={dismissClaimError}
+            action={
+              <Callout.Action
+                type="button"
+                onClick={() =>
+                  openUrlInNewTab(
+                    getDocumentationUrl({
+                      locale: currentWorkspaceMember?.locale,
+                      path: claimError.docPath,
+                    }),
+                  )
+                }
+              >{t`Read documentation`}</Callout.Action>
+            }
+            closeLabel={t`Close`}
+            onDismiss={dismissClaimError}
           />
         </StyledCalloutContainer>
       )}

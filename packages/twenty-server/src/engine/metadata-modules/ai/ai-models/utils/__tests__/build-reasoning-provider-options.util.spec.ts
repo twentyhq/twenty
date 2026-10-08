@@ -153,4 +153,100 @@ describe('buildReasoningProviderOptions', () => {
       ).toEqual(expected);
     },
   );
+
+  describe('with a reasoning summary', () => {
+    it.each([
+      [
+        AI_SDK_OPENAI,
+        'openai/gpt-5.6-sol',
+        { openai: { reasoningSummary: 'auto' } },
+      ],
+      [
+        AI_SDK_AZURE,
+        'azure/gpt-5.6-sol',
+        { azure: { reasoningSummary: 'auto' } },
+      ],
+      [
+        AI_SDK_GOOGLE,
+        'google/gemini-3.7-flash',
+        { google: { thinkingConfig: { includeThoughts: true } } },
+      ],
+    ] as const)(
+      'asks %s for a summary of its reasoning',
+      (sdkPackage, modelId, expected) => {
+        expect(
+          buildReasoningProviderOptions(
+            { modelId, sdkPackage, supportsReasoning: true },
+            {
+              shouldIncludeReasoningSummary: true,
+              isOpenAiReasoningSummaryEnabled: true,
+            },
+          ),
+        ).toEqual(expected);
+      },
+    );
+
+    it.each([
+      [AI_SDK_OPENAI, 'openai/gpt-5.6-sol'],
+      [AI_SDK_AZURE, 'azure/gpt-5.6-sol'],
+    ] as const)(
+      'asks %s for no summary until OpenAI summaries are enabled',
+      (sdkPackage, modelId) => {
+        expect(
+          buildReasoningProviderOptions(
+            { modelId, sdkPackage, supportsReasoning: true },
+            { shouldIncludeReasoningSummary: true },
+          ),
+        ).toEqual({});
+      },
+    );
+
+    it('keeps the pinned effort next to the summary', () => {
+      expect(
+        buildReasoningProviderOptions(
+          {
+            modelId: 'google/gemini-3.7-flash@low',
+            sdkPackage: AI_SDK_GOOGLE,
+            supportsReasoning: true,
+            effort: 'low',
+          },
+          { shouldIncludeReasoningSummary: true },
+        ),
+      ).toEqual({
+        google: {
+          thinkingConfig: { thinkingLevel: 'low', includeThoughts: true },
+        },
+      });
+    });
+
+    it('asks for no summary when reasoning is turned off', () => {
+      expect(
+        buildReasoningProviderOptions(
+          {
+            modelId: 'openai/gpt-5.6-sol@none',
+            sdkPackage: AI_SDK_OPENAI,
+            supportsReasoning: true,
+            effort: 'none',
+          },
+          {
+            shouldIncludeReasoningSummary: true,
+            isOpenAiReasoningSummaryEnabled: true,
+          },
+        ),
+      ).toEqual({ openai: { reasoningEffort: 'none' } });
+    });
+
+    it('asks nothing of a model that does not reason', () => {
+      expect(
+        buildReasoningProviderOptions(
+          {
+            modelId: 'openai/gpt-4.1',
+            sdkPackage: AI_SDK_OPENAI,
+            supportsReasoning: false,
+          },
+          { shouldIncludeReasoningSummary: true },
+        ),
+      ).toEqual({});
+    });
+  });
 });

@@ -3,11 +3,15 @@ import Suggestion from '@tiptap/suggestion';
 
 import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
+import { MENTION_SUGGESTION_TEAMMATE_LIMIT } from '@/mention/constants/MentionSuggestionTeammateLimit';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
+import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
+import { isWorkspaceMemberMentionSearchResult } from '@/mention/utils/isWorkspaceMemberMentionSearchResult';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 type MentionSuggestionOptions = {
   searchMentionRecords: (query: string) => Promise<MentionSearchResult[]>;
+  searchWorkspaceMembers: (query: string) => MentionSearchResult[];
 };
 
 export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
@@ -15,11 +19,13 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
 
   addOptions: () => ({
     searchMentionRecords: async () => [],
+    searchWorkspaceMembers: () => [],
   }),
 
   addStorage() {
     return {
       searchMentionRecords: this.options.searchMentionRecords,
+      searchWorkspaceMembers: this.options.searchWorkspaceMembers,
     };
   },
 
@@ -41,16 +47,13 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
             .chain()
             .focus()
             .deleteRange(range)
-            .insertContent({
-              type: 'mentionTag',
-              attrs: {
-                recordId: selectedItem.recordId,
-                objectNameSingular: selectedItem.objectNameSingular,
-                label: selectedItem.label,
-                imageUrl: selectedItem.imageUrl,
-              },
-            })
-            .insertContent(' ')
+            .insertContent(
+              getMentionTagContent({
+                ...selectedItem,
+                shouldAddAsParticipant:
+                  isWorkspaceMemberMentionSearchResult(selectedItem),
+              }),
+            )
             .run();
         },
         render: () =>
@@ -63,6 +66,19 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
                 editor,
                 range,
               }),
+              // Teammates are searched locally, so they show before records
+              // load; all of them once a name is typed, else only a few
+              getLocalItems: (query) => {
+                const workspaceMemberResults =
+                  this.storage.searchWorkspaceMembers(query);
+
+                return query === ''
+                  ? workspaceMemberResults.slice(
+                      0,
+                      MENTION_SUGGESTION_TEAMMATE_LIMIT,
+                    )
+                  : workspaceMemberResults;
+              },
             },
             this.editor,
           ),

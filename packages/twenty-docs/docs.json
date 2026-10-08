@@ -157,6 +157,23 @@
                 ]
               },
               {
+                "group": "Email Campaigns",
+                "icon": "paper-plane",
+                "pages": [
+                  "user-guide/email-campaigns/overview",
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/email-campaigns/how-tos/set-up-a-sending-domain",
+                      "user-guide/email-campaigns/how-tos/email-campaign-best-practices",
+                      "user-guide/email-campaigns/how-tos/send-your-first-campaign",
+                      "user-guide/email-campaigns/how-tos/create-a-campaign-with-ai",
+                      "user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
@@ -445,7 +462,8 @@
                       "developers/extend/apps/logic/skills-and-agents",
                       "developers/extend/apps/logic/connections",
                       "developers/extend/apps/logic/messaging-channels",
-                      "developers/extend/apps/logic/credits"
+                      "developers/extend/apps/logic/credits",
+                      "developers/extend/apps/logic/good-practices"
                     ]
                   },
                   {
@@ -508,7 +526,9 @@
                       "ui/tokens",
                       "ui/dark-mode",
                       "ui/ssr",
-                      "ui/accessibility"
+                      "ui/accessibility",
+                      "ui/icons",
+                      "ui/testing"
                     ]
                   },
                   {
@@ -518,7 +538,7 @@
                       {
                         "group": "Accessibility",
                         "pages": [
-                          "ui/primitives/accessibility/visibility-hidden"
+                          "ui/primitives/accessibility/visually-hidden"
                         ]
                       },
                       {
@@ -536,9 +556,10 @@
                         "group": "Feedback",
                         "pages": [
                           "ui/primitives/feedback/banner",
-                          "ui/primitives/feedback/circular-progress-bar",
                           "ui/primitives/feedback/loader",
-                          "ui/primitives/feedback/progress-bar"
+                          "ui/primitives/feedback/progress-bar",
+                          "ui/primitives/feedback/progress-ring",
+                          "ui/primitives/feedback/skeleton"
                         ]
                       },
                       {
@@ -549,6 +570,7 @@
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
+                          "ui/primitives/input/number-stepper",
                           "ui/primitives/input/textarea",
                           "ui/primitives/input/checkbox",
                           "ui/primitives/input/radio",
@@ -562,18 +584,18 @@
                       {
                         "group": "Layout",
                         "pages": [
-                          "ui/primitives/layout/animated-expandable-container",
-                          "ui/primitives/layout/horizontal-separator",
+                          "ui/primitives/layout/collapsible",
+                          "ui/primitives/layout/separator",
                           "ui/primitives/layout/resize-handle",
-                          "ui/primitives/layout/text-direction-provider"
+                          "ui/primitives/layout/direction-provider"
                         ]
                       },
                       {
                         "group": "Navigation",
                         "pages": [
+                          "ui/primitives/navigation/breadcrumb",
                           "ui/primitives/navigation/list-item",
-                          "ui/primitives/navigation/tabs",
-                          "ui/primitives/navigation/click-to-action-link"
+                          "ui/primitives/navigation/tabs"
                         ]
                       },
                       {
@@ -592,6 +614,7 @@
                         "pages": [
                           "ui/primitives/typography/heading",
                           "ui/primitives/typography/text",
+                          "ui/primitives/typography/shortcut",
                           "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
@@ -601,16 +624,68 @@
                     "group": "Components",
                     "pages": [
                       "ui/components/overview",
-                      "ui/components/input/main-button",
-                      "ui/components/input/light-button",
-                      "ui/components/input/icon-button",
-                      "ui/components/input/light-icon-button",
-                      "ui/components/section",
-                      "ui/components/settings-row",
-                      "ui/components/dropdown",
-                      "ui/components/tab-button",
-                      "ui/components/code-editor",
-                      "ui/components/toast"
+                      {
+                        "group": "Data display",
+                        "pages": [
+                          "ui/components/data-display/avatar-group",
+                          "ui/components/data-display/command-block",
+                          "ui/components/data-display/json-tree",
+                          "ui/components/data-display/metric-row",
+                          "ui/components/data-display/notification-counter",
+                          "ui/components/data-display/tinted-icon-tile"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/components/feedback/callout",
+                          "ui/components/feedback/inline-banner",
+                          "ui/components/feedback/toast"
+                        ]
+                      },
+                      {
+                        "group": "Input",
+                        "pages": [
+                          "ui/components/input/main-button",
+                          "ui/components/input/light-button",
+                          "ui/components/input/icon-button",
+                          "ui/components/input/light-icon-button",
+                          "ui/components/input/country-select",
+                          "ui/components/input/currency-picker",
+                          "ui/components/input/phone-country-picker",
+                          "ui/components/input/image-input",
+                          "ui/components/input/search-input"
+                        ]
+                      },
+                      {
+                        "group": "Layout",
+                        "pages": [
+                          "ui/components/layout/section",
+                          "ui/components/layout/overflowing-list",
+                          "ui/components/layout/animated-icon-crossfade"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "ui/components/navigation/dropdown",
+                          "ui/components/navigation/menu-items",
+                          "ui/components/navigation/menu-picker",
+                          "ui/components/navigation/tab-button"
+                        ]
+                      },
+                      {
+                        "group": "Settings",
+                        "pages": [
+                          "ui/components/settings/settings-row"
+                        ]
+                      },
+                      {
+                        "group": "Code editor",
+                        "pages": [
+                          "ui/components/code-editor/code-editor"
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -6649,6 +6724,14 @@
   },
   "redirects": [
     {
+      "source": "/ui/components/info",
+      "destination": "/ui/components/feedback/inline-banner"
+    },
+    {
+      "source": "/ui/primitives/layout/animated-expandable-container",
+      "destination": "/ui/primitives/layout/collapsible"
+    },
+    {
       "source": "/twenty-ui/input/checkbox",
       "destination": "/ui/primitives/input/checkbox"
     },
@@ -7394,7 +7477,7 @@
     },
     {
       "source": "/ui/primitives/feedback/toast",
-      "destination": "/ui/components/toast"
+      "destination": "/ui/components/feedback/toast"
     },
     {
       "source": "/ui/primitives/surfaces/card-header",
@@ -7407,6 +7490,10 @@
     {
       "source": "/ui/primitives/surfaces/card-footer",
       "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/components/card-picker",
+      "destination": "/ui/primitives/input/radio#card-options"
     }
   ]
 }
