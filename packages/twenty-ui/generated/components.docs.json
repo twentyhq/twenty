@@ -1113,48 +1113,162 @@
     "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
     "slug": "layout/collapsible",
-    "props": [
+    "props": [],
+    "parts": [
       {
-        "name": "animationDurations",
-        "type": "AnimationDurations",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default theme timing or separate opacity and size durations in seconds."
+        "name": "Root",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Initial uncontrolled expansion state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Default disabled state inherited by the triggers in this root."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the requested open state and cancelable Base UI event details."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled expansion state. Use defaultOpen for uncontrolled state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the root div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "children",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Content inside the expanding panel."
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables this trigger."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Set to false when render replaces the native button with another element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the linked trigger button. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "containAnimation",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Clips overflowing content during expansion and uses a column layout."
-      },
-      {
-        "name": "dimension",
-        "type": "\"height\" | \"width\"",
-        "required": false,
-        "defaultValue": "height",
-        "description": "Dimension animated when the panel opens and closes."
-      },
-      {
-        "name": "duration",
-        "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
-      },
-      {
-        "name": "isExpanded",
-        "type": "boolean",
-        "required": true,
-        "defaultValue": null,
-        "description": "Controlled visibility of the panel. The application owns the trigger and state."
+        "name": "Panel",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsiblePanelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "containAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Clips overflowing content during expansion and uses a column layout."
+          },
+          {
+            "name": "dimension",
+            "type": "\"height\" | \"width\"",
+            "required": false,
+            "defaultValue": "height",
+            "description": "Dimension animated when the panel opens and closes."
+          },
+          {
+            "name": "duration",
+            "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
+            "required": false,
+            "defaultValue": "normal",
+            "description": "Theme timing preset for both size and opacity. Native style can customize transition timing."
+          },
+          {
+            "name": "hiddenUntilFound",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Uses hidden until-found so browser page search can reveal the contents. Overrides keepMounted."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the closed panel mounted and hidden, preserving local content state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsiblePanelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the animated panel div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsiblePanelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -1360,18 +1474,11 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
-        "name": "displayedMaxRows",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Maximum displayed rows. Omit for single-line truncation; use a positive integer for multiline text."
-      },
-      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a tab stop and opens the tooltip on focus or click."
+        "description": "Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus."
       },
       {
         "name": "isTooltipMultiline",
@@ -1381,25 +1488,32 @@
         "description": "Preserves whitespace and line breaks in the tooltip."
       },
       {
-        "name": "size",
-        "type": "\"large\" | \"small\"",
+        "name": "lineClamp",
+        "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Small inherited text sizing or the large fixed-height treatment."
+        "description": "Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
       },
       {
         "name": "text",
         "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null | undefined",
         "required": true,
         "defaultValue": null,
-        "description": "Text or React content to truncate. Non-string React content requires `tooltipContent`."
+        "description": "Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text."
       },
       {
         "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Plain text displayed in the tooltip. Defaults to `text` when it is a nonempty string."
+        "description": "Plain text displayed in the tooltip. Defaults to nonempty string `text`."
       },
       {
         "name": "tooltipDelay",
@@ -1414,6 +1528,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Preferred side of the tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
       }
     ]
   },
@@ -7915,21 +8036,21 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of lines before the text is truncated with an ellipsis.\nCannot be combined with `truncate`."
+        "description": "Positive integer limiting the number of visible lines. Cannot be combined with `truncate`."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Truncates overflowing text on one line with an ellipsis. Cannot be\ncombined with `lineClamp`."
+        "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
       }
     ]
   },

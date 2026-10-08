@@ -29,7 +29,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
-import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
+import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
@@ -46,6 +46,7 @@ import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
+import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
@@ -180,7 +181,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/layout/Collapsible/Collapsible.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/collapsible',
-    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
+    partPropDescriptions: COLLAPSIBLE_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Panel: {
+        dimension: 'height',
+        containAnimation: 'true',
+        duration: 'normal',
+      },
+    },
   },
   {
     name: 'Separator',
@@ -477,6 +485,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/typography/Text/Text.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/text',
+    propDescriptions: TEXT_PROP_DESCRIPTIONS,
   },
   {
     name: 'Avatar',

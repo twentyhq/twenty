@@ -1,9 +1,11 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { collapsibleTest } from '@/__stories__/twenty-ui-gallery/utils/collapsibleTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 
 export const layoutTest: TwentyUiGalleryPlayFunction = async (context) => {
+  await collapsibleTest(context);
   await resizeHandleTest(context);
   const canvas = within(context.canvasElement);
   const horizontal = canvas.getByRole('separator', {
