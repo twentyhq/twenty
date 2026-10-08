@@ -4,7 +4,6 @@ export type GeometryWakeSources = {
   detachElementSources: () => void;
   detachAllSources: () => void;
   setRoot: (node: Element | null) => void;
-  setPortalLayer: (node: Element | null) => void;
   startObservingNode: (node: Element) => void;
   stopObservingNode: (node: Element) => void;
 };

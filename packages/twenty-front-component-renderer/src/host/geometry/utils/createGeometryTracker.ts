@@ -3,12 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
-import { GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS } from '@/host/geometry/constants/GeometryIdlePortalCheckIntervalMs';
 import { GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES } from '@/host/geometry/constants/GeometryUnregisteredObservationExpiryFrames';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/geometry/types/PushGeometryUpdates';
 import { createGeometryWakeSources } from '@/host/geometry/utils/createGeometryWakeSources';
-import { isFrontComponentPortalOwnerInert } from '@/host/geometry/utils/isFrontComponentPortalOwnerInert';
 import { isGeometrySnapshotEqualWithinEpsilon } from '@/host/geometry/utils/isGeometrySnapshotEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/geometry/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGeometry';
@@ -29,7 +27,6 @@ export const createGeometryTracker = (): GeometryTracker => {
   let pushGeometryUpdates: PushGeometryUpdates | null = null;
   let lastViewportSnapshot: ViewportGeometrySnapshot | null = null;
   let animationFrameHandle: number | null = null;
-  let idlePortalCheckTimeout: ReturnType<typeof setTimeout> | null = null;
   let idleFrameCount = 0;
 
   const scheduleAnimationFrame = (): void => {
@@ -43,76 +40,12 @@ export const createGeometryTracker = (): GeometryTracker => {
     });
   };
 
-  const hasPortalOwnerChangedSinceLastFrame = (): boolean => {
-    if (!isDefined(portalLayer) || !isDefined(rootContainer)) {
-      return false;
-    }
-
-    const rootContainerRectangle = rootContainer.getBoundingClientRect();
-    const lastRootContainerRectangle = isDefined(lastViewportSnapshot)
-      ? {
-          x: lastViewportSnapshot.rootContainerX,
-          y: lastViewportSnapshot.rootContainerY,
-          width: lastViewportSnapshot.rootContainerWidth,
-          height: lastViewportSnapshot.rootContainerHeight,
-        }
-      : null;
-    const hasRootContainerMoved = !isGeometrySnapshotEqualWithinEpsilon(
-      lastRootContainerRectangle,
-      {
-        x: rootContainerRectangle.x,
-        y: rootContainerRectangle.y,
-        width: rootContainerRectangle.width,
-        height: rootContainerRectangle.height,
-      },
-    );
-
-    return (
-      hasRootContainerMoved ||
-      portalLayer.inert !== isFrontComponentPortalOwnerInert(rootContainer)
-    );
-  };
-
-  const scheduleIdlePortalCheck = (): void => {
-    if (isDefined(idlePortalCheckTimeout)) {
-      return;
-    }
-
-    idlePortalCheckTimeout = setTimeout(() => {
-      idlePortalCheckTimeout = null;
-
-      if (hasPortalOwnerChangedSinceLastFrame()) {
-        wake();
-        return;
-      }
-
-      scheduleIdlePortalCheck();
-    }, GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
-  };
-
-  const cancelIdlePortalCheck = (): void => {
-    if (!isDefined(idlePortalCheckTimeout)) {
-      return;
-    }
-
-    clearTimeout(idlePortalCheckTimeout);
-    idlePortalCheckTimeout = null;
-  };
-
   const wake = (): void => {
     idleFrameCount = 0;
     scheduleAnimationFrame();
   };
 
   const wakeSources = createGeometryWakeSources(wake);
-
-  const detachElementSourcesWhenUnused = (): void => {
-    if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
-      return;
-    }
-
-    wakeSources.detachElementSources();
-  };
 
   const readViewportGeometry = (): ViewportGeometrySnapshot =>
     measureViewportGeometry(rootContainer);
@@ -125,7 +58,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     const viewport = readViewportGeometry();
 
     if (isDefined(portalLayer)) {
-      updateFrontComponentPortalLayer({ portalLayer, rootContainer, viewport });
+      updateFrontComponentPortalLayer({ portalLayer, viewport });
     }
 
     const rootContainerOrigin = {
@@ -184,8 +117,11 @@ export const createGeometryTracker = (): GeometryTracker => {
       unregisteredObservedFrameCounts.delete(remoteElementId);
     }
 
-    if (expiredRemoteElementIds.length > 0) {
-      detachElementSourcesWhenUnused();
+    if (
+      expiredRemoteElementIds.length > 0 &&
+      observedRemoteElementIds.size === 0
+    ) {
+      wakeSources.detachElementSources();
     }
 
     const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon(
@@ -214,11 +150,6 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     if (idleFrameCount < GEOMETRY_IDLE_FRAME_THRESHOLD) {
       scheduleAnimationFrame();
-      return;
-    }
-
-    if (isDefined(portalLayer)) {
-      scheduleIdlePortalCheck();
     }
   };
 
@@ -300,7 +231,9 @@ export const createGeometryTracker = (): GeometryTracker => {
       }
     }
 
-    detachElementSourcesWhenUnused();
+    if (observedRemoteElementIds.size === 0) {
+      wakeSources.detachElementSources();
+    }
   };
 
   const setRoot = (node: Element | null): void => {
@@ -310,18 +243,13 @@ export const createGeometryTracker = (): GeometryTracker => {
 
   const setPortalLayer = (element: HTMLElement | null): void => {
     portalLayer = element;
-    wakeSources.setPortalLayer(element);
 
     if (!isDefined(element)) {
-      cancelIdlePortalCheck();
-      detachElementSourcesWhenUnused();
       return;
     }
 
-    wakeSources.attachElementSources();
     updateFrontComponentPortalLayer({
       portalLayer: element,
-      rootContainer,
       viewport: readViewportGeometry(),
     });
     wake();
@@ -338,10 +266,6 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     wakeSources.attachViewportSources();
 
-    if (isDefined(portalLayer)) {
-      wakeSources.attachElementSources();
-    }
-
     if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
       wake();
     }
@@ -355,7 +279,6 @@ export const createGeometryTracker = (): GeometryTracker => {
       animationFrameHandle = null;
     }
 
-    cancelIdlePortalCheck();
     wakeSources.detachAllSources();
 
     observedRemoteElementIds.clear();

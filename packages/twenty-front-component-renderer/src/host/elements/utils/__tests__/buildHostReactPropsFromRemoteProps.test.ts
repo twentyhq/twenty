@@ -14,31 +14,6 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(result).toEqual({ id: 'keep' });
   });
 
-  it('drops native top-layer invokers and raw markup while retaining ordinary props', () => {
-    const result = buildHostReactPropsFromRemoteProps({
-      remoteProps: {
-        popover: '',
-        popoverTarget: 'host-dialog',
-        popovertargetaction: 'show',
-        commandFor: 'host-dialog',
-        command: 'show-modal',
-        interestFor: 'host-popup',
-        dangerouslySetInnerHTML: { __html: '<dialog open>Escape</dialog>' },
-        innerHTML: '<div popover>Escape</div>',
-        role: 'dialog',
-        'aria-label': 'Local popup',
-        title: 'Keep',
-      },
-      htmlTag: 'button',
-    });
-
-    expect(result).toEqual({
-      role: 'dialog',
-      'aria-label': 'Local popup',
-      title: 'Keep',
-    });
-  });
-
   it('should drop undefined values', () => {
     const result = buildHostReactPropsFromRemoteProps({
       remoteProps: { title: undefined, id: 'x' },

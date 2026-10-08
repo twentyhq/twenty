@@ -4,12 +4,12 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button } from 'twenty-ui/primitives/input';
 import { Menu } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
-import { THEME_COMMON } from 'twenty-ui/theme';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
-import { OVERSIZED_PORTAL_EXTENT } from '@/__stories__/twenty-ui-gallery/constants/OversizedPortalExtent';
 
+const OVERSIZED_PORTAL_EXTENT = 4000;
 const OVERSIZED_PORTAL_OFFSET = -1000;
+const OVERSIZED_PORTAL_Z_INDEX = 2147483647;
 const MENU_ITEM_LABELS = Array.from(
   { length: 16 },
   (_, itemIndex) => `Menu item ${itemIndex + 1}`,
@@ -19,7 +19,6 @@ const PortalsExample = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOversizedOpen, setIsOversizedOpen] = useState(false);
   const [actionCount, setActionCount] = useState(0);
-  const [menuSelection, setMenuSelection] = useState('none');
 
   return (
     <TwentyUiGalleryCard title="Portals">
@@ -27,18 +26,10 @@ const PortalsExample = () => {
         <Menu.Trigger>Open menu</Menu.Trigger>
         <Menu.Popup>
           {MENU_ITEM_LABELS.map((menuItemLabel) => (
-            <Menu.Item
-              key={menuItemLabel}
-              onClick={() => setMenuSelection(menuItemLabel)}
-            >
-              {menuItemLabel}
-            </Menu.Item>
+            <Menu.Item key={menuItemLabel}>{menuItemLabel}</Menu.Item>
           ))}
         </Menu.Popup>
       </Menu.Root>
-      <Text role="status" aria-label="Menu selection">
-        Menu selection: {menuSelection}
-      </Text>
       <Button onClick={() => setIsOpen(!isOpen)}>Toggle popup</Button>
       <Button onClick={() => setIsOversizedOpen(!isOversizedOpen)}>
         Fill portal area
@@ -68,7 +59,7 @@ const PortalsExample = () => {
               height: OVERSIZED_PORTAL_EXTENT,
               maxWidth: 'none',
               maxHeight: 'none',
-              zIndex: THEME_COMMON.lastLayerZIndex,
+              zIndex: OVERSIZED_PORTAL_Z_INDEX,
               background: '#f00080',
             }}
           >

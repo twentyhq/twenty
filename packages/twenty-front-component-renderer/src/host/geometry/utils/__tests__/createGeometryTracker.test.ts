@@ -1,7 +1,6 @@
 import { setupGeometryGlobals } from '@/testing/setupGeometryGlobals';
 
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
-import { GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS } from '@/host/geometry/constants/GeometryIdlePortalCheckIntervalMs';
 import { createGeometryTracker } from '../createGeometryTracker';
 
 const geometryGlobals = setupGeometryGlobals();
@@ -36,7 +35,6 @@ describe('createGeometryTracker', () => {
       tracker.reset();
     }
     armedTrackers.length = 0;
-    jest.useRealTimers();
   });
 
   it('should not schedule a frame when created', () => {
@@ -45,12 +43,8 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
-  it('keeps an idle open portal in sync with its owner on a slow check instead of every frame, and stops after it closes', () => {
-    jest.useFakeTimers({
-      doNotFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
-    });
-    const tracker = createGeometryTracker();
-    armedTrackers.push(tracker);
+  it('should place the portal layer on the root container and follow it on the next frame', () => {
+    const { tracker } = createArmedTracker();
     const root = geometryGlobals.createStubNode({
       x: 20,
       y: 30,
@@ -60,118 +54,17 @@ describe('createGeometryTracker', () => {
     const portalLayer = document.createElement('div');
     tracker.setRoot(root.node);
     tracker.setPortalLayer(portalLayer);
-    tracker.setPushGeometryUpdates(jest.fn());
 
-    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
-
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+    expect(portalLayer.style.left).toBe('calc(20px / var(--t-zoom, 1))');
+    expect(portalLayer.style.top).toBe('calc(30px / var(--t-zoom, 1))');
 
     root.setGeometry({ x: 40, y: 50, width: 360, height: 220 });
-    root.node.style.pointerEvents = 'none';
-    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
     geometryGlobals.flushAnimationFrame();
 
     expect(portalLayer.style.left).toBe('calc(40px / var(--t-zoom, 1))');
     expect(portalLayer.style.top).toBe('calc(50px / var(--t-zoom, 1))');
     expect(portalLayer.style.width).toBe('calc(360px / var(--t-zoom, 1))');
     expect(portalLayer.style.height).toBe('calc(220px / var(--t-zoom, 1))');
-    expect(portalLayer.inert).toBe(true);
-
-    tracker.setPortalLayer(null);
-    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
-    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
-
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
-  });
-
-  it('only probes the owner of an idle open portal instead of re-measuring observed elements', () => {
-    jest.useFakeTimers({
-      doNotFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
-    });
-    const { tracker, pushGeometryUpdates } = createArmedTracker();
-    const root = geometryGlobals.createStubNode({
-      x: 20,
-      y: 30,
-      width: 320,
-      height: 180,
-    });
-    const portalItem = geometryGlobals.createStubNode({
-      x: 20,
-      y: 210,
-      width: 200,
-      height: 32,
-    });
-    tracker.setRoot(root.node);
-    tracker.setPortalLayer(document.createElement('div'));
-    tracker.registerNode('portal-item', portalItem.node);
-    tracker.observe(['portal-item']);
-
-    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
-    const portalItemMeasurement = jest.spyOn(
-      portalItem.node,
-      'getBoundingClientRect',
-    );
-    const pushCountWhenIdle = pushGeometryUpdates.mock.calls.length;
-    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS * 3);
-
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
-    expect(portalItemMeasurement).not.toHaveBeenCalled();
-    expect(pushGeometryUpdates).toHaveBeenCalledTimes(pushCountWhenIdle);
-  });
-
-  it('wakes on portal content mutations but not on its own portal layer writes', () => {
-    const { tracker } = createArmedTracker();
-    const root = geometryGlobals.createStubNode({
-      x: 20,
-      y: 30,
-      width: 320,
-      height: 180,
-    });
-    const portalLayer = document.createElement('div');
-    const portalContent = document.createElement('div');
-    portalLayer.append(portalContent);
-    tracker.setRoot(root.node);
-    tracker.setPortalLayer(portalLayer);
-    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
-
-    geometryGlobals.triggerMutationObserversOf({
-      observedTarget: portalLayer,
-      mutatedNode: portalLayer,
-    });
-
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
-
-    geometryGlobals.triggerMutationObserversOf({
-      observedTarget: portalLayer,
-      mutatedNode: portalContent,
-    });
-
-    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
-  });
-
-  it('disables the portal with its owner and hides it when its owner is removed', () => {
-    const { tracker } = createArmedTracker();
-    const root = geometryGlobals.createStubNode({
-      x: 20,
-      y: 30,
-      width: 320,
-      height: 180,
-    });
-    const portalLayer = document.createElement('div');
-    tracker.setRoot(root.node);
-    tracker.setPortalLayer(portalLayer);
-
-    root.node.style.pointerEvents = 'none';
-    geometryGlobals.flushAnimationFrame();
-    expect(portalLayer.inert).toBe(true);
-
-    root.node.style.pointerEvents = 'auto';
-    geometryGlobals.flushAnimationFrame();
-    expect(portalLayer.inert).toBe(false);
-
-    root.node.remove();
-    geometryGlobals.flushAnimationFrame();
-    expect(portalLayer.style.display).toBe('none');
   });
 
   it('should find the remote element id of a node through its nearest registered ancestor', () => {

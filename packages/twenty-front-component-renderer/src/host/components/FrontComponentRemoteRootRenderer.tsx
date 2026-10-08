@@ -12,7 +12,6 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
-import { toZoomCompensatedCssLength } from '@/host/geometry/utils/toZoomCompensatedCssLength';
 
 const PORTAL_LAYER_Z_INDEX = 38;
 
@@ -21,7 +20,7 @@ const PORTAL_LAYER_STYLE: CSSProperties = {
   contain: 'layout',
   zIndex: PORTAL_LAYER_Z_INDEX,
   pointerEvents: 'none',
-  clipPath: `inset(${toZoomCompensatedCssLength(-FRONT_COMPONENT_PORTAL_MARGIN)})`,
+  clipPath: `inset(calc(-${FRONT_COMPONENT_PORTAL_MARGIN}px / var(--t-zoom, 1)))`,
 };
 
 const PORTAL_CONTENT_STYLE: CSSProperties = {
