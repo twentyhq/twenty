@@ -1,18 +1,15 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { useIsPageLayoutSidePanelTargetAvailable } from '@/side-panel/pages/page-layout/hooks/useIsPageLayoutSidePanelTargetAvailable';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/WorkspaceSurfaceHeaderPortalContext';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
@@ -37,29 +34,16 @@ export const SidePanelRouter = () => {
     currentNavigationItem?.page ?? SidePanelPages.CommandMenuDisplay;
   const sidePanelPageInstanceId = currentNavigationItem?.pageId ?? '';
 
-  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
-    contextStoreTargetedRecordsRuleComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
-  const hasSingleTargetedRecord =
-    contextStoreTargetedRecordsRule.mode === 'selection' &&
-    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
+  const isPageLayoutSidePanelTargetAvailable =
+    useIsPageLayoutSidePanelTargetAvailable();
 
   const shouldSkipPageLayoutPage =
-    isDefined(sidePanelPage) &&
     isPageLayoutSidePanelPage(sidePanelPage) &&
-    (!isDefined(contextStoreCurrentObjectMetadataItemId) ||
-      !hasSingleTargetedRecord);
+    !isPageLayoutSidePanelTargetAvailable;
 
-  const rawPageComponent =
-    isDefined(sidePanelPage) && !shouldSkipPageLayoutPage
-      ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
-      : null;
+  const rawPageComponent = shouldSkipPageLayoutPage
+    ? null
+    : SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage);
 
   const sidePanelPageComponent =
     isDefined(rawPageComponent) && React.isValidElement(rawPageComponent)
@@ -124,9 +108,11 @@ export const SidePanelRouter = () => {
                 displayType="listItem"
                 containerType={CommandMenuItemContainerType.CommandMenuList}
               >
-                <SidePanelSubPageRouter>
-                  {sidePanelPageComponent}
-                </SidePanelSubPageRouter>
+                {!shouldSkipPageLayoutPage && (
+                  <SidePanelSubPageRouter>
+                    {sidePanelPageComponent}
+                  </SidePanelSubPageRouter>
+                )}
               </CommandMenuContextProvider>
             </StyledSidePanelContent>
           </WorkspaceSurfaceHeaderPortalContext.Provider>

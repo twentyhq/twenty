@@ -5,6 +5,7 @@ import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelM
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
+import { useIsPageLayoutSidePanelTargetAvailable } from '@/side-panel/pages/page-layout/hooks/useIsPageLayoutSidePanelTargetAvailable';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPages } from 'twenty-shared/types';
 
@@ -15,6 +16,9 @@ type SidePanelPageInfoProps = {
 };
 
 export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
+  const isPageLayoutSidePanelTargetAvailable =
+    useIsPageLayoutSidePanelTargetAvailable();
+
   if (!isDefined(pageChip)) {
     return null;
   }
@@ -40,7 +44,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     ? isPageLayoutSidePanelPage(pageChip.page.page)
     : false;
 
-  if (isPageLayoutPage) {
+  if (isPageLayoutPage && isPageLayoutSidePanelTargetAvailable) {
     return <SidePanelPageLayoutInfo />;
   }
 
