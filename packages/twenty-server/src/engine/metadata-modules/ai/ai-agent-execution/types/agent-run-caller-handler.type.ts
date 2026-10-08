@@ -2,7 +2,7 @@ import { type AgentRunSummary } from 'twenty-shared/ai';
 
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
-import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
+import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 
 export type AgentRunCallerHandler = {
@@ -10,9 +10,7 @@ export type AgentRunCallerHandler = {
     input: AgentRunCallerInput,
   ): Promise<AgentRunExecutionContext>;
 
-  getWaitingState(
-    input: AgentRunCallerInput,
-  ): Promise<AgentRunCallerWaitingState>;
+  getWaitingState(input: AgentRunCallerInput): Promise<OwnerWaitingState>;
 
   // absent for a caller that only records the run, whose outcome is already in its conversation
   onOutcome?(

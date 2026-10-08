@@ -2,9 +2,10 @@ import { StepStatus } from 'twenty-shared/workflow';
 
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
-import { WorkflowStepPendingWakeUpHandlerWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-pending-wake-up-handler.workspace-service';
+import { WorkflowWaitingStepWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-waiting-step.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
@@ -83,11 +84,14 @@ const buildService = ({
 
   const registry = new PendingWakeUpOwnerHandlerRegistryService();
 
-  new WorkflowStepPendingWakeUpHandlerWorkspaceService(
+  new WorkflowWaitingStepWorkspaceService(
+    new AgentRunCallerHandlerRegistryService(),
     registry,
     pendingWakeUpService as never,
     workflowRunWorkspaceService as never,
+    {} as never,
     workflowExecutionContextService as never,
+    {} as never,
     messageQueueService as never,
   ).onModuleInit();
 
@@ -106,7 +110,7 @@ const buildService = ({
   };
 };
 
-describe('WorkflowStepPendingWakeUpHandlerWorkspaceService', () => {
+describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
   it('does nothing when the wait was already resolved or cancelled', async () => {
     const { service, workflowRunWorkspaceService, messageQueueService } =
       buildService({ storedWait: null });
