@@ -1,8 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { type ConnectedAccountGroup } from '@/settings/accounts/types/ConnectedAccountGroup';
-import { getConnectedAccountSettingsChannels } from '@/settings/accounts/utils/getConnectedAccountSettingsChannels';
+import { type ConnectedAccountGroup } from '@/settings/consolidated-accounts/types/ConnectedAccountGroup';
+import { getConnectedAccountSettingsChannels } from '@/settings/consolidated-accounts/utils/getConnectedAccountSettingsChannels';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';

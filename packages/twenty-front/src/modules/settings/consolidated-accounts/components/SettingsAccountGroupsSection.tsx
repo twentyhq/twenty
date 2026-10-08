@@ -1,7 +1,7 @@
-import { SettingsAccountGroupTableRow } from '@/settings/accounts/components/SettingsAccountGroupTableRow';
+import { SettingsAccountGroupTableRow } from '@/settings/consolidated-accounts/components/SettingsAccountGroupTableRow';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/accounts/constants/SettingsAccountGroupTableGridTemplateColumns';
-import { useMyAccountGroups } from '@/settings/accounts/hooks/useMyAccountGroups';
+import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/consolidated-accounts/constants/SettingsAccountGroupTableGridTemplateColumns';
+import { useMyAccountGroups } from '@/settings/consolidated-accounts/hooks/useMyAccountGroups';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';

@@ -1,6 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { groupConnectedAccountsByNativeAccount } from '@/settings/accounts/utils/groupConnectedAccountsByNativeAccount';
+import { groupConnectedAccountsByNativeAccount } from '@/settings/consolidated-accounts/utils/groupConnectedAccountsByNativeAccount';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 

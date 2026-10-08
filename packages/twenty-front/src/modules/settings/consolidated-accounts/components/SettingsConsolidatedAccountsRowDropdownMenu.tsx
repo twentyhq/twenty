@@ -16,9 +16,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   IconAt,
-  IconCalendarEvent,
   IconDotsVertical,
-  IconMail,
   IconPlayerPlay,
   IconRefresh,
   IconTrash,
@@ -27,17 +25,17 @@ import {
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Link } from 'react-router-dom';
-import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
-import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
-import { isConnectedAccountEligibleForProviderReconnect } from '../utils/isConnectedAccountEligibleForProviderReconnect';
+import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
+import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
+import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
 
-type SettingsAccountsRowDropdownMenuProps = {
+type SettingsConsolidatedAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
 
-export const SettingsAccountsRowDropdownMenu = ({
+export const SettingsConsolidatedAccountsRowDropdownMenu = ({
   account,
-}: SettingsAccountsRowDropdownMenuProps) => {
+}: SettingsConsolidatedAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
   const deleteAccountModalId = `delete-account-modal-${account.id}`;
   const disconnectAccountModalId = `disconnect-account-modal-${account.id}`;
@@ -121,18 +119,6 @@ export const SettingsAccountsRowDropdownMenu = ({
                 }
               >{t`Connection settings`}</Dropdown.ActionItem>
             )}
-            <Dropdown.ActionItem
-              startIcon={<IconMail />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
-              }
-            >{t`Emails settings`}</Dropdown.ActionItem>
-            <Dropdown.ActionItem
-              startIcon={<IconCalendarEvent />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsCalendars)} />
-              }
-            >{t`Calendar settings`}</Dropdown.ActionItem>
             {isEligibleForProviderReconnect && (
               <Dropdown.ActionItem
                 startIcon={<IconRefresh />}

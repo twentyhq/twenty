@@ -1,4 +1,4 @@
-import { SettingsAccountGroupsSection } from '@/settings/accounts/components/SettingsAccountGroupsSection';
+import { SettingsAccountGroupsSection } from '@/settings/consolidated-accounts/components/SettingsAccountGroupsSection';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';

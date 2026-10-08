@@ -3,6 +3,7 @@ import { fn } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -217,6 +218,18 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
+  graphql.query('FindManyBlocklists', () =>
+    HttpResponse.json({
+      data: {
+        blocklists: {
+          __typename: 'BlocklistConnection',
+          edges: [],
+          pageInfo: getEmptyPageInfo(),
+          totalCount: 0,
+        },
+      },
+    }),
+  ),
   ...graphqlMocks.handlers,
 ];
 
