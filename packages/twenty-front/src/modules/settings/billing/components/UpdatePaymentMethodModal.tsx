@@ -56,9 +56,9 @@ export const UpdatePaymentMethodModal = ({
 
   return (
     <DialogInstance dialogId={modalInstanceId} dismissible renderInDocumentBody>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          {...{ onKeyDown }}
           size="md"
           data-globally-prevent-click-outside
           style={{

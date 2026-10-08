@@ -605,6 +605,8 @@ Front components can trigger navigation, modals, and notifications using functio
 | `updateProgress(progress)`                         | Update a progress indicator                                                                                                                                                                  |
 | `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
+Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for dialogs. It accepts structured title, subtitle and button options, and resolves to `'confirm'` or `'cancel'`. Twenty owns the modal, focus management and page scrolling. Front components must not render `Dialog`, `AlertDialog`, native `dialog` elements or native browser popovers directly. Supplying a local portal container does not make direct app-owned modality supported.
+
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx
@@ -888,12 +890,14 @@ These entry points do not require `monaco-editor`.
 | `twenty-ui/primitives/input`         | Buttons and form controls                                                  |
 | `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                             |
 | `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                         |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                              |
+| `twenty-ui/primitives/surfaces`      | Cards, menus, nonmodal popovers, and tooltips                              |
 | `twenty-ui/primitives/typography`    | Text and headings                                                          |
 | `twenty-ui/icon`                     | `Icon*` components (e.g. `IconCheck`)                                      |
 | `twenty-ui/theme`                    | `ThemeProvider`, `themeCssVariables`                                       |
 
 Use [`Dropdown`](/ui/components/navigation/dropdown) for action menus, option pickers, and form panels.
+
+The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

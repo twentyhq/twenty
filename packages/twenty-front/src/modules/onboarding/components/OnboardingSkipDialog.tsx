@@ -58,9 +58,9 @@ export const OnboardingSkipDialog = ({
 
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          {...{ onKeyDown }}
           size="compact"
           initialFocus={firstActionRef}
           finalFocus={finalFocus}

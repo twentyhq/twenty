@@ -278,9 +278,9 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         dismissible
         onClose={() => setTransferSubdomain('')}
       >
-        {({ container, backdrop, viewportProps, onKeyDown }) => (
+        {({ onKeyDown }) => (
           <Dialog.Popup
-            {...{ container, backdrop, viewportProps, onKeyDown }}
+            {...{ onKeyDown }}
             data-globally-prevent-click-outside
             style={{
               padding: 'var(--t-spacing-6)',

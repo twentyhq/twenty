@@ -47,6 +47,7 @@ import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDesc
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
+import { DIALOG_PORTAL_PROP_DESCRIPTIONS } from './dialogPortalPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
 import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
@@ -419,9 +420,49 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
     partPropDescriptions: {
+      Root: {
+        children:
+          'Parts or a render function receiving the active trigger payload. Root renders no DOM node.',
+        handle: 'Connects detached triggers and imperative dialog actions.',
+        onOpenChange:
+          'Receives the requested state and Base UI event details, including reason, event, trigger and cancel().',
+      },
+      Trigger: {
+        ref: 'Ref to the trigger button, or the element supplied through render.',
+      },
+      Portal: DIALOG_PORTAL_PROP_DESCRIPTIONS,
+      Backdrop: {
+        ref: 'Ref to the backdrop div, or the element supplied through render.',
+        forceRender: 'Renders the backdrop even when this dialog is nested.',
+      },
+      Viewport: {
+        ref: 'Ref to the viewport div, or the element supplied through render.',
+        children:
+          'Popup and any other content within the positioning viewport.',
+      },
       Popup: DIALOG_POPUP_PROP_DESCRIPTIONS,
       Title: DIALOG_TITLE_PROP_DESCRIPTIONS,
+      Description: {
+        ref: 'Ref to the description paragraph, or the element supplied through render.',
+      },
+      Close: {
+        ref: 'Ref to the close button, or the element supplied through render.',
+      },
     },
   },
   {

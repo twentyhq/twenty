@@ -105,10 +105,10 @@ export const SettingsApplicationScreenshotLightbox = ({
       onClose={onClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={displayName}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          {...{ onKeyDown }}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >

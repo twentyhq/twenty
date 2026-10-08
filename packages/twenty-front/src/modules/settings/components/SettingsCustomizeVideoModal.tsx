@@ -123,10 +123,10 @@ export const SettingsCustomizeVideoModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={activeTab.title}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          {...{ onKeyDown }}
           size="lg"
           style={{ padding: 0 }}
         >

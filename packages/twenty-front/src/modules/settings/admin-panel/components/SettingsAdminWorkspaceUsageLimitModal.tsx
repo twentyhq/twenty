@@ -198,9 +198,9 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          {...{ onKeyDown }}
           size="md"
           data-globally-prevent-click-outside
           style={{
