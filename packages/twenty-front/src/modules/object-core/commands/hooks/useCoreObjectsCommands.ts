@@ -95,7 +95,10 @@ export const useCoreObjectsCommands = () => {
     isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
       ? {
           label: getSelectedRecordsCountLabel({
-            objectMetadataItem: workflowObjectMetadataItem,
+            objectMetadataItem: {
+              labelSingular: t`Workflow`,
+              labelPlural: t`Workflows`,
+            },
             numberOfSelectedRecords: selectedCoreWorkflowIds.length,
           }),
         }
