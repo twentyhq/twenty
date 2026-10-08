@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -32,15 +33,13 @@ export const Textarea = ({
   rows,
   ...props
 }: TextareaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const mergedRef = useMemo(() => mergeRefs(ref, textareaRef), [ref]);
+  const [textarea, setTextarea] = useState<HTMLTextAreaElement | null>(null);
+  const mergedRef = useMemo(() => mergeRefs(ref, setTextarea), [ref]);
   const isControlled = isDefined(value);
   const consumerBlockSize = style?.blockSize;
   const wasAutoResize = useRef(false);
 
   useLayoutEffect(() => {
-    const textarea = textareaRef.current;
-
     if (!isDefined(textarea)) {
       return;
     }
@@ -56,10 +55,9 @@ export const Textarea = ({
     if (shouldRestoreBlockSize) {
       textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
     }
-  }, [autoResize, value, maxRows, rows, size, consumerBlockSize]);
+  }, [textarea, autoResize, value, maxRows, rows, size, consumerBlockSize]);
 
   useLayoutEffect(() => {
-    const textarea = textareaRef.current;
     if (!autoResize || !isDefined(textarea)) {
       return;
     }
@@ -67,11 +65,7 @@ export const Textarea = ({
     let isActive = true;
     const handleReset = (event: Event) => {
       queueMicrotask(() => {
-        if (
-          isActive &&
-          !event.defaultPrevented &&
-          textareaRef.current === textarea
-        ) {
+        if (isActive && !event.defaultPrevented) {
           resizeTextareaToContent(textarea);
         }
       });
@@ -87,7 +81,7 @@ export const Textarea = ({
       form?.removeEventListener('reset', handleReset);
       stopObservingWidth?.();
     };
-  }, [autoResize, props.form]);
+  }, [textarea, autoResize, props.form]);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (autoResize && !isControlled) {

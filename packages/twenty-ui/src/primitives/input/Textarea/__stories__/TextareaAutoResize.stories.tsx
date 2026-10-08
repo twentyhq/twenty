@@ -59,6 +59,34 @@ const TextareaResizeExample = ({ style, ...props }: TextareaProps) => {
   );
 };
 
+const ReplaceableTextareaResizeExample = () => {
+  const [controlKey, setControlKey] = useState(0);
+  const [width, setWidth] = useState(240);
+
+  return (
+    <form>
+      <Textarea
+        aria-label="Notes"
+        autoResize
+        rows={1}
+        defaultValue="One line of notes that wraps at a narrower width."
+        style={{ width }}
+        render={(props) => <textarea key={controlKey} {...props} />}
+      />
+      <Button
+        type="button"
+        onClick={() => setControlKey((previousKey) => previousKey + 1)}
+      >
+        Replace notes control
+      </Button>
+      <Button type="button" onClick={() => setWidth(120)}>
+        Narrow notes
+      </Button>
+      <Button type="reset">Reset notes</Button>
+    </form>
+  );
+};
+
 const meta: Meta<typeof Textarea> = {
   title: 'UI/Input/Textarea/Auto resize',
   component: Textarea,
@@ -197,5 +225,32 @@ export const MaximumRowsChange: Story = {
       canvas.getByRole('button', { name: 'Expand row limit' }),
     );
     await expect(textarea.clientHeight).toBe(initialHeight);
+  },
+};
+
+export const RenderedControlReplacement: Story = {
+  render: () => <ReplaceableTextareaResizeExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const originalTextarea = canvas.getByRole('textbox', { name: 'Notes' });
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Replace notes control' }),
+    );
+    const textarea = canvas.getByRole('textbox', { name: 'Notes' });
+    expect(textarea).not.toBe(originalTextarea);
+    expect(originalTextarea).not.toBeInTheDocument();
+    const replacementHeight = textarea.clientHeight;
+    await userEvent.click(canvas.getByRole('button', { name: 'Narrow notes' }));
+    await waitFor(() =>
+      expect(textarea.clientHeight).toBeGreaterThan(replacementHeight),
+    );
+    const narrowedHeight = textarea.clientHeight;
+    await userEvent.type(textarea, '{enter}Second{enter}Third');
+    expect(textarea.clientHeight).toBeGreaterThan(narrowedHeight);
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset notes' }));
+    expect(textarea).toHaveValue(
+      'One line of notes that wraps at a narrower width.',
+    );
+    await waitFor(() => expect(textarea.clientHeight).toBe(narrowedHeight));
   },
 };
