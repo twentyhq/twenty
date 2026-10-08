@@ -204,6 +204,7 @@ export class ClientConfigService {
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,
@@ -240,11 +241,6 @@ export class ClientConfigService {
             inviteTeamCreditsRewardPerUser: toDisplayCredits(
               this.twentyConfigService.get(
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-              ),
-            ),
-            installAppsCreditsReward: toDisplayCredits(
-              this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
               ),
             ),
             createProfileCreditsReward: toDisplayCredits(

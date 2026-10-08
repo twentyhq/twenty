@@ -4,16 +4,14 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import {
-  Dropdown,
-  InlineBanner,
-  SearchInput,
-  Section,
-  SettingsRow,
-} from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
 const StyledSearchInputContainer = styled.div`
@@ -148,10 +146,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
           {!showVettedOnly && nonVettedApplications.length > 0 && (
             <StyledNotVettedContainer>
-              <InlineBanner
-                color={'danger'}
-                message={t`Applications below are not vetted. Use at your own risk.`}
-              />
+              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
                 {nonVettedApplications.map((application) => (
                   <SettingsAvailableApplicationCard

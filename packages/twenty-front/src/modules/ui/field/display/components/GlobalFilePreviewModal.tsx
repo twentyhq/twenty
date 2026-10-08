@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type JSX, lazy, Suspense, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const DocumentViewer = lazy(() =>
@@ -104,10 +104,10 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={filePreview.label ?? t`File preview`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
           style={{ padding: 'var(--t-spacing-4)' }}
         >

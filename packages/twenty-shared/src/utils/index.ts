@@ -32,6 +32,8 @@ export { safeGetNestedProperty } from './command-menu-items/safeGetNestedPropert
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
+export { convertCurrencyAmountToCurrencyMicros } from './currency/convertCurrencyAmountToCurrencyMicros';
+export { convertCurrencyMicrosToCurrencyAmount } from './currency/convertCurrencyMicrosToCurrencyAmount';
 export {
   NON_ISO_DATE_FORMATS,
   ACCEPTED_DATE_FORMATS,
@@ -66,6 +68,7 @@ export {
   computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
+export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldMetadataEligibleForFieldsWidget';

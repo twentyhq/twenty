@@ -31,20 +31,21 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
-import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import {
   AiException,
   AiExceptionCode,
@@ -90,9 +91,10 @@ export class AgentChatStreamingService {
     private readonly metricsService: MetricsService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly actorService: AgentChatActorService,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentRunConversationService: AgentRunConversationService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
   async tryClaimStream({
@@ -120,7 +122,17 @@ export class AgentChatStreamingService {
     return true;
   }
 
-  async streamAgentChat({
+  // a message that lands while a run goes on in the conversation would be read by that run once it
+  // goes on after a wait, so it is let in only between runs
+  streamAgentChat(options: StreamAgentChatOptions) {
+    return this.agentRunConversationService.withThreadLockForMessage({
+      workspaceId: options.workspace.id,
+      threadId: options.thread.id,
+      work: () => this.startOrQueueMessage(options),
+    });
+  }
+
+  private async startOrQueueMessage({
     thread,
     userWorkspaceId,
     workspaceMemberId,
@@ -614,8 +626,8 @@ export class AgentChatStreamingService {
     );
   }
 
-  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
-  // an answer holding the stream keeps them, and workflow-step calls gate the run, so a chat message never closes them
+  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why.
+  // An answer holding the stream keeps them, and a chat message never closes calls a run or a caller waits on
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -628,41 +640,23 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
+    await this.agentRunSuspensionService.assertConversationNotSuspended({
+      workspaceId,
+      threadId: thread.id,
+    });
+
     if (!isDefined(messageId)) {
       return;
     }
 
-    if (await this.isAwaitingWorkflowStep({ messageId, workspaceId })) {
-      throw new AiException(
-        'This conversation is waiting on an answer to its workflow run',
-        AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
-      );
-    }
-
-    await this.agentChatService.closePendingToolCalls({
+    // the member moved on from the question, which ends the turn that asked it
+    await this.threadLifecycleService.closePendingQuestion({
+      workspaceId,
       threadId: thread.id,
       messageId,
-      workspaceId,
-      where: { activeStreamId: IsNull() },
+      activeStreamId: null,
+      turnStatus: AgentTurnStatus.COMPLETED,
     });
-  }
-
-  // a call a workflow step posted gates that step until it is answered
-  private async isAwaitingWorkflowStep({
-    messageId,
-    workspaceId,
-  }: {
-    messageId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const parts = await this.messagePartRepository.find(workspaceId, {
-      where: { messageId },
-      select: ['id', 'toolOutput'],
-    });
-
-    return parts.some((part) =>
-      isDefined(readToolCallWorkflowStep(part.toolOutput)),
-    );
   }
 
   private async enqueueStreamJob({

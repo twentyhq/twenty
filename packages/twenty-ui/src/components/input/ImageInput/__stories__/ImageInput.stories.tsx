@@ -7,7 +7,8 @@ import { ImageInput } from '../ImageInput';
 import { IMAGE_INPUT_PREVIEW_URL } from './imageInputPreviewUrl';
 
 const meta: Meta<typeof ImageInput> = {
-  title: 'UI/Input/ImageInput',
+  id: 'ui-input-imageinput',
+  title: 'UI/Components/Input/ImageInput',
   component: ImageInput,
   args: { onUpload: fn(), onRemove: fn() },
   decorators: [ComponentDecorator],

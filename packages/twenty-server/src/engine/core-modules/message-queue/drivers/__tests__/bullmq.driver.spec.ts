@@ -1,5 +1,6 @@
 import { type Job, Worker } from 'bullmq';
 
+import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -9,6 +10,7 @@ const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
+const mockGetJobCountByTypes = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -18,6 +20,7 @@ jest.mock('bullmq', () => ({
     addBulk: mockAddBulk,
     setGlobalConcurrency: mockSetGlobalConcurrency,
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
+    getJobCountByTypes: mockGetJobCountByTypes,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -194,6 +197,215 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver job change events', () => {
+  const eventEmitter = { emit: jest.fn() };
+  const driver = new BullMQDriver(
+    {} as never,
+    { recordHistogram: jest.fn() } as never,
+    {} as never,
+    eventEmitter as never,
+  );
+
+  driver.register(MessageQueue.workspaceQueue);
+
+  const getWorkerListener = (eventName: string) => {
+    driver.work(MessageQueue.workspaceQueue, async () => {});
+
+    const workerInstances = jest.mocked(Worker).mock.results;
+    const worker = workerInstances[workerInstances.length - 1]
+      .value as unknown as { on: jest.Mock };
+    const listener = worker.on.mock.calls.find(
+      ([name]: [string, unknown]) => name === eventName,
+    )?.[1];
+
+    if (typeof listener !== 'function') {
+      throw new Error(`No ${eventName} listener registered on the worker`);
+    }
+
+    return listener;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('forwards a progress update of a broadcast job as an active job change', () => {
+    const onProgress = getWorkerListener('progress');
+
+    onProgress(
+      {
+        id: 'job-id',
+        data: {},
+        opts: { broadcastTo: { workspaceId: 'workspace-id' } },
+        attemptsMade: 0,
+        progress: 40,
+        timestamp: 1,
+      } as unknown as Job,
+      40,
+    );
+
+    expect(eventEmitter.emit).toHaveBeenCalledWith(QUEUE_JOB_CHANGED_EVENT, {
+      queueName: MessageQueue.workspaceQueue,
+      job: expect.objectContaining({
+        id: 'job-id',
+        state: 'active',
+        progress: 40,
+        broadcastTo: { workspaceId: 'workspace-id' },
+      }),
+    });
+  });
+
+  it('ignores progress updates of jobs without recipients', () => {
+    const onProgress = getWorkerListener('progress');
+
+    onProgress(
+      {
+        id: 'job-id',
+        data: {},
+        opts: {},
+        attemptsMade: 0,
+        progress: 40,
+        timestamp: 1,
+      } as unknown as Job,
+      40,
+    );
+
+    expect(eventEmitter.emit).not.toHaveBeenCalled();
+  });
+});
+
+describe('BullMQDriver queue wait metric', () => {
+  const recordHistogram = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { recordHistogram } as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.workflowQueue);
+
+  const processJob = async (
+    job: Pick<Job, 'opts' | 'timestamp' | 'attemptsStarted'>,
+  ) => {
+    jest.clearAllMocks();
+    driver.work(MessageQueue.workflowQueue, jest.fn());
+
+    const processor = jest.mocked(Worker).mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await processor({
+      id: 'job-id',
+      name: 'job',
+      data: {},
+      updateData: jest.fn(),
+      updateProgress: jest.fn(),
+      ...job,
+    } as unknown as Job);
+  };
+
+  beforeAll(() => {
+    jest.setSystemTime(1_700_000_000_000);
+  });
+
+  it('records the wait net of the scheduled delay', async () => {
+    await processJob({
+      opts: { delay: 60_000 },
+      timestamp: Date.now() - 62_000,
+      attemptsStarted: 1,
+    });
+
+    expect(recordHistogram).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: 2_000,
+        attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
+      }),
+    );
+  });
+
+  it('records no wait for a job picked up before its scheduled delay elapsed', async () => {
+    await processJob({
+      opts: { delay: 60_000 },
+      timestamp: Date.now() - 30_000,
+      attemptsStarted: 1,
+    });
+
+    expect(recordHistogram).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 0 }),
+    );
+  });
+
+  it('does not sample the wait of a re-run after a retry or a stall', async () => {
+    await processJob({
+      opts: {},
+      timestamp: Date.now() - 120_000,
+      attemptsStarted: 2,
+    });
+
+    expect(recordHistogram).not.toHaveBeenCalled();
+  });
+});
+
+describe('BullMQDriver queue job count gauges', () => {
+  const createMultiObservableGauge = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { createMultiObservableGauge } as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.workflowQueue);
+
+  const collectGauge = async (metricName: string) => {
+    const gauge = createMultiObservableGauge.mock.calls
+      .map(([options]) => options)
+      .find((options) => options.metricName === metricName);
+
+    if (!gauge) {
+      throw new Error(`Gauge ${metricName} was not registered`);
+    }
+
+    return gauge.callback();
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetJobCountByTypes.mockImplementation(async (...types: string[]) =>
+      types.includes('delayed') ? 7 : 3,
+    );
+    driver.onModuleInit();
+  });
+
+  it('reports the runnable backlog without the delayed jobs', async () => {
+    await expect(
+      collectGauge('twenty_queue_jobs_waiting_total'),
+    ).resolves.toEqual([
+      { value: 3, attributes: { queue: MessageQueue.workflowQueue } },
+    ]);
+
+    expect(mockGetJobCountByTypes).toHaveBeenCalledWith(
+      'waiting',
+      'prioritized',
+      'paused',
+      'waiting-children',
+    );
+  });
+
+  it('reports the delayed jobs on their own gauge', async () => {
+    await expect(
+      collectGauge('twenty_queue_jobs_delayed_total'),
+    ).resolves.toEqual([
+      { value: 7, attributes: { queue: MessageQueue.workflowQueue } },
+    ]);
+
+    expect(mockGetJobCountByTypes).toHaveBeenCalledWith('delayed');
+  });
 });
 
 describe('BullMQDriver global concurrency', () => {

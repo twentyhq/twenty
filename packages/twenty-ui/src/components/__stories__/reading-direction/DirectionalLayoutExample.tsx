@@ -10,7 +10,7 @@ import {
 import { ListItem } from '@ui/primitives/navigation';
 import { Text } from '@ui/primitives/typography';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 
 export const DirectionalLayoutExample = ({
   direction,
@@ -18,7 +18,7 @@ export const DirectionalLayoutExample = ({
   direction: 'ltr' | 'rtl';
 }) => {
   return (
-    <TextDirectionProvider direction={direction}>
+    <DirectionProvider direction={direction}>
       <div
         dir={direction}
         data-testid={`layout-${direction}`}
@@ -33,7 +33,7 @@ export const DirectionalLayoutExample = ({
       >
         <Text>{direction.toUpperCase()}</Text>
         <Callout
-          variant="info"
+          status="info"
           title="Account details"
           description="Review the information before continuing."
         />
@@ -85,7 +85,7 @@ export const DirectionalLayoutExample = ({
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (
                 <Avatar key={name} name={name} size="lg" />
               ))}
-              overflowCount={2}
+              total={5}
             />
           </div>
         ))}
@@ -107,6 +107,6 @@ export const DirectionalLayoutExample = ({
           shouldExpandNodeInitially={() => true}
         />
       </div>
-    </TextDirectionProvider>
+    </DirectionProvider>
   );
 };

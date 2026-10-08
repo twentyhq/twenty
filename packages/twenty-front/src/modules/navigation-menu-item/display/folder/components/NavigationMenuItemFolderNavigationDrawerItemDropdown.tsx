@@ -7,7 +7,8 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 

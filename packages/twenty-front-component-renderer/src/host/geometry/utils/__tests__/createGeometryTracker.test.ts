@@ -43,6 +43,94 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('should place the portal layer on the root container and follow it on the next frame', () => {
+    const { tracker } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    const portalLayer = document.createElement('div');
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+
+    expect(portalLayer.style.left).toBe('calc(20px / var(--t-zoom, 1))');
+    expect(portalLayer.style.top).toBe('calc(30px / var(--t-zoom, 1))');
+
+    root.setGeometry({ x: 40, y: 50, width: 360, height: 220 });
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.left).toBe('calc(40px / var(--t-zoom, 1))');
+    expect(portalLayer.style.top).toBe('calc(50px / var(--t-zoom, 1))');
+    expect(portalLayer.style.width).toBe('calc(360px / var(--t-zoom, 1))');
+    expect(portalLayer.style.height).toBe('calc(220px / var(--t-zoom, 1))');
+  });
+
+  it('should hide the portal layer while the root container is not interactive', () => {
+    const { tracker } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    root.node.getClientRects = () =>
+      [root.node.getBoundingClientRect()] as unknown as DOMRectList;
+    const portalLayer = document.createElement('div');
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+
+    expect(portalLayer.style.display).toBe('');
+
+    root.node.style.pointerEvents = 'none';
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.display).toBe('none');
+
+    root.node.style.pointerEvents = '';
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.display).toBe('');
+  });
+
+  it('should resume scheduling on scroll only while a portal layer is mounted', () => {
+    const { tracker } = createArmedTracker();
+    tracker.setPortalLayer(document.createElement('div'));
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    tracker.setPortalLayer(null);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('should keep resuming on scroll for a portal layer after the last id is unobserved', () => {
+    const { tracker } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+    tracker.setPortalLayer(document.createElement('div'));
+    tracker.unobserve(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    document.dispatchEvent(new Event('scroll'));
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+  });
+
   it('should find the remote element id of a node through its nearest registered ancestor', () => {
     const tracker = createGeometryTracker();
     const tabList = document.createElement('div');

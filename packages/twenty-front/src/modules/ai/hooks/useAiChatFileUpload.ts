@@ -5,7 +5,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';

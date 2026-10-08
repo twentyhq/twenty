@@ -8,15 +8,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
-import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/types/tool-call-workflow-step.type';
-import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/stamp-pending-tool-parts-with-workflow-step.util';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
@@ -32,6 +31,7 @@ export class AgentConversationWriterService {
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly transactionService: AgentHistoryTransactionService,
+    private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
   ) {}
 
   runInTransaction<TResult>(
@@ -59,14 +59,18 @@ export class AgentConversationWriterService {
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
     const now = new Date().toISOString();
-    const values = {
-      threadId,
-      agentId,
-      status,
-      startedAt: now,
-      endedAt: isAgentTurnStatusFinal(status) ? now : null,
-      ...(isDefined(createdBy) ? { createdBy } : {}),
-    };
+    const values = (await this.upgradeFenceService.hasUpgradedAgentHistory(
+      workspaceId,
+    ))
+      ? {
+          threadId,
+          agentId,
+          status,
+          startedAt: now,
+          endedAt: isAgentTurnStatusFinal(status) ? now : null,
+          ...(isDefined(createdBy) ? { createdBy } : {}),
+        }
+      : { threadId, agentId };
 
     if (isDefined(scope)) {
       const turnId = id ?? randomUUID();
@@ -193,11 +197,13 @@ export class AgentConversationWriterService {
         );
       }
 
-      await transactionScope.update(
-        'agentTurn',
-        { id: turnId },
-        { status: AgentTurnStatus.WAITING_FOR_INPUT, endedAt: null },
-      );
+      if (await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId)) {
+        await transactionScope.update(
+          'agentTurn',
+          { id: turnId },
+          { status: AgentTurnStatus.WAITING_FOR_INPUT, endedAt: null },
+        );
+      }
     };
 
     if (isDefined(scope)) {
@@ -216,7 +222,6 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
-    workflowStep,
     scope,
   }: {
     workspaceId: string;
@@ -224,19 +229,12 @@ export class AgentConversationWriterService {
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
-    workflowStep?: ToolCallWorkflowStep;
     scope?: AgentHistoryTransactionScope;
   }): Promise<{
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
-    const mappedReplyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
-    const replyParts = isDefined(workflowStep)
-      ? stampPendingToolPartsWithWorkflowStep({
-          parts: mappedReplyParts,
-          workflowStep,
-        })
-      : mappedReplyParts;
+    const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
 
     if (replyParts.length === 0) {
       return { isAwaitingAnswer: false, replyParts };

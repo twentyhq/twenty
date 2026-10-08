@@ -42,7 +42,7 @@ export default defineApplication({
 Notes:
 - `universalIdentifier` fields are UUIDs you generate once and own. Keep them stable across syncs. The application's own `universalIdentifier` must be a valid UUID: the server rejects a manifest whose identifier is not one. It is unique across the whole instance and is bound to the workspace that owns its registration, so only that workspace can sync the app — see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - `applicationVariables` accept an optional `label` — a user-friendly name displayed in the app's settings page instead of the raw variable key.
-- `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
+- `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables. A variable with `scope: 'USER'` holds the value of the member the code runs for: see [Workspace and user variables](#workspace-and-user-variables).
 - Your app can also read and update its own variable values at runtime, which is how a custom settings component saves what the user typed: see [Reading and updating variables at runtime](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). An application only ever reaches its own variables, in its own workspace.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
 - Pre-install, post-install, and uninstall functions, and the health check, are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
@@ -127,6 +127,65 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 ```
 
 The same applies to front components reading values via `getApplicationVariable('VARIABLE_NAME')` — the returned value is a string; parse it as needed.
+
+## Workspace and user variables
+
+Each application variable has a `scope`:
+
+- **`WORKSPACE`** (default): one value for the whole workspace, set by a member who can manage apps.
+- **`USER`**: each member keeps their own value.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    RECORD_MY_MEETINGS: {
+      universalIdentifier: '0b6f3c1e-8a2d-4f57-9c1b-7e4d2a9f6c30',
+      label: 'Record my meetings',
+      type: FieldType.BOOLEAN,
+      value: true,
+      scope: 'USER',
+    },
+  },
+});
+```
+
+A user variable's `value` is its default: a member who has not set their own reads it, and a new version of your app can change it. A secret variable cannot have a default. Without one, a member who has not set theirs reads an empty string, so your app decides what an unset value means.
+
+A workspace admin cannot set a value for a user variable: its values belong to each member.
+
+A variable's scope is set when it is created and cannot change. To change it, declare the variable with a new `universalIdentifier`: the sync deletes the old variable, with its members' values, and creates the new one.
+
+User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
+
+For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
+
+A user variable is injected with the value of the member your code runs for, or its default until they set their own:
+
+- In a logic function, `process.env` holds the values of the member who triggered the run, the same member `TWENTY_APP_ACCESS_TOKEN` acts as. A run with nobody behind it, such as a cron job or an install hook, gets no user variables at all.
+- In a front component, `getApplicationVariable` returns the values of the member viewing it. Secret user variables are left out, like secret workspace variables.
+
+The member who triggered a run is not always the member it is about: a database event runs as whoever edited the record. When a run is about someone else, or about every member, read the values with `myUserApplicationVariables` through `MetadataApiClient`. It lists every member with their values of your app's user variables, and works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId`, `workspaceMemberId` and `variables`: each user variable's declaration (`label`, `description`, `type`, `options`, `isSecret`, `isRequired`, `isDeprecated`) and the member's value, or the default until they set their own. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's entry, with secrets masked.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+// In a logic function, for example a cron job
+const client = new MetadataApiClient({ runAs: 'application' });
+
+const { myUserApplicationVariables } = await client.query({
+  myUserApplicationVariables: {
+    workspaceMemberId: true,
+    variables: { key: true, value: true },
+  },
+});
+```
+
+Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
+
+A member saves their own value with `updateMyUserApplicationVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
 
 ## Default function role
 

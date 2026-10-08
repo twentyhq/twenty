@@ -23,6 +23,7 @@ import {
   OpenRecordIn,
   SidePanelPages,
   type EnqueueSnackbarParams,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -50,7 +51,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
 import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FileFolder } from '~/generated-metadata/graphql';
@@ -122,6 +123,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  selectedRecordsFilter,
   objectNameSingular,
   timelineActivityId,
   toolCall,
@@ -131,6 +133,7 @@ export const useFrontComponentExecutionContext = ({
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  selectedRecordsFilter?: RecordGqlOperationFilter | null;
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
@@ -436,6 +439,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    selectedRecordsFilter: selectedRecordsFilter ?? null,
     selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
       ? {
           id: selectedObjectMetadataItem.id,
