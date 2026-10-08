@@ -10,6 +10,7 @@ import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/Fr
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
@@ -59,7 +60,7 @@ export const FrontComponentRenderer = ({
   applicationVariables,
   storageNamespace,
   executionContext,
-  frontComponentHostCommunicationApi,
+  frontComponentHostCommunicationApi = FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP,
   mediaSessionHost,
   onError,
   colorScheme,
