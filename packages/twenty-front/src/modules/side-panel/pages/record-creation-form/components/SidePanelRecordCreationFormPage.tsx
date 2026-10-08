@@ -1,3 +1,4 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -24,7 +25,7 @@ import { useValidationRules } from '@/validation-rules/hooks/useValidationRules'
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
-import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
+import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/getValidationRuleViolationsFromError';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -34,6 +35,7 @@ import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -112,6 +114,7 @@ const SidePanelRecordCreationForm = ({
   const theme = useTheme();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
+  const { enqueueToast } = useToast();
 
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
@@ -237,8 +240,21 @@ const SidePanelRecordCreationForm = ({
         }),
       });
 
+      if (!isDefined(error)) {
+        return;
+      }
+
+      const serverViolations = getValidationRuleViolationsFromError(error);
+
+      setValidationRuleViolations(serverViolations);
+
+      if (serverViolations.length === 0) {
+        enqueueToast(getToastOptionsFromError({ error }));
+        return;
+      }
+
       revealHiddenFieldsIfTargeted(
-        getValidationRuleViolationFieldMetadataIdsFromError(error),
+        serverViolations.map((violation) => violation.fieldMetadataId),
       );
     } finally {
       setIsSubmitting(false);
