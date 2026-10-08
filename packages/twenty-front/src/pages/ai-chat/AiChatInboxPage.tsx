@@ -133,8 +133,14 @@ const AiChatInboxPageContent = () => {
   const isListShown = isSplitView || !isDefined(selectedThreadId);
   const isSelectionPaneShown = isSplitView && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
+  // Split view always has a chat beside the list
+  const firstThreadToOpen =
+    isSplitView && !isDefined(selectedThreadId) ? threads.at(0) : undefined;
   const isEmptyPaneShown =
-    isSplitView && !isDefined(selectedThreadId) && !isSelectionShown;
+    isSplitView &&
+    !isDefined(selectedThreadId) &&
+    !isSelectionShown &&
+    !isDefined(firstThreadToOpen);
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
@@ -145,8 +151,15 @@ const AiChatInboxPageContent = () => {
       <AiChatInboxSelectionEffect
         selectedThreadId={selectedThreadId}
         threads={threads}
-        shouldSelectFirstThread={isSplitView}
       />
+      {isDefined(firstThreadToOpen) && (
+        <Navigate
+          to={getAppPath(AppPath.AiChatInbox, {
+            threadId: firstThreadToOpen.id,
+          })}
+          replace
+        />
+      )}
       {/* The selection takes the place of the chat on screen, so the command
       menu acts on it */}
       {isSelectionShown && !isThreadShown && (
