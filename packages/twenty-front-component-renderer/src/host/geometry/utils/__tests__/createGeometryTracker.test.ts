@@ -94,6 +94,43 @@ describe('createGeometryTracker', () => {
     expect(portalLayer.style.display).toBe('');
   });
 
+  it('should resume scheduling on scroll only while a portal layer is mounted', () => {
+    const { tracker } = createArmedTracker();
+    tracker.setPortalLayer(document.createElement('div'));
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    tracker.setPortalLayer(null);
+
+    document.dispatchEvent(new Event('scroll'));
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+  });
+
+  it('should keep resuming on scroll for a portal layer after the last id is unobserved', () => {
+    const { tracker } = createArmedTracker();
+    const stub = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    tracker.registerNode('1', stub.node);
+    tracker.observe(['1']);
+    tracker.setPortalLayer(document.createElement('div'));
+    tracker.unobserve(['1']);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    document.dispatchEvent(new Event('scroll'));
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+  });
+
   it('should find the remote element id of a node through its nearest registered ancestor', () => {
     const tracker = createGeometryTracker();
     const tabList = document.createElement('div');

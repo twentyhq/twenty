@@ -9,6 +9,7 @@ import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalM
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
 
 const MAXIMUM_MENU_TRIGGER_GAP = 16;
+const WIDGET_SCROLL_OFFSET = 40;
 
 const waitForGeometryTrackerToIdle = () =>
   waitForAnimationFrames(GEOMETRY_IDLE_FRAME_THRESHOLD * 2);
@@ -124,6 +125,16 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   const scrollFrame = canvas.getByRole('region', {
     name: 'Widget scroll frame',
   });
+  await waitForGeometryTrackerToIdle();
+  scrollFrame.scrollTop = WIDGET_SCROLL_OFFSET;
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+  );
+  scrollFrame.scrollTop = 0;
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+  );
+
   await expectPortalActionHiddenWhileScrollFrameStyleIsNone({
     scrollFrame,
     propertyName: 'display',

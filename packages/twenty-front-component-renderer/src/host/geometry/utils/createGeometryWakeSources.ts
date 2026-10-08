@@ -74,6 +74,15 @@ export const createGeometryWakeSources = (
     onWake();
   };
 
+  const syncScrollListener = (): void => {
+    if (areElementSourcesAttached || arePortalLayerSourcesAttached) {
+      document.addEventListener('scroll', handleScroll, true);
+      return;
+    }
+
+    document.removeEventListener('scroll', handleScroll, true);
+  };
+
   const resolveResizeObserver = (): ResizeObserver | null => {
     if (isDefined(resizeObserver) || typeof ResizeObserver !== 'function') {
       return resizeObserver;
@@ -179,8 +188,7 @@ export const createGeometryWakeSources = (
     }
 
     areElementSourcesAttached = true;
-
-    document.addEventListener('scroll', handleScroll, true);
+    syncScrollListener();
 
     for (const eventType of ANIMATION_EVENT_TYPES) {
       document.addEventListener(eventType, handleAnimationEvent, true);
@@ -197,8 +205,7 @@ export const createGeometryWakeSources = (
     }
 
     areElementSourcesAttached = false;
-
-    document.removeEventListener('scroll', handleScroll, true);
+    syncScrollListener();
 
     for (const eventType of ANIMATION_EVENT_TYPES) {
       document.removeEventListener(eventType, handleAnimationEvent, true);
@@ -219,6 +226,7 @@ export const createGeometryWakeSources = (
     }
 
     arePortalLayerSourcesAttached = true;
+    syncScrollListener();
 
     if (isDefined(rootContainer)) {
       observeRootAncestorMutations(rootContainer);
@@ -231,6 +239,7 @@ export const createGeometryWakeSources = (
     }
 
     arePortalLayerSourcesAttached = false;
+    syncScrollListener();
     disconnectRootAncestorMutations();
   };
 
