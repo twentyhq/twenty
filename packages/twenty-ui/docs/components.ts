@@ -1,3 +1,4 @@
+import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -311,6 +312,25 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Checkbox/Checkbox.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/checkbox',
+    parts: ['Root', 'Indicator'],
+    propDescriptions: CHECKBOX_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: CHECKBOX_PROP_DESCRIPTIONS },
+    propDefaults: {
+      size: 'sm',
+      variant: 'solid',
+      shape: 'square',
+      color: 'accent',
+      hoverable: 'true',
+    },
+    partPropDefaults: {
+      Root: {
+        size: 'sm',
+        variant: 'solid',
+        shape: 'square',
+        color: 'accent',
+        hoverable: 'true',
+      },
+    },
   },
   {
     name: 'Radio',
@@ -363,6 +383,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Switch/Switch.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
+    parts: ['Root', 'Thumb'],
+    propDescriptions: { size: 'Visual size of the switch.' },
+    partPropDescriptions: { Root: { size: 'Visual size of the switch.' } },
+    propDefaults: { size: 'md' },
+    partPropDefaults: { Root: { size: 'md' } },
   },
   {
     name: 'Breadcrumb',

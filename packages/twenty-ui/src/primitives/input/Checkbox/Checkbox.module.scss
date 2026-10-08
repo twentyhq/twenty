@@ -5,6 +5,7 @@
   --tw-checkbox-icon-size: 14px;
   --tw-checkbox-border-width: 1px;
   --tw-checkbox-bg: transparent;
+  --tw-checkbox-padding: 0px;
   --tw-checkbox-border-color: var(--t-border-color-secondary-inverted);
   --tw-checkbox-box-radius: var(--t-border-radius-sm-round);
 
@@ -14,7 +15,7 @@
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
-  padding: 0;
+  padding: var(--tw-checkbox-padding);
   position: relative;
 }
 
@@ -75,11 +76,11 @@
 }
 
 .hoverable {
-  padding: 5px;
+  --tw-checkbox-padding: 5px;
 }
 
 .hoverable.md {
-  padding: 6px;
+  --tw-checkbox-padding: 6px;
 }
 
 @include hover-capable {
@@ -117,14 +118,7 @@
   background-color: transparent;
 }
 
-.box {
-  block-size: calc(var(--tw-checkbox-box-size) + 2px);
-  padding: 0;
-  position: relative;
-  inline-size: calc(var(--tw-checkbox-box-size) + 2px);
-}
-
-.box::before {
+.root::before {
   background: var(--tw-checkbox-bg);
   border-color: var(--tw-checkbox-border-color);
   border-radius: var(--tw-checkbox-box-radius);
@@ -142,10 +136,14 @@
 .indicator {
   display: block;
   block-size: var(--tw-checkbox-icon-size);
-  inset-inline-start: 0;
+  inset-inline-start: var(--tw-checkbox-padding);
   position: absolute;
-  inset-block-start: 0;
+  inset-block-start: var(--tw-checkbox-padding);
   inline-size: var(--tw-checkbox-icon-size);
+}
+
+.indicator[data-unchecked] {
+  opacity: 0;
 }
 
 .indicator svg {
