@@ -306,8 +306,6 @@ export class ApplicationService {
       .getCount();
   }
 
-  // Server routes resolve through the owner workspace installation, so removing it
-  // would break the webhooks of every other workspace the application is installed in
   async isUninstallBlockedByOtherWorkspaceInstallations({
     applicationId,
     applicationRegistrationId,
