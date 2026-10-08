@@ -390,6 +390,7 @@ describe('agent runs that wait (integration)', () => {
           query: gql`
             mutation RunAgent($input: RunAgentInput!) {
               runAgent(input: $input) {
+                threadId
                 status
               }
             }
@@ -404,12 +405,18 @@ describe('agent runs that wait (integration)', () => {
         token,
       );
 
-      expect(response.body.data.runAgent).toEqual({ status: 'SUSPENDED' });
+      const { threadId, status } = response.body.data.runAgent;
+
+      expect(status).toBe('SUSPENDED');
 
       await expectEventually(async () => {
-        expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'completed',
+          'completed',
+        ]);
       });
 
+      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       expect(
         executeAgent.mock.calls.map(
           ([execution]) => execution.executionContext.authContext,
