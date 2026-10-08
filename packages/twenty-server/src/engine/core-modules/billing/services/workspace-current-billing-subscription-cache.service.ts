@@ -1,14 +1,9 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -22,10 +17,6 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 @Injectable()
 @WorkspaceCache('currentBillingSubscription', { packingPonderation: 1 })
 export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCacheProvider<CurrentBillingSubscription> {
-  private readonly logger = new Logger(
-    WorkspaceCurrentBillingSubscriptionCacheService.name,
-  );
-
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
@@ -66,7 +57,8 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialStart: subscription.trialStart,
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
-      planAllowanceMicro: this.findPlanAllowanceMicro(subscription),
+      planAllowanceMicro:
+        this.billingUsageService.findResourceUsageCap(subscription),
       creditGrants: unexpiredGrants.map(
         ({ amountMicro, effectiveAt, expiresAt }) => ({
           amountMicro,
@@ -75,26 +67,5 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
         }),
       ),
     };
-  }
-
-  private findPlanAllowanceMicro(
-    subscription: BillingSubscriptionEntity,
-  ): number | null {
-    try {
-      return this.billingUsageService.getResourceUsageCap(subscription);
-    } catch (error) {
-      if (
-        !(error instanceof BillingException) ||
-        error.code !== BillingExceptionCode.BILLING_PRICE_NOT_FOUND
-      ) {
-        throw error;
-      }
-
-      this.logger.error(
-        `No credit allowance for workspace ${subscription.workspaceId}: ${error.message}`,
-      );
-
-      return null;
-    }
   }
 }
