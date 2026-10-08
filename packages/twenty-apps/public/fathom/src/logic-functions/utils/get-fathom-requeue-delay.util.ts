@@ -6,8 +6,6 @@ import { getFathomRetryAfterDelay } from 'src/logic-functions/utils/get-fathom-r
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { isDefined } from 'src/utils/is-defined';
 
-// The platform's own retries back off for seconds, far shorter than a Fathom
-// rate-limit window or outage, so transient failures are re-enqueued instead.
 export const getFathomRequeueDelay = ({
   error,
   now,

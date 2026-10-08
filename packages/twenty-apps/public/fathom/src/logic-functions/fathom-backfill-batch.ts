@@ -30,8 +30,6 @@ export const fathomBackfillBatchHandler = async (
   >[] = [];
   let skippedMeetingCount = 0;
 
-  // Only the meetings not yet imported are re-enqueued, so a failure late in
-  // the batch does not re-fetch the ones before it.
   const requeueRemainingMeetings = async ({
     meetingIndex,
     operation,
@@ -106,8 +104,6 @@ export const fathomBackfillBatchHandler = async (
         }),
       );
     } catch (error) {
-      // A partially applied sync is safe to repeat: the CallRecording id is
-      // derived from the recording.
       return requeueRemainingMeetings({
         meetingIndex,
         operation: `sync recording ${serializedMeeting.recordingId}`,

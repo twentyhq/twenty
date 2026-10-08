@@ -71,8 +71,6 @@ export const fathomBackfillWorkerHandler = async (
       throw error;
     }
 
-    // A lost page would end the history import for good, so once the
-    // re-enqueue budget is spent the platform's own retries get a last try.
     if (requeueAttempt >= MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS) {
       throw buildRetryableFathomError({ operation: listOperation, error });
     }
@@ -167,8 +165,6 @@ export default defineLogicFunction({
   name: 'fathom-backfill-worker',
   description:
     "Discovers one page of Fathom meetings, schedules paced import batches, and continues from Fathom's cursor.",
-  // A timeout is never retried and would end the history import, so this
-  // outlasts the two-minute Twenty rate-limit wait plus the Fathom page fetch.
   timeoutSeconds: 300,
   handler: fathomBackfillWorkerHandler,
 });
