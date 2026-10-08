@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { GRAPH_CREATED_CHANGE_TYPE } from 'src/features/transcripts/logic-functions/constants/graph-created-change-type';
 import { TEAMS_TRANSCRIPT_SUBSCRIPTION_LIFETIME_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-transcript-subscription-lifetime-milliseconds';
 import { type GraphSubscription } from 'src/features/transcripts/logic-functions/types/graph-subscription.type';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
@@ -28,7 +29,7 @@ export const createTeamsTranscriptSubscription = async ({
     url: 'subscriptions',
     method: 'POST',
     body: {
-      changeType: 'created',
+      changeType: GRAPH_CREATED_CHANGE_TYPE,
       notificationUrl,
       lifecycleNotificationUrl: notificationUrl,
       resource: `users/${user.id}/onlineMeetings/getAllTranscripts`,
