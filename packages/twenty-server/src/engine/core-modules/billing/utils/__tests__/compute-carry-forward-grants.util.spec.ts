@@ -278,6 +278,33 @@ describe('computeCarryForwardGrants', () => {
       ]);
     });
 
+    it('carries nothing more when a redelivery replays the transition over the grants it closed', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        liveGrants: [
+          grant({
+            grantId: 'compensation_old',
+            type: BillingCreditGrantType.COMPENSATION,
+            amountMicro: 600_000,
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+            expiresAt: BOUNDARY,
+          }),
+          grant({
+            grantId: 'sales_new',
+            type: BillingCreditGrantType.SALES,
+            amountMicro: 400_000,
+            createdAt: new Date('2026-01-15T00:00:00.000Z'),
+            expiresAt: BOUNDARY,
+          }),
+        ],
+        usageMicro: 500_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([]);
+    });
+
     it('spends the earlier of two deadlines first', () => {
       const result = computeCarryForwardGrants({
         allowanceMicro: 0,
