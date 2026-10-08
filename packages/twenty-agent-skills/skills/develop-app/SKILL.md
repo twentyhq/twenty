@@ -75,9 +75,18 @@ Use the app CLI to add new entities. It generates the correct file structure, UU
 yarn twenty dev:add
 ```
 
-This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. Do not manually create entity files, explore SDK typings in `node_modules`, or generate UUIDs by hand when the CLI can do it.
+This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. `dev:add object` also offers the table view, navigation menu item and record page layout that make the object usable.
 
-Only create entity files manually when modifying existing entities or when the CLI does not support the specific entity type.
+`dev:add` prompts for every value, so it needs an interactive terminal. When your shell has none, use the standalone `twenty` CLI if it is installed globally; it never prompts with `--no-input`:
+
+```bash
+twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
+```
+
+It does not generate object companions or other entity types. When neither CLI can produce the entity, or to modify an existing one, write the file by hand: copy the shape of existing app files or the CLI templates, and generate identifiers with `crypto.randomUUID()` rather than inventing them.
 
 ## After Entity Changes
 

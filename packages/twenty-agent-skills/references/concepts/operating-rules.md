@@ -8,7 +8,7 @@ This file is the single source of truth for the cross-skill rules. Harness-speci
 
 2. **Do not run broad validation unless it is requested.** After scaffolding (`create-twenty-app`) or after the CLI generates entities, prefer the bounded command that matches the task: `yarn twenty apply` for app sync, the package's unit-test script for unit tests, and `TWENTY_API_URL=http://localhost:2021 yarn test` for the full integration suite. Integration tests must target the isolated test instance on port `2021`, not the dev instance on port `2020`, unless the user explicitly asks otherwise.
 
-3. **Use `yarn twenty dev:add` for new entities.** It generates correct file structure, UUIDs, SDK imports, and boilerplate. Do not hand-craft entity files unless modifying existing ones or the CLI does not support that entity type.
+3. **Use `yarn twenty dev:add` for new entities.** It generates correct file structure, UUIDs, SDK imports, and boilerplate. It prompts for every value, so it needs an interactive terminal. Without one, use the standalone `twenty` CLI when it is installed globally (`twenty`, not `yarn twenty`): `twenty app add <object|field|logic-function|front-component> --name <name> ... --no-input` never prompts and exits with code 2 when a required value is missing. Hand-craft an entity file only to modify an existing entity, for a type neither CLI can generate, or when neither can run; then copy the shape of existing app files or the generated templates, and generate identifiers with `crypto.randomUUID()`.
 
 4. **Confirm destructive operations.** Deploys to production, uninstalls, production remote changes, and production syncs require explicit user confirmation before execution. Treat `--remote production` as user-visible.
 
