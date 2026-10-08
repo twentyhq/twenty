@@ -55,6 +55,18 @@ Object metadata belongs to the front component's own context, so a side panel ca
 
 Use the generated or core Twenty client for reads and writes. Keep loading, empty, error, disabled, and saving states explicit so runtime failures are visible and recoverable.
 
+## Personal App Preferences
+
+Declare personal custom settings with `defineSettingsMenuItem({ scope: 'USER', frontComponentUniversalIdentifier, ... })`. A USER settings component hosted in App preferences can use these `twenty-sdk/front-component` APIs:
+
+- `await getUserApplicationVariables()` reads fresh declared USER values as a key/value map, with secrets masked.
+- `await updateUserApplicationVariable({ key, value })` saves a declared USER value for the viewing member and app. Pass plaintext for an explicit secret replacement; a returned mask is a placeholder.
+- `useFrontComponentExecutionContext((context) => context.connectedAccountId)` reads the optional selected connection ID. It is separate from record selection; selecting a connection does not change the member/app scope of USER variables.
+
+The host binds the preference calls to the component's app and the current member session. Never supply another app/member ID or try to forward a member session token into the worker. These APIs reject outside personal App preferences and do not expose WORKSPACE variables or require the `APPLICATIONS` permission. Handle read/save failures with visible retry feedback.
+
+Account context can be absent when no usable connection exists or the member cannot select accounts. Render the app's personal preferences in that case instead of assuming a record or account exists.
+
 ## Headless Actions And DRY Helpers
 
 Headless front components should be thin action shells. The component file should mostly read SDK hooks, return the `Command` helper, and delegate reusable behavior to helpers.
