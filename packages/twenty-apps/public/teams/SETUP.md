@@ -57,7 +57,11 @@ connecting an account does not enable them. With both on, connecting an account
 also creates a Microsoft Graph subscription to the transcripts of the meetings
 that account organizes. Graph delivers its notifications to
 `https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
-so the Twenty server must be reachable from the internet over HTTPS. A
+so the Twenty server must be reachable from the internet over HTTPS. New
+transcripts then import automatically into Call Recordings as Microsoft
+publishes them. Use the **Sync Teams Transcript** action for transcripts from
+before the connection existed, and for any that Microsoft has not published
+about two and a half hours after the meeting or whose import keeps failing. A
 connection added while transcripts were off has no subscription: reconnect it
 after turning transcripts on. Disconnecting the account or uninstalling the app
 deletes the subscription.
