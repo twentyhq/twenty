@@ -22,6 +22,7 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -408,15 +409,33 @@ export class BillingSubscriptionUpdateService {
     const diffInCents =
       Number(newPrice.unitAmount) - Number(currentPrice.unitAmount);
 
-    if (diffInCents > 0) {
-      await this.stripeInvoiceService.createImmediateUpgradeInvoice({
-        stripeCustomerId: subscription.stripeCustomerId,
-        stripeSubscriptionId: subscription.stripeSubscriptionId,
-        diffAmountInCents: diffInCents,
-        description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
-        currency: newPrice.currency,
-      });
+    if (diffInCents <= 0) {
+      return;
     }
+
+    const upgradeInvoiceItem = {
+      stripeCustomerId: subscription.stripeCustomerId,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      diffAmountInCents: diffInCents,
+      description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
+      currency: newPrice.currency,
+    };
+
+    // Invoice-paying customers have no card to charge; the amount joins their next grouped invoice
+    if (
+      subscription.collectionMethod ===
+      BillingSubscriptionCollectionMethod.SEND_INVOICE
+    ) {
+      await this.stripeInvoiceService.createPendingUpgradeInvoiceItem(
+        upgradeInvoiceItem,
+      );
+
+      return;
+    }
+
+    await this.stripeInvoiceService.createImmediateUpgradeInvoice(
+      upgradeInvoiceItem,
+    );
   }
 
   private async getProductKeyByPriceId(
@@ -510,6 +529,9 @@ export class BillingSubscriptionUpdateService {
       {
         currentSeats: currentPrices.seats,
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
+        isSendInvoice:
+          subscription.collectionMethod ===
+          BillingSubscriptionCollectionMethod.SEND_INVOICE,
       },
     );
 
