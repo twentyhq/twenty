@@ -7,6 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { FlatFrontComponentModule } from 'src/engine/metadata-modules/flat-front-component/flat-front-component.module';
 import { FrontComponentController } from 'src/engine/metadata-modules/front-component/controllers/front-component.controller';
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
+import { FrontComponentQueryResolver } from 'src/engine/metadata-modules/front-component/front-component-query.resolver';
 import { FrontComponentResolver } from 'src/engine/metadata-modules/front-component/front-component.resolver';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -31,6 +32,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   controllers: [FrontComponentController],
   providers: [
     FrontComponentService,
+    FrontComponentQueryResolver,
     FrontComponentResolver,
     FrontComponentRestApiExceptionFilter,
   ],

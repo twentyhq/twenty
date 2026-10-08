@@ -20,17 +20,13 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -53,7 +49,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
 )
 @UseInterceptors(
@@ -115,26 +111,6 @@ export class FrontComponentResolver {
     return (
       flatApplicationMaps.byId[frontComponent.applicationId]
         ?.grantedCapabilities ?? []
-    );
-  }
-
-  @Query(() => [FrontComponentDTO])
-  @UseGuards(NoPermissionGuard)
-  @AllowSuspendedWorkspace()
-  async frontComponents(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
-  ): Promise<FrontComponentDTO[]> {
-    const frontComponents = await this.frontComponentService.findAll(
-      workspace.id,
-    );
-
-    return frontComponents.filter((frontComponent) =>
-      canCallerReachApplication({
-        callingApplication,
-        applicationId: frontComponent.applicationId,
-      }),
     );
   }
 
@@ -225,20 +201,7 @@ export class FrontComponentResolver {
   }
 
   @Mutation(() => FrontComponentDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async createFrontComponent(
     @Args('input') input: CreateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -252,20 +215,7 @@ export class FrontComponentResolver {
   }
 
   @Mutation(() => FrontComponentDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async updateFrontComponent(
     @Args('input') input: UpdateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -280,20 +230,7 @@ export class FrontComponentResolver {
   }
 
   @Mutation(() => FrontComponentDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async deleteFrontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

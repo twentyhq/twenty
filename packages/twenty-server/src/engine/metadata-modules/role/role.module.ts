@@ -9,6 +9,7 @@ import { WorkspaceFlatRoleTargetMapCacheService } from 'src/engine/metadata-modu
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { RolePermissionFlagModule } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleQueryResolver } from 'src/engine/metadata-modules/role/role-query.resolver';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/role/services/workspace-flat-role-map-cache.service';
@@ -36,6 +37,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     RoleService,
+    RoleQueryResolver,
     RoleResolver,
     RoleToolWorkspaceService,
     WorkspaceFlatRoleMapCacheService,

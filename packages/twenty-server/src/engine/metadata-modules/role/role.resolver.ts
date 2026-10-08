@@ -4,14 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,11 +37,6 @@ import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permissi
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import {
@@ -80,7 +68,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
   SettingsPermissionGuard(PermissionFlagType.ROLES),
 )
@@ -103,30 +91,6 @@ export class RoleResolver {
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
-
-  @Query(() => [RoleDTO])
-  async getRoles(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<RoleDTO[]> {
-    return this.roleService.getWorkspaceRoles(workspace.id);
-  }
-
-  @Query(() => RoleDTO)
-  async getRole(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-  ): Promise<RoleDTO> {
-    const role = await this.roleService.getRoleById(id, workspace.id);
-
-    if (!isDefined(role)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_FOUND,
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
-      );
-    }
-
-    return role;
-  }
 
   @Mutation(() => WorkspaceMemberDTO)
   @UseGuards(
@@ -176,19 +140,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => RoleDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async createOneRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
@@ -209,19 +160,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => RoleDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async updateOneRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
@@ -241,19 +179,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => String)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async deleteOneRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
@@ -294,19 +219,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => [ObjectPermissionDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async upsertObjectPermissions(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertObjectPermissionsInput')
@@ -323,19 +235,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => [RolePermissionFlagDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async upsertPermissionFlags(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertPermissionFlagsInput')
@@ -363,19 +262,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => [FieldPermissionDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async upsertFieldPermissions(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('upsertFieldPermissionsInput')
@@ -392,19 +278,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => UpsertRowLevelPermissionPredicatesResultDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async upsertRowLevelPermissionPredicates(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
@@ -419,19 +292,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async assignRoleToAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
@@ -447,19 +307,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async removeRoleFromAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

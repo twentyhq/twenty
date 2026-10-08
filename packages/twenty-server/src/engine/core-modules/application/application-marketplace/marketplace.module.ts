@@ -10,6 +10,7 @@ import { MarketplaceCatalogCacheProviderService } from 'src/engine/core-modules/
 import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-sync.service';
 import { MarketplacePublicResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace-public.resolver';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
+import { MarketplaceQueryResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.resolver';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -31,6 +32,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     MarketplaceCatalogSyncCronJob,
     MarketplaceCatalogSyncCronCommand,
     MarketplaceCatalogSyncCommand,
+    MarketplaceQueryResolver,
     MarketplaceResolver,
     MarketplacePublicResolver,
   ],

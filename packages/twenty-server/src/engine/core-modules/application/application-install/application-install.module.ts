@@ -9,6 +9,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
+import { ApplicationInstallQueryResolver } from 'src/engine/core-modules/application/application-install/application-install-query.resolver';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
@@ -44,6 +45,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   ],
   providers: [
     ApplicationCapabilityResolver,
+    ApplicationInstallQueryResolver,
     ApplicationInstallResolver,
     ApplicationInstallService,
     ApplicationLifecycleJobService,

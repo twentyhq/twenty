@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -33,7 +33,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
@@ -51,19 +51,6 @@ export class ApprovedAccessDomainResolver {
   ) {}
 
   @Mutation(() => ApprovedAccessDomainDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async createApprovedAccessDomain(
     @Args('input') { domain, email }: CreateApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -95,19 +82,6 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async deleteApprovedAccessDomain(
     @Args('input') { id }: DeleteApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -121,19 +95,6 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => ApprovedAccessDomainDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async validateApprovedAccessDomain(
     @Args('input')
     {
@@ -145,14 +106,5 @@ export class ApprovedAccessDomainResolver {
       validationToken,
       approvedAccessDomainId,
     });
-  }
-
-  @Query(() => [ApprovedAccessDomainDTO])
-  async getApprovedAccessDomains(
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<Array<ApprovedAccessDomainDTO>> {
-    return await this.approvedAccessDomainService.getApprovedAccessDomains(
-      currentWorkspace,
-    );
   }
 }

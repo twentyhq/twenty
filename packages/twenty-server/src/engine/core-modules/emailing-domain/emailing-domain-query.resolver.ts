@@ -1,10 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { CreateEmailingDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/create-emailing-domain.input';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
@@ -13,9 +13,8 @@ import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/s
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -27,7 +26,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     },
     apiKey: true,
     oauthClient: true,
-    application: false,
+    application: true,
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
@@ -37,54 +36,22 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   AuthGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver(() => EmailingDomainDTO)
-export class EmailingDomainResolver {
+@MetadataResolver()
+export class EmailingDomainQueryResolver {
   constructor(
     private readonly emailingDomainService: EmailingDomainService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
   ) {}
 
-  @Mutation(() => EmailingDomainDTO)
-  async createEmailingDomain(
-    @Args('input') input: CreateEmailingDomainInput,
+  @Query(() => [EmailingDomainDTO])
+  async getEmailingDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<EmailingDomainDTO> {
+  ): Promise<EmailingDomainDTO[]> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
-    const emailingDomain =
-      await this.emailingDomainService.createEmailingDomain(
-        input.domain.trim().toLowerCase(),
-        currentWorkspace.id,
-      );
+    const emailingDomains =
+      await this.emailingDomainService.getEmailingDomains(currentWorkspace);
 
-    return emailingDomain;
-  }
-
-  @Mutation(() => Boolean)
-  async deleteEmailingDomain(
-    @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-
-    await this.emailingDomainService.deleteEmailingDomain(currentWorkspace, id);
-
-    return true;
-  }
-
-  @Mutation(() => EmailingDomainDTO)
-  async verifyEmailingDomain(
-    @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<EmailingDomainDTO> {
-    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-
-    const emailingDomain =
-      await this.emailingDomainService.verifyEmailingDomain({
-        workspaceId: currentWorkspace.id,
-        emailingDomainId: id,
-      });
-
-    return emailingDomain;
+    return emailingDomains;
   }
 }

@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainQueryResolver } from 'src/engine/core-modules/public-domain/public-domain-query.resolver';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -30,6 +31,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   exports: [CheckPublicDomainsValidRecordsCronCommand, PublicDomainService],
   providers: [
     PublicDomainService,
+    PublicDomainQueryResolver,
     PublicDomainResolver,
     CheckPublicDomainsValidRecordsCronCommand,
     CheckPublicDomainsValidRecordsCronJob,

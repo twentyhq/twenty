@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -9,7 +9,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
-import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -34,7 +33,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
@@ -52,19 +51,6 @@ export class WorkspaceInvitationResolver {
   ) {}
 
   @Mutation(() => String)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async deleteWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -116,11 +102,6 @@ export class WorkspaceInvitationResolver {
       workspace,
       workspaceMember,
     );
-  }
-
-  @Query(() => [WorkspaceInvitation])
-  async findWorkspaceInvitations(@AuthWorkspace() workspace: WorkspaceEntity) {
-    return this.workspaceInvitationService.loadWorkspaceInvitations(workspace);
   }
 
   @Mutation(() => SendInvitationsDTO)

@@ -17,6 +17,7 @@ import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain
 import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailingDomainQueryResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain-query.resolver';
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
@@ -58,6 +59,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     UnsubscribeContentService,
     UnsubscribeHostnameService,
     DmarcRecordService,
+    EmailingDomainQueryResolver,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
