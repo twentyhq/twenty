@@ -344,29 +344,29 @@ export class CacheStorageService {
     }
 
     const redisClient = this.cache.store.client;
-    const token = v4();
+    const ownerToken = v4();
 
-    const result = await redisClient.set(this.getKey(key), token, {
+    const result = await redisClient.set(this.getKey(key), ownerToken, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK' ? token : null;
+    return result === 'OK' ? ownerToken : null;
   }
 
   async extendLock({
     key,
-    token,
+    ownerToken,
     ttl,
   }: {
     key: string;
-    token: string;
+    ownerToken: string;
     ttl: number;
   }): Promise<boolean> {
     const extended = await this.runScript<number>({
       script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
       keys: [key],
-      args: [token, String(ttl)],
+      args: [ownerToken, String(ttl)],
     });
 
     return extended === 1;
@@ -374,15 +374,15 @@ export class CacheStorageService {
 
   async releaseLock({
     key,
-    token,
+    ownerToken,
   }: {
     key: string;
-    token: string;
+    ownerToken: string;
   }): Promise<void> {
     await this.runScript<number>({
       script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
       keys: [key],
-      args: [token, '0'],
+      args: [ownerToken, '0'],
     });
   }
 

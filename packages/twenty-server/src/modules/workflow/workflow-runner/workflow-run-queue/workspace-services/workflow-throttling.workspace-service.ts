@@ -119,14 +119,14 @@ export class WorkflowThrottlingWorkspaceService {
 
   async releaseWorkflowEnqueueLock({
     workspaceId,
-    lockToken,
+    lockOwnerToken,
   }: {
     workspaceId: string;
-    lockToken: string;
+    lockOwnerToken: string;
   }): Promise<void> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    await this.cacheStorage.releaseLock({ key, token: lockToken });
+    await this.cacheStorage.releaseLock({ key, ownerToken: lockOwnerToken });
   }
 
   private async setWorkflowRunNotStartedCount(

@@ -178,10 +178,10 @@ export class UpgradeStatusService {
   }
 
   async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
-    const refreshLockToken =
+    const refreshLockOwnerToken =
       await this.upgradeStatusCacheService.tryAcquireRefreshLock();
 
-    if (isDefined(refreshLockToken)) {
+    if (isDefined(refreshLockOwnerToken)) {
       try {
         const refreshedStatus =
           await this.refreshInstanceAndAllWorkspacesStatus();
@@ -197,7 +197,7 @@ export class UpgradeStatusService {
         this.logger.error('Failed to refresh upgrade status', error);
 
         await this.upgradeStatusCacheService.releaseRefreshLock(
-          refreshLockToken,
+          refreshLockOwnerToken,
         );
       }
     }

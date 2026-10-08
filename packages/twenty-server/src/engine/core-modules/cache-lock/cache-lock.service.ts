@@ -37,20 +37,36 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const token = await this.cacheStorageService.acquireLock({ key, ttl });
+      const ownerToken = await this.cacheStorageService.acquireLock({
+        key,
+        ttl,
+      });
 
-      if (isDefined(token)) {
-        const leaseRenewal = setInterval(() => {
-          void this.renewLease({ key, token, ttl });
+      if (isDefined(ownerToken)) {
+        const lockExtensionInterval = setInterval(() => {
+          void this.cacheStorageService
+            .extendLock({ key, ownerToken, ttl })
+            .then((isExtended) => {
+              if (!isExtended) {
+                this.logger.warn(
+                  `Lost lock for key "${key}" before it was released`,
+                );
+              }
+            })
+            .catch((extendError) => {
+              this.logger.warn(
+                `Failed to extend lock for key "${key}": ${extendError}`,
+              );
+            });
         }, ttl / 3);
 
         try {
           return await fn();
         } finally {
-          clearInterval(leaseRenewal);
+          clearInterval(lockExtensionInterval);
 
           try {
-            await this.cacheStorageService.releaseLock({ key, token });
+            await this.cacheStorageService.releaseLock({ key, ownerToken });
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,
@@ -66,29 +82,5 @@ export class CacheLockService {
       `Failed to acquire lock for key: ${key}`,
       CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT,
     );
-  }
-
-  private async renewLease({
-    key,
-    token,
-    ttl,
-  }: {
-    key: string;
-    token: string;
-    ttl: number;
-  }) {
-    try {
-      const extended = await this.cacheStorageService.extendLock({
-        key,
-        token,
-        ttl,
-      });
-
-      if (!extended) {
-        this.logger.warn(`Lost lock for key "${key}" before it was released`);
-      }
-    } catch (error) {
-      this.logger.warn(`Failed to renew lock for key "${key}": ${error}`);
-    }
   }
 }

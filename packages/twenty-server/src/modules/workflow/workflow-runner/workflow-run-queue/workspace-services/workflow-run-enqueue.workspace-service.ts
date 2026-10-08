@@ -38,12 +38,12 @@ export class WorkflowRunEnqueueWorkspaceService {
     workspaceId: string;
     isCacheMode: boolean;
   }) {
-    const lockToken =
+    const lockOwnerToken =
       await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock({
         workspaceId,
       });
 
-    if (!isDefined(lockToken)) {
+    if (!isDefined(lockOwnerToken)) {
       return;
     }
 
@@ -167,7 +167,7 @@ export class WorkflowRunEnqueueWorkspaceService {
         await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
           {
             workspaceId,
-            lockToken,
+            lockOwnerToken,
           },
         );
       } catch (releaseError) {

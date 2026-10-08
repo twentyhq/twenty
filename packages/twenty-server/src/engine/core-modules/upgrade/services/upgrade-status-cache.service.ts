@@ -88,10 +88,10 @@ export class UpgradeStatusCacheService {
     });
   }
 
-  async releaseRefreshLock(refreshLockToken: string): Promise<void> {
+  async releaseRefreshLock(refreshLockOwnerToken: string): Promise<void> {
     await this.cacheStorage.releaseLock({
       key: REFRESH_LOCK_KEY,
-      token: refreshLockToken,
+      ownerToken: refreshLockOwnerToken,
     });
   }
 
