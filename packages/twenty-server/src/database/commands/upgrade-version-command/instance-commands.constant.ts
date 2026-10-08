@@ -234,6 +234,7 @@ import { DropAgentEvaluationInputsDeferredFastInstanceCommand } from 'src/databa
 import { AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524804-add-two-factor-authentication-recovery-code-index-concurrently';
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524805-add-upgrade-migration-workspace-id-created-at-index-concurrently';
 import { RenameAgentRunSuspensionToAgentRunFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791411908603-rename-agent-run-suspension-to-agent-run';
+import { MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791417349093-move-posted-call-waits-to-answer-wake-ups';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -470,4 +471,5 @@ export const INSTANCE_COMMANDS = [
   AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand,
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand,
   RenameAgentRunSuspensionToAgentRunFastInstanceCommand,
+  MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand,
 ];

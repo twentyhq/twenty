@@ -148,6 +148,62 @@ describe('WorkflowStepPendingWakeUpHandlerWorkspaceService', () => {
     );
   });
 
+  it('hands the answer to the run job, which ends the step through the executor', async () => {
+    const { service, workflowRunWorkspaceService, messageQueueService } =
+      buildService({
+        storedWait: {
+          ...STORED_WAIT,
+          condition: {
+            type: 'ANSWER',
+            threadId: 'thread-id',
+            toolCallId: 'call-id',
+          },
+        },
+      });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      wakeUpId: WAIT_ID,
+      answer: { result: { threadId: 'thread-id', outcome: 'executed' } },
+    });
+
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      RUN_WORKFLOW_JOB_NAME,
+      {
+        workspaceId: WORKSPACE_ID,
+        workflowRunId: WORKFLOW_RUN_ID,
+        awaitedStepOutput: {
+          stepId: STEP_ID,
+          actionOutput: {
+            result: { threadId: 'thread-id', outcome: 'executed' },
+          },
+        },
+      },
+      expect.anything(),
+    );
+  });
+
+  it('keeps an answer for later when the step does not wait yet', async () => {
+    const { service, pendingWakeUpService } = buildService({
+      stepStatus: StepStatus.RUNNING,
+    });
+    const answer = { error: 'The answer could not be read' };
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      wakeUpId: WAIT_ID,
+      answer,
+    });
+
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+    expect(pendingWakeUpService.scheduleResolution).toHaveBeenCalledWith(
+      expect.objectContaining({ answer, attempt: 1 }),
+    );
+  });
+
   it('keeps waiting when the run cannot read the record of the event', async () => {
     const { service, pendingWakeUpService, workflowRunWorkspaceService } =
       buildService({ readableRecords: [] });

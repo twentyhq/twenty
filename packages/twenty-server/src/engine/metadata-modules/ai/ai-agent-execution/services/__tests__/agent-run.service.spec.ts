@@ -1,3 +1,4 @@
+import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { type AgentRunEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run.entity';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
@@ -13,7 +14,7 @@ const buildRun = (overrides: Partial<AgentRunEntity> = {}): AgentRunEntity =>
     workspaceId: 'workspace-id',
     threadId: 'thread-id',
     caller: CALLER,
-    runSpec: null,
+    runSpec: {},
     summary: null,
     status: 'SUSPENDED',
     outcome: null,
@@ -21,23 +22,56 @@ const buildRun = (overrides: Partial<AgentRunEntity> = {}): AgentRunEntity =>
     ...overrides,
   }) as AgentRunEntity;
 
-const buildService = () => {
+const ANSWER_WAKE_UP = {
+  id: 'wake-up-id',
+  workspaceId: 'workspace-id',
+  ownerType: 'WORKFLOW_STEP',
+  ownerId: 'workflow-run-id',
+  ownerKey: 'step-id',
+  condition: { type: 'ANSWER', threadId: 'thread-id', toolCallId: 'call-id' },
+} as PendingWakeUpEntity;
+
+const buildService = ({
+  answerWakeUp = null as PendingWakeUpEntity | null,
+  suspendedRun = null as AgentRunEntity | null,
+} = {}) => {
   const onOutcome = jest.fn().mockResolvedValue(undefined);
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const runRepository = {
+    findOne: jest.fn().mockResolvedValue(suspendedRun),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const pendingWakeUpService = {
-    cancel: jest.fn().mockResolvedValue(undefined),
+    cancel: jest.fn().mockResolvedValue([]),
+    claim: jest.fn().mockResolvedValue(null),
+    findAnswerWakeUp: jest.fn().mockResolvedValue(answerWakeUp),
+  };
+  const pendingWakeUpResolverService = {
+    resolve: jest.fn().mockResolvedValue(undefined),
+  };
+
+  const messagePartRepository = {
+    query: jest.fn().mockResolvedValue(undefined),
   };
 
   const service = new AgentRunService(
     runRepository as never,
     { findOne: jest.fn().mockResolvedValue(null) } as never,
-    { query: jest.fn().mockResolvedValue(undefined) } as never,
+    messagePartRepository as never,
     {} as never,
     pendingWakeUpService as never,
-    { getHandlerOrThrow: () => ({ onOutcome }) } as never,
+    {
+      getHandlerOrThrow: () => ({
+        getOwnerState: jest.fn().mockResolvedValue({ status: 'WAITING' }),
+      }),
+    } as never,
+    pendingWakeUpResolverService as never,
+    {
+      getHandlerOrThrow: () => ({
+        onOutcome,
+        getWaitingState: jest.fn().mockResolvedValue('WAITING'),
+      }),
+    } as never,
     messageQueueService as never,
   );
 
@@ -47,39 +81,84 @@ const buildService = () => {
     messageQueueService,
     runRepository,
     pendingWakeUpService,
+    pendingWakeUpResolverService,
+    messagePartRepository,
   };
 };
 
+const APPROVED_TOOL_RESULT = {
+  success: true,
+  result: {
+    status: 'approved',
+    proposal: {
+      toolName: 'update_one_company',
+      arguments: { id: 'company-id', employees: 25 },
+    },
+    output: { id: 'company-id' },
+  },
+};
+
 describe('AgentRunService', () => {
+  describe('findAwaiter', () => {
+    it('finds the wake-up of the caller that posted the call before any run', async () => {
+      const { service, runRepository } = buildService({
+        answerWakeUp: ANSWER_WAKE_UP,
+        suspendedRun: buildRun(),
+      });
+
+      expect(
+        await service.findAwaiter({
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          toolCallId: 'call-id',
+        }),
+      ).toEqual({ status: 'WAITING', wakeUp: ANSWER_WAKE_UP });
+      expect(runRepository.findOne).not.toHaveBeenCalled();
+    });
+
+    it('finds the run suspended in the conversation, which asked the call', async () => {
+      const run = buildRun();
+      const { service } = buildService({ suspendedRun: run });
+
+      expect(
+        await service.findAwaiter({
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          toolCallId: 'call-id',
+        }),
+      ).toEqual({ status: 'WAITING', run });
+    });
+
+    it('finds nothing for a call no caller waits on', async () => {
+      const { service } = buildService();
+
+      expect(
+        await service.findAwaiter({
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          toolCallId: 'call-id',
+        }),
+      ).toBeNull();
+    });
+  });
+
   describe('deliverAnswer', () => {
-    it('hands the answer to a call the caller posted itself as its completed outcome', async () => {
-      const { service, onOutcome, messageQueueService, runRepository } =
+    it('resolves the wake-up of the caller that posted the call with the answer', async () => {
+      const { service, onOutcome, pendingWakeUpResolverService } =
         buildService();
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        run: buildRun(),
-        toolResult: {
-          success: true,
-          result: {
-            status: 'approved',
-            proposal: {
-              toolName: 'update_one_company',
-              arguments: { id: 'company-id', employees: 25 },
-            },
-            output: { id: 'company-id' },
-          },
-        },
+        threadId: 'thread-id',
+        awaiter: { status: 'WAITING', wakeUp: ANSWER_WAKE_UP },
+        toolResult: APPROVED_TOOL_RESULT,
       });
 
-      expect(messageQueueService.add).not.toHaveBeenCalled();
-      expect(onOutcome).toHaveBeenCalledTimes(1);
-      expect(onOutcome).toHaveBeenCalledWith({
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(pendingWakeUpResolverService.resolve).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
-        caller: CALLER,
-        threadId: 'thread-id',
-        outcome: {
-          status: 'COMPLETED',
+        wakeUpId: 'wake-up-id',
+        answer: {
           result: {
             threadId: 'thread-id',
             outcome: 'executed',
@@ -90,46 +169,33 @@ describe('AgentRunService', () => {
             error: null,
           },
         },
-        summary: null,
       });
-      expect(runRepository.update).toHaveBeenCalledWith(
-        'workspace-id',
-        { id: 'run-id' },
-        expect.objectContaining({
-          status: 'COMPLETED',
-          outcome: {
-            result: expect.objectContaining({ outcome: 'executed' }),
-          },
-        }),
-      );
     });
 
     it('fails the caller when the answer cannot be read', async () => {
-      const { service, onOutcome } = buildService();
+      const { service, pendingWakeUpResolverService } = buildService();
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        run: buildRun(),
+        threadId: 'thread-id',
+        awaiter: { status: 'WAITING', wakeUp: ANSWER_WAKE_UP },
         toolResult: { success: true, result: { status: 'pending' } },
       });
 
-      expect(onOutcome).toHaveBeenCalledTimes(1);
-      expect(onOutcome).toHaveBeenCalledWith(
-        expect.objectContaining({
-          outcome: {
-            status: 'FAILED',
-            error: 'The answer to the proposed call could not be read',
-          },
-        }),
-      );
+      expect(pendingWakeUpResolverService.resolve).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        wakeUpId: 'wake-up-id',
+        answer: { error: 'The answer to the proposed call could not be read' },
+      });
     });
 
-    it('continues a suspended agent run instead of settling it', async () => {
+    it('continues a suspended agent run', async () => {
       const { service, onOutcome, messageQueueService } = buildService();
 
       await service.deliverAnswer({
         workspaceId: 'workspace-id',
-        run: buildRun({ runSpec: {} as never }),
+        threadId: 'thread-id',
+        awaiter: { status: 'WAITING', run: buildRun() },
         toolResult: {},
       });
 
@@ -159,9 +225,41 @@ describe('AgentRunService', () => {
       });
       expect(runRepository.update).toHaveBeenCalledWith(
         'workspace-id',
-        { id: 'run-id' },
+        expect.objectContaining({ id: 'run-id' }),
         { status: 'CANCELLED' },
       );
+      expect(onOutcome).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('settle', () => {
+    it('leaves a run its caller dropped while it went on as it ended', async () => {
+      const {
+        service,
+        onOutcome,
+        runRepository,
+        pendingWakeUpService,
+        messagePartRepository,
+      } = buildService();
+
+      runRepository.update.mockResolvedValue({ affected: 0 });
+
+      await service.settle({
+        workspaceId: 'workspace-id',
+        run: buildRun(),
+        outcome: { status: 'COMPLETED', result: { answer: 'done' } },
+      });
+
+      expect(runRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        {
+          id: 'run-id',
+          status: expect.objectContaining({ _value: ['RUNNING', 'SUSPENDED'] }),
+        },
+        expect.objectContaining({ status: 'COMPLETED' }),
+      );
+      expect(pendingWakeUpService.cancel).not.toHaveBeenCalled();
+      expect(messagePartRepository.query).not.toHaveBeenCalled();
       expect(onOutcome).not.toHaveBeenCalled();
     });
   });
