@@ -1,5 +1,6 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
@@ -19,6 +20,7 @@ export class CacheStorageService {
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly namespace: CacheStorageNamespace,
+    private readonly keyPrefix: string = '',
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -511,7 +513,10 @@ end`;
   }
 
   private getKey(key: string) {
-    const formattedKey = `${this.namespace}:${key}`;
+    const keyPrefix = isNonEmptyString(this.keyPrefix)
+      ? `${this.keyPrefix}:`
+      : '';
+    const formattedKey = `${keyPrefix}${this.namespace}:${key}`;
 
     if (process.env.NODE_ENV === 'test') {
       return `${CacheStorageNamespace.IntegrationTests}:${formattedKey}`;
