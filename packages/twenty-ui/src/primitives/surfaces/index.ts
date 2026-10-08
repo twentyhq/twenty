@@ -8,16 +8,32 @@
  */
 
 export { AlertDialog } from './AlertDialog/AlertDialog';
+export type { AlertDialogBackdropProps } from './AlertDialog/types/AlertDialogBackdropProps';
+export type { AlertDialogBackdropState } from './AlertDialog/types/AlertDialogBackdropState';
 export type { AlertDialogBodyProps } from './AlertDialog/types/AlertDialogBodyProps';
 export type { AlertDialogCloseProps } from './AlertDialog/types/AlertDialogCloseProps';
+export type { AlertDialogCloseState } from './AlertDialog/types/AlertDialogCloseState';
 export type { AlertDialogDescriptionProps } from './AlertDialog/types/AlertDialogDescriptionProps';
+export type { AlertDialogDescriptionState } from './AlertDialog/types/AlertDialogDescriptionState';
 export type { AlertDialogFooterProps } from './AlertDialog/types/AlertDialogFooterProps';
+export type { AlertDialogHandle } from './AlertDialog/types/AlertDialogHandle';
 export type { AlertDialogHeaderProps } from './AlertDialog/types/AlertDialogHeaderProps';
 export type { AlertDialogPopupProps } from './AlertDialog/types/AlertDialogPopupProps';
+export type { AlertDialogPopupState } from './AlertDialog/types/AlertDialogPopupState';
+export type { AlertDialogPortalProps } from './AlertDialog/types/AlertDialogPortalProps';
+export type { AlertDialogPortalState } from './AlertDialog/types/AlertDialogPortalState';
+export type { AlertDialogRootActions } from './AlertDialog/types/AlertDialogRootActions';
+export type { AlertDialogRootChangeEventDetails } from './AlertDialog/types/AlertDialogRootChangeEventDetails';
+export type { AlertDialogRootChangeEventReason } from './AlertDialog/types/AlertDialogRootChangeEventReason';
 export type { AlertDialogRootProps } from './AlertDialog/types/AlertDialogRootProps';
+export type { AlertDialogRootState } from './AlertDialog/types/AlertDialogRootState';
 export type { AlertDialogSize } from './AlertDialog/types/AlertDialogSize';
 export type { AlertDialogTitleProps } from './AlertDialog/types/AlertDialogTitleProps';
+export type { AlertDialogTitleState } from './AlertDialog/types/AlertDialogTitleState';
 export type { AlertDialogTriggerProps } from './AlertDialog/types/AlertDialogTriggerProps';
+export type { AlertDialogTriggerState } from './AlertDialog/types/AlertDialogTriggerState';
+export type { AlertDialogViewportProps } from './AlertDialog/types/AlertDialogViewportProps';
+export type { AlertDialogViewportState } from './AlertDialog/types/AlertDialogViewportState';
 export { Card } from './Card/Card';
 export { Dialog } from './Dialog/Dialog';
 export type { DialogBodyProps } from './Dialog/types/DialogBodyProps';

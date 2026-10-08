@@ -592,7 +592,7 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 ## Host communication API
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`. Use `openCommandConfirmationModal` for confirmation dialogs. It accepts a structured title, subtitle, and confirm-button options and returns a confirm or cancel result. The host owns modal focus, dismissal, and scrolling. Front components cannot render direct `Dialog`, `AlertDialog`, or native browser dialogs, or activate native popovers.
 
 | Function                                           | Description                                                                                                                                                                                  |
 | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -888,7 +888,7 @@ These entry points do not require `monaco-editor`.
 | `twenty-ui/primitives/input`         | Buttons and form controls                                                  |
 | `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                             |
 | `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                         |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                              |
+| `twenty-ui/primitives/surfaces`      | Cards, menus, popovers, and tooltips                                       |
 | `twenty-ui/primitives/typography`    | Text and headings                                                          |
 | `twenty-ui/icon`                     | `Icon*` components (e.g. `IconCheck`)                                      |
 | `twenty-ui/theme`                    | `ThemeProvider`, `themeCssVariables`                                       |

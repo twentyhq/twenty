@@ -46,7 +46,6 @@ effect within the interaction timeout.
 | `twenty-ui-select`               | Select                                                                                                                              |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
 | `twenty-ui-toast`                | Toast                                                                                                                               |
-| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
 | `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
@@ -79,6 +78,10 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
+## Dialog policy
+
+Direct `AlertDialog` modality is prohibited inside the front component renderer. Its standalone Twenty UI API has dedicated unit and browser stories in `twenty-ui`. Front components request a host-owned confirmation through the SDK `openCommandConfirmationModal` API, which accepts structured title, subtitle, and confirm-button options and returns confirm or cancel. Renderer policy and SDK result, focus restoration, and teardown acceptance remain part of the renderer integration work. No direct AlertDialog gallery fixture is retained as a compatibility target.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -89,12 +92,12 @@ must change the corresponding story to assert successful behavior; do not keep
 or broaden an obsolete expectation. No stories are skipped or marked as
 expected-to-fail by the runner.
 
-| Component | Current limitation |
-| --- | --- |
-| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
-| Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
-| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                                                                                   | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ImageInput                                                                                                                  | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
+| Popover, Dialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                |
+| Slider                                                                                                                      | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
+| Responsive hooks                                                                                                            | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
