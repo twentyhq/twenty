@@ -1,4 +1,5 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
+import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -8,7 +9,10 @@ import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/consta
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { t } from '@lingui/core/macro';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RestoreRecordsCommand = () => {
@@ -73,6 +77,13 @@ export const RestoreRecordsCommand = () => {
       idsToRestore: recordIdsToRestore,
     });
   };
+
+  // Chats are deleted without confirmation, so restoring one should not ask for it either
+  if (
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+  ) {
+    return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  }
 
   const objectLabel = isSingleRecord
     ? objectMetadataItem.labelSingular
