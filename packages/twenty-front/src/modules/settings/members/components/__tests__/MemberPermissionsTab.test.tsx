@@ -10,7 +10,6 @@ import { ThemeProvider } from 'twenty-ui/theme';
 import { MemberPermissionsTab } from '@/settings/members/components/MemberPermissionsTab';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 jest.mock('twenty-ui/components/feedback', () => ({
@@ -73,7 +72,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
 
 const MEMBER = {
   id: '20202020-0000-4000-8000-000000000002',
-} as WorkspaceMember;
+};
 
 const getPermissionCheckbox = (label: string) => {
   const row = screen.getByText(label).closest<HTMLElement>('[data-table-row]');

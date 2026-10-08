@@ -8,7 +8,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { buildFieldMetadataItemFromMarketplaceField } from '@/settings/applications/utils/buildFieldMetadataItemFromMarketplaceField';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
-import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -354,7 +353,6 @@ export const SettingsApplicationPermissionsTab = ({
     return (
       <>
         <SettingsRolesQueryEffect />
-        <SettingsRoleDraftSyncEffect roleId={defaultRoleId} />
         <SettingsRolePermissions roleId={defaultRoleId} isEditable={false} />
       </>
     );

@@ -39,8 +39,8 @@ import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFo
 import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
+import { isCoreAgentRoleDirty } from '@/object-core/agents/utils/isCoreAgentRoleDirty';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -91,9 +91,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
     formValues.role || '',
   );
 
-  const isRoleDirty =
-    isDefined(formValues.role) &&
-    !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
+  const isRoleDirty = isCoreAgentRoleDirty({
+    roleId: formValues.role,
+    draftRole: settingsDraftRole,
+    persistedRole: settingsPersistedRole,
+  });
 
   const { scheduleAutoSave } = useCoreAgentSave({
     agent,

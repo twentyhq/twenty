@@ -1,5 +1,4 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
-import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
@@ -41,7 +40,7 @@ const StyledRoleSelector = styled.div`
 `;
 
 type MemberPermissionsTabProps = {
-  member: WorkspaceMember;
+  member: Pick<WorkspaceMember, 'id'>;
   roles: RoleWithPartialMembers[];
   allRoles: RoleWithPartialMembers[];
 };
@@ -146,7 +145,6 @@ export const MemberPermissionsTab = ({
             variant="outline"
           >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
-        <SettingsRoleDraftSyncEffect roleId={primaryRole.id} />
         <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
       </Section.Root>
 
