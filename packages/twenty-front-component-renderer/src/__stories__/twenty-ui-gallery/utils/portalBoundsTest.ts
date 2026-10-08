@@ -127,7 +127,15 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Oversized portal',
   });
   expect(oversizedPortal.getBoundingClientRect().width).toBe(4000);
-  expectElementToReceivePointer(oversizedPortal, ownerRoot);
+  const ownerRectangle = ownerRoot.getBoundingClientRect();
+  expect(
+    oversizedPortal.contains(
+      hostDocument.elementFromPoint(
+        ownerRectangle.left + ownerRectangle.width / 2,
+        ownerRectangle.top + ownerRectangle.height / 2,
+      ),
+    ),
+  ).toBe(true);
   expectElementToReceivePointer(hostAction);
   await userEvent.click(hostAction);
   expect(
