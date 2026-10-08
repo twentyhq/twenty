@@ -5,6 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { AvatarFallback } from './internal/AvatarFallback';
 import { AvatarImage } from './internal/AvatarImage';
 import { AvatarRoot } from './internal/AvatarRoot';
+import { getAvatarInitial } from './internal/getAvatarInitial';
 import { type AvatarProps } from './types/AvatarProps';
 
 const AvatarAssembly = ({
@@ -16,7 +17,7 @@ const AvatarAssembly = ({
   backgroundColor,
   ...props
 }: AvatarProps) => {
-  const initial = name?.trim().charAt(0).toUpperCase();
+  const initial = getAvatarInitial(name);
   const hasIcon = isDefined(icon) && !isBoolean(icon) && icon !== '';
   const imageLabel = imageProps?.alt ?? name ?? '';
   const hasImageLabel = !hasIcon && isNonEmptyString(imageLabel);

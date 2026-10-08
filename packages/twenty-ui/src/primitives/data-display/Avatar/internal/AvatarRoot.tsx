@@ -9,6 +9,8 @@ import { stringToThemeColorP3String } from '@ui/utilities';
 import styles from '../Avatar.module.scss';
 import { type AvatarRootProps } from '../types/AvatarRootProps';
 
+import { getAvatarInitial } from './getAvatarInitial';
+
 export const AvatarRoot = ({
   name,
   colorSeed = name,
@@ -25,7 +27,7 @@ export const AvatarRoot = ({
   ...props
 }: AvatarRootProps) => {
   const theme = useTheme();
-  const initial = name?.trim().charAt(0).toUpperCase();
+  const initial = getAvatarInitial(name);
   const fallbackColor = initial
     ? (color ??
       stringToThemeColorP3String({
