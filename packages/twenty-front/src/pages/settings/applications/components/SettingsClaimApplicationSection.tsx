@@ -29,6 +29,7 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
@@ -234,12 +235,11 @@ export const SettingsClaimApplicationSection = () => {
               <Callout.Action
                 type="button"
                 onClick={() =>
-                  window.open(
+                  openUrlInNewTab(
                     getDocumentationUrl({
                       locale: currentWorkspaceMember?.locale,
                       path: claimError.docPath,
                     }),
-                    '_blank',
                   )
                 }
               >{t`Read documentation`}</Callout.Action>
