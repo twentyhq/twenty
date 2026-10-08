@@ -37,9 +37,19 @@ describe('computeUsageLimitProgress', () => {
     ).toBeNull();
   });
 
-  it('reports nothing when the limit cannot be divided by', () => {
+  it('treats a zero limit as exhausted', () => {
     expect(
-      computeUsageLimitProgress({ limitValue: 0, consumedValue: 10 }),
+      computeUsageLimitProgress({ limitValue: 0, consumedValue: 0 }),
+    ).toEqual({
+      remainingValue: 0,
+      consumedPercentage: 100,
+      remainingPercentage: 0,
+    });
+  });
+
+  it('reports nothing for a negative limit', () => {
+    expect(
+      computeUsageLimitProgress({ limitValue: -1, consumedValue: 10 }),
     ).toBeNull();
   });
 });

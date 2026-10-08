@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
@@ -10,15 +11,20 @@ export const buildCreateUsageLimitInput = (
 ): CreateUsageLimitInput | null => {
   const scope = buildUsageQuotaScopeInput(values);
 
-  if (!isDefined(scope)) {
+  if (!isDefined(scope) || !isNonEmptyString(values.limitValue.trim())) {
     return null;
   }
 
+  const inputValue = Number(values.limitValue);
   const limitValue = Math.round(
-    Number(values.limitValue) * getUsageLimitInputScale(scope.unit),
+    inputValue * getUsageLimitInputScale(scope.unit),
   );
 
-  if (!Number.isSafeInteger(limitValue) || limitValue < 1) {
+  if (
+    !Number.isSafeInteger(limitValue) ||
+    limitValue < 0 ||
+    (limitValue === 0 && inputValue !== 0)
+  ) {
     return null;
   }
 

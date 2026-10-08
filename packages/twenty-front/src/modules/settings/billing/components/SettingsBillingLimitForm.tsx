@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -139,11 +140,13 @@ export const SettingsBillingLimitForm = ({
   };
 
   const consumedValue = scopeConsumption?.consumedValue ?? null;
-  const progress = computeUsageLimitProgress({
-    limitValue:
-      Number(values.limitValue) * getUsageLimitInputScale(values.unit),
-    consumedValue,
-  });
+  const progress = isNonEmptyString(values.limitValue.trim())
+    ? computeUsageLimitProgress({
+        limitValue:
+          Number(values.limitValue) * getUsageLimitInputScale(values.unit),
+        consumedValue,
+      })
+    : null;
   const consumedPercentage = progress?.consumedPercentage ?? 0;
   const isExhausted = progress?.remainingValue === 0;
   const hasConsumption = isDefined(consumedValue) && consumedValue > 0;
