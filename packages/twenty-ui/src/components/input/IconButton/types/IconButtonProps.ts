@@ -9,6 +9,7 @@ export type IconButtonProps = Omit<
   ButtonProps,
   | 'size'
   | 'aria-label'
+  | 'aria-labelledby'
   | 'children'
   | 'startIcon'
   | 'endIcon'
@@ -20,9 +21,11 @@ export type IconButtonProps = Omit<
   size?: IconButtonSize;
   shape?: 'square' | 'round';
   children: ReactNode;
-  'aria-label': string;
   tooltip?: string;
   tooltipPlace?: TooltipSide;
   tooltipDelay?: number;
   tooltipOffset?: number;
-};
+} & (
+    | { 'aria-label': string; 'aria-labelledby'?: string }
+    | { 'aria-label'?: string; 'aria-labelledby': string }
+  );
