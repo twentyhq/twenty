@@ -38,7 +38,6 @@ export class HttpTool implements Tool {
         url,
         method: method,
         headers: headersCopy,
-        // axios `timeout` only bounds socket inactivity, so a server trickling bytes would never hit it
         signal: timeoutSignal,
         maxContentLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
         maxBodyLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
