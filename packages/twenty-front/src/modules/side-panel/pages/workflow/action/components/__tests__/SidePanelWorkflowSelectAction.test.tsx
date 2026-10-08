@@ -1,11 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { SidePanelWorkflowSelectAction } from '@/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction';
 import {
   jotaiStore,
@@ -28,30 +26,23 @@ jest.mock(
   () => ({
     WorkflowActionMenuItems: ({
       actions,
-      onClick,
     }: {
-      actions: { defaultLabel: string; type: string }[];
-      onClick: (actionType: string) => void;
+      actions: { defaultLabel: string }[];
     }) => (
       <>
         {actions.map((action) => (
-          <button
-            key={action.defaultLabel}
-            onClick={() => onClick(action.type)}
-          >
-            {action.defaultLabel}
-          </button>
+          <div key={action.defaultLabel}>{action.defaultLabel}</div>
         ))}
       </>
     ),
   }),
 );
 
-const renderPicker = (onActionSelected = jest.fn()) =>
+const renderPicker = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <SidePanelWorkflowSelectAction onActionSelected={onActionSelected} />
+        <SidePanelWorkflowSelectAction onActionSelected={jest.fn()} />
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -75,34 +66,5 @@ describe('SidePanelWorkflowSelectAction', () => {
     renderPicker();
 
     expect(screen.getByText('Wait for Event')).toBeInTheDocument();
-  });
-
-  it("defaults a new Create Calendar Event step to the user's time zone", async () => {
-    jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
-      ...jotaiStore.get(workspaceMemberFormatPreferencesState.atom),
-      timeZone: 'Europe/Paris',
-    });
-    const onActionSelected = jest.fn();
-
-    renderPicker(onActionSelected);
-
-    await userEvent.click(screen.getByText('Create Calendar Event'));
-
-    expect(onActionSelected).toHaveBeenCalledTimes(1);
-    expect(onActionSelected).toHaveBeenCalledWith({
-      type: 'CREATE_CALENDAR_EVENT',
-      defaultSettings: { input: { timeZone: 'Europe/Paris' } },
-    });
-  });
-
-  it('creates other steps without default settings', async () => {
-    const onActionSelected = jest.fn();
-
-    renderPicker(onActionSelected);
-
-    await userEvent.click(screen.getByText('Send Email'));
-
-    expect(onActionSelected).toHaveBeenCalledTimes(1);
-    expect(onActionSelected).toHaveBeenCalledWith({ type: 'SEND_EMAIL' });
   });
 });

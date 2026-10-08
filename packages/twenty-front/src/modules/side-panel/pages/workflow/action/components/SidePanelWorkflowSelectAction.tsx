@@ -1,7 +1,6 @@
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
@@ -71,18 +70,7 @@ export const SidePanelWorkflowSelectAction = ({
       !isWorkspaceCustomApplication({ id: fn.applicationId }, currentWorkspace),
   );
 
-  const { timeZone } = useDateTimeFormat();
-
   const handleActionClick = (actionType: WorkflowActionType) => {
-    if (actionType === 'CREATE_CALENDAR_EVENT') {
-      onActionSelected({
-        type: actionType,
-        defaultSettings: { input: { timeZone } },
-      });
-
-      return;
-    }
-
     onActionSelected({ type: actionType });
   };
 
