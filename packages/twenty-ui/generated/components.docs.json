@@ -5818,11 +5818,11 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "type": "string | ((state: DialogPortalState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -5832,7 +5832,99 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": "Element the dialog is portaled into. Defaults to the theme's portal\ncontainer."
+            "description": "Portal destination. Omission uses the theme container or Base UI default; explicit `null` defers mounting. A ref with a null current value uses the Base UI default destination."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps content mounted while the alert is closed."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Backdrop",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogBackdropState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "forceRender",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the backdrop is forced to render even when nested."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogBackdropState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogBackdropState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogViewportState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "finalFocus",
@@ -5849,13 +5941,6 @@
             "description": "Determines the element to focus when the dialog is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the dialog\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keeps the dialog mounted in the DOM while it is closed."
-          },
-          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPopupState>",
             "required": false,
@@ -5867,7 +5952,7 @@
             "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Width of the dialog, or `fullscreen` to fill the viewport."
+            "description": "Width of the alert, or `fullscreen` to fill the viewport."
           },
           {
             "name": "style",

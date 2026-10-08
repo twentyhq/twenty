@@ -36,18 +36,17 @@ Slots such as `InputGroup.startElement` and `ListItem.actions` accept React node
 
 ### Popup composition
 
-Some components package supporting overlay elements inside their public `Popup` part:
+Some primitives package supporting overlay elements inside their `Popup` part:
 
-| Component     | Included in `Popup`                    | Configure on `Popup`                                     |
-| ------------- | -------------------------------------- | -------------------------------------------------------- |
-| `Select`      | Portal and positioner                  | Placement, anchor, and portal container                  |
-| `Menu`        | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
-| `Popover`     | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
-| `AlertDialog` | Portal, backdrop, and viewport         | Size, portal container, mounting, and focus              |
+| Component | Included in `Popup`                    | Configure on `Popup`                                     |
+| --------- | -------------------------------------- | -------------------------------------------------------- |
+| `Select`  | Portal and positioner                  | Placement, anchor, and portal container                  |
+| `Menu`    | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
+| `Popover` | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
 
 Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
 
-[Dialog](/ui/primitives/surfaces/dialog) instead exposes separate `Portal`, `Backdrop`, `Viewport` and `Popup` parts. Compose them explicitly and customize each part through its own native props, handlers, ref and `render`. Its Popup owns dialog content, size and focus targets; Portal owns the destination and mounting. Dialog is for standalone UI and the Twenty host. Front components use the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api).
+[Dialog](/ui/primitives/surfaces/dialog) and [AlertDialog](/ui/primitives/surfaces/alert-dialog) expose separate `Portal`, `Backdrop`, `Viewport` and `Popup` parts. Configure mounting and the destination on Portal, overlay appearance on Backdrop and Viewport, and content size and focus on Popup. Each part preserves its own native attributes, ref target and render composition. These dialog APIs are for standalone UI and the Twenty host. Front components use the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api).
 
 ### Custom components
 

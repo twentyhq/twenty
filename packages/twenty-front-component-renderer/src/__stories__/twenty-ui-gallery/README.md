@@ -41,12 +41,11 @@ effect within the interaction timeout.
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                  |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                      |
 | `twenty-ui-popover`              | Popover                                                                                                                             |
-| `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                       |
+| `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                             |
 | `twenty-ui-menu`                 | Menu                                                                                                                                |
 | `twenty-ui-select`               | Select                                                                                                                              |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
 | `twenty-ui-toast`                | Toast                                                                                                                               |
-| `twenty-ui-alert-dialog`         | Historical direct AlertDialog example, excluded from renderer compatibility acceptance                                              |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
 | `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
@@ -79,9 +78,13 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
+## Dialog policy
+
+Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popover activation are prohibited in front components. Their standalone Twenty UI APIs have dedicated unit and browser stories. Front components use SDK `openCommandConfirmationModal`, whose structured title, subtitle and confirm-button options are rendered by the host. The Dialog fixture checks the confirmation request. Result handling and actual host modal focus, restoration, dismissal and teardown acceptance remain part of the renderer integration work. No direct Dialog or AlertDialog gallery fixture is retained as a compatibility target.
+
 ## Known sandbox limitations
 
-Direct app-owned Dialog/AlertDialog modality and native browser dialog/popover activation are prohibited in front components. Dialogs use the existing SDK `openCommandConfirmationModal` API, whose structured options are rendered by the host. The Dialog fixture checks the SDK confirmation request. Result handling and actual host modal focus, restoration, confirm/cancel and teardown integration remain part of the renderer host-dialog integration work. The retained direct AlertDialog fixture does not establish support and will be aligned separately. An invisible popup is not a compatibility pass.
+An invisible popup is not a compatibility pass.
 
 These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. Scenarios pin the current behavior exactly: a
