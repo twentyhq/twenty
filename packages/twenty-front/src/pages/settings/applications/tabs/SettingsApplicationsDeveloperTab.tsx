@@ -99,7 +99,7 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
-        <CommandBlock commands={createCommands} button={createCopyButton} />
+        <CommandBlock commands={createCommands} actions={createCopyButton} />
         <StyledButtonContainer>
           <Button
             startIcon={<IconArrowUpRight />}

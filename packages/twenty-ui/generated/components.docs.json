@@ -9788,7 +9788,7 @@
         "name": "Header",
         "props": [
           {
-            "name": "adornment",
+            "name": "actions",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
@@ -9806,14 +9806,21 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+            "description": "Supporting text associated with the heading. Strings have optional truncation and overflow tooltips; React nodes render as supplied."
           },
           {
             "name": "descriptionLineClamp",
-            "type": "number",
+            "type": "number | false",
             "required": false,
             "defaultValue": "5",
-            "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+            "description": "Maximum visible lines for a string description. Defaults to `5`; use `false` to display the full description without a tooltip."
+          },
+          {
+            "name": "isDescriptionFocusable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`."
           },
           {
             "name": "level",
@@ -10161,18 +10168,25 @@
     "slug": "components/data-display/command-block",
     "props": [
       {
-        "name": "button",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+        "name": "actions",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional action element beside the command lines, such as a copy button."
+        "description": "Content beside the command lines, such as a copy button, link or status."
       },
       {
         "name": "commands",
-        "type": "string[]",
+        "type": "readonly string[]",
         "required": true,
         "defaultValue": null,
         "description": "Command lines to display. The component prefixes each line with > and does not execute commands."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
       }
     ]
   },
