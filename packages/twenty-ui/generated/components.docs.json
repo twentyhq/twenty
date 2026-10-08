@@ -2949,7 +2949,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Adds padding around the box and a hover background. Disable it for a\ncompact checkbox inside another interactive element."
+        "description": "Adds padding and a hover background around the box."
       },
       {
         "name": "id",
@@ -3062,6 +3062,207 @@
         "required": false,
         "defaultValue": "solid",
         "description": "Visual style of the box: filled, outlined, or tinted."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "checked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the checkbox is currently ticked.\n\nTo render an uncontrolled checkbox, use the `defaultChecked` prop instead."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: CheckboxRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"accent\" | \"success\" | \"warning\"",
+            "required": false,
+            "defaultValue": "accent",
+            "description": "Color used while the checkbox is checked or indeterminate."
+          },
+          {
+            "name": "defaultChecked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox is initially ticked.\n\nTo render a controlled checkbox, use the `checked` prop instead."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the form that owns the hidden input.\nUseful when the checkbox is rendered outside the form."
+          },
+          {
+            "name": "hoverable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Adds padding and a hover background around the box."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The id of the input element."
+          },
+          {
+            "name": "indeterminate",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox is in a mixed state: neither ticked, nor unticked."
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to access the hidden `<input>` element."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the field when a form is submitted."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
+          },
+          {
+            "name": "onCheckedChange",
+            "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the checkbox is ticked or unticked."
+          },
+          {
+            "name": "parent",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the checkbox controls a group of child checkboxes.\n\nMust be used in a [Checkbox Group](https://base-ui.com/react/components/checkbox-group)."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user should be unable to tick or untick the checkbox."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CheckboxRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user must tick the checkbox before submitting a form."
+          },
+          {
+            "name": "shape",
+            "type": "\"round\" | \"square\"",
+            "required": false,
+            "defaultValue": "square",
+            "description": "Corner shape of the box."
+          },
+          {
+            "name": "size",
+            "type": "\"md\" | \"sm\"",
+            "required": false,
+            "defaultValue": "sm",
+            "description": "Visual size of the checkbox."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CheckboxRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "uncheckedValue",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the checkbox is unchecked.\nBy default, unchecked checkboxes do not submit any value, matching native checkbox behavior."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The checkbox's value. Identifies it within a [Checkbox Group](https://base-ui.com/react/components/checkbox-group), falling back to `name` when omitted.\nWhen submitting a form, a checked box submits `value`; with no `value`, it submits the native \"on\"."
+          },
+          {
+            "name": "variant",
+            "type": "\"outline\" | \"soft\" | \"solid\"",
+            "required": false,
+            "defaultValue": "solid",
+            "description": "Visual style of the box: filled, outlined, or tinted."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CheckboxIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the element in the DOM when the checkbox is not checked."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CheckboxIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CheckboxIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -4813,6 +5014,158 @@
         "required": false,
         "defaultValue": null,
         "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "checked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the switch is currently active.\n\nTo render an uncontrolled switch, use the `defaultChecked` prop instead."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: SwitchRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultChecked",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the switch is initially active.\n\nTo render a controlled switch, use the `checked` prop instead."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component should ignore user interaction."
+          },
+          {
+            "name": "form",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the form that owns the hidden input.\nUseful when the switch is rendered outside the form."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The id of the hidden input element.\n\nWhen `nativeButton` is `true`, the id is applied to the root element."
+          },
+          {
+            "name": "inputRef",
+            "type": "Ref<HTMLInputElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to access the hidden `<input>` element."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Identifies the field when a form is submitted."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
+          },
+          {
+            "name": "onCheckedChange",
+            "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the switch is activated or deactivated."
+          },
+          {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user should be unable to activate or deactivate the switch."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "required",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the user must activate the switch before submitting a form."
+          },
+          {
+            "name": "size",
+            "type": "\"md\" | \"sm\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Visual size of the switch."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "uncheckedValue",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the switch is off.\nBy default, unchecked switches do not submit any value, matching native checkbox behavior."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value submitted with the form when the switch is on.\nBy default, switch submits the \"on\" value, matching native checkbox behavior."
+          }
+        ]
+      },
+      {
+        "name": "Thumb",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: SwitchThumbState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SwitchThumbState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: SwitchThumbState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -10944,7 +11297,7 @@
         "type": "ReactNode[]",
         "required": true,
         "defaultValue": null,
-        "description": "Avatar elements in display order. Only the first maxVisible elements are shown."
+        "description": "Avatar elements in display order. Empty React nodes are ignored. Supply stable keys to preserve identity when reordering."
       },
       {
         "name": "className",
@@ -10958,21 +11311,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "4",
-        "description": "Maximum number of supplied avatars to show."
-      },
-      {
-        "name": "overflowAvatar",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom trailing element, used instead of the numeric overflow indicator."
-      },
-      {
-        "name": "overflowCount",
-        "type": "number",
-        "required": false,
-        "defaultValue": "0",
-        "description": "Number shown in the trailing +N indicator. Compute this in the application; it is not derived from avatars."
+        "description": "Maximum number of actual avatars to show, excluding the overflow indicator. Floored and clamped to zero; Infinity shows all avatars and NaN shows none."
       },
       {
         "name": "overflowShape",
@@ -10994,6 +11333,34 @@
         "required": false,
         "defaultValue": "3px",
         "description": "CSS length of the overlap between avatars."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the rendered root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render function for the root. Forward the supplied props and ref; the default element is a div."
+      },
+      {
+        "name": "renderOverflow",
+        "type": "((hiddenCount: number) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the derived hidden count when it is positive. Return a custom indicator, or null to hide it."
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Total collection size for partially loaded avatars. Floored and never smaller than the supplied renderable count; nonfinite values use the supplied count."
       }
     ]
   },

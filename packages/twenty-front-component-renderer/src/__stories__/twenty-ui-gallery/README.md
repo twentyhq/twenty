@@ -13,6 +13,8 @@ Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused Reac
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
+AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -34,6 +36,7 @@ effect within the interaction timeout.
 | `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                    |
 | `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
+| `twenty-ui-avatar-group`         | AvatarGroup (derived and partial totals, custom overflow, keyed child state, native refs and explicit button/link composition)          |
 | `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input`          | ImageInput                                                                                                                              |
 | `twenty-ui-list-item`            | ListItem                                                                                                                                |
@@ -200,13 +203,14 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-The Autocomplete, CountrySelect and reading-directions fixtures live in their
-own story files, so run them separately:
+The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
+live in their own story files, so run them separately:
 
 ```sh
 npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiAvatarGroup.stories.tsx
 ```
 
 Section and CommandBlock composition is checked in the Typography and DataDisplay
