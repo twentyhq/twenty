@@ -1,12 +1,11 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
 import {
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getOrderByForFieldMetadataType, isDefined } from 'twenty-shared/utils';
 
 export const getOrderByFieldForObjectMetadataItem = (
   objectMetadataItem: EnrichedObjectMetadataItem,

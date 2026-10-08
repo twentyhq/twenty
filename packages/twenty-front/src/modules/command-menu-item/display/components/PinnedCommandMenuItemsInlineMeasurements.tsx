@@ -1,11 +1,14 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
+import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
+import { getPinnedCommandMenuItemWidthKey } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemWidthKey';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -48,22 +51,39 @@ export const PinnedCommandMenuItemsInlineMeasurements = ({
         );
 
         const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
+        const hotKey = getCommandMenuItemButtonHotKey(item);
+
+        const renderMeasurement = (shouldShowHotKey: boolean) => {
+          const widthKey = getPinnedCommandMenuItemWidthKey({
+            commandMenuItemId: item.id,
+            shouldShowHotKey,
+          });
+
+          return (
+            <NodeDimension
+              onDimensionChange={onPinnedCommandMenuItemDimensionChange(
+                widthKey,
+              )}
+            >
+              <CommandMenuButton
+                command={{
+                  key: `${widthKey}-inline-measurement`,
+                  label,
+                  shortLabel,
+                  Icon,
+                }}
+                hotKey={shouldShowHotKey ? hotKey : undefined}
+                shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
+              />
+            </NodeDimension>
+          );
+        };
 
         return (
-          <NodeDimension
-            key={item.id}
-            onDimensionChange={onPinnedCommandMenuItemDimensionChange(item.id)}
-          >
-            <CommandMenuButton
-              command={{
-                key: `${item.id}-inline-measurement`,
-                label,
-                shortLabel,
-                Icon,
-              }}
-              shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
-            />
-          </NodeDimension>
+          <Fragment key={item.id}>
+            {renderMeasurement(true)}
+            {isDefined(hotKey) && renderMeasurement(false)}
+          </Fragment>
         );
       })}
     </StyledHiddenMeasurementsContainer>

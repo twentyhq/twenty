@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -9,7 +10,6 @@ import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActiv
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -132,7 +132,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
-          <OverflowingTextWithTooltip text={body} />
+          <OverflowingTextWithTooltip
+            text={<LinkifiedText text={body} />}
+            tooltipContent={body}
+          />
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
@@ -155,19 +158,13 @@ export const TaskRow = ({ task }: { task: Task }) => {
               maxWidth={200}
               isDisplayModeFixHeight
             >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: task.id,
-                }}
-              >
-                <StopPropagationContainer>
-                  <RecordFieldComponentInstanceContext.Provider
-                    value={{ instanceId: componentInstanceId }}
-                  >
-                    <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-                  </RecordFieldComponentInstanceContext.Provider>
-                </StopPropagationContainer>
-              </RecordFieldsScopeContextProvider>
+              <StopPropagationContainer>
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{ instanceId: componentInstanceId }}
+                >
+                  <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+                </RecordFieldComponentInstanceContext.Provider>
+              </StopPropagationContainer>
             </FieldContextProvider>
           </StyledActivityTargetsContainer>
         }

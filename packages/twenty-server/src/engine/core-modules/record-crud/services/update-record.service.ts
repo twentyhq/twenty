@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { isObjectSyncedFromConnectedAccounts } from 'twenty-shared/workflow';
 
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import {
@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/types/update-record-params.type';
+import { canFieldsBeUpdatedByAutomation } from 'src/engine/core-modules/record-crud/utils/can-fields-be-updated-by-automation.util';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { removeUndefinedFromRecord } from 'src/engine/core-modules/record-crud/utils/remove-undefined-from-record.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -53,26 +54,7 @@ export class UpdateRecordService {
         rolePermissionConfig,
       });
 
-      if (
-        !canObjectBeManagedByAutomation({
-          nameSingular: flatObjectMetadata.nameSingular,
-        })
-      ) {
-        throw new RecordCrudException(
-          'Failed to update: Object cannot be updated by automation',
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
       const fieldsToUpdateArray = fieldsToUpdate ?? Object.keys(objectRecord);
-
-      if (fieldsToUpdateArray.length === 0) {
-        return {
-          success: true,
-          message: 'No fields to update',
-          result: undefined,
-        };
-      }
 
       const filteredObjectRecord = Object.keys(objectRecord).reduce(
         (acc, key) => {
@@ -85,8 +67,29 @@ export class UpdateRecordService {
         {},
       );
 
-      // Clean undefined values from the record data (including nested composite fields)
-      // This prevents validation errors for partial composite field inputs
+      if (
+        !canFieldsBeUpdatedByAutomation({
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          fieldNames: Object.keys(filteredObjectRecord),
+          workspaceCustomApplicationId:
+            authContext.workspace.workspaceCustomApplicationId,
+        })
+      ) {
+        throw new RecordCrudException(
+          'Failed to update: Object cannot be updated by automation',
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      if (fieldsToUpdateArray.length === 0) {
+        return {
+          success: true,
+          message: 'No fields to update',
+          result: undefined,
+        };
+      }
+
       const cleanedRecord = removeUndefinedFromRecord(filteredObjectRecord);
 
       const { results: updatedRecord } =
@@ -100,6 +103,18 @@ export class UpdateRecordService {
         );
 
       this.logger.log(`Record updated successfully in ${objectName}`);
+
+      if (
+        isObjectSyncedFromConnectedAccounts({
+          nameSingular: flatObjectMetadata.nameSingular,
+        })
+      ) {
+        return {
+          success: true,
+          message: `Record updated successfully in ${objectName}`,
+          result: { id: objectRecordId },
+        };
+      }
 
       return {
         success: true,

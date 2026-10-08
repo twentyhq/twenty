@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  AnimatedIconCrossfade,
   IconButton,
   LightButton,
   LightIconButton,
   MainButton,
-  MenuItem,
-  MenuItemDraggable,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import 'twenty-ui/style.css';
@@ -28,8 +27,8 @@ const ButtonControls = () => {
         startIcon={
           <AnimatedIconCrossfade
             isActive={isEditing}
-            ActiveIcon={IconX}
-            InactiveIcon={IconPencil}
+            activeIcon={<IconX size={14} />}
+            inactiveIcon={<IconPencil size={14} />}
           />
         }
       >
@@ -52,7 +51,12 @@ const ButtonControls = () => {
       <LightButton onClick={() => setLoading(false)}>
         Complete request
       </LightButton>
-      <Button href="https://twenty.com" target="_blank" rel="noreferrer">
+      <Button
+        variant="link"
+        href="https://twenty.com"
+        target="_blank"
+        rel="noreferrer"
+      >
         Documentation
       </Button>
       <ButtonGroup aria-label="Actions" size="sm">
@@ -115,6 +119,9 @@ const ButtonControls = () => {
           </LightIconButton>
         }
       />
+      <Button variant="link" onClick={handleClick}>
+        Log out
+      </Button>
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );

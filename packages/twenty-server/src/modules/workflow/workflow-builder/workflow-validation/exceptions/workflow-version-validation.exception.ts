@@ -10,8 +10,7 @@ export enum WorkflowVersionValidationExceptionCode {
   NON_ACTIVABLE_WORKFLOW_VERSION = 'NON_ACTIVABLE_WORKFLOW_VERSION',
 }
 
-// A long list would fill the toast and bury the first thing to fix, and the
-// rest are still in the exception's own message for the logs.
+// More would bury the first thing to fix; the full list stays in the logged message
 const MAX_ISSUES_SHOWN_TO_USER = 3;
 
 const describeIssuesForUser = (issues: WorkflowValidationIssue[]): string => {
@@ -24,8 +23,7 @@ const describeIssuesForUser = (issues: WorkflowValidationIssue[]): string => {
   return remaining > 0 ? `${shown} (+${remaining} more)` : shown;
 };
 
-// The reasons are interpolated rather than summarised away: "malformed" alone
-// leaves someone hunting a field across every step of the workflow.
+// Reasons are interpolated: "malformed" alone leaves someone hunting a field across every step
 const getWorkflowVersionValidationExceptionUserFriendlyMessage = (
   code: WorkflowVersionValidationExceptionCode,
   issues: WorkflowValidationIssue[],

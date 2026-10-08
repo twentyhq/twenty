@@ -44,8 +44,6 @@ const findMorphTargetFieldInfo = (
     targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
   });
 
-  // For morph relations, compute the join column name from the computed field name
-  // e.g., caretakerPerson → caretakerPersonId
   return {
     fieldName,
     joinColumnName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),

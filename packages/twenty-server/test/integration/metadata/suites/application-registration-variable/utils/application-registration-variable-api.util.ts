@@ -1,6 +1,4 @@
 import {
-  createApplicationRegistrationVariableMutationFactory,
-  deleteApplicationRegistrationVariableMutationFactory,
   findApplicationRegistrationVariablesQueryFactory,
   updateApplicationRegistrationVariableMutationFactory,
 } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-query-factories.util';
@@ -66,42 +64,6 @@ export const findApplicationRegistrationVariables = async ({
   return { data: response.body.data, errors: response.body.errors };
 };
 
-export const createApplicationRegistrationVariable = async ({
-  applicationRegistrationId,
-  key,
-  value,
-  description,
-  isSecret,
-  expectToFail,
-  token,
-}: {
-  applicationRegistrationId: string;
-  key: string;
-  value: string;
-  description?: string;
-  isSecret?: boolean;
-  expectToFail?: boolean;
-  token?: string;
-}): CommonResponseBody<{
-  createApplicationRegistrationVariable: VariableFields;
-}> => {
-  const graphqlOperation = createApplicationRegistrationVariableMutationFactory(
-    {
-      applicationRegistrationId,
-      key,
-      value,
-      description,
-      isSecret,
-    },
-  );
-
-  const response = await makeMetadataApiRequest(graphqlOperation, token);
-
-  handleExpectation(response, expectToFail, 'Create variable');
-
-  return { data: response.body.data, errors: response.body.errors };
-};
-
 export const updateApplicationRegistrationVariable = async ({
   id,
   value,
@@ -128,28 +90,6 @@ export const updateApplicationRegistrationVariable = async ({
   const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   handleExpectation(response, expectToFail, 'Update variable');
-
-  return { data: response.body.data, errors: response.body.errors };
-};
-
-export const deleteApplicationRegistrationVariable = async ({
-  id,
-  expectToFail,
-  token,
-}: {
-  id: string;
-  expectToFail?: boolean;
-  token?: string;
-}): CommonResponseBody<{
-  deleteApplicationRegistrationVariable: boolean;
-}> => {
-  const graphqlOperation = deleteApplicationRegistrationVariableMutationFactory(
-    { id },
-  );
-
-  const response = await makeMetadataApiRequest(graphqlOperation, token);
-
-  handleExpectation(response, expectToFail, 'Delete variable');
 
   return { data: response.body.data, errors: response.body.errors };
 };

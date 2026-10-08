@@ -2,7 +2,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
 } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
@@ -24,15 +24,16 @@ const TAB_MANIFEST: PageLayoutTabManifest = {
 const PAGE_LAYOUT_MANIFEST: Required<Omit<PageLayoutManifest, 'tabs'>> = {
   universalIdentifier: PAGE_LAYOUT_UID,
   name: 'Pet page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: TAB_UID,
+  isFirstTabPinned: false,
 };
 
 const MINIMAL_PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   universalIdentifier: PAGE_LAYOUT_UID,
   name: 'Pet board',
-  type: 'STANDALONE_PAGE',
+  type: PageLayoutType.STANDALONE_PAGE,
 };
 
 const forward = (pageLayoutManifest: PageLayoutManifest) =>

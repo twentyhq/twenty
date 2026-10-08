@@ -144,7 +144,7 @@ describe('DragSelect', () => {
     );
   });
 
-  it('should work without scrollWrapperComponentInstanceId (universal compatibility)', () => {
+  it('should work outside a ScrollWrapper', () => {
     expect(() => {
       render(
         <DragSelect

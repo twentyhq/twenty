@@ -44,21 +44,21 @@ export class DataModelSection {
       exact: true,
     });
     this.objectMoreOptionsButton = page.getByLabel('Object Options');
-    this.editObjectButton = page.getByTestId('tooltip').getByText('Edit');
-    this.deactivateMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('Deactivate');
-    this.activateMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('Activate');
-    this.deleteObjectButton = page.getByTestId('tooltip').getByText('Delete');
+    this.editObjectButton = page.getByText('Edit', { exact: true });
+    this.deactivateMoreOptionsButton = page.getByText('Deactivate', {
+      exact: true,
+    });
+    this.activateMoreOptionsButton = page.getByText('Activate', {
+      exact: true,
+    });
+    this.deleteObjectButton = page.getByText('Delete', { exact: true });
     this.activeSection = page.getByText('Active', { exact: true });
     this.inactiveSection = page.getByText('Inactive');
     this.searchFieldInput = page.getByPlaceholder('Search a field...');
     this.addFieldButton = page.getByRole('button', { name: 'Add field' });
-    this.viewFieldDetailsMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('View');
+    this.viewFieldDetailsMoreOptionsButton = page.getByText('View', {
+      exact: true,
+    });
     this.nameFieldInput = page.getByPlaceholder('Employees');
     this.descriptionFieldInput = page.getByPlaceholder('Write a description');
     this.deactivateButton = page.getByRole('button', { name: 'Deactivate' });

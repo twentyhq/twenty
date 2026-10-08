@@ -20,10 +20,16 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 
 const StyledEditor = styled.div`
   display: contents;
+`;
+
+const StyledIconPickerTrigger = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
 `;
 
 const StyledButton = styled.button`
@@ -110,22 +116,6 @@ export const NavigationMenuItemInlineEditor = ({
     void updateItem(item.id, { name: value.trim() || initialName });
     stopRenaming(clearSelection);
   };
-  const iconButton = (
-    <StyledButton
-      type="button"
-      aria-label={isFolder ? t`Choose icon and color` : t`Edit link`}
-      onClick={isFolder ? undefined : onEditLink}
-    >
-      {isFolder ? (
-        <ColoredIcon
-          Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
-          color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
-        />
-      ) : (
-        <NavigationMenuItemIcon navigationMenuItem={item} />
-      )}
-    </StyledButton>
-  );
   const icon = isFolder ? (
     <IconPicker
       dropdownId={`${dropdownId}-icon`}
@@ -139,10 +129,19 @@ export const NavigationMenuItemInlineEditor = ({
         ),
         onColorChange: (color) => void updateItem(item.id, { color }),
       }}
-      clickableComponent={iconButton}
+      clickableComponent={
+        <StyledIconPickerTrigger aria-label={t`Choose icon and color`}>
+          <ColoredIcon
+            Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
+            color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+          />
+        </StyledIconPickerTrigger>
+      }
     />
   ) : (
-    iconButton
+    <StyledButton type="button" aria-label={t`Edit link`} onClick={onEditLink}>
+      <NavigationMenuItemIcon navigationMenuItem={item} />
+    </StyledButton>
   );
   const label =
     isFolder && isNameInputVisible ? (
@@ -151,6 +150,7 @@ export const NavigationMenuItemInlineEditor = ({
         autoFocus
         selectOnFocus
         copyButton={false}
+        shouldTrim={false}
         value={name}
         onChange={setName}
         onEnter={finishRename}

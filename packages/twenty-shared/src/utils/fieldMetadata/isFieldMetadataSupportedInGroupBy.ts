@@ -8,6 +8,11 @@ const ALWAYS_GROUPABLE_SYSTEM_DATE_FIELD_NAMES = new Set([
   'updatedAt',
 ]);
 
+const ALWAYS_GROUPABLE_SYSTEM_ACTOR_FIELD_NAMES = new Set([
+  'createdBy',
+  'updatedBy',
+]);
+
 const RELATION_FIELD_METADATA_TYPES = new Set<FieldMetadataType>([
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
@@ -24,12 +29,14 @@ export const isFieldMetadataSupportedInGroupBy = ({
   isSystem: boolean;
   relationType?: RelationType | null;
 }): boolean => {
-  const isAlwaysGroupableSystemDateField =
-    ALWAYS_GROUPABLE_SYSTEM_DATE_FIELD_NAMES.has(name) &&
-    isFieldMetadataDateKind(type);
+  const isAlwaysGroupableSystemField =
+    (ALWAYS_GROUPABLE_SYSTEM_DATE_FIELD_NAMES.has(name) &&
+      isFieldMetadataDateKind(type)) ||
+    (ALWAYS_GROUPABLE_SYSTEM_ACTOR_FIELD_NAMES.has(name) &&
+      type === FieldMetadataType.ACTOR);
 
   if (
-    !isAlwaysGroupableSystemDateField &&
+    !isAlwaysGroupableSystemField &&
     shouldExcludeFieldFromAgentToolSchema({ fieldName: name, isSystem })
   ) {
     return false;

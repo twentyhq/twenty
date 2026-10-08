@@ -15,9 +15,7 @@ export const useCloseCommandMenu = ({
   closeSidePanelOnShowPageOptionsExecution?: boolean;
   closeSidePanelOnCommandMenuListExecution?: boolean;
 } = {}) => {
-  const { containerType, commandMenuContextApi } =
-    useContext(CommandMenuContext);
-  const isInSidePanel = commandMenuContextApi.isInSidePanel;
+  const { containerType } = useContext(CommandMenuContext);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -27,9 +25,10 @@ export const useCloseCommandMenu = ({
     CommandMenuComponentInstanceContext,
   );
 
-  const dropdownId = isInSidePanel
-    ? getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId)
-    : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
+  const dropdownId =
+    containerType === CommandMenuItemContainerType.CommandMenuShowPageDropdown
+      ? getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId)
+      : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const closeCommandMenu = () => {
     if (containerType === CommandMenuItemContainerType.CommandMenuList) {

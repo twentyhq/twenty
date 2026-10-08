@@ -7,20 +7,17 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
+import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
+import { buildOnboardingInviteTeamRewardLockKey } from 'src/engine/core-modules/onboarding/utils/build-onboarding-invite-team-reward-lock-key.util';
 import { buildOnboardingStepTransitionLockName } from 'src/engine/core-modules/onboarding/utils/build-onboarding-step-transition-lock-name.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import {
-  INSTALL_ONBOARDING_APPS_JOB_NAME,
-  type InstallOnboardingAppsJobData,
-} from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import {
   OnboardingException,
   OnboardingExceptionCode,
@@ -37,7 +34,6 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
   ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
@@ -47,7 +43,6 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
@@ -60,6 +55,8 @@ export class OnboardingService {
   constructor(
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -67,8 +64,6 @@ export class OnboardingService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -117,10 +112,7 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }): Promise<OnboardingStatus | null> {
-    // We always read the workspace directly from the database here (bypassing
-    // the per-instance core entity cache) so that onboardingStatus reflects the
-    // freshest activationStatus right after activateWorkspace, even when a
-    // sibling server instance still has a stale cached workspace.
+    // Bypasses the core entity cache, which a sibling instance may hold stale right after activateWorkspace.
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -146,9 +138,6 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
       true;
 
-    const isInstallAppsPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING) === true;
-
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
@@ -157,10 +146,6 @@ export class OnboardingService {
 
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
-    }
-
-    if (isInstallAppsPending) {
-      return OnboardingStatus.APPS_INSTALLATION;
     }
 
     if (isProfileCreationPending) {
@@ -327,7 +312,11 @@ export class OnboardingService {
       key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
     });
 
-    return Array.isArray(reversibleStepHistory) ? reversibleStepHistory : [];
+    return Array.isArray(reversibleStepHistory)
+      ? reversibleStepHistory.filter((step) =>
+          Object.values(OnboardingStatus).includes(step),
+        )
+      : [];
   }
 
   private async setReversibleOnboardingStepHistory(
@@ -395,15 +384,6 @@ export class OnboardingService {
           },
           queryRunner,
         );
-      case OnboardingStatus.APPS_INSTALLATION:
-        return this.setOnboardingInstallAppsPending(
-          {
-            userId,
-            workspaceId,
-            value: true,
-          },
-          queryRunner,
-        );
       case OnboardingStatus.PROFILE_CREATION:
         return this.setOnboardingCreateProfilePending(
           {
@@ -414,8 +394,7 @@ export class OnboardingService {
           queryRunner,
         );
       case OnboardingStatus.INVITE_TEAM:
-        // User-scoped on purpose: the workspace-scoped flag would pull every
-        // other member of the workspace back to the invite screen.
+        // User-scoped: the workspace-scoped flag would pull every other member back to the invite screen.
         return this.setOnboardingInviteTeamPending(
           {
             userId,
@@ -507,7 +486,10 @@ export class OnboardingService {
       return;
     }
 
-    await this.creditImportContactsRewardForFirstWorkspaceUser({ workspaceId });
+    await this.creditImportContactsRewardForWorkspaceCreator({
+      userId,
+      workspaceId,
+    });
   }
 
   async skipOnboardingConnectAccountStep({
@@ -544,16 +526,20 @@ export class OnboardingService {
     );
   }
 
-  private async isFirstWorkspaceUser({
+  private async isWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const workspaceUserCount = await this.userWorkspaceRepository.countBy({
-      workspaceId,
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
     });
 
-    return workspaceUserCount === 1;
+    return earliestUserWorkspace?.userId === userId;
   }
 
   private async claimOnboardingConnectAccountStep(
@@ -578,17 +564,20 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditImportContactsRewardForFirstWorkspaceUser({
+  private async creditImportContactsRewardForWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }) {
     try {
-      const isFirstWorkspaceUser = await this.isFirstWorkspaceUser({
+      const isWorkspaceCreator = await this.isWorkspaceCreator({
+        userId,
         workspaceId,
       });
 
-      if (!isFirstWorkspaceUser) {
+      if (!isWorkspaceCreator) {
         return;
       }
 
@@ -599,7 +588,7 @@ export class OnboardingService {
         ),
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: import contacts',
-        idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
@@ -609,216 +598,56 @@ export class OnboardingService {
     }
   }
 
-  async setOnboardingInstallAppsPending(
-    {
-      userId,
-      workspaceId,
-      value,
-    }: {
-      userId: string;
-      workspaceId: string;
-      value: boolean;
-    },
-    queryRunner?: QueryRunner,
-  ) {
-    if (!value) {
-      await this.userVarsService.delete(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-        },
-        queryRunner,
-      );
-
-      return;
-    }
-
-    await this.userVarsService.set(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-        value: true,
-      },
-      queryRunner,
-    );
-  }
-
-  async triggerInstallAppsOnboardingStep({
-    userId,
+  async creditInviteTeamReward({
     workspaceId,
-    universalIdentifiers,
-    isAutoSkipped,
+    userId,
   }: {
-    userId: string;
     workspaceId: string;
-    universalIdentifiers: string[];
-    isAutoSkipped: boolean;
+    userId: string;
   }) {
-    const installableUniversalIdentifiers = universalIdentifiers.filter(
-      (universalIdentifier) =>
-        ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
-          universalIdentifier,
-        ),
-    );
+    const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
 
-    if (installableUniversalIdentifiers.length === 0) {
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) => {
-          const hasClaimedInstallAppsStep =
-            await this.claimInstallAppsOnboardingStep(
-              { userId, workspaceId },
-              queryRunner,
+    try {
+      await this.cacheLockService.withLock(
+        async () => {
+          const rewardedTeammatesCount =
+            await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
+              {
+                workspaceId,
+                type: BillingCreditGrantType.ONBOARDING_REWARD,
+                idempotencyKeyPrefix,
+              },
             );
 
-          if (!hasClaimedInstallAppsStep || isAutoSkipped) {
+          if (
+            rewardedTeammatesCount >=
+            this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
+          ) {
             return;
           }
 
-          await this.pushReversibleOnboardingStep(
-            {
-              userId,
-              workspaceId,
-              step: OnboardingStatus.APPS_INSTALLATION,
-            },
-            queryRunner,
-          );
+          await this.billingCreditService.grantCredits({
+            workspaceId,
+            amountMicro: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+            ),
+            type: BillingCreditGrantType.ONBOARDING_REWARD,
+            reason: 'Onboarding reward: invited teammate signed up',
+            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
+          });
         },
-      );
-
-      return;
-    }
-
-    const hasClaimedInstallAppsStep =
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) =>
-          this.claimInstallAppsOnboardingStep(
-            { userId, workspaceId },
-            queryRunner,
-          ),
-      );
-
-    if (!hasClaimedInstallAppsStep) {
-      return;
-    }
-
-    try {
-      await this.messageQueueService.add<InstallOnboardingAppsJobData>(
-        INSTALL_ONBOARDING_APPS_JOB_NAME,
-        {
-          workspaceId,
-          universalIdentifiers: installableUniversalIdentifiers,
-          userId,
-        },
-        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
-      );
-    } catch (error) {
-      const enqueueFailureMessage = `Failed to enqueue the install onboarding apps job for workspace ${workspaceId}`;
-
-      this.logger.error(enqueueFailureMessage, error);
-
-      await this.releaseInstallAppsOnboardingStepClaim({ userId, workspaceId });
-
-      throw new OnboardingException(
-        enqueueFailureMessage,
-        OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED,
-      );
-    }
-  }
-
-  private async releaseInstallAppsOnboardingStepClaim({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }) {
-    try {
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) =>
-          this.setOnboardingInstallAppsPending(
-            {
-              userId,
-              workspaceId,
-              value: true,
-            },
-            queryRunner,
-          ),
+        buildOnboardingInviteTeamRewardLockKey(workspaceId),
+        ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS,
       );
     } catch (error) {
       this.logger.error(
-        `Failed to restore the pending install-apps onboarding step for workspace ${workspaceId}`,
+        `Failed to credit onboarding invite reward for workspace ${workspaceId}`,
         error,
       );
-    }
-  }
 
-  async clearReversibleOnboardingStepHistoryAfterAppsInstalled({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }) {
-    await this.runStepTransitionInLockedTransaction(
-      { userId, workspaceId },
-      async (queryRunner) =>
-        this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-          { userId, workspaceId },
-          queryRunner,
-        ),
-    );
-  }
-
-  private async claimInstallAppsOnboardingStep(
-    {
-      userId,
-      workspaceId,
-    }: {
-      userId: string;
-      workspaceId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-      },
-      queryRunner,
-    );
-
-    return isDefined(affectedRows) && affectedRows > 0;
-  }
-
-  async creditInstallAppsReward({
-    workspaceId,
-    rewardAppsCount,
-  }: {
-    workspaceId: string;
-    rewardAppsCount: number;
-  }) {
-    try {
-      await this.billingCreditService.grantCredits({
-        workspaceId,
-        amountMicro:
-          this.twentyConfigService.get(
-            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
-          ) * rewardAppsCount,
-        type: BillingCreditGrantType.ONBOARDING_REWARD,
-        reason: `Onboarding reward: install ${rewardAppsCount} app(s)`,
-        idempotencyKey: `onboarding-install-apps:${workspaceId}`,
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
       });
-    } catch (error) {
-      this.logger.error(
-        `Failed to credit onboarding install-apps reward for workspace ${workspaceId}`,
-        error,
-      );
     }
   }
 
@@ -865,10 +694,7 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
-    // Reading the tiers throws on its own when the configured value is not a
-    // parseable JSON object, so it sits inside the guard with the grant: a
-    // reward nobody has configured correctly must not cost anyone their
-    // onboarding.
+    // Reading the tiers throws on malformed config, so it stays guarded: a broken reward must not break onboarding.
     try {
       const { amountMicro, malformedTierKeys } =
         getOnboardingEnrichmentCreditRewardMicro({
@@ -879,8 +705,7 @@ export class OnboardingService {
         });
 
       if (malformedTierKeys.length > 0) {
-        // Dropping a malformed tier silently would under-pay every workspace
-        // that should have matched it, with nothing to notice it by.
+        // Otherwise a dropped tier would silently under-pay every workspace that should have matched it.
         this.exceptionHandlerService.captureExceptions([
           new Error(
             `Ignored malformed ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS entries: ${malformedTierKeys.join(', ')}`,
@@ -897,11 +722,8 @@ export class OnboardingService {
         amountMicro,
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: enrichment-qualified workspace',
-        // The only gate on the reward, deliberately: it is keyed on the
-        // workspace rather than the enriching user so that a re-run of the
-        // enrichment, or a second member qualifying later, replays instead of
-        // topping up a balance the workspace already received.
-        idempotencyKey: `onboarding-enrichment-qualified:${workspaceId}`,
+        // Keyed on the workspace, not the user, so re-runs and later members replay instead of topping up.
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.enrichmentQualification}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
@@ -1068,8 +890,7 @@ export class OnboardingService {
           throw new Error('Transaction entity manager has no query runner');
         }
 
-        // Claiming the offer is the single-winner gate: a concurrent enrichment
-        // loses the insert and must not resurrect a step the user already skipped.
+        // Single-winner gate: a concurrent enrichment must not resurrect a step the user already skipped.
         const hasClaimedBookCallOffer =
           await this.userVarsService.setIfNotExists(
             {

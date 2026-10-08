@@ -81,8 +81,8 @@ export class CleanerWorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly i18nService: I18nService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceDestroyQueue)
+    private readonly workspaceDestroyQueueService: MessageQueueService,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
@@ -107,6 +107,16 @@ export class CleanerWorkspaceService {
     }
 
     return null;
+  }
+
+  private async enqueueWorkspaceDestruction(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.workspaceDestroyQueueService.add<DestroySoftDeletedWorkspaceJobData>(
+      DestroySoftDeletedWorkspaceJob.name,
+      { workspaceId },
+      { id: `destroy-soft-deleted-workspace-${workspaceId}` },
+    );
   }
 
   async sendWarningEmail(
@@ -317,18 +327,12 @@ export class CleanerWorkspaceService {
             await this.workspaceService.deleteWorkspace(workspace.id, true);
           }
         } else {
-          if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
-              workspace.id,
-            );
-          }
-
           this.logger.log(
-            `${dryRun ? 'DRY RUN - ' : ''}Hard deleting onboarding workspace ${workspace.id}`,
+            `${dryRun ? 'DRY RUN - ' : ''}Enqueuing destruction of onboarding workspace ${workspace.id}`,
           );
 
           if (!dryRun) {
-            await this.workspaceService.deleteWorkspace(workspace.id);
+            await this.enqueueWorkspaceDestruction(workspace.id);
           }
         }
       }
@@ -402,12 +406,9 @@ export class CleanerWorkspaceService {
             );
 
             if (!dryRun) {
-              const jobId =
-                await this.messageQueueService.add<DestroySoftDeletedWorkspaceJobData>(
-                  DestroySoftDeletedWorkspaceJob.name,
-                  { workspaceId: workspace.id },
-                  { id: `destroy-soft-deleted-workspace-${workspace.id}` },
-                );
+              const jobId = await this.enqueueWorkspaceDestruction(
+                workspace.id,
+              );
 
               if (isDefined(jobId)) {
                 enqueuedWorkspacesCount++;

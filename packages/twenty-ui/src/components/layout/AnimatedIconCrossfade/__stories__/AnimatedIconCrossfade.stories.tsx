@@ -9,10 +9,14 @@ import { ComponentDecorator } from '@ui/testing';
 import { AnimatedIconCrossfade } from '../AnimatedIconCrossfade';
 
 const meta = {
-  title: 'UI/Input/Button/Button',
+  title: 'UI/Components/Layout/AnimatedIconCrossfade',
   component: AnimatedIconCrossfade,
   tags: ['!autodocs'],
-  args: { isActive: false, ActiveIcon: IconX, InactiveIcon: IconPencil },
+  args: {
+    isActive: false,
+    activeIcon: <IconX size={14} />,
+    inactiveIcon: <IconPencil size={14} />,
+  },
 } satisfies Meta<typeof AnimatedIconCrossfade>;
 
 export default meta;
@@ -32,8 +36,8 @@ export const AnimatedIcon: Story = {
         startIcon={
           <AnimatedIconCrossfade
             isActive={isEditing}
-            ActiveIcon={IconX}
-            InactiveIcon={IconPencil}
+            activeIcon={<IconX size={14} />}
+            inactiveIcon={<IconPencil size={14} />}
           />
         }
       >
@@ -47,7 +51,9 @@ export const AnimatedIcon: Story = {
     });
     await document.fonts.load('500 1em Inter');
     await document.fonts.ready;
-    const [pencil, cross] = button.querySelectorAll('svg');
+    const icons = button.querySelectorAll('svg');
+    const pencil = icons[0]!;
+    const cross = icons[1]!;
     const originalWidth = button.getBoundingClientRect().width;
 
     await expect(button.getBoundingClientRect().height).toBe(24);
@@ -68,6 +74,6 @@ export const AnimatedIcon: Story = {
   },
 };
 export const AnimatedIconDocumentation: Story = {
-  ...AnimatedIcon,
-  play: undefined,
+  decorators: AnimatedIcon.decorators,
+  render: AnimatedIcon.render,
 };

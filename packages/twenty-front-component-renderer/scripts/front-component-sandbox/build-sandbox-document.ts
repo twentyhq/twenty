@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 import { build, type Rollup } from 'vite';
 
+import { createDomutilsStubPlugin } from '../worker/createDomutilsStubPlugin';
+
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(dirname, '../..');
 
@@ -33,6 +35,9 @@ const buildSandboxDocument = async (): Promise<void> => {
       alias: {
         '@/': path.resolve(projectRoot, 'src') + '/',
       },
+    },
+    worker: {
+      plugins: () => [createDomutilsStubPlugin()],
     },
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),

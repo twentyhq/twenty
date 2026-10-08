@@ -28,13 +28,13 @@ ListItem
 └── endIcon
 ```
 
-| Slot                                 | Requirement                      | Purpose                                                                         |
-| ------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------- |
-| `children`                           | Required for a visible row label | Supplies the main text.                                                         |
-| `startIcon`, `endIcon`               | Optional                         | Add supporting icons at either end of the row content.                          |
-| `description`                        | Optional                         | Adds supporting text inline or at the end, according to `descriptionPlacement`. |
-| `actions`                            | Optional                         | Adds trailing content, such as a separately focusable action.                   |
-| `indicator`, `hotkeys`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
+| Slot                                  | Requirement                      | Purpose                                                                         |
+| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
+| `children`                            | Required for a visible row label | Supplies the main text.                                                         |
+| `startIcon`, `endIcon`                | Optional                         | Add supporting icons at either end of the row content.                          |
+| `description`                         | Optional                         | Adds supporting text inline or at the end, according to `descriptionPlacement`. |
+| `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                   |
+| `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
 
 The row supplies layout. Use `render` to choose its element and semantics. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
 
@@ -58,11 +58,11 @@ export const DuplicateAction = ({ onDuplicate }: DuplicateActionProps) => (
 );
 ```
 
-The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `hotkeys` displays shortcut hints; your application must register the shortcuts.
+The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `shortcut` displays shortcut hints; your application must register the shortcuts.
 
 ## Settings row
 
-Use [SettingsRow](/ui/components/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
+Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
 
 ## Selection indicator
 
@@ -121,7 +121,7 @@ export const AssigneeButtons = () => {
           aria-pressed={assignee === name}
           selected={assignee === name}
           indicator="check"
-          startIcon={<Avatar name={name} size="md" />}
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
           onClick={() => setAssignee(name)}
         >
           {name}
@@ -209,8 +209,14 @@ export const ContactRow = ({ onOpen }: ContactRowProps) => (
 );
 ```
 
+## Labels
+
+Use `shortcutJoinLabel` to customize the text between sequential shortcut steps. It defaults to `then`; an empty string removes the join text. The same prop is available on `Menu` and `Dropdown` item parts. The legacy `MenuItem` composition uses `shortcutJoinLabel` alongside `shortcut`.
+
 ## Props
 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <ListItemReference />
+
+Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.

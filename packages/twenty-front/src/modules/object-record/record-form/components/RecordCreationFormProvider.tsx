@@ -1,6 +1,6 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
@@ -57,7 +57,7 @@ export const RecordCreationFormProvider = ({
         !isDefined(pendingRecordCreation) ||
         pendingRecordCreation.isSettling
       ) {
-        return;
+        return {};
       }
 
       if (draftRecord === null) {
@@ -69,7 +69,7 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        return;
+        return {};
       }
 
       setPendingRecordCreations((previousPendingRecordCreations) =>
@@ -95,7 +95,7 @@ export const RecordCreationFormProvider = ({
 
         enqueueToast(getToastOptionsFromError({ error }));
 
-        return;
+        return { error };
       }
 
       removePageFromSidePanelHistory(requestId);
@@ -107,6 +107,8 @@ export const RecordCreationFormProvider = ({
           (candidate) => candidate.requestId !== requestId,
         ),
       );
+
+      return {};
     },
     [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
   );

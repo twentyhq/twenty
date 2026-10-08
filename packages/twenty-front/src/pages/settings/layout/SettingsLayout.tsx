@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';

@@ -12,7 +12,7 @@ import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEm
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -21,15 +21,12 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Callout } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/components/feedback';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
-
-const StyledSwitch = styled(Switch)`
-  align-self: center;
-`;
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -55,8 +52,8 @@ const StyledNoticesContainer = styled.div`
 type CalendarEventComposerFieldsProps = {
   composerState: ReturnType<typeof useCalendarEventComposer>;
   contextRecord: EmailComposerContextRecord;
-  onAddAccount: () => void;
-  onReauthorize: () => void;
+  onAddAccount?: () => void;
+  onReauthorize?: () => void;
 };
 
 export const CalendarEventComposerFields = ({
@@ -169,7 +166,7 @@ export const CalendarEventComposerFields = ({
                 composerState.handleIsFullDayChange(!composerState.isFullDay)
               }
               trailing={
-                <StyledSwitch
+                <Switch
                   aria-label={t`All day`}
                   size="sm"
                   checked={composerState.isFullDay}
@@ -254,7 +251,7 @@ export const CalendarEventComposerFields = ({
                 composerState.setSendInvitations(!composerState.sendInvitations)
               }
               trailing={
-                <StyledSwitch
+                <Switch
                   aria-label={t`Send invitations`}
                   size="sm"
                   checked={composerState.sendInvitations}
@@ -273,7 +270,7 @@ export const CalendarEventComposerFields = ({
                 composerState.setAddConferencing(!composerState.addConferencing)
               }
               trailing={
-                <StyledSwitch
+                <Switch
                   aria-label={t`Video conferencing`}
                   size="sm"
                   checked={composerState.addConferencing}
@@ -307,23 +304,45 @@ export const CalendarEventComposerFields = ({
         <StyledNoticesContainer>
           {composerState.accountOptions.length === 0 && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Connect a calendar account`}
-              description={t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`}
-              action={{ label: t`Add account`, onClick: onAddAccount }}
+              description={
+                isDefined(onAddAccount)
+                  ? t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`
+                  : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
+              }
+              action={
+                isDefined(onAddAccount) ? (
+                  <Callout.Action
+                    type="button"
+                    onClick={onAddAccount}
+                  >{t`Add account`}</Callout.Action>
+                ) : undefined
+              }
             />
           )}
           {composerState.missingScopes.length > 0 && (
             <Callout
-              variant="error"
+              status="error"
               title={t`Calendar access needs approval`}
-              description={t`Reconnect this account to grant permission to create calendar events.`}
-              action={{ label: t`Reconnect`, onClick: onReauthorize }}
+              description={
+                isDefined(onReauthorize)
+                  ? t`Reconnect this account to grant permission to create calendar events.`
+                  : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+              }
+              action={
+                isDefined(onReauthorize) ? (
+                  <Callout.Action
+                    type="button"
+                    onClick={onReauthorize}
+                  >{t`Reconnect`}</Callout.Action>
+                ) : undefined
+              }
             />
           )}
           {!composerState.hasValidDateRange && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Check the event dates`}
               description={
                 composerState.isFullDay
@@ -334,7 +353,7 @@ export const CalendarEventComposerFields = ({
           )}
           {composerState.hasTooManyAttendees && (
             <Callout
-              variant="warning"
+              status="warning"
               title={t`Too many guests`}
               description={t`Remove some guests before creating this event.`}
             />

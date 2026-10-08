@@ -15,6 +15,7 @@ import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogs
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -24,7 +25,7 @@ import {
   IconPlayerPlay,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -99,12 +100,10 @@ export const SettingsLogs = () => {
   const navigateSettings = useNavigateSettings();
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const hasAuditLogsEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
-        entitlement.value,
-    ) === true;
+  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
+    BillingEntitlementKey.AUDIT_LOGS,
+    currentWorkspace,
+  );
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
     EventLogTable.PAGEVIEW,
@@ -145,7 +144,7 @@ export const SettingsLogs = () => {
     isDefined(filters.dateRange?.start) ||
     isDefined(filters.dateRange?.end);
 
-  const liveRecords = useEventLogsLiveStream({
+  const { liveRecords } = useEventLogsLiveStream({
     table: selectedTable,
     enabled: !isPaused && !hasActiveFilters && canQuery,
   });

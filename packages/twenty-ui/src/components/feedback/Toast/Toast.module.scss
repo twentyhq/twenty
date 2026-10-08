@@ -1,6 +1,6 @@
 .root {
   backdrop-filter: var(--t-blur-medium);
-  background-color: var(--t-background-transparent-primary);
+  background-color: var(--t-background-primary);
   border-radius: var(--t-border-radius-md);
   box-shadow: var(--t-box-shadow-strong);
   box-sizing: border-box;
@@ -34,6 +34,7 @@
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-2);
   margin-block-end: var(--t-spacing-1);
+  position: relative;
 }
 
 .message {

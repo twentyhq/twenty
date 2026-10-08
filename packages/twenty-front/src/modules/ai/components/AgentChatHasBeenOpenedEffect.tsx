@@ -1,16 +1,20 @@
 import { useEffect } from 'react';
+import { Temporal } from 'temporal-polyfill';
 
-import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const AgentChatHasBeenOpenedEffect = () => {
-  const setHasAgentChatBeenOpened = useSetAtomState(
-    hasAgentChatBeenOpenedState,
+  const setAgentChatUISessionStartTime = useSetAtomState(
+    agentChatUISessionStartTimeState,
   );
 
   useEffect(() => {
-    setHasAgentChatBeenOpened(true);
-  }, [setHasAgentChatBeenOpened]);
+    setAgentChatUISessionStartTime(
+      (agentChatUISessionStartTime) =>
+        agentChatUISessionStartTime ?? Temporal.Now.instant(),
+    );
+  }, [setAgentChatUISessionStartTime]);
 
   return null;
 };

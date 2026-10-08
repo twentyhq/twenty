@@ -1,4 +1,4 @@
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import {
   buildCoreWorkflowHasAnyOfStatusesPredicate,
   CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,

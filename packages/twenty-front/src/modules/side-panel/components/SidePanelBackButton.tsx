@@ -1,38 +1,39 @@
 import { SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID } from '@/side-panel/constants/SidePanelNavigationHistoryDropdownId';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconButton, MenuItem } from 'twenty-ui/components';
+import { Children, useRef, type MouseEvent } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledNavigationIcon = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-`;
 
 export const SidePanelBackButton = () => {
   const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { contextChips } = useSidePanelContextChips();
 
+  const historyChips = contextChips.slice(0, -1);
+
   const { openDropdown } = useOpenDropdown();
 
   const { closeDropdown } = useCloseDropdown();
 
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleBackButtonClick = () => {
+    closeDropdown(SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID);
+    goBackFromSidePanel();
+  };
+
   const handleBackButtonContextMenu = (
-    event: React.MouseEvent<HTMLDivElement>,
+    event: MouseEvent<HTMLButtonElement>,
   ) => {
-    if (contextChips.length === 0) {
+    if (!isNonEmptyArray(historyChips)) {
       return;
     }
 
@@ -46,39 +47,41 @@ export const SidePanelBackButton = () => {
   };
 
   return (
-    <Dropdown
-      clickableComponent={
-        <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
-          <IconButton
-            size="sm"
-            variant="ghost"
-            onClick={goBackFromSidePanel}
-            aria-label={t`Back`}
-          >
-            <IconChevronLeft />
-          </IconButton>
-        </StyledNavigationIcon>
-      }
-      dropdownComponents={
-        <LegacyDropdownContent>
-          <DropdownMenuItemsContainer>
-            {contextChips.slice(0, -1).map((chip, index) => (
-              <MenuItem
-                key={index}
-                LeftComponent={chip.Icons}
-                onClick={() => {
-                  closeDropdown(SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID);
-                  chip.onClick?.();
-                }}
-                text={chip.text}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
-      }
+    <DropdownRoot
+      type="menu"
       dropdownId={SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID}
-      dropdownPlacement="bottom-start"
-      disableClickForClickableComponent={true}
-    />
+      onInteractOutside={(event) => {
+        if (backButtonRef.current?.contains(event.target)) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <IconButton
+        ref={backButtonRef}
+        size="sm"
+        variant="ghost"
+        onClick={handleBackButtonClick}
+        onContextMenu={handleBackButtonContextMenu}
+        aria-label={t`Back`}
+      >
+        <IconChevronLeft />
+      </IconButton>
+      <DropdownContent
+        anchor={backButtonRef}
+        aria-label={t`Navigation history`}
+      >
+        <Dropdown.Section>
+          {historyChips.map((chip, index) => (
+            <Dropdown.ActionItem
+              key={index}
+              startIcon={<>{Children.toArray(chip.Icons)}</>}
+              onClick={chip.onClick}
+            >
+              {chip.text}
+            </Dropdown.ActionItem>
+          ))}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

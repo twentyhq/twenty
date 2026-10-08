@@ -2,7 +2,7 @@ import { Radio as RadioPrimitive } from '@base-ui/react/radio';
 import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { clsx } from 'clsx';
 
-import { isRenderableSlot } from '@ui/primitives/navigation/ListItem/internal/isRenderableSlot';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from './SegmentedControl.module.scss';

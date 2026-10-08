@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_RECORD_PERMISSIONS = gql`
-  query GetRecordPermissions($targets: [RecordPermissionsTargetInput!]!) {
+  query GetRecordPermissions($targets: [RecordTargetInput!]!) {
     recordPermissions(targets: $targets) {
       objectMetadataId
       recordId

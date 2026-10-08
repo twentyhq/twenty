@@ -10,7 +10,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ObjectPermissions } from 'twenty-shared/types';
 
 type FieldsWidgetFieldItemProps = {
@@ -63,10 +62,7 @@ export const FieldsWidgetFieldItem = ({
         isDisplayModeFixHeight: true,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly,
-          objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
-            objectPermissionsByObjectMetadataId,
-            objectMetadataId: objectMetadataItem.id,
-          }),
+          objectMetadataId: objectMetadataItem.id,
           fieldMetadataItem,
           fieldDefinition,
           objectPermissionsByObjectMetadataId,

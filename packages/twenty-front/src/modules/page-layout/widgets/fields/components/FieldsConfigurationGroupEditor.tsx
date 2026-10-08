@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
+import { type DropdownDismissEvent } from 'twenty-ui/components/navigation';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationEmptyGroupDropZone } from '@/page-layout/widgets/fields/components/FieldsConfigurationEmptyGroupDropZone';
@@ -11,8 +12,8 @@ import { FIELDS_CONFIGURATION_FIELD_DND_TYPE } from '@/page-layout/widgets/field
 import { type FieldsConfigurationFieldDragData } from '@/page-layout/widgets/fields/types/FieldsConfigurationFieldDragData';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -90,6 +91,8 @@ export const FieldsConfigurationGroupEditor = ({
     group.id,
   );
 
+  const groupHeaderRef = useRef<HTMLDivElement>(null);
+
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
@@ -100,19 +103,13 @@ export const FieldsConfigurationGroupEditor = ({
     });
   };
 
-  const handleCancelRename = () => {
-    closeDropdown(renameDropdownId);
-  };
+  const handleRenameInteractOutside = (event: DropdownDismissEvent) => {
+    const isGroupHeaderPress =
+      groupHeaderRef.current?.contains(event.target) ?? false;
 
-  const handleRenameGroup = ({
-    groupId,
-    newName,
-  }: {
-    groupId: string;
-    newName: string;
-  }) => {
-    closeDropdown(renameDropdownId);
-    onRenameGroup({ groupId, newName });
+    if (isGroupHeaderPress) {
+      event.preventDefault();
+    }
   };
 
   const sortedFields = [...group.fields].sort(
@@ -122,36 +119,32 @@ export const FieldsConfigurationGroupEditor = ({
   return (
     <StyledGroupContainer isDragging={isDragging}>
       <StyledGroupHeaderRow>
-        <DragDropItemSortableHandle fill>
-          <Dropdown
-            dropdownId={renameDropdownId}
-            clickableComponentWidth="100%"
-            clickableComponent={
-              <StyledMenuItemDraggableWrapper>
-                <FieldsConfigurationGroupDraggableHeader text={group.name} />
-              </StyledMenuItemDraggableWrapper>
-            }
-            disableClickForClickableComponent
-            dropdownPlacement="bottom-start"
-            dropdownOffset={{ x: 32 }}
-            onClose={handleCancelRename}
-            dropdownComponents={
-              <LegacyDropdownContent
-                widthInPixels={GenericDropdownContentWidth.Large}
-              >
-                <FieldsConfigurationGroupRenameInput
-                  dropdownId={renameDropdownId}
-                  renameValue={renamingGroupValue}
-                  onRenameValueChange={onRenamingGroupValueChange}
-                  onSave={(newName) =>
-                    handleRenameGroup({ groupId: group.id, newName })
-                  }
-                  onCancel={handleCancelRename}
-                />
-              </LegacyDropdownContent>
-            }
-          />
-        </DragDropItemSortableHandle>
+        <StyledMenuItemDraggableWrapper ref={groupHeaderRef}>
+          <DragDropItemSortableHandle fill>
+            <FieldsConfigurationGroupDraggableHeader text={group.name} />
+          </DragDropItemSortableHandle>
+        </StyledMenuItemDraggableWrapper>
+        <DropdownRoot
+          dropdownId={renameDropdownId}
+          type="panel"
+          onInteractOutside={handleRenameInteractOutside}
+        >
+          <DropdownContent
+            anchor={groupHeaderRef}
+            alignOffset={32}
+            width={GenericDropdownContentWidth.Large}
+            aria-label={t`Rename group`}
+          >
+            <FieldsConfigurationGroupRenameInput
+              renameValue={renamingGroupValue}
+              onRenameValueChange={onRenamingGroupValueChange}
+              onSave={(newName) =>
+                onRenameGroup({ groupId: group.id, newName })
+              }
+              onClose={() => closeDropdown(renameDropdownId)}
+            />
+          </DropdownContent>
+        </DropdownRoot>
         <StyledDropdownContainer>
           <FieldsConfigurationGroupDropdown
             groupId={group.id}

@@ -13,7 +13,7 @@ type CustomQuotaScope = Pick<
   | 'spenderType'
   | 'spenderId'
   | 'periodUnit'
-  | 'meter'
+  | 'unit'
   | 'limitValue'
 >;
 
@@ -35,7 +35,7 @@ export const buildCustomQuota = ({
   spenderId: normalizeSpenderId(usageLimit.spenderId),
   spenderLabel,
   periodUnit: usageLimit.periodUnit,
-  meter: usageLimit.meter,
+  unit: usageLimit.unit,
   limitValue: usageLimit.limitValue,
   isEnforced,
   consumedValue: consumption?.consumedValue ?? null,

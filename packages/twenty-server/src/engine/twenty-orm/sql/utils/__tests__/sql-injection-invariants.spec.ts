@@ -108,12 +108,14 @@ describe('ORM v2 SQL injection invariants', () => {
       (hostileValue) => {
         const queryBuilder = buildQueryBuilder(['id', 'name', 'deletedAt']);
 
-        const [text, values] = queryBuilder
-          .where('"person"."id" = :id', { id: 'id-1' })
-          .update()
-          .set({ name: hostileValue })
-          .returning(['id'])
-          .getQueryAndParameters();
+        const [text, values] =
+          WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+            queryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+            'update',
+          )
+            .set({ name: hostileValue })
+            .returning(['id'])
+            .getQueryAndParameters();
 
         expect(text).not.toContain(hostileValue);
         expect(text).toContain('$1');
@@ -125,9 +127,10 @@ describe('ORM v2 SQL injection invariants', () => {
       const queryBuilder = buildQueryBuilder(['id', 'name', 'deletedAt']);
 
       expect(() =>
-        queryBuilder
-          .where('"person"."id" = :id', { id: 'id-1' })
-          .update()
+        WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+          queryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+          'update',
+        )
           .set({ "name\" = ''); DROP TABLE person; --": 'x' })
           .returning(['id'])
           .getQuery(),

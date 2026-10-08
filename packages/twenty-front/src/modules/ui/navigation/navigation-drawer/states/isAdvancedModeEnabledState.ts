@@ -4,4 +4,5 @@ export const isAdvancedModeEnabledState = createAtomState<boolean>({
   key: 'isAdvancedModeEnabledAtom',
   defaultValue: false,
   useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });

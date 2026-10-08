@@ -27,7 +27,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button, Field } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledQuestion = styled.div`
@@ -152,7 +152,7 @@ export const WorkflowEditActionClassify = ({
 
         {questions.map((question) => (
           <StyledQuestion key={question.id}>
-            <HorizontalSeparator noMargin />
+            <Separator />
 
             <FormFieldInputContainer>
               <StyledNameRow>
@@ -231,7 +231,7 @@ export const WorkflowEditActionClassify = ({
 
         {!readonly && (
           <>
-            <HorizontalSeparator noMargin />
+            <Separator />
             <Button
               startIcon={<IconPlus />}
               onClick={() =>
@@ -246,7 +246,7 @@ export const WorkflowEditActionClassify = ({
         )}
       </WorkflowStepBody>
 
-      <WorkflowStepFooter stepId={action.id} />
+      {!readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

@@ -18,7 +18,8 @@ type MainButtonStoryProps = ButtonProps & {
 };
 
 const meta: Meta<MainButtonStoryProps> = {
-  title: 'UI/Components/MainButton',
+  id: 'ui-components-mainbutton',
+  title: 'UI/Components/Input/MainButton',
   component: MainButton,
   args: { children: 'Save changes' },
 };
@@ -114,7 +115,7 @@ export const Catalog: CatalogStory<Story, typeof MainButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'variant',

@@ -1,81 +1,92 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ContinueAgentRunJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/continue-agent-run.job';
+import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
+import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
+import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
+import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
+import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-
-import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
-import { AgentMessageEntity } from './entities/agent-message.entity';
-import { AgentTurnEntity } from './entities/agent-turn.entity';
-import { AgentMessagePartResolver } from './resolvers/agent-message-part.resolver';
-import { AgentRunResolver } from './resolvers/agent-run.resolver';
-import { AgentActorContextService } from './services/agent-actor-context.service';
-import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
-import { AgentRunService } from './services/agent-run.service';
-import { RunAgentAttachmentService } from './services/run-agent-attachment.service';
 
 @Module({
   imports: [
+    AgentChatThreadLifecycleModule,
+    AgentChatThreadModule,
+    AgentHistoryModule,
     AiBillingModule,
-    AiModelsModule,
     AiAgentModule,
-    ApplicationModule,
-    BillingModule,
+    AiAgentRoleModule,
+    ApplicationLookupModule,
+    CacheLockModule,
     FileUrlModule,
-    WorkspaceDomainsModule,
     MetricsModule,
+    PendingWakeUpModule,
     UserWorkspaceModule,
     UserRoleModule,
     PermissionsModule,
-    WorkspaceCacheModule,
-    forwardRef(() => ToolProviderModule),
+    ToolProviderModule,
     TypeOrmModule.forFeature([
       AgentEntity,
-      AgentMessageEntity,
-      AgentMessagePartEntity,
-      AgentTurnEntity,
       FileEntity,
-      RoleTargetEntity,
+      PendingWakeUpEntity,
       WorkspaceEntity,
     ]),
   ],
   providers: [
     AgentAsyncExecutorService,
     AgentActorContextService,
-    AiGraphqlApiExceptionInterceptor,
+    AgentCallerConversationService,
+    AgentRunCallerHandlerRegistryService,
+    AgentRunConversationService,
+    AgentRunSuspensionService,
     AgentMessagePartResolver,
+    AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
+    AgentRunnerService,
+    // continues suspended runs once answered or woken up, on the server and the worker alike
+    AgentRunPendingWakeUpHandlerService,
+    ContinueAgentRunJob,
     RunAgentAttachmentService,
-    provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(PendingWakeUpEntity),
   ],
   exports: [
-    AgentAsyncExecutorService,
     AgentActorContextService,
-    TypeOrmModule.forFeature([
-      AgentMessageEntity,
-      AgentMessagePartEntity,
-      AgentTurnEntity,
-    ]),
+    AgentCallerConversationService,
+    AgentRunCallerHandlerRegistryService,
+    AgentRunConversationService,
+    AgentRunSuspensionService,
+    AgentRunnerService,
   ],
 })
 export class AiAgentExecutionModule {}

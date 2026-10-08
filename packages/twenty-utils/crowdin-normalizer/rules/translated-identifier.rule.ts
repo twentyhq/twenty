@@ -1,10 +1,6 @@
 import { type NormalizationRule } from '../types/normalization-rule.type';
 
-// Backticks in the docs carry two different things: symbols the machine
-// resolves, and UI labels the reader sees translated in their own app. Only the
-// first kind is restored - a span shaped like an identifier, never one shaped
-// like prose - so `useEffect` and `SELECT` are put back while `Settings` and
-// `Data Model` stay in the reader's language.
+// Only identifier-shaped spans are restored; prose-shaped ones are UI labels the reader sees translated.
 const INLINE_CODE_REGEX = /`[^`\n]+`/g;
 
 function codeSpansIn(text: string): string[] {
@@ -13,10 +9,7 @@ function codeSpansIn(text: string): string[] {
   );
 }
 
-// Package, command and header names are hyphenated lowercase, and that is the
-// shape translators actually broke: the French docs ship `vingt-emails` and the
-// Japanese `20-emails` for `twenty-emails`, each inside an npx command nobody
-// can run. Nothing in the English source has this shape without being a symbol.
+// Translators broke hyphenated names (`vingt-emails` for `twenty-emails`); no English prose takes that shape.
 const KEBAB_CASE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)+$/;
 
 function looksLikeIdentifier(span: string): boolean {
@@ -32,12 +25,7 @@ function looksLikeIdentifier(span: string): boolean {
   );
 }
 
-// Only a message carrying exactly one span on each side is repaired. Lining
-// spans up by position looked obvious and is wrong: a translation reorders them
-// to suit its own grammar, so "the `twenty-app` keyword in your `package.json`
-// `keywords` array" comes back with keywords and package.json swapped, and
-// restoring by position writes package.json over both. With one span there is
-// no order to get wrong.
+// Only single-span messages: translations reorder spans, so restoring by position overwrites the wrong one.
 function restoreIdentifiers(text: string, sourceText?: string): string {
   if (sourceText === undefined) return text;
 

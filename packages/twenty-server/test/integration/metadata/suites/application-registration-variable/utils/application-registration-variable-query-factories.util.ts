@@ -31,39 +31,6 @@ export const findApplicationRegistrationVariablesQueryFactory = ({
   variables: { applicationRegistrationId },
 });
 
-export const createApplicationRegistrationVariableMutationFactory = ({
-  applicationRegistrationId,
-  key,
-  value,
-  description,
-  isSecret,
-}: {
-  applicationRegistrationId: string;
-  key: string;
-  value: string;
-  description?: string;
-  isSecret?: boolean;
-}) => ({
-  query: gql`
-    mutation CreateApplicationRegistrationVariable(
-      $input: CreateApplicationRegistrationVariableInput!
-    ) {
-      createApplicationRegistrationVariable(input: $input) {
-        ${VARIABLE_GQL_FIELDS}
-      }
-    }
-  `,
-  variables: {
-    input: {
-      applicationRegistrationId,
-      key,
-      value,
-      ...(description !== undefined && { description }),
-      ...(isSecret !== undefined && { isSecret }),
-    },
-  },
-});
-
 export const updateApplicationRegistrationVariableMutationFactory = ({
   id,
   value,
@@ -91,17 +58,4 @@ export const updateApplicationRegistrationVariableMutationFactory = ({
       },
     },
   },
-});
-
-export const deleteApplicationRegistrationVariableMutationFactory = ({
-  id,
-}: {
-  id: string;
-}) => ({
-  query: gql`
-    mutation DeleteApplicationRegistrationVariable($id: String!) {
-      deleteApplicationRegistrationVariable(id: $id)
-    }
-  `,
-  variables: { id },
 });

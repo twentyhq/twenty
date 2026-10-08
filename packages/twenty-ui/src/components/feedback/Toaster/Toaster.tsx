@@ -1,8 +1,8 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { createPortal } from 'react-dom';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -20,7 +20,7 @@ export const Toaster = ({
   ...props
 }: ToasterProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
   const target =
     container === undefined
       ? (themeContainer ??

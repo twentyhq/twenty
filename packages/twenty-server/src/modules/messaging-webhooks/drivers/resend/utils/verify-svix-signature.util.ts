@@ -4,9 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 const SIGNING_SECRET_PREFIX = 'whsec_';
 
-// Svix signatures are an HMAC-SHA256 over `${id}.${timestamp}.${body}` keyed
-// with the base64 secret after `whsec_`, carried base64-encoded in the
-// space-separated `v1,<sig>` entries of the signature header.
+// Svix signs `${id}.${timestamp}.${body}` with HMAC-SHA256 keyed by the base64 secret after `whsec_`
 export const verifySvixSignature = ({
   signingSecret,
   svixId,

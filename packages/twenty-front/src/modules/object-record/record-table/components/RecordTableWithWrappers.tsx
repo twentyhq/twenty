@@ -4,20 +4,18 @@ import { RecordTable } from '@/object-record/record-table/components/RecordTable
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
-import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
+import { useRecordTableSelectAllHotkeys } from '@/object-record/record-table/hooks/useRecordTableSelectAllHotkeys';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { RecordTableRecordLimitReloadEffect } from '@/object-record/record-table/virtualization/components/RecordTableRecordLimitReloadEffect';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 
 const StyledRecordTablePrintBoundary = styled.div`
   display: contents;
 
-  // Without this, swiping the table back to its first column hands the gesture
-  // to the browser and navigates back on iOS.
+  // Otherwise swiping back to the first column triggers iOS back navigation.
   .scroll-wrapper-x-enabled {
     overscroll-behavior-x: contain;
   }
@@ -40,20 +38,9 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const { selectAllRows } = useSelectAllRows(recordTableId);
-
-  const handleSelectAllRows = () => {
-    selectAllRows();
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: ['ctrl+a,meta+a'],
-    callback: handleSelectAllRows,
+  useRecordTableSelectAllHotkeys({
+    recordTableId,
     focusId: PageFocusId.RecordIndex,
-    dependencies: [handleSelectAllRows],
-    options: {
-      enableOnFormTags: false,
-    },
   });
 
   const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);

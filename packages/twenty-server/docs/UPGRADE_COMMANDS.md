@@ -146,6 +146,12 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+## Dry run
+
+`upgrade --dry-run` stops as soon as it reaches an instance command, logging `Dry run stopped before instance step "<name>"`. It does not execute that command or any later step, and records nothing in `upgradeMigration`.
+
+If the run starts within a workspace segment, pending workspace commands run with `options.dryRun` set until the next instance command or the end of the sequence. Each workspace command is responsible for simulating its own changes. Dry runs cannot preview the full upgrade sequence because later workspace commands may depend on schema changes made by preceding instance commands.
+
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
 Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.
@@ -205,6 +211,8 @@ npx nx run twenty-server:database:migrate:generate --name <name> --type fast --v
 ```
 
 It registers and boots (versions are validated against `TWENTY_ALL_VERSIONS`) but stays **dormant** — the sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (previous + current). It activates automatically when `nx version:bump` promotes the version to current.
+
+CI rejects changes to next version directories by default, so add the `ci:allow-next-version-upgrade-mutation` label to the PR to confirm the command is meant for a future version.
 
 **Caveat:** `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator pointing at a still-dormant next-version command fails boot with `unknown-step-name`. For a deferred drop, keep the entity's `WasRemovedInUpgrade<T>` type wrapper now and add the decorator only once the version is current.
 

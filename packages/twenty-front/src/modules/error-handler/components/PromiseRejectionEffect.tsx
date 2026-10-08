@@ -12,7 +12,7 @@ import {
   UnconventionalError,
 } from '@apollo/client/errors';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||
@@ -42,7 +42,9 @@ export const PromiseRejectionEffect = () => {
 
       const isAbortError =
         error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError';
+        error?.name === 'AbortError' ||
+        (error instanceof TypeError &&
+          error.message.toLowerCase() === 'cancelled');
 
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
