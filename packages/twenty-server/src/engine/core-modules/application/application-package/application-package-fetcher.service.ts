@@ -371,6 +371,9 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
     const httpClient = this.secureHttpClientService.getHttpClient({
       timeout: RESOLUTION_TIMEOUT_MS,
+      maxContentLength: this.twentyConfigService.get(
+        'MAX_TARBALL_UPLOAD_SIZE_BYTES',
+      ),
     });
 
     try {
