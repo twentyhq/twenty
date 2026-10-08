@@ -5,6 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { IconCheck } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Checkbox } from '../Checkbox';
@@ -142,5 +143,43 @@ export const IndicatorState: Story = {
     await expect(indicator).toHaveAttribute('data-unchecked');
     await expect(indicator).toHaveStyle({ opacity: '0' });
     await expect(indicator).toBeInTheDocument();
+  },
+};
+
+export const TallChildren: Story = {
+  render: () => (
+    <>
+      {(['sm', 'md'] as const).map((size) =>
+        [false, true].map((hoverable) => (
+          <Checkbox.Root
+            key={`${size}-${hoverable}`}
+            size={size}
+            hoverable={hoverable}
+            defaultChecked
+            aria-label={`${size} ${hoverable ? 'with hover' : 'without hover'}`}
+          >
+            <Checkbox.Indicator data-testid="selection-indicator">
+              <IconCheck aria-hidden />
+            </Checkbox.Indicator>
+            <Text render={<span />} style={{ lineHeight: '48px' }}>
+              Tall content
+            </Text>
+          </Checkbox.Root>
+        )),
+      )}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    for (const checkbox of within(canvasElement).getAllByRole('checkbox')) {
+      const indicator = within(checkbox).getByTestId('selection-indicator');
+      const checkboxBounds = checkbox.getBoundingClientRect();
+      const indicatorBounds = indicator.getBoundingClientRect();
+      const checkboxCenter = checkboxBounds.top + checkboxBounds.height / 2;
+      const indicatorCenter = indicatorBounds.top + indicatorBounds.height / 2;
+
+      await expect(Math.abs(checkboxCenter - indicatorCenter)).toBeLessThan(
+        0.5,
+      );
+    }
   },
 };

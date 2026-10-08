@@ -138,7 +138,8 @@
   block-size: var(--tw-checkbox-icon-size);
   inset-inline-start: var(--tw-checkbox-padding);
   position: absolute;
-  inset-block-start: var(--tw-checkbox-padding);
+  inset-block-start: 50%;
+  transform: translateY(-50%);
   inline-size: var(--tw-checkbox-icon-size);
 }
 
