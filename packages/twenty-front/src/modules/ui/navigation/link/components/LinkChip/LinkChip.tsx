@@ -14,7 +14,6 @@ const styles = {
       vertical-align: middle;
     }
     & > a {
-      max-width: 100%;
       min-width: 0;
       text-decoration: none;
     }
