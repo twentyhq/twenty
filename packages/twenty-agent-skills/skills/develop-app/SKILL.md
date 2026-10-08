@@ -86,7 +86,7 @@ twenty app add logic-function --name send-invoice --no-input
 twenty app add front-component --name invoice-panel --no-input
 ```
 
-It does not generate object companions or other entity types. When the shell has no terminal and the standalone CLI is not installed, `dev:add` fails at once with `User force closed the prompt`. If the user is available, ask them to run the exact `yarn twenty dev:add <entityType>` command in their own terminal; for an object this is the best option, since it also generates the table view, navigation menu item and record page layout. Otherwise write the file by hand: follow the example on the matching docs page (append `.md` to its URL), or an existing file of the same kind in the app, check the shape against the types exported by `twenty-sdk/define`, and generate every identifier with `crypto.randomUUID()` instead of inventing one.
+It does not generate object companions or other entity types. When neither CLI can run, follow rule 3 of the operating rules linked above: ask the user to run `dev:add` in their terminal, or write the file by hand from the docs example and the `twenty-sdk/define` types.
 
 ## After Entity Changes
 
