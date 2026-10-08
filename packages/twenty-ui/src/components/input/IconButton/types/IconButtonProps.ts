@@ -15,6 +15,7 @@ export type IconButtonProps = Omit<
   | 'shortcut'
   | 'shortcutJoinLabel'
   | 'fullWidth'
+  | 'loadingPosition'
 > & {
   size?: IconButtonSize;
   shape?: 'square' | 'round';

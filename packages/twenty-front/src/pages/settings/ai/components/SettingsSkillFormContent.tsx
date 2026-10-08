@@ -27,7 +27,7 @@ import { useSettingsSkillSave } from '~/pages/settings/ai/hooks/useSettingsSkill
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 
 const StyledFormContainer = styled.div`
   display: flex;

@@ -29,7 +29,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
-import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
+import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
@@ -46,12 +46,14 @@ import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
+import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -142,6 +144,9 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
+    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },
   {
     name: 'Loader',
@@ -149,6 +154,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/loader',
     propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Skeleton',
+    source: 'primitives/feedback/Skeleton/Skeleton.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/skeleton',
+    propDescriptions: SKELETON_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressBar',
@@ -169,7 +181,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/layout/Collapsible/Collapsible.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/collapsible',
-    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
+    partPropDescriptions: COLLAPSIBLE_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Panel: {
+        dimension: 'height',
+        containAnimation: 'true',
+        duration: 'normal',
+      },
+    },
   },
   {
     name: 'Separator',
@@ -441,7 +460,16 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/tooltip',
-    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Viewport',
+      'Provider',
+    ],
     propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
     propDefaults: { sideOffset: '10' },
     partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
@@ -457,6 +485,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/typography/Text/Text.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/text',
+    propDescriptions: TEXT_PROP_DESCRIPTIONS,
   },
   {
     name: 'Avatar',
@@ -630,10 +659,21 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Callout',
+    nativeProps: 'div',
     source: 'components/feedback/Callout/Callout.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      closeLabel: 'Close',
+      color: 'status palette',
+      fullWidth: 'false',
+      icon: 'decorative help icon',
+      status: 'info',
+      variant: 'soft',
+    },
   },
   {
     name: 'InlineBanner',
@@ -641,6 +681,16 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/inline-banner',
     propDescriptions: INLINE_BANNER_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'soft',
+      layout: 'standard',
+      embedded: 'false',
+      icon: 'decorative information icon',
+    },
   },
   {
     name: 'ToastProvider',

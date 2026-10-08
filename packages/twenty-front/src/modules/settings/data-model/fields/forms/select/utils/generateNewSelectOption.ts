@@ -4,7 +4,7 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
 import { MAIN_COLOR_NAMES, getNextThemeColor } from 'twenty-ui/theme';
 
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 export const generateNewSelectOption = (
   options: FieldMetadataItemOption[],

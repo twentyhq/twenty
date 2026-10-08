@@ -6,6 +6,8 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
+Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -23,7 +25,8 @@ effect within the interaction timeout.
 | Fixture                          | Components                                                                                                                          |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                  |
-| `twenty-ui-number-stepper`       | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission)                                         |
+| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)      |
+| `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)    |
 | `twenty-ui-display-helpers`      | Text                                                                                                                                |
 | `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
 | `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
@@ -67,6 +70,12 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
+The Autocomplete fixture uses the public inline list interface to isolate input
+behavior from popup support. Its Empty section runs Base UI's live-region marker
+through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
+currentNode without callback filters; document Selection and DOM Range are
+outside this scope.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -79,9 +88,8 @@ expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
@@ -95,10 +103,11 @@ attributes so React and Preact forward `true`/`false` instead of empty strings
 and remove the attribute when the prop is cleared. `getAttribute` and the
 selector engine read the remote properties React and Preact set, and the
 selector engine matches the sandbox's custom element tags by their HTML tag
-names and reads live control properties. `TooltipPreact` therefore covers hover
-opening and Escape dismissal. Pointer leave still needs
-`mousemove` delivery from outside the component for the safe polygon, and the
-compound tooltip's title and description are not covered yet.
+names and reads live control properties. `TooltipReact` and `TooltipPreact` cover
+hover opening, keyboard focus,
+Escape dismissal, compound title and description content, and typed detached
+handle payloads through the public Tooltip interface. Pointer leave still needs
+`mousemove` delivery from outside the component for the safe polygon.
 
 A page event crosses to the worker when the element it targets, or one of that
 element's ancestors in the component, listens for that event type. It crosses
@@ -149,10 +158,11 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-The CountrySelect and reading-directions fixtures live in their own story
-files, so run them separately:
+The Autocomplete, CountrySelect and reading-directions fixtures live in their
+own story files, so run them separately:
 
 ```sh
+npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```

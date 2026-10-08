@@ -38,7 +38,6 @@ describe('buildWorkflowAgentRunSpec', () => {
       instructions: null,
       capabilities: {
         canAskHumans: false,
-        canProposeToolCalls: false,
       },
     });
     expect(spec).not.toHaveProperty('additionalExcludedToolNames');
@@ -56,7 +55,6 @@ describe('buildWorkflowAgentRunSpec', () => {
     expect(spec.agentId).toBe('agent-id');
     expect(spec.capabilities).toEqual({
       canAskHumans: true,
-      canProposeToolCalls: true,
     });
     expect(spec.instructions).toMatch(/Ask before choosing a plan\.$/);
   });

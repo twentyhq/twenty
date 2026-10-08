@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import ModelContextProtocolLogo from '@/settings/mcp-and-apis/assets/model-context-protocol-logo.svg?react';
 import { SettingsMcpSetupCard } from '@/settings/mcp-and-apis/components/SettingsMcpSetupCard';
 import { buildMcpSetupCategories } from '@/settings/mcp-and-apis/utils/buildMcpSetupCategories';

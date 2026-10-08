@@ -53,7 +53,7 @@ export const InformationBannerMaintenance = () => {
   return (
     <InformationBanner
       componentInstanceId="information-banner-maintenance"
-      variant="secondary"
+      variant="soft"
       message={message}
       buttonTitle={isDefined(maintenanceLink) ? t`Learn more` : undefined}
       buttonIcon={isDefined(maintenanceLink) ? IconExternalLink : undefined}

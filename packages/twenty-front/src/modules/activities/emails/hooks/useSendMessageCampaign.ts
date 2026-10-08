@@ -16,7 +16,7 @@ import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,
 } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 type SendMessageCampaignParams = {
   campaignId: string;

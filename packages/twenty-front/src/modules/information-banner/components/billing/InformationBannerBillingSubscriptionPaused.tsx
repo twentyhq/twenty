@@ -36,8 +36,8 @@ export const InformationBannerBillingSubscriptionPaused = () => {
       <ToastOnQueryErrorEffect error={error} />
       <InformationBanner
         componentInstanceId="information-banner-billing-subscription-paused"
-        color="danger"
-        variant="secondary"
+        status="error"
+        variant="soft"
         message={
           hasPermissionToUpdateBillingDetails
             ? t`Trial expired. Please update your billing details.`
