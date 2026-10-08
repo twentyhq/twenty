@@ -244,6 +244,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'MainButton',
@@ -265,6 +271,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: {
+      variant: 'outline',
+      color: 'neutral',
+      size: 'md',
+      nativeButton: 'true (false for the built-in href anchor)',
+    },
   },
   {
     name: 'ButtonGroup',

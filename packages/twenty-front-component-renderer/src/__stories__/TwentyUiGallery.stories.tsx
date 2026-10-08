@@ -22,6 +22,7 @@ import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest
 import { resizeHandlePanelTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandlePanelTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
+import { buttonContractsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonContractsTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
@@ -541,6 +542,18 @@ export const TagControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tag-controls',
   runtime: 'preact',
   play: tagControlsTest,
+});
+
+export const ButtonContractsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-contracts',
+  runtime: 'react',
+  play: buttonContractsTest,
+});
+
+export const ButtonContractsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-contracts',
+  runtime: 'preact',
+  play: buttonContractsTest,
 });
 
 export const ButtonControlsReact: Story = createGalleryStory({
