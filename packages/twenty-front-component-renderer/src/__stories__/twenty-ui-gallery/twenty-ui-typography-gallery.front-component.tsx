@@ -1,9 +1,7 @@
-import { useState } from 'react';
 import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Section } from 'twenty-ui/components/layout';
+import { SectionExample } from './section-example';
 import { VisuallyHiddenExample } from './visually-hidden-example';
-import { Button } from 'twenty-ui/primitives/input';
 import {
   Heading,
   Text,
@@ -16,25 +14,6 @@ import {
   ComponentGallery,
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
-
-const SectionExample = () => {
-  const [activations, setActivations] = useState(0);
-
-  return (
-    <Section.Root>
-      <Section.Header
-        title="Workspace preferences"
-        description="Manage the settings for your workspace."
-        adornment={
-          <Button onClick={() => setActivations((count) => count + 1)}>
-            Edit workspace
-          </Button>
-        }
-      />
-      <Text aria-label="Workspace edits">{activations}</Text>
-    </Section.Root>
-  );
-};
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {

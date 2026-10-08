@@ -47,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
         <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
-          adornment={<OrganizationAdornment />}
+          actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
           <Card.Root rounded>

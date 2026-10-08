@@ -143,7 +143,7 @@ export const Home = ({ state, command, isPending }: ActionProps) => {
       >
         <Section.Header
           title={i18n._('Recordings')}
-          adornment={
+          actions={
             <Button
               variant="ghost"
               startIcon={<IconArrowUpRight />}

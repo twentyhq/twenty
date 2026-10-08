@@ -97,7 +97,7 @@ export const UsageBreakdownPieSection = ({
       <Section.Header
         title={title}
         description={resolvedDescription}
-        adornment={
+        actions={
           <Select
             dropdownId={`${sectionId}-period`}
             value={period}
