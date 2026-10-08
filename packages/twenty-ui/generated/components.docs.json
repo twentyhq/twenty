@@ -9776,18 +9776,18 @@
             "description": "Supporting text associated with the heading. Strings have optional truncation and overflow tooltips; React nodes render as supplied."
           },
           {
-            "name": "descriptionFocusable",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`."
-          },
-          {
             "name": "descriptionLineClamp",
             "type": "number | false",
             "required": false,
             "defaultValue": "5",
             "description": "Maximum visible lines for a string description. Defaults to `5`; use `false` to display the full description without a tooltip."
+          },
+          {
+            "name": "isDescriptionFocusable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`."
           },
           {
             "name": "level",

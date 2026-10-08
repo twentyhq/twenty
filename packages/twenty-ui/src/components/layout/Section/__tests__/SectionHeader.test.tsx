@@ -76,7 +76,7 @@ describe('Section description composition', () => {
       <Section.Header
         title="Workspace"
         description="Details"
-        descriptionFocusable
+        isDescriptionFocusable
       />,
     );
     await user.tab();
@@ -89,7 +89,7 @@ describe('Section description composition', () => {
         title="Workspace"
         description={'First line\nSecond line'}
         descriptionLineClamp={false}
-        descriptionFocusable
+        isDescriptionFocusable
       />,
     );
     const description = screen.getByText(/First line/);

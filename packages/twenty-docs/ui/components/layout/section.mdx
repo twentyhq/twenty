@@ -39,7 +39,7 @@ export const WorkspaceSection = () => (
 
 ## Description overflow
 
-String descriptions show up to five lines. Set `descriptionLineClamp` to a positive integer to choose another limit, or `false` to display the full description without an overflow tooltip. Hover reveals overflowing text. Descriptions do not add a tab stop by default; set `descriptionFocusable` to enable focus access to the tooltip. Escape dismisses the tooltip.
+String descriptions show up to five lines. Set `descriptionLineClamp` to a positive integer to choose another limit, or `false` to display the full description without an overflow tooltip. Hover reveals overflowing text. Descriptions do not add a tab stop by default; set `isDescriptionFocusable` to enable focus access to the tooltip. Escape dismisses the tooltip.
 
 The heading accepts node content. Choose `level` for the document outline independently of visual `size` and `color`. Compose links and other rich content explicitly in a node description.
 
@@ -49,7 +49,7 @@ Pass a React node for richer supporting content. Rich descriptions render as sup
 
 Both parts forward native attributes, refs, class names, styles, and `render` to their outer element. For example, `Section.Root render={<section aria-label="Workspace settings" />}` provides a named section, and `Section.Header render={<header />}` uses a header container.
 
-When migrating, replace `adornment` with `actions`. Opt into description focus with `descriptionFocusable` when needed. `SectionRootProps` and `SectionHeaderProps` are exported from `twenty-ui/components/layout`.
+When migrating, replace `adornment` with `actions`. Opt into description focus with `isDescriptionFocusable` when needed. `SectionRootProps` and `SectionHeaderProps` are exported from `twenty-ui/components/layout`.
 
 ## Props
 

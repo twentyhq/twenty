@@ -9,6 +9,6 @@ export const SECTION_HEADER_PROP_DESCRIPTIONS = {
   actions: 'Content alongside the heading, such as an action button or status.',
   descriptionLineClamp:
     'Maximum visible lines for a string description. Defaults to `5`; use `false` to display the full description without a tooltip.',
-  descriptionFocusable:
+  isDescriptionFocusable:
     'Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`.',
 } satisfies Partial<Record<keyof SectionHeaderProps, string>>;

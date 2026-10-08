@@ -52,14 +52,14 @@ export const SectionExample = () => {
         title="Focusable description"
         description="Focusable workspace details"
         descriptionLineClamp={1}
-        descriptionFocusable
+        isDescriptionFocusable
         onFocus={() => setFocuses((count) => count + 1)}
       />
       <Section.Header
         title="Full description"
         description={'First line of full details\nSecond line of full details'}
         descriptionLineClamp={false}
-        descriptionFocusable
+        isDescriptionFocusable
       />
       <Section.Header
         title="Rich description"

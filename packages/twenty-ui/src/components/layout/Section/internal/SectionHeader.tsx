@@ -20,7 +20,7 @@ export const SectionHeader = ({
   size = 'md',
   color = 'primary',
   descriptionLineClamp = 5,
-  descriptionFocusable = false,
+  isDescriptionFocusable = false,
   render,
   ref,
   className,
@@ -68,7 +68,7 @@ export const SectionHeader = ({
                   text={description}
                   lineClamp={descriptionLineClamp}
                   isTooltipMultiline
-                  isFocusable={descriptionFocusable}
+                  isFocusable={isDescriptionFocusable}
                 />
               ) : (
                 descriptionContent

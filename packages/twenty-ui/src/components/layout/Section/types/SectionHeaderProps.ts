@@ -12,5 +12,5 @@ export type SectionHeaderProps = Omit<
     description?: ReactNode;
     actions?: ReactNode;
     descriptionLineClamp?: number | false;
-    descriptionFocusable?: boolean;
+    isDescriptionFocusable?: boolean;
   };

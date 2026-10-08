@@ -96,7 +96,7 @@ export const LongDescription: Story = {
   args: {
     description: LONG_DESCRIPTION,
     descriptionLineClamp: 2,
-    descriptionFocusable: true,
+    isDescriptionFocusable: true,
   },
   parameters: { container: { width: 240 } },
   play: async ({ canvasElement }) => {
