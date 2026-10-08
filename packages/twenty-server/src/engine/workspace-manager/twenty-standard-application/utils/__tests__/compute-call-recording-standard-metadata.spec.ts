@@ -60,6 +60,18 @@ describe('CallRecording standard metadata build', () => {
     ]);
   });
 
+  it('loads the transcript value only when opened by default', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.callRecording.fields.transcript.universalIdentifier
+      ],
+    ).toMatchObject({
+      isUIEditable: false,
+      settings: { isValueLoadedOnOpen: true },
+      universalSettings: { isValueLoadedOnOpen: true },
+    });
+  });
+
   it('links callRecording to a calendarEvent through a direct relation', () => {
     const calendarEventField =
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[

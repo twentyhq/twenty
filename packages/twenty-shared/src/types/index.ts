@@ -126,6 +126,7 @@ export type {
   FieldCurrencyFormat,
   FieldLinksVariant,
   FieldMetadataSettingsMapping,
+  FieldMetadataRawJsonSettings,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';

@@ -480,6 +480,9 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       icon: 'IconFileText',
       isNullable: true,
       isUIEditable: false,
+      settings: {
+        isValueLoadedOnOpen: true,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

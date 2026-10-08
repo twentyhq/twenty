@@ -6,6 +6,7 @@ import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
+  type FieldMetadataRawJsonSettings,
   type FileCategory,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -129,7 +130,7 @@ export type FieldAddressMetadata = BaseFieldMetadata & {
 
 export type FieldRawJsonMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: null;
+  settings?: FieldMetadataRawJsonSettings | null;
 };
 
 export type FieldRichTextMetadata = BaseFieldMetadata & {

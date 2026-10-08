@@ -41,6 +41,10 @@ type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
 };
 
+export type FieldMetadataRawJsonSettings = {
+  isValueLoadedOnOpen?: boolean;
+};
+
 type FieldMetadataDateSettings = {
   displayFormat?: DateDisplayFormat;
 };
@@ -76,6 +80,7 @@ export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
+  [FieldMetadataType.RAW_JSON]: FieldMetadataRawJsonSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
