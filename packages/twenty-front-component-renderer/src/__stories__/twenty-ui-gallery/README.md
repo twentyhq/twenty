@@ -191,6 +191,13 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```
 
+Section and CommandBlock composition is checked in the Typography and DataDisplay
+catalogs for React and Preact. The checks cover node titles/actions, heading
+levels, description line limits and optional focus, code semantics, native
+handlers, refs, and element/callback render composition. Description popup
+visibility and dismissal in the sandbox remain part of the existing portal and
+geometry acceptance work; standalone Section stories verify those behaviors.
+
 For native chooser coverage, serve Storybook on port 6008 after the same prebuild,
 then run from the repository root:
 

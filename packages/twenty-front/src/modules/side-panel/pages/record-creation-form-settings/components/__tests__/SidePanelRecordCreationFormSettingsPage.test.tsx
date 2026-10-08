@@ -47,11 +47,21 @@ const NAME_FIELD = buildTextField('name', 'Name');
 const DOMAIN_FIELD = buildTextField('domain', 'Domain');
 const NICKNAME_FIELD = buildTextField('nickname', 'Nickname');
 const SECRET_FIELD = buildTextField('secret', 'Secret');
+const RATING_FIELD = {
+  ...buildTextField('rating', 'Rating'),
+  type: FieldMetadataType.RATING,
+};
 
 const COMPANY_OBJECT = {
   id: OBJECT_METADATA_ID,
   labelSingular: 'Company',
-  fields: [NAME_FIELD, DOMAIN_FIELD, NICKNAME_FIELD, SECRET_FIELD],
+  fields: [
+    NAME_FIELD,
+    DOMAIN_FIELD,
+    NICKNAME_FIELD,
+    SECRET_FIELD,
+    RATING_FIELD,
+  ],
 };
 
 const updatePageLayoutWidgetsIsActive = jest.fn();
@@ -149,6 +159,7 @@ const seedRecordFormPageLayout = () => {
       buildFormFieldWidget(DOMAIN_FIELD.id, 1, true),
       buildFormFieldWidget(NICKNAME_FIELD.id, 2, false),
       buildFormFieldWidget(SECRET_FIELD.id, 3, false),
+      buildFormFieldWidget(RATING_FIELD.id, 4, true),
     ],
     draft: [],
     status: 'up-to-date',
@@ -200,7 +211,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     );
   });
 
-  it('lists the form fields in form order with their visibility, whatever the viewer can update', () => {
+  it('lists the supported form fields in form order with their visibility, whatever the viewer can update', () => {
     renderPage();
 
     expect(
