@@ -1,6 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { isFrontComponentPortalOwnerInert } from '@/host/geometry/utils/isFrontComponentPortalOwnerInert';
+import { toZoomCompensatedCssLength } from '@/host/geometry/utils/toZoomCompensatedCssLength';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
+
+const setStylePropertyIfChanged = (
+  element: HTMLElement,
+  propertyName: string,
+  value: string,
+): void => {
+  if (element.style.getPropertyValue(propertyName) === value) {
+    return;
+  }
+
+  element.style.setProperty(propertyName, value);
+};
 
 export const updateFrontComponentPortalLayer = ({
   portalLayer,
@@ -16,17 +30,41 @@ export const updateFrontComponentPortalLayer = ({
     rootContainer.isConnected &&
     viewport.rootContainerWidth > 0 &&
     viewport.rootContainerHeight > 0;
-  portalLayer.style.display = hasVisibleRoot ? 'block' : 'none';
 
-  if (!hasVisibleRoot || !isDefined(rootContainer)) {
+  setStylePropertyIfChanged(
+    portalLayer,
+    'display',
+    hasVisibleRoot ? 'block' : 'none',
+  );
+
+  if (!hasVisibleRoot) {
     return;
   }
 
-  portalLayer.style.left = `calc(${viewport.rootContainerX}px / var(--t-zoom, 1))`;
-  portalLayer.style.top = `calc(${viewport.rootContainerY}px / var(--t-zoom, 1))`;
-  portalLayer.style.width = `calc(${viewport.rootContainerWidth}px / var(--t-zoom, 1))`;
-  portalLayer.style.height = `calc(${viewport.rootContainerHeight}px / var(--t-zoom, 1))`;
-  portalLayer.inert =
-    getComputedStyle(rootContainer).pointerEvents === 'none' ||
-    isDefined(rootContainer.closest('[inert]'));
+  setStylePropertyIfChanged(
+    portalLayer,
+    'left',
+    toZoomCompensatedCssLength(viewport.rootContainerX),
+  );
+  setStylePropertyIfChanged(
+    portalLayer,
+    'top',
+    toZoomCompensatedCssLength(viewport.rootContainerY),
+  );
+  setStylePropertyIfChanged(
+    portalLayer,
+    'width',
+    toZoomCompensatedCssLength(viewport.rootContainerWidth),
+  );
+  setStylePropertyIfChanged(
+    portalLayer,
+    'height',
+    toZoomCompensatedCssLength(viewport.rootContainerHeight),
+  );
+
+  const isOwnerInert = isFrontComponentPortalOwnerInert(rootContainer);
+
+  if (portalLayer.inert !== isOwnerInert) {
+    portalLayer.inert = isOwnerInert;
+  }
 };

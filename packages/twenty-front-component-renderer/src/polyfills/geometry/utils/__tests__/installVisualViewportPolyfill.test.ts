@@ -1,18 +1,9 @@
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
 import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 import { installVisualViewportPolyfill } from '../installVisualViewportPolyfill';
-
-type InstalledVisualViewport = EventTarget & {
-  offsetLeft: number;
-  offsetTop: number;
-  pageLeft: number;
-  pageTop: number;
-  width: number;
-  height: number;
-  scale: number;
-};
 
 const createViewport = (
   overrides: Partial<ViewportGeometrySnapshot> = {},
@@ -32,7 +23,7 @@ const createViewport = (
 const installWithGeometryUpdates = (
   readViewport: () => ViewportGeometrySnapshot | null,
 ) => {
-  let notifyGeometryUpdate: () => void = () => {};
+  const geometryUpdates = createSubscriptionStub();
   const polyfillWindow: Record<string, unknown> = {};
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
@@ -40,19 +31,14 @@ const installWithGeometryUpdates = (
     globalScope,
     geometryStore: createWorkerGeometryStoreStub({
       getViewportSnapshot: readViewport,
-      subscribeToGeometryUpdates: (listener) => {
-        notifyGeometryUpdate = listener;
-
-        return () => {};
-      },
+      subscribeToGeometryUpdates: geometryUpdates.subscribe,
     }),
   });
 
   return {
-    globalScope,
     polyfillWindow,
-    visualViewport: globalScope.visualViewport as InstalledVisualViewport,
-    notifyGeometryUpdate: () => notifyGeometryUpdate(),
+    visualViewport: globalScope.visualViewport as VisualViewport,
+    notifyGeometryUpdate: geometryUpdates.notify,
   };
 };
 

@@ -13,6 +13,10 @@ export const setupGeometryGlobals = () => {
   let nextAnimationFrameHandle = 1;
   const resizeObserverCallbacks: ResizeObserverCallback[] = [];
   const mutationObserverCallbacks: MutationCallback[] = [];
+  const observedTargetsByMutationCallback = new Map<
+    MutationCallback,
+    Set<Node>
+  >();
 
   class StubResizeObserver {
     constructor(callback: ResizeObserverCallback) {
@@ -24,11 +28,18 @@ export const setupGeometryGlobals = () => {
   }
 
   class StubMutationObserver {
+    private readonly observedTargets = new Set<Node>();
+
     constructor(callback: MutationCallback) {
       mutationObserverCallbacks.push(callback);
+      observedTargetsByMutationCallback.set(callback, this.observedTargets);
     }
-    observe() {}
-    disconnect() {}
+    observe(target: Node) {
+      this.observedTargets.add(target);
+    }
+    disconnect() {
+      this.observedTargets.clear();
+    }
     takeRecords() {
       return [];
     }
@@ -76,6 +87,25 @@ export const setupGeometryGlobals = () => {
     triggerMutationObserver: () => {
       for (const callback of mutationObserverCallbacks) {
         callback([], {} as MutationObserver);
+      }
+    },
+    triggerMutationObserversOf: ({
+      observedTarget,
+      mutatedNode,
+    }: {
+      observedTarget: Node;
+      mutatedNode: Node;
+    }) => {
+      for (const [
+        callback,
+        observedTargets,
+      ] of observedTargetsByMutationCallback) {
+        if (observedTargets.has(observedTarget)) {
+          callback(
+            [{ target: mutatedNode } as MutationRecord],
+            {} as MutationObserver,
+          );
+        }
       }
     },
     createStubNode: (geometry: GeometryFixture) => {

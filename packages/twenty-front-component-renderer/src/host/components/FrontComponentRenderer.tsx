@@ -79,11 +79,7 @@ export const FrontComponentRenderer = ({
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div
-        ref={geometryTracker.setRoot}
-        style={ROOT_CONTAINER_STYLE}
-        data-front-component-root=""
-      >
+      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           applicationAccessToken={applicationAccessToken}

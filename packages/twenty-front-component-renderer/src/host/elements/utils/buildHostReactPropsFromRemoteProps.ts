@@ -9,7 +9,7 @@ import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
-const PORTAL_ESCAPE_PROPS = new Set([
+const TOP_LAYER_INVOKER_PROP_NAMES = [
   'popover',
   'popovertarget',
   'popovertargetaction',
@@ -19,9 +19,15 @@ const PORTAL_ESCAPE_PROPS = new Set([
   'commandforelement',
   'interestfor',
   'interestforelement',
+];
+const RAW_MARKUP_PROP_NAMES = [
   'dangerouslysetinnerhtml',
   'innerhtml',
   'outerhtml',
+];
+const BLOCKED_REMOTE_PROP_NAMES = new Set([
+  ...TOP_LAYER_INVOKER_PROP_NAMES,
+  ...RAW_MARKUP_PROP_NAMES,
 ]);
 
 export const buildHostReactPropsFromRemoteProps = ({
@@ -38,7 +44,7 @@ export const buildHostReactPropsFromRemoteProps = ({
   for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
     if (
       INTERNAL_PROPS.has(remotePropName) ||
-      PORTAL_ESCAPE_PROPS.has(remotePropName.toLowerCase()) ||
+      BLOCKED_REMOTE_PROP_NAMES.has(remotePropName.toLowerCase()) ||
       isUndefined(remotePropValue)
     ) {
       continue;

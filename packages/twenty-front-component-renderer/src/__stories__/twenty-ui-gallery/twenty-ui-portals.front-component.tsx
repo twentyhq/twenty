@@ -4,12 +4,12 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button } from 'twenty-ui/primitives/input';
 import { Menu } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
+import { THEME_COMMON } from 'twenty-ui/theme';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
+import { OVERSIZED_PORTAL_EXTENT } from '@/__stories__/twenty-ui-gallery/constants/OversizedPortalExtent';
 
-const OVERSIZED_PORTAL_EXTENT = 4000;
 const OVERSIZED_PORTAL_OFFSET = -1000;
-const OVERSIZED_PORTAL_Z_INDEX = 2147483647;
 const MENU_ITEM_LABELS = Array.from(
   { length: 16 },
   (_, itemIndex) => `Menu item ${itemIndex + 1}`,
@@ -68,7 +68,7 @@ const PortalsExample = () => {
               height: OVERSIZED_PORTAL_EXTENT,
               maxWidth: 'none',
               maxHeight: 'none',
-              zIndex: OVERSIZED_PORTAL_Z_INDEX,
+              zIndex: THEME_COMMON.lastLayerZIndex,
               background: '#f00080',
             }}
           >

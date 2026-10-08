@@ -8,6 +8,7 @@ import { GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES } from '@/host/geometry
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/geometry/types/PushGeometryUpdates';
 import { createGeometryWakeSources } from '@/host/geometry/utils/createGeometryWakeSources';
+import { isFrontComponentPortalOwnerInert } from '@/host/geometry/utils/isFrontComponentPortalOwnerInert';
 import { isGeometrySnapshotEqualWithinEpsilon } from '@/host/geometry/utils/isGeometrySnapshotEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/geometry/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGeometry';
@@ -42,6 +43,36 @@ export const createGeometryTracker = (): GeometryTracker => {
     });
   };
 
+  const hasPortalOwnerChangedSinceLastFrame = (): boolean => {
+    if (!isDefined(portalLayer) || !isDefined(rootContainer)) {
+      return false;
+    }
+
+    const rootContainerRectangle = rootContainer.getBoundingClientRect();
+    const lastRootContainerRectangle = isDefined(lastViewportSnapshot)
+      ? {
+          x: lastViewportSnapshot.rootContainerX,
+          y: lastViewportSnapshot.rootContainerY,
+          width: lastViewportSnapshot.rootContainerWidth,
+          height: lastViewportSnapshot.rootContainerHeight,
+        }
+      : null;
+    const hasRootContainerMoved = !isGeometrySnapshotEqualWithinEpsilon(
+      lastRootContainerRectangle,
+      {
+        x: rootContainerRectangle.x,
+        y: rootContainerRectangle.y,
+        width: rootContainerRectangle.width,
+        height: rootContainerRectangle.height,
+      },
+    );
+
+    return (
+      hasRootContainerMoved ||
+      portalLayer.inert !== isFrontComponentPortalOwnerInert(rootContainer)
+    );
+  };
+
   const scheduleIdlePortalCheck = (): void => {
     if (isDefined(idlePortalCheckTimeout)) {
       return;
@@ -49,7 +80,13 @@ export const createGeometryTracker = (): GeometryTracker => {
 
     idlePortalCheckTimeout = setTimeout(() => {
       idlePortalCheckTimeout = null;
-      scheduleAnimationFrame();
+
+      if (hasPortalOwnerChangedSinceLastFrame()) {
+        wake();
+        return;
+      }
+
+      scheduleIdlePortalCheck();
     }, GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS);
   };
 
@@ -68,6 +105,14 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const wakeSources = createGeometryWakeSources(wake);
+
+  const detachElementSourcesWhenUnused = (): void => {
+    if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
+      return;
+    }
+
+    wakeSources.detachElementSources();
+  };
 
   const readViewportGeometry = (): ViewportGeometrySnapshot =>
     measureViewportGeometry(rootContainer);
@@ -139,11 +184,8 @@ export const createGeometryTracker = (): GeometryTracker => {
       unregisteredObservedFrameCounts.delete(remoteElementId);
     }
 
-    if (
-      expiredRemoteElementIds.length > 0 &&
-      observedRemoteElementIds.size === 0
-    ) {
-      wakeSources.detachElementSources();
+    if (expiredRemoteElementIds.length > 0) {
+      detachElementSourcesWhenUnused();
     }
 
     const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon(
@@ -258,9 +300,7 @@ export const createGeometryTracker = (): GeometryTracker => {
       }
     }
 
-    if (observedRemoteElementIds.size === 0) {
-      wakeSources.detachElementSources();
-    }
+    detachElementSourcesWhenUnused();
   };
 
   const setRoot = (node: Element | null): void => {
@@ -270,14 +310,17 @@ export const createGeometryTracker = (): GeometryTracker => {
 
   const setPortalLayer = (element: HTMLElement | null): void => {
     portalLayer = element;
+    wakeSources.setPortalLayer(element);
 
-    if (!isDefined(portalLayer)) {
+    if (!isDefined(element)) {
       cancelIdlePortalCheck();
+      detachElementSourcesWhenUnused();
       return;
     }
 
+    wakeSources.attachElementSources();
     updateFrontComponentPortalLayer({
-      portalLayer,
+      portalLayer: element,
       rootContainer,
       viewport: readViewportGeometry(),
     });
@@ -294,6 +337,10 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     wakeSources.attachViewportSources();
+
+    if (isDefined(portalLayer)) {
+      wakeSources.attachElementSources();
+    }
 
     if (observedRemoteElementIds.size > 0 || isDefined(portalLayer)) {
       wake();

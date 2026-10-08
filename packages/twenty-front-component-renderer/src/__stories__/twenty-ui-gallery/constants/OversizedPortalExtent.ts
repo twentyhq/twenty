@@ -1,0 +1,1 @@
+export const OVERSIZED_PORTAL_EXTENT = 4000;

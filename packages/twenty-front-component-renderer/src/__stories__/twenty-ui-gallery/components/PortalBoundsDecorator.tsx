@@ -42,7 +42,7 @@ export const PortalBoundsDecorator: Decorator = (Story) => {
           aria-label="Widget scroll frame"
           style={{ width: '100%', height: '100%', overflow: 'auto' }}
         >
-          <div style={{ height: 260 }}>
+          <div role="group" aria-label="Widget" style={{ height: 260 }}>
             <Story />
           </div>
         </div>

@@ -84,6 +84,71 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('only probes the owner of an idle open portal instead of re-measuring observed elements', () => {
+    jest.useFakeTimers({
+      doNotFake: ['requestAnimationFrame', 'cancelAnimationFrame'],
+    });
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    const portalItem = geometryGlobals.createStubNode({
+      x: 20,
+      y: 210,
+      width: 200,
+      height: 32,
+    });
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(document.createElement('div'));
+    tracker.registerNode('portal-item', portalItem.node);
+    tracker.observe(['portal-item']);
+
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+    const portalItemMeasurement = jest.spyOn(
+      portalItem.node,
+      'getBoundingClientRect',
+    );
+    const pushCountWhenIdle = pushGeometryUpdates.mock.calls.length;
+    jest.advanceTimersByTime(GEOMETRY_IDLE_PORTAL_CHECK_INTERVAL_MS * 3);
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+    expect(portalItemMeasurement).not.toHaveBeenCalled();
+    expect(pushGeometryUpdates).toHaveBeenCalledTimes(pushCountWhenIdle);
+  });
+
+  it('wakes on portal content mutations but not on its own portal layer writes', () => {
+    const { tracker } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    const portalLayer = document.createElement('div');
+    const portalContent = document.createElement('div');
+    portalLayer.append(portalContent);
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+    flushFrames(GEOMETRY_IDLE_FRAME_THRESHOLD + 2);
+
+    geometryGlobals.triggerMutationObserversOf({
+      observedTarget: portalLayer,
+      mutatedNode: portalLayer,
+    });
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
+
+    geometryGlobals.triggerMutationObserversOf({
+      observedTarget: portalLayer,
+      mutatedNode: portalContent,
+    });
+
+    expect(geometryGlobals.getScheduledFrameCount()).toBe(1);
+  });
+
   it('disables the portal with its owner and hides it when its owner is removed', () => {
     const { tracker } = createArmedTracker();
     const root = geometryGlobals.createStubNode({

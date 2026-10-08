@@ -1,24 +1,27 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { clickElementOnceItReceivesPointer } from '@/__stories__/shared/test-utils/clickElementOnceItReceivesPointer';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
-import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
 
-export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-  await expectFrontComponentMounted(canvas);
+const ASSIGNEE_TRIGGER_NAME = 'Choose assignee';
 
-  const trigger = canvas.getByRole('button', { name: 'Choose assignee' });
-  await userEvent.click(trigger);
-  const assignPersonItem = await canvas.findByText('Assign person');
-  await waitFor(() => expectElementToReceivePointer(assignPersonItem));
-  await userEvent.click(assignPersonItem);
-  const adaLovelaceItem = await canvas.findByText('Ada Lovelace');
-  await waitFor(() => expectElementToReceivePointer(adaLovelaceItem));
-  await userEvent.click(adaLovelaceItem);
+const assigneeDropdownOpenTest = createDropdownOpenTest({
+  triggerName: ASSIGNEE_TRIGGER_NAME,
+  popupText: 'Assign person',
+});
+
+export const dropdownTest: TwentyUiGalleryPlayFunction = async (context) => {
+  const canvas = within(context.canvasElement);
+  const page = within(context.canvasElement.ownerDocument.body);
+
+  await assigneeDropdownOpenTest(context);
+  const trigger = canvas.getByRole('button', { name: ASSIGNEE_TRIGGER_NAME });
+  await clickElementOnceItReceivesPointer(page.getByText('Assign person'));
+  await clickElementOnceItReceivesPointer(
+    await page.findByText('Ada Lovelace'),
+  );
 
   await waitFor(() =>
     expect(canvas.getByRole('status')).toHaveTextContent(
@@ -29,13 +32,7 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );
 
-  await userEvent.click(trigger);
-  await waitFor(() => {
-    const reopenedAssignPersonItem = canvas.getByText('Assign person');
-
-    expect(reopenedAssignPersonItem).toBeVisible();
-    expectElementToReceivePointer(reopenedAssignPersonItem);
-  });
+  await assigneeDropdownOpenTest(context);
   await userEvent.click(trigger);
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),

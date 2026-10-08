@@ -21,14 +21,15 @@ export const attachRemoteRenderRootToWorkerDocument = (
   );
   const remoteRoot = document.body;
   const renderContainer = document.createElement(REMOTE_RENDER_CONTAINER_TAG);
+  const styleContainer = document.createElement(REMOTE_RENDER_CONTAINER_TAG);
 
   setRemoteId(remoteRoot, ROOT_ID);
   connectRemoteNode(remoteRoot, batchedConnection);
-  remoteRoot.append(renderContainer);
+  remoteRoot.append(renderContainer, styleContainer);
   workerGeometryStore.setRootElement(remoteRoot);
   workerFocusTransport.setRootElement(remoteRoot);
   workerInputSelectionStore.setRootElement(remoteRoot);
-  installStyleBridge(remoteRoot);
+  installStyleBridge(styleContainer);
 
   return renderContainer;
 };

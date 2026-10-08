@@ -1,15 +1,29 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { clickElementOnceItReceivesPointer } from '@/__stories__/shared/test-utils/clickElementOnceItReceivesPointer';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
+import { OVERSIZED_PORTAL_EXTENT } from '@/__stories__/twenty-ui-gallery/constants/OversizedPortalExtent';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 
 const MAXIMUM_MENU_TRIGGER_GAP = 16;
-const GEOMETRY_TRACKER_IDLE_DELAY_MS = 500;
+
+const expectPortalActionAtOwnerBottom = ({
+  portalAction,
+  ownerRoot,
+}: {
+  portalAction: Element;
+  ownerRoot: Element;
+}) => {
+  expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
+    ownerRoot.getBoundingClientRect().bottom,
+    0,
+  );
+  expectElementToReceivePointer(portalAction);
+};
 
 const expectMenuAttachedToTriggerWithinPortalArea = ({
   menu,
@@ -45,36 +59,28 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
 }) => {
   const canvas = within(canvasElement);
   const hostDocument = canvasElement.ownerDocument;
+  const page = within(hostDocument.body);
   await expectFrontComponentMounted(canvas);
 
+  const ownerRoot = canvas.getByRole('group', { name: 'Widget' });
   const trigger = canvas.getByRole('button', { name: 'Toggle popup' });
   await userEvent.click(trigger);
-  const portalAction = await canvas.findByRole('button', {
+  const portalAction = await page.findByRole('button', {
     name: 'Portal action',
   });
   expect(portalAction).toBeVisible();
-
-  const ownerRoot = trigger.closest('[data-front-component-root]');
-  if (!isDefined(ownerRoot)) {
-    throw new Error('Front component root was not found');
-  }
-  expect(portalAction.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-    ownerRoot.getBoundingClientRect().bottom,
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
   );
-  expectElementToReceivePointer(portalAction);
 
   const scrollFrame = canvas.getByRole('region', {
     name: 'Widget scroll frame',
   });
   scrollFrame.scrollTop = 40;
   expect(scrollFrame.scrollTop).toBe(40);
-  await waitFor(() => {
-    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
-      ownerRoot.getBoundingClientRect().bottom,
-      0,
-    );
-    expectElementToReceivePointer(portalAction);
-  });
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+  );
 
   const rootStyle = hostDocument.documentElement.style;
   const previousZoom = rootStyle.getPropertyValue('zoom');
@@ -83,28 +89,19 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   try {
     rootStyle.setProperty('--t-zoom', '0.8');
     rootStyle.setProperty('zoom', 'var(--t-zoom)');
-    await waitFor(() => {
-      expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
-        ownerRoot.getBoundingClientRect().bottom,
-        0,
-      );
-      expectElementToReceivePointer(portalAction);
-    });
+    await waitFor(() =>
+      expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+    );
   } finally {
     rootStyle.setProperty('zoom', previousZoom);
     rootStyle.setProperty('--t-zoom', previousScale);
   }
 
-  await waitFor(() => {
-    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
-      ownerRoot.getBoundingClientRect().bottom,
-      0,
-    );
-  });
-
-  await new Promise((resolve) =>
-    setTimeout(resolve, GEOMETRY_TRACKER_IDLE_DELAY_MS),
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
   );
+
+  await waitForSandboxRoundTrip();
   const ownerTopBeforeShift = ownerRoot.getBoundingClientRect().top;
   await userEvent.click(canvas.getByRole('button', { name: 'Shift widget' }));
   await waitFor(() =>
@@ -112,13 +109,9 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
       ownerTopBeforeShift,
     ),
   );
-  await waitFor(() => {
-    expect(portalAction.getBoundingClientRect().top).toBeCloseTo(
-      ownerRoot.getBoundingClientRect().bottom,
-      0,
-    );
-    expectElementToReceivePointer(portalAction);
-  });
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+  );
 
   await userEvent.click(portalAction);
   await waitFor(() =>
@@ -128,32 +121,31 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   );
   await userEvent.click(trigger);
   await waitFor(() =>
-    expect(canvas.queryByRole('button', { name: 'Portal action' })).toBeNull(),
+    expect(page.queryByRole('button', { name: 'Portal action' })).toBeNull(),
   );
 
   const menuTrigger = canvas.getByRole('button', { name: 'Open menu' });
   await userEvent.click(menuTrigger);
-  const firstMenuItem = await canvas.findByRole('menuitem', {
+  const firstMenuItem = await page.findByRole('menuitem', {
     name: 'Menu item 1',
   });
   await waitFor(() => {
     expectElementToReceivePointer(firstMenuItem);
     expectMenuAttachedToTriggerWithinPortalArea({
-      menu: canvas.getByRole('menu'),
+      menu: page.getByRole('menu'),
       menuTrigger,
       ownerRoot,
     });
   });
-  const lastMenuItem = canvas.getByRole('menuitem', { name: 'Menu item 16' });
+  const lastMenuItem = page.getByRole('menuitem', { name: 'Menu item 16' });
   lastMenuItem.scrollIntoView({ block: 'nearest' });
-  await waitFor(() => expectElementToReceivePointer(lastMenuItem));
-  await userEvent.click(lastMenuItem);
+  await clickElementOnceItReceivesPointer(lastMenuItem);
   await waitFor(() =>
     expect(
       canvas.getByRole('status', { name: 'Menu selection' }),
     ).toHaveTextContent('Menu selection: Menu item 16'),
   );
-  await waitFor(() => expect(canvas.queryByRole('menu')).toBeNull());
+  await waitFor(() => expect(page.queryByRole('menu')).toBeNull());
 
   const hostAction = canvas.getByRole('button', { name: 'Host action' });
   expectElementToReceivePointer(hostAction);
@@ -166,25 +158,19 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(
     canvas.getByRole('button', { name: 'Fill portal area' }),
   );
-  const oversizedPortal = await canvas.findByRole('button', {
+  const oversizedPortal = await page.findByRole('button', {
     name: 'Oversized portal',
   });
-  expect(oversizedPortal.getBoundingClientRect().width).toBe(4000);
+  expect(oversizedPortal.getBoundingClientRect().width).toBe(
+    OVERSIZED_PORTAL_EXTENT,
+  );
   expect(hostScrollingElement.scrollWidth).toBe(
     hostScrollSizeBeforeOversizedPortal.width,
   );
   expect(hostScrollingElement.scrollHeight).toBe(
     hostScrollSizeBeforeOversizedPortal.height,
   );
-  const ownerRectangle = ownerRoot.getBoundingClientRect();
-  expect(
-    oversizedPortal.contains(
-      hostDocument.elementFromPoint(
-        ownerRectangle.left + ownerRectangle.width / 2,
-        ownerRectangle.top + ownerRectangle.height / 2,
-      ),
-    ),
-  ).toBe(true);
+  expectElementToReceivePointer(oversizedPortal, ownerRoot);
   expectElementToReceivePointer(hostAction);
   await userEvent.click(hostAction);
   expect(
