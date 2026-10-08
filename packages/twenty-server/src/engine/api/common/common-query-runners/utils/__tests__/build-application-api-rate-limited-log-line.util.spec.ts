@@ -40,4 +40,22 @@ describe('buildApplicationApiRateLimitedLogLine', () => {
     expect(logLine).toContain('app_name="The \\"best\\" app" ');
     expect(logLine).not.toContain('unit=');
   });
+
+  it('keeps an app name with line breaks on a single log line', () => {
+    const logLine = buildApplicationApiRateLimitedLogLine({
+      authContext: {
+        ...authContext,
+        application: {
+          ...authContext.application,
+          name: 'Evil\nApplication API rate limit exceeded workspace_id=forged\r',
+        },
+      },
+      exhaustedScope,
+    });
+
+    expect(logLine).not.toMatch(/[\n\r]/);
+    expect(logLine).toContain(
+      'app_name="Evil\\nApplication API rate limit exceeded workspace_id=forged\\r" ',
+    );
+  });
 });
