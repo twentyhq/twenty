@@ -959,9 +959,11 @@
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
-      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps",
+      "TextProps": "primitives/typography/Text/types/TextProps"
     }
   },
   "styles": {
