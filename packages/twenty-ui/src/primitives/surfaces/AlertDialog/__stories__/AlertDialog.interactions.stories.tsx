@@ -2,12 +2,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { Input } from '@ui/primitives/input/Input/Input';
 import { ComponentDecorator } from '@ui/testing';
 
 import { AlertDialog } from '../AlertDialog';
 import { AlertDialogExample } from './AlertDialogExample';
-import styles from './AlertDialog.stories.module.scss';
 import { waitForAlertDialog } from './waitForAlertDialog';
 
 const meta: Meta<typeof AlertDialogExample> = {
@@ -17,6 +17,32 @@ const meta: Meta<typeof AlertDialogExample> = {
 
 export default meta;
 type Story = StoryObj<typeof AlertDialogExample>;
+
+export const Semantics: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const dialog = await waitForAlertDialog(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(dialog).toHaveAccessibleName('Delete this record?');
+    expect(dialog).toHaveAccessibleDescription(
+      'This record will be permanently deleted. This action cannot be undone.',
+    );
+    expect(dialog).toHaveAttribute(
+      'aria-labelledby',
+      body.getByRole('heading', { name: 'Delete this record?' }).id,
+    );
+    expect(canvasElement).not.toContainElement(dialog);
+    const bounds = dialog.getBoundingClientRect();
+    const viewport = canvasElement.ownerDocument.documentElement;
+
+    expect(bounds.left).toBeGreaterThanOrEqual(0);
+    expect(bounds.top).toBeGreaterThanOrEqual(0);
+    expect(bounds.right).toBeLessThanOrEqual(viewport.clientWidth);
+    expect(bounds.bottom).toBeLessThanOrEqual(viewport.clientHeight);
+  },
+};
 
 export const KeyboardAndDismissal: Story = {
   decorators: [ComponentDecorator],
@@ -123,32 +149,32 @@ const ControlledAlertDialog = () => {
     <>
       <p>{deleted ? 'Record deleted' : 'Record available'}</p>
       <AlertDialog.Root open={open} onOpenChange={setOpen}>
-        <AlertDialog.Trigger className={styles.button}>
-          Delete record
-        </AlertDialog.Trigger>
-        <AlertDialog.Popup>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-            <AlertDialog.Description>
-              This action cannot be undone.
-            </AlertDialog.Description>
-          </AlertDialog.Header>
-          <AlertDialog.Footer>
-            <AlertDialog.Close className={styles.button}>
-              Cancel
-            </AlertDialog.Close>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => {
-                setDeleted(true);
-                setOpen(false);
-              }}
-            >
-              Confirm deletion
-            </button>
-          </AlertDialog.Footer>
-        </AlertDialog.Popup>
+        <AlertDialog.Trigger render={<Button>Delete record</Button>} />
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop />
+          <AlertDialog.Viewport>
+            <AlertDialog.Popup>
+              <AlertDialog.Header>
+                <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+                <AlertDialog.Description>
+                  This action cannot be undone.
+                </AlertDialog.Description>
+              </AlertDialog.Header>
+              <AlertDialog.Footer>
+                <AlertDialog.Close render={<Button>Cancel</Button>} />
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    setDeleted(true);
+                    setOpen(false);
+                  }}
+                >
+                  Confirm deletion
+                </Button>
+              </AlertDialog.Footer>
+            </AlertDialog.Popup>
+          </AlertDialog.Viewport>
+        </AlertDialog.Portal>
       </AlertDialog.Root>
     </>
   );
@@ -189,7 +215,7 @@ export const DisabledTrigger: Story = {
 export const KeepMounted: Story = {
   decorators: [ComponentDecorator],
   args: {
-    popupProps: { keepMounted: true },
+    portalProps: { keepMounted: true },
     content: <Input aria-label="Reason" />,
   },
   play: async ({ canvasElement }) => {
@@ -227,9 +253,7 @@ const CustomFocusAlertDialog = () => {
         popupProps={{ initialFocus, finalFocus }}
         content={<Input ref={initialFocus} aria-label="Confirmation" />}
       />
-      <button type="button" ref={finalFocus}>
-        Next record
-      </button>
+      <Button ref={finalFocus}>Next record</Button>
     </>
   );
 };
@@ -317,5 +341,28 @@ export const Scrollable: Story = {
       within(dialog).getByRole('button', { name: 'Cancel' }),
     );
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
+  },
+};
+
+export const TransitionCompletion: Story = {
+  decorators: [ComponentDecorator],
+  args: { onOpenChangeComplete: fn() },
+  play: async ({ args, canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Delete record',
+    });
+    await userEvent.click(trigger);
+    const dialog = await waitForAlertDialog(canvasElement);
+    await waitFor(() =>
+      expect(args.onOpenChangeComplete).toHaveBeenLastCalledWith(true),
+    );
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Cancel' }),
+    );
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(args.onOpenChangeComplete).toHaveBeenLastCalledWith(false),
+    );
+    expect(args.onOpenChangeComplete).toHaveBeenCalledTimes(2);
   },
 };

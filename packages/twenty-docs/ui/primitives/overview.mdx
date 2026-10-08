@@ -36,16 +36,17 @@ Slots such as `InputGroup.startElement` and `ListItem.actions` accept React node
 
 ### Popup composition
 
-Twenty UI packages the supporting overlay elements inside each public `Popup` part:
+Some primitives package supporting overlay elements inside their `Popup` part:
 
-| Component     | Included in `Popup`                    | Configure on `Popup`                                     |
-| ------------- | -------------------------------------- | -------------------------------------------------------- |
-| `Select`      | Portal and positioner                  | Placement, anchor, and portal container                  |
-| `Menu`        | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
-| `Popover`     | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
-| `AlertDialog` | Portal, backdrop, and viewport         | Size, portal container, mounting, and focus              |
+| Component | Included in `Popup`                    | Configure on `Popup`                                     |
+| --------- | -------------------------------------- | -------------------------------------------------------- |
+| `Select`  | Portal and positioner                  | Placement, anchor, and portal container                  |
+| `Menu`    | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
+| `Popover` | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
 
 Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
+
+[AlertDialog](/ui/primitives/surfaces/alert-dialog) exposes `Portal`, `Backdrop`, `Viewport`, and `Popup` separately. Configure mounting and the destination on `Portal`, overlay appearance on `Backdrop` and `Viewport`, and content size and focus on `Popup`. Each part preserves its own native attributes, ref target, and render composition.
 
 ### Custom components
 

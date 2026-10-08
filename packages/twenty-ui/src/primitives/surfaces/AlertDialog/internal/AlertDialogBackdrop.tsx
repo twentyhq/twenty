@@ -3,16 +3,14 @@ import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';
-import { type AlertDialogPopupProps } from '../types/AlertDialogPopupProps';
+import { type AlertDialogBackdropProps } from '../types/AlertDialogBackdropProps';
 
-export const AlertDialogPopup = ({
-  size = 'md',
+export const AlertDialogBackdrop = ({
   className,
   ...props
-}: AlertDialogPopupProps) => (
-  <AlertDialogPrimitive.Popup
+}: AlertDialogBackdropProps) => (
+  <AlertDialogPrimitive.Backdrop
     {...props}
-    data-size={size}
-    className={mergeClassNames(styles.popup, className)}
+    className={mergeClassNames(styles.backdrop, className)}
   />
 );

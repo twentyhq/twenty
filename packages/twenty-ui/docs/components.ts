@@ -46,6 +46,7 @@ import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
+import { ALERT_DIALOG_PART_PROP_DESCRIPTIONS } from './alertDialogPartPropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
@@ -429,6 +430,22 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/AlertDialog/AlertDialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/alert-dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
+    partPropDescriptions: ALERT_DIALOG_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Popup: { size: 'md' } },
   },
   {
     name: 'Menu',
