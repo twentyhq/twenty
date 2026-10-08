@@ -29,6 +29,9 @@ describe('TriggerUpgradeApplicationJob', () => {
   it('upgrades the requested application and forwards progress updates', async () => {
     await job.handle(jobData, jobContext);
 
+    expect(applicationUpgradeService.upgradeApplication).toHaveBeenCalledTimes(
+      1,
+    );
     expect(applicationUpgradeService.upgradeApplication).toHaveBeenCalledWith({
       appRegistrationId: jobData.applicationRegistrationId,
       targetVersion: jobData.targetVersion,

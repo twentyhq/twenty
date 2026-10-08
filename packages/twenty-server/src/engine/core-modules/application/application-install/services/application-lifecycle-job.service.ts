@@ -200,8 +200,14 @@ export class ApplicationLifecycleJobService {
     jobName: string;
     data: TData;
   }): Promise<{ jobId: string }> {
+    const inFlightJobIds = await this.findInFlightJobIds();
+    const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
+      inFlightJobIds.find(
+        (jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix,
+      );
+
     for (const conflictingOperation of CONFLICTING_OPERATIONS[operation]) {
-      const conflictingJobId = await this.findInFlightJobId(
+      const conflictingJobId = findInFlightJobIdWithPrefix(
         buildApplicationLifecycleJobId({
           operation: conflictingOperation,
           workspaceId,
@@ -228,6 +234,14 @@ export class ApplicationLifecycleJobService {
       workspaceId,
       universalIdentifier,
     });
+
+    // The queue only deduplicates waiting jobs, so a request made while the
+    // same operation is already running would otherwise enqueue a duplicate.
+    const inFlightJobId = findInFlightJobIdWithPrefix(jobIdPrefix);
+
+    if (isDefined(inFlightJobId)) {
+      return { jobId: inFlightJobId };
+    }
 
     const jobId =
       (await this.workspaceQueueService.add<TData>(jobName, data, {
@@ -272,11 +286,16 @@ export class ApplicationLifecycleJobService {
   private async findInFlightJobId(
     jobIdPrefix: string,
   ): Promise<string | undefined> {
+    const inFlightJobIds = await this.findInFlightJobIds();
+
+    return inFlightJobIds.find(
+      (jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix,
+    );
+  }
+
+  private async findInFlightJobIds(): Promise<string[]> {
     const inFlightJobs = await this.workspaceQueueService.getInFlightJobs();
 
-    return inFlightJobs
-      .map((job) => job.id)
-      .filter(isDefined)
-      .find((jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix);
+    return inFlightJobs.map((job) => job.id).filter(isDefined);
   }
 }
