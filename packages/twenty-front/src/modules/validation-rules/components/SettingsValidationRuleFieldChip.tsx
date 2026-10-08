@@ -1,3 +1,5 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useIcons } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -32,7 +34,7 @@ export const SettingsValidationRuleFieldChip = ({
         title={path}
         startElement={<Icon size={theme.icon.size.sm} />}
       >
-        {label}
+        {isNonEmptyString(label) ? label : <UntitledChipLabel />}
       </Chip>
     </StyledWrapper>
   );

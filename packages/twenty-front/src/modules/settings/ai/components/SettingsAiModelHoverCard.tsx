@@ -1,3 +1,5 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -95,7 +97,11 @@ export const SettingsAiModelHoverCard = ({
             }
             endElement={null}
           >
-            {model.label}
+            {isNonEmptyString(model.label) ? (
+              model.label
+            ) : (
+              <UntitledChipLabel />
+            )}
           </Chip>
         </StyledChipContainer>
       ),

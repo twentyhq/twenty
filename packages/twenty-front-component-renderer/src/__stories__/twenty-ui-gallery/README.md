@@ -190,3 +190,12 @@ levels, description line limits and optional focus, code semantics, native
 handlers, refs, and element/callback render composition. Description popup
 visibility and dismissal in the sandbox remain part of the existing portal and
 geometry acceptance work; standalone Section stories verify those behaviors.
+
+Chip controls check caller-owned empty, fallback and node content, stable default
+elements with native handlers, named icon-only buttons, explicit native button
+and link composition, DOM refs, keyboard activation and disabled owners in both
+runtimes. The same fixtures check intentional link content without automatic
+anchors, truncation and custom multiline tooltip content. Escape dismissal is
+checked from an explicit button owner with a native keyboard handler, which
+relays the event to the worker. General document-listener forwarding remains
+part of the renderer's dismissal work.

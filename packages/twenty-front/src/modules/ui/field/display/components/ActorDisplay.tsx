@@ -1,8 +1,9 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
-import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -21,7 +22,6 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      emptyLabel={t`Untitled`}
       variant="ghost"
       startElement={
         <AvatarOrIcon
@@ -34,7 +34,7 @@ export const ActorDisplay = ({
       }
       style={{ paddingInlineStart: 0 }}
     >
-      {name ?? ''}
+      {isNonEmptyString(name) ? name : <UntitledChipLabel />}
     </Chip>
   );
 };

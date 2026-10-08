@@ -71,9 +71,3 @@ export const avatarControlsTest = createDisplayControlTest({
   staticContent: 'A',
   checkGallery: avatarGalleryTest,
 });
-
-export const chipControlsTest = createDisplayControlTest({
-  buttonName: 'Open chip',
-  disabledButtonName: 'Disabled chip',
-  staticContent: 'Static chip',
-});

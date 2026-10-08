@@ -1,8 +1,10 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
 import { CallRecordingTranscriptEntryWords } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryWords';
 import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptEntryPlaybackPhase';
 import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Ref } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -136,7 +138,7 @@ export const CallRecordingTranscriptEntryListItem = ({
           }
           style={{ paddingInlineStart: 0 }}
         >
-          {speakerName}
+          {isNonEmptyString(speakerName) ? speakerName : <UntitledChipLabel />}
         </Chip>
         {isDefined(formattedStartTimestamp) && (
           <StyledTimestamp

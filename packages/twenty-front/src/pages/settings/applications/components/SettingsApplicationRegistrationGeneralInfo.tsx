@@ -1,3 +1,4 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
@@ -117,7 +118,11 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             />
           }
         >
-          {ownerWorkspace.displayName}
+          {isNonEmptyString(ownerWorkspace.displayName) ? (
+            ownerWorkspace.displayName
+          ) : (
+            <UntitledChipLabel />
+          )}
         </Chip>
       ) : (
         <Tag color="orange">{t`Unclaimed`}</Tag>

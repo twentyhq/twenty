@@ -39,7 +39,6 @@ import {
   statusControlsTest,
   tagControlsTest,
   avatarControlsTest,
-  chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
 import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
@@ -68,6 +67,7 @@ import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
 import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
 import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
+import { chipControlsTest } from '@/__stories__/twenty-ui-gallery/utils/chipControlsTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',

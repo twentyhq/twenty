@@ -8810,14 +8810,21 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows the string-label tooltip even when the label is not truncated."
+        "description": "Shows the content tooltip even when the content is not truncated."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-owned content. Missing or empty children add no fallback label."
       },
       {
         "name": "clickable",
         "type": "boolean",
         "required": false,
         "defaultValue": "isDefined(onClick)",
-        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not add button semantics by itself."
+        "description": "Enables hover and pointer styling. Defaults to whether `onClick` is supplied; does not change the default div or add keyboard behavior."
       },
       {
         "name": "color",
@@ -8827,25 +8834,11 @@
         "description": "Primary or secondary text color."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
-      },
-      {
-        "name": "emptyLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": "Untitled",
-        "description": "Placeholder shown when children are missing, empty, or false, unless `forceEmptyText` is enabled."
-      },
-      {
         "name": "endElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Content after the label. Avoid interactive content when the chip itself is a button."
+        "description": "Content after the label. Avoid interactive content when the chip itself is a button or link."
       },
       {
         "name": "endElementDivider",
@@ -8855,39 +8848,25 @@
         "description": "Adds a divider before `endElement` when that slot has content."
       },
       {
-        "name": "forceEmptyText",
+        "name": "isTooltipMultiline",
         "type": "boolean",
         "required": false,
-        "defaultValue": "false",
-        "description": "Suppresses the empty label when children are missing, empty, or false."
-      },
-      {
-        "name": "isLabelHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the label while keeping the start and end elements. Supply an accessible name for an interactive chip."
+        "defaultValue": null,
+        "description": "Preserves line breaks in the tooltip text."
       },
       {
         "name": "maxWidth",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain and truncate the label."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable chip uses `render` with an element other than a native button."
+        "description": "Maximum chip width in pixels, used to constrain the content."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Compose a native button or link explicitly; that owner supplies disabled and native interaction behavior."
       },
       {
         "name": "shape",
@@ -8911,18 +8890,32 @@
         "description": "Content before the label, such as an avatar or icon."
       },
       {
-        "name": "tooltipLabel",
+        "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Tooltip content for a string label. Defaults to the label text."
+        "description": "Tooltip text. Defaults to string children. Supply text explicitly for node content."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Delay in milliseconds before the tooltip opens."
       },
       {
         "name": "tooltipPlace",
         "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
-        "description": "Position of the string-label tooltip."
+        "description": "Position of the content tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Truncates overflowing content with an ellipsis. Defaults to true."
       },
       {
         "name": "variant",
@@ -8936,7 +8929,7 @@
         "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
-        "description": "Font weight of the label."
+        "description": "Font weight of the content."
       }
     ]
   },

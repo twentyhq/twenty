@@ -1,3 +1,4 @@
+import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
@@ -25,7 +26,7 @@ export const MentionRecordChip = ({
     return (
       <Chip
         variant="ghost"
-        disabled
+        aria-disabled
         style={{ paddingInlineStart: 0 }}
       >{t`Unknown object`}</Chip>
     );
@@ -35,7 +36,7 @@ export const MentionRecordChip = ({
     return (
       <Chip
         variant="ghost"
-        disabled
+        aria-disabled
         style={{ paddingInlineStart: 0 }}
       >{t`Deleted record`}</Chip>
     );
@@ -47,7 +48,6 @@ export const MentionRecordChip = ({
 
   return (
     <LinkChip
-      emptyLabel={t`Untitled`}
       to={linkToShowPage}
       variant="soft"
       className={className}
@@ -60,7 +60,7 @@ export const MentionRecordChip = ({
         />
       }
     >
-      {label}
+      {isNonEmptyString(label) ? label : <UntitledChipLabel />}
     </LinkChip>
   );
 };
