@@ -5,7 +5,6 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
-import { useSetAtomIfChanged } from '@/object-core/workflows/hooks/useSetAtomIfChanged';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { buildWorkflowRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowRecordFromCoreWorkflow';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -37,8 +36,6 @@ export const CoreWorkflowsSelectionToContextStoreEffect = ({
       contextStoreNumberOfSelectedRecordsComponentState,
     );
 
-  const setIfChanged = useSetAtomIfChanged();
-
   useEffect(() => {
     const selectedRecordIds = selectedCoreWorkflows.map(({ id }) => id);
 
@@ -48,12 +45,12 @@ export const CoreWorkflowsSelectionToContextStoreEffect = ({
       ),
     });
 
-    setIfChanged(contextStoreTargetedRecordsRuleAtom, {
+    store.set(contextStoreTargetedRecordsRuleAtom, {
       mode: 'selection',
       selectedRecordIds,
     });
 
-    setIfChanged(
+    store.set(
       contextStoreRecordIdsInSelectionOrderAtom,
       orderRecordIdsBySelection({
         previousRecordIdsInSelectionOrder: store.get(
@@ -63,7 +60,7 @@ export const CoreWorkflowsSelectionToContextStoreEffect = ({
       }),
     );
 
-    setIfChanged(
+    store.set(
       contextStoreNumberOfSelectedRecordsAtom,
       selectedRecordIds.length,
     );
@@ -72,25 +69,24 @@ export const CoreWorkflowsSelectionToContextStoreEffect = ({
     contextStoreRecordIdsInSelectionOrderAtom,
     contextStoreTargetedRecordsRuleAtom,
     selectedCoreWorkflows,
-    setIfChanged,
     store,
     upsertRecordsInStore,
   ]);
 
   useEffect(
     () => () => {
-      setIfChanged(contextStoreTargetedRecordsRuleAtom, {
+      store.set(contextStoreTargetedRecordsRuleAtom, {
         mode: 'selection',
         selectedRecordIds: [],
       });
-      setIfChanged(contextStoreRecordIdsInSelectionOrderAtom, []);
-      setIfChanged(contextStoreNumberOfSelectedRecordsAtom, 0);
+      store.set(contextStoreRecordIdsInSelectionOrderAtom, []);
+      store.set(contextStoreNumberOfSelectedRecordsAtom, 0);
     },
     [
       contextStoreNumberOfSelectedRecordsAtom,
       contextStoreRecordIdsInSelectionOrderAtom,
       contextStoreTargetedRecordsRuleAtom,
-      setIfChanged,
+      store,
     ],
   );
 

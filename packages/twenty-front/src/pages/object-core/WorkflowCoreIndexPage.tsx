@@ -9,6 +9,7 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
@@ -51,7 +52,8 @@ export const WorkflowCoreIndexPage = () => {
     refetchLoadedCoreWorkflows,
   } = useCoreWorkflows({ tableId });
 
-  const { createCoreWorkflow, canCreateCoreWorkflow } = useCreateCoreWorkflow();
+  const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
+    useCreateCoreWorkflow();
 
   const {
     displayedCoreWorkflows,
@@ -137,6 +139,13 @@ export const WorkflowCoreIndexPage = () => {
           onToggleAllRows: selectRows,
         }}
       />
+      {canCreateCoreWorkflow && (
+        <CoreObjectTableAddNewRow
+          label={t`New ${objectMetadataItem.labelSingular}`}
+          onClick={createCoreWorkflow}
+          disabled={isCreatingCoreWorkflow}
+        />
+      )}
     </CoreObjectIndexPageLayout>
   );
 };
