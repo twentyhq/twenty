@@ -6,10 +6,6 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// The agent shares the app's single role as its CRM tool scope (the ceiling),
-// never an identity it acts under. Each request runs as the linked workspace
-// member (see the worker), so the member's own permissions apply within that
-// scope; an unlinked user is declined rather than answered under the scope.
 export default defineAgent({
   universalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   name: 'slack-assistant',

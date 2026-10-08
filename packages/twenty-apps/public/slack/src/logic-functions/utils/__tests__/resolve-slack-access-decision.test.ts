@@ -59,7 +59,7 @@ describe('resolveSlackAccessDecision', () => {
     expect(resolveSlackIdentitiesMock).not.toHaveBeenCalled();
   });
 
-  it('should allow a linked member whose request is not eligible for impersonation', async () => {
+  it('should decline a confirmed member whose request has no run-as member', async () => {
     mockResolution({
       ...RESOLUTION_BASE,
       outcome: 'confirmedMember',
@@ -75,7 +75,7 @@ describe('resolveSlackAccessDecision', () => {
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
-    ).toEqual({ status: 'ALLOWED' });
+    ).toEqual({ status: 'DENIED' });
   });
 
   it('should deny an account every lookup agreed is not a member', async () => {

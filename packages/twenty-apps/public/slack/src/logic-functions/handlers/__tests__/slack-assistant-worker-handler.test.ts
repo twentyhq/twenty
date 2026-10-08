@@ -275,21 +275,6 @@ describe('slackAssistantWorkerHandler', () => {
     expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should decline an allowed request it could not attribute to a member', async () => {
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
-
-    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
-      done: true,
-      declined: true,
-    });
-
-    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
-    expect(sendSlackMessageMock).toHaveBeenCalledWith(
-      expect.objectContaining({ messageText: SLACK_ACCESS_DENIED_TEXT }),
-    );
-  });
-
   it('should show the thinking status before fetching the Slack context', async () => {
     await slackAssistantWorkerHandler(REQUEST_RECORD);
 

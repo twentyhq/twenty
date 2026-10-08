@@ -5,13 +5,6 @@ import {
   SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// The single role of the Slack app: the ceiling for the app's own functions and
-// the tool scope of the assistant agent (bound to this role). Read, update and
-// soft-delete are opened across all objects so the agent, which always runs as
-// the linked workspace member, is bounded by that member's own permissions
-// rather than clipped to a fixed object list. Destroy and settings stay off as
-// hard guardrails that hold even for an admin member; the one exception is
-// destroying a Slack user link, which the linking functions need.
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
@@ -26,8 +19,6 @@ export default defineApplicationRole({
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
   objectPermissions: [
-    // Read/update are already covered by the all-object grants above; the
-    // linking functions additionally need to destroy a Slack user link.
     {
       objectUniversalIdentifier: SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,

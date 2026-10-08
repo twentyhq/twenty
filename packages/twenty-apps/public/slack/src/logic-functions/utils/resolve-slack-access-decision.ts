@@ -45,12 +45,11 @@ export const resolveSlackAccessDecision = async ({
   }
 
   switch (resolution.outcome) {
-    case 'confirmedMember':
-      return { status: 'ALLOWED' };
-    case 'membershipNotConfirmed':
-      return { status: 'DENIED' };
     case 'membershipUnverifiable':
     case 'unidentified':
       return { status: 'UNVERIFIABLE' };
+    case 'confirmedMember':
+    case 'membershipNotConfirmed':
+      return { status: 'DENIED' };
   }
 };

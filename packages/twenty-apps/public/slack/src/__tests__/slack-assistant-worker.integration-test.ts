@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
@@ -20,8 +21,6 @@ import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-
 const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
-// jane.austen@apple.dev is a seeded workspace member, so a requester carrying
-// this email resolves to a confirmed member and the agent runs as them.
 const CONFIRMED_MEMBER_EMAIL = 'jane.austen@apple.dev';
 
 type SlackAssistantRequestStatus =
@@ -43,9 +42,6 @@ describe('Slack assistant worker', () => {
   const createdRequestIds: string[] = [];
   const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
-  // A channel message only reads as an assistant request when it addresses the
-  // bot; the stored request text stays clean so mention and run-as text matching
-  // still hold once the leading bot mention is stripped.
   const mentionBot = (text: string): string => `<@${slack.botUserId}> ${text}`;
 
   const addConfirmedRequester = (): void => {
@@ -56,10 +52,8 @@ describe('Slack assistant worker', () => {
     });
   };
 
-  // The worker's own posts carry a botId; the seeded request message does not,
-  // so this isolates what the worker actually sent to the channel.
   const botMessagesIn = (channelId: string) =>
-    slack.messagesIn(channelId).filter((message) => message.botId !== undefined);
+    slack.messagesIn(channelId).filter((message) => isDefined(message.botId));
 
   const createRequestRecord = async (fields: {
     slackChannelId: string;
@@ -78,11 +72,6 @@ describe('Slack assistant worker', () => {
             slackThreadTimestamp: '',
             slackUserId: REQUESTER_USER_ID,
             slackEventId: `Ev${fields.slackMessageTimestamp}`,
-            // Mirror the production enqueue path, which writes the request under
-            // the app actor (source APPLICATION, no workspace member). The run-as
-            // gate only attributes such app-authored records to the confirmed
-            // requester; the explicit name stops the server replacing this
-            // crafted actor with the authenticated test user.
             createdBy: {
               source: 'APPLICATION',
               workspaceMemberId: null,
@@ -150,9 +139,6 @@ describe('Slack assistant worker', () => {
 
     createdRequestIds.length = 0;
 
-    // A confirmed-member request auto-links the requester to the workspace
-    // member on the live server; that link outlives the fakes' reset, so clear
-    // it here to keep each run testing link creation from a clean slate.
     const linkQuery = await coreClient.query({
       slackUserLinks: {
         __args: { filter: { slackUserId: { eq: REQUESTER_USER_ID } } },
@@ -261,9 +247,6 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true });
 
-    // The thread is replayed as turns, the bot's own earlier reply as an
-    // assistant turn without its footer, and the message that triggered this
-    // run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
       {
         role: 'user',
@@ -277,8 +260,6 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
-    // The requester matches a confirmed workspace member, so the agent runs as
-    // that member and the prompt grants it that member's own permissions.
     const agentMessages = appRuntime.lastAgentMessages;
     const agentRuns = appRuntime.agentRuns;
     const runAsWorkspaceMemberId =
@@ -302,14 +283,12 @@ describe('Slack assistant worker', () => {
       .find(
         (message) =>
           message.threadTimestamp === slackMessageTimestamp &&
-          message.botId !== undefined &&
+          isDefined(message.botId) &&
           message.blocks !== undefined,
       );
 
     expect(postedAnswer?.blocks).toEqual([
       { type: 'markdown', text: 'Acme has 3 open deals.' },
-      // The feedback buttons carry the request record id, which is how a click
-      // finds the answer it rates.
       expect.objectContaining({
         type: 'context_actions',
         block_id: request.id,
@@ -321,7 +300,6 @@ describe('Slack assistant worker', () => {
         ],
       }),
     ]);
-    // Record links in the answer must not turn into Slack previews.
     expect(slack.lastCallTo('chat.postMessage')?.args).toEqual(
       expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
     );
@@ -349,7 +327,6 @@ describe('Slack assistant worker', () => {
     addConfirmedRequester();
     const slackMessageTimestamp = nextMessageTimestamp();
 
-    // A direct message is addressed to the assistant without a bot mention.
     slack.addMessage({
       channelId: DIRECT_MESSAGE_CHANNEL_ID,
       timestamp: slackMessageTimestamp,
@@ -645,8 +622,6 @@ describe('Slack assistant worker', () => {
 
   it('should decline a requester it cannot tie to a workspace member', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
-    // No email means no workspace member match, so the requester stays unlinked
-    // and the request is declined rather than answered under any role.
     slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
     const slackMessageTimestamp = nextMessageTimestamp();
 
@@ -674,7 +649,6 @@ describe('Slack assistant worker', () => {
 
     expect(result).toEqual({ done: true, declined: true });
     expect(appRuntime.agentRuns).toHaveLength(0);
-    // The denial is posted as markdown, so the mock records it as markdownText.
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         markdownText: SLACK_ACCESS_DENIED_TEXT,

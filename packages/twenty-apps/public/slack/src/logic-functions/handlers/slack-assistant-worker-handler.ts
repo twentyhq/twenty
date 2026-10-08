@@ -145,13 +145,7 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    // The agent carries no role of its own, so it can only run as the linked
-    // member who made the request. A request we allowed but could not attribute
-    // to a member is declined rather than answered without an identity.
-    if (
-      accessDecision.status === 'DENIED' ||
-      !isNonEmptyString(runAsWorkspaceMemberId)
-    ) {
+    if (accessDecision.status === 'DENIED') {
       await stopStatusUpdates();
 
       const denialDelivery = await sendSlackMessage({
