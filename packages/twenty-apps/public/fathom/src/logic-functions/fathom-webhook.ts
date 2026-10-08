@@ -119,6 +119,6 @@ export default defineLogicFunction({
   name: 'fathom-webhook',
   description:
     'Verifies Fathom meeting webhooks and upserts accessible recordings into CallRecording records.',
-  timeoutSeconds: 60,
+  timeoutSeconds: 300,
   handler: fathomWebhookHandler,
 });

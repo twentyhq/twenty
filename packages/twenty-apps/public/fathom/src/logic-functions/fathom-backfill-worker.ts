@@ -75,20 +75,27 @@ export const fathomBackfillWorkerHandler = async (
       throw buildRetryableFathomError({ operation: listOperation, error });
     }
 
-    await enqueueFathomJobsOrThrow({
-      logicFunctionUniversalIdentifier:
-        FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-      payloads: [
-        {
-          connectedAccountId: payload.connectedAccountId,
-          createdAfter,
-          cursor: payload.cursor,
-          pageIndex,
-          requeueAttempt: requeueAttempt + 1,
-        },
-      ],
-      delayMs: delay,
-    });
+    try {
+      await enqueueFathomJobsOrThrow({
+        logicFunctionUniversalIdentifier:
+          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+        payloads: [
+          {
+            connectedAccountId: payload.connectedAccountId,
+            createdAfter,
+            cursor: payload.cursor,
+            pageIndex,
+            requeueAttempt: requeueAttempt + 1,
+          },
+        ],
+        delayMs: delay,
+      });
+    } catch (enqueueError) {
+      throw buildRetryableFathomError({
+        operation: `re-enqueue after ${listOperation}`,
+        error: enqueueError,
+      });
+    }
 
     console.warn(
       `[fathom] ${listOperation} failed, re-enqueued in ${delay}ms: ${toErrorMessage(error)}`,

@@ -16,7 +16,10 @@ export const getFathomRequeueDelay = ({
   const retryAfterDelay = getFathomRetryAfterDelay({ error, now });
 
   if (isDefined(retryAfterDelay)) {
-    return Math.min(retryAfterDelay, FATHOM_MAX_REQUEUE_DELAY_MILLISECONDS);
+    return Math.min(
+      Math.ceil(retryAfterDelay),
+      FATHOM_MAX_REQUEUE_DELAY_MILLISECONDS,
+    );
   }
 
   return isTransientFathomError(error)

@@ -106,6 +106,16 @@ describe('fathomBackfillWorkerHandler', () => {
     );
   });
 
+  it('asks the platform to retry when re-enqueueing the page fails', async () => {
+    mocks.listMeetings.mockRejectedValue(buildFathomRateLimitError('120'));
+    mocks.enqueueJobs.mockResolvedValue({ enqueued: false });
+
+    await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toBeInstanceOf(
+      RetryableLogicFunctionError,
+    );
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
+  });
+
   it('asks the platform to retry once the re-enqueue budget is spent', async () => {
     mocks.listMeetings.mockRejectedValue(buildFathomRateLimitError('120'));
 

@@ -1,6 +1,9 @@
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
 import {
@@ -47,12 +50,19 @@ export const fathomBackfillBatchHandler = async (
 
     const remainingMeetings = payload.meetings.slice(meetingIndex);
 
-    await enqueueFathomBackfillBatch({
-      connectedAccountId: payload.connectedAccountId,
-      meetings: remainingMeetings,
-      requeueAttempt: requeueAttempt + 1,
-      notBeforeDelayMilliseconds: delay,
-    });
+    try {
+      await enqueueFathomBackfillBatch({
+        connectedAccountId: payload.connectedAccountId,
+        meetings: remainingMeetings,
+        requeueAttempt: requeueAttempt + 1,
+        notBeforeDelayMilliseconds: delay,
+      });
+    } catch (enqueueError) {
+      throw buildRetryableFathomError({
+        operation: `re-enqueue after ${operation}`,
+        error: enqueueError,
+      });
+    }
 
     console.warn(
       `[fathom] ${operation} failed, re-enqueued ${remainingMeetings.length} meetings in ${delay}ms: ${toErrorMessage(error)}`,
@@ -104,9 +114,18 @@ export const fathomBackfillBatchHandler = async (
         }),
       );
     } catch (error) {
+      const operation = `sync recording ${serializedMeeting.recordingId}`;
+
+      if (
+        !(error instanceof RetryableLogicFunctionError) &&
+        !(error instanceof TypeError)
+      ) {
+        throw buildRetryableFathomError({ operation, error });
+      }
+
       return requeueRemainingMeetings({
         meetingIndex,
-        operation: `sync recording ${serializedMeeting.recordingId}`,
+        operation,
         error,
         delay: FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS,
       });

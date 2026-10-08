@@ -136,7 +136,7 @@ describe('fathomBackfillBatchHandler', () => {
     expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ delayMs: 10 * 60_000 }),
     );
-    expect(mocks.kvSet).toHaveBeenCalledWith(
+    expect(mocks.kvSet).toHaveBeenCalledExactlyOnceWith(
       'fathom-backfill-schedule:connection-1',
       {
         nextBatchAvailableAt:
@@ -149,7 +149,7 @@ describe('fathomBackfillBatchHandler', () => {
     mocks.syncFathomMeetingToCallRecording
       .mockResolvedValueOnce({ recordingId: 1 })
       .mockResolvedValueOnce({ recordingId: 2 })
-      .mockRejectedValueOnce(new Error('Twenty unavailable'));
+      .mockRejectedValueOnce(new RetryableLogicFunctionError('rate limited'));
 
     const result = await fathomBackfillBatchHandler({
       ...PAYLOAD,
@@ -171,6 +171,17 @@ describe('fathomBackfillBatchHandler', () => {
     );
   });
 
+  it('hands a save that fails for good back to the platform without re-enqueueing', async () => {
+    mocks.syncFathomMeetingToCallRecording.mockRejectedValueOnce(
+      new Error('Invalid record'),
+    );
+
+    await expect(fathomBackfillBatchHandler(PAYLOAD)).rejects.toBeInstanceOf(
+      RetryableLogicFunctionError,
+    );
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
   it('hands the batch back to the platform once the re-enqueue budget is spent', async () => {
     failTranscriptFor(1, buildFathomRateLimitError('30'));
 
@@ -181,6 +192,16 @@ describe('fathomBackfillBatchHandler', () => {
       }),
     ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('hands the batch back to the platform when the re-enqueue fails', async () => {
+    failTranscriptFor(2, buildFathomRateLimitError('120'));
+    mocks.enqueueJobs.mockResolvedValue({ enqueued: false });
+
+    await expect(fathomBackfillBatchHandler(PAYLOAD)).rejects.toBeInstanceOf(
+      RetryableLogicFunctionError,
+    );
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
   });
 
   it('skips a recording Fathom rejects permanently and imports the rest', async () => {

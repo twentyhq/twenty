@@ -124,7 +124,7 @@ export default defineLogicFunction({
   name: 'fathom-sync-call',
   description:
     'Sync one Fathom recording into a CallRecording on demand: fetches its transcript, summary and action items and upserts them onto the record linked to the matching CalendarEvent. Useful to recover a missed webhook or to sync from a workflow.',
-  timeoutSeconds: 60,
+  timeoutSeconds: 300,
   handler: fathomSyncCallHandler,
   toolTriggerSettings: { inputSchema: fathomSyncCallInputSchema },
   workflowActionTriggerSettings: {
