@@ -282,17 +282,6 @@ describe('Credit allowance enforcement (integration)', () => {
     });
   });
 
-  it('admits when the plan has no resource-credit price to read an allowance from', async () => {
-    await global.testDataSource.query(
-      `DELETE FROM core."billingSubscriptionItem" WHERE "stripeSubscriptionItemId" = $1`,
-      [TEST_STRIPE_SUBSCRIPTION_ITEM_ID],
-    );
-    await refreshCurrentBillingSubscription(workspaceId);
-    await recordAiUsage(ALLOWANCE_MICRO);
-
-    expect(await findAllowanceRefusal()).toBeNull();
-  });
-
   it('keeps the allowance counter equal to the period ledger', async () => {
     const workflowRunCreditsMicro = [600, 300];
 

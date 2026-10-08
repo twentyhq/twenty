@@ -241,7 +241,7 @@ export class BillingUsageService {
     );
   }
 
-  findResourceUsageCap(subscription: BillingSubscriptionEntity): number | null {
+  getResourceUsageCap(subscription: BillingSubscriptionEntity): number {
     const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
 
     if (isInFreeTrial) {
@@ -260,7 +260,10 @@ export class BillingUsageService {
       );
 
     if (!isDefined(resourceCreditPrice)) {
-      return null;
+      throw new BillingException(
+        `Resource credit price not found for workspace ${subscription.workspaceId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
     }
 
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);

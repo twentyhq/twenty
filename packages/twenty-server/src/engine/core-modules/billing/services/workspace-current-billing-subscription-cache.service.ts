@@ -58,7 +58,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
       planAllowanceMicro:
-        this.billingUsageService.findResourceUsageCap(subscription),
+        this.billingUsageService.getResourceUsageCap(subscription),
       creditGrants: unexpiredGrants.map(
         ({ amountMicro, effectiveAt, expiresAt }) => ({
           amountMicro,
