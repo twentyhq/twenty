@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { useServerBaseUrl } from '@/settings/security/hooks/useServerBaseUrl';
+import { useBuildServerUrl } from '@/settings/security/hooks/useBuildServerUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -38,10 +38,10 @@ export const SettingsSsoOidcForm = () => {
   const { control } = useFormContext();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
-  const serverBaseUrl = useServerBaseUrl();
+  const buildServerUrl = useBuildServerUrl();
 
   const authorizedUrl = window.location.origin;
-  const redirectionUrl = `${serverBaseUrl}/auth/oidc/callback`;
+  const redirectionUrl = buildServerUrl('/auth/oidc/callback');
 
   return (
     <>
