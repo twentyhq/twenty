@@ -224,6 +224,15 @@ describe('AiChatInboxPage', () => {
     expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
   });
 
+  it('opens the first chat beside the list', () => {
+    renderInbox('/inbox');
+
+    expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+    expect(
+      screen.queryByText('No conversation selected'),
+    ).not.toBeInTheDocument();
+  });
+
   it('opens the clicked chat', () => {
     renderInbox();
 
