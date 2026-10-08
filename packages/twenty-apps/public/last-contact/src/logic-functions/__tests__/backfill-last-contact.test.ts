@@ -1,27 +1,40 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 const {
   queryMock,
+  enqueueJobsMock,
   scheduleUpcomingPersonMeetingsMock,
   collectPersonMeetingParticipantsMock,
   applyMeetingInteractionsMock,
   backfillPeopleMock,
-  backfillOpportunitiesMock,
-  backfillCompaniesMock,
+  recomputeOpportunitiesMock,
+  recomputeCompaniesMock,
 } = vi.hoisted(() => ({
   queryMock: vi.fn(),
+  enqueueJobsMock: vi.fn(),
   scheduleUpcomingPersonMeetingsMock: vi.fn(),
   collectPersonMeetingParticipantsMock: vi.fn(),
   applyMeetingInteractionsMock: vi.fn(),
   backfillPeopleMock: vi.fn(),
-  backfillOpportunitiesMock: vi.fn(),
-  backfillCompaniesMock: vi.fn(),
+  recomputeOpportunitiesMock: vi.fn(),
+  recomputeCompaniesMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return { query: queryMock };
   }),
+}));
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
+vi.mock('src/utils/create-paced-client', () => ({
+  createPacedClient: (client: unknown) => client,
 }));
 
 vi.mock('src/utils/schedule-meetings', () => ({
@@ -44,13 +57,19 @@ vi.mock('src/utils/backfill-people-last-contact', () => ({
   backfillPeopleLastContact: backfillPeopleMock,
 }));
 
-vi.mock('src/utils/backfill-opportunities-last-contact', () => ({
-  backfillOpportunitiesLastContact: backfillOpportunitiesMock,
+vi.mock('src/utils/recompute-opportunity-last-contact', () => ({
+  recomputeOpportunitiesLastContact: recomputeOpportunitiesMock,
 }));
 
-vi.mock('src/utils/backfill-companies-last-contact', () => ({
-  backfillCompaniesLastContact: backfillCompaniesMock,
+vi.mock('src/utils/recompute-company-last-contact', () => ({
+  recomputeCompaniesLastContact: recomputeCompaniesMock,
 }));
+
+import {
+  BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
+  BACKFILL_RUN_BUDGET_MS,
+} from 'src/constants/backfill';
+import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 import backfillLastContact from '../backfill-last-contact';
 
@@ -59,9 +78,9 @@ type ConnectionQuery = Record<
   { __args: { first: number; after?: string } }
 >;
 
-const RECORDS_BY_QUERY_FIELD: Record<string, Record<string, unknown>[]> = {
+const RECORDS_BY_QUERY_FIELD: Record<string, { id: string }[]> = {
   people: [{ id: 'person-1' }, { id: 'person-2' }, { id: 'person-3' }],
-  opportunities: [{ id: 'opportunity-1', pointOfContactId: 'person-1' }],
+  opportunities: [{ id: 'opportunity-1' }],
   companies: [],
 };
 
@@ -72,19 +91,16 @@ const handler = backfillLastContact.config.handler as (
 let events: string[] = [];
 
 const recordBatch =
-  (phase: string) =>
-  async (_client: unknown, records: (string | { id: string })[]) => {
+  (phase: string) => async (_client: unknown, recordIds: string[]) => {
     await Promise.resolve();
-    events.push(
-      `backfilled ${phase} ${records
-        .map((record) => (typeof record === 'string' ? record : record.id))
-        .join(',')}`,
-    );
+    events.push(`backfilled ${phase} ${recordIds.join(',')}`);
   };
 
 beforeEach(() => {
   events = [];
 
+  enqueueJobsMock.mockReset();
+  enqueueJobsMock.mockResolvedValue({ enqueued: true });
   scheduleUpcomingPersonMeetingsMock.mockReset();
   scheduleUpcomingPersonMeetingsMock.mockResolvedValue(undefined);
   collectPersonMeetingParticipantsMock.mockReset();
@@ -113,10 +129,14 @@ beforeEach(() => {
 
   backfillPeopleMock.mockReset();
   backfillPeopleMock.mockImplementation(recordBatch('people'));
-  backfillOpportunitiesMock.mockReset();
-  backfillOpportunitiesMock.mockImplementation(recordBatch('opportunities'));
-  backfillCompaniesMock.mockReset();
-  backfillCompaniesMock.mockImplementation(recordBatch('companies'));
+  recomputeOpportunitiesMock.mockReset();
+  recomputeOpportunitiesMock.mockImplementation(recordBatch('opportunities'));
+  recomputeCompaniesMock.mockReset();
+  recomputeCompaniesMock.mockImplementation(recordBatch('companies'));
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe('backfill-last-contact', () => {
@@ -139,14 +159,7 @@ describe('backfill-last-contact', () => {
       'backfilled opportunities opportunity-1',
       'read companies from 0',
     ]);
-  });
-
-  it('should hand each opportunity to its batch with its point of contact', async () => {
-    await handler({ newVersion: '1.6.0' });
-
-    expect(backfillOpportunitiesMock).toHaveBeenCalledWith(expect.anything(), [
-      { id: 'opportunity-1', pointOfContactId: 'person-1' },
-    ]);
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it.each(['1.4.1', '1.5.0'])(
@@ -181,7 +194,84 @@ describe('backfill-last-contact', () => {
       },
     );
     expect(applyMeetingInteractionsMock).toHaveBeenCalledTimes(1);
+  });
 
-    vi.useRealTimers();
+  it('should hand the rest of the backfill to a new run once the run budget is spent', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-12T12:00:00.000Z'));
+    backfillPeopleMock.mockImplementationOnce(async (_client, recordIds) => {
+      await recordBatch('people')(_client, recordIds);
+      vi.setSystemTime(Date.now() + BACKFILL_RUN_BUDGET_MS);
+    });
+
+    await expect(handler({ newVersion: '1.6.0' })).resolves.toEqual({
+      outcome: 'paused',
+      phases: [{ phase: 'people', count: 2 }],
+      resumeFrom: { phase: 'people', after: '2' },
+    });
+
+    expect(events).toEqual([
+      'read people from 0',
+      'backfilled people person-1,person-2',
+    ]);
+    expect(enqueueJobsMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      jobs: [{ payload: { resumeFrom: { phase: 'people', after: '2' } } }],
+    });
+  });
+
+  it('should resume from the cursor without scheduling meetings again', async () => {
+    await expect(
+      handler({ resumeFrom: { phase: 'people', after: '2' } }),
+    ).resolves.toMatchObject({ outcome: 'completed' });
+
+    expect(events).toEqual([
+      'read people from 2',
+      'backfilled people person-3',
+      'read opportunities from 0',
+      'backfilled opportunities opportunity-1',
+      'read companies from 0',
+    ]);
+    expect(scheduleUpcomingPersonMeetingsMock).not.toHaveBeenCalled();
+    expect(applyMeetingInteractionsMock).not.toHaveBeenCalled();
+  });
+
+  it('should resume a later phase from its start', async () => {
+    await handler({ resumeFrom: { phase: 'opportunities' } });
+
+    expect(events).toEqual([
+      'read opportunities from 0',
+      'backfilled opportunities opportunity-1',
+      'read companies from 0',
+    ]);
+  });
+
+  it('should redo the rate-limited batch in a delayed run instead of restarting the backfill', async () => {
+    backfillPeopleMock
+      .mockImplementationOnce(recordBatch('people'))
+      .mockRejectedValueOnce(new RetryableLogicFunctionError('Rate limited'));
+
+    await expect(handler({ newVersion: '1.6.0' })).resolves.toEqual({
+      outcome: 'paused',
+      phases: [{ phase: 'people', count: 2 }],
+      resumeFrom: { phase: 'people', after: '2' },
+    });
+
+    expect(enqueueJobsMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      jobs: [{ payload: { resumeFrom: { phase: 'people', after: '2' } } }],
+      delayMs: BACKFILL_RATE_LIMITED_RESUME_DELAY_MS,
+    });
+  });
+
+  it('should fail the run on errors that are not rate limits', async () => {
+    backfillPeopleMock.mockRejectedValueOnce(new Error('Bad Request'));
+
+    await expect(handler({ newVersion: '1.6.0' })).rejects.toThrow(
+      'Bad Request',
+    );
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 });

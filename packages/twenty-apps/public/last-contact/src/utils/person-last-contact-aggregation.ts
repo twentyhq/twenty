@@ -18,7 +18,6 @@ type MeetingInteraction = {
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
 type ContactItem = { kind: 'email' | 'meeting'; id: string };
 
-export type LastContact = { at: string; item: ContactItem };
 export type PersonUpdateData = Record<string, string | null>;
 
 export type PersonAgg = {
@@ -348,22 +347,6 @@ export const buildPersonAggregates = async (
   return aggByPersonId;
 };
 
-export const pickPersonLastContact = (
-  agg: PersonAgg | undefined,
-): LastContact | undefined =>
-  agg?.lastContactAt && agg.item
-    ? { at: agg.lastContactAt, item: agg.item }
-    : undefined;
-
-export const pickLatestLastContact = (
-  contacts: LastContact[],
-): LastContact | undefined =>
-  contacts.reduce<LastContact | undefined>(
-    (latest, contact) =>
-      !latest || contact.at > latest.at ? contact : latest,
-    undefined,
-  );
-
 export const buildPersonUpdateData = (agg: PersonAgg): PersonUpdateData => ({
   ...(agg.lastContactAt
     ? {
@@ -386,13 +369,4 @@ export const buildPersonUpdateData = (agg: PersonAgg): PersonUpdateData => ({
           lastContactItemMessageId: null,
         }
       : {}),
-});
-
-export const buildRelatedUpdateData = ({
-  at,
-  item,
-}: LastContact): PersonUpdateData => ({
-  lastContactAt: at,
-  lastContactItemMessageId: item.kind === 'email' ? item.id : null,
-  lastContactItemCalendarEventId: item.kind === 'meeting' ? item.id : null,
 });
