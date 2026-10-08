@@ -63,6 +63,7 @@ import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 
 const getAccountPath = (connectedAccountId: string) =>
   getSettingsPath(SettingsPath.AppPreferencesAccount, { connectedAccountId });
@@ -626,7 +627,9 @@ export const InstalledAccountKeepsAppScopedVariablesAndSelectedControls: Story =
     },
     beforeEach: () => prepareConnectionOwner(),
     render: () => (
-      <AccountPreferencesWithNavigation initialPath="/settings/app-preferences" />
+      <ToastStoryContainer>
+        <AccountPreferencesWithNavigation initialPath="/settings/app-preferences" />
+      </ToastStoryContainer>
     ),
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);
@@ -649,10 +652,12 @@ export const InstalledAccountKeepsAppScopedVariablesAndSelectedControls: Story =
       ).toBeVisible();
       await userEvent.keyboard('{Escape}');
       await userEvent.click(rowLink);
-      await expect(
-        (await canvas.findAllByText(PERSONAL_FATHOM_ACCOUNT.handle))[0],
-      ).toBeVisible();
       await expect(await canvas.findByText('My Fathom account')).toBeVisible();
+      await waitFor(() =>
+        expect(
+          canvas.getAllByText(PERSONAL_FATHOM_ACCOUNT.handle)[0],
+        ).toBeVisible(),
+      );
       await expect(
         canvas.queryByText('Shared Fathom account'),
       ).not.toBeInTheDocument();
@@ -676,6 +681,12 @@ export const InstalledAccountKeepsAppScopedVariablesAndSelectedControls: Story =
           value: 'Personal',
         }),
       );
+      await canvas.findByText('Preferences saved.');
+      await waitFor(() =>
+        expect(
+          canvas.queryByRole('button', { name: 'Save' }),
+        ).not.toBeInTheDocument(),
+      );
       await userEvent.click(canvas.getByRole('link', { name: 'Apps' }));
       const appLink = (
         await canvas.findAllByRole('link', { name: /Fathom/ })
@@ -691,12 +702,16 @@ export const InstalledAccountKeepsAppScopedVariablesAndSelectedControls: Story =
       await expect(
         await canvas.findByRole('group', { name: 'Meeting prefix' }),
       ).toBeVisible();
+      await waitFor(() =>
+        expect(
+          within(
+            canvas.getByRole('group', { name: 'Meeting prefix' }),
+          ).getByRole('textbox'),
+        ).toHaveValue('Personal'),
+      );
       await expect(
-        within(canvas.getByRole('group', { name: 'Meeting prefix' })).getByRole(
-          'textbox',
-        ),
-      ).toHaveValue('Personal');
-      await expect(canvas.getByText('Shared Fathom account')).toBeVisible();
+        await canvas.findByText('Shared Fathom account'),
+      ).toBeVisible();
     },
   };
 
