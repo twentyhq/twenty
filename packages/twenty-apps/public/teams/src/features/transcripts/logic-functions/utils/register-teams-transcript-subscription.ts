@@ -44,25 +44,6 @@ const renewStoredSubscriptionOrUndefined = async ({
   }
 };
 
-const discardCreatedSubscription = async ({
-  accessToken,
-  subscriptionId,
-  subscriptionKvKey,
-  connectionKvKey,
-}: {
-  accessToken: string;
-  subscriptionId: string;
-  subscriptionKvKey: string;
-  connectionKvKey: string;
-}): Promise<void> => {
-  try {
-    await deleteTeamsTranscriptSubscription({ accessToken, subscriptionId });
-  } finally {
-    await kv.delete(subscriptionKvKey);
-    await kv.delete(connectionKvKey, { scope: 'SERVER' });
-  }
-};
-
 const isTeamsConnectionListed = async (
   connectedAccountId: string,
 ): Promise<boolean> =>
@@ -122,20 +103,14 @@ export const registerTeamsTranscriptSubscription = async ({
       apiUrl,
       connectedAccountId,
     }),
-  }).catch(async (error: unknown) => {
-    await kv.delete(connectionKvKey, { scope: 'SERVER' });
-
-    throw error;
   });
 
   try {
     await kv.set(subscriptionKvKey, subscription);
   } catch (error) {
-    await discardCreatedSubscription({
+    await deleteTeamsTranscriptSubscription({
       accessToken,
       subscriptionId: subscription.subscriptionId,
-      subscriptionKvKey,
-      connectionKvKey,
     });
 
     throw error;
@@ -143,12 +118,12 @@ export const registerTeamsTranscriptSubscription = async ({
 
   // A disconnect during the Graph call found nothing to delete, so the new subscription is dropped here.
   if (!(await isTeamsConnectionListed(connectedAccountId))) {
-    await discardCreatedSubscription({
+    await deleteTeamsTranscriptSubscription({
       accessToken,
       subscriptionId: subscription.subscriptionId,
-      subscriptionKvKey,
-      connectionKvKey,
     });
+    await kv.delete(subscriptionKvKey);
+    await kv.delete(connectionKvKey, { scope: 'SERVER' });
 
     return { transcriptSubscriptionId: null };
   }
