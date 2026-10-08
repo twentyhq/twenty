@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconList, IconPlus } from 'twenty-ui/icon';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
 
 import { SIDE_PANEL_DISCARD_CHANGES_DIALOG_ID } from '@/side-panel/constants/SidePanelDiscardChangesDialogId';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
@@ -31,16 +31,16 @@ const renderHooks = () =>
     { wrapper: Wrapper },
   );
 
-const openCreationFormOverRecordPage = (
+const openCreationFormOverSearchPage = (
   navigateSidePanelMenu: ReturnType<
     typeof useSidePanelMenu
   >['navigateSidePanelMenu'],
 ) => {
   navigateSidePanelMenu({
-    page: SidePanelPages.ViewRecord,
-    pageTitle: 'Company',
-    pageIcon: IconList,
-    pageId: 'record-page',
+    page: SidePanelPages.SearchRecords,
+    pageTitle: 'Search',
+    pageIcon: IconSearch,
+    pageId: 'search-page',
   });
   navigateSidePanelMenu({
     page: SidePanelPages.RecordCreationForm,
@@ -71,7 +71,7 @@ describe('useHandleSidePanelEscape', () => {
     const { result } = renderHooks();
 
     act(() => {
-      openCreationFormOverRecordPage(
+      openCreationFormOverSearchPage(
         result.current.sidePanelMenu.navigateSidePanelMenu,
       );
     });
@@ -80,7 +80,7 @@ describe('useHandleSidePanelEscape', () => {
       result.current.handleSidePanelEscape();
     });
 
-    expect(getNavigationPageIds()).toEqual(['record-page']);
+    expect(getNavigationPageIds()).toEqual(['search-page']);
     expect(isDiscardChangesDialogOpened()).toBe(false);
   });
 
@@ -88,7 +88,7 @@ describe('useHandleSidePanelEscape', () => {
     const { result } = renderHooks();
 
     act(() => {
-      openCreationFormOverRecordPage(
+      openCreationFormOverSearchPage(
         result.current.sidePanelMenu.navigateSidePanelMenu,
       );
       jotaiStore.set(
@@ -104,7 +104,7 @@ describe('useHandleSidePanelEscape', () => {
     });
 
     expect(getNavigationPageIds()).toEqual([
-      'record-page',
+      'search-page',
       'creation-form-page',
     ]);
     expect(isDiscardChangesDialogOpened()).toBe(true);
