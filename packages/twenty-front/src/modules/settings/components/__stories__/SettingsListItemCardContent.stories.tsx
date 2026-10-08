@@ -27,6 +27,12 @@ export const Default: Story = {
     action.focus();
     await userEvent.keyboard('{Enter} ');
     await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(action).toHaveStyle({
+      position: 'absolute',
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineOffset: '-2px',
+    });
   },
 };
 

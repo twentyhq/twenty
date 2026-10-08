@@ -1,3 +1,4 @@
+import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
 import { styled } from '@linaria/react';
 
 import { t } from '@lingui/core/macro';
@@ -52,20 +53,8 @@ const StyledCardContentContainer = styled.div`
 `;
 
 const StyledCardAction = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  inset: 0;
-  padding: 0;
-  position: absolute;
-
   &:disabled {
     cursor: not-allowed;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: -2px;
   }
 `;
 
@@ -134,6 +123,7 @@ export const SettingsCard = ({
           <Card.Content>
             {isDefined(onClick) && (
               <StyledCardAction
+                className={CARD_ACTION_CLASS_NAME}
                 type="button"
                 aria-label={title}
                 onClick={onClick}

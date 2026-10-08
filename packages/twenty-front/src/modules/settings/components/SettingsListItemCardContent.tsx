@@ -1,4 +1,5 @@
-import { css } from '@linaria/core';
+import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
+import { css, cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
@@ -81,20 +82,8 @@ const StyledDescription = styled.span`
 `;
 
 const rowActionClassName = css`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  inset: 0;
-  padding: 0;
-  position: absolute;
-
   &:hover {
     background: ${themeCssVariables.background.transparent.lighter};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: -2px;
   }
 `;
 
@@ -129,7 +118,7 @@ export const SettingsListItemCardContent = ({
       <Card.Content divider={divider}>
         {isDefined(to) ? (
           <Link
-            className={rowActionClassName}
+            className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
             aria-labelledby={labelId}
             aria-describedby={hasDescription ? descriptionId : undefined}
             onClick={onClick}
@@ -138,7 +127,7 @@ export const SettingsListItemCardContent = ({
         ) : (
           isDefined(onClick) && (
             <button
-              className={rowActionClassName}
+              className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
               aria-labelledby={labelId}
               aria-describedby={hasDescription ? descriptionId : undefined}
               onClick={onClick}

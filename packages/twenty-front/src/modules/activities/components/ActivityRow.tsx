@@ -1,3 +1,4 @@
+import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
 import { styled } from '@linaria/react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,13 +18,6 @@ const StyledRowContentContainer = styled.div`
 `;
 
 const StyledRowAction = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  inset: 0;
-  padding: 0;
-  position: absolute;
-
   &:not(:disabled):hover {
     background: ${themeCssVariables.background.transparent.lighter};
   }
@@ -31,11 +25,6 @@ const StyledRowAction = styled.button`
   &:disabled {
     cursor: default;
     pointer-events: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: -2px;
   }
 `;
 
@@ -84,6 +73,7 @@ export const ActivityRow = ({
       <Card.Content onClick={handleContentClick}>
         {isDefined(onClick) && (
           <StyledRowAction
+            className={CARD_ACTION_CLASS_NAME}
             type="button"
             aria-label={label}
             onClick={onClick}
