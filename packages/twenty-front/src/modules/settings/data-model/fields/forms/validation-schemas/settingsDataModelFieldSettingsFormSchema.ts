@@ -17,6 +17,7 @@ import {
 import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema';
 import { settingsDataModelFieldLinksVariantSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldLinksVariantSchema';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
+import { settingsDataModelFieldRawJsonSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldRawJsonSchema';
 import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -111,6 +112,11 @@ const filesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.FILES) })
   .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema));
 
+const rawJsonFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.RAW_JSON) })
+  .extend(settingsDataModelFieldRawJsonSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
+
 const otherFieldsFormSchema = z
   .object({
     type: z.enum(
@@ -132,6 +138,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.LINKS,
           FieldMetadataType.ARRAY,
           FieldMetadataType.FILES,
+          FieldMetadataType.RAW_JSON,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
@@ -157,6 +164,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     linksFieldFormSchema,
     arrayFieldFormSchema,
     filesFieldFormSchema,
+    rawJsonFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );

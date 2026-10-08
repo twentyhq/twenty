@@ -3,19 +3,27 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
+import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,6 +41,7 @@ export const RecordBoardCardBody = () => {
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
+    isOnDemandFieldsEnabled,
   } = useRecordIndexContextOrThrow();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
@@ -59,6 +68,39 @@ export const RecordBoardCardBody = () => {
     recordBoardCardHoverPositionComponentState,
   );
 
+  const initDraftValue = useInitDraftValue();
+  const { openFieldInput } = useOpenFieldInputEditMode();
+  const setRecordBoardCardEditModePosition = useSetAtomComponentState(
+    recordBoardCardEditModePositionComponentState,
+  );
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
+
+  const openFieldEditMode = ({
+    fieldDefinition,
+    position,
+  }: {
+    fieldDefinition: FieldDefinition<FieldMetadata>;
+    position: number;
+  }) => {
+    initDraftValue({
+      recordId,
+      fieldDefinition,
+      fieldComponentInstanceId: getRecordFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+      }),
+    });
+    setRecordBoardCardEditModePosition(position);
+    openFieldInput({
+      fieldDefinition,
+      recordId,
+      prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+    });
+  };
+
   const handleMouseEnter = (index: number) => {
     setRecordBoardCardHoverPosition(index);
   };
@@ -80,20 +122,41 @@ export const RecordBoardCardBody = () => {
           return null;
         }
 
+        const isOnDemand = getIsOnDemandFieldEnabled({
+          isOnDemandFieldsEnabled,
+          fieldMetadataItem,
+        });
+
         return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+          <StopPropagationContainer
+            key={
+              isOnDemand
+                ? `${recordField.fieldMetadataItemId}-${index}`
+                : recordField.fieldMetadataItemId
+            }
+          >
             <FieldContext.Provider
               value={{
                 recordId,
                 maxWidth: 156,
                 isLabelIdentifier: false,
-                isRecordFieldReadOnly: isRecordFieldReadOnly({
-                  isRecordReadOnly,
-                  objectMetadataId: objectMetadataItem.id,
-                  fieldMetadataItem,
-                  fieldDefinition: correspondingFieldDefinition,
-                  objectPermissionsByObjectMetadataId,
-                }),
+                isOnDemand,
+                isRecordFieldReadOnly:
+                  (isOnDemand && isRecordBoardCellsNonEditable) ||
+                  isRecordFieldReadOnly({
+                    isRecordReadOnly,
+                    objectMetadataId: objectMetadataItem.id,
+                    fieldMetadataItem,
+                    fieldDefinition: correspondingFieldDefinition,
+                    objectPermissionsByObjectMetadataId,
+                  }),
+                onOpenEditMode: isOnDemand
+                  ? () =>
+                      openFieldEditMode({
+                        fieldDefinition: correspondingFieldDefinition,
+                        position: index,
+                      })
+                  : undefined,
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,

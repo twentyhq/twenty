@@ -1,6 +1,7 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -84,6 +85,8 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
+    fieldMetadataItemByFieldMetadataItemId,
+    isOnDemandFieldsEnabled,
   } = useRecordIndexContextOrThrow();
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
@@ -119,18 +122,25 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     (recordField) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+      const fieldMetadataItem =
+        fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+      const isOnDemand = getIsOnDemandFieldEnabled({
+        isOnDemandFieldsEnabled,
+        fieldMetadataItem,
+      });
 
       if (
         !isDefined(fieldDefinition) ||
-        isFieldValueEmpty({
-          fieldDefinition,
-          fieldValue: recordStore[fieldDefinition.metadata.fieldName],
-        })
+        (!isOnDemand &&
+          isFieldValueEmpty({
+            fieldDefinition,
+            fieldValue: recordStore[fieldDefinition.metadata.fieldName],
+          }))
       ) {
         return [];
       }
 
-      return [{ recordField, fieldDefinition }];
+      return [{ recordField, fieldDefinition, isOnDemand }];
     },
   );
 
@@ -210,15 +220,18 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
           />
         </StyledRecordChipContainer>
         <StyledFieldsContainer>
-          {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
-            <RecordListRowField
-              key={recordField.fieldMetadataItemId}
-              recordId={recordId}
-              recordField={recordField}
-              fieldDefinition={fieldDefinition}
-              maxWidth={displayedFieldsLayout.displayedFieldMaxWidth}
-            />
-          ))}
+          {displayedRecordFields.map(
+            ({ recordField, fieldDefinition, isOnDemand }) => (
+              <RecordListRowField
+                key={recordField.fieldMetadataItemId}
+                recordId={recordId}
+                recordField={recordField}
+                fieldDefinition={fieldDefinition}
+                isOnDemand={isOnDemand}
+                maxWidth={displayedFieldsLayout.displayedFieldMaxWidth}
+              />
+            ),
+          )}
           {hiddenFieldCount > 0 && (
             <StyledOverflowChipContainer>
               {isNonEmptyString(linkToRecord) ? (

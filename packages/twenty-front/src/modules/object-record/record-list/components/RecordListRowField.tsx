@@ -11,14 +11,14 @@ import { styled } from '@linaria/react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 // Shrinkable so a long record label narrows fields instead of clipping them off the left edge.
-const StyledFieldContainer = styled.div`
+const StyledFieldContainer = styled.div<{ isOnDemand: boolean }>`
   align-items: center;
   display: flex;
   min-width: 0;
   overflow: hidden;
 
   & > * {
-    pointer-events: none;
+    pointer-events: ${({ isOnDemand }) => (isOnDemand ? 'auto' : 'none')};
   }
 `;
 
@@ -27,6 +27,7 @@ type RecordListRowFieldProps = {
   recordField: RecordField;
   fieldDefinition: ColumnDefinition<FieldMetadata>;
   maxWidth: number;
+  isOnDemand?: boolean;
 };
 
 export const RecordListRowField = ({
@@ -34,12 +35,15 @@ export const RecordListRowField = ({
   recordField,
   fieldDefinition,
   maxWidth,
+  isOnDemand = false,
 }: RecordListRowFieldProps) => {
   return (
     <Tooltip.Trigger
       payload={recordField.fieldMetadataItemId}
       delay={TooltipDelay.shortDelay}
-      render={<StyledFieldContainer style={{ maxWidth }} />}
+      render={
+        <StyledFieldContainer isOnDemand={isOnDemand} style={{ maxWidth }} />
+      }
     >
       <FieldContext.Provider
         value={{
@@ -47,6 +51,7 @@ export const RecordListRowField = ({
           maxWidth,
           isLabelIdentifier: false,
           isRecordFieldReadOnly: true,
+          isOnDemand,
           fieldDefinition,
           isDisplayModeFixHeight: true,
           disableChipClick: true,

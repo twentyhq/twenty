@@ -25,6 +25,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type RecordTableWidgetProviderProps = PropsWithChildren<{
   objectNameSingular: string;
@@ -48,6 +50,9 @@ export const RecordTableWidgetProvider = ({
   junctionCreateThrough,
   children,
 }: RecordTableWidgetProviderProps) => {
+  const isOnDemandFieldsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ON_DEMAND_FIELDS_ENABLED,
+  );
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -151,6 +156,7 @@ export const RecordTableWidgetProvider = ({
         />
         <RecordIndexContextProvider
           value={{
+            isOnDemandFieldsEnabled,
             objectPermissionsByObjectMetadataId,
             recordIndexId,
             viewBarInstanceId: recordIndexId,

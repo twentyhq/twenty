@@ -1,6 +1,7 @@
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
+import { SettingsDataModelFieldRawJsonForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldRawJsonForm';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import { SettingsDataModelFieldTextSettingsFormCard } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextSettingsFormCard';
@@ -218,6 +219,12 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               />
               <Separator />
             </>
+          )}
+          {fieldType === FieldMetadataType.RAW_JSON && (
+            <SettingsDataModelFieldRawJsonForm
+              existingFieldMetadataId={existingFieldMetadataId}
+              disabled={disabled}
+            />
           )}
           <SettingsDataModelFieldIsUniqueForm
             fieldType={fieldType}

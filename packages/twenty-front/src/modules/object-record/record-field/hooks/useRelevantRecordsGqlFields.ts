@@ -4,13 +4,14 @@ import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
+import { getEagerRecordFieldMetadataItems } from '@/object-record/record-field/on-demand/utils/getEagerRecordFieldMetadataItems';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordsUsefulGqlFields = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -29,8 +30,10 @@ export const useRelevantRecordsGqlFields = ({
     currentRecordFiltersComponentState,
   );
 
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    isOnDemandFieldsEnabled = false,
+  } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -57,11 +60,14 @@ export const useRelevantRecordsGqlFields = ({
     )
     .filter(isDefined);
 
-  const fieldMetadataItemsToUse = [
-    ...visibleRecordFieldMetadataItems,
-    ...(recordFilterFields ?? []),
-    ...additionalFieldMetadataItems,
-  ].filter(filterDuplicatesById);
+  const fieldMetadataItemsToUse = getEagerRecordFieldMetadataItems({
+    visibleFieldMetadataItems: visibleRecordFieldMetadataItems,
+    requiredFieldMetadataItems: [
+      ...recordFilterFields,
+      ...additionalFieldMetadataItems,
+    ],
+    isOnDemandFieldsEnabled,
+  });
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,

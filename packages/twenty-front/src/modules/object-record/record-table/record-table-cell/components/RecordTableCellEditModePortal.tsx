@@ -4,7 +4,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
-import { RecordTableCellHotkeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHotkeysEffect';
+import { RecordTableCellHotkeys } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHotkeys';
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
@@ -37,7 +37,7 @@ export const RecordTableCellEditModePortal = () => {
           </RecordTableCellEditMode>
         </RecordTableCellPortalRootContainer>
       )}
-      <RecordTableCellHotkeysEffect cellFocusId={cellFocusId} />
+      <RecordTableCellHotkeys cellFocusId={cellFocusId} />
     </RecordTableCellPortalWrapper>
   );
 };

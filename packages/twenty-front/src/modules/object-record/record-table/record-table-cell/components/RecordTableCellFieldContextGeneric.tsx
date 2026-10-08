@@ -1,6 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -9,6 +10,8 @@ import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-fiel
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
@@ -38,6 +41,7 @@ export const RecordTableCellFieldContextGeneric = ({
     objectPermissionsByObjectMetadataId,
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
+    isOnDemandFieldsEnabled,
   } = useRecordIndexContextOrThrow();
 
   const fieldDefinition =
@@ -46,6 +50,8 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const updateRecord = useContext(RecordTableUpdateContext);
+  const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
+  const { cellPosition } = useContext(RecordTableCellContext);
 
   if (!isDefined(fieldMetadataItem)) {
     return null;
@@ -103,8 +109,29 @@ export const RecordTableCellFieldContextGeneric = ({
     }
   }
 
+  const isReadOnly =
+    isRecordTableCellsNonEditable ||
+    isInvalidJunctionRelation ||
+    isRecordFieldReadOnly({
+      isRecordReadOnly: isRecordReadOnly ?? false,
+      objectMetadataId: objectMetadataItem.id,
+      fieldMetadataItem,
+      fieldDefinition,
+      objectPermissionsByObjectMetadataId,
+    });
+
+  const isOnDemand = getIsOnDemandFieldEnabled({
+    isOnDemandFieldsEnabled,
+    fieldMetadataItem,
+  });
+
   return (
     <FieldContext.Provider
+      key={
+        isOnDemand
+          ? `${recordId}-${fieldDefinition.fieldMetadataId}-${cellPosition.row}-${cellPosition.column}`
+          : undefined
+      }
       value={{
         fieldMetadataItemId: recordField.fieldMetadataItemId,
         recordId,
@@ -118,17 +145,19 @@ export const RecordTableCellFieldContextGeneric = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
-        isRecordFieldReadOnly:
-          isRecordTableCellsNonEditable ||
-          isInvalidJunctionRelation ||
-          isRecordFieldReadOnly({
-            isRecordReadOnly: isRecordReadOnly ?? false,
-            objectMetadataId: objectMetadataItem.id,
-            fieldMetadataItem,
-            fieldDefinition,
-            objectPermissionsByObjectMetadataId,
-          }),
+        isRecordFieldReadOnly: isReadOnly,
+        onOpenEditMode: isOnDemand
+          ? () =>
+              onOpenTableCell({
+                cellPosition,
+                recordId,
+                fieldDefinition,
+                isReadOnly,
+                isNavigating: false,
+              })
+          : undefined,
         isForbidden: !hasObjectReadPermissions,
+        isOnDemand,
       }}
     >
       {children}

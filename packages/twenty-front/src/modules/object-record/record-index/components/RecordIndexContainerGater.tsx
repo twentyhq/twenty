@@ -23,6 +23,8 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { styled } from '@linaria/react';
 import { memo, useCallback } from 'react';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -32,6 +34,9 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = memo(() => {
+  const isOnDemandFieldsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ON_DEMAND_FIELDS_ENABLED,
+  );
   const setLastShowPageRecordId = useSetAtomComponentState(
     lastShowPageRecordIdState,
   );
@@ -82,6 +87,7 @@ export const RecordIndexContainerGater = memo(() => {
   return (
     <RecordIndexContextProvider
       value={{
+        isOnDemandFieldsEnabled,
         objectPermissionsByObjectMetadataId,
         recordIndexId,
         viewBarInstanceId: recordIndexId,

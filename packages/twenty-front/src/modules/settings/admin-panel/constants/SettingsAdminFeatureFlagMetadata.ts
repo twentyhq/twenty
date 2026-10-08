@@ -20,6 +20,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`JSON filters`,
     description: msg`Allow filtering records by values inside JSON fields.`,
   },
+  [FeatureFlagKey.IS_ON_DEMAND_FIELDS_ENABLED]: {
+    label: msg`On-demand fields`,
+    description: msg`Load large field values when opened in record collections.`,
+  },
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns, lists, and unsubscribe management.`,

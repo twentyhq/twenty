@@ -5,16 +5,28 @@ import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useRecordBoardCardMetadataFromPosition } from '@/object-record/record-board/record-board-card/hooks/useRecordBoardCardMetadataFromPosition';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
+import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardCardCellHoveredPortal = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
   const { recordId } = useContext(RecordBoardCardContext);
+  const { isOnDemandFieldsEnabled } = useRecordIndexContextOrThrow();
 
   const { hoveredFieldMetadataItem } = useRecordBoardCardMetadataFromPosition();
 
   if (!isDefined(hoveredFieldMetadataItem)) {
+    return null;
+  }
+
+  if (
+    getIsOnDemandFieldEnabled({
+      isOnDemandFieldsEnabled,
+      fieldMetadataItem: hoveredFieldMetadataItem,
+    })
+  ) {
     return null;
   }
 

@@ -2,23 +2,29 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { recordCalendarCardEditModePositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardEditModePositionComponentState';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
+import { getIsOnDemandFieldEnabled } from '@/object-record/record-field/on-demand/utils/getIsOnDemandFieldEnabled';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -55,6 +61,7 @@ export const RecordCalendarCardBody = ({
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
+    isOnDemandFieldsEnabled,
   } = useRecordIndexContextOrThrow();
 
   const visibleRecordFields = useAtomComponentSelectorValue(
@@ -69,6 +76,32 @@ export const RecordCalendarCardBody = ({
   const setRecordCalendarCardHoverPosition = useSetAtomComponentState(
     recordCalendarCardHoverPositionComponentState,
   );
+
+  const initDraftValue = useInitDraftValue();
+  const { openFieldInput } = useOpenFieldInputEditMode();
+  const setRecordCalendarCardEditModePosition = useSetAtomComponentState(
+    recordCalendarCardEditModePositionComponentState,
+  );
+
+  const openFieldEditMode = ({
+    fieldDefinition,
+    position,
+  }: {
+    fieldDefinition: FieldDefinition<FieldMetadata>;
+    position: number;
+  }) => {
+    initDraftValue({
+      recordId,
+      fieldDefinition,
+      fieldComponentInstanceId: getRecordFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        prefix: cardInstanceIdPrefix,
+      }),
+    });
+    setRecordCalendarCardEditModePosition(position);
+    openFieldInput({ fieldDefinition, recordId, prefix: cardInstanceIdPrefix });
+  };
 
   const handleMouseEnter = (index: number) => {
     setRecordCalendarCardHoverPosition(index);
@@ -93,13 +126,25 @@ export const RecordCalendarCardBody = ({
           return null;
         }
 
+        const isOnDemand = getIsOnDemandFieldEnabled({
+          isOnDemandFieldsEnabled,
+          fieldMetadataItem,
+        });
+
         return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+          <StopPropagationContainer
+            key={
+              isOnDemand
+                ? `${recordField.fieldMetadataItemId}-${index}`
+                : recordField.fieldMetadataItemId
+            }
+          >
             <FieldContext.Provider
               value={{
                 recordId,
                 maxWidth: 156,
                 isLabelIdentifier: false,
+                isOnDemand,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
                   objectMetadataId: objectMetadataItem.id,
@@ -107,6 +152,13 @@ export const RecordCalendarCardBody = ({
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),
+                onOpenEditMode: isOnDemand
+                  ? () =>
+                      openFieldEditMode({
+                        fieldDefinition: correspondingFieldDefinition,
+                        position: index,
+                      })
+                  : undefined,
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,

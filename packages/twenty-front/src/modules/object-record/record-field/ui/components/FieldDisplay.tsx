@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { OnDemandJsonFieldDisplay } from '@/object-record/record-field/on-demand/components/OnDemandJsonFieldDisplay';
 
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
 import { ArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ArrayFieldDisplay';
@@ -57,10 +58,12 @@ import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFiel
 
 export const FieldDisplay = () => {
   const {
+    recordId,
     fieldDefinition,
     isLabelIdentifier,
     isForbidden,
     isRecordFieldReadOnly,
+    isOnDemand,
   } = useContext(FieldContext);
 
   const isChipDisplay = isFieldIdentifierDisplay(
@@ -70,6 +73,14 @@ export const FieldDisplay = () => {
 
   if (isDefined(isForbidden) && isForbidden) {
     return <ForbiddenFieldDisplay />;
+  }
+
+  if (isOnDemand) {
+    return (
+      <OnDemandJsonFieldDisplay
+        key={`${recordId}-${fieldDefinition.fieldMetadataId}`}
+      />
+    );
   }
 
   return isChipDisplay ? (

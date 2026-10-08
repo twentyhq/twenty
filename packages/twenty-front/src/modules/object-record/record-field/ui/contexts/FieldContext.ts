@@ -41,6 +41,7 @@ export type GenericFieldContextType = {
   onMouseLeave?: () => void;
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
+  isOnDemand?: boolean;
   anchorId?: string;
 };
 

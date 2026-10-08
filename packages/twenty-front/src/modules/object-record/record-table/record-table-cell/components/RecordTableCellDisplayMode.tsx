@@ -10,8 +10,11 @@ export const RecordTableCellDisplayMode = ({
 }: {
   children: ReactNode;
 }) => {
-  const { recordId, isRecordFieldReadOnly: isReadOnly } =
-    useContext(FieldContext);
+  const {
+    recordId,
+    isRecordFieldReadOnly: isReadOnly,
+    isOnDemand,
+  } = useContext(FieldContext);
 
   const { openRecordContextMenu } = useRecordTableBodyContextOrThrow();
 
@@ -21,7 +24,7 @@ export const RecordTableCellDisplayMode = ({
 
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    if (!isFieldInputOnly && !isReadOnly) {
+    if (!isFieldInputOnly && !isReadOnly && !isOnDemand) {
       openTableCell();
     }
   };
