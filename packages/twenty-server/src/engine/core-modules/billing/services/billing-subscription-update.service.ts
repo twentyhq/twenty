@@ -421,7 +421,6 @@ export class BillingSubscriptionUpdateService {
       currency: newPrice.currency,
     };
 
-    // Invoice-paying customers have no card to charge; the amount joins their next grouped invoice
     if (
       subscription.collectionMethod ===
       BillingSubscriptionCollectionMethod.SEND_INVOICE
