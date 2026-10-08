@@ -13,7 +13,9 @@ import {
   SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
   StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { SettingsObjectDeleteConfirmationDialog } from '@/settings/data-model/objects/components/SettingsObjectDeleteConfirmationDialog';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -28,7 +30,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
@@ -38,6 +40,9 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+
+const DELETE_OBJECT_FROM_TABLE_MODAL_ID =
+  'delete-object-from-table-confirmation-modal';
 
 const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -81,6 +86,22 @@ export const SettingsObjectTable = ({
   const shouldShowSystemObjects = isAdvancedModeEnabled && showSystemObjects;
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
+  const { openDialog } = useDialog();
+  const [objectMetadataItemToDelete, setObjectMetadataItemToDelete] =
+    useState<EnrichedObjectMetadataItem | null>(null);
+
+  const handleDelete = (objectMetadataItem: EnrichedObjectMetadataItem) => {
+    setObjectMetadataItemToDelete(objectMetadataItem);
+    openDialog(DELETE_OBJECT_FROM_TABLE_MODAL_ID);
+  };
+
+  const confirmDelete = () => {
+    if (!isDefined(objectMetadataItemToDelete)) {
+      return;
+    }
+
+    deleteOneObjectMetadataItem(objectMetadataItemToDelete.id);
+  };
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
@@ -282,8 +303,8 @@ export const SettingsObjectTable = ({
                               })
                             }
                             onDelete={() =>
-                              deleteOneObjectMetadataItem(
-                                objectSettingsItem.objectMetadataItem.id,
+                              handleDelete(
+                                objectSettingsItem.objectMetadataItem,
                               )
                             }
                           />
@@ -306,6 +327,13 @@ export const SettingsObjectTable = ({
           </Table>
         </StyledScrollableContent>
       </StyledScrollWrapper>
+      {isDefined(objectMetadataItemToDelete) && (
+        <SettingsObjectDeleteConfirmationDialog
+          dialogId={DELETE_OBJECT_FROM_TABLE_MODAL_ID}
+          objectLabel={objectMetadataItemToDelete.labelPlural}
+          onConfirmClick={confirmDelete}
+        />
+      )}
     </>
   );
 };

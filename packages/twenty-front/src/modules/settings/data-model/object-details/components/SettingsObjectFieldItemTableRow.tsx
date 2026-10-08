@@ -8,9 +8,11 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SettingsFieldDeleteConfirmationDialog } from '@/settings/data-model/fields/components/SettingsFieldDeleteConfirmationDialog';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -129,6 +131,9 @@ export const SettingsObjectFieldItemTableRow = ({
   const { activateMetadataField } = useFieldMetadataItem();
 
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
+  const { openDialog } = useDialog();
+
+  const deleteFieldDialogId = `delete-field-confirmation-modal-${fieldMetadataItem.id}`;
 
   const setSettingsObjectFields = useSetAtomFamilyState(
     settingsObjectFieldsFamilyState,
@@ -167,128 +172,143 @@ export const SettingsObjectFieldItemTableRow = ({
       ? relationObjectMetadataItem?.labelSingular
       : relationObjectMetadataItem?.labelPlural;
 
-  return (
-    <TableRow
-      gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-      onClick={mode === 'view' ? navigateToFieldEdit : undefined}
-    >
-      <UndecoratedLink to={linkToNavigate}>
-        <TableCell
-          color={themeCssVariables.font.color.primary}
-          gap={themeCssVariables.spacing[2]}
-        >
-          {isDefined(Icon) && (
-            <Icon
-              style={{
-                minWidth: theme.icon.size.md,
-              }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-          <StyledNameContainer>
-            <StyledNameLabel title={fieldMetadataItem.label}>
-              {fieldMetadataItem.label}
-            </StyledNameLabel>
-            {!fieldMetadataItem.isActive && (
-              <SettingsNameCellSecondaryLabel>
-                {t`Deactivated`}
-              </SettingsNameCellSecondaryLabel>
-            )}
-            {fieldMetadataItem.isActive && isMostlyEmpty && (
-              <Tooltip
-                content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
-                delay={TooltipDelay.shortDelay}
-              >
-                <SettingsNameCellSecondaryLabel id={mostlyEmptyLabelId}>
-                  {t`Mostly empty`}
-                </SettingsNameCellSecondaryLabel>
-              </Tooltip>
-            )}
-          </StyledNameContainer>
-        </TableCell>
-      </UndecoratedLink>
+  const isInactiveFieldInViewMode = status === 'disabled' && mode === 'view';
 
-      <TableCell>
-        <SettingsItemTypeTag
-          item={{
-            applicationId: fieldMetadataItem.applicationId,
-          }}
-        />
-      </TableCell>
-      <TableCell>
-        <SettingsObjectFieldDataType
-          Icon={RelationIcon}
-          label={label}
-          labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
-          }
-          to={
-            isRelatedObjectLinkable
-              ? getSettingsPath(SettingsPath.Objects, {
-                  objectNamePlural: relationObjectMetadataItem.namePlural,
-                })
-              : undefined
-          }
-          value={fieldType}
-          onClick={(e) => {
-            if (isRelatedObjectLinkable) {
-              e.stopPropagation();
-            }
-          }}
-        />
-      </TableCell>
-      <TableCell
-        align="center"
-        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+  return (
+    <>
+      <TableRow
+        gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        onClick={mode === 'view' ? navigateToFieldEdit : undefined}
       >
-        {status === 'active' ? (
-          mode === 'view' ? (
-            <UndecoratedLink to={linkToNavigate}>
-              <StyledIconChevronRightContainer>
-                <IconChevronRight
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              </StyledIconChevronRightContainer>
-            </UndecoratedLink>
-          ) : (
-            canToggleField && (
-              <LightIconButton
-                emphasis="subtle"
-                onClick={handleToggleField}
-                aria-label={t`Deactivate field`}
-              >
-                <IconMinus />
-              </LightIconButton>
-            )
-          )
-        ) : mode === 'view' ? (
-          <SettingsObjectFieldInactiveActionDropdown
-            isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
-            isSystemField={fieldMetadataItem.isSystem === true}
-            readonly={readonly}
-            fieldMetadataItemId={fieldMetadataItem.id}
-            onEdit={navigateToFieldEdit}
-            onActivate={() =>
-              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
-            }
-            onDelete={() =>
-              deleteOneFieldMetadataItem({
-                idToDelete: fieldMetadataItem.id,
-              })
-            }
-          />
-        ) : (
-          <LightIconButton
-            emphasis="subtle"
-            onClick={handleToggleField}
-            aria-label={t`Add`}
+        <UndecoratedLink to={linkToNavigate}>
+          <TableCell
+            color={themeCssVariables.font.color.primary}
+            gap={themeCssVariables.spacing[2]}
           >
-            <IconPlus />
-          </LightIconButton>
-        )}
-      </TableCell>
-    </TableRow>
+            {isDefined(Icon) && (
+              <Icon
+                style={{
+                  minWidth: theme.icon.size.md,
+                }}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            )}
+            <StyledNameContainer>
+              <StyledNameLabel title={fieldMetadataItem.label}>
+                {fieldMetadataItem.label}
+              </StyledNameLabel>
+              {!fieldMetadataItem.isActive && (
+                <SettingsNameCellSecondaryLabel>
+                  {t`Deactivated`}
+                </SettingsNameCellSecondaryLabel>
+              )}
+              {fieldMetadataItem.isActive && isMostlyEmpty && (
+                <Tooltip
+                  content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
+                  delay={TooltipDelay.shortDelay}
+                >
+                  <SettingsNameCellSecondaryLabel id={mostlyEmptyLabelId}>
+                    {t`Mostly empty`}
+                  </SettingsNameCellSecondaryLabel>
+                </Tooltip>
+              )}
+            </StyledNameContainer>
+          </TableCell>
+        </UndecoratedLink>
+
+        <TableCell>
+          <SettingsItemTypeTag
+            item={{
+              applicationId: fieldMetadataItem.applicationId,
+            }}
+          />
+        </TableCell>
+        <TableCell>
+          <SettingsObjectFieldDataType
+            Icon={RelationIcon}
+            label={label}
+            labelDetail={
+              fieldMetadataItem.settings?.type === 'percentage'
+                ? '%'
+                : undefined
+            }
+            to={
+              isRelatedObjectLinkable
+                ? getSettingsPath(SettingsPath.Objects, {
+                    objectNamePlural: relationObjectMetadataItem.namePlural,
+                  })
+                : undefined
+            }
+            value={fieldType}
+            onClick={(e) => {
+              if (isRelatedObjectLinkable) {
+                e.stopPropagation();
+              }
+            }}
+          />
+        </TableCell>
+        <TableCell
+          align="center"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        >
+          {status === 'active' ? (
+            mode === 'view' ? (
+              <UndecoratedLink to={linkToNavigate}>
+                <StyledIconChevronRightContainer>
+                  <IconChevronRight
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </StyledIconChevronRightContainer>
+              </UndecoratedLink>
+            ) : (
+              canToggleField && (
+                <LightIconButton
+                  emphasis="subtle"
+                  onClick={handleToggleField}
+                  aria-label={t`Deactivate field`}
+                >
+                  <IconMinus />
+                </LightIconButton>
+              )
+            )
+          ) : mode === 'view' ? (
+            <SettingsObjectFieldInactiveActionDropdown
+              isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
+              isSystemField={fieldMetadataItem.isSystem === true}
+              readonly={readonly}
+              fieldMetadataItemId={fieldMetadataItem.id}
+              onEdit={navigateToFieldEdit}
+              onActivate={() =>
+                activateMetadataField(
+                  fieldMetadataItem.id,
+                  objectMetadataItem.id,
+                )
+              }
+              onDelete={() => openDialog(deleteFieldDialogId)}
+            />
+          ) : (
+            <LightIconButton
+              emphasis="subtle"
+              onClick={handleToggleField}
+              aria-label={t`Add`}
+            >
+              <IconPlus />
+            </LightIconButton>
+          )}
+        </TableCell>
+      </TableRow>
+      {isInactiveFieldInViewMode && (
+        <SettingsFieldDeleteConfirmationDialog
+          dialogId={deleteFieldDialogId}
+          fieldLabel={fieldMetadataItem.label}
+          objectLabel={objectMetadataItem.labelPlural}
+          onConfirmClick={() =>
+            deleteOneFieldMetadataItem({ idToDelete: fieldMetadataItem.id })
+          }
+        />
+      )}
+    </>
   );
 };

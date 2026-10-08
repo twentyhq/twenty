@@ -12,13 +12,13 @@ import { SettingsObjectIndexesSection } from '@/settings/data-model/object-detai
 import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
+import { SettingsObjectDeleteConfirmationDialog } from '@/settings/data-model/objects/components/SettingsObjectDeleteConfirmationDialog';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -260,15 +260,11 @@ export const ObjectSettings = ({
           </Section.Root>
         </StyledFormSectionContainer>
       )}
-      <ConfirmationDialog
+      <SettingsObjectDeleteConfirmationDialog
         dialogId={DELETE_OBJECT_MODAL_ID}
-        title={t`Delete ${objectLabel} object?`}
-        subtitle={t`This will permanently delete the object and all its records. Type "yes" to confirm.`}
-        confirmButtonText={t`Delete`}
+        objectLabel={objectLabel}
         onConfirmClick={confirmDelete}
         onClose={() => closeDialog(DELETE_OBJECT_MODAL_ID)}
-        confirmationValue="yes"
-        confirmationPlaceholder="yes"
         loading={isDeleting}
       />
     </StyledContentContainer>

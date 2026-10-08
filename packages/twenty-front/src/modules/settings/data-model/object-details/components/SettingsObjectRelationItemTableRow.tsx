@@ -10,7 +10,9 @@ import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SettingsFieldDeleteConfirmationDialog } from '@/settings/data-model/fields/components/SettingsFieldDeleteConfirmationDialog';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
@@ -92,6 +94,9 @@ export const SettingsObjectRelationItemTableRow = ({
 
   const { activateMetadataField } = useFieldMetadataItem();
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
+  const { openDialog } = useDialog();
+
+  const deleteFieldDialogId = `delete-field-confirmation-modal-${fieldMetadataItem.id}`;
 
   const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
     objectNamePlural: objectMetadataItem.namePlural,
@@ -147,116 +152,127 @@ export const SettingsObjectRelationItemTableRow = ({
     isMorphRelation || isDefined(relationObjectMetadataItem);
 
   return (
-    <TableRow
-      gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-      // The row can't be a Link: it contains a nested link to the related
-      // object, and <a> inside <a> is invalid HTML (React 19 errors on it).
-      // oxlint-disable-next-line twenty/no-navigate-prefer-link
-      onClick={navigateToFieldEdit}
-      cursor="pointer"
-    >
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
+    <>
+      <TableRow
+        gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        // The row can't be a Link: it contains a nested link to the related
+        // object, and <a> inside <a> is invalid HTML (React 19 errors on it).
+        // oxlint-disable-next-line twenty/no-navigate-prefer-link
+        onClick={navigateToFieldEdit}
+        cursor="pointer"
       >
-        {isDefined(NameIcon) && (
-          <NameIcon
-            style={{
-              minWidth: theme.icon.size.md,
-            }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        <StyledNameContainer>
-          {isRelatedObjectLinkable ? (
-            <SettingsTextLink
-              to={getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural: relationObjectMetadataItem.namePlural,
-              })}
-              onClick={(event: MouseEvent<HTMLAnchorElement>) =>
-                event.stopPropagation()
-              }
-              title={targetObjectLabel}
-            >
-              {targetObjectLabel}
-            </SettingsTextLink>
-          ) : (
-            <StyledNameLabel title={targetObjectLabel}>
-              {targetObjectLabel}
-            </StyledNameLabel>
-          )}
-          {shouldDisplayFieldLabelAsSubtitle && (
-            <SettingsNameCellSecondaryLabel title={fieldLabelSubtitle}>
-              {fieldLabelSubtitle}
-            </SettingsNameCellSecondaryLabel>
-          )}
-          {!fieldMetadataItem.isActive && (
-            <SettingsNameCellSecondaryLabel>
-              {t`Deactivated`}
-            </SettingsNameCellSecondaryLabel>
-          )}
-        </StyledNameContainer>
-      </TableCell>
-
-      <TableCell>
-        <SettingsItemTypeTag
-          item={{
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: fieldMetadataItem.applicationId,
-          }}
-        />
-      </TableCell>
-
-      <TableCell>
-        <StyledRelationType>
-          {RelationIcon && (
-            <RelationIcon
-              size={theme.icon.size.sm}
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
+          {isDefined(NameIcon) && (
+            <NameIcon
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
+              size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />
           )}
-          {relationTypeLabel}
-        </StyledRelationType>
-      </TableCell>
+          <StyledNameContainer>
+            {isRelatedObjectLinkable ? (
+              <SettingsTextLink
+                to={getSettingsPath(SettingsPath.ObjectDetail, {
+                  objectNamePlural: relationObjectMetadataItem.namePlural,
+                })}
+                onClick={(event: MouseEvent<HTMLAnchorElement>) =>
+                  event.stopPropagation()
+                }
+                title={targetObjectLabel}
+              >
+                {targetObjectLabel}
+              </SettingsTextLink>
+            ) : (
+              <StyledNameLabel title={targetObjectLabel}>
+                {targetObjectLabel}
+              </StyledNameLabel>
+            )}
+            {shouldDisplayFieldLabelAsSubtitle && (
+              <SettingsNameCellSecondaryLabel title={fieldLabelSubtitle}>
+                {fieldLabelSubtitle}
+              </SettingsNameCellSecondaryLabel>
+            )}
+            {!fieldMetadataItem.isActive && (
+              <SettingsNameCellSecondaryLabel>
+                {t`Deactivated`}
+              </SettingsNameCellSecondaryLabel>
+            )}
+          </StyledNameContainer>
+        </TableCell>
 
-      <TableCell
-        align="center"
-        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
-      >
-        {fieldMetadataItem.isActive ? (
-          // The row navigates via onClick (it can't be a Link because it
-          // contains a nested link to the related object). This chevron is a
-          // real link to the same destination so keyboard users can still reach
-          // field edit; stopPropagation avoids firing the row onClick too.
-          <UndecoratedLink
-            to={linkToNavigate}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <StyledIconChevronRightContainer>
-              <IconChevronRight
-                size={theme.icon.size.md}
+        <TableCell>
+          <SettingsItemTypeTag
+            item={{
+              isRemote: objectMetadataItem.isRemote,
+              applicationId: fieldMetadataItem.applicationId,
+            }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <StyledRelationType>
+            {RelationIcon && (
+              <RelationIcon
+                size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
               />
-            </StyledIconChevronRightContainer>
-          </UndecoratedLink>
-        ) : (
-          <SettingsObjectFieldInactiveActionDropdown
-            isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
-            readonly={readonly}
-            fieldMetadataItemId={fieldMetadataItem.id}
-            onEdit={navigateToFieldEdit}
-            onActivate={() =>
-              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
-            }
-            onDelete={() =>
-              deleteOneFieldMetadataItem({
-                idToDelete: fieldMetadataItem.id,
-              })
-            }
-          />
-        )}
-      </TableCell>
-    </TableRow>
+            )}
+            {relationTypeLabel}
+          </StyledRelationType>
+        </TableCell>
+
+        <TableCell
+          align="center"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        >
+          {fieldMetadataItem.isActive ? (
+            // The row navigates via onClick (it can't be a Link because it
+            // contains a nested link to the related object). This chevron is a
+            // real link to the same destination so keyboard users can still reach
+            // field edit; stopPropagation avoids firing the row onClick too.
+            <UndecoratedLink
+              to={linkToNavigate}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <StyledIconChevronRightContainer>
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </StyledIconChevronRightContainer>
+            </UndecoratedLink>
+          ) : (
+            <SettingsObjectFieldInactiveActionDropdown
+              isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
+              readonly={readonly}
+              fieldMetadataItemId={fieldMetadataItem.id}
+              onEdit={navigateToFieldEdit}
+              onActivate={() =>
+                activateMetadataField(
+                  fieldMetadataItem.id,
+                  objectMetadataItem.id,
+                )
+              }
+              onDelete={() => openDialog(deleteFieldDialogId)}
+            />
+          )}
+        </TableCell>
+      </TableRow>
+      {!fieldMetadataItem.isActive && (
+        <SettingsFieldDeleteConfirmationDialog
+          dialogId={deleteFieldDialogId}
+          fieldLabel={fieldMetadataItem.label}
+          objectLabel={objectMetadataItem.labelPlural}
+          onConfirmClick={() =>
+            deleteOneFieldMetadataItem({ idToDelete: fieldMetadataItem.id })
+          }
+        />
+      )}
+    </>
   );
 };

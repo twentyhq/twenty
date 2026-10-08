@@ -14,6 +14,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
+import { SettingsFieldDeleteConfirmationDialog } from '@/settings/data-model/fields/components/SettingsFieldDeleteConfirmationDialog';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
@@ -21,7 +22,6 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -458,13 +458,10 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsPageLayout>
       </FormProvider>
       {isCustomField && (
-        <ConfirmationDialog
+        <SettingsFieldDeleteConfirmationDialog
           dialogId={DELETE_FIELD_MODAL_ID}
-          title={t`Delete ${fieldLabel} field?`}
-          subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
-          confirmButtonText={t`Delete`}
-          confirmationValue="yes"
-          confirmationPlaceholder="yes"
+          fieldLabel={fieldLabel}
+          objectLabel={objectLabel}
           onConfirmClick={confirmDelete}
           onClose={() => closeDialog(DELETE_FIELD_MODAL_ID)}
           loading={isDeleting}
