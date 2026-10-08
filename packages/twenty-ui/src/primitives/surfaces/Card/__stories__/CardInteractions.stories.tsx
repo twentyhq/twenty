@@ -237,3 +237,64 @@ export const NativePartsAndRefs: Story = {
     await expect(canvas.getByText('Last checked just now.')).toHaveFocus();
   },
 };
+
+export const HoverOwners: Story = {
+  tags: ['!dev'],
+  render: () => (
+    <>
+      {[
+        <button type="button" aria-label="Review import" />,
+        <a href="#card-report" aria-label="Open report" />,
+        <button type="button" aria-label="Import unavailable" disabled />,
+      ].map((owner) => (
+        <Card.Root key={owner.props['aria-label']} render={owner}>
+          <Card.Header render={<span />}>Customer import</Card.Header>
+          <Card.Content render={<span />}>24 customers are ready.</Card.Content>
+          <Card.Footer render={<span />}>Last checked just now.</Card.Footer>
+        </Card.Root>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const sectionLabels = [
+      'Customer import',
+      '24 customers are ready.',
+      'Last checked just now.',
+    ];
+
+    for (const owner of [
+      canvas.getByRole('button', { name: 'Review import' }),
+      canvas.getByRole('link', { name: 'Open report' }),
+    ]) {
+      await trustedUserEvent.hover(owner);
+
+      await expect(owner).not.toHaveStyle({
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+      });
+
+      for (const sectionLabel of sectionLabels) {
+        await expect(within(owner).getByText(sectionLabel)).toHaveStyle({
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+        });
+      }
+    }
+
+    const disabledOwner = canvas.getByRole('button', {
+      name: 'Import unavailable',
+    });
+
+    await trustedUserEvent.hover(disabledOwner);
+
+    await expect(disabledOwner).toHaveStyle({
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+    });
+
+    for (const sectionLabel of sectionLabels) {
+      await expect(
+        within(disabledOwner).getByText(sectionLabel),
+      ).not.toHaveStyle({ backgroundColor: 'rgba(0, 0, 0, 0)' });
+    }
+  },
+};

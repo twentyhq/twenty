@@ -3,6 +3,8 @@
 .card {
   @include CardOwner.card-owner;
 
+  --card-section-background-color: initial;
+
   background-color: var(--card-background-color, transparent);
   border: 1px solid var(--t-border-color-medium);
   border-radius: var(--t-border-radius-md);

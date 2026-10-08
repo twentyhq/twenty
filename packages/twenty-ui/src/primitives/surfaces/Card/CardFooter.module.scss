@@ -3,7 +3,10 @@
 .cardFooter {
   @include CardOwner.card-owner;
 
-  background-color: var(--t-background-primary);
+  background-color: var(
+    --card-section-background-color,
+    var(--t-background-primary)
+  );
   border: 0;
   border-top: 1px solid var(--t-border-color-medium);
   font-size: var(--t-font-size-sm);

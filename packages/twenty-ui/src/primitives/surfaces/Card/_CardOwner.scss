@@ -23,6 +23,8 @@
     &:not(:disabled, [aria-disabled='true'], [data-disabled]) {
       @include hover-capable {
         &:hover {
+          --card-section-background-color: transparent;
+
           background-color: var(--t-background-transparent-light);
         }
       }

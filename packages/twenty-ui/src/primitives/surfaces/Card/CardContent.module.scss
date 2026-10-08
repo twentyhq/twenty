@@ -3,7 +3,10 @@
 .cardContent {
   @include CardOwner.card-owner;
 
-  background-color: var(--t-background-secondary);
+  background-color: var(
+    --card-section-background-color,
+    var(--t-background-secondary)
+  );
   border: 0;
   font-size: inherit;
   font-weight: inherit;
