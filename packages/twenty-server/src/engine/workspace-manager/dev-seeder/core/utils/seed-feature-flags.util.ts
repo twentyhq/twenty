@@ -14,6 +14,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
   [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: true,
   [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: true,
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

@@ -5,7 +5,6 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
@@ -19,8 +18,6 @@ const StyledContainer = styled.div`
   max-width: 400px;
   padding: 24px;
 `;
-
-const INSTANCE_ID = 'agentChatQuestionCardStory';
 
 const EMAIL_TYPE_QUESTION = {
   header: 'Email type',
@@ -105,15 +102,11 @@ const meta: Meta<typeof AiChatQuestionCard> = {
   component: AiChatQuestionCard,
   decorators: [
     (Story) => (
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
-      >
-        <StoreSeeder>
-          <StyledContainer>
-            <Story />
-          </StyledContainer>
-        </StoreSeeder>
-      </AgentChatComponentInstanceContext.Provider>
+      <StoreSeeder>
+        <StyledContainer>
+          <Story />
+        </StyledContainer>
+      </StoreSeeder>
     ),
     ToastDecorator,
     ComponentDecorator,

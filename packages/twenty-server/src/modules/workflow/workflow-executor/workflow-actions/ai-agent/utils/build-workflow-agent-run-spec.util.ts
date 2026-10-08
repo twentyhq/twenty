@@ -27,7 +27,6 @@ export const buildWorkflowAgentRunSpec = ({
       : null,
     capabilities: {
       canAskHumans,
-      canProposeToolCalls: canAskHumans,
     },
     ...(isApplicationBound
       ? {
