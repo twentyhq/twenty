@@ -1,8 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { getConnection, kv, listConnections } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
@@ -43,6 +44,13 @@ const renewStoredSubscriptionOrUndefined = async ({
   }
 };
 
+const isTeamsConnectionListed = async (
+  connectedAccountId: string,
+): Promise<boolean> =>
+  (await listConnections({ providerName: TEAMS_PROVIDER_NAME })).some(
+    (connection) => connection.id === connectedAccountId,
+  );
+
 export const registerTeamsTranscriptSubscription = async ({
   connectedAccountId,
 }: {
@@ -69,6 +77,8 @@ export const registerTeamsTranscriptSubscription = async ({
 
   const subscriptionKvKey =
     buildTeamsTranscriptSubscriptionKvKey(connectedAccountId);
+  const connectionKvKey =
+    buildTeamsTranscriptsConnectionKvKey(connectedAccountId);
   const storedSubscription =
     await kv.get<TeamsTranscriptSubscription>(subscriptionKvKey);
   const { accessToken } = await getConnection(connectedAccountId);
@@ -85,9 +95,7 @@ export const registerTeamsTranscriptSubscription = async ({
     return { transcriptSubscriptionId: renewedSubscription.subscriptionId };
   }
 
-  await kv.set(buildTeamsTranscriptsConnectionKvKey(connectedAccountId), null, {
-    scope: 'SERVER',
-  });
+  await kv.set(connectionKvKey, null, { scope: 'SERVER' });
 
   const subscription = await createTeamsTranscriptSubscription({
     accessToken,
@@ -106,6 +114,18 @@ export const registerTeamsTranscriptSubscription = async ({
     });
 
     throw error;
+  }
+
+  // A disconnect during the Graph call found nothing to delete, so the new subscription is dropped here.
+  if (!(await isTeamsConnectionListed(connectedAccountId))) {
+    await deleteTeamsTranscriptSubscription({
+      accessToken,
+      subscriptionId: subscription.subscriptionId,
+    });
+    await kv.delete(subscriptionKvKey);
+    await kv.delete(connectionKvKey, { scope: 'SERVER' });
+
+    return { transcriptSubscriptionId: null };
   }
 
   return { transcriptSubscriptionId: subscription.subscriptionId };
