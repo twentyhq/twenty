@@ -81,7 +81,7 @@ Follow these steps for a manual setup.
     ```
 
 <Note>
-Leave the variables you do not use commented out rather than blank. Docker Compose forwards a blank `VARIABLE=` line as an empty string, and the server treats an empty string as a configured value: an empty `SERVER_URL` fails validation at startup, and an empty `STORAGE_S3_NAME` with `STORAGE_TYPE=S_3` breaks every upload.
+Variables that `docker-compose.yml` forwards without a `:-` default, such as `SERVER_URL` and the `STORAGE_S3_*` variables, reach the server as an empty string when they are blank or missing in `.env`, and the server treats an empty string as a configured value rather than as unset. Keep `SERVER_URL` set, and when `STORAGE_TYPE=S_3`, set every required `STORAGE_S3_*` variable: an empty `STORAGE_S3_NAME` breaks every upload. Variables with a default in `docker-compose.yml`, such as the `PG_DATABASE_*` parts and `REDIS_URL`, fall back to that default when blank or missing.
 </Note>
 
 ### Step 2: Obtain the Docker Compose File
