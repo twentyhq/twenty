@@ -83,6 +83,7 @@ describe('granolaBackfillNoteHandler for a deferred webhook note', () => {
 
     expect(result).toEqual({ success: true, deferred: true });
     expect(mocks.syncNote).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
     expect(mocks.enqueueJobs).toHaveBeenCalledWith(
       expect.objectContaining({
         delayMs: 60_000,
@@ -107,6 +108,7 @@ describe('granolaBackfillNoteHandler for a deferred webhook note', () => {
     const result = await granolaBackfillNoteHandler(deferredPayload(2));
 
     expect(result).toEqual({ success: true, importedNoteCount: 1 });
+    expect(mocks.syncNote).toHaveBeenCalledTimes(1);
     expect(mocks.syncNote).toHaveBeenCalledWith(
       expect.objectContaining({ noteId: NOTE_ID }),
     );

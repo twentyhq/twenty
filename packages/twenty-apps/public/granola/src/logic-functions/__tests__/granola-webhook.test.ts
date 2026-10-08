@@ -61,7 +61,7 @@ const deliver = (eventId: string) =>
         event_type: 'note.edited',
         note_id: NOTE_ID,
       }),
-    } as unknown as Parameters<typeof granolaWebhookHandler>[0]['routePayload'],
+    },
   });
 
 describe('granolaWebhookHandler', () => {
@@ -86,6 +86,7 @@ describe('granolaWebhookHandler', () => {
     const result = await deliver('evt-1');
 
     expect(result).toEqual({ success: true, skipped: false });
+    expect(mocks.syncNote).toHaveBeenCalledTimes(1);
     expect(mocks.syncNote).toHaveBeenCalledWith(
       expect.objectContaining({ noteId: NOTE_ID }),
     );
@@ -99,6 +100,7 @@ describe('granolaWebhookHandler', () => {
 
     expect(result).toEqual({ success: true, deferred: true });
     expect(mocks.syncNote).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
     expect(mocks.enqueueJobs).toHaveBeenCalledWith(
       expect.objectContaining({
         delayMs: 30_000,

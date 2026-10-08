@@ -28,7 +28,10 @@ export const granolaWebhookHandler = async ({
   routePayload,
   receivedAt,
 }: {
-  routePayload: RoutePayload<unknown>;
+  routePayload: Pick<
+    RoutePayload<unknown>,
+    'queryStringParameters' | 'rawBody' | 'headers'
+  >;
   receivedAt: number;
 }) => {
   const registrationId = routePayload.queryStringParameters?.registrationId;

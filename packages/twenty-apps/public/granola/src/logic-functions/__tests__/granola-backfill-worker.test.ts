@@ -77,21 +77,23 @@ const listNoteJobIds = async ({
   return mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs?.[0]?.jobId);
 };
 
+const buildRegistration = (folderIds: string[]) => ({
+  registrationId: 'reg-1',
+  webhookEndpointId: 'wh-1',
+  signingSecret: 'secret',
+  apiKeyFingerprint: getGranolaApiKeyFingerprint(API_KEY),
+  scopes: ['personal'],
+  folderIds,
+  isInitialBackfillEnqueued: true,
+});
+
 describe('granolaBackfillWorkerHandler', () => {
   beforeEach(() => {
     mocks.store.clear();
     vi.clearAllMocks();
     process.env[GRANOLA_API_KEY_ENV_VAR_NAME] = API_KEY;
     mocks.enqueueJobs.mockResolvedValue({ enqueued: true });
-    mocks.store.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, {
-      registrationId: 'reg-1',
-      webhookEndpointId: 'wh-1',
-      signingSecret: 'secret',
-      apiKeyFingerprint: getGranolaApiKeyFingerprint(API_KEY),
-      scopes: ['personal'],
-      folderIds: [],
-      isInitialBackfillEnqueued: true,
-    });
+    mocks.store.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, buildRegistration([]));
   });
 
   it('gives an unchanged note the same import job across same-day runs', async () => {
@@ -119,6 +121,24 @@ describe('granolaBackfillWorkerHandler', () => {
     const second = await listNoteJobIds({ folderId: 'fol_bbbbbbbbbbbbbb' });
 
     expect(second[0]).not.toBe(first[0]);
+  });
+
+  it('gives a note a new import job once the folder selection changes', async () => {
+    const folderId = 'fol_aaaaaaaaaaaaaa';
+
+    mocks.store.set(
+      GRANOLA_WEBHOOK_REGISTRATION_KEY,
+      buildRegistration([folderId]),
+    );
+    const before = await listNoteJobIds({ folderId });
+
+    mocks.store.set(
+      GRANOLA_WEBHOOK_REGISTRATION_KEY,
+      buildRegistration([folderId, 'fol_bbbbbbbbbbbbbb']),
+    );
+    const after = await listNoteJobIds({ folderId });
+
+    expect(after[0]).not.toBe(before[0]);
   });
 
   it('gives an edited note a new import job', async () => {
