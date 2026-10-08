@@ -92,12 +92,12 @@ Summary
 
 ## Troubleshooting
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+If an upgrade fails, the server container exits without starting the application. Inspect the logs with `docker compose logs server`, fix the failure, and restart the server (`docker compose up -d`) to retry from where it left off.
 
 To quickly identify problems, run:
 
 ```bash
-docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
+docker compose run --rm --no-deps -e DISABLE_DB_MIGRATIONS=true -e DISABLE_CRON_JOBS_REGISTRATION=true server yarn command:prod upgrade:status --failed-only
 ```
 
 This shows only workspaces that are behind or have failed, along with the error message for each failure.

@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Test entrypoint
+        run: node --test packages/twenty-docker/twenty/__tests__/entrypoint.test.mjs
       # Pull base images through Google's Docker Hub mirror — avoids Docker Hub
       # rate limits and needs no credentials (this repo is public).
       - name: Configure Docker Hub mirror

@@ -21,7 +21,8 @@ setup_and_migrate_db() {
     fi
 
     if ! yarn command:prod upgrade; then
-        echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+        echo "Error: Upgrade failed. Refusing to start with an incompletely migrated database. Check logs, fix the failure, and restart to retry." >&2
+        exit 1
     fi
 
     if ! yarn command:prod cache:flush; then
