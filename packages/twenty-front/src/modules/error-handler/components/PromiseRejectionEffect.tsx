@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
@@ -40,11 +41,11 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      // WebKit (Safari) names cancelled fetches 'Cancelled' instead of 'AbortError'
       const isAbortError =
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError' ||
-        error?.message === 'Cancelled';
+        (isString(error?.message) &&
+          error.message.toLowerCase() === 'cancelled');
 
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
