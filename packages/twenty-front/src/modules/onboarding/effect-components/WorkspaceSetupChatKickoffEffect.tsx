@@ -5,8 +5,7 @@ import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
@@ -98,9 +97,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
         if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
           store.set(
-            agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
-              instanceId: AGENT_CHAT_INSTANCE_ID,
-              familyKey: { threadId: thread.id },
+            agentChatIsAwaitingFirstChunkFamilyState.atomFamily({
+              threadId: thread.id,
             }),
             true,
           );

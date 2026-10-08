@@ -19,11 +19,13 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -70,6 +72,8 @@ export class ToolCallAnswerService {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
+    private readonly conversationReaderService: AgentConversationReaderService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
@@ -81,7 +85,11 @@ export class ToolCallAnswerService {
         where: { id: threadId },
         select: ['id', 'activeStreamId', 'pendingQuestionMessageId'],
       }),
-      this.agentChatService.findToolPart({ threadId, toolCallId, workspaceId }),
+      this.conversationReaderService.findToolPart({
+        threadId,
+        toolCallId,
+        workspaceId,
+      }),
     ]);
     const pausingToolCall = parsePausingToolCall(toolPart);
 
@@ -180,10 +188,13 @@ export class ToolCallAnswerService {
         }
 
         if (waitingState.status === 'GONE') {
-          await this.agentChatService.closePendingToolCalls({
+          // the run waiting on the call was dropped, as when its suspension is released
+          await this.threadLifecycleService.closePendingQuestion({
+            workspaceId,
             threadId,
             messageId: toolPart.messageId,
-            workspaceId,
+            activeStreamId: streamId,
+            turnStatus: AgentTurnStatus.CANCELLED,
           });
 
           await this.agentRunSuspensionService.release({
@@ -241,12 +252,13 @@ export class ToolCallAnswerService {
       // a call claimed as running cannot be answered again, so it closes as interrupted and the
       // run or turn fails, instead of leaving the call waiting on an outcome
       if (isClaimedAsRunning) {
-        await this.agentChatService
-          .closePendingToolCalls({
+        await this.threadLifecycleService
+          .closePendingQuestion({
+            workspaceId,
             threadId,
             messageId: toolPart.messageId,
-            workspaceId,
-            where: { activeStreamId: streamId },
+            activeStreamId: streamId,
+            turnStatus: AgentTurnStatus.COMPLETED,
           })
           .catch((closeError: unknown) =>
             this.logger.warn(

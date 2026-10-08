@@ -198,7 +198,6 @@ export class AgentRunService
           // the call returns before anyone could answer, so the run can wait but not ask
           capabilities: {
             canAskHumans: false,
-            canProposeToolCalls: false,
           },
           toolLoadingStrategy: 'lazy',
         },
@@ -215,7 +214,6 @@ export class AgentRunService
           workspaceId: workspace.id,
           caller,
         }),
-        resolveCreatedBy: async () => caller.ref.createdBy,
       });
 
       return {
@@ -282,6 +280,7 @@ export class AgentRunService
     return {
       authContext: runAsContext?.authContext ?? agentContext.authContext,
       actorContext: runAsContext?.actorContext,
+      turnCreatedBy: ref.createdBy,
       userWorkspaceId:
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
@@ -297,12 +296,6 @@ export class AgentRunService
         : { type: 'application', applicationId: agentContext.application.id },
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
-  }
-
-  async resolveTurnAuthor({
-    caller,
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<ActorMetadata> {
-    return caller.ref.createdBy;
   }
 
   async getWaitingState({

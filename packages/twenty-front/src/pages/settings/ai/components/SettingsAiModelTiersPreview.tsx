@@ -8,14 +8,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr';
 const EMPTY_VALUE = '–';

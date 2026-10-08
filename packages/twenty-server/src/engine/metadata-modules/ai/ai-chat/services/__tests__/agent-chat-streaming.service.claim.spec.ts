@@ -1,8 +1,7 @@
-import { IsNull } from 'typeorm';
-
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
 const QUESTIONS = [
@@ -81,7 +80,6 @@ describe('AgentChatStreamingService claim & reap', () => {
       addMessage: jest
         .fn()
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
-      closePendingToolCalls: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
       getThreadContexts: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
@@ -91,6 +89,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
       promoteQueuedMessage: jest.fn().mockResolvedValue('turn-id'),
       deleteQueuedMessage: jest.fn().mockResolvedValue(true),
+    };
+    const threadLifecycleService = {
+      closePendingQuestion: jest.fn().mockResolvedValue(undefined),
     };
     const messagePartRepository = {
       find: jest.fn().mockResolvedValue([
@@ -120,6 +121,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       streamHeartbeatService as never,
       eventPublisherService as never,
       metricsService as never,
+      { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     );
 
     const service = new AgentChatStreamingService(
@@ -156,6 +158,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
       } as never,
       { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
+      threadLifecycleService as never,
     );
 
     return {
@@ -172,6 +175,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       threadRepository,
       messageQueueService,
       agentChatService,
+      threadLifecycleService,
       eventPublisherService,
       streamHeartbeatService,
       publishedEvents,
@@ -266,26 +270,33 @@ describe('AgentChatStreamingService claim & reap', () => {
     };
 
     it('closes the pending call as skipped before streaming, unless an answer holds the stream', async () => {
-      const { send, agentChatService, messageQueueService } = buildService({
-        thread: waitingThread,
-      });
+      const { send, threadLifecycleService, messageQueueService } =
+        buildService({
+          thread: waitingThread,
+        });
 
       const result = await send();
 
       expect(result.queued).toBe(false);
-      expect(agentChatService.closePendingToolCalls).toHaveBeenCalledWith({
+      expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
         threadId: 'thread-id',
         messageId: 'question-message-id',
-        workspaceId: 'workspace-id',
-        where: { activeStreamId: IsNull() },
+        activeStreamId: null,
+        turnStatus: AgentTurnStatus.COMPLETED,
       });
       expect(
-        agentChatService.closePendingToolCalls.mock.invocationCallOrder[0],
+        threadLifecycleService.closePendingQuestion.mock.invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
     });
 
     it('refuses a message while a caller waits on the pending call', async () => {
-      const { send, agentChatService, messageQueueService } = buildService({
+      const {
+        send,
+        agentChatService,
+        threadLifecycleService,
+        messageQueueService,
+      } = buildService({
         thread: waitingThread,
         pendingToolOutput: {
           result: { questions: QUESTIONS, status: 'pending' },
@@ -296,7 +307,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       await expect(send()).rejects.toMatchObject({
         code: AiExceptionCode.THREAD_AWAITING_ANSWER,
       });
-      expect(agentChatService.closePendingToolCalls).not.toHaveBeenCalled();
+      expect(
+        threadLifecycleService.closePendingQuestion,
+      ).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
       expect(agentChatService.queueMessage).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();

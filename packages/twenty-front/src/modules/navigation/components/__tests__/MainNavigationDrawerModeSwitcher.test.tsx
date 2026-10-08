@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -5,20 +6,32 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import {
+  GetAgentChatOpenThreadsSummaryDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/navigation/hooks/useActiveNavigationDrawerMode');
-jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
+jest.mock(
+  '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded',
+);
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
+
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+}));
 
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
@@ -27,47 +40,49 @@ jest.mock('twenty-ui/utilities', () => ({
 
 const mockSwitchNavigationDrawerMode = jest.fn();
 
-const THREAD_ID = 'thread-1';
-const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
-
-const receiveOpenChat = (
-  store: ReturnType<typeof createStore>,
-  lastReadAt: string | null,
-) => {
-  setAgentChatThreadList(store, [
-    {
-      __typename: 'AgentChatThread',
-      id: THREAD_ID,
-      deletedAt: null,
-      lastActivityAt: LAST_ACTIVITY_AT,
-    } as never,
-  ]);
-  store.set(agentChatThreadParticipantsState.atom, {
-    [THREAD_ID]: {
-      threadId: THREAD_ID,
-      lastReadAt,
-      archivedAt: null,
-      snoozedUntil: null,
-      isSubscribed: true,
-      lastMentionedAt: null,
-      id: 'participant-id',
-      updatedAt: LAST_ACTIVITY_AT,
+const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
+  request: { query: GetAgentChatOpenThreadsSummaryDocument },
+  delay: 0,
+  result: {
+    data: {
+      agentChatOpenThreadsSummary: {
+        __typename: 'AgentChatOpenThreadsSummary' as const,
+        openThreadCount: 1,
+        needsInputThreadCount: 0,
+        hasUnreadOpenThread,
+        hasUnreadMentionThread: false,
+        hasUnreadAssignedThread: false,
+      },
     },
-  });
-};
+  },
+});
 
-const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {
+const renderModeSwitcher = ({
+  isLayoutCustomizationModeEnabled = false,
+  hasUnreadOpenThread = false,
+}: {
+  isLayoutCustomizationModeEnabled?: boolean;
+  hasUnreadOpenThread?: boolean;
+} = {}) => {
   const store = createStore();
 
   store.set(
     isLayoutCustomizationModeEnabledState.atom,
     isLayoutCustomizationModeEnabled,
   );
+  store.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags: [PermissionFlagType.AI],
+  });
 
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
-        <MainNavigationDrawerModeSwitcher />
+        <MockedProvider
+          mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
+        >
+          <MainNavigationDrawerModeSwitcher />
+        </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
   );
@@ -75,9 +90,13 @@ const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {
   return { store };
 };
 
+const waitForOpenThreadsSummary = () =>
+  act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+
 describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAiChatInboxEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -140,7 +159,9 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       jest
         .mocked(useIsNavigationDrawerContentExpanded)
         .mockReturnValue(isExpanded);
-      const { store } = renderModeSwitcher(true);
+      const { store } = renderModeSwitcher({
+        isLayoutCustomizationModeEnabled: true,
+      });
       const settingsButton = screen.getByRole('button', { name: label });
 
       expect(settingsButton).toHaveAttribute('aria-disabled', 'true');
@@ -168,27 +189,35 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     },
   );
 
-  it('marks the inbox while one of its open chats is unread', () => {
-    const { store } = renderModeSwitcher();
-
-    act(() => receiveOpenChat(store, null));
+  it('marks the inbox while one of its open chats is unread', async () => {
+    renderModeSwitcher({ hasUnreadOpenThread: true });
 
     expect(
-      screen.getByRole('button', { name: 'AI, unread' }),
+      await screen.findByRole('button', { name: 'AI, unread' }),
     ).toBeInTheDocument();
+  });
 
-    act(() => receiveOpenChat(store, LAST_ACTIVITY_AT));
+  it('does not mark the inbox when its open chats are read', async () => {
+    renderModeSwitcher();
+    await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });
 
-  it('does not mark the inbox while it is open', () => {
+  it('does not mark unread chats while the inbox feature flag is off', async () => {
+    mockIsAiChatInboxEnabled = false;
+    renderModeSwitcher({ hasUnreadOpenThread: true });
+    await waitForOpenThreadsSummary();
+
+    expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
+
+  it('does not mark the inbox while it is open', async () => {
     jest
       .mocked(useActiveNavigationDrawerMode)
       .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    const { store } = renderModeSwitcher();
-
-    act(() => receiveOpenChat(store, null));
+    renderModeSwitcher({ hasUnreadOpenThread: true });
+    await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
   });

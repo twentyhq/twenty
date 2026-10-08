@@ -1,5 +1,4 @@
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { act, renderHook } from '@testing-library/react';
@@ -78,9 +77,8 @@ describe('useSelectAiChatThread', () => {
       totalOutputCredits: 50000,
     };
     setAgentChatThreadList(jotaiStore, [thread]);
-    const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
-      instanceId: AGENT_CHAT_INSTANCE_ID,
-      familyKey: { threadId: thread.id },
+    const usageAtom = agentChatUsageFamilyState.atomFamily({
+      threadId: thread.id,
     });
     const { result } = renderHook(() => useSelectAiChatThread(), {
       wrapper: Wrapper,

@@ -1,4 +1,4 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';

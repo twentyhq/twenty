@@ -107,6 +107,7 @@ describe('computeDraftValidationRuleViolations', () => {
       {
         ruleId: 'amount-rule',
         message: 'A customer deal needs an amount',
+        fieldMetadataId: 'amount-field',
       },
     ]);
   });
@@ -245,5 +246,13 @@ describe('computeDraftValidationRuleViolations', () => {
         (violation) => violation.ruleId,
       ),
     ).toEqual(['company-rule']);
+  });
+
+  it('should report a rule without an error field as a record-level violation', () => {
+    expect(
+      compute({ company: { employees: 3 } }, [COMPANY_RULE]).map(
+        (violation) => violation.fieldMetadataId,
+      ),
+    ).toEqual([null]);
   });
 });

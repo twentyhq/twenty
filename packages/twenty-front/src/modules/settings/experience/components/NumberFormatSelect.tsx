@@ -2,7 +2,7 @@ import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { formatNumber as utilFormatNumber } from '~/utils/format/formatNumber';
+import { formatNumber as utilFormatNumber } from '@/localization/utils/formatNumber';
 
 type NumberFormatSelectProps = {
   value: NumberFormat;
