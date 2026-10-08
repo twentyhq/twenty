@@ -185,16 +185,20 @@ export const WidthChange: Story = {
 };
 
 export const FormReset: Story = {
+  tags: ['!dev'],
   args: { defaultValue: 'Initial' },
   play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const canvas = within(canvasElement);
     const textarea = canvas.getByRole('textbox', { name: 'Notes' });
     const initialHeight = textarea.clientHeight;
     await userEvent.type(textarea, '{enter}Second{enter}Third');
     await expect(textarea.clientHeight).toBeGreaterThan(initialHeight);
-    await userEvent.click(canvas.getByRole('button', { name: 'Reset notes' }));
+    await trustedUserEvent.click(
+      canvas.getByRole('button', { name: 'Reset notes' }),
+    );
     await expect(textarea).toHaveValue('Initial');
-    await expect(textarea.clientHeight).toBe(initialHeight);
+    await waitFor(() => expect(textarea.clientHeight).toBe(initialHeight));
   },
 };
 

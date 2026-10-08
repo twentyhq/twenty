@@ -64,7 +64,7 @@ export const Textarea = ({
 
     let isActive = true;
     const handleReset = (event: Event) => {
-      queueMicrotask(() => {
+      requestAnimationFrame(() => {
         if (isActive && !event.defaultPrevented) {
           resizeTextareaToContent(textarea);
         }
