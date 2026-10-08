@@ -68,7 +68,7 @@ export const ActivityRow = ({
     const target = event.target;
 
     if (
-      disabled === true ||
+      disabled ||
       event.defaultPrevented ||
       !(target instanceof Element) ||
       isDefined(target.closest(INDEPENDENT_ROW_ACTION_SELECTOR))
