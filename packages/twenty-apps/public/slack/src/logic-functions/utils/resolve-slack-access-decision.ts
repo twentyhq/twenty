@@ -21,7 +21,7 @@ export const resolveSlackAccessDecision = async ({
   runAsWorkspaceMemberId: string | undefined;
 }): Promise<SlackAccessDecision> => {
   if (isNonEmptyString(runAsWorkspaceMemberId)) {
-    return { status: 'ALLOWED' };
+    return { status: 'ALLOWED', runAsWorkspaceMemberId };
   }
 
   if (!isDefined(slackClient) || !isDefined(identity)) {
@@ -49,7 +49,8 @@ export const resolveSlackAccessDecision = async ({
     case 'unidentified':
       return { status: 'UNVERIFIABLE' };
     case 'confirmedMember':
+      return { status: 'DENIED', reason: 'REQUEST_NOT_ATTRIBUTABLE' };
     case 'membershipNotConfirmed':
-      return { status: 'DENIED' };
+      return { status: 'DENIED', reason: 'NOT_A_MEMBER' };
   }
 };

@@ -54,12 +54,12 @@ describe('resolveSlackAccessDecision', () => {
         identity,
         runAsWorkspaceMemberId: 'member-id',
       }),
-    ).toEqual({ status: 'ALLOWED' });
+    ).toEqual({ status: 'ALLOWED', runAsWorkspaceMemberId: 'member-id' });
 
     expect(resolveSlackIdentitiesMock).not.toHaveBeenCalled();
   });
 
-  it('should decline a confirmed member whose request has no run-as member', async () => {
+  it('should decline a confirmed member whose request could not be attributed to them', async () => {
     mockResolution({
       ...RESOLUTION_BASE,
       outcome: 'confirmedMember',
@@ -75,7 +75,7 @@ describe('resolveSlackAccessDecision', () => {
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
-    ).toEqual({ status: 'DENIED' });
+    ).toEqual({ status: 'DENIED', reason: 'REQUEST_NOT_ATTRIBUTABLE' });
   });
 
   it('should deny an account every lookup agreed is not a member', async () => {
@@ -89,7 +89,7 @@ describe('resolveSlackAccessDecision', () => {
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
-    ).toEqual({ status: 'DENIED' });
+    ).toEqual({ status: 'DENIED', reason: 'NOT_A_MEMBER' });
   });
 
   it('should not deny when membership could not be established', async () => {

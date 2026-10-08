@@ -1,7 +1,12 @@
-import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+import {
+  defineApplicationRole,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+} from 'twenty-sdk/define';
 
 import {
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
@@ -9,10 +14,10 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
   description:
-    'Everything the Slack app can do in the CRM. Tools only forward requests to Slack using the configured connected account. It reads, updates and soft-deletes records across the workspace, but never destroys them (apart from Slack user links) and never changes settings. The assistant agent runs as the linked workspace member who made the request, so a member’s own permissions apply within this ceiling, and an unlinked Slack user gets no answer.',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: true,
-  canSoftDeleteAllObjectRecords: true,
+    "Everything the Slack app can do in the CRM. Tools only forward requests to Slack using the configured connected account. Tracks assistant requests, links Slack accounts to workspace members (which needs read access on workspace members for the email match), reads CRM records to render record link previews in Slack, and hosts the assistant agent, which always runs as the linked workspace member who asked and acts with that member's own permissions.",
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canBeAssignedToAgents: true,
@@ -20,12 +25,46 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
+      objectUniversalIdentifier:
+        SLACK_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
       objectUniversalIdentifier: SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: true,
     },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    ...(
+      [
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget.universalIdentifier,
+      ] as const
+    ).map((objectUniversalIdentifier) => ({
+      objectUniversalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: false,
+    })),
   ],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [
