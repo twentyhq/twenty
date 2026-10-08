@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   type InputJsonSchema,
@@ -10,6 +9,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { FATHOM_SYNC_CALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
 import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
@@ -83,7 +83,7 @@ export const fathomSyncCallHandler = async (
       continue;
     }
 
-    const coreApiClient = new CoreApiClient({ runAs: 'application' });
+    const coreApiClient = createFathomCoreApiClient();
     const callRecordingId = computeCallRecordingIdForFathomMeeting(recordingId);
     const deletedCallRecordingIds = await listDeletedCallRecordingIds({
       coreApiClient,
