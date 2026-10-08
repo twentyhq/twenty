@@ -9,6 +9,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
+import { type AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
 import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job.types';
@@ -30,6 +31,11 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 // Runs in the participant write's transaction, after the participant row is
 // locked, in the order member activity takes the two locks
@@ -53,6 +59,14 @@ const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
      "updatedAt" = now()
    RETURNING *`;
 
+const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
+  openThreadCount: 0,
+  needsInputThreadCount: 0,
+  hasUnreadOpenThread: false,
+  hasUnreadMentionThread: false,
+  hasUnreadAssignedThread: false,
+};
+
 const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
@@ -68,6 +82,7 @@ export class AgentChatThreadParticipantService {
     private readonly participantEventService: AgentChatThreadParticipantEventService,
     @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly delayedJobsQueueService: MessageQueueService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async markAsRead(
@@ -411,6 +426,86 @@ export class AgentChatThreadParticipantService {
     }
 
     return rows[0];
+  }
+
+  // Over every chat the member can open, the way the inbox lists them; a chat
+  // without the member's row is in their inbox, unread
+  async findOpenThreadsSummary({
+    workspaceId,
+    workspaceMemberId,
+  }: Omit<
+    AgentChatThreadAccessArgs,
+    'threadId'
+  >): Promise<AgentChatOpenThreadsSummaryDTO> {
+    const authContext = await this.sharingService.getAuthContext({
+      workspaceId,
+      workspaceMemberId,
+    });
+
+    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+      return EMPTY_OPEN_THREADS_SUMMARY;
+    }
+
+    const [summary] = await this.workspaceOrmManager
+      .executeInWorkspaceContext(() => {
+        const repository =
+          this.workspaceOrmManager.getRepositoryWithContextPermissions(
+            'agentChatThread',
+          );
+        const readableThreads = repository
+          .createQueryBuilder('thread')
+          .select([])
+          .addSelect('"thread"."id"', 'id')
+          .addSelect('"thread"."lastActivityAt"', 'lastActivityAt')
+          .addSelect('"thread"."assigneeId"', 'assigneeId')
+          .addSelect(
+            '"thread"."pendingQuestionMessageId"',
+            'pendingQuestionMessageId',
+          )
+          .applyRowLevelPermissions();
+
+        return repository.executeRaw<
+          Pick<
+            AgentChatOpenThreadsSummaryDTO,
+            keyof AgentChatOpenThreadsSummaryDTO
+          >
+        >(
+          `WITH open_thread AS (
+             SELECT thread."assigneeId", thread."pendingQuestionMessageId", participant."lastMentionedAt",
+               thread."lastActivityAt" IS NOT NULL
+                 AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
+             FROM (${readableThreads.getQuery()}) thread
+             LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
+               ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
+             WHERE COALESCE(participant."isSubscribed", true)
+               AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
+           )
+           SELECT
+             COUNT(*)::int AS "openThreadCount",
+             COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
+             COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
+             COALESCE(BOOL_OR("isUnread" AND "lastMentionedAt" IS NOT NULL), false) AS "hasUnreadMentionThread",
+             COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
+           FROM open_thread`,
+          {
+            ...readableThreads.getParameters(),
+            summaryWorkspaceMemberId: workspaceMemberId,
+          },
+        );
+      }, authContext)
+      .catch((error: unknown) => {
+        // A role that cannot read chats has none open
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.PERMISSION_DENIED
+        ) {
+          return [EMPTY_OPEN_THREADS_SUMMARY];
+        }
+
+        throw error;
+      });
+
+    return summary;
   }
 
   private async scheduleSnoozeEnd({

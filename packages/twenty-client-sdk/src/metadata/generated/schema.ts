@@ -40,6 +40,15 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface AgentChatOpenThreadsSummary {
+    hasUnreadAssignedThread: Scalars['Boolean']
+    hasUnreadMentionThread: Scalars['Boolean']
+    hasUnreadOpenThread: Scalars['Boolean']
+    needsInputThreadCount: Scalars['Int']
+    openThreadCount: Scalars['Int']
+    __typename: 'AgentChatOpenThreadsSummary'
+}
+
 export interface AgentChatThread {
     contextWindowTokens?: Scalars['Int']
     conversationSize: Scalars['Int']
@@ -2683,6 +2692,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     apiKey?: ApiKey
@@ -3924,6 +3934,16 @@ export interface AgentGenqlSelection{
 export interface AgentChatEventGenqlSelection{
     event?: boolean | number
     threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatOpenThreadsSummaryGenqlSelection{
+    hasUnreadAssignedThread?: boolean | number
+    hasUnreadMentionThread?: boolean | number
+    hasUnreadOpenThread?: boolean | number
+    needsInputThreadCount?: boolean | number
+    openThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6876,6 +6896,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -8433,6 +8454,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatOpenThreadsSummary_possibleTypes: string[] = ['AgentChatOpenThreadsSummary']
+    export const isAgentChatOpenThreadsSummary = (obj?: { __typename?: any } | null): obj is AgentChatOpenThreadsSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatOpenThreadsSummary"')
+      return AgentChatOpenThreadsSummary_possibleTypes.includes(obj.__typename)
     }
     
 
