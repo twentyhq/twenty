@@ -17,9 +17,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -40,8 +37,6 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
-import { computeMessageImportProgress } from 'src/engine/metadata-modules/message-channel/utils/compute-message-import-progress.util';
-import { MESSAGING_MESSAGES_IMPORT_SYNC_STAGES } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-import-sync-stages.constant';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
@@ -82,8 +77,6 @@ export class MessageChannelResolver {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
-    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   @ResolveField('importProgress', () => Int, { nullable: true })
@@ -91,21 +84,9 @@ export class MessageChannelResolver {
     @Parent() messageChannel: MessageChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<number | null> {
-    if (
-      !MESSAGING_MESSAGES_IMPORT_SYNC_STAGES.includes(messageChannel.syncStage)
-    ) {
-      return null;
-    }
-
-    const [totalMessagesToImportCount, importedMessagesCount] =
-      await this.cacheStorage.mget<number>([
-        `messages-to-import-total:${workspace.id}:${messageChannel.id}`,
-        `messages-imported:${workspace.id}:${messageChannel.id}`,
-      ]);
-
-    return computeMessageImportProgress({
-      importedMessagesCount,
-      totalMessagesToImportCount,
+    return this.messageChannelMetadataService.getImportProgress({
+      messageChannelId: messageChannel.id,
+      workspaceId: workspace.id,
     });
   }
 

@@ -1,8 +1,8 @@
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { useRefetchOnMessageChannelChange } from '@/settings/accounts/hooks/useRefetchOnMessageChannelChange';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -14,13 +14,7 @@ import { Section } from 'twenty-ui/components/layout';
 export const SettingsAccounts = () => {
   const { t } = useLingui();
 
-  const {
-    accounts: allAccounts,
-    loading,
-    refetchMessageChannels,
-  } = useMyConnectedAccounts();
-
-  useRefetchOnMessageChannelChange({ refetch: refetchMessageChannels });
+  const { accounts: allAccounts, loading } = useMyConnectedAccounts();
 
   return (
     <SettingsPageLayout
@@ -33,6 +27,7 @@ export const SettingsAccounts = () => {
         { children: t`Account` },
       ]}
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>
         {loading ? (
           <SettingsSectionSkeletonLoader />

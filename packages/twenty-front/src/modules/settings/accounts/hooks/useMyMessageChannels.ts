@@ -5,16 +5,14 @@ import { useApolloClient, useQuery } from '@apollo/client/react';
 export const useMyMessageChannels = () => {
   const apolloClient = useApolloClient();
 
-  const { data, loading, refetch } = useQuery<{
+  const { data, loading } = useQuery<{
     myMessageChannels: MessageChannel[];
   }>(GET_MY_MESSAGE_CHANNELS, {
     client: apolloClient,
-    notifyOnNetworkStatusChange: false,
   });
 
   return {
     channels: data?.myMessageChannels ?? [],
     loading,
-    refetch,
   };
 };

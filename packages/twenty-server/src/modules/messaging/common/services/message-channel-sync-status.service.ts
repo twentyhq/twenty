@@ -26,7 +26,14 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { computeMessageImportProgress } from 'src/engine/metadata-modules/message-channel/utils/compute-message-import-progress.util';
+
+type UpdatedMessageChannel = Pick<
+  MessageChannelEntity,
+  'id' | 'syncStatus' | 'syncStage'
+> & { userWorkspaceId: string };
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -214,6 +221,8 @@ export class MessageChannelSyncStatusService {
       return;
     }
 
+    await this.clearImportProgress(messageChannelIds, workspaceId);
+
     await this.updateMessageChannels(messageChannelIds, workspaceId, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
@@ -272,6 +281,8 @@ export class MessageChannelSyncStatusService {
       `Marking message channels [${messageChannelIds.join(', ')}] as ${syncStatus} in workspace ${workspaceId}`,
     );
 
+    await this.clearImportProgress(messageChannelIds, workspaceId);
+
     await this.updateMessageChannels(messageChannelIds, workspaceId, {
       syncStage: MessageChannelSyncStage.FAILED,
       syncStatus: syncStatus,
@@ -323,6 +334,34 @@ export class MessageChannelSyncStatusService {
     );
   }
 
+  public async getImportProgress(
+    workspaceId: string,
+    messageChannelId: string,
+  ): Promise<number | null> {
+    const [totalMessagesToImportCount, importedMessagesCount] =
+      await this.cacheStorage.mget<number>([
+        `messages-to-import-total:${workspaceId}:${messageChannelId}`,
+        `messages-imported:${workspaceId}:${messageChannelId}`,
+      ]);
+
+    return computeMessageImportProgress({
+      importedMessagesCount,
+      totalMessagesToImportCount,
+    });
+  }
+
+  private async clearImportProgress(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    await this.cacheStorage.mdel(
+      messageChannelIds.flatMap((messageChannelId) => [
+        `messages-to-import-total:${workspaceId}:${messageChannelId}`,
+        `messages-imported:${workspaceId}:${messageChannelId}`,
+      ]),
+    );
+  }
+
   private async updateMessageChannels(
     messageChannelIds: string[],
     workspaceId: string,
@@ -330,45 +369,59 @@ export class MessageChannelSyncStatusService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        await this.messageChannelRepository.update(
-          { id: In(messageChannelIds), workspaceId },
-          values,
-        );
-      },
-      authContext,
-      { lite: true },
-    );
+    const updatedMessageChannels =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const updateResult = await this.messageChannelRepository
+            .createQueryBuilder()
+            .update()
+            .set(values)
+            .where({ id: In(messageChannelIds), workspaceId })
+            .returning(
+              `id, "syncStatus", "syncStage", (SELECT "userWorkspaceId" FROM core."connectedAccount" WHERE core."connectedAccount".id = "messageChannel"."connectedAccountId") AS "userWorkspaceId"`,
+            )
+            .execute();
 
-    await this.broadcastMessageChannelsUpdated(messageChannelIds, workspaceId);
+          return updateResult.raw as UpdatedMessageChannel[];
+        },
+        authContext,
+        { lite: true },
+      );
+
+    await this.broadcastMessageChannelsUpdated(
+      updatedMessageChannels,
+      workspaceId,
+    );
   }
 
   private async broadcastMessageChannelsUpdated(
-    messageChannelIds: string[],
+    updatedMessageChannels: UpdatedMessageChannel[],
     workspaceId: string,
   ): Promise<void> {
     try {
-      const messageChannels = await this.messageChannelRepository.find({
-        where: { id: In(messageChannelIds), workspaceId },
-        relations: { connectedAccount: true },
-      });
+      const events: WorkspaceBroadcastEvent[] = await Promise.all(
+        updatedMessageChannels.map(
+          async ({ id, syncStatus, syncStage, userWorkspaceId }) => ({
+            type: 'updated',
+            entityName: 'messageChannel',
+            recordId: id,
+            properties: {
+              after: {
+                id,
+                syncStatus,
+                syncStage,
+                importProgress: await this.getImportProgress(workspaceId, id),
+              },
+            },
+            recipientUserWorkspaceIds: [userWorkspaceId],
+          }),
+        ),
+      );
 
-      await this.workspaceEventBroadcaster.broadcast({
-        workspaceId,
-        events: messageChannels.map((messageChannel) => ({
-          type: 'updated',
-          entityName: 'messageChannel',
-          recordId: messageChannel.id,
-          properties: { after: { id: messageChannel.id } },
-          recipientUserWorkspaceIds: [
-            messageChannel.connectedAccount.userWorkspaceId,
-          ],
-        })),
-      });
+      await this.workspaceEventBroadcaster.broadcast({ workspaceId, events });
     } catch (error) {
       this.logger.warn(
-        `Failed to broadcast updated event for message channels [${messageChannelIds.join(', ')}] in workspace ${workspaceId}`,
+        `Failed to broadcast updated event for message channels [${updatedMessageChannels.map(({ id }) => id).join(', ')}] in workspace ${workspaceId}`,
         error,
       );
     }
