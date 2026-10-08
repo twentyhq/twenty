@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { getMorphRelationGroupFlatEntityMapsMock } from 'src/engine/subscriptions/metadata-event/__mocks__/get-morph-relation-group-flat-entity-maps.mock';
 import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -12,6 +13,7 @@ const OWNER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 describe('MetadataEventPublisher', () => {
   let publisher: MetadataEventPublisher;
   const broadcast = jest.fn();
+  const getOrRecomputeManyOrAllFlatEntityMaps = jest.fn();
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -22,7 +24,7 @@ describe('MetadataEventPublisher', () => {
         { provide: WorkspaceEventBroadcaster, useValue: { broadcast } },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: {},
+          useValue: { getOrRecomputeManyOrAllFlatEntityMaps },
         },
         { provide: NavigationMenuItemRecordIdentifierService, useValue: {} },
         { provide: I18nService, useValue: {} },
@@ -168,5 +170,56 @@ describe('MetadataEventPublisher', () => {
     });
 
     expect(event.recipientUserWorkspaceIds).toBeUndefined();
+  });
+
+  it('hands a morph field over to its new representative when the representative row is deleted', async () => {
+    const personRow = { id: 'morph-row-2', targetNameSingular: 'person' };
+    const companyRow = { id: 'morph-row-3', targetNameSingular: 'company' };
+    const before = getMorphRelationGroupFlatEntityMapsMock([
+      { id: 'morph-row-1', targetNameSingular: 'rocket' },
+      personRow,
+      companyRow,
+    ]);
+    const after = getMorphRelationGroupFlatEntityMapsMock([
+      personRow,
+      companyRow,
+    ]);
+
+    getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(after);
+
+    await publisher.publish({
+      name: 'metadata.fieldMetadata.deleted',
+      workspaceId: 'workspace-1',
+      metadataName: 'fieldMetadata',
+      type: 'deleted',
+      events: [
+        {
+          metadataName: 'fieldMetadata',
+          type: 'deleted',
+          recordId: 'morph-row-1',
+          properties: {
+            before: before.getScalarFlatFieldMetadata('morph-row-1'),
+          },
+        },
+      ],
+    });
+
+    const [handedOverEvent, deletedEvent] = broadcast.mock.calls[0][0].events;
+
+    expect(handedOverEvent).toMatchObject({
+      type: 'created',
+      recordId: 'morph-row-2',
+      properties: { after: { id: 'morph-row-2', name: 'target' } },
+    });
+    expect(
+      handedOverEvent.properties.after.morphRelations.map(
+        (morphRelation: { targetObjectMetadata: { nameSingular: string } }) =>
+          morphRelation.targetObjectMetadata.nameSingular,
+      ),
+    ).toEqual(['person', 'company']);
+    expect(deletedEvent).toMatchObject({
+      type: 'deleted',
+      recordId: 'morph-row-1',
+    });
   });
 });

@@ -25,10 +25,10 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { renameMorphRelationFlatFieldMetadataToMorphName } from 'src/engine/metadata-modules/flat-field-metadata/utils/rename-morph-relation-flat-field-metadata-to-morph-name.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { fromFlatSearchFieldMetadataToSearchFieldMetadataDto } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-flat-search-field-metadata-to-search-field-metadata-dto.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
@@ -464,32 +464,17 @@ export class DataloaderService {
               );
 
             const filteredFieldMetadataEntitiesWithMorphRenamed =
-              filteredFieldMetadataEntities.map((flatFieldMetadata) => {
-                if (
-                  isFlatFieldMetadataOfType(
-                    flatFieldMetadata,
-                    FieldMetadataType.MORPH_RELATION,
-                  )
-                ) {
-                  const relationTargetObjectMetadata =
-                    findFlatEntityByIdInFlatEntityMapsOrThrow({
-                      flatEntityId:
-                        flatFieldMetadata.relationTargetObjectMetadataId,
-                      flatEntityMaps: flatObjectMetadataMaps,
-                    });
-
-                  return {
-                    ...flatFieldMetadata,
-                    name: getMorphNameFromMorphFieldMetadataName({
+              filteredFieldMetadataEntities.map((flatFieldMetadata) =>
+                isFlatFieldMetadataOfType(
+                  flatFieldMetadata,
+                  FieldMetadataType.MORPH_RELATION,
+                )
+                  ? renameMorphRelationFlatFieldMetadataToMorphName({
                       morphRelationFlatFieldMetadata: flatFieldMetadata,
-                      nameSingular: relationTargetObjectMetadata.nameSingular,
-                      namePlural: relationTargetObjectMetadata.namePlural,
-                    }),
-                  };
-                }
-
-                return flatFieldMetadata;
-              });
+                      flatObjectMetadataMaps,
+                    })
+                  : flatFieldMetadata,
+              );
 
             return filteredFieldMetadataEntitiesWithMorphRenamed.map(
               fromFlatFieldMetadataToFieldMetadataDto,

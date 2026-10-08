@@ -8,10 +8,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
+import { collapseMorphRelationFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/collapse-morph-relation-field-metadata-events.util';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
@@ -157,7 +159,7 @@ export class MetadataEventPublisher {
   ): Promise<MetadataEventBatch> {
     switch (metadataEventBatch.metadataName) {
       case 'fieldMetadata':
-        return this.enrichFieldMetadataEventsWithRelations(
+        return this.collapseAndEnrichFieldMetadataEvents(
           metadataEventBatch as MetadataEventBatch<'fieldMetadata'>,
         );
       case 'navigationMenuItem':
@@ -169,7 +171,7 @@ export class MetadataEventPublisher {
     }
   }
 
-  private async enrichFieldMetadataEventsWithRelations(
+  private async collapseAndEnrichFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -180,7 +182,13 @@ export class MetadataEventPublisher {
         },
       );
 
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
+    const collapsedEvents = collapseMorphRelationFieldMetadataEvents({
+      events: metadataEventBatch.events as MetadataEvent<'fieldMetadata'>[],
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    }) as MetadataEvent[];
+
+    const enrichedEvents = collapsedEvents.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (

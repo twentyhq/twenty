@@ -15,7 +15,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { renameMorphRelationFlatFieldMetadataToMorphName } from 'src/engine/metadata-modules/flat-field-metadata/utils/rename-morph-relation-flat-field-metadata-to-morph-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
@@ -104,30 +104,15 @@ export class FieldMetadataConnectionLoaderFactory {
               flatEntity: flatFieldMetadata,
               i18nContext: getI18nContext(flatFieldMetadata.applicationId),
             });
-          let renamedFlatFieldMetadata = overriddenFlatFieldMetadata;
-
-          if (
-            isFlatFieldMetadataOfType(
-              overriddenFlatFieldMetadata,
-              FieldMetadataType.MORPH_RELATION,
-            )
-          ) {
-            const relationTargetObjectMetadata =
-              findFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityId:
-                  overriddenFlatFieldMetadata.relationTargetObjectMetadataId,
-                flatEntityMaps: flatObjectMetadataMaps,
-              });
-
-            renamedFlatFieldMetadata = {
-              ...overriddenFlatFieldMetadata,
-              name: getMorphNameFromMorphFieldMetadataName({
+          const renamedFlatFieldMetadata = isFlatFieldMetadataOfType(
+            overriddenFlatFieldMetadata,
+            FieldMetadataType.MORPH_RELATION,
+          )
+            ? renameMorphRelationFlatFieldMetadataToMorphName({
                 morphRelationFlatFieldMetadata: overriddenFlatFieldMetadata,
-                nameSingular: relationTargetObjectMetadata.nameSingular,
-                namePlural: relationTargetObjectMetadata.namePlural,
-              }),
-            };
-          }
+                flatObjectMetadataMaps,
+              })
+            : overriddenFlatFieldMetadata;
 
           return {
             ...edge,
