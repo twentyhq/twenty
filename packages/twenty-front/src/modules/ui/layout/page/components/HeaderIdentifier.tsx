@@ -1,7 +1,6 @@
+import { getAvatarButtonRender } from '@/ui/field/display/utils/getAvatarButtonRender';
 import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledHeaderIdentifierLabel';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -71,19 +70,11 @@ export const HeaderIdentifier = ({
   title,
   label,
 }: HeaderIdentifierProps) => {
-  const trimmedAvatarName = avatar?.name?.trim();
-  const avatarLabel = isNonEmptyString(trimmedAvatarName)
-    ? trimmedAvatarName
-    : t`Avatar`;
   const identifierIcon = isDefined(avatar) ? (
     <Avatar
       src={avatar.src}
       onClick={avatar.onClick}
-      render={
-        isDefined(avatar.onClick) ? (
-          <button type="button" aria-label={avatarLabel} />
-        ) : undefined
-      }
+      render={getAvatarButtonRender(avatar)}
       name={avatar.name}
       colorSeed={avatar.colorSeed}
       shape={avatar.shape}

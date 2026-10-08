@@ -1,3 +1,4 @@
+import { getAvatarButtonRender } from '@/ui/field/display/utils/getAvatarButtonRender';
 import { t } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -61,8 +62,6 @@ export const AvatarOrIcon = ({
   const theme = useTheme();
 
   if (!isDefined(Icon)) {
-    const trimmedName = name?.trim();
-    const avatarLabel = isNonEmptyString(trimmedName) ? trimmedName : t`Avatar`;
     return (
       <Avatar
         src={src}
@@ -71,11 +70,7 @@ export const AvatarOrIcon = ({
         size="sm"
         shape={shape ?? undefined}
         onClick={onClick}
-        render={
-          isDefined(onClick) ? (
-            <button type="button" aria-label={avatarLabel} />
-          ) : undefined
-        }
+        render={getAvatarButtonRender({ name, onClick })}
       />
     );
   }
