@@ -5,7 +5,7 @@ import { createEventRef } from '@/cli/utilities/build/common/front-component-bui
 export const replaceJsxEventRefUserRef = (
   jsxEventRef: EventRef,
   userRef: UserRef,
-) => {
+): EventRef => {
   const lastUserRefReplacement = jsxEventRef._lastUserRefReplacement;
   const canReuseLastUserRefReplacement =
     lastUserRefReplacement !== undefined &&
