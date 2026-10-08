@@ -38,7 +38,7 @@ export const BillingLink = () => (
 );
 ```
 
-For client-side routing, pass the resolved destination as `href` and your router link through `render`. Keep route state and history options on the router link. Custom wrappers must forward props and the ref to the anchor. Disabled links retain their link role and block activation.
+For client-side routing, set `nativeButton={false}` and `role="link"`, pass the resolved destination as `href`, and supply your router link through `render`. Keep route state and history options on the router link. Custom wrappers must forward props and the ref to the anchor. Disabled links retain their link role and block activation.
 
 ## Actions
 
