@@ -221,6 +221,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Show Name' }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
+    expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledTimes(1);
     expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledWith([
       { widgetId: 'widget-field-domain', isActive: false },
       { widgetId: 'widget-field-nickname', isActive: true },
@@ -262,6 +263,22 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
 
     expect(goBackFromSidePanel).toHaveBeenCalledTimes(1);
     expect(getNavigationStackPageIds()).toEqual([CREATION_FORM_PAGE_ID]);
+  });
+
+  it('ignores visibility toggles while a save is running', async () => {
+    const user = userEvent.setup();
+
+    updatePageLayoutWidgetsIsActive.mockReturnValue(new Promise(() => {}));
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Hide Domain' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(screen.getByRole('button', { name: 'Show Nickname' }));
+
+    expect(
+      screen.getByRole('button', { name: 'Show Nickname' }),
+    ).toBeInTheDocument();
   });
 
   it('stays on the page when saving fails', async () => {

@@ -82,6 +82,10 @@ const SidePanelRecordCreationFormSettings = ({
     recordFormField.isVisible;
 
   const handleToggleVisibility = (recordFormField: RecordFormField) => {
+    if (isSaving) {
+      return;
+    }
+
     setIsVisibleByFieldMetadataId((previousIsVisibleByFieldMetadataId) => ({
       ...previousIsVisibleByFieldMetadataId,
       [recordFormField.fieldMetadataItem.id]:
