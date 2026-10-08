@@ -39,6 +39,9 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       href: { type: 'string', optional: true },
       target: { type: 'string', optional: true },
       rel: { type: 'string', optional: true },
+      download: { type: 'string', optional: true },
+      hrefLang: { type: 'string', optional: true },
+      referrerPolicy: { type: 'string', optional: true },
     },
   },
   {

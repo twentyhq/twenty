@@ -40,16 +40,12 @@ export class RecordDetails {
 
   async createRelatedNote() {
     await this.addShowPageButton.click();
-    await this.page
-      .locator('//div[@data-testid="tooltip" and contains(., "Note")]')
-      .click();
+    await this.page.getByText('Note', { exact: true }).click();
   }
 
   async createRelatedTask() {
     await this.addShowPageButton.click();
-    await this.page
-      .locator('//div[@data-testid="tooltip" and contains(., "Task")]')
-      .click();
+    await this.page.getByText('Task', { exact: true }).click();
   }
 
   async clickMoreOptionsButton() {
@@ -90,22 +86,19 @@ export class RecordDetails {
 
   async clickField(name: string) {
     await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${name}']/../../../div[last()]/div/div`,
-      )
+      .getByText(name, { exact: true })
+      .locator('xpath=../../../div[last()]/div/div')
       .click();
   }
 
   async clickFieldWithButton(name: string) {
     await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${name}']/../../../div[last()]/div/div`,
-      )
+      .getByText(name, { exact: true })
+      .locator('xpath=../../../div[last()]/div/div')
       .hover();
     await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${name}']/../../../div[last()]/div/div[last()]/div/button`,
-      )
+      .getByText(name, { exact: true })
+      .locator('xpath=../../../div[last()]/div/div[last()]/div/button')
       .click();
   }
 
@@ -133,9 +126,7 @@ export class RecordDetails {
   }
 
   async selectRelationRecord(name: string) {
-    await this.page
-      .locator(`//div[@data-testid="tooltip" and contains(., "${name}")]`)
-      .click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async searchRelationRecord(name: string) {
@@ -143,8 +134,6 @@ export class RecordDetails {
   }
 
   async createNewRelationRecord() {
-    await this.page
-      .locator('//div[@data-testid="tooltip" and contains(., "Add New")]')
-      .click();
+    await this.page.getByText('Add New', { exact: true }).click();
   }
 }

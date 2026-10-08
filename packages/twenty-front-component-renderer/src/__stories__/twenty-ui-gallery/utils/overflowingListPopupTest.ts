@@ -126,7 +126,10 @@ const expectAddedTargetAppearsInTargetsPopup = async ({
   await expect(within(updatedTargetsPopup).getAllByRole('button')).toHaveLength(
     5,
   );
-  await userEvent.keyboard('{Escape}');
+  await expectEscapeClosesPopupAndRestoresTriggerFocus({
+    popup: updatedTargetsPopup,
+    trigger: targetsTrigger,
+  });
 };
 
 const openReviewersPopupWhileTargetsPopupStaysClosed = async ({

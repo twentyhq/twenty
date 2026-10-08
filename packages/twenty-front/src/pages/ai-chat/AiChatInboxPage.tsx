@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useId, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -34,6 +34,8 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
@@ -131,8 +133,14 @@ const AiChatInboxPageContent = () => {
   const isListShown = isSplitView || !isDefined(selectedThreadId);
   const isSelectionPaneShown = isSplitView && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
+  // Split view always has a chat beside the list
+  const firstThreadToOpen =
+    isSplitView && !isDefined(selectedThreadId) ? threads.at(0) : undefined;
   const isEmptyPaneShown =
-    isSplitView && !isDefined(selectedThreadId) && !isSelectionShown;
+    isSplitView &&
+    !isDefined(selectedThreadId) &&
+    !isSelectionShown &&
+    !isDefined(firstThreadToOpen);
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
@@ -143,8 +151,15 @@ const AiChatInboxPageContent = () => {
       <AiChatInboxSelectionEffect
         selectedThreadId={selectedThreadId}
         threads={threads}
-        shouldSelectFirstThread={isSplitView}
       />
+      {isDefined(firstThreadToOpen) && (
+        <Navigate
+          to={getAppPath(AppPath.AiChatInbox, {
+            threadId: firstThreadToOpen.id,
+          })}
+          replace
+        />
+      )}
       {/* The selection takes the place of the chat on screen, so the command
       menu acts on it */}
       {isSelectionShown && !isThreadShown && (
@@ -250,6 +265,19 @@ const AiChatInboxPageContent = () => {
 export const AiChatInboxPage = () => {
   // A new instance per visit, so a selection does not outlive the inbox
   const recordSelectionInstanceId = useId();
+  const { threadId } = useParams();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+
+  if (!isAiChatInboxEnabled) {
+    return (
+      <Navigate
+        to={getAppPath(AppPath.AiChat, { threadId: threadId ?? null })}
+        replace
+      />
+    );
+  }
 
   return (
     <RecordSelectionComponentInstanceContext.Provider

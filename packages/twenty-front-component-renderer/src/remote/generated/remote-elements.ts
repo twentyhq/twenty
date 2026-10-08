@@ -15,6 +15,7 @@ export type HtmlCommonProperties = {
   style?: string;
   title?: string;
   tabIndex?: number;
+  hidden?: boolean;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean;
@@ -138,6 +139,7 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
   style: { type: String },
   title: { type: String },
   tabIndex: { type: Number },
+  hidden: { type: Boolean },
   role: { type: String },
   'aria-label': { type: String },
   'aria-hidden': { type: Boolean },
@@ -391,6 +393,9 @@ export type HtmlAProperties = HtmlCommonProperties & {
   href?: string;
   target?: string;
   rel?: string;
+  download?: string;
+  hrefLang?: string;
+  referrerPolicy?: string;
 };
 
 export const HtmlAElement = createRemoteElement<
@@ -404,6 +409,9 @@ export const HtmlAElement = createRemoteElement<
     href: { type: String },
     target: { type: String },
     rel: { type: String },
+    download: { type: String },
+    hrefLang: { type: String },
+    referrerPolicy: { type: String },
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,

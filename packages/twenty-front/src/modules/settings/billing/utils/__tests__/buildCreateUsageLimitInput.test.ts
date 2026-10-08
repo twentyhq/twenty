@@ -67,8 +67,14 @@ describe('buildCreateUsageLimitInput', () => {
     ).toBe(2);
   });
 
-  it('rejects an amount that is not a positive number', () => {
-    for (const limitValue of ['', 'abc', '-5', '0', '1e30']) {
+  it('accepts a zero amount to block the usage entirely', () => {
+    expect(
+      buildCreateUsageLimitInput(buildValues({ limitValue: '0' }))?.limitValue,
+    ).toBe(0);
+  });
+
+  it('rejects an amount that is not a positive number or zero', () => {
+    for (const limitValue of ['', ' ', 'abc', '-5', '1e30']) {
       expect(
         buildCreateUsageLimitInput(buildValues({ limitValue })),
       ).toBeNull();

@@ -39,7 +39,7 @@ Prefer the app CLI for new entities when interactive prompts are acceptable:
 yarn twenty dev:add
 ```
 
-For non-interactive agent work, direct file creation is often better. Use generated CLI templates, local SDK typings, or existing app files as the source of truth for imports and config shape.
+Check first for the standalone `twenty` CLI (`command -v twenty`): `twenty app add ... --no-input` works without a terminal, and for objects the `--create-view --create-navigation-menu-item --create-page-layout` flags add the UI definitions. Rule 3 of the operating rules gives the full order of options.
 
 Use official Twenty docs or local SDK source when exact imports, entity fields, or configuration shapes matter.
 

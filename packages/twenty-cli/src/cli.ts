@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runCli } from '@/run-cli';
+import { startCli } from '@/start-cli';
 
 const exitWhenStdoutCloses = (error: NodeJS.ErrnoException) => {
   if (error.code !== 'EPIPE') {
@@ -11,4 +11,8 @@ const exitWhenStdoutCloses = (error: NodeJS.ErrnoException) => {
 
 process.stdout.on('error', exitWhenStdoutCloses);
 
-void runCli(process.argv.slice(2));
+void startCli({
+  args: process.argv.slice(2),
+  nodeVersion: process.versions.node,
+  loadCli: () => import('@/run-cli'),
+});

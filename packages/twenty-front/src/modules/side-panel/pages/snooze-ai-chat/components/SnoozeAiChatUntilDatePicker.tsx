@@ -6,10 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,7 +30,8 @@ export const SnoozeAiChatUntilDatePicker = ({
   onSnoozed,
 }: SnoozeAiChatUntilDatePickerProps) => {
   const { t } = useLingui();
-  const { snoozeAgentChatThreads } = useAgentChatThreadParticipants();
+  const { updateAgentChatThreadInboxState } =
+    useUpdateAgentChatThreadInboxState();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { userTimezone } = useUserTimezone();
   const dateTimePickerInstanceId = useId();
@@ -67,7 +69,11 @@ export const SnoozeAiChatUntilDatePicker = ({
     }
 
     onSnoozed();
-    void snoozeAgentChatThreads({ threadIds, snoozedUntil: snoozedUntilDate });
+    void updateAgentChatThreadInboxState({
+      threadIds,
+      action: AgentChatInboxAction.SNOOZE,
+      snoozedUntil: snoozedUntilDate,
+    });
   };
 
   return (

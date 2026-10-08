@@ -25,6 +25,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
@@ -41,6 +42,10 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
+import {
+  RECORDS_PER_GROUP_LIMIT,
+  RELATIONS_PER_RECORD_LIMIT,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -462,5 +467,38 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       ? groupByQueryComplexity +
           selectedFieldsComplexity * getGroupLimit(args.limit)
       : groupByQueryComplexity;
+  }
+
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonExtendedInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    const aggregateCount = Object.keys(selectedFieldsResult.aggregate).filter(
+      (aggregateName) =>
+        !isDefined(selectedFieldsResult.relations[aggregateName]),
+    ).length;
+
+    const recordFieldCount = args.includeRecords
+      ? RECORDS_PER_GROUP_LIMIT *
+        computeMaxFieldCountPerRecord({
+          selectedFieldsResult,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          recordLimitPerOneToManyRelation: RELATIONS_PER_RECORD_LIMIT,
+        })
+      : 0;
+
+    return (
+      getGroupLimit(args.limit) *
+      (args.groupBy.length + aggregateCount + recordFieldCount)
+    );
   }
 }

@@ -53,8 +53,8 @@ export const InformationBannerNoMoreCredits = () => {
     <>
       <InformationBanner
         componentInstanceId={COMPONENT_INSTANCE_ID}
-        color="danger"
-        variant="secondary"
+        status="error"
+        variant="soft"
         message={
           hasPermissionToUpdateCreditPlan
             ? t`Credit limit reached. Update your credit plan to keep workflows, AI, and apps running.`
