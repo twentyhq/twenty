@@ -183,6 +183,10 @@ add_header X-Accel-Buffering no always;
 }
 ```
 
+#### AI chat fails as soon as a conversation contains an image or a PDF, with "URL with IP address ... is not allowed" in the worker logs
+
+Attachments are sent to the model as links built from `SERVER_URL`, so `SERVER_URL` must be a public address that both the AI provider and the worker can reach. A `localhost` or private network `SERVER_URL` only works for text. See [AI File Attachments](/developers/self-host/capabilities/setup#ai-file-attachments).
+
 ### 1-click Docker Compose
 
 #### Unable to Log In
