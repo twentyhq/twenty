@@ -2943,7 +2943,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -4719,7 +4719,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -5581,7 +5581,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
@@ -6440,7 +6440,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
     },
     "traits": {
       "properties": {
-        "in": {
+        "containsAny": {
           "description": "Contains any of these values",
           "items": {
             "enum": [
