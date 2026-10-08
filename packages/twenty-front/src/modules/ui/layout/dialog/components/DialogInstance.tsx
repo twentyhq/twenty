@@ -18,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type DialogInstanceProps = {
   dialogId: string;
-  children: (popupProps: DialogPopupProps) => ReactNode;
+  children: (popupProps: Pick<DialogPopupProps, 'onKeyDown'>) => ReactNode;
   onEnter?: () => void;
   onClose?: () => void;
   dismissible?: boolean;
@@ -54,7 +54,7 @@ export const DialogInstance = ({
   const { openDialog, closeDialog } = useDialog();
   const position = isInContainer ? 'absolute' : 'fixed';
 
-  const popupProps: DialogPopupProps = {
+  const popupProps: Pick<DialogPopupProps, 'onKeyDown'> = {
     onKeyDown: (event) => {
       const isNestedFocus = store.get(currentFocusIdSelector.atom) !== dialogId;
       if (
