@@ -40,15 +40,7 @@ export const Default: Story = {
     title: 'This form will appear in workflow runs.',
     description:
       'Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.',
-    action: (
-      <Button
-        size="sm"
-        variant="ghost"
-        style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-      >
-        Learn more
-      </Button>
-    ),
+    action: <Callout.Action>Learn more</Callout.Action>,
   },
 };
 
@@ -57,15 +49,7 @@ export const FullWidth: Story = {
     status: 'error',
     title: 'Your Postcard provider key was revoked.',
     fullWidth: true,
-    action: (
-      <Button
-        size="sm"
-        variant="ghost"
-        style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-      >
-        Reconnect
-      </Button>
-    ),
+    action: <Callout.Action>Reconnect</Callout.Action>,
   },
 };
 
@@ -136,11 +120,7 @@ export const DismissalRequest: Story = {
         aria-label="Import warning"
       />
     ),
-    action: (
-      <Button size="sm" variant="ghost" onClick={onAction}>
-        Review import
-      </Button>
-    ),
+    action: <Callout.Action onClick={onAction}>Review import</Callout.Action>,
     onDismiss,
     closeLabel: 'Dismiss import notice',
   },
@@ -165,9 +145,12 @@ export const DismissalRequest: Story = {
     await expect(onDismiss).toHaveBeenCalledTimes(3);
     await expect(canvas.getByText('Import needs review')).toBeVisible();
     await expect(onSubmit).not.toHaveBeenCalled();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Review import' }),
-    );
+    const action = canvas.getByRole('button', { name: 'Review import' });
+    const regularFontWeight = getComputedStyle(action)
+      .getPropertyValue('--t-font-weight-regular')
+      .trim();
+    await expect(action).toHaveStyle({ fontWeight: regularFontWeight });
+    await userEvent.click(action);
     await expect(onAction).toHaveBeenCalledTimes(1);
     await expect(onDismiss).toHaveBeenCalledTimes(3);
   },

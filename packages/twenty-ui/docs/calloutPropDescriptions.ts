@@ -12,7 +12,8 @@ export const CALLOUT_PROP_DESCRIPTIONS = {
   description: 'Optional supporting content node. Empty slots are hidden.',
   fullWidth: 'Removes the default 512px maximum width.',
   icon: 'Leading icon node. Defaults to a decorative help icon. Pass null to omit it.',
-  action: 'Optional footer node, such as a Button, link, or group of actions.',
+  action:
+    'Optional footer node. Use Callout.Action for the standard action or supply custom controls.',
   closeLabel: 'Accessible name of the dismiss button. Defaults to `Close`.',
   onDismiss:
     'Shows a dismiss button and notifies the caller once per activation. The caller owns visibility.',

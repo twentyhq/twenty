@@ -32,13 +32,11 @@ export const CalloutGalleryExample = () => {
         }
         action={
           <>
-            <Button
-              size="sm"
-              variant="ghost"
+            <Callout.Action
               onClick={() => setRetryAttempts((count) => count + 1)}
             >
               Retry callout
-            </Button>
+            </Callout.Action>
             <Button disabled>Unavailable action</Button>
           </>
         }

@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="action" type="ReactNode">
-  Optional footer node, such as a Button, link, or group of actions.
+  Optional footer node. Use Callout.Action for the standard action or supply custom controls.
 </ParamField>
 
 <ParamField body="className" type="string">
@@ -23,7 +23,7 @@
   Accessible name of the dismiss button. Defaults to `Close`.
 </ParamField>
 
-<ParamField body="color" type="&quot;blue&quot; | &quot;gray&quot; | &quot;green&quot; | &quot;orange&quot; | &quot;red&quot;" default="FEEDBACK_STATUS_COLORS[status]">
+<ParamField body="color" type="&quot;blue&quot; | &quot;gray&quot; | &quot;green&quot; | &quot;orange&quot; | &quot;red&quot;" default="status palette">
   Palette override: gray, blue, green, orange, or red. Defaults to the status palette.
 </ParamField>
 
@@ -35,7 +35,7 @@
   Removes the default 512px maximum width.
 </ParamField>
 
-<ParamField body="icon" type="ReactNode" default="&lt;IconHelp size={themeCssVariables.icon.size.md} aria-hidden=&quot;true&quot; /&gt;">
+<ParamField body="icon" type="ReactNode" default="decorative help icon">
   Leading icon node. Defaults to a decorative help icon. Pass null to omit it.
 </ParamField>
 
@@ -65,4 +65,64 @@
 
 <ParamField body="variant" type="&quot;soft&quot;" default="soft">
   Supported appearance: soft.
+</ParamField>
+
+### Callout.Action
+
+<ParamField body="Action.className" type="string | ((state: ButtonState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Action.color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;">
+  Semantic color of the button.
+</ParamField>
+
+<ParamField body="Action.elevated" type="boolean">
+  Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.
+</ParamField>
+
+<ParamField body="Action.endIcon" type="ReactNode">
+  Decorative content displayed after the label.
+</ParamField>
+
+<ParamField body="Action.focusableWhenDisabled" type="boolean" default="false">
+  Whether the button should be focusable when disabled.
+</ParamField>
+
+<ParamField body="Action.fullWidth" type="boolean">
+  Expands the button to fill its container width.
+</ParamField>
+
+<ParamField body="Action.href" type="string">
+  Destination URL. Enables native link semantics instead of button semantics.
+</ParamField>
+
+<ParamField body="Action.loading" type="boolean">
+  Shows a loading indicator and disables activation.
+</ParamField>
+
+<ParamField body="Action.loadingPosition" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;">
+  Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner.
+</ParamField>
+
+<ParamField body="Action.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
+  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
+</ParamField>
+
+<ParamField body="Action.shortcut" type="ShortcutDefinition">
+  Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens.
+</ParamField>
+
+<ParamField body="Action.shortcutJoinLabel" type="string">
+  Localized text between sequence steps. Defaults to then.
+</ParamField>
+
+<ParamField body="Action.startIcon" type="ReactNode">
+  Decorative content displayed before the label.
+</ParamField>
+
+<ParamField body="Action.style" type="CSSProperties | ((state: ButtonState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>

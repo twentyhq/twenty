@@ -8,6 +8,7 @@
  */
 
 export { Callout } from './Callout/Callout';
+export type { CalloutActionProps } from './Callout/types/CalloutActionProps';
 export type { CalloutColor } from './Callout/types/CalloutColor';
 export type { CalloutProps } from './Callout/types/CalloutProps';
 export type { CalloutState } from './Callout/types/CalloutState';

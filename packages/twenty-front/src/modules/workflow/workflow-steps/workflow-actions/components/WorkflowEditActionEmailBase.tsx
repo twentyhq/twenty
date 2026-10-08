@@ -264,13 +264,10 @@ export const WorkflowEditActionEmailBase = ({
                 }
                 action={
                   hasConnectedAccountsPermission ? (
-                    <Button
+                    <Callout.Action
                       type="button"
-                      size="sm"
-                      variant="ghost"
-                      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
                       onClick={handleReauthorize}
-                    >{t`Reauthorize`}</Button>
+                    >{t`Reauthorize`}</Callout.Action>
                   ) : undefined
                 }
               />

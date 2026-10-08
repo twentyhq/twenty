@@ -26,9 +26,9 @@ export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
           description="Review the missing email addresses before importing."
           icon={<IconAlertTriangle size={16} aria-hidden="true" />}
           action={
-            <Button size="sm" variant="ghost" onClick={onReview}>
+            <Callout.Action onClick={onReview}>
               Review records
-            </Button>
+            </Callout.Action>
           }
           onDismiss={() => setIsVisible(false)}
           closeLabel="Dismiss import notice"
@@ -44,7 +44,7 @@ export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
 
 Passing `onDismiss` exposes an accessible close button. Each pointer or keyboard activation calls it once. The callout remains rendered until its caller hides it. Omit `onDismiss` for a persistent message. `closeLabel` defaults to `Close`.
 
-Your application owns the content, actions, accessible names, and translations. Actions can be buttons, links, disabled controls, or multiple nodes. The default help icon is decorative; pass `icon={null}` to omit it or supply a node with appropriate accessible semantics. Twenty UI does not require an i18n provider.
+Your application owns the content, actions, accessible names, and translations. Use `Callout.Action` for a small ghost button with regular font weight. It accepts Button props, including link attributes, disabled state, refs, and custom rendering; size and appearance are fixed. The action slot also accepts custom buttons, links, disabled controls, or multiple nodes. The default help icon is decorative; pass `icon={null}` to omit it or supply a node with appropriate accessible semantics. Twenty UI does not require an i18n provider.
 
 ## Native integration
 
@@ -54,7 +54,7 @@ The component adds no live-region role or announcements. Supply native `role`, `
 
 ## Migration
 
-Replace the previous semantic `variant` with `status`, and constructor `Icon` with an `icon` node. Replace `{ label, onClick }` action objects with caller-supplied controls. Replace `isClosable` and `onClose` with `onDismiss`, and conditionally render the callout in the caller when dismissal should hide it. Existing translated content and action labels stay in the application.
+Replace the previous semantic `variant` with `status`, and constructor `Icon` with an `icon` node. Replace `{ label, onClick }` action objects with `Callout.Action` or custom controls. Replace `isClosable` and `onClose` with `onDismiss`, and conditionally render the callout in the caller when dismissal should hide it. Existing translated content and action labels stay in the application.
 
 <StoryEmbed
   storyId="ui-feedback-callout--default"

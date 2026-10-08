@@ -66,6 +66,7 @@
       "useToast": "components/feedback/Toast/hooks/useToast"
     },
     "types": {
+      "CalloutActionProps": "components/feedback/Callout/types/CalloutActionProps",
       "CalloutColor": "components/feedback/Callout/types/CalloutColor",
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
       "CalloutState": "components/feedback/Callout/types/CalloutState",

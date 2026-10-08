@@ -25,7 +25,6 @@ import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconAlertTriangle,
@@ -278,11 +277,8 @@ export const WorkflowEditActionFormBuilder = ({
               closeLabel={t`Close`}
               onDismiss={() => setIsCalloutVisible(false)}
               action={
-                <Button
+                <Callout.Action
                   type="button"
-                  size="sm"
-                  variant="ghost"
-                  style={{ fontWeight: 'var(--t-font-weight-regular)' }}
                   onClick={() =>
                     window.open(
                       'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
@@ -290,7 +286,7 @@ export const WorkflowEditActionFormBuilder = ({
                       'noopener,noreferrer',
                     )
                   }
-                >{t`Learn more`}</Button>
+                >{t`Learn more`}</Callout.Action>
               }
             />
           </StyledCalloutContainer>

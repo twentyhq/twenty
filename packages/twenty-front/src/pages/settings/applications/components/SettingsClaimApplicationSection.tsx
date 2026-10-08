@@ -231,11 +231,8 @@ export const SettingsClaimApplicationSection = () => {
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}
             action={
-              <Button
+              <Callout.Action
                 type="button"
-                size="sm"
-                variant="ghost"
-                style={{ fontWeight: 'var(--t-font-weight-regular)' }}
                 onClick={() =>
                   window.open(
                     getDocumentationUrl({
@@ -245,7 +242,7 @@ export const SettingsClaimApplicationSection = () => {
                     '_blank',
                   )
                 }
-              >{t`Read documentation`}</Button>
+              >{t`Read documentation`}</Callout.Action>
             }
             closeLabel={t`Close`}
             onDismiss={dismissClaimError}

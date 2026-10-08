@@ -23,7 +23,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { Button, Switch } from 'twenty-ui/primitives/input';
+import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
@@ -313,13 +313,10 @@ export const CalendarEventComposerFields = ({
               }
               action={
                 isDefined(onAddAccount) ? (
-                  <Button
+                  <Callout.Action
                     type="button"
-                    size="sm"
-                    variant="ghost"
-                    style={{ fontWeight: 'var(--t-font-weight-regular)' }}
                     onClick={onAddAccount}
-                  >{t`Add account`}</Button>
+                  >{t`Add account`}</Callout.Action>
                 ) : undefined
               }
             />
@@ -335,13 +332,10 @@ export const CalendarEventComposerFields = ({
               }
               action={
                 isDefined(onReauthorize) ? (
-                  <Button
+                  <Callout.Action
                     type="button"
-                    size="sm"
-                    variant="ghost"
-                    style={{ fontWeight: 'var(--t-font-weight-regular)' }}
                     onClick={onReauthorize}
-                  >{t`Reconnect`}</Button>
+                  >{t`Reconnect`}</Callout.Action>
                 ) : undefined
               }
             />

@@ -39,7 +39,12 @@ export const calloutTest: TwentyUiGalleryPlayFunction = async (context) => {
     expect(canvas.getByText('Dismiss requests: 3')).toBeVisible(),
   );
   expect(canvas.getByText('Import needs review')).toBeVisible();
-  await userEvent.click(canvas.getByRole('button', { name: 'Retry callout' }));
+  const action = canvas.getByRole('button', { name: 'Retry callout' });
+  const regularFontWeight = getComputedStyle(action)
+    .getPropertyValue('--t-font-weight-regular')
+    .trim();
+  expect(action).toHaveStyle({ fontWeight: regularFontWeight });
+  await userEvent.click(action);
   await waitFor(() =>
     expect(canvas.getByText('Retry attempts: 1')).toBeVisible(),
   );
