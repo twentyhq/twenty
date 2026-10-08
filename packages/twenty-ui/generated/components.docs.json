@@ -9068,32 +9068,32 @@
         "description": "Stable value used to choose fallback colors. Defaults to `name`."
       },
       {
-        "name": "disabled",
-        "type": "boolean",
+        "name": "fallbackProps",
+        "type": "AvatarFallbackProps",
         "required": false,
-        "defaultValue": "false",
-        "description": "Applies disabled styling and disables activation when `onClick` is supplied."
+        "defaultValue": null,
+        "description": "Complete `Avatar.Fallback` props, including caller-owned children, labeling, refs, `render`, and fallback `delay` in milliseconds."
       },
       {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Icon rendered instead of the image and first-letter fallback."
+        "description": "Decorative icon rendered instead of the image and first-letter fallback. Give the root an accessible label when the icon conveys information."
+      },
+      {
+        "name": "imageProps",
+        "type": "AvatarImageProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Complete `Avatar.Image` props, including native image attributes, refs, `render`, `keepMounted`, and `onLoadingStatusChange`. Alternative text defaults to an empty string. Supply a nonempty `alt` to label the image and default fallback."
       },
       {
         "name": "name",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Name used for the first-letter fallback and the default accessible name when clickable."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Set to `false` when a clickable avatar uses `render` with an element other than a native button."
+        "description": "Name used for the first-letter fallback and fallback colors. Does not add an accessible label."
       },
       {
         "name": "pulsing",
@@ -9107,7 +9107,7 @@
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
       },
       {
         "name": "ring",
@@ -9135,7 +9135,7 @@
         "type": "string | null",
         "required": false,
         "defaultValue": null,
-        "description": "Image URL. A missing or failed image shows the fallback."
+        "description": "Image URL. A missing or failed image shows the fallback. `imageProps.src` overrides this value."
       },
       {
         "name": "style",
@@ -9150,6 +9150,240 @@
         "required": false,
         "defaultValue": "soft",
         "description": "Visual treatment of the fallback."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "backgroundColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Background color override for a first-letter fallback."
+          },
+          {
+            "name": "borderColor",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Border color override for the outline fallback."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned Image, Fallback, and other content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text color override for a first-letter fallback."
+          },
+          {
+            "name": "colorSeed",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable value used to choose fallback colors. Defaults to `name`."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Name used to choose fallback colors. Does not add children or accessible labels."
+          },
+          {
+            "name": "pulsing",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Animates the avatar opacity. Respects reduced-motion preferences."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Defaults to a presentational span. Compose a native button or link explicitly for interaction, and put its click handler and disabled state on that owner."
+          },
+          {
+            "name": "ring",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
+          },
+          {
+            "name": "shape",
+            "type": "\"circle\" | \"rounded-square\" | \"square\"",
+            "required": false,
+            "defaultValue": "square",
+            "description": "Shape of the avatar and its fallback."
+          },
+          {
+            "name": "size",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "variant",
+            "type": "\"outline\" | \"soft\"",
+            "required": false,
+            "defaultValue": "soft",
+            "description": "Visual treatment of the fallback."
+          }
+        ]
+      },
+      {
+        "name": "Image",
+        "props": [
+          {
+            "name": "alt",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned alternative text. Use an empty string for decorative images."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarImageState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "crossOrigin",
+            "type": "\"\" | \"anonymous\" | \"use-credentials\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native image cross-origin policy, also used during preloading."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the image mounted and loads it in place. Loading and failed images stay hidden while Fallback is shown."
+          },
+          {
+            "name": "loading",
+            "type": "\"eager\" | \"lazy\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native eager or lazy loading. Use keepMounted for lazy loading."
+          },
+          {
+            "name": "onLoadingStatusChange",
+            "type": "((status: ImageLoadingStatus) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when Base UI reports a loading, loaded, or error status. Shares that state with Root and Fallback."
+          },
+          {
+            "name": "referrerPolicy",
+            "type": "\"\" | \"no-referrer-when-downgrade\" | \"no-referrer\" | \"origin-when-cross-origin\" | \"origin\" | \"same-origin\" | \"strict-origin-when-cross-origin\" | \"strict-origin\" | \"unsafe-url\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native image referrer policy, also used during preloading."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, AvatarImageState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the image. Preserve a native image and forward the supplied attributes, events, and ref."
+          },
+          {
+            "name": "sizes",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native responsive image sizes used with srcSet."
+          },
+          {
+            "name": "src",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Image URL. Image renders after a successful load unless keepMounted is enabled."
+          },
+          {
+            "name": "srcSet",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native responsive image source candidates."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarImageState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Fallback",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned fallback content, such as initials or an icon."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: AvatarFallbackState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Milliseconds before the initial fallback is shown. Defaults to 0."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, AvatarFallbackState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the fallback span. Forward the supplied props and ref, and provide its accessible label or decorative attributes."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: AvatarFallbackState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },

@@ -728,7 +728,14 @@
       "Tag": "primitives/data-display/Tag/Tag"
     },
     "types": {
+      "AvatarFallbackProps": "primitives/data-display/Avatar/types/AvatarFallbackProps",
+      "AvatarFallbackState": "primitives/data-display/Avatar/types/AvatarFallbackState",
+      "AvatarImageLoadingStatus": "primitives/data-display/Avatar/types/AvatarImageLoadingStatus",
+      "AvatarImageProps": "primitives/data-display/Avatar/types/AvatarImageProps",
+      "AvatarImageState": "primitives/data-display/Avatar/types/AvatarImageState",
       "AvatarProps": "primitives/data-display/Avatar/types/AvatarProps",
+      "AvatarRootProps": "primitives/data-display/Avatar/types/AvatarRootProps",
+      "AvatarRootState": "primitives/data-display/Avatar/types/AvatarRootState",
       "AvatarShape": "primitives/data-display/Avatar/types/AvatarShape",
       "AvatarSize": "primitives/data-display/Avatar/types/AvatarSize",
       "ChipProps": "primitives/data-display/Chip/types/ChipProps",

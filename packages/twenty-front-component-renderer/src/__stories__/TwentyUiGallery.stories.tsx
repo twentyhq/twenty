@@ -38,7 +38,6 @@ import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gall
 import {
   statusControlsTest,
   tagControlsTest,
-  avatarControlsTest,
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
@@ -66,6 +65,7 @@ import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRan
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
+import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
 import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
 import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
 

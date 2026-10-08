@@ -82,6 +82,7 @@ export const WorkspaceMemberAvatarStack = ({
             <Avatar
               src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
               name={displayName}
+              imageProps={{ alt: displayName }}
               colorSeed={workspaceMember.id}
               size="md"
               shape="circle"

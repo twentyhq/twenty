@@ -25,13 +25,13 @@ export const TeamAvatars = () => (
       'Katherine',
       'Joan',
     ].map((name) => (
-      <Avatar key={name} name={name} />
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
     ))}
   />
 );
 ```
 
-Supply stable keys to keep surviving avatars mounted when the limit, total, or display order changes. Keep the member names available in surrounding content.
+Supply stable keys to keep surviving avatars mounted when the limit, total, or display order changes. Avatars are decorative by default. When the group is the only representation of its members, supply each member's name through `imageProps.alt` to label the image and default fallback. Keep avatars decorative when visible text or an owner label already supplies that identity.
 
 <StoryEmbed
   storyId="ui-data-display-avatargroup--with-derived-overflow"
@@ -52,7 +52,7 @@ export const LoadedTeamAvatars = () => (
     maxVisible={3}
     total={20}
     avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
-      <Avatar key={name} name={name} />
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
     ))}
   />
 );
@@ -88,7 +88,7 @@ export const TeamAvatarsWithAction = ({
     maxVisible={3}
     total={20}
     avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
-      <Avatar key={name} name={name} />
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
     ))}
     renderOverflow={(hiddenCount) => (
       <Button
@@ -135,7 +135,7 @@ export const NamedTeamAvatars = () => {
       style={{ marginBlock: 8 }}
       render={<div data-location="project-header" />}
       avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
-        <Avatar key={name} name={name} />
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
       ))}
     />
   );

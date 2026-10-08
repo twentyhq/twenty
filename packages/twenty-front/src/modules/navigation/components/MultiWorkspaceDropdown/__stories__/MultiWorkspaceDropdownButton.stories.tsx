@@ -244,3 +244,31 @@ export const MobileBoundary: Story = {
     });
   },
 };
+
+const HIDDEN_WORKSPACE_LABEL_STORY: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Twenty' });
+
+    await expect(
+      within(trigger).getByRole('img', { name: 'Twenty' }),
+    ).toBeVisible();
+    await userEvent.click(trigger);
+    await expect(
+      await canvas.findByRole('menu', { name: 'Twenty' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const HiddenWorkspaceLabel: Story = {
+  ...HIDDEN_WORKSPACE_LABEL_STORY,
+  args: { shouldHideLabel: true },
+};
+
+export const CollapsedWorkspaceLabel: Story = {
+  ...HIDDEN_WORKSPACE_LABEL_STORY,
+  beforeEach: () => {
+    jotaiStore.set(isNavigationDrawerExpandedState.atom, false);
+  },
+};

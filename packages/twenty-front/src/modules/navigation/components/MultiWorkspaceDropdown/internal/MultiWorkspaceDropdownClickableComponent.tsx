@@ -27,6 +27,8 @@ export const MultiWorkspaceDropdownClickableComponent = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
+  const isWorkspaceLabelVisible =
+    !shouldHideLabel && isNavigationDrawerExpanded;
   return (
     <StyledContainer
       data-testid="workspace-dropdown"
@@ -34,6 +36,11 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       disabled={disabled}
     >
       <Avatar
+        imageProps={{
+          alt: isWorkspaceLabelVisible
+            ? ''
+            : (currentWorkspace?.displayName ?? ''),
+        }}
         name={currentWorkspace?.displayName || ''}
         colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
         src={getAbsoluteImageUrl(
@@ -42,7 +49,7 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       />
       {!shouldHideLabel && (
         <>
-          <StyledLabelWrapper>
+          <StyledLabelWrapper aria-hidden={!isWorkspaceLabelVisible}>
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
             </NavigationDrawerAnimatedCollapseWrapper>
