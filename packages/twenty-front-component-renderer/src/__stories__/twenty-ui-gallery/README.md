@@ -6,6 +6,13 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
+The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
+Textarea auto-resize growth and shrinking remain known renderer failures. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. The growth failure also reproduces with main's unchanged Textarea. The fixture pins them with the existing known-failure helper; these assertions do not count as resize acceptance. Standalone Textarea browser checks pass.
+
+Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
+
+Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -36,13 +43,12 @@ effect within the interaction timeout.
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                  |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                      |
 | `twenty-ui-popover`              | Popover                                                                                                                             |
-| `twenty-ui-dialog`               | Dialog                                                                                                                              |
+| `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                             |
 | `twenty-ui-menu`                 | Menu                                                                                                                                |
 | `twenty-ui-select`               | Select                                                                                                                              |
 | `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                     |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
 | `twenty-ui-toast`                | Toast                                                                                                                               |
-| `twenty-ui-alert-dialog`         | AlertDialog                                                                                                                         |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
 | `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
@@ -81,7 +87,13 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
+## Dialog policy
+
+Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popover activation are prohibited in front components. Their standalone Twenty UI APIs have dedicated unit and browser stories. Front components use SDK `openCommandConfirmationModal`, whose structured title, subtitle and confirm-button options are rendered by the host. The Dialog fixture checks the confirmation request. Result handling and actual host modal focus, restoration, dismissal and teardown acceptance remain part of the renderer integration work. No direct Dialog or AlertDialog gallery fixture is retained as a compatibility target.
+
 ## Known sandbox limitations
+
+An invisible popup is not a compatibility pass.
 
 These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. Scenarios pin the current behavior exactly: a
@@ -91,12 +103,12 @@ must change the corresponding story to assert successful behavior; do not keep
 or broaden an obsolete expectation. No stories are skipped or marked as
 expected-to-fail by the runner.
 
-| Component | Current limitation |
-| --- | --- |
-| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet. |
-| Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
-| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ImageInput                                                                                            | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
+| Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
+| Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
+| Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
@@ -108,10 +120,11 @@ attributes so React and Preact forward `true`/`false` instead of empty strings
 and remove the attribute when the prop is cleared. `getAttribute` and the
 selector engine read the remote properties React and Preact set, and the
 selector engine matches the sandbox's custom element tags by their HTML tag
-names and reads live control properties. `TooltipPreact` therefore covers hover
-opening and Escape dismissal. Pointer leave still needs
-`mousemove` delivery from outside the component for the safe polygon, and the
-compound tooltip's title and description are not covered yet.
+names and reads live control properties. `TooltipReact` and `TooltipPreact` cover
+hover opening, keyboard focus,
+Escape dismissal, compound title and description content, and typed detached
+handle payloads through the public Tooltip interface. Pointer leave still needs
+`mousemove` delivery from outside the component for the safe polygon.
 
 A page event crosses to the worker when the element it targets, or one of that
 element's ancestors in the component, listens for that event type. It crosses
@@ -170,3 +183,10 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```
+
+Section and CommandBlock composition is checked in the Typography and DataDisplay
+catalogs for React and Preact. The checks cover node titles/actions, heading
+levels, description line limits and optional focus, code semantics, native
+handlers, refs, and element/callback render composition. Description popup
+visibility and dismissal in the sandbox remain part of the existing portal and
+geometry acceptance work; standalone Section stories verify those behaviors.

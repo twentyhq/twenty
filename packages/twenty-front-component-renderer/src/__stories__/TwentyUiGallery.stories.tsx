@@ -50,7 +50,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { alertDialogTest } from '@/__stories__/twenty-ui-gallery/utils/alertDialogTest';
 import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
@@ -66,8 +65,8 @@ import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRan
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
-import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
-import { loaderTest } from '@/__stories__/twenty-ui-gallery/utils/loaderTest';
+import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
+import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -84,23 +83,23 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: colorSampleTest,
+  play: commandBlockTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: colorSampleTest,
+  play: commandBlockTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'react',
-  play: loaderTest,
+  play: calloutTest,
 });
 export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
-  play: loaderTest,
+  play: calloutTest,
 });
 
 export const ProgressReact: Story = createGalleryStory({
@@ -457,17 +456,6 @@ export const ToastCountdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-toast-countdown',
   runtime: 'preact',
   play: toastCountdownTest,
-});
-
-export const AlertDialogReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'react',
-  play: alertDialogTest,
-});
-export const AlertDialogPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-alert-dialog',
-  runtime: 'preact',
-  play: alertDialogTest,
 });
 
 export const SwitchReact: Story = createGalleryStory({

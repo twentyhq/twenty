@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';

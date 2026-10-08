@@ -7,8 +7,13 @@
  *                              |___/
  */
 
-export type { BannerColor, BannerVariant } from './Banner/Banner';
 export { Banner } from './Banner/Banner';
+export type { BannerActionProps } from './Banner/types/BannerActionProps';
+export type { BannerColor } from './Banner/types/BannerColor';
+export type { BannerProps } from './Banner/types/BannerProps';
+export type { BannerState } from './Banner/types/BannerState';
+export type { BannerStatus } from './Banner/types/BannerStatus';
+export type { BannerVariant } from './Banner/types/BannerVariant';
 export { Loader } from './Loader/Loader';
 export type { LoaderProps } from './Loader/types/LoaderProps';
 export { ProgressBar } from './ProgressBar/ProgressBar';

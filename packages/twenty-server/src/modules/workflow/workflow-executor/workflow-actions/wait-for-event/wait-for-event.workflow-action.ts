@@ -11,11 +11,11 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { computeWorkflowDurationInMs } from 'src/modules/workflow/workflow-executor/utils/compute-workflow-duration-in-ms.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { WAIT_FOR_EVENT_NAME_PATTERN } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/constants/wait-for-event-name-pattern.constant';
 import { isWorkflowWaitForEventAction } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/guards/is-workflow-wait-for-event-action.guard';
 import { type WorkflowWaitForEventActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/types/workflow-wait-for-event-action-input.type';
-import { computeWaitTimeoutInMs } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/utils/compute-wait-timeout-in-ms.util';
 
 @Injectable()
 export class WaitForEventWorkflowAction implements WorkflowAction {
@@ -59,7 +59,9 @@ export class WaitForEventWorkflowAction implements WorkflowAction {
       );
     }
 
-    const timeoutInMs = computeWaitTimeoutInMs(timeout);
+    const timeoutInMs = isDefined(timeout)
+      ? computeWorkflowDurationInMs(timeout)
+      : 0;
 
     return {
       wait: {
@@ -67,7 +69,7 @@ export class WaitForEventWorkflowAction implements WorkflowAction {
         eventName,
         ...(isNonEmptyString(recordId) ? { recordId } : {}),
         ...(isNonEmptyArray(updatedFields) ? { updatedFields } : {}),
-        ...(isDefined(timeoutInMs)
+        ...(timeoutInMs > 0
           ? { expiresAt: new Date(Date.now() + timeoutInMs).toISOString() }
           : {}),
       },

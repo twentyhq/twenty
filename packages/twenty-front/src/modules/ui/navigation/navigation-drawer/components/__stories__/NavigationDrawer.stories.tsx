@@ -37,6 +37,7 @@ import {
   IconUsers,
 } from 'twenty-ui/icon';
 
+import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
@@ -69,7 +70,8 @@ const meta: Meta<typeof NavigationDrawer> = {
     layout: 'fullscreen',
     msw: graphqlMocks,
   },
-  argTypes: { children: { control: false } },
+  args: { header: <NavigationDrawerHeader /> },
+  argTypes: { children: { control: false }, header: { control: false } },
 };
 
 export default meta;

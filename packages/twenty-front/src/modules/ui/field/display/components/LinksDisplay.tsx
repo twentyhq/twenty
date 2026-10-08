@@ -11,8 +11,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
-import { checkUrlType } from '~/utils/checkUrlType';
-import { isSocialLinkType } from '~/utils/isSocialLinkType';
+import { checkUrlType } from '@/ui/field/display/utils/checkUrlType';
+import { isSocialLinkType } from '@/ui/field/display/utils/isSocialLinkType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;

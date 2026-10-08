@@ -1,5 +1,4 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
@@ -7,7 +6,7 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
@@ -274,9 +273,8 @@ export const useRefreshAgentChatThreads = () => {
         addAgentChatThreadParticipants(page.participants);
 
         // The chat may have been selected before its record loaded, when usage couldn't be restored.
-        const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
-          instanceId: AGENT_CHAT_INSTANCE_ID,
-          familyKey: { threadId: thread.id },
+        const usageAtom = agentChatUsageFamilyState.atomFamily({
+          threadId: thread.id,
         });
 
         if (!isDefined(store.get(usageAtom))) {

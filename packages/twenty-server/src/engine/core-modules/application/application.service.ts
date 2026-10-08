@@ -1,9 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource, type QueryRunner, type Repository } from 'typeorm';
+import {
+  type DataSource,
+  IsNull,
+  Not,
+  type QueryRunner,
+  type Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
@@ -297,6 +304,81 @@ export class ApplicationService {
       .andWhere('application.deletedAt IS NULL')
       .andWhere('workspace.deletedAt IS NULL')
       .getCount();
+  }
+
+  async isUninstallBlockedByOtherWorkspaceInstallations({
+    applicationId,
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    applicationRegistrationId?: string | null;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (!isDefined(applicationRegistrationId)) {
+      return false;
+    }
+
+    const isOwnedByWorkspace =
+      await this.applicationRegistrationRepository.existsBy({
+        id: applicationRegistrationId,
+        ownerWorkspaceId: workspaceId,
+      });
+
+    if (!isOwnedByWorkspace) {
+      return false;
+    }
+
+    const hasServerRouteLogicFunction =
+      await this.logicFunctionRepository.exists(workspaceId, {
+        where: { applicationId, serverRouteTriggerSettings: Not(IsNull()) },
+      });
+
+    if (!hasServerRouteLogicFunction) {
+      return false;
+    }
+
+    return this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        {
+          applicationRegistrationId,
+        },
+      )
+      .andWhere('application.workspaceId != :workspaceId', { workspaceId })
+      .andWhere('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .getExists();
+  }
+
+  async assertUninstallIsNotBlockedByOtherWorkspaceInstallationsOrThrow({
+    application,
+    workspaceId,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'applicationRegistrationId'
+    >;
+    workspaceId: string;
+  }): Promise<void> {
+    const isUninstallBlocked =
+      await this.isUninstallBlockedByOtherWorkspaceInstallations({
+        applicationId: application.id,
+        applicationRegistrationId: application.applicationRegistrationId,
+        workspaceId,
+      });
+
+    if (isUninstallBlocked) {
+      throw new ApplicationException(
+        `Application ${application.universalIdentifier} exposes a server route and is installed in other workspaces, it cannot be uninstalled from its owner workspace ${workspaceId}`,
+        ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`,
+        },
+      );
+    }
   }
 
   // Number of workspaces each external (non-LOCAL) application is installed in,

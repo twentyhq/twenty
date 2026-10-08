@@ -46,7 +46,7 @@ const QUESTION = {
 // queued.
 describe('Sending an inbox message as an application', () => {
   const input = {
-    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
     threadKey: `inbox-thread-${uuidv4()}`,
     idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
@@ -237,6 +237,38 @@ describe('Sending an inbox message as an application', () => {
     expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
   });
 
+  it('adds the members a later send lists to the same conversation', async () => {
+    const response = await sendInboxMessage(applicationToken, {
+      workspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      ],
+      idempotencyKey: 'shared-with-tim',
+      text: 'Tim joins the conversation.',
+      toolCall: null,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
+    expect(
+      await global.testDataSource.query(
+        `SELECT "isSubscribed" FROM "${schema}"."agentChatThreadParticipant"
+         WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+        [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+      ),
+    ).toEqual([{ isSubscribed: true }]);
+  });
+
+  it('refuses a member who cannot have the conversation', async () => {
+    const response = await sendInboxMessage(applicationToken, {
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, uuidv4()],
+      idempotencyKey: 'shared-with-a-stranger',
+      toolCall: null,
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain('THREAD_NOT_FOUND');
+  });
+
   it('keeps a single waiting question when two are sent at once', async () => {
     const threadKey = `inbox-thread-${uuidv4()}`;
     const responses = await Promise.all(
@@ -319,7 +351,6 @@ describe('Sending an inbox message as an application', () => {
 
     const { threadId: failedThreadId } = buildInboxMessageIds({
       senderKey: `application:${application.id}`,
-      workspaceMemberId: input.workspaceMemberId,
       threadKey,
       idempotencyKey: input.idempotencyKey,
     });
@@ -414,7 +445,7 @@ describe('Proposing a record call as an application', () => {
         query: SEND_INBOX_MESSAGE,
         variables: {
           input: {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
             threadKey: `inbox-thread-${uuidv4()}`,
             idempotencyKey: 'record-proposal',
             title: 'A deal looks won',

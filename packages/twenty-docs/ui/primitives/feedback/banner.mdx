@@ -1,50 +1,60 @@
 ---
 title: Banner
-description: Display a prominent information or error message with optional actions.
+description: Feedback content with independent status, appearance, and palette.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
 
-`Banner` lays out a message and optional controls across its container. Use `color="blue"` for information and `color="danger"` for errors. The `primary` variant uses a solid background; `secondary` uses a translucent background.
+`Banner` lays out caller-provided content, an optional `icon` node and an optional `action` node. `status` describes feedback meaning: `neutral`, `info`, `success`, `warning` or `error`. `variant` selects `solid` or `soft` appearance. An explicit `color` overrides the status palette without changing its meaning.
+
+Defaults are `status="info"` and `variant="solid"`. The default status palettes are gray, blue, green, orange and red, respectively.
 
 <StoryEmbed storyId="ui-feedback-banner--default" title="Banner example" />
 
-## Usage
-
 ```tsx
 import { Banner } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
-import { Text } from 'twenty-ui/primitives/typography';
+import { IconInfoCircle } from 'twenty-ui/icon';
 
-type ImportFailureProps = { onRetry: () => void };
-
-export const ImportFailure = ({ onRetry }: ImportFailureProps) => (
-  <Banner color="danger" variant="secondary">
-    <Text>Some records could not be imported.</Text>
-    <Button onClick={onRetry}>Retry import</Button>
+export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
+  <Banner
+    status="error"
+    variant="soft"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
+  >
+    Contact sync could not finish.
   </Banner>
 );
 ```
 
-## Visibility and announcements
+`Banner.Action` provides a small outline button that inherits the banner’s displayed color, including explicit palette overrides and solid appearances. It supports Button interactions, links, refs and custom rendering. The `action` slot also accepts arbitrary controls.
 
-The application owns the message, action handlers, and whether the banner is rendered. `Banner` has no open state or built-in close button.
+The root target is a `div`. Native attributes, event handlers, `className`, `style` and `ref` apply to that root. `render` accepts a Base UI element or callback; the callback receives native props and ref plus resolved `status`, `variant` and `color` state. Preserve the supplied props and ref when composing another element.
 
 ```tsx
 import { Banner } from 'twenty-ui/primitives/feedback';
 
-type ImportNoticeProps = { message: string | null };
-
-export const ImportNotice = ({ message }: ImportNoticeProps) => (
-  <div role="status">
-    {message !== null && <Banner variant="secondary">{message}</Banner>}
-  </div>
+export const SyncResult = () => (
+  <Banner
+    status="success"
+    variant="soft"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    render={<section aria-label="Sync result" />}
+  >
+    Contacts are up to date.
+  </Banner>
 );
 ```
 
-Keep the live-region wrapper mounted before updating its message. Use `role="alert"` only for urgent messages that need immediate attention. The banner itself does not add a live region or forward `role` and other native attributes.
+Status does not automatically assign `role`, `aria-live` or announcements. Choose them at the caller when updates should be announced. Supply accessible names for controls and mark decorative icon nodes with `aria-hidden`. The caller owns visibility and dismissal.
+
+## Migration
+
+Replace `variant="primary"` with `variant="solid"` and `variant="secondary"` with `variant="soft"`. Replace `color="danger"` with `status="error"`, or `color="red"` when only the palette should change. Blue information banners can use `status="info"`.
 
 ## Props
 
