@@ -173,15 +173,15 @@ export const prepareAppAddFiles = async ({
       };
 
       if (interactive && !Object.values(companions).some(Boolean)) {
-        const createCompanions = await confirmInTerminal({
+        const shouldCreateCompanions = await confirmInTerminal({
           question:
             'Also create a view, navigation menu item, and record page layout for this object?',
           signal,
         });
 
-        companions.createView = createCompanions;
-        companions.createNavigationMenuItem = createCompanions;
-        companions.createPageLayout = createCompanions;
+        companions.createView = shouldCreateCompanions;
+        companions.createNavigationMenuItem = shouldCreateCompanions;
+        companions.createPageLayout = shouldCreateCompanions;
       }
 
       const objectUniversalIdentifier = randomUUID();
