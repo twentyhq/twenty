@@ -12,6 +12,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
 import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
+import { resolveCalendarEventTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/resolve-calendar-event-time-zone.util';
 import { type CalendarEventComposerResult } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-composer-result.type';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-event-creation-manager/types/compose-calendar-event-params.type';
@@ -97,10 +98,7 @@ export class CalendarEventComposerService {
       return { error: datesError };
     }
 
-    // The workflow node stores an empty string when no time zone is picked
-    const timeZone = isNonEmptyString(params.timeZone)
-      ? params.timeZone
-      : 'UTC';
+    const timeZone = resolveCalendarEventTimeZone(params.timeZone);
 
     if (!isValidTimeZone(timeZone)) {
       return { error: `timeZone '${timeZone}' is not a valid IANA time zone` };

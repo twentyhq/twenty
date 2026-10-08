@@ -88,6 +88,7 @@ describe('SidePanelWorkflowSelectAction', () => {
 
     await userEvent.click(screen.getByText('Create Calendar Event'));
 
+    expect(onActionSelected).toHaveBeenCalledTimes(1);
     expect(onActionSelected).toHaveBeenCalledWith({
       type: 'CREATE_CALENDAR_EVENT',
       defaultSettings: { input: { timeZone: 'Europe/Paris' } },
@@ -101,6 +102,7 @@ describe('SidePanelWorkflowSelectAction', () => {
 
     await userEvent.click(screen.getByText('Send Email'));
 
+    expect(onActionSelected).toHaveBeenCalledTimes(1);
     expect(onActionSelected).toHaveBeenCalledWith({ type: 'SEND_EMAIL' });
   });
 });
