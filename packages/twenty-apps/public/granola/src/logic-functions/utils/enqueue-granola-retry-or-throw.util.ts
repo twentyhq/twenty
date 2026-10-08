@@ -19,7 +19,6 @@ export const enqueueGranolaRetryOrThrow = async <
     retryAttempt: (payload.retryAttempt ?? 0) + 1,
   };
 
-  // The running job still holds its own id, so reusing it would make the queue drop the retry
   await enqueueGranolaJobOrThrow({
     logicFunctionUniversalIdentifier,
     payload: retryPayload,

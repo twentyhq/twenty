@@ -20,7 +20,6 @@ const getRateLimitDelayMilliseconds = async (
     const errors = body?.errors;
     const data = asRecord(body?.data);
 
-    // Retrying a partially successful mutation could repeat an already-applied write
     if (
       isNonEmptyArray(errors) &&
       Object.values(data ?? {}).every((value) => value === null) &&
@@ -43,9 +42,7 @@ const getRateLimitDelayMilliseconds = async (
         }),
       );
     }
-  } catch {
-    // An HTTP 429 may carry a proxy's plain-text body instead of GraphQL errors
-  }
+  } catch {}
 
   return response.status === 429 ? headerDelayMilliseconds : undefined;
 };

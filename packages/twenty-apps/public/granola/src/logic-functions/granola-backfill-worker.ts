@@ -56,7 +56,6 @@ export const granolaBackfillWorkerHandler = async (
     );
 
     for (const [index, noteId] of noteIds.entries()) {
-      // Selection and run day let a later run retry a note whose job was skipped or failed for good, while overlapping imports still collapse
       const notePayload: GranolaBackfillNotePayload = {
         registrationId: payload.registrationId,
         folderId: payload.folderId,
