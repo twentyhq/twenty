@@ -9,11 +9,11 @@ import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
-import { formatAgentChatWorkDuration } from '@/ai/utils/formatAgentChatWorkDuration';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
+import { formatRoundedDuration } from '~/utils/format/formatRoundedDuration';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -203,7 +203,7 @@ export const ThinkingStepsDisplay = ({
           </StyledSummaryChevronContainer>
           <StyledSummaryText>
             {isDefined(workDurationMs)
-              ? t`Worked for ${formatAgentChatWorkDuration(workDurationMs)}`
+              ? t`Worked for ${formatRoundedDuration(workDurationMs)}`
               : plural(stepCount, {
                   one: '# step',
                   other: '# steps',

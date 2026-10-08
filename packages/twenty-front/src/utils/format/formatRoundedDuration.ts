@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
 
-export const formatAgentChatWorkDuration = (durationMs: number): string => {
-  const totalSeconds = Math.max(1, Math.round(durationMs / 1000));
+export const formatRoundedDuration = (durationMs: number): string => {
+  const totalSeconds = Math.max(0, Math.round(durationMs / 1000));
 
   if (totalSeconds < SECONDS_PER_MINUTE) {
     return t`${totalSeconds}s`;
