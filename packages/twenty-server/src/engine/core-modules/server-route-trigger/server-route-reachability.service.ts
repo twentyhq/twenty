@@ -12,8 +12,6 @@ export class ServerRouteReachabilityService {
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
-  // A server route only resolves through the owner workspace's copy of the same
-  // resolver, so a route installed anywhere is unreachable when the owner lacks it
   async findUnreachableServerRouteRegistrations(): Promise<
     UnreachableServerRouteRegistration[]
   > {

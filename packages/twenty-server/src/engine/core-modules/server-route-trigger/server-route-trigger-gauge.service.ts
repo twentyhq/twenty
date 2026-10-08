@@ -11,8 +11,6 @@ export class ServerRouteTriggerGaugeService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    // No catch here: MetricsService logs a failed collection without caching it,
-    // whereas an empty result would be cached and hide the alert until it expires
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_app_server_route_unreachable_workspaces',
       options: {
