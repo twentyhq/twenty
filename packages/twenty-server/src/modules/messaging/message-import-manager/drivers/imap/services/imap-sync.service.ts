@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ImapFlow } from 'imapflow';
+import { type ExpungeEvent, type ImapFlow } from 'imapflow';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   MessageImportDriverException,
@@ -11,6 +12,7 @@ import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manage
 
 type SyncResult = {
   messageUids: number[];
+  expungedMessageUids: number[];
 };
 
 @Injectable()
@@ -31,7 +33,13 @@ export class ImapSyncService {
       mailboxState,
     );
 
-    return { messageUids };
+    const expungedMessageUids = await this.fetchExpungedMessageUids(
+      client,
+      folderPath,
+      previousCursor,
+    );
+
+    return { messageUids, expungedMessageUids };
   }
 
   private validateUidValidity(
@@ -74,5 +82,45 @@ export class ImapSyncService {
     }
 
     return uids;
+  }
+
+  private async fetchExpungedMessageUids(
+    client: ImapFlow,
+    folderPath: string,
+    previousCursor: ImapSyncCursor | null,
+  ): Promise<number[]> {
+    if (
+      !client.enabled.has('QRESYNC') ||
+      !isDefined(previousCursor?.modSeq) ||
+      previousCursor.highestUid === 0
+    ) {
+      return [];
+    }
+
+    const expungedMessageUids: number[] = [];
+
+    const collectVanishedMessageUid = (expungeEvent: ExpungeEvent) => {
+      if (
+        expungeEvent.vanished &&
+        expungeEvent.path === folderPath &&
+        isDefined(expungeEvent.uid)
+      ) {
+        expungedMessageUids.push(expungeEvent.uid);
+      }
+    };
+
+    client.on('expunge', collectVanishedMessageUid);
+
+    try {
+      await client.fetchAll(
+        `1:${previousCursor.highestUid}`,
+        { uid: true },
+        { uid: true, changedSince: BigInt(previousCursor.modSeq) },
+      );
+    } finally {
+      client.off('expunge', collectVanishedMessageUid);
+    }
+
+    return expungedMessageUids;
   }
 }

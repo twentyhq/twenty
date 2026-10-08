@@ -20,7 +20,6 @@ const createMailbox = (
   ({
     uidValidity: BigInt(100),
     uidNext: 51,
-    exists: 42,
     highestModseq: BigInt(9),
     ...overrides,
   }) as NonNullable<ImapFlow['mailbox']>;
@@ -39,7 +38,6 @@ describe('resolveMailboxState', () => {
       uidValidity: 100,
       uidNext: 51,
       maxUid: 50,
-      messageCount: 42,
       highestModSeq: BigInt(9),
     });
     expect(client.status).not.toHaveBeenCalled();

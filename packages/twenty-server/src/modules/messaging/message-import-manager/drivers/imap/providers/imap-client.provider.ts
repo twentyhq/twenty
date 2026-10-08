@@ -104,6 +104,7 @@ export class ImapClientProvider {
       },
       logger: false,
       disableIMAP4rev2: true,
+      qresync: true,
       tls: {
         rejectUnauthorized: false,
       },

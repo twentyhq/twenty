@@ -2,15 +2,12 @@ import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { appendMessageOverImap } from 'test/integration/utils/append-message-over-imap.util';
 import { connectDovecotImapAccount } from 'test/integration/utils/connect-dovecot-imap-account.util';
 import { deleteMessageOverImap } from 'test/integration/utils/delete-message-over-imap.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { type DovecotServer } from 'test/integration/utils/start-dovecot-container.util';
 
@@ -116,37 +113,5 @@ describe('IMAP expunged messages (integration)', () => {
     expect(
       await findImportedMessageSubjects([keptSubject, deletedSubject]),
     ).toEqual([keptSubject]);
-  }, 300000);
-
-  it('removes messages deleted before the sync cursor tracked the message count', async () => {
-    const deletedSubject = `IMAP deleted before upgrade ${randomUUID()}`;
-
-    await appendMessage({ subject: deletedSubject, folder: 'INBOX' });
-    await runMessageChannelSync(messageChannelId);
-
-    const messageFolderRepository =
-      getCoreRepository<MessageFolderEntity>(MessageFolderEntity);
-    const inbox = await messageFolderRepository.findOneByOrFail({
-      messageChannelId,
-      name: 'INBOX',
-    });
-    const { highestUid, uidValidity, modSeq } = JSON.parse(
-      inbox.syncCursor ?? '{}',
-    );
-
-    await messageFolderRepository.update(inbox.id, {
-      syncCursor: JSON.stringify({ highestUid, uidValidity, modSeq }),
-    });
-
-    await deleteMessage({ subject: deletedSubject, folder: 'INBOX' });
-    await runMessageChannelSync(messageChannelId);
-
-    expect(await findImportedMessageSubjects([deletedSubject])).toEqual([]);
-    expect(
-      JSON.parse(
-        (await messageFolderRepository.findOneByOrFail({ id: inbox.id }))
-          .syncCursor ?? '{}',
-      ),
-    ).toEqual(expect.objectContaining({ messageCount: expect.any(Number) }));
   }, 300000);
 });

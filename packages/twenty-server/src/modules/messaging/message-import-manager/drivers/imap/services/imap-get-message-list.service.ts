@@ -4,7 +4,6 @@ import { type ImapFlow } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import {
@@ -12,7 +11,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapFindExpungedMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-expunged-messages.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
@@ -27,10 +25,6 @@ import {
   type GetOneMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
-type ImapGetMessageListsArgs = GetMessageListsArgs & {
-  messageChannel: Pick<MessageChannelEntity, 'workspaceId'>;
-};
-
 @Injectable()
 export class ImapGetMessageListService {
   private readonly logger = new Logger(ImapGetMessageListService.name);
@@ -39,14 +33,13 @@ export class ImapGetMessageListService {
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapSyncService: ImapSyncService,
     private readonly errorHandler: ImapMessageListFetchErrorHandler,
-    private readonly imapFindExpungedMessagesService: ImapFindExpungedMessagesService,
   ) {}
 
   async getMessageLists({
     connectedAccount,
     messageFolders,
     messageChannel,
-  }: ImapGetMessageListsArgs): Promise<GetMessageListsResponse> {
+  }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
     const foldersToProcess =
       messageChannel.messageFolderImportPolicy ===
       MessageFolderImportPolicy.SELECTED_FOLDERS
@@ -68,11 +61,7 @@ export class ImapGetMessageListService {
 
       for (const folder of foldersToProcess) {
         try {
-          const response = await this.getMessageList(
-            client,
-            folder,
-            messageChannel,
-          );
+          const response = await this.getMessageList(client, folder);
 
           results.push({ ...response, folderId: folder.id });
         } catch (error) {
@@ -102,7 +91,6 @@ export class ImapGetMessageListService {
   private async getMessageList(
     client: ImapFlow,
     folder: MessageFolder,
-    messageChannel: ImapGetMessageListsArgs['messageChannel'],
   ): Promise<GetOneMessageListResponse> {
     const messageExternalIdPrefix = getImapFolderPath(folder.externalId);
 
@@ -149,51 +137,31 @@ export class ImapGetMessageListService {
         mailbox,
       );
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
-        client,
-        folderPath,
-        previousCursor,
-        mailboxState,
-      );
-
-      const serverMessageCountUpToHighestSyncedUid =
-        mailboxState.messageCount - messageUids.length;
-
-      const hasServerMessageCountChanged =
-        isDefined(previousCursor) &&
-        previousCursor.messageCount !== serverMessageCountUpToHighestSyncedUid;
-
-      const expungedMessageExternalIds = hasServerMessageCountChanged
-        ? await this.imapFindExpungedMessagesService.findExpungedMessageExternalIds(
-            {
-              client,
-              workspaceId: messageChannel.workspaceId,
-              messageChannelId: messageChannel.id,
-              messageFolderId: folder.id,
-              messageExternalIdPrefix,
-              highestSyncedUid: previousCursor.highestUid,
-              expectedServerMessageCount:
-                serverMessageCountUpToHighestSyncedUid,
-            },
-          )
-        : [];
+      const { messageUids, expungedMessageUids } =
+        await this.imapSyncService.syncFolder(
+          client,
+          folderPath,
+          previousCursor,
+          mailboxState,
+        );
 
       const nextCursor = createSyncCursor(
         messageUids,
         previousCursor,
         mailboxState,
-        isDefined(expungedMessageExternalIds)
-          ? mailboxState.messageCount
-          : undefined,
       );
 
       const messageExternalIds = messageUids
         .sort((a, b) => b - a)
         .map((uid) => `${messageExternalIdPrefix}:${uid}`);
 
+      const messageExternalIdsToDelete = expungedMessageUids.map(
+        (uid) => `${messageExternalIdPrefix}:${uid}`,
+      );
+
       return {
         messageExternalIds,
-        messageExternalIdsToDelete: expungedMessageExternalIds ?? [],
+        messageExternalIdsToDelete,
         nextSyncCursor: JSON.stringify(nextCursor),
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
@@ -228,7 +196,6 @@ export class ImapGetMessageListService {
       const supportsCondstore = client.capabilities.has('CONDSTORE');
 
       const status = await client.status(folderPath, {
-        messages: true,
         uidNext: true,
         uidValidity: true,
         ...(supportsCondstore && { highestModseq: true }),
@@ -269,14 +236,6 @@ export class ImapGetMessageListService {
       if (hasModSeqChanged) {
         this.logger.debug(
           `Folder ${folderPath}: MODSEQ changed (${previousCursor.modSeq} → ${status.highestModseq}). Sync required.`,
-        );
-
-        return false;
-      }
-
-      if (status.messages !== previousCursor.messageCount) {
-        this.logger.debug(
-          `Folder ${folderPath}: message count changed (${previousCursor.messageCount} → ${status.messages}). Sync required.`,
         );
 
         return false;

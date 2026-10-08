@@ -8,7 +8,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
-import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -48,11 +47,6 @@ export class MessagingMessageCleanerService {
                 'messageChannelMessageAssociation',
                 { shouldBypassPermissionChecks: true },
               );
-            const messageFolderAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-                'messageChannelMessageAssociationMessageFolder',
-                { shouldBypassPermissionChecks: true },
-              );
             const messageThreadRepository =
               transactionScope.getRepository<MessageThreadWorkspaceEntity>(
                 'messageThread',
@@ -75,17 +69,9 @@ export class MessagingMessageCleanerService {
                 continue;
               }
 
-              const associationIdsToDelete = associationsToDelete.map(
-                ({ id }) => id,
-              );
-
               await messageChannelMessageAssociationRepository.delete(
-                associationIdsToDelete,
+                associationsToDelete.map(({ id }) => id),
               );
-
-              await messageFolderAssociationRepository.delete({
-                messageChannelMessageAssociationId: In(associationIdsToDelete),
-              });
 
               this.logger.log(
                 `WorkspaceId: ${workspaceId} Deleting ${associationsToDelete.length} message channel message associations`,
