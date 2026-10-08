@@ -189,11 +189,13 @@ Once both are set, **reconnect** so the token picks up the assistant scopes.
 ### Permissions
 
 Only a Slack account linked to a workspace member can use the assistant; an
-account with no link gets no answer. The **Slack Assistant** role is the
-assistant's CRM scope, the most it may ever touch, not an identity it takes on.
-The assistant never acts on that scope alone: every request runs with the linked
-member's own permissions, within that scope, so it can never do more than the
-person asking.
+account with no link gets no answer. The app's single role is the ceiling: it
+allows read, update and soft-delete across the workspace, but never destroy
+(apart from Slack user links) and never settings changes. That ceiling is not an
+identity the assistant takes on — every request runs with the linked member's
+own permissions within it, so the assistant can never do more than the person
+asking, and an admin's request is still blocked from destroying records or
+changing settings.
 
 ## Linking Slack accounts to workspace members
 
