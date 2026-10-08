@@ -35,7 +35,11 @@ const API_KEY = 'grn_test_key';
 const runCron = (workspaceId: string) =>
   granolaEnqueueDailyCatchUpHandler({}, {
     workspaceId,
-  } as LogicFunctionExecutionContext);
+    retryCount: 0,
+    maxRetries: 0,
+    userWorkspaceId: null,
+    workspaceMemberId: null,
+  } satisfies LogicFunctionExecutionContext);
 
 const getEnqueuedDelays = () =>
   mocks.enqueueJobs.mock.calls.map(([input]) => input.delayMs);
@@ -81,6 +85,22 @@ describe('granolaEnqueueDailyCatchUpHandler', () => {
     const [first, second, firstAgain] = getEnqueuedDelays();
     expect(second).not.toBe(first);
     expect(firstAgain).toBe(first);
+  });
+
+  it('collapses repeated cron runs on the same day into one catch-up job', async () => {
+    vi.useFakeTimers({ now: new Date('2026-09-06T04:00:00Z') });
+    await runCron('20202020-1111-4444-8888-303030303030');
+    vi.setSystemTime(new Date('2026-09-06T04:05:00Z'));
+    await runCron('20202020-1111-4444-8888-303030303030');
+    vi.setSystemTime(new Date('2026-09-07T04:00:00Z'));
+    await runCron('20202020-1111-4444-8888-303030303030');
+    vi.useRealTimers();
+
+    const [firstJobId, sameDayJobId, nextDayJobId] =
+      mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs?.[0]?.jobId);
+    expect(firstJobId).toBeDefined();
+    expect(sameDayJobId).toBe(firstJobId);
+    expect(nextDayJobId).not.toBe(firstJobId);
   });
 
   it('enqueues nothing for a workspace that never connected Granola', async () => {

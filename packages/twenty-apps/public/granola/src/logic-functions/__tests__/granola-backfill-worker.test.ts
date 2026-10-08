@@ -208,5 +208,34 @@ describe('granolaBackfillWorkerHandler', () => {
       ).rejects.toBeInstanceOf(GranolaUnavailableError);
       expect(mocks.enqueueJobs).not.toHaveBeenCalled();
     });
+
+    it('gives the next page a fresh retry budget once the retried page succeeds', async () => {
+      mocks.listNotes.mockResolvedValue({
+        notes: [],
+        hasMore: true,
+        cursor: 'cursor-4',
+      });
+
+      await granolaBackfillWorkerHandler({
+        ...workerPayload,
+        retryAttempt: GRANOLA_UNAVAILABLE_RETRY_LIMIT,
+      });
+
+      expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          logicFunctionUniversalIdentifier:
+            GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+          jobs: [
+            expect.objectContaining({
+              payload: {
+                ...workerPayload,
+                cursor: 'cursor-4',
+                pageIndex: 4,
+              },
+            }),
+          ],
+        }),
+      );
+    });
   });
 });

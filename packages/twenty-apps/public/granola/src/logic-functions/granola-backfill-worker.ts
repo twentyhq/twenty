@@ -61,6 +61,7 @@ export const granolaBackfillWorkerHandler = async (
         folderId: payload.folderId,
         noteId,
         updatedAt: updatedAtByNoteId.get(noteId),
+        selectedFolderIds: [...(registration?.folderIds ?? [])].sort(),
         runDay: payload.runDay,
       };
 
@@ -70,10 +71,7 @@ export const granolaBackfillWorkerHandler = async (
         payload: notePayload,
         jobId: getGranolaJobId({
           prefix: 'granola-note',
-          identity: {
-            ...notePayload,
-            selectedFolderIds: [...(registration?.folderIds ?? [])].sort(),
-          },
+          identity: notePayload,
         }),
         delayMs: schedule.noteDelays[index],
       });
@@ -104,6 +102,7 @@ export const granolaBackfillWorkerHandler = async (
         ...payload,
         cursor: nextPage.cursor,
         pageIndex: payload.pageIndex + 1,
+        retryAttempt: undefined,
       };
 
       await enqueueGranolaJobOrThrow({
