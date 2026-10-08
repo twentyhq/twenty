@@ -10,7 +10,7 @@ import {
 } from 'node:fs/promises';
 import type * as fileSystemPromises from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -61,6 +61,28 @@ describe('app add exclusive file creation', () => {
     },
   );
 
+  it('stages beside each destination when directories are on different filesystems', async () => {
+    const companion = { path: 'src/views/all-invoice.ts', content: 'view' };
+    vi.mocked(link).mockImplementation(async (source, destination) => {
+      if (dirname(dirname(String(source))) !== dirname(String(destination))) {
+        throw Object.assign(new Error('cross-device link'), { code: 'EXDEV' });
+      }
+      return (await actual).link(source, destination);
+    });
+
+    await expect(
+      writeAppAddFiles({
+        appPath: root,
+        files: [file, companion],
+        signal: new AbortController().signal,
+      }),
+    ).resolves.toEqual([]);
+    expect(await readFile(join(root, file.path), 'utf8')).toBe(file.content);
+    expect(await readFile(join(root, companion.path), 'utf8')).toBe(
+      companion.content,
+    );
+  });
+
   it('preserves a destination created while the new definition was staged', async () => {
     vi.mocked(link).mockImplementationOnce(async (source, destination) => {
       await (await actual).writeFile(destination, 'concurrent user definition');
@@ -94,7 +116,7 @@ describe('app add exclusive file creation', () => {
         signal: new AbortController().signal,
       }),
     ).rejects.toThrow('disk full');
-    expect(await readdir(root)).toEqual([]);
+    expect(await readdir(join(root, 'src/objects'))).toEqual([]);
   });
 
   it('cancels after staging without creating the destination', async () => {
@@ -112,7 +134,7 @@ describe('app add exclusive file creation', () => {
         signal: cancellation.signal,
       }),
     ).rejects.toThrow();
-    expect(await readdir(root)).toEqual([]);
+    expect(await readdir(join(root, 'src/objects'))).toEqual([]);
   });
 
   it('reports completion when cancellation arrives after the file was committed', async () => {
@@ -129,7 +151,7 @@ describe('app add exclusive file creation', () => {
         files: [file],
         signal: cancellation.signal,
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toEqual([]);
     expect(await readFile(join(root, file.path), 'utf8')).toBe(file.content);
     expect(await readdir(join(root, 'src/objects'))).toEqual(['invoice.ts']);
   });
@@ -214,13 +236,14 @@ describe('app add exclusive file creation', () => {
   it('returns a cleanup warning path after a successful commit instead of reporting failure', async () => {
     vi.mocked(rm).mockRejectedValueOnce(new Error('cleanup denied'));
 
-    const cleanupPath = await writeAppAddFiles({
+    const cleanupPaths = await writeAppAddFiles({
       appPath: root,
       files: [file],
       signal: new AbortController().signal,
     });
 
-    expect(cleanupPath).toContain(join(root, '.twenty-add-'));
+    expect(cleanupPaths).toHaveLength(1);
+    expect(cleanupPaths[0]).toContain(join(root, 'src/objects/.twenty-add-'));
     expect(await readFile(join(root, file.path), 'utf8')).toBe(file.content);
   });
 });
