@@ -69,15 +69,13 @@ When a front component triggers a logic function for selected records, always pr
 
 ## Adding New Entities
 
-Use the app CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate automatically:
+Use a CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate. Check first for the standalone CLI, which works without a terminal:
 
 ```bash
-yarn twenty dev:add
+command -v twenty && twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. Do not manually create entity files, explore SDK typings in `node_modules`, or generate UUIDs by hand when the CLI can do it.
-
-Only create entity files manually when modifying existing entities or when the CLI does not support the specific entity type.
+Otherwise run `yarn twenty dev:add` in an interactive terminal. The full order of options, including what to do when neither CLI can run, is rule 3 of the operating rules linked above.
 
 ## After Entity Changes
 
