@@ -256,7 +256,7 @@ msgstr "تعيين"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "أعِد إعداد المصادقة الثنائية ضمن الإعدادات، الملف الشخصي."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "بريد تجريبي"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "يمكن استخدام الرمز مرة واحدة وتنتهي صلاحيته في {formattedExpiresAt}. يؤدي استخدامه إلى إزالة المُصادِق الحالي لمساحة العمل هذه وتسجيل خروجك من جلساتك الأخرى فيها."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, شركة ذات منفعة عامة"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "تم إصدار رمز استرداد المصادقة الثنائية"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "إعادة تعيين المصادقة الثنائية"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

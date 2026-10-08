@@ -36,13 +36,13 @@ msgstr "—"
 #. js-lingui-id: Terfvz
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid ", assigned to {assigneeName}"
-msgstr ""
+msgstr "، اختصاص‌یافته به {assigneeName}"
 
 #. js-lingui-id: /c8CZ4
 #: src/modules/ai/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
-msgstr ""
+msgstr "، خوانده‌نشده"
 
 #. js-lingui-id: ypz2+E
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -180,13 +180,13 @@ msgstr "{0, plural, one {{years} سال} other {{years} سال}}"
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
-msgstr ""
+msgstr "{0, plural, one {# گفت‌وگو انتخاب شده است} other {# گفت‌وگو انتخاب شده‌اند}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
-msgstr ""
+msgstr "{0, plural, one {# گفت‌وگو} other {# گفت‌وگو}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -210,7 +210,7 @@ msgstr "{0, plural, one {# شیء} other {# شیء}}"
 #. placeholder {0}: agentChatQueuedMessages.length
 #: src/modules/ai/components/AiChatQueuedMessages.tsx
 msgid "{0, plural, one {# Queued} other {# Queued}}"
-msgstr ""
+msgstr "{0, plural, one {# در صف} other {# در صف}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -236,7 +236,7 @@ msgstr "{0, plural, one {کمپین لغو شد، ارسال {1} ایمیل در
 #. placeholder {0}: onboardingConfig.importContactsCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credit} other {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, one {صندوق پستی‌تان را متصل کنید تا {formattedImportContactsCreditsReward} اعتبار رایگان کسب کنید} other {صندوق پستی‌تان را متصل کنید تا {formattedImportContactsCreditsReward} اعتبار رایگان کسب کنید}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
@@ -248,7 +248,7 @@ msgstr "{0, plural, one {اعتبار/دوره} other {اعتبار/دوره}}"
 #. placeholder {0}: onboardingConfig.inviteTeamCreditsRewardPerUser
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
-msgstr ""
+msgstr "{0, plural, one {به‌ازای هر هم‌تیمی که می‌پیوندد، {formattedInviteTeamCreditsRewardPerUser} اعتبار رایگان کسب کنید} other {به‌ازای هر هم‌تیمی که می‌پیوندد، {formattedInviteTeamCreditsRewardPerUser} اعتبار رایگان کسب کنید}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -260,13 +260,13 @@ msgstr "{0, plural, one {جایگاه} other {جایگاه}}"
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
-msgstr ""
+msgstr "{0, plural, one {ارسال دعوت‌نامه} other {ارسال # دعوت‌نامه}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credit} other {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, one {نسخه آزمایشی خود را ارتقا دهید تا {formattedUpgradeCreditsReward} اعتبار رایگان کسب کنید} other {نسخه آزمایشی خود را ارتقا دهید تا {formattedUpgradeCreditsReward} اعتبار رایگان کسب کنید}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -278,7 +278,7 @@ msgstr "{0, plural, one {شما مجوز دسترسی به فیلد {fieldsList}
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
-msgstr ""
+msgstr "{0, plural, one {دعوت‌نامه شما هنوز ارسال نشده است} other {# دعوت‌نامه شما هنوز ارسال نشده‌اند}}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -346,7 +346,7 @@ msgstr "{0} از {1}"
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} opted out of email tracking, their clicks are not recorded"
-msgstr ""
+msgstr "{0} ردیابی ایمیل را غیرفعال کرده است و کلیک‌های او ثبت نمی‌شوند"
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -401,7 +401,7 @@ msgstr "{0} استفاده شده"
 #. placeholder {1}: item.spenderName
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "{0} used by {1}"
-msgstr ""
+msgstr "{0} استفاده‌شده توسط {1}"
 
 #. js-lingui-id: izNf/z
 #. placeholder {0}: view.name
@@ -435,7 +435,7 @@ msgstr "{0} عضو فضای کاری"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
-msgstr ""
+msgstr "{0}، بازگشت به فیلدها"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -503,7 +503,7 @@ msgstr "{browser} در {operatingSystem}"
 #. js-lingui-id: p8aaxP
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} other {{formattedCallRecordingHours} hours}}"
-msgstr ""
+msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} ساعت} other {{formattedCallRecordingHours} ساعت}}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -528,12 +528,12 @@ msgstr "{count, plural, one {مثلاً {example} برای # رقم اعشار} 
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit each} other {{label}, earn {formattedCreditsReward} free credits each}}"
-msgstr ""
+msgstr "{creditsReward, plural, one {{label}، برای هر مورد {formattedCreditsReward} اعتبار رایگان کسب کنید} other {{label}، برای هر مورد {formattedCreditsReward} اعتبار رایگان کسب کنید}}"
 
 #. js-lingui-id: r05RaJ
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit} other {{label}, earn {formattedCreditsReward} free credits}}"
-msgstr ""
+msgstr "{creditsReward, plural, one {{label}، {formattedCreditsReward} اعتبار رایگان کسب کنید} other {{label}، {formattedCreditsReward} اعتبار رایگان کسب کنید}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -543,7 +543,7 @@ msgstr "{currentCreditAmountDisplay} اعتبار "
 #. js-lingui-id: Btf16S
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{currentStepCredits, plural, one {اعتبار رایگان} other {اعتبار رایگان}}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -564,7 +564,7 @@ msgstr "{deletedCount, plural, one {حذف موفقیت‌آمیز {deletedCount
 #. js-lingui-id: toR3wC
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{formattedEarnedCredits} credits}}"
-msgstr ""
+msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} اعتبار} other {{formattedEarnedCredits} اعتبار}}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -600,7 +600,7 @@ msgstr "{formattedCreatedRecordsProgress} از {formattedRecordsToImportCount} �
 #. js-lingui-id: EjjpWm
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
-msgstr ""
+msgstr "{formattedPercentage}% استفاده شده، {formattedConversationSize} از {formattedContextWindow} توکن"
 
 #. js-lingui-id: iokIra
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -610,7 +610,7 @@ msgstr "{formattedType} از {objectLabel}"
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{goalCredits, plural, one {اعتبار رایگان} other {اعتبار رایگان}}"
 
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -645,17 +645,17 @@ msgstr "{hours, plural, one {{hours} ساعت} other {{hours} ساعت}}"
 #. js-lingui-id: /oqig9
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h"
-msgstr ""
+msgstr "{hours}س"
 
 #. js-lingui-id: i3Frvq
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h {minutes}m"
-msgstr ""
+msgstr "{hours}س {minutes}د"
 
 #. js-lingui-id: +RLs0P
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{importContactsCallRecordingHours, plural, one {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hour of call recording.} other {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hours of call recording.}}"
-msgstr ""
+msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContactsAiActions} اقدام هوش مصنوعی، {formattedImportContactsEnrichments} غنی‌سازی یا {formattedImportContactsCallRecordingHours} ساعت ضبط تماس.} other {{formattedImportContactsAiActions} اقدام هوش مصنوعی، {formattedImportContactsEnrichments} غنی‌سازی یا {formattedImportContactsCallRecordingHours} ساعت ضبط تماس.}}"
 
 #. js-lingui-id: m+qcrh
 #. placeholder {0}: formatNumber(installCount)
@@ -697,7 +697,7 @@ msgstr "{label} (خودکار)"
 #. js-lingui-id: Qoi5Dj
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "{label} (default)"
-msgstr ""
+msgstr "{label} (پیش‌فرض)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -712,12 +712,12 @@ msgstr "فهرست {label}"
 #. js-lingui-id: q8vaHD
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionsListItem.tsx
 msgid "{label}, {statusLabel}"
-msgstr ""
+msgstr "{label}، {statusLabel}"
 
 #. js-lingui-id: hr3CkB
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "{label}, unread"
-msgstr ""
+msgstr "{label}، خوانده‌نشده"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -737,12 +737,12 @@ msgstr "{minutes, plural, one {# دقیقه} other {# دقیقه}}"
 #. js-lingui-id: ZOtn9F
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m"
-msgstr ""
+msgstr "{minutes}د"
 
 #. js-lingui-id: a5xsc/
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m {seconds}s"
-msgstr ""
+msgstr "{minutes}د {seconds}ث"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -753,12 +753,12 @@ msgstr "{morphRelationCount} شیء"
 #. js-lingui-id: 430IKF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
-msgstr ""
+msgstr "{newlyEarnedCredits, plural, one {شما {formattedNewlyEarnedCredits} اعتبار رایگان کسب کردید} other {شما {formattedNewlyEarnedCredits} اعتبار رایگان کسب کردید}}"
 
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
-msgstr ""
+msgstr "{notAddedLabels} نمی‌توانستند به این گفت‌وگو افزوده شوند، زیرا نمی‌توانند در آن پاسخ دهند."
 
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
@@ -773,12 +773,12 @@ msgstr "{numberOfSelectedItems} عضو فضای کاری"
 #. js-lingui-id: dKtfA2
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} به‌عنوان شرکت‌کننده افزوده می‌شود و به این گفت‌وگو دسترسی پیدا می‌کند"
 
 #. js-lingui-id: MDJKup
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} به‌عنوان شرکت‌کننده افزوده می‌شوند و به این گفت‌وگو دسترسی پیدا می‌کنند"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -841,7 +841,7 @@ msgstr "{roleTargetName} به نقش \"{newRoleName}\" اختصاص داده خ�
 #. js-lingui-id: Mkqwbv
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr ""
+msgstr "{runCount, plural, one {# اجرا} other {# اجرا}}"
 
 #. js-lingui-id: UsskHt
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -881,7 +881,7 @@ msgstr "{selectedOptionCount} گزینه"
 #. js-lingui-id: tz1jJj
 #: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
-msgstr ""
+msgstr "{senderLabel}: {text}"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -906,7 +906,7 @@ msgstr "{stepNumber}. تقویم"
 #. js-lingui-id: C1Cp3d
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
-msgstr ""
+msgstr "{storedToolName} (برای شما در دسترس نیست)"
 
 #. js-lingui-id: bI/mcH
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -921,12 +921,12 @@ msgstr "{totalFieldsCount} فیلد قابل مشاهده"
 #. js-lingui-id: sQlMlH
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{totalSeconds}s"
-msgstr ""
+msgstr "{totalSeconds}ث"
 
 #. js-lingui-id: zLrD5y
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "{typeLabel} field"
-msgstr ""
+msgstr "فیلد {typeLabel}"
 
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
@@ -1032,7 +1032,7 @@ msgstr "+{estimatedInstallCount} نصب"
 #. js-lingui-id: 918EaY
 #: src/modules/onboarding/components/OnboardingCreditsRewardChip.tsx
 msgid "+{formattedCreditsReward} each"
-msgstr ""
+msgstr "+{formattedCreditsReward} برای هر مورد"
 
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
@@ -1077,7 +1077,7 @@ msgstr "0 */1 * * *"
 #. js-lingui-id: gPLARo
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "1 credit is enough for one of these on average"
-msgstr ""
+msgstr "به‌طور میانگین، ۱ اعتبار برای یکی از این‌ها کافی است"
 
 #. js-lingui-id: 4pzLrc
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -1206,12 +1206,12 @@ msgstr "یک پیش‌نویس از قبل برای این گردش کار وج�
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
-msgstr ""
+msgstr "فرمی برای شخصی که گردش کار را اجرا می‌کند باز می‌شود و همان‌جا تکمیل می‌شود. با این ماشه، فقط در اجرای گردش کار نمایش داده می‌شود. برای درخواست پاسخ یا تأیید از کسی در صندوق ورودی او، به‌جای آن از مرحله «ارسال به صندوق ورودی» استفاده کنید."
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
-msgstr ""
+msgstr "یک مورد جدید در هر بار اجرای مرحله"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -1226,12 +1226,12 @@ msgstr "پرداختی برای اشتراک شما ناموفق بود. تا ز
 #. js-lingui-id: Aiok04
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr ""
+msgstr "یک رکورد را می‌توان با هر کسی به اشتراک گذاشت، حتی افرادی که نقششان به این شیء دسترسی ندارد. آن‌ها فقط همان رکورد را برای مشاهده یا ویرایش دریافت می‌کنند."
 
 #. js-lingui-id: Yfxf0I
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows."
-msgstr ""
+msgstr "یک رکورد فقط زمانی ذخیره می‌شود که همه قوانین فعال درست باشند. قوانین در هر نوشتن اجرا می‌شوند: فرم‌ها، API، واردکردن‌ها و گردش‌های کار."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1246,7 +1246,7 @@ msgstr "باید نقشی برای کلید API انتخاب شود"
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary could not be generated because no transcript is available."
-msgstr ""
+msgstr "خلاصه ایجاد نشد، زیرا هیچ رونوشتی در دسترس نیست."
 
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1261,7 +1261,7 @@ msgstr "یک ایمیل تأیید به این نشانی ارسال شده اس
 #. js-lingui-id: DSFl3F
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "A won opportunity needs an amount"
-msgstr ""
+msgstr "یک فرصت برنده‌شده به مبلغ نیاز دارد"
 
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -1344,7 +1344,7 @@ msgstr "شناسه کلید دسترسی"
 #. js-lingui-id: 6hdTJw
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
-msgstr ""
+msgstr "دسترسی به {objectLabelPlural} بر اساس نقش‌ها تنظیم می‌شود، نه رکورد به رکورد."
 
 #. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
@@ -1425,7 +1425,7 @@ msgstr "عمل"
 #. js-lingui-id: 3B7Xla
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Action arguments"
-msgstr ""
+msgstr "آرگومان‌های اقدام"
 
 #. js-lingui-id: j6ogTf
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -1435,7 +1435,7 @@ msgstr "عمل هنگام کلیک"
 #. js-lingui-id: muKPyT
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Action to approve"
-msgstr ""
+msgstr "اقدام برای تأیید"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
@@ -1593,7 +1593,7 @@ msgstr "ابتدا شخصی با ایمیل به این شرکت اضافه کن
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add a recipient to {label}"
-msgstr ""
+msgstr "افزودن گیرنده به {label}"
 
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
@@ -1626,12 +1626,12 @@ msgstr "افزودن پیوند ویدئوکنفرانس"
 #. js-lingui-id: 9ZokcY
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a Workflow"
-msgstr ""
+msgstr "افزودن یک گردش کار"
 
 #. js-lingui-id: OHMMfc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox."
-msgstr ""
+msgstr "یک مرحله گردش کار اضافه کنید که پیامی و در صورت تمایل اقدامی برای تأیید را به صندوق ورودی یک عضو ارسال کند."
 
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -1645,7 +1645,7 @@ msgstr "افزودن حساب"
 #. js-lingui-id: haRzHN
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add an Agent"
-msgstr ""
+msgstr "افزودن یک عامل"
 
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
@@ -1686,7 +1686,7 @@ msgstr "افزودن BCC"
 #. js-lingui-id: 4gCq8e
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Add block"
-msgstr ""
+msgstr "افزودن بلوک"
 
 #. js-lingui-id: We0vOO
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -1707,7 +1707,7 @@ msgstr "افزودن CC"
 #. js-lingui-id: AgvHni
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
 msgid "Add column"
-msgstr ""
+msgstr "افزودن ستون"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -1761,7 +1761,7 @@ msgstr "افزودن کانال ایمیل"
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
-msgstr ""
+msgstr "افزودن بازخورد"
 
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
@@ -1942,12 +1942,12 @@ msgstr "افزودن پرسش"
 #. js-lingui-id: sJqK1O
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add recipient"
-msgstr ""
+msgstr "افزودن گیرنده"
 
 #. js-lingui-id: pCK4rY
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add record trigger"
-msgstr ""
+msgstr "افزودن ماشه رکورد"
 
 #. js-lingui-id: AmiJYR
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownOneToMany.tsx
@@ -1987,7 +1987,7 @@ msgstr "افزودن گروه قانون"
 #. js-lingui-id: pM+R6K
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add schedule"
-msgstr ""
+msgstr "افزودن زمان‌بندی"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2006,7 +2006,7 @@ msgstr "افزودن ارائه‌دهنده هویت SSO"
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
-msgstr ""
+msgstr "افزودن هم‌تیمی‌ها"
 
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -2121,12 +2121,12 @@ msgstr "اولین {objectLabel} خود را اضافه کنید"
 #. js-lingui-id: dakTu+
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add your first Agent"
-msgstr ""
+msgstr "اولین عامل خود را اضافه کنید"
 
 #. js-lingui-id: fcbR/4
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first Workflow"
-msgstr ""
+msgstr "اولین گردش کار خود را اضافه کنید"
 
 #. js-lingui-id: vLO+NG
 #: src/modules/settings/hooks/useGetAddedRelativeDateDescription.ts
@@ -2368,7 +2368,7 @@ msgstr "هوش مصنوعی و اتوماسیون‌ها"
 #. js-lingui-id: VOc0Pn
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "AI actions"
-msgstr ""
+msgstr "اقدام‌های هوش مصنوعی"
 
 #. js-lingui-id: HbXHSp
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -2383,7 +2383,7 @@ msgstr "گفت‌وگوی هوش مصنوعی"
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
-msgstr ""
+msgstr "صندوق ورودی گفت‌وگوی هوش مصنوعی"
 
 #. js-lingui-id: /YYegB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2549,7 +2549,7 @@ msgstr "همه ({relationRecordsCount})"
 #. js-lingui-id: cF7bEt
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "All actions"
-msgstr ""
+msgstr "همه اقدام‌ها"
 
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
@@ -2612,7 +2612,7 @@ msgstr "همه گروه‌ها"
 #. js-lingui-id: 2o5c3R
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "All it takes is their email."
-msgstr ""
+msgstr "تنها چیزی که لازم است ایمیل آن‌هاست."
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -2720,7 +2720,7 @@ msgstr "همه شیءهای سفارشی شما"
 #. js-lingui-id: Ub/mf+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow applications to install workflows and start new workflow runs."
-msgstr ""
+msgstr "به برنامه‌ها اجازه دهید گردش‌های کار را نصب کرده و اجراهای جدید گردش کار را آغاز کنند."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2990,7 +2990,7 @@ msgstr "هر فیلد"
 #. js-lingui-id: V38wzw
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Anyone in the workspace"
-msgstr ""
+msgstr "هر کسی در فضای کاری"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3215,7 +3215,7 @@ msgstr "متغیر برنامه"
 #. js-lingui-id: M/Fsre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Application workflows"
-msgstr ""
+msgstr "گردش‌های کار برنامه"
 
 #. js-lingui-id: fL7WXr
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3255,7 +3255,7 @@ msgstr "اعمال"
 #. js-lingui-id: d+6U9x
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply record sharing visibility rules when accessing records."
-msgstr ""
+msgstr "هنگام دسترسی به رکوردها، قوانین قابلیت مشاهده اشتراک‌گذاری رکورد را اعمال کنید."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -3265,12 +3265,12 @@ msgstr "اعمال{progressText}"
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Approve"
-msgstr ""
+msgstr "تأیید"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
-msgstr ""
+msgstr "تأیید شد"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -3280,7 +3280,7 @@ msgstr "دامنه دسترسی تأییدشده اعتبارسنجی شد"
 #. js-lingui-id: nfUdWT
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
-msgstr ""
+msgstr "تأیید شد، اما ناموفق بود"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -3390,13 +3390,13 @@ msgstr "آیا مطمئن هستید؟ اطلاعات فعلی شما ذخیره
 #. js-lingui-id: OgB1k4
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 msgid "Arguments"
-msgstr ""
+msgstr "آرگومان‌ها"
 
 #. js-lingui-id: qUFEtj
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
-msgstr ""
+msgstr "آرگومان‌ها باید یک شیء JSON معتبر باشند."
 
 #. js-lingui-id: AkeObK
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -3433,14 +3433,14 @@ msgstr "بپرسید و پیدا کنید"
 #. js-lingui-id: 5nEvjb
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the Sync Account permission to connect a calendar account."
-msgstr ""
+msgstr "برای اتصال یک حساب تقویم، از مدیر فضای کاری مجوز همگام‌سازی حساب را درخواست کنید."
 
 #. js-lingui-id: 0b3325
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the Sync Account permission to reconnect this account."
-msgstr ""
+msgstr "برای اتصال مجدد این حساب، از مدیر فضای کاری مجوز همگام‌سازی حساب را درخواست کنید."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3464,12 +3464,12 @@ msgstr "هر چیزی بپرسید، یک رکورد را با @ یا یک مه�
 #. js-lingui-id: OF5WZ/
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a teammate or record, / a skill..."
-msgstr ""
+msgstr "هر چیزی بپرسید، یک هم‌تیمی یا رکورد را @ کنید، / یک مهارت..."
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Ask for human input"
-msgstr ""
+msgstr "درخواست ورودی انسانی"
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3479,7 +3479,7 @@ msgstr "در حال پرسیدن سؤال‌ها..."
 #. js-lingui-id: kaEPzR
 #: src/modules/side-panel/hooks/useOpenAssignAiChatInSidePanel.ts
 msgid "Assign"
-msgstr ""
+msgstr "واگذاری"
 
 #. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -3524,7 +3524,7 @@ msgstr "قابل اختصاص به اعضای فضای کاری"
 #. js-lingui-id: lXGdbb
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
-msgstr ""
+msgstr "واگذارشده"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -3539,7 +3539,7 @@ msgstr "منتسب به"
 #. js-lingui-id: ArzUbT
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid "Assigned to {assigneeName}"
-msgstr ""
+msgstr "اختصاص‌یافته به {assigneeName}"
 
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3644,22 +3644,22 @@ msgstr "پیوست کردن فایل‌ها"
 #. js-lingui-id: 4xOjp/
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to a record"
-msgstr ""
+msgstr "این گفت‌وگو به یک رکورد پیوست شد"
 
 #. js-lingui-id: DCyq1H
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to the {objectLabel}"
-msgstr ""
+msgstr "این گفت‌وگو به {objectLabel} پیوست شد"
 
 #. js-lingui-id: e9I63P
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to a record"
-msgstr ""
+msgstr "در حال پیوست کردن این گفت‌وگو به یک رکورد"
 
 #. js-lingui-id: 0/s5dI
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to the {objectLabel}"
-msgstr ""
+msgstr "در حال پیوست کردن این گفت‌وگو به {objectLabel}"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -3883,7 +3883,7 @@ msgstr "بازگشت به محتوا"
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
-msgstr ""
+msgstr "بازگشت به صندوق ورودی"
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4049,7 +4049,7 @@ msgstr "بلوک"
 #. js-lingui-id: 32TndD
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
-msgstr ""
+msgstr "مسدود شد"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -4126,7 +4126,7 @@ msgstr ""
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Breakdown"
-msgstr ""
+msgstr "جزئیات"
 
 #. js-lingui-id: 1hGdwj
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -4260,7 +4260,7 @@ msgstr "دور زدن SSO"
 #. js-lingui-id: RmEeKl
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "bytes"
-msgstr ""
+msgstr "بایت"
 
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -4419,7 +4419,7 @@ msgstr "ضبط‌کننده تماس"
 #. js-lingui-id: wYLT8I
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Call recording"
-msgstr ""
+msgstr "ضبط تماس"
 
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4484,7 +4484,7 @@ msgstr "زمان‌بندی کمپین لغو شد و به پیش‌نویس‌�
 #. js-lingui-id: n3fZtA
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr ""
+msgstr "فقط می‌تواند مشاهده کند: نقش او نمی‌تواند {objectLabelPlural} را ویرایش کند"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4541,7 +4541,7 @@ msgstr "تغییر بسته اعتبار لغو شود؟"
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Cancel field selection"
-msgstr ""
+msgstr "لغو انتخاب فیلد"
 
 #. js-lingui-id: dV4HC5
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
@@ -4601,7 +4601,7 @@ msgstr "لغو شده در"
 #. js-lingui-id: vv7kpg
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Cancelled"
-msgstr ""
+msgstr "لغو شد"
 
 #. js-lingui-id: y4uH7j
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -4797,7 +4797,7 @@ msgstr "گفتگوی چت"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Chat details"
-msgstr ""
+msgstr "جزئیات گفت‌وگو"
 
 #. js-lingui-id: tDlhkF
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -4812,7 +4812,7 @@ msgstr "جلسه‌های چت"
 #. js-lingui-id: VGw5+N
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Chat stopped: no more available credits."
-msgstr ""
+msgstr "گفت‌وگو متوقف شد: اعتبار بیشتری در دسترس نیست."
 
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4866,7 +4866,7 @@ msgstr "برای تأیید نشانی ایمیل جدیدتان، صندوق و
 #. js-lingui-id: w+pzSf
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Checked only when the record this rule belongs to is saved. Editing the related record does not check it again."
-msgstr ""
+msgstr "فقط زمانی بررسی می‌شود که رکوردی که این قانون به آن تعلق دارد ذخیره شود. ویرایش رکورد مرتبط، آن را دوباره بررسی نمی‌کند."
 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
@@ -4939,7 +4939,7 @@ msgstr "پوشه‌ها را برای همگام‌سازی انتخاب کنی�
 #: src/modules/side-panel/components/SidePanelPageLayoutInfo.tsx
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Choose icon"
-msgstr ""
+msgstr "انتخاب نماد"
 
 #. js-lingui-id: SJ1Aum
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
@@ -5082,7 +5082,7 @@ msgstr "پاک کردن فیلترها"
 #. js-lingui-id: FBIuPX
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "Clear selection"
-msgstr ""
+msgstr "پاک کردن انتخاب"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -5109,7 +5109,7 @@ msgstr "اینجا کلیک کنید"
 #. js-lingui-id: 80Rsvc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run."
-msgstr ""
+msgstr "برای افزودن نخستین ورودی به فرم خود، روی «افزودن فیلد» در زیر کلیک کنید. فرم برای شخصی که گردش کار را به‌صورت دستی اجرا می‌کند باز می‌شود. برای گردش‌های کار با ماشه‌های دیگر، فرم از اجرای گردش کار تکمیل می‌شود."
 
 #. js-lingui-id: q2R9+z
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -5160,7 +5160,7 @@ msgstr "ClickHouse پیکربندی نشده است"
 #. js-lingui-id: GhPnTR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Clicks only"
-msgstr ""
+msgstr "فقط کلیک‌ها"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5305,7 +5305,7 @@ msgstr "مفسر کد"
 #. placeholder {0}: beautifyExactDateTime(pendingRecoveryCodeExpiresAt)
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Code pending until {0}"
-msgstr ""
+msgstr "کد تا {0} در انتظار است"
 
 #. js-lingui-id: FXSsRm
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -5355,7 +5355,7 @@ msgstr "جمع کردن پوشه"
 #. js-lingui-id: q4bqvN
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Collapse hidden fields"
-msgstr ""
+msgstr "جمع کردن فیلدهای پنهان"
 
 #. js-lingui-id: mkMLq4
 #: src/modules/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation.ts
@@ -5386,7 +5386,7 @@ msgstr "داده ستون با انتخاب چندگانه سازگار نیست
 #. js-lingui-id: DNkveC
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 msgid "Column options"
-msgstr ""
+msgstr "گزینه‌های ستون"
 
 #. js-lingui-id: /xTbaM
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5430,7 +5430,7 @@ msgstr "منوی فرمان"
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Command menu | {0}"
-msgstr ""
+msgstr "منوی فرمان | {0}"
 
 #. js-lingui-id: Ngoldv
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -5544,7 +5544,7 @@ msgstr "کارهای تکمیل‌شده برای {completedDuration} و کار�
 #. js-lingui-id: HBEnT7
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Complexity"
-msgstr ""
+msgstr "پیچیدگی"
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5565,7 +5565,7 @@ msgstr "محاسبه‌شده در"
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Condition"
-msgstr ""
+msgstr "شرط"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -5668,7 +5668,7 @@ msgstr "تنظیمات IMAP را برای دریافت و همگام‌سازی 
 #. js-lingui-id: uUDe3+
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Configure rule"
-msgstr ""
+msgstr "پیکربندی قانون"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5887,7 +5887,7 @@ msgstr "اتصال با موفقیت به‌روزرسانی شد"
 #. js-lingui-id: 3/kWN3
 #: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
 msgid "Connection to the assistant was lost. Reload to see the response."
-msgstr ""
+msgstr "اتصال به دستیار قطع شد. برای دیدن پاسخ، دوباره بارگیری کنید."
 
 #. js-lingui-id: JdGr7p
 #: src/modules/side-panel/pages/page-layout/components/ChartLimitInfoBanner.tsx
@@ -5946,12 +5946,12 @@ msgstr "زمینه و میزان استفاده"
 #. js-lingui-id: uEf5Og
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
-msgstr ""
+msgstr "زمینه و میزان استفاده، {formattedPercentage}% از پنجره زمینه استفاده شده است"
 
 #. js-lingui-id: 4NJlEz
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
-msgstr ""
+msgstr "زمینه و میزان استفاده، پنجره زمینه در دسترس نیست"
 
 #. js-lingui-id: LXIm4m
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -6030,12 +6030,12 @@ msgstr "گفتگو"
 #. js-lingui-id: Ljx9HM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation key"
-msgstr ""
+msgstr "کلید گفتگو"
 
 #. js-lingui-id: 5RinAt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Conversation title"
-msgstr ""
+msgstr "عنوان گفتگو"
 
 #. js-lingui-id: EnJuK0
 #: src/modules/ai/components/MobileHomeAiChatSection.tsx
@@ -6046,17 +6046,17 @@ msgstr "گفت‌وگوها"
 #. js-lingui-id: 5dVEtZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Conversations linked to this record will appear here."
-msgstr ""
+msgstr "گفتگوهای پیوندشده به این رکورد در اینجا نمایش داده می‌شوند."
 
 #. js-lingui-id: SXWEJM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Conversations tab"
-msgstr ""
+msgstr "زبانه گفتگوها"
 
 #. js-lingui-id: LMvWS1
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversations you can open will appear here."
-msgstr ""
+msgstr "گفتگوهایی که می‌توانید باز کنید در اینجا نمایش داده می‌شوند."
 
 #. js-lingui-id: HRGl1X
 #: src/modules/settings/members/components/MemberNameFields.tsx
@@ -6253,17 +6253,17 @@ msgstr "هزینه به‌ازای هر یک میلیون توکن برای ور
 #. js-lingui-id: lvWtM4
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to a record"
-msgstr ""
+msgstr "اتصال این گفتگو به یک رکورد ممکن نشد"
 
 #. js-lingui-id: 3KqAq7
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to the {objectLabel}"
-msgstr ""
+msgstr "اتصال این گفتگو به {objectLabel} ممکن نشد"
 
 #. js-lingui-id: E/YqmF
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
-msgstr ""
+msgstr "پیشنهاد نشد"
 
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -6299,7 +6299,7 @@ msgstr "امکان اعطای دسترسی به رسانه وجود نداشت. 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
-msgstr ""
+msgstr "بارگیری اجراها ناموفق بود"
 
 #. js-lingui-id: Tr0DHk
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
@@ -6438,7 +6438,7 @@ msgstr "شمارش بر اساس"
 #. js-lingui-id: EEqRLn
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Count clicks by routing campaign links through Twenty before the original page."
-msgstr ""
+msgstr "با هدایت پیوندهای کمپین از طریق Twenty پیش از صفحه اصلی، کلیک‌ها را شمارش کنید."
 
 #. js-lingui-id: vQJINq
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -6513,7 +6513,7 @@ msgstr "ایجاد {objectLabelSingular}"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Create a few {0} to preview this rule on real records."
-msgstr ""
+msgstr "چند {0} ایجاد کنید تا این قانون را روی رکوردهای واقعی پیش‌نمایش کنید."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -6565,7 +6565,7 @@ msgstr "یک گردش کار ایجاد کنید و برای مشاهده نسخ
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
-msgstr ""
+msgstr "برای خودکارسازی کارتان یک گردش کار ایجاد کنید."
 
 #. js-lingui-id: Hn5erC
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
@@ -6575,7 +6575,7 @@ msgstr "ایجاد یک فضای کاری"
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create an Agent to automate your work."
-msgstr ""
+msgstr "برای خودکارسازی کارتان یک عامل ایجاد کنید."
 
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6752,7 +6752,7 @@ msgstr "ایجادشده در {0}"
 #. js-lingui-id: esG9lm
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
-msgstr ""
+msgstr "ایجاد یا به‌روزرسانی شد"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts

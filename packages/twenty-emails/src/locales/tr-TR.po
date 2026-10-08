@@ -256,7 +256,7 @@ msgstr "Belirle"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Ayarlar, Profil altında iki faktörlü kimlik doğrulamayı yeniden ayarlayın."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Test e-postası"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Kod bir kez kullanılabilir ve {formattedExpiresAt} tarihinde sona erer. Kodu kullanmak, bu çalışma alanı için mevcut kimlik doğrulayıcınızı kaldırır ve buradaki diğer oturumlarınızdan çıkış yapmanızı sağlar."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Kamu Yararına Şirket"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "İki faktörlü kimlik doğrulama kurtarma kodu oluşturuldu"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "İki faktörlü kimlik doğrulama sıfırlandı"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

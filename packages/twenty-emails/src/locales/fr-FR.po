@@ -256,7 +256,7 @@ msgstr "Définir"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Configurez à nouveau l'authentification à deux facteurs dans Paramètres, Profil."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "E-mail de test"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Le code ne peut être utilisé qu'une seule fois et expire le {formattedExpiresAt}. Son utilisation supprime votre authentificateur actuel pour cet espace de travail et vous déconnecte de vos autres sessions qui s'y trouvent."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Société d'intérêt public"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Code de récupération pour l'authentification à deux facteurs émis"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Réinitialisation de l'authentification à deux facteurs"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

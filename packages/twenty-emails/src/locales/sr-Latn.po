@@ -256,7 +256,7 @@ msgstr "Podesiti"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Ponovo podesite dvofaktorsku autentifikaciju u okviru Podešavanja, Profil."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Test imejl"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Kôd se može upotrebiti jednom i ističe {formattedExpiresAt}. Njegovim korišćenjem uklanjate trenutni autentifikator za ovaj radni prostor i odjavljujete se iz drugih sesija tamo."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, javna korporacija"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Izdat je kôd za oporavak dvofaktorske autentifikacije"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Resetovanje dvofaktorske autentifikacije"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -256,7 +256,7 @@ msgstr "Setează"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Configurați din nou autentificarea în doi pași din Setări, Profil."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Email de test"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Codul poate fi utilizat o singură dată și expiră la {formattedExpiresAt}. Utilizarea acestuia elimină autentificatorul actual pentru acest spațiu de lucru și vă deconectează de la celelalte sesiuni de acolo."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Corporație de Beneficiu Public"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Cod de recuperare pentru autentificarea în doi pași emis"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Resetarea autentificării în doi pași"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

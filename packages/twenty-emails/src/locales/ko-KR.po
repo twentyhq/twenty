@@ -256,7 +256,7 @@ msgstr "설정"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "설정의 프로필에서 이중 인증을 다시 설정하세요."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "테스트 이메일"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "이 코드는 한 번만 사용할 수 있으며 {formattedExpiresAt}에 만료됩니다. 이를 사용하면 이 워크스페이스의 현재 인증기가 제거되고 해당 워크스페이스의 다른 세션에서 로그아웃됩니다."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, 공익 법인"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "이중 인증 복구 코드 발급됨"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "이중 인증 재설정"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

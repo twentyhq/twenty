@@ -256,7 +256,7 @@ msgstr "تنظیم"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "احراز هویت دومرحله‌ای را دوباره از مسیر تنظیمات، نمایه راه‌اندازی کنید."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "ایمیل آزمایشی"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "این کد یک‌بار قابل استفاده است و در {formattedExpiresAt} منقضی می‌شود. استفاده از آن، احرازکننده فعلی شما را برای این فضای کاری حذف می‌کند و شما را از سایر نشست‌هایتان در آنجا خارج می‌کند."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com، شرکت عام‌المنفعه"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "کد بازیابی احراز هویت دومرحله‌ای صادر شد"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "بازنشانی احراز هویت دومرحله‌ای"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
