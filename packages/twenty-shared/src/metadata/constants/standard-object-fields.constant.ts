@@ -71,6 +71,9 @@ export const STANDARD_OBJECT_FIELDS = {
     participants: {
       universalIdentifier: '2ede85e4-216b-4308-8556-b045971414e7',
     },
+    assignee: {
+      universalIdentifier: 'e77858ef-4b01-4a32-b921-8b88b1fd3020',
+    },
     lastActivityAt: {
       universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
     },
@@ -96,6 +99,12 @@ export const STANDARD_OBJECT_FIELDS = {
     archivedAt: { universalIdentifier: 'ee092c9d-f27e-4fbc-8dad-9ec950936216' },
     snoozedUntil: {
       universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
+    },
+    isSubscribed: {
+      universalIdentifier: '146b1d5e-6603-4493-944b-c3bd2817569b',
+    },
+    lastMentionedAt: {
+      universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
     },
   },
   agentChatThreadTarget: {
@@ -141,6 +150,30 @@ export const STANDARD_OBJECT_FIELDS = {
     agentId: { universalIdentifier: '4ac55a9a-95e8-4fd9-8c03-47ee3b618ae7' },
     thread: { universalIdentifier: '4e9b4f1f-c1bb-42d0-bb38-eb2b2f830e64' },
     messages: { universalIdentifier: '737c3559-ea1a-4269-aea4-e672b17afbb1' },
+    status: { universalIdentifier: 'c17a4d49-f4f5-40e2-b084-11c5c4bae431' },
+    error: { universalIdentifier: 'b0ed90f6-5953-4c85-aff8-407a28ec8cc7' },
+    startedAt: { universalIdentifier: '578977d7-b0d9-48d1-83f7-29ad6215a6f0' },
+    endedAt: { universalIdentifier: '2b13f528-738b-402c-a033-7bbb0cce73a4' },
+    modelId: { universalIdentifier: 'b1e1c27b-03dc-40b1-8052-4474c15b8233' },
+    inputTokens: {
+      universalIdentifier: '0e419986-4255-4858-b252-e6a161d55f58',
+    },
+    outputTokens: {
+      universalIdentifier: '3e7f5fb8-f9cf-45b2-b1a7-b36c1e8ff2fd',
+    },
+    cacheReadTokens: {
+      universalIdentifier: 'c2bcbbf5-81ce-4679-8f08-f6a3cc00569c',
+    },
+    cacheCreationTokens: {
+      universalIdentifier: '4d9feae2-2a80-43b2-965d-8ad40f129503',
+    },
+    inputCredits: {
+      universalIdentifier: '740456a7-c0be-4bc9-8429-52dc3e3a3707',
+    },
+    outputCredits: {
+      universalIdentifier: '1ca5da82-b797-43a8-a2ee-d1a062a24ca5',
+    },
+    createdBy: { universalIdentifier: 'c3d5e8a2-fde8-452d-a74d-04436aaf17bc' },
   },
   agentMessage: {
     ...buildStandardObjectBaseFields(
@@ -1587,6 +1620,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     agentChatThreadParticipants: {
       universalIdentifier: 'd1de909f-a0eb-4e94-8903-abec012864c9',
+    },
+    assignedAgentChatThreads: {
+      universalIdentifier: 'a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',

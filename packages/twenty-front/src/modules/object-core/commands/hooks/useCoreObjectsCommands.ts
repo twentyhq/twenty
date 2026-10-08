@@ -15,13 +15,12 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const useCoreObjectsCommands = () => {
   const { t } = useLingui();
@@ -38,9 +37,6 @@ export const useCoreObjectsCommands = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
     });
-  const workflowObjectPermissions = useObjectPermissionsForObject(
-    workflowObjectMetadataItem.id,
-  );
 
   const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
   const coreWorkflowsFilterSettings = useAtomStateValue(
@@ -80,7 +76,6 @@ export const useCoreObjectsCommands = () => {
     !isInPreviewMode &&
     isNonEmptyArray(selectedCoreWorkflowIds) &&
     canManageWorkflows &&
-    workflowObjectPermissions.canSoftDeleteObjectRecords &&
     matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
 
   const coreObjectCommandIds = shouldDisplayCoreWorkflowFiltersCommand
@@ -95,7 +90,10 @@ export const useCoreObjectsCommands = () => {
     isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
       ? {
           label: getSelectedRecordsCountLabel({
-            objectMetadataItem: workflowObjectMetadataItem,
+            objectMetadataItem: {
+              labelSingular: t`Workflow`,
+              labelPlural: t`Workflows`,
+            },
             numberOfSelectedRecords: selectedCoreWorkflowIds.length,
           }),
         }

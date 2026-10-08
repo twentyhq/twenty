@@ -1,5 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 
+const DELETED_RECORDS_LABEL_PATTERN = /^Deleted /;
+
 export class MainPage {
   // TODO: add missing elements (advanced filters, import/export popups)
   private readonly tableViews: Locator;
@@ -32,9 +34,7 @@ export class MainPage {
 
   constructor(public readonly page: Page) {
     this.tableViews = page.getByText('·');
-    this.addViewButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Add view$/ });
+    this.addViewButton = page.getByText('Add view', { exact: true });
     this.viewIconSelect = page.getByLabel('Click to select icon (');
     this.viewNameInput; // can be selected using only actual value
     this.viewTypeSelect = page.locator(
@@ -44,9 +44,9 @@ export class MainPage {
     this.deleteViewButton = page.getByRole('button', { name: 'Delete' });
     this.filterButton = page.getByText('Filter');
     this.searchFieldInput = page.getByPlaceholder('Search fields');
-    this.advancedFilterButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Advanced filter$/ });
+    this.advancedFilterButton = page.getByText('Advanced filter', {
+      exact: true,
+    });
     this.addFilterButton = page.getByRole('button', { name: 'Add Filter' });
     this.resetFilterButton = page.getByTestId('cancel-button');
     this.saveFilterAsViewButton = page.getByRole('button', {
@@ -57,18 +57,10 @@ export class MainPage {
     this.optionsButton = page.getByText('Options');
     this.fieldsButton = page.getByText('Fields');
     this.goBackButton = page.getByTestId('dropdown-menu-header-end-icon');
-    this.hiddenFieldsButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Hidden Fields$/ });
-    this.editFieldsButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Edit Fields$/ });
-    this.importButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Import$/ });
-    this.deletedRecordsButton = page
-      .getByTestId('tooltip')
-      .filter({ hasText: /^Deleted */ });
+    this.hiddenFieldsButton = page.getByText('Hidden Fields', { exact: true });
+    this.editFieldsButton = page.getByText('Edit Fields', { exact: true });
+    this.importButton = page.getByText('Import', { exact: true });
+    this.deletedRecordsButton = page.getByText(DELETED_RECORDS_LABEL_PATTERN);
     this.createNewRecordButton = page.getByTestId('add-button');
     this.addToFavoritesButton = page.getByText('Add to favorites');
     this.deleteFromFavoritesButton = page.getByText('Delete from favorites');
@@ -91,7 +83,7 @@ export class MainPage {
   // name can be either be 'Table' or 'Kanban'
   async selectViewType(name: string) {
     await this.viewTypeSelect.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async createView() {
@@ -134,7 +126,7 @@ export class MainPage {
   //can be Ascending or Descending
   async setSortOrder(name: string) {
     await this.sortOrderButton.click();
-    await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+    await this.page.getByText(name, { exact: true }).click();
   }
 
   async clickOptionsButton() {

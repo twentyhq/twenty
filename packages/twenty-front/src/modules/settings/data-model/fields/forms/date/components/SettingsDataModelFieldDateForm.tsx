@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
+import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFieldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
@@ -105,30 +105,33 @@ export const SettingsDataModelFieldDateForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
-      <Collapsible
-        isExpanded={showCustomFormatTextInput}
-        dimension="height"
-        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-        containAnimation={false}
-      >
-        <Controller
-          name="settings.customUnicodeDateFormat"
-          control={control}
-          defaultValue={initialCustomUnicodeDateFormat}
-          render={({ field: { onChange, value } }) => (
-            <StyledTextInputContainer>
-              <SettingsTextInput
-                instanceId="custom-date-format-input"
-                placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
-                value={value}
-                onChange={(value) => onChange(value)}
-                disabled={false}
-                fullWidth
-              />
-            </StyledTextInputContainer>
-          )}
-        />
-      </Collapsible>
+      <Collapsible.Root open={showCustomFormatTextInput}>
+        <Collapsible.Panel
+          dimension="height"
+          style={{
+            transitionDuration: `${ADVANCED_SETTINGS_ANIMATION_DURATION.size}s, ${ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}s`,
+          }}
+          containAnimation={false}
+        >
+          <Controller
+            name="settings.customUnicodeDateFormat"
+            control={control}
+            defaultValue={initialCustomUnicodeDateFormat}
+            render={({ field: { onChange, value } }) => (
+              <StyledTextInputContainer>
+                <SettingsTextInput
+                  instanceId="custom-date-format-input"
+                  placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
+                  value={value}
+                  onChange={(value) => onChange(value)}
+                  disabled={false}
+                  fullWidth
+                />
+              </StyledTextInputContainer>
+            )}
+          />
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </>
   );
 };

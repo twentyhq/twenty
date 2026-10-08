@@ -1,9 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
@@ -209,28 +209,26 @@ export const DatePicker = ({
         <Suspense
           fallback={
             <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
-              >
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-              </SkeletonTheme>
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
             </StyledDatePickerFallback>
           }
         >

@@ -1,6 +1,6 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
@@ -35,8 +35,8 @@ import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
+import { usePageChangeEffectNavigateLocation } from '@/app/hooks/usePageChangeEffectNavigateLocation';
+import { getPageLayoutIdForLocation } from '@/app/utils/getPageLayoutIdForLocation';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
@@ -331,22 +331,6 @@ export const PageChangeEffect = () => {
             componentInstance: {
               componentType: FocusComponentType.PAGE,
               componentInstanceId: PageFocusId.SyncEmail,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: false,
-              enableGlobalHotkeysConflictingWithKeyboard: false,
-            },
-          },
-        });
-        break;
-      }
-      case isMatchingLocation(location, AppPath.InstallApps): {
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.InstallApps,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.InstallApps,
             },
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,

@@ -20,7 +20,7 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 
 const StyledEditor = styled.div`
   display: contents;

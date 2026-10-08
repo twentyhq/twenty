@@ -54,7 +54,7 @@ jest.mock('@/ui/layout/page/components/PageContainer', () => ({
   ),
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
 
@@ -116,6 +116,10 @@ jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
 }));
 
 describe('RecordIndexPage workspace surface composition', () => {
+  beforeAll(async () => {
+    await import('~/pages/object-core/WorkflowCoreIndexPage');
+  });
+
   beforeEach(() => {
     mockIsCoreWorkflowsIndexEnabled.mockReturnValue(false);
     mockObjectNamePlural = 'people';

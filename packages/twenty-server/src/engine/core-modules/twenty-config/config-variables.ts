@@ -143,6 +143,16 @@ export class ConfigVariables {
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which an admin-issued two-factor authentication recovery code is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsPositiveDuration()
+  @IsOptional()
+  TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_EXPIRES_IN = '1h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Enable or disable the Google Calendar integration',
     type: ConfigVariableType.BOOLEAN,
@@ -1111,17 +1121,6 @@ export class ConfigVariables {
   @IsInt()
   @IsOptional()
   ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER = 500_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description:
-      'Free credits granted for installing apps during the install-apps onboarding step, whatever the number of apps (in microCredits)',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsInt()
-  @IsOptional()
-  ONBOARDING_INSTALL_APPS_CREDITS_REWARD = 500_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

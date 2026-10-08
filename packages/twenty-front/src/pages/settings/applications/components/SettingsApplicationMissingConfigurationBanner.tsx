@@ -1,5 +1,6 @@
+import { themeCssVariables } from 'twenty-ui/theme';
 import { t } from '@lingui/core/macro';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertCircle } from 'twenty-ui/icon';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { getApplicationVariableDisplayLabel } from '~/pages/settings/applications/utils/getApplicationVariableDisplayLabel';
@@ -19,10 +20,18 @@ export const SettingsApplicationMissingConfigurationBanner = ({
 
   return (
     <InlineBanner
-      color="danger"
-      LeftIcon={IconAlertCircle}
-      message={t`Missing configuration: ${missingLabels}`}
-      button={{ title: t`Configure`, onClick: onConfigure }}
-    />
+      status="error"
+      icon={
+        <IconAlertCircle
+          size={themeCssVariables.icon.size.md}
+          aria-hidden="true"
+        />
+      }
+      action={
+        <InlineBanner.Action
+          onClick={onConfigure}
+        >{t`Configure`}</InlineBanner.Action>
+      }
+    >{t`Missing configuration: ${missingLabels}`}</InlineBanner>
   );
 };

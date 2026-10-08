@@ -73,7 +73,11 @@ Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neut
 
 `link` uses compact text with no border or filled background. It follows its content height at either size, with a smaller font and narrower padding. Its neutral color uses stronger text on hover. The appearance does not determine semantics: use `onClick` for actions and `href` for navigation.
 
-`disabled` and `loading` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner.
+`disabled` and `loading` prevent activation. Loading keeps the label accessible and communicates a busy state. By default, `loadingPosition="center"` hides the content while preserving its layout space and centers the spinner. Set `loadingPosition` to `start` or `end` to keep children and the opposite icon visible while replacing the corresponding icon with the spinner.
+
+Your application owns progress formatting and the translated label. Pass the complete status phrase as children, for example `Installing (42%)`.
+
+<StoryEmbed storyId="ui-input-button-button--loading-at-end" height={220} />
 
 ## Upcoming features
 
@@ -111,7 +115,7 @@ Compose `Button` with `AnimatedIconCrossfade` to change its icon when applicatio
 import { useState } from 'react';
 import { IconPencil, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { AnimatedIconCrossfade } from 'twenty-ui/components';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 
 export const EditActions = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -124,8 +128,8 @@ export const EditActions = () => {
       startIcon={
         <AnimatedIconCrossfade
           isActive={isEditing}
-          ActiveIcon={IconX}
-          InactiveIcon={IconPencil}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
         />
       }
     >
@@ -139,7 +143,7 @@ When an icon is itself an action, use `IconButton` or `LightIconButton` and anim
 
 <StoryEmbed
   title="Button with an animated icon"
-  storyId="ui-input-button-button--animated-icon-documentation"
+  storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"
   height={120}
 />
 

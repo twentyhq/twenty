@@ -2,8 +2,14 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { IconBolt, IconLock, IconSettings, useIcons } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/components/layout';
+import {
+  IconBolt,
+  IconLock,
+  IconSettings,
+  IconTerminal,
+  useIcons,
+} from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -18,8 +24,13 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  type FindOneAgentQuery,
+} from '~/generated-metadata/graphql';
 import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
+import { CoreAgentRunsTab } from '@/object-core/agents/components/CoreAgentRunsTab';
 import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
 import { CoreAgentTriggersTab } from '@/object-core/agents/components/CoreAgentTriggersTab';
 import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
@@ -46,6 +57,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   const isReadonlyMode = isOwnedByInstalledApplication({
     applicationId: agent.applicationId,
@@ -108,11 +122,20 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       title: t`Role`,
       Icon: IconLock,
     },
-    {
-      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS,
-      title: t`Triggers`,
-      Icon: IconBolt,
-    },
+    ...(isAiChatInboxEnabled
+      ? [
+          {
+            id: CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS,
+            title: t`Triggers`,
+            Icon: IconBolt,
+          },
+          {
+            id: CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS,
+            title: t`Runs`,
+            Icon: IconTerminal,
+          },
+        ]
+      : []),
   ];
 
   const title = agent.label;
@@ -122,7 +145,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const isSettingsTab =
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
   const isTriggersTab =
+    isAiChatInboxEnabled &&
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS;
+  const isRunsTab =
+    isAiChatInboxEnabled &&
+    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS;
 
   const isFormDisabled = isReadonlyMode || !agent.isCustom;
 
@@ -172,6 +199,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                   disabled={isFormDisabled}
                 />
               )}
+              {isRunsTab && <CoreAgentRunsTab agentId={agentId} />}
             </StyledContentContainer>
           </Section.Root>
         </SettingsPageContainer>

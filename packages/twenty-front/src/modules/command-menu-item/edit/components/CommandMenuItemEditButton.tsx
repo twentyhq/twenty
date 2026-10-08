@@ -6,12 +6,14 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import { AnimatedIconCrossfade } from 'twenty-ui/components';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 import { IconPencil, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useTheme } from 'twenty-ui/theme';
 
 export const CommandMenuItemEditButton = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -48,8 +50,8 @@ export const CommandMenuItemEditButton = () => {
       startIcon={
         <AnimatedIconCrossfade
           isActive={isCommandMenuEditPageActive}
-          ActiveIcon={IconX}
-          InactiveIcon={IconPencil}
+          activeIcon={<IconX size={theme.icon.size.sm} />}
+          inactiveIcon={<IconPencil size={theme.icon.size.sm} />}
         />
       }
       variant="outline"

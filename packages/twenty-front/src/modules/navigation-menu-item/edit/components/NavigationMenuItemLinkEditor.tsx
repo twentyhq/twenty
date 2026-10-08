@@ -1,5 +1,5 @@
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type KeyboardEvent, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';

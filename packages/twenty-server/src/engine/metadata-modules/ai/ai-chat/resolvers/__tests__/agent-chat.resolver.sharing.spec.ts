@@ -77,6 +77,7 @@ const buildResolver = () => {
     recordEvents as never,
     {} as never,
     threadService,
+    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
   const streaming = {
     streamAgentChat: jest
@@ -96,6 +97,8 @@ const buildResolver = () => {
     redis as never,
     {} as never,
     recordEvents as never,
+    {} as never,
+    {} as never,
   );
   const resolver = new AgentChatResolver(
     chatService,
@@ -114,6 +117,7 @@ const buildResolver = () => {
       { assertAiExecutionAllowed: jest.fn() } as never,
     ),
     threadLifecycle,
+    { findLatestTurnError: jest.fn().mockResolvedValue(null) } as never,
   );
   return {
     resolver,
@@ -173,6 +177,7 @@ describe('Shared conversation API boundaries', () => {
       null,
       undefined,
       null,
+      null,
       VIEWER_ID,
       'member',
       workspace,
@@ -214,6 +219,7 @@ describe('Shared conversation API boundaries', () => {
             'message',
             null,
             undefined,
+            null,
             null,
             VIEWER_ID,
             'member',
@@ -263,6 +269,7 @@ describe('Shared conversation API boundaries', () => {
       null,
       undefined,
       null,
+      null,
       VIEWER_ID,
       'member',
       workspace,
@@ -275,6 +282,61 @@ describe('Shared conversation API boundaries', () => {
         text: 'My request',
       }),
     );
+  });
+
+  it('adds the mentioned members once the message is sent', async () => {
+    const { resolver, threadService, streaming } = buildResolver();
+    const addParticipants = jest
+      .spyOn(threadService, 'addParticipants')
+      .mockResolvedValue(['jony']);
+
+    const result = await resolver.sendChatMessage(
+      THREAD_ID,
+      'Can you look at this @Jony @Tim',
+      'message',
+      null,
+      undefined,
+      null,
+      ['jony', 'tim'],
+      'owner-user',
+      'owner',
+      workspace,
+    );
+
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
+    expect(addParticipants).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      workspaceMemberId: 'owner',
+      workspaceId: WORKSPACE_ID,
+      participantWorkspaceMemberIds: ['jony', 'tim'],
+    });
+    expect(result.mentionedParticipantWorkspaceMemberIds).toEqual(['jony']);
+  });
+
+  it('keeps a sent message sent when its mentions cannot be applied', async () => {
+    const { resolver, threadService } = buildResolver();
+
+    jest
+      .spyOn(threadService, 'addParticipants')
+      .mockRejectedValue(new Error('share failed'));
+
+    const result = await resolver.sendChatMessage(
+      THREAD_ID,
+      'Can you look at this @Jony',
+      'message',
+      null,
+      undefined,
+      null,
+      ['jony'],
+      'owner-user',
+      'owner',
+      workspace,
+    );
+
+    expect(result).toMatchObject({
+      messageId: 'message',
+      mentionedParticipantWorkspaceMemberIds: [],
+    });
   });
 
   it('allows an editor to remove a queued message after update authorization', async () => {

@@ -17,9 +17,6 @@ export type ResumePendingCallRecordingResult =
   | { status: 'skipped'; reason: string }
   | { status: 'deferred'; reason: string };
 
-// Single-recording variant of the recovery sweep: finishes bot scheduling for
-// one row that transitioned back to pending. Deferred outcomes are retried by
-// the queue and ultimately by the recovery cron.
 export const resumePendingCallRecording = async ({
   client,
   callRecordingId,
@@ -65,7 +62,7 @@ export const resumePendingCallRecording = async ({
       now,
     })
   ) {
-    // The recovery cron owns failing rows whose meeting is over.
+    // The follow-up owns failing rows whose meeting is over.
     return { status: 'skipped', reason: 'meeting already ended' };
   }
 
@@ -82,7 +79,7 @@ export const resumePendingCallRecording = async ({
 
   return {
     status: 'deferred',
-    reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
+    reason: 'ambiguous prior attempt; the follow-up will look it up at Recall',
   };
 };
 

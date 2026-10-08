@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -40,6 +41,8 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   lastReadAt: '2026-10-01T10:00:00.000Z',
   archivedAt: null,
   snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
@@ -55,7 +58,9 @@ const renderEffect = (
 
   render(
     <JotaiProvider store={store}>
-      <AgentChatThreadParticipantOperationsEffect />
+      <MockedProvider>
+        <AgentChatThreadParticipantOperationsEffect />
+      </MockedProvider>
     </JotaiProvider>,
   );
 
@@ -131,6 +136,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       ...READ_PARTICIPANT,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      isSubscribed: true,
+      lastMentionedAt: null,
     };
     const { store } = renderEffect({ [THREAD_ID]: snoozedParticipant });
 

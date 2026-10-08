@@ -7,7 +7,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -21,7 +21,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -131,7 +131,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         />
         {isDefined(missingScopes) && (
           <Callout
-            variant={'error'}
+            status={'error'}
             title={t`Missing calendar permission.`}
             description={
               hasConnectedAccountsPermission
@@ -139,9 +139,12 @@ export const WorkflowEditActionCreateCalendarEvent = ({
                 : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
             }
             action={
-              hasConnectedAccountsPermission
-                ? { label: t`Reauthorize`, onClick: handleReauthorize }
-                : undefined
+              hasConnectedAccountsPermission ? (
+                <Callout.Action
+                  type="button"
+                  onClick={handleReauthorize}
+                >{t`Reauthorize`}</Callout.Action>
+              ) : undefined
             }
           />
         )}

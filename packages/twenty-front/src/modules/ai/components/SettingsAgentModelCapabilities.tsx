@@ -3,7 +3,7 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';

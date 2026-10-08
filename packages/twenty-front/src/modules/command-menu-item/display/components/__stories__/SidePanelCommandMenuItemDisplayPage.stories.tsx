@@ -34,7 +34,6 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -51,6 +50,7 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const PINNED_ITEM_WIDTH = 100;
 

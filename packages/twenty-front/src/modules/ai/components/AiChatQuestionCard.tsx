@@ -8,7 +8,7 @@ import {
   type AskQuestionsToolResult,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, LightIconButton } from 'twenty-ui/components';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import {
   IconArrowUp,
   IconChevronLeft,

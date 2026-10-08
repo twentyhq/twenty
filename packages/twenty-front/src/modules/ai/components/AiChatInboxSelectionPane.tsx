@@ -1,26 +1,42 @@
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
 import { Key } from 'ts-key-enum';
-import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
-import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
-import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { AiChatInboxSelectionPile } from '@/ai/components/AiChatInboxSelectionPile';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
-export const AiChatInboxSelectionPane = () => {
+const StyledSelection = styled(EmptyState.Root)`
+  box-sizing: border-box;
+  gap: ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[4]};
+`;
+
+const StyledButtons = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
+`;
+
+type AiChatInboxSelectionPaneProps = {
+  selectedThreads: AgentChatThreadRecord[];
+};
+
+export const AiChatInboxSelectionPane = ({
+  selectedThreads,
+}: AiChatInboxSelectionPaneProps) => {
   const { t } = useLingui();
-  const selectedRecordIds = useAtomComponentSelectorValue(
-    selectedRecordIdsComponentSelector,
-  );
   const { resetRecordSelection } = useResetRecordSelection();
+  const { openSidePanelMenu } = useSidePanelMenu();
 
   useGlobalHotkeys({
     keys: [Key.Escape],
@@ -33,34 +49,42 @@ export const AiChatInboxSelectionPane = () => {
     <PageCardLayout
       header={
         <PageCardHeader
-          actionButton={
-            <CommandMenuContextProvider
-              displayType="button"
-              containerType={CommandMenuItemContainerType.ShowPageHeader}
-            >
-              <PinnedCommandMenuItemButtons />
-            </CommandMenuContextProvider>
-          }
+          title={plural(selectedThreads.length, {
+            one: '# chat',
+            other: '# chats',
+          })}
         />
       }
     >
-      <EmptyState.Root>
+      <StyledSelection>
+        <AiChatInboxSelectionPile threads={selectedThreads} />
         <EmptyState.Content>
           <EmptyState.Title>
-            {plural(selectedRecordIds.length, {
+            {plural(selectedThreads.length, {
               one: '# chat selected',
               other: '# chats selected',
             })}
           </EmptyState.Title>
+          <StyledButtons>
+            <Button
+              size="sm"
+              variant="outline"
+              shortcut={['Esc']}
+              onClick={resetRecordSelection}
+            >
+              {t`Clear selection`}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              shortcut={['Mod', 'K']}
+              onClick={openSidePanelMenu}
+            >
+              {t`All actions`}
+            </Button>
+          </StyledButtons>
         </EmptyState.Content>
-        <Button
-          variant="outline"
-          startIcon={<IconX />}
-          onClick={resetRecordSelection}
-        >
-          {t`Clear selection`}
-        </Button>
-      </EmptyState.Root>
+      </StyledSelection>
     </PageCardLayout>
   );
 };

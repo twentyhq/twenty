@@ -36,6 +36,9 @@ export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-t
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
+export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
   AgentResponseFormatType,
@@ -47,6 +50,8 @@ export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/AgentResponseSchema';
+export type { AgentRunSummary } from './types/AgentRunSummary';
+export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -92,6 +97,7 @@ export {
   TOOL_WIDGET_NAMES,
   isToolWidgetName,
 } from './types/ToolWidget';
+export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';

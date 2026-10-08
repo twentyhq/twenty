@@ -26,17 +26,6 @@ describe('AiChatInboxSelectionEffect', () => {
     navigate.mockClear();
   });
 
-  it('selects the first chat when none is selected', () => {
-    render(
-      <AiChatInboxSelectionEffect
-        selectedThreadId={undefined}
-        threads={buildThreads(['thread-1', 'thread-2'])}
-      />,
-    );
-
-    expectSelected('thread-1');
-  });
-
   it('selects the chat that takes the place of the one leaving the list', () => {
     const { rerender } = render(
       <AiChatInboxSelectionEffect

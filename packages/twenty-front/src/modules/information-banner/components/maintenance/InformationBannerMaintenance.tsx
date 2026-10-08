@@ -8,6 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { IconExternalLink } from 'twenty-ui/icon';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const formatMaintenanceDateTime = (
   isoString: string,
@@ -53,13 +54,13 @@ export const InformationBannerMaintenance = () => {
   return (
     <InformationBanner
       componentInstanceId="information-banner-maintenance"
-      variant="secondary"
+      variant="soft"
       message={message}
       buttonTitle={isDefined(maintenanceLink) ? t`Learn more` : undefined}
       buttonIcon={isDefined(maintenanceLink) ? IconExternalLink : undefined}
       buttonOnClick={
         isDefined(maintenanceLink)
-          ? () => window.open(maintenanceLink, '_blank', 'noopener,noreferrer')
+          ? () => openUrlInNewTab(maintenanceLink)
           : undefined
       }
       onClose={dismissBanner}

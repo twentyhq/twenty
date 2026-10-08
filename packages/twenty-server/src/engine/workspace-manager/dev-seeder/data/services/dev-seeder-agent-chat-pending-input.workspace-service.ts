@@ -14,7 +14,7 @@ import { v5 } from 'uuid';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -33,6 +33,7 @@ import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/
 import { requestFormCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/request-form-call.util';
 import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
   '3c7e1f52-8a4d-4b0e-9d61-2f5a7c9e0b14';
@@ -422,6 +423,9 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: questionTurnId,
       threadId,
       agentId: null,
+      status: isDefined(conversation.answer)
+        ? AgentTurnStatus.COMPLETED
+        : AgentTurnStatus.WAITING_FOR_INPUT,
     });
 
     await this.conversationWriterService.insertMessage({
@@ -494,6 +498,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: answerTurnId,
       threadId,
       agentId: null,
+      status: AgentTurnStatus.COMPLETED,
     });
 
     await this.conversationWriterService.insertMessage({

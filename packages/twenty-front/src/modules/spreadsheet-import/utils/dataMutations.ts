@@ -13,7 +13,6 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = (
   data: (ImportedStructuredRow & Partial<ImportedStructuredRowMetadata>)[],
@@ -56,7 +55,7 @@ export const addErrorsAndRunHooks = (
           values.forEach((value) => {
             if (
               fieldValidationDefinition.allowEmpty === true &&
-              (isUndefinedOrNull(value) || value === '' || !Boolean(value))
+              (!isDefined(value) || value === '' || !Boolean(value))
             ) {
               return;
             }
@@ -163,7 +162,7 @@ export const addErrorsAndRunHooks = (
         ImportedStructuredRowMetadata;
     }
 
-    if (isUndefinedOrNull(errors[index]) && isDefined(value?.__errors)) {
+    if (!isDefined(errors[index]) && isDefined(value?.__errors)) {
       return { ...newValue, __errors: null } as ImportedStructuredRow &
         ImportedStructuredRowMetadata;
     }

@@ -1,0 +1,52 @@
+---
+title: TintedIconTile
+description: An icon on a tinted background derived from a theme color.
+---
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+Pass icon content through the lowercase `icon` node slot. The tile derives its background and inherited foreground color from the theme palette. Icon content is decorative. Keep a visible label beside it, or give the root `role="img"` and an accessible name for a standalone labeled image.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </>
+);
+```
+
+## Geometry and native composition
+
+The tile defaults to 16px through the spacing token and uses the small border-radius token. Set icon dimensions and stroke on the node itself. Root `style` or `className` controls tile width, height, border, shape, and colors; explicit styles override palette defaults. Custom artwork should inherit `currentColor` when it uses the palette foreground.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+Native attributes, events, `className`, `style`, and `ref` target the outer div. `render` replaces that target through Base UI composition while preserving the decorative icon content. Name the surrounding control when composing a tile into an action.
+
+Replace `Icon={CompanyIcon}` with `icon={<CompanyIcon size={16} />}`. Move the former `size` and `stroke` options to the icon node, and use root styles for custom tile dimensions.
+
+## Props
+
+<TintedIconTileReference />

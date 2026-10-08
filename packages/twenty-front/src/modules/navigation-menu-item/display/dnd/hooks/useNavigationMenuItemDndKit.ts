@@ -2,7 +2,7 @@ import { isSortable } from '@dnd-kit/react/sortable';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import type { DraggableData } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDraggableData';
 import type { DropDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDropDestination';
 import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/NavigationMenuItemDropResult';

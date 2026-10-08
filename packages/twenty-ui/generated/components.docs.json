@@ -1,8 +1,8 @@
 [
   {
     "name": "CountrySelect",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/country-select",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/country-select",
     "props": [
       {
         "name": "className",
@@ -127,8 +127,8 @@
   },
   {
     "name": "CurrencyPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/currency-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/currency-picker",
     "props": [],
     "parts": [
       {
@@ -320,15 +320,15 @@
   },
   {
     "name": "MetricRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/metric-row",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/metric-row",
     "props": [
       {
         "name": "children",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Required nonempty text label that also names the optional progress ring."
+        "description": "Label content whose accessible text also names the optional progress ring."
       },
       {
         "name": "className",
@@ -367,10 +367,10 @@
       },
       {
         "name": "startIcon",
-        "type": "IconComponent",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Decorative icon before the label, rendered at 14px."
+        "description": "Decorative node content before the label. The caller controls icon geometry."
       },
       {
         "name": "style",
@@ -438,16 +438,23 @@
     ]
   },
   {
-    "name": "VisibilityHidden",
+    "name": "VisuallyHidden",
     "entryPoint": "twenty-ui/primitives/accessibility",
-    "slug": "accessibility/visibility-hidden",
+    "slug": "accessibility/visually-hidden",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Content hidden visually while remaining available to assistive technology."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render function composed with the hidden span props and ref."
       }
     ]
   },
@@ -457,11 +464,25 @@
     "slug": "data-display/color-sample",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mark decorative swatches as hidden from assistive technology."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name when the caller supplies role=\"img\"."
+      },
+      {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the swatch."
+        "description": "CSS class merged with the swatch class."
       },
       {
         "name": "color",
@@ -478,11 +499,32 @@
         "description": "Theme color used for the background and border. Required even when `color` overrides the background."
       },
       {
-        "name": "variant",
-        "type": "\"circle\" | \"default\" | \"pipeline\"",
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Swatch shape: `default`, `circle`, or `pipeline`. Omitting it uses the default shape."
+        "description": "Ref to the swatch div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the swatch color defaults. Explicit styles win."
+      },
+      {
+        "name": "variant",
+        "type": "\"circle\" | \"default\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Generic swatch shape: `default` or `circle`. Omitting it uses the default shape."
       }
     ]
   },
@@ -534,32 +576,172 @@
     "slug": "feedback/banner",
     "props": [
       {
+        "name": "action",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trailing ReactNode. Banner.Action supplies a small outline action that inherits the resolved banner color; arbitrary controls are also accepted."
+      },
+      {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Message and optional actions displayed inside the banner."
+        "description": "Caller-provided content, including text, links and controls."
       },
       {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the banner."
+        "description": "Class merged onto the root div or composed element."
       },
       {
         "name": "color",
-        "type": "\"blue\" | \"danger\"",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
-        "defaultValue": "blue",
-        "description": "Blue information treatment or danger treatment."
+        "defaultValue": "status palette",
+        "description": "Palette override: gray, blue, green, orange or red. When omitted, status selects the corresponding palette."
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional leading ReactNode. The caller supplies decorative or accessible icon semantics."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or to the DOM element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, BannerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Base UI element or render callback. The callback receives native props/ref and resolved status, variant and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning or error. Defaults to info. Does not assign a role or live region."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root div or composed element."
       },
       {
         "name": "variant",
-        "type": "\"primary\" | \"secondary\"",
+        "type": "\"soft\" | \"solid\"",
         "required": false,
-        "defaultValue": "primary",
-        "description": "Primary solid treatment or secondary translucent treatment."
+        "defaultValue": "solid",
+        "description": "Solid or soft appearance. Defaults to solid, independently of status."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
@@ -569,11 +751,151 @@
     "slug": "feedback/loader",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Hide a decorative loader when another element supplies loading feedback."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name for a labeled loader status."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of text that names the loader status."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class merged with the loader container class."
+      },
+      {
         "name": "color",
         "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
         "required": false,
         "defaultValue": null,
         "description": "Theme color for the animated dot and border. When omitted, inherits the button color if available, otherwise the tertiary text color."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the container div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supply status to expose loading feedback as a live region. No role is assigned by default."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the loader color defaults. Explicit styles win."
+      }
+    ]
+  },
+  {
+    "name": "Skeleton",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/skeleton",
+    "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Animate the highlight by default. Reduced-motion preferences always disable animation."
+      },
+      {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholders are decorative and hidden from assistive technology by default. The host owns loading announcements."
+      },
+      {
+        "name": "baseColor",
+        "type": "BackgroundColor",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder background color. Defaults to the theme tertiary background."
+      },
+      {
+        "name": "borderRadius",
+        "type": "BorderRadius<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class merged with the placeholder class."
+      },
+      {
+        "name": "height",
+        "type": "Height<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder height in pixels or a CSS length. Defaults to the inherited font height."
+      },
+      {
+        "name": "highlightColor",
+        "type": "BackgroundColor",
+        "required": false,
+        "defaultValue": null,
+        "description": "Animated highlight color. Defaults to the theme lighter transparent background."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLSpanElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the placeholder span, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the placeholder dimensions and colors. Explicit styles win."
+      },
+      {
+        "name": "width",
+        "type": "Width<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width."
       }
     ]
   },
@@ -791,90 +1113,197 @@
     "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
     "slug": "layout/collapsible",
-    "props": [
+    "props": [],
+    "parts": [
       {
-        "name": "animationDurations",
-        "type": "AnimationDurations",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default theme timing or separate opacity and size durations in seconds."
+        "name": "Root",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Initial uncontrolled expansion state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Default disabled state inherited by the triggers in this root."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the requested open state and cancelable Base UI event details."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled expansion state. Use defaultOpen for uncontrolled state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the root div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "children",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Content inside the expanding panel."
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsibleTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables this trigger."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Set to false when render replaces the native button with another element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsibleTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the linked trigger button. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsibleTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       },
       {
-        "name": "containAnimation",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Clips overflowing content during expansion and uses a column layout."
-      },
-      {
-        "name": "dimension",
-        "type": "\"height\" | \"width\"",
-        "required": false,
-        "defaultValue": "height",
-        "description": "Dimension animated when the panel opens and closes."
-      },
-      {
-        "name": "duration",
-        "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
-      },
-      {
-        "name": "isExpanded",
-        "type": "boolean",
-        "required": true,
-        "defaultValue": null,
-        "description": "Controlled visibility of the panel. The application owns the trigger and state."
+        "name": "Panel",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: CollapsiblePanelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "containAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Clips overflowing content during expansion and uses a column layout."
+          },
+          {
+            "name": "dimension",
+            "type": "\"height\" | \"width\"",
+            "required": false,
+            "defaultValue": "height",
+            "description": "Dimension animated when the panel opens and closes."
+          },
+          {
+            "name": "duration",
+            "type": "\"fast\" | \"instant\" | \"normal\" | \"slow\"",
+            "required": false,
+            "defaultValue": "normal",
+            "description": "Theme timing preset for both size and opacity. Native style can customize transition timing."
+          },
+          {
+            "name": "hiddenUntilFound",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Uses hidden until-found so browser page search can reveal the contents. Overrides keepMounted."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Keeps the closed panel mounted and hidden, preserving local content state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CollapsiblePanelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the animated panel div. Forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: CollapsiblePanelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
   {
-    "name": "HorizontalSeparator",
+    "name": "Separator",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/horizontal-separator",
+    "slug": "layout/separator",
     "props": [
       {
-        "name": "color",
-        "type": "string",
+        "name": "className",
+        "type": "string | ((state: SeparatorState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "CSS color for the line and text. Defaults to the medium border color."
+        "description": "CSS class or function of the separator orientation."
       },
       {
-        "name": "noMargin",
-        "type": "boolean",
+        "name": "orientation",
+        "type": "\"horizontal\" | \"vertical\"",
         "required": false,
-        "defaultValue": "false",
-        "description": "Removes the vertical margins."
+        "defaultValue": "horizontal",
+        "description": "Direction of the divider: horizontal or vertical."
       },
       {
-        "name": "text",
-        "type": "string",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, SeparatorState>",
         "required": false,
-        "defaultValue": "",
-        "description": "Optional label displayed between two lines."
+        "defaultValue": null,
+        "description": "Element or render function composed with the native separator props and ref."
       },
       {
-        "name": "textPosition",
-        "type": "\"center\" | \"end\"",
+        "name": "style",
+        "type": "CSSProperties | ((state: SeparatorState) => CSSProperties | undefined)",
         "required": false,
-        "defaultValue": "center",
-        "description": "Places the text between two lines, or at the end of a single line."
-      },
-      {
-        "name": "visible",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Shows the dividing line. Setting it to false preserves margins and any text."
+        "defaultValue": null,
+        "description": "Native style or function of the separator orientation. Use it for spacing and line color."
       }
     ]
   },
@@ -887,8 +1316,8 @@
         "name": "axis",
         "type": "\"x\" | \"y\"",
         "required": false,
-        "defaultValue": "y",
-        "description": "Pointer movement axis: `y` for height or `x` for width."
+        "defaultValue": "y without edge",
+        "description": "Pointer movement axis without `edge`: `y` for height or `x` for width."
       },
       {
         "name": "defaultValue",
@@ -898,11 +1327,32 @@
         "description": "Initial size when the handle owns its state."
       },
       {
+        "name": "direction",
+        "type": "\"normal\" | \"reverse\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical increasing direction. Omit to follow the horizontal text direction; use `normal` or `reverse` for a fixed physical edge."
+      },
+      {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
         "description": "Disables resizing and removes the handle from the tab order."
+      },
+      {
+        "name": "dragThreshold",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5 with edge; 0 otherwise",
+        "description": "Physical pointer distance required before resizing starts. Movement below the threshold remains a click. Defaults to 5 with `edge` and 0 otherwise."
+      },
+      {
+        "name": "edge",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical panel edge. Determines the movement axis and increasing direction, independently of text direction."
       },
       {
         "name": "max",
@@ -919,11 +1369,46 @@
         "description": "Minimum allowed size."
       },
       {
+        "name": "onActivate",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called for a click without dragging, Enter, or Space."
+      },
+      {
+        "name": "onResizeEnd",
+        "type": "((details: { cancelled: boolean; value: number; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called after a started drag ends, with its final value and whether it was cancelled. Cancellation restores the starting value within the current bounds."
+      },
+      {
+        "name": "onResizeStart",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called once with the first bounded drag value after the threshold is crossed."
+      },
+      {
         "name": "onValueChange",
         "type": "((value: number) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the bounded size after pointer or keyboard interaction."
+        "description": "Called with the bounded size during pointer or keyboard interaction and with the restored value on cancellation."
+      },
+      {
+        "name": "onValueCommitted",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit."
+      },
+      {
+        "name": "placement",
+        "type": "\"edge\" | \"gap\" | \"inline\"",
+        "required": false,
+        "defaultValue": "edge with edge; inline otherwise",
+        "description": "Layout mode: `inline` stays in normal flow, `edge` positions the handle on the panel edge, and `gap` sits between panels. Defaults to `edge` when `edge` is set and `inline` otherwise."
       },
       {
         "name": "render",
@@ -931,6 +1416,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "scale",
+        "type": "number | (() => number)",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Pointer scale or resolver sampled at pointer down. Movement is divided by this positive scale; keyboard steps are unchanged."
       },
       {
         "name": "step",
@@ -944,27 +1436,27 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Controlled size. Apply the value to the element being resized."
+        "description": "Current controlled size. Update it in `onValueChange` and apply it to the element being resized."
       }
     ]
   },
   {
-    "name": "TextDirectionProvider",
+    "name": "DirectionProvider",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/text-direction-provider",
+    "slug": "layout/direction-provider",
     "props": [
       {
         "name": "children",
         "type": "ReactNode",
-        "required": true,
+        "required": false,
         "defaultValue": null,
         "description": "Controls that receive the direction context."
       },
       {
         "name": "direction",
         "type": "\"ltr\" | \"rtl\"",
-        "required": true,
-        "defaultValue": null,
+        "required": false,
+        "defaultValue": "ltr",
         "description": "Reading direction used by directional interactions. Also set the matching HTML `dir` attribute on the content."
       }
     ]
@@ -982,18 +1474,11 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
-        "name": "displayedMaxRows",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Maximum displayed rows. Omit for single-line truncation; use a positive integer for multiline text."
-      },
-      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a tab stop and opens the tooltip on focus or click."
+        "description": "Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus."
       },
       {
         "name": "isTooltipMultiline",
@@ -1003,25 +1488,32 @@
         "description": "Preserves whitespace and line breaks in the tooltip."
       },
       {
-        "name": "size",
-        "type": "\"large\" | \"small\"",
+        "name": "lineClamp",
+        "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Small inherited text sizing or the large fixed-height treatment."
+        "description": "Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
       },
       {
         "name": "text",
         "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...> | null | undefined",
         "required": true,
         "defaultValue": null,
-        "description": "Text or React content to truncate. Non-string React content requires `tooltipContent`."
+        "description": "Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text."
       },
       {
         "name": "tooltipContent",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Plain text displayed in the tooltip. Defaults to `text` when it is a nonempty string."
+        "description": "Plain text displayed in the tooltip. Defaults to nonempty string `text`."
       },
       {
         "name": "tooltipDelay",
@@ -1032,17 +1524,24 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Preferred side of the tooltip."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
       }
     ]
   },
   {
     "name": "LightIconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1105,7 +1604,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
+        "description": "Shows a loading indicator and disables activation."
       },
       {
         "name": "render",
@@ -1158,7 +1657,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Preferred placement of the tooltip relative to the button."
@@ -1174,8 +1673,8 @@
   },
   {
     "name": "IconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1231,7 +1730,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
+        "description": "Shows a loading indicator and disables activation."
       },
       {
         "name": "render",
@@ -1284,7 +1783,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": "bottom",
         "description": "Preferred placement of the tooltip relative to the button."
@@ -1300,8 +1799,8 @@
   },
   {
     "name": "MainButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/main-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/main-button",
     "props": [
       {
         "name": "className",
@@ -1357,7 +1856,14 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
+        "description": "Shows a loading indicator and disables activation."
+      },
+      {
+        "name": "loadingPosition",
+        "type": "\"center\" | \"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
         "name": "render",
@@ -1412,8 +1918,8 @@
   },
   {
     "name": "LightButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-button",
     "props": [
       {
         "name": "className",
@@ -1476,7 +1982,14 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
+        "description": "Shows a loading indicator and disables activation."
+      },
+      {
+        "name": "loadingPosition",
+        "type": "\"center\" | \"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
         "name": "render",
@@ -1588,7 +2101,14 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
+        "description": "Shows a loading indicator and disables activation."
+      },
+      {
+        "name": "loadingPosition",
+        "type": "\"center\" | \"end\" | \"start\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
         "name": "render",
@@ -1786,6 +2306,39 @@
         ]
       },
       {
+        "name": "Item",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: FieldItemState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the wrapped control should ignore user interaction.\nThe `disabled` prop on `<Field.Root>` takes precedence over this."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, FieldItemState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: FieldItemState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
         "name": "Label",
         "props": [
           {
@@ -1955,21 +2508,28 @@
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Callback fired when the `value` changes. Use when controlled."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the native input with a custom element or render callback. Forward the supplied props and ref to an input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual size of the input. Inside an `InputGroup`, the group's size applies."
+        "description": "Visual size. Explicit input size takes precedence over the InputGroup default, then md applies. Group layout still sets the surrounding height."
       },
       {
         "name": "style",
@@ -2000,18 +2560,25 @@
         "description": "Content rendered after the input, such as a suffix or a button."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the layout element, a div by default."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Customizes the layout element. Forward its props, children and ref. Native control props belong on the child input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual size of the group and its input."
+        "description": "Visual size of the layout and default size for inputs that omit size. Defaults to md."
       },
       {
         "name": "startElement",
@@ -2186,7 +2753,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Grows the textarea with its content instead of showing a scrollbar."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -2200,21 +2767,28 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of rows the textarea grows to when `autoResize` is set.\nLonger content scrolls."
+        "description": "Caps automatic height growth. Content beyond this row limit scrolls."
       },
       {
         "name": "onValueChange",
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the new value when the textarea value changes."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLTextAreaElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native textarea element."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, InputState>",
         "required": false,
-        "defaultValue": "<textarea />",
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "defaultValue": null,
+        "description": "Composes the native textarea with a custom element or callback receiving textarea props and Field state. Forward the supplied props and ref to a textarea."
       },
       {
         "name": "size",
@@ -6453,7 +7027,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -6530,7 +7104,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "8",
             "description": "Distance in pixels between the anchor and the popup."
@@ -6647,7 +7221,7 @@
         "name": "align",
         "type": "\"center\" | \"end\" | \"start\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "center",
         "description": "Alignment relative to the trigger. Defaults to center."
       },
       {
@@ -6670,6 +7244,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Displays an arrow pointing to the trigger. Defaults to false."
+      },
+      {
+        "name": "arrowPadding",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Minimum distance from the arrow to the popup edges."
       },
       {
         "name": "children",
@@ -6729,10 +7310,10 @@
       },
       {
         "name": "content",
-        "type": "ReactNode",
+        "type": "ReactNode | PayloadChildRenderFunction<TPayload>",
         "required": true,
         "defaultValue": null,
-        "description": "Supplementary content displayed in the tooltip."
+        "description": "Supplementary content, or a function receiving the active trigger payload. Strings and numbers use the shorthand title layout."
       },
       {
         "name": "defaultOpen",
@@ -6756,6 +7337,13 @@
         "description": "Delay in milliseconds before opening on hover. Defaults to 600."
       },
       {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional secondary text below the shorthand title."
+      },
+      {
         "name": "disableAnchorTracking",
         "type": "boolean",
         "required": false,
@@ -6777,6 +7365,13 @@
         "description": "Prevents hovering over the popup from keeping it open."
       },
       {
+        "name": "handle",
+        "type": "TooltipHandle<TPayload>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Connects detached triggers and preserves their typed payloads."
+      },
+      {
         "name": "keepMounted",
         "type": "boolean",
         "required": false,
@@ -6795,7 +7390,7 @@
         "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when an interaction requests a visibility change."
+        "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel()."
       },
       {
         "name": "onOpenChangeComplete",
@@ -6810,6 +7405,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Controlled visibility of the tooltip."
+      },
+      {
+        "name": "portalProps",
+        "type": "TooltipPortalProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Portal props, including native props, ref and render. Overrides shorthand portal defaults."
+      },
+      {
+        "name": "positionerProps",
+        "type": "TooltipPositionerProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults."
       },
       {
         "name": "positionMethod",
@@ -6834,9 +7443,9 @@
       },
       {
         "name": "side",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "top",
         "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
       },
       {
@@ -6845,6 +7454,13 @@
         "required": false,
         "defaultValue": "10",
         "description": "Distance from the trigger in pixels. Defaults to 10."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional node before the shorthand title."
       },
       {
         "name": "sticky",
@@ -6875,6 +7491,13 @@
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
       },
       {
+        "name": "triggerProps",
+        "type": "TooltipTriggerProps<TPayload>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Full Trigger props, including native props, ref, render and payload. Overrides the shorthand trigger defaults."
+      },
+      {
         "name": "withExitAnimation",
         "type": "boolean",
         "required": false,
@@ -6898,7 +7521,7 @@
             "type": "ReactNode | PayloadChildRenderFunction<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "The content of the tooltip.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+            "description": "Parts or a render function receiving the active trigger payload. Root renders no DOM node."
           },
           {
             "name": "defaultOpen",
@@ -6933,14 +7556,14 @@
             "type": "TooltipHandle<Payload>",
             "required": false,
             "defaultValue": null,
-            "description": "A handle to associate the tooltip with a trigger.\nIf specified, allows external triggers to control the tooltip's open state.\nCan be created with the Tooltip.createHandle() method."
+            "description": "Connects detached triggers and imperative open/close actions."
           },
           {
             "name": "onOpenChange",
             "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Event handler called when the tooltip is opened or closed."
+            "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger and cancel()."
           },
           {
             "name": "onOpenChangeComplete",
@@ -7008,7 +7631,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": "If `true`, the tooltip will not open when interacting with this trigger.\nNote that this doesn't apply the `disabled` attribute to the trigger element.\nIf you want to disable the trigger element itself, you can pass the `disabled` prop to the trigger element via the `render` prop."
+            "description": "Disables tooltip interaction for this trigger without disabling its native element."
           },
           {
             "name": "handle",
@@ -7025,11 +7648,18 @@
             "description": "A payload to pass to the tooltip when it is opened."
           },
           {
+            "name": "ref",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the rendered trigger element, a button by default."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipTriggerState>",
             "required": false,
             "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+            "description": "Composes a native element or a component that forwards attributes, handlers and ref."
           },
           {
             "name": "style",
@@ -7041,49 +7671,89 @@
         ]
       },
       {
-        "name": "Popup",
+        "name": "Portal",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipPortalState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Portal destination. Defaults to the current theme container, then the document body."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to keep the portal mounted in the DOM while the popup is hidden."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the portal div."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPortalState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipPortalState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Positioner",
         "props": [
           {
             "name": "align",
             "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "center",
-            "description": "Alignment relative to the trigger. Defaults to center."
+            "description": "How to align the popup relative to the specified side."
           },
           {
             "name": "alignOffset",
             "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
-            "description": "Offset along the alignment axis in pixels."
+            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": "An explicit positioning anchor for the popup."
+            "description": "An element to position the popup against.\nBy default, the popup will be positioned against the trigger."
           },
           {
-            "name": "arrow",
-            "type": "boolean",
+            "name": "arrowPadding",
+            "type": "number",
             "required": false,
-            "defaultValue": "false",
-            "description": "Displays an arrow pointing to the trigger. Defaults to false."
-          },
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "Content displayed inside the popup."
+            "defaultValue": "5",
+            "description": "Minimum distance to maintain between the arrow and the edges of the popup.\n\nUse it to prevent the arrow element from hanging out of the rounded corners of a popup."
           },
           {
             "name": "className",
-            "type": "string | ((state: TooltipPopupState) => string | undefined)",
+            "type": "string | ((state: TooltipPositionerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Additional CSS class for the popup."
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
             "name": "collisionAvoidance",
@@ -7107,20 +7777,6 @@
             "description": "Additional space to maintain from the edge of the collision boundary."
           },
           {
-            "name": "container",
-            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
-            "required": false,
-            "defaultValue": null,
-            "description": "Portal destination. Defaults to the current theme container."
-          },
-          {
-            "name": "content",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Supplementary content displayed in the tooltip."
-          },
-          {
             "name": "disableAnchorTracking",
             "type": "boolean",
             "required": false,
@@ -7128,53 +7784,39 @@
             "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
           },
           {
-            "name": "keepMounted",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keeps the popup mounted while closed."
-          },
-          {
-            "name": "maxWidth",
-            "type": "MaxWidth<string | number>",
-            "required": false,
-            "defaultValue": "300px",
-            "description": "Maximum popup width. Defaults to 300 pixels."
-          },
-          {
             "name": "positionMethod",
             "type": "\"absolute\" | \"fixed\"",
             "required": false,
             "defaultValue": "absolute",
-            "description": "CSS positioning method for the popup."
+            "description": "Determines which CSS `position` property to use."
           },
           {
             "name": "ref",
             "type": "Ref<HTMLDivElement>",
             "required": false,
             "defaultValue": null,
-            "description": "Ref forwarded to the popup element."
+            "description": "Ref to the positioning div. Native props, styles and render target this element."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPositionerState>",
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
             "name": "side",
-            "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": "top",
-            "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
+            "description": "Preferred physical or logical side of the anchor. Defaults to top."
           },
           {
             "name": "sideOffset",
             "type": "number | OffsetFunction",
             "required": false,
-            "defaultValue": "10",
-            "description": "Distance from the trigger in pixels. Defaults to 10."
+            "defaultValue": "0",
+            "description": "Distance from the anchor. Defaults to 0 in compound usage. Accepts a number or positioning function."
           },
           {
             "name": "sticky",
@@ -7185,56 +7827,143 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+            "type": "CSSProperties | ((state: TooltipPositionerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Inline styles for the popup."
-          },
-          {
-            "name": "withExitAnimation",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
       {
-        "name": "Content",
+        "name": "Popup",
         "props": [
           {
             "name": "children",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Primary text displayed in the tooltip."
+            "description": "Content rendered as supplied. Does not create a portal, positioner, title layout or arrow."
           },
           {
-            "name": "description",
-            "type": "ReactNode",
+            "name": "className",
+            "type": "string | ((state: TooltipPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Secondary explanation beneath the primary text."
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the popup div. Native props, styles and render target this element."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           },
           {
-            "name": "startIcon",
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Enables the optional Twenty exit transition."
+          }
+        ]
+      },
+      {
+        "name": "Arrow",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipArrowState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the arrow div. Compose inside Popup."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipArrowState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipArrowState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Viewport",
+        "props": [
+          {
+            "name": "children",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "An icon displayed before the text."
+            "description": "The content to render inside the transition container."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipViewportState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the content-transition div. Useful when several triggers share changing content."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipViewportState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipViewportState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           }
         ]
       },
       {
         "name": "Provider",
         "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Tooltips sharing delay, closeDelay and timeout configuration. Provider renders no DOM node."
+          },
           {
             "name": "closeDelay",
             "type": "number",
@@ -7262,8 +7991,8 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/components",
-    "slug": "feedback/toast",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast",
     "props": [
       {
         "name": "action",
@@ -7361,21 +8090,21 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of lines before the text is truncated with an ellipsis.\nCannot be combined with `truncate`."
+        "description": "Positive integer limiting the number of visible lines. Cannot be combined with `truncate`."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Truncates overflowing text on one line with an ellipsis. Cannot be\ncombined with `lineClamp`."
+        "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
       }
     ]
   },
@@ -7624,7 +8353,7 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Position of the string-label tooltip."
@@ -7815,8 +8544,8 @@
   },
   {
     "name": "SettingsRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/settings-row",
+    "entryPoint": "twenty-ui/components/settings",
+    "slug": "components/settings/settings-row",
     "props": [
       {
         "name": "checked",
@@ -7913,8 +8642,8 @@
   },
   {
     "name": "PhoneCountryPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/phone-country-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/phone-country-picker",
     "props": [],
     "parts": [
       {
@@ -8029,8 +8758,8 @@
   },
   {
     "name": "Dropdown",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/dropdown",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/dropdown",
     "props": [],
     "parts": [
       {
@@ -8069,7 +8798,7 @@
             "type": "((event: DropdownDismissEvent) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open."
           },
           {
             "name": "onOpenChange",
@@ -8167,7 +8896,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -8237,7 +8966,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
             "description": "Distance in pixels between the anchor and the popup."
@@ -8261,6 +8990,20 @@
       {
         "name": "ActionItem",
         "props": [
+          {
+            "name": "actions",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row."
+          },
+          {
+            "name": "actionsVisibility",
+            "type": "\"always\" | \"hover\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether trailing actions appear on hover or remain visible. Defaults to `hover`."
+          },
           {
             "name": "className",
             "type": "string",
@@ -8371,6 +9114,20 @@
       {
         "name": "OptionItem",
         "props": [
+          {
+            "name": "actions",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row."
+          },
+          {
+            "name": "actionsVisibility",
+            "type": "\"always\" | \"hover\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether trailing actions appear on hover or remain visible. Defaults to `hover`."
+          },
           {
             "name": "className",
             "type": "string",
@@ -8976,8 +9733,8 @@
   },
   {
     "name": "OverflowingList",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/overflowing-list",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/overflowing-list",
     "props": [
       {
         "name": "children",
@@ -9011,8 +9768,8 @@
   },
   {
     "name": "Section",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/section",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/section",
     "props": [],
     "parts": [
       {
@@ -9052,7 +9809,7 @@
         "name": "Header",
         "props": [
           {
-            "name": "adornment",
+            "name": "actions",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
@@ -9070,14 +9827,21 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+            "description": "Supporting text associated with the heading. Strings have optional truncation and overflow tooltips; React nodes render as supplied."
           },
           {
             "name": "descriptionLineClamp",
-            "type": "number",
+            "type": "number | false",
             "required": false,
             "defaultValue": "5",
-            "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+            "description": "Maximum visible lines for a string description. Defaults to `5`; use `false` to display the full description without a tooltip."
+          },
+          {
+            "name": "isDescriptionFocusable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Adds a tab stop to a truncated string description so its overflow tooltip can open on focus. Defaults to `false`."
           },
           {
             "name": "level",
@@ -9114,7 +9878,7 @@
   {
     "name": "CodeEditor",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor",
+    "slug": "components/code-editor/code-editor",
     "props": [
       {
         "name": "autoHeight",
@@ -9226,35 +9990,63 @@
   {
     "name": "CodeEditorHeader",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor-header",
+    "slug": "components/code-editor/code-editor-header",
     "props": [
       {
-        "name": "leftNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the start of the header, such as tabs."
-      },
-      {
-        "name": "rightNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the end of the header, such as actions."
-      },
-      {
-        "name": "title",
+        "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Text shown at the start of the header, after `leftNodes`."
+        "description": "Additional CSS class applied to the root element."
+      },
+      {
+        "name": "endElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the end of the header, such as actions. Use a fragment for multiple elements."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the rendered root element, a div by default."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replace the root div or compose it with another component. Native props and refs target the rendered root."
+      },
+      {
+        "name": "startElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the start of the header, before the title, such as tabs. Use a fragment for multiple elements."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown after `startElement`. This is visible header content, not the native HTML title attribute."
       }
     ]
   },
   {
     "name": "TabButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tab-button",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/tab-button",
     "props": [
       {
         "name": "active",
@@ -9330,8 +10122,8 @@
   },
   {
     "name": "AvatarGroup",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/avatar-group",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/avatar-group",
     "props": [
       {
         "name": "avatars",
@@ -9393,29 +10185,36 @@
   },
   {
     "name": "CommandBlock",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/command-block",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/command-block",
     "props": [
       {
-        "name": "button",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+        "name": "actions",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional action element beside the command lines, such as a copy button."
+        "description": "Content beside the command lines, such as a copy button, link or status."
       },
       {
         "name": "commands",
-        "type": "string[]",
+        "type": "readonly string[]",
         "required": true,
         "defaultValue": null,
         "description": "Command lines to display. The component prefixes each line with > and does not execute commands."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
       }
     ]
   },
   {
     "name": "JsonTree",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/json-tree",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/json-tree",
     "props": [
       {
         "name": "arrowButtonCollapsedLabel",
@@ -9491,8 +10290,8 @@
   },
   {
     "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/notification-counter",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/notification-counter",
     "props": [
       {
         "name": "className",
@@ -9519,50 +10318,64 @@
   },
   {
     "name": "TintedIconTile",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tinted-icon-tile",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/tinted-icon-tile",
     "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the tile root."
+      },
       {
         "name": "color",
         "type": "string | null",
         "required": false,
         "defaultValue": "gray",
-        "description": "Theme palette name used to derive the background and icon shades. Invalid names use the default theme color."
+        "description": "Theme palette name used to derive the background and foreground shades. Invalid names use the default theme color."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component rendered inside the tinted tile."
+        "description": "Decorative icon content. The caller controls its dimensions and stroke."
       },
       {
-        "name": "size",
-        "type": "number",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon and tile dimension in pixels. When omitted, the icon uses the medium theme size."
+        "description": "Replaces the div root while preserving icon content and native props."
       },
       {
-        "name": "stroke",
-        "type": "number",
+        "name": "style",
+        "type": "CSSProperties",
         "required": false,
         "defaultValue": null,
-        "description": "Icon stroke width. Defaults to the medium theme stroke."
+        "description": "Inline styles override tile geometry and palette defaults."
       }
     ]
   },
   {
     "name": "Callout",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/callout",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/callout",
     "props": [
       {
         "name": "action",
-        "type": "{ label: string; onClick: () => void; }",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional footer action with a label and onClick callback."
+        "description": "Optional footer node. Use Callout.Action for the standard action or supply custom controls."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
@@ -9572,116 +10385,382 @@
         "description": "Accessible name of the dismiss button. Defaults to `Close`."
       },
       {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
+        "required": false,
+        "defaultValue": "status palette",
+        "description": "Palette override: gray, blue, green, orange, or red. Defaults to the status palette."
+      },
+      {
         "name": "description",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional supporting text. Empty strings are hidden."
+        "description": "Optional supporting content node. Empty slots are hidden."
       },
       {
         "name": "fullWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Fills the available container width."
+        "description": "Removes the default 512px maximum width."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the help icon."
+        "defaultValue": "decorative help icon",
+        "description": "Leading icon node. Defaults to a decorative help icon. Pass null to omit it."
       },
       {
-        "name": "isClosable",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a close button that hides the callout until it is remounted."
-      },
-      {
-        "name": "onClose",
+        "name": "onDismiss",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called after the close button hides the callout."
+        "description": "Shows a dismiss button and notifies the caller once per activation. The caller owns visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CalloutState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or callback composition for the root. Receives status, variant, and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to info."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       },
       {
         "name": "title",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Main message displayed beside the icon."
+        "description": "Main message node displayed beside the icon."
       },
       {
         "name": "variant",
-        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Semantic appearance: info, warning, error, neutral, or success."
+        "type": "\"soft\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Supported appearance: soft."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Semantic color of the button."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
   {
     "name": "InlineBanner",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/inline-banner",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/inline-banner",
     "props": [
       {
-        "name": "button",
-        "type": "InlineBannerButtonProps",
+        "name": "action",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional button or destination link. All fields are optional:\n\n- `title` (`string`): visible action label.\n- `onClick` (`(event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => void`): activation handler, including keyboard activation.\n- `href` (`string`): destination URL; selects native link semantics.\n- `render` (`ReactElement | ((props: HTMLProps, state: { disabled: boolean }) => ReactElement)`): custom root element or renderer. Preserve an anchor when `href` is set, or a native button otherwise. `HTMLProps` includes native element attributes and its ref.\n- `target` (`string`): link browsing context, such as `_blank`.\n- `rel` (`string`): link relationship, such as `noopener noreferrer`.\n- `download` (native anchor attribute): use `true` to download the destination or a `string` to suggest a filename.\n- `disabled` (`boolean`): prevents activation.\n- `hidden` (`boolean`): omits the action from the banner.\n- `aria-label` (`string`): accessible action name, needed when no visible title is supplied.\n- `Icon` (`IconComponent`): decorative icon component displayed before the title.\n\nAction and link fields use the corresponding [Button props](/ui/primitives/input/button). `BaseUIEvent` extends the React event with `preventBaseUIHandler()` and `baseUIHandlerPrevented`."
+        "description": "Optional trailing ReactNode. InlineBanner.Action supplies the shared banner action preset and inherits the resolved banner color; arbitrary controls are also accepted."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-provided content. Standard plain strings truncate with a focusable tooltip; rich nodes render directly. Compact content wraps."
       },
       {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Class applied to the banner."
+        "description": "Class merged onto the root div or composed element."
       },
       {
         "name": "color",
-        "type": "\"blue\" | \"danger\"",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
-        "defaultValue": "blue",
-        "description": "Banner palette color. An omitted color uses Banner’s default."
+        "defaultValue": "status palette",
+        "description": "Gray, blue, green, orange or red palette override. An omitted color follows status."
       },
       {
         "name": "embedded",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Removes the bottom margin from standard banners. Compact banners have no bottom margin."
+        "description": "Removes the standard bottom margin. Compact layouts have no bottom margin."
       },
       {
-        "name": "LeftIcon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the information icon."
+        "defaultValue": "decorative information icon",
+        "description": "Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it."
       },
       {
-        "name": "message",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Message text. Standard banners truncate with a focusable tooltip; compact banners wrap."
-      },
-      {
-        "name": "variant",
+        "name": "layout",
         "type": "\"compact\" | \"standard\"",
         "required": false,
         "defaultValue": "standard",
-        "description": "Standard full-width banner or compact wrapping message with a 512px maximum content width."
+        "description": "Standard full-width layout or compact wrapping layout with a 512px maximum content width. Defaults to standard."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or to the DOM element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, BannerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Base UI root element or render callback, receiving native props/ref and resolved Banner state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning or error. Defaults to info. Roles and announcements remain caller-owned."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root div or composed element."
+      },
+      {
+        "name": "variant",
+        "type": "\"soft\" | \"solid\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Solid or soft appearance, independently of status and layout. Defaults to soft."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },
   {
     "name": "ToastProvider",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toast-provider",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast-provider",
     "props": [
       {
         "name": "children",
@@ -9701,8 +10780,8 @@
   },
   {
     "name": "Toaster",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toaster",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toaster",
     "props": [
       {
         "name": "container",
@@ -9729,8 +10808,8 @@
   },
   {
     "name": "ImageInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/image-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/image-input",
     "props": [
       {
         "name": "abortLabel",
@@ -9848,8 +10927,8 @@
   },
   {
     "name": "SearchInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/search-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/search-input",
     "props": [
       {
         "name": "aria-label",
@@ -9974,43 +11053,57 @@
   },
   {
     "name": "AnimatedIconCrossfade",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/animated-icon-crossfade",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/animated-icon-crossfade",
     "props": [
       {
-        "name": "ActiveIcon",
-        "type": "IconComponent",
+        "name": "activeIcon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component for the active state."
+        "description": "Decorative node content for the active state."
       },
       {
-        "name": "InactiveIcon",
-        "type": "IconComponent",
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the inline span root."
+      },
+      {
+        "name": "inactiveIcon",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Icon component for the inactive state."
+        "description": "Decorative node content for the inactive state."
       },
       {
         "name": "isActive",
         "type": "boolean",
         "required": true,
         "defaultValue": null,
-        "description": "Shows ActiveIcon when true and InactiveIcon otherwise."
+        "description": "Shows activeIcon when true and inactiveIcon otherwise."
       },
       {
-        "name": "size",
-        "type": "number",
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Icon dimension in pixels. Defaults to the small theme icon size."
+        "description": "Replaces the span root while preserving both transition layers."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root, including width and height."
       }
     ]
   },
   {
     "name": "MenuItem",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item",
     "props": [
       {
         "name": "accent",
@@ -10198,8 +11291,8 @@
   },
   {
     "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-avatar",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-avatar",
     "props": [
       {
         "name": "accent",
@@ -10210,7 +11303,7 @@
       },
       {
         "name": "avatar",
-        "type": "Pick<AvatarProps, \"size\" | \"name\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
+        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
         "required": false,
         "defaultValue": null,
         "description": "Avatar name, source, color seed, size, and shape. Omit to hide the avatar."
@@ -10296,8 +11389,8 @@
   },
   {
     "name": "MenuItemDraggable",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-draggable",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-draggable",
     "props": [
       {
         "name": "accent",
@@ -10394,8 +11487,8 @@
   },
   {
     "name": "MenuItemSuggestion",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-suggestion",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-suggestion",
     "props": [
       {
         "name": "className",
@@ -10457,8 +11550,8 @@
   },
   {
     "name": "MenuPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-picker",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-picker",
     "props": [
       {
         "name": "className",

@@ -10,7 +10,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -34,6 +34,7 @@ export const ConfirmationDialog = ({
   dialogId,
   title,
   loading,
+  isConfirmButtonDisabled = false,
   subtitle,
   onConfirmClick,
   onClose,
@@ -51,8 +52,9 @@ export const ConfirmationDialog = ({
     useState<string>('');
 
   const isValidValue =
-    !isNonEmptyString(confirmationValue) ||
-    inputConfirmationValue === confirmationValue;
+    !isConfirmButtonDisabled &&
+    (!isNonEmptyString(confirmationValue) ||
+      inputConfirmationValue === confirmationValue);
 
   const { closeDialog } = useDialog();
 

@@ -24,6 +24,7 @@ import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-module
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 @Injectable()
 export class AgentInboxService {
@@ -78,12 +79,13 @@ export class AgentInboxService {
     // A member who deleted the conversation has dismissed it, and a message
     // that exists was already delivered.
     if (isDefined(existingThread?.deletedAt)) {
-      return { threadId, isDismissed: true };
+      return { threadId, toolCallId, isDismissed: true };
     }
 
     if (await this.messageExists({ workspaceId, id: messageId })) {
       return {
         threadId,
+        toolCallId,
         isDismissed: false,
         awaitedToolOutput: isDefined(buildAwaitingToolCall)
           ? await this.findToolOutput({ workspaceId, toolCallId })
@@ -162,14 +164,14 @@ export class AgentInboxService {
     }
 
     if (!isDefined(awaitingToolCall)) {
-      return { threadId, isDismissed: false };
+      return { threadId, toolCallId, isDismissed: false };
     }
 
     const awaitedToolOutput = isWritten
       ? awaitingToolCall.output
       : await this.findToolOutput({ workspaceId, toolCallId });
 
-    return { threadId, isDismissed: false, awaitedToolOutput };
+    return { threadId, toolCallId, isDismissed: false, awaitedToolOutput };
   }
 
   // The thread key picks the sender's conversation with the member, so every
@@ -267,6 +269,7 @@ export class AgentInboxService {
         id: turnId,
         threadId,
         agentId: null,
+        status: AgentTurnStatus.COMPLETED,
       }),
     );
 
