@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { getToolName, isToolUIPart } from 'ai';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ExtendedFileUIPart,
@@ -11,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CacheLockException } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
+import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -25,6 +28,7 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import {
   AiException,
@@ -208,9 +212,19 @@ export class AgentRunConversationService {
           throw error;
         });
 
+    // a run that paused on a wait goes on later, so its turn is not done yet
+    const isWaitingOnWait =
+      execution.isPaused === true &&
+      replyParts.some(
+        (part) =>
+          isToolUIPart(part) &&
+          AGENT_WAIT_TOOL_NAMES.includes(getToolName(part)) &&
+          isAwaitingPausingToolOutput(part.output),
+      );
+
     await this.turnRecorderService.finishExecutedTurn({
       ...turn,
-      isAwaitingAnswer,
+      isWaiting: isAwaitingAnswer || isWaitingOnWait,
     });
 
     // the waiting call is already saved and can be answered from the conversation, so a

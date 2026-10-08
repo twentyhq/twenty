@@ -14,6 +14,8 @@
   justify-content: center;
   color: var(--tw-avatar-color);
   background: var(--tw-avatar-background);
+  text-decoration: none;
+  position: relative;
 
   &[data-shape='rounded-square'] {
     border-radius: var(--t-border-radius-sm);
@@ -30,12 +32,16 @@
       0 0 0 2px var(--t-background-primary);
   }
 
-  &[data-clickable]:not([data-disabled]) {
+  &:is(button, a[href], [role='button'], [role='link']):not(:disabled):not(
+      [aria-disabled='true']
+    ) {
     cursor: pointer;
   }
 
   @include hover-capable {
-    &[data-clickable]:not([data-disabled]):hover {
+    &:is(button, a[href], [role='button'], [role='link']):not(:disabled):not(
+        [aria-disabled='true']
+      ):hover {
       box-shadow: 0 0 0 4px var(--t-background-transparent-light);
     }
   }
@@ -95,11 +101,17 @@
   object-fit: cover;
   block-size: 100%;
   inline-size: 100%;
+
+  &[data-loading],
+  &[data-error] {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
 }
 .fallback {
   font-weight: var(--t-font-weight-medium);
-}
-.icon {
   display: flex;
   & > svg {
     inline-size: calc(var(--t-icon-size-xl) * 1px);

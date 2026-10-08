@@ -582,7 +582,6 @@ export abstract class CommonBaseQueryRunnerService<
           universal_identifier: authContext.application.universalIdentifier,
           app_name: authContext.application.name,
           source_type: authContext.application.sourceType,
-          workspace_id: authContext.workspace.id,
         },
       });
     }
