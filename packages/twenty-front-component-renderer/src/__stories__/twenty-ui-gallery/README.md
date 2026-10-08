@@ -27,34 +27,34 @@ the Dropdown-based popups.
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
 
-| Fixture                          | Components                                                                                                                          |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                  |
-| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)      |
-| `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)    |
-| `twenty-ui-display-helpers`      | Text                                                                                                                                |
-| `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
-| `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
-| `twenty-ui-image-input`          | ImageInput                                                                                                                          |
-| `twenty-ui-list-item`            | ListItem                                                                                                                            |
-| `twenty-ui-settings-row`         | SettingsRow                                                                                                                         |
-| `twenty-ui-tabs`                 | Tabs                                                                                                                                |
-| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                     |
-| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                  |
-| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                      |
-| `twenty-ui-popover`              | Popover                                                                                                                             |
-| `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                             |
-| `twenty-ui-menu`                 | Menu                                                                                                                                |
-| `twenty-ui-select`               | Select                                                                                                                              |
-| `twenty-ui-dropdown`             | Dropdown                                                                                                                            |
-| `twenty-ui-toast`                | Toast                                                                                                                               |
-| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                             |
-| `twenty-ui-checkbox`             | Checkbox                                                                                                                            |
-| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                               |
-| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                             |
-| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                       |
-| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
-| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                 |
+| Fixture                          | Components                                                                                                                              |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `twenty-ui-field-controls`       | Field, Input, InputGroup, Textarea                                                                                                      |
+| `twenty-ui-number-stepper`       | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms)          |
+| `twenty-ui-autocomplete`         | Autocomplete (caret keys, controlled editing, composition, filtering, disabled state, Empty; `TwentyUiAutocomplete.stories.tsx`)        |
+| `twenty-ui-display-helpers`      | Text                                                                                                                                    |
+| `twenty-ui-avatar-controls`      | Avatar (stable presentational root, compound fallback, refs, explicit button/link composition and native keyboard/disabled behavior)    |
+| `twenty-ui-avatar-image`         | Avatar Root/Image/Fallback (image labels/attributes/refs, loading callbacks, decoded images, fallback, replacement and unmount/remount) |
+| `twenty-ui-image-input`          | ImageInput                                                                                                                              |
+| `twenty-ui-list-item`            | ListItem                                                                                                                                |
+| `twenty-ui-settings-row`         | SettingsRow                                                                                                                             |
+| `twenty-ui-tabs`                 | Tabs                                                                                                                                    |
+| `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
+| `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
+| `twenty-ui-popover`              | Popover                                                                                                                                 |
+| `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
+| `twenty-ui-menu`                 | Menu                                                                                                                                    |
+| `twenty-ui-select`               | Select                                                                                                                                  |
+| `twenty-ui-dropdown`             | Dropdown                                                                                                                                |
+| `twenty-ui-toast`                | Toast                                                                                                                                   |
+| `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
+| `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
+| `twenty-ui-radio-group`          | RadioGroup, Radio (standard and card)                                                                                                   |
+| `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                 |
+| `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                           |
+| `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)     |
+| `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                     |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -73,6 +73,29 @@ remounted Avatar. The Storybook Vite fixture middleware owns these pending
 responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
+Both runtimes also pin the current retained-image and responsive-source gaps
+described below. The controls fixture uses
+native buttons and an anchor through `render`; the anchor targets a local
+fragment with `target="_self"` and checks pointer and Enter activation without changing navigation
+policy. Callback refs expose the renderer's registered HTML element proxies,
+whose tag names use the `HTML-` prefix.
+
+Avatar's default preloaded `src` path decodes visible images and supports image
+labels, custom image/fallback rendering, refs, status/native load callbacks,
+replacement and fallback in both runtimes. The host image element currently
+forwards only `src`, `alt`, `width` and `height` among image-specific properties;
+`srcSet`, `sizes`, `loading`, `decoding` and `referrerPolicy` do not reach it.
+The detached preloader accepts responsive sources, so a `srcSet`-only Avatar
+reports loaded while its host image has no source and a zero natural width.
+The fixture pins this as an unsupported visible-image case.
+
+`keepMounted` with the fixture's caller-supplied `render` and loading callback
+also remains unsupported. Its native host image decodes to the expected width,
+but the worker element has no `complete` or `naturalWidth` readback. Base UI
+therefore returns to loading after the callback updates its parent, leaving the
+decoded image hidden and the fallback visible. The fixture pins that failure
+and checks recovery when returning to the default preload mode. These boundary
+assertions do not establish responsive-source or retained-image acceptance.
 
 The Autocomplete fixture uses the public inline list interface to isolate input
 behavior from popup support. Its Empty section runs Base UI's live-region marker

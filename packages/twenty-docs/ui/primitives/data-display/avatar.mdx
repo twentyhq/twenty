@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
 
-`Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip).
+`Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
 <StoryEmbed storyId="ui-data-display-avatar--app" title="Avatar example" />
 
@@ -19,16 +19,78 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 type PersonAvatarProps = { name: string; imageUrl?: string | null };
 
 export const PersonAvatar = ({ name, imageUrl }: PersonAvatarProps) => (
-  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-    <Avatar src={imageUrl} name={name} shape="circle" size="lg" />
-    {name}
-  </span>
+  <Avatar src={imageUrl} name={name} shape="circle" size="lg" />
 );
 ```
 
 When the image is absent or fails to load, the fallback shows the first letter of the trimmed name in uppercase. An empty name shows `-`. `colorSeed` chooses stable fallback colors and defaults to `name`; use a record identifier to keep the color stable when the name changes.
 
-The image and fallback are decorative. Keep the visible name beside the avatar, as above. For a standalone avatar that conveys information, supply `role="img"` and an `aria-label`.
+For an image or initial avatar, the image alternative text and fallback label default to `name`. Set `imageProps.alt` to supply a different label. When a visible name already provides the same information, pass `imageProps={{ alt: '' }}` to make both the image and default fallback decorative.
+
+`imageProps` accepts the complete image contract, including `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, native events, refs, and `render`. Its `src` overrides the shorthand `src`. `fallbackProps` accepts the complete fallback contract, including `delay`, children, labeling, refs, and `render`.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type RecordAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const RecordAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: RecordAvatarProps) => (
+  <Avatar
+    name={name}
+    src={imageUrl}
+    size="lg"
+    imageProps={{ decoding: 'async', referrerPolicy: 'no-referrer' }}
+    fallbackProps={{ children: initials, delay: 150 }}
+  />
+);
+```
+
+## Compose the parts
+
+Use `Avatar.Root`, `Avatar.Image`, and `Avatar.Fallback` when you own the anatomy. Root supplies the size, shape, and fallback appearance; it does not generate children or accessible labels.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type ContactAvatarProps = {
+  name: string;
+  imageUrl?: string;
+  initials: string;
+};
+
+export const ContactAvatar = ({
+  name,
+  imageUrl,
+  initials,
+}: ContactAvatarProps) => (
+  <Avatar.Root name={name} shape="circle" size="xl">
+    <Avatar.Image src={imageUrl} alt={name} decoding="async" />
+    <Avatar.Fallback role="img" aria-label={name} delay={150}>
+      {initials}
+    </Avatar.Fallback>
+  </Avatar.Root>
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatar--parts" title="Avatar parts" />
+
+The parts share Base UI's image loading state. Image renders an `img` after a successful load by default, and Fallback renders a `span` while the image is absent, loading, or has failed. `delay` postpones the initial fallback display in milliseconds and defaults to `0`. A changed source is loaded again and can replace either the current image or fallback.
+
+`Avatar.Image` exposes `onLoadingStatusChange` with `idle`, `loading`, `loaded`, and `error` status values. The callback runs when Base UI reports a non-idle status change; unmounting the Image part resets the shared root state to `idle`. Root, Image, and Fallback accept state-aware `className`, `style`, and `render` functions with `imageLoadingStatus`; Image also exposes `transitionStatus`.
+
+Use `keepMounted` on Image when the rendered image must load in place, including `loading="lazy"` or an optimized image component. Forward native attributes, events, and the ref from custom image renderers. A mounted image can still be loading or failed; inspect loading state rather than treating its presence as success.
+
+The front component renderer currently supports the default preload path with `src`. Its host image does not receive `srcSet`, `sizes`, `loading`, `decoding`, or `referrerPolicy`. A changing custom `render` function with `keepMounted` can leave a decoded image hidden because the worker cannot read its completion state or dimensions. Use default preloading there until those renderer capabilities are available.
+
+The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `AvatarRootState`, `AvatarImageState`, `AvatarFallbackState`, and `AvatarImageLoadingStatus` types are exported from `twenty-ui/primitives/data-display`. Refs target the rendered DOM element: `span`, `img`, and `span` by default, or the element supplied through `render`.
 
 ## Shape and appearance
 
@@ -49,30 +111,66 @@ export const ContactIcon = () => (
 );
 ```
 
-An `icon` takes precedence over both the image and the first-letter fallback. `pulsing` animates opacity and respects reduced-motion preferences.
+An `icon` takes precedence over both the image and the first-letter fallback. The icon itself is decorative, so label the root when it conveys information. `pulsing` animates opacity and respects reduced-motion preferences.
 
 ## Open a profile
 
 ```tsx
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-type ProfileAvatarProps = { onOpenProfile: () => void };
+type ProfileAvatarProps = {
+  onOpenProfile: () => void;
+  disabled?: boolean;
+};
 
-export const ProfileAvatar = ({ onOpenProfile }: ProfileAvatarProps) => (
+export const ProfileAvatar = ({
+  onOpenProfile,
+  disabled = false,
+}: ProfileAvatarProps) => (
   <Avatar
     name="Jane"
     shape="circle"
     size="lg"
+    imageProps={{ alt: '' }}
+    render={<button type="button" disabled={disabled} />}
     aria-label="Open Jane's profile"
     onClick={onOpenProfile}
   />
 );
 ```
 
-Supplying `onClick` renders a button with pointer, Enter, and Space activation. Use `disabled` to prevent activation. The default accessible name comes from `name`, but an action-specific `aria-label` makes the purpose clearer. When replacing the button through `render`, set `nativeButton={false}` for a non-button element.
+<StoryEmbed
+  storyId="ui-data-display-avatar--button-composition"
+  title="Avatar composed as a button"
+/>
+
+Compose a native button for actions. It owns focus, Enter and Space activation, and disabled behavior. Supply an action-specific accessible name. Set `disabled` on the rendered button; Avatar has no `disabled` or `nativeButton` prop.
+
+For navigation, compose an anchor with an `href` or a router link that preserves anchor semantics. Native links activate with Enter. Keep navigation and disabled behavior with the link or interactive component you compose.
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const ProfileLink = () => (
+  <Avatar
+    name="Jane"
+    shape="circle"
+    size="lg"
+    render={<a href="/people/jane" />}
+    aria-label="Open Jane's profile"
+    imageProps={{ alt: '' }}
+  />
+);
+```
+
+## Migrate clickable avatars
+
+Supplying `onClick` passes the handler to the root and keeps the default `span`. Add `render={<button type="button" />}` to an action avatar, or `render={<a href="..." />}` to a navigation avatar. Move `disabled` onto the composed owner and remove `nativeButton`. Give the owner a useful accessible name and avoid nesting interactive elements.
+
+Images now use `name` as alternative text by default. Add `imageProps={{ alt: '' }}` where the avatar sits beside the same visible name. With explicit parts, supply image alternative text and fallback labels or decorative attributes yourself, and keep translated content in your application.
 
 ## Props
 
-Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
+Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted by every part.
 
 <AvatarReference />

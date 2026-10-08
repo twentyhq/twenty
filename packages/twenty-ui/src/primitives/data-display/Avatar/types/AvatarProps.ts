@@ -1,22 +1,12 @@
-import { type Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
 import { type ReactNode } from 'react';
 
-import { type AvatarSize } from './AvatarSize';
-import { type AvatarShape } from './AvatarShape';
+import { type AvatarFallbackProps } from './AvatarFallbackProps';
+import { type AvatarImageProps } from './AvatarImageProps';
+import { type AvatarRootProps } from './AvatarRootProps';
 
-export type AvatarProps = Omit<AvatarPrimitive.Root.Props, 'children'> & {
+export type AvatarProps = Omit<AvatarRootProps, 'children'> & {
   src?: string | null;
-  name?: string;
-  colorSeed?: string;
-  size?: AvatarSize;
-  shape?: AvatarShape;
-  variant?: 'soft' | 'outline';
   icon?: ReactNode;
-  color?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  pulsing?: boolean;
-  ring?: boolean;
-  disabled?: boolean;
-  nativeButton?: boolean;
+  imageProps?: AvatarImageProps;
+  fallbackProps?: AvatarFallbackProps;
 };

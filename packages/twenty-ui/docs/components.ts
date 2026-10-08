@@ -34,6 +34,7 @@ import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoa
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
 import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
@@ -573,6 +574,15 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/avatar',
     propDescriptions: AVATAR_PROP_DESCRIPTIONS,
+    propDefaults: {
+      size: 'md',
+      shape: 'square',
+      variant: 'soft',
+      pulsing: 'false',
+      ring: 'false',
+    },
+    parts: ['Root', 'Image', 'Fallback'],
+    partPropDescriptions: AVATAR_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Chip',
