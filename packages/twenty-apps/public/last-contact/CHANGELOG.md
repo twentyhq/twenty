@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.0
+
+- Drop the `on-person-created` and `on-company-created` triggers. Last contact only comes from a synced email or meeting linked to a person, so a newly created person or company never has one, and recomputing the company on creation could not change anything. A mailbox sync that creates contacts spent 6 API calls per batch of 100 contacts on them.
+
 ## 1.8.0
 
 All installs of the app share one API rate limit, 500 calls per minute across every workspace. This version is about spending far fewer of those calls.
