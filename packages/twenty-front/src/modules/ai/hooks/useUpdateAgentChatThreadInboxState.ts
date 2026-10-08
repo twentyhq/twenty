@@ -5,7 +5,6 @@ import { applyAgentChatInboxAction } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
   type AgentChatThreadVisit,
@@ -35,8 +34,6 @@ export const useUpdateAgentChatThreadInboxState = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { refreshAgentChatOpenThreadsSummary } =
-    useRefreshAgentChatOpenThreadsSummary();
 
   // The change shows right away, and is put back if the server refuses it
   const updateAgentChatThreadInboxState = useCallback(
@@ -107,7 +104,6 @@ export const useUpdateAgentChatThreadInboxState = () => {
             snoozedUntil: snoozedUntil?.toISOString(),
           },
         });
-        refreshAgentChatOpenThreadsSummary();
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
@@ -142,7 +138,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
         });
       }
     },
-    [client, enqueueToast, refreshAgentChatOpenThreadsSummary, store],
+    [client, enqueueToast, store],
   );
 
   return { updateAgentChatThreadInboxState };
