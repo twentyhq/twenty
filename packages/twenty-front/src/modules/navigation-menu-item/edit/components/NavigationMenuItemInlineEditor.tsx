@@ -150,7 +150,6 @@ export const NavigationMenuItemInlineEditor = ({
         autoFocus
         selectOnFocus
         copyButton={false}
-        // Trimming on every keystroke drops each typed space; finishRename trims on commit
         shouldTrim={false}
         value={name}
         onChange={setName}
