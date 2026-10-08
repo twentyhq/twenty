@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
@@ -16,9 +17,10 @@ export const agentChatThreadInboxStatusFamilySelector =
       ({ get }) => {
         const participants = get(agentChatThreadParticipantsState);
         const visit = get(agentChatThreadVisitState);
+        const thread = get(agentChatThreadRecordFamilySelector, threadId);
+        const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
         const status = getAgentChatThreadInboxStatus({
-          lastActivityAt: get(agentChatThreadRecordFamilySelector, threadId)
-            ?.lastActivityAt,
+          lastActivityAt: thread?.lastActivityAt,
           participant: participants?.[threadId],
         });
 
@@ -30,6 +32,9 @@ export const agentChatThreadInboxStatusFamilySelector =
         return {
           ...status,
           isUnread: isDefined(participants) && !isOnScreen && status.isUnread,
+          isAssignedToMe:
+            isDefined(currentWorkspaceMemberId) &&
+            thread?.assigneeId === currentWorkspaceMemberId,
         };
       },
     areEqual: isDeeplyEqual,

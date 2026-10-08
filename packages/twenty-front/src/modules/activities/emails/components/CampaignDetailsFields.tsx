@@ -120,10 +120,14 @@ export const CampaignDetailsFields = ({
           <StyledWarningContainer>
             <InlineBanner
               embedded
-              color="danger"
-              LeftIcon={IconAlertTriangle}
-              message={t`No sending address. Connect a verified domain in Settings.`}
-            />
+              status="error"
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
+            >{t`No sending address. Connect a verified domain in Settings.`}</InlineBanner>
           </StyledWarningContainer>
         )
       }

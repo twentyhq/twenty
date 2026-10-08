@@ -30,7 +30,7 @@ import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 

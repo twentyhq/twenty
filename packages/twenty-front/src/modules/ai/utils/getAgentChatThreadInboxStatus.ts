@@ -16,7 +16,7 @@ export const getAgentChatThreadInboxStatus = ({
 }: {
   lastActivityAt: string | null | undefined;
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
-}): AgentChatThreadInboxStatus => {
+}): Omit<AgentChatThreadInboxStatus, 'isAssignedToMe'> => {
   const isUnread =
     isDefined(lastActivityAt) &&
     (!isDefined(participant?.lastReadAt) ||

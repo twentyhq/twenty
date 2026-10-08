@@ -465,7 +465,8 @@
                 "developers/extend/apps/logic/skills-and-agents",
                 "developers/extend/apps/logic/connections",
                 "developers/extend/apps/logic/messaging-channels",
-                "developers/extend/apps/logic/credits"
+                "developers/extend/apps/logic/credits",
+                "developers/extend/apps/logic/good-practices"
               ]
             },
             {
@@ -569,7 +570,8 @@
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
                     "ui/primitives/feedback/progress-bar",
-                    "ui/primitives/feedback/progress-ring"
+                    "ui/primitives/feedback/progress-ring",
+                    "ui/primitives/feedback/skeleton"
                   ]
                 },
                 {

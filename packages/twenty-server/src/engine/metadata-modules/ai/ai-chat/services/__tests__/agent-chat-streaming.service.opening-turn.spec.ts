@@ -64,6 +64,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
       ),
       {} as never,
       {} as never,

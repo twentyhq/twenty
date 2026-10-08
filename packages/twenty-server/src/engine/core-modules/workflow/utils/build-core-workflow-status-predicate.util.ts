@@ -1,4 +1,4 @@
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 
 const HAS_DRAFT_VERSION = `coalesce(bool_or(v.status = 'DRAFT'), false)`;
 const HAS_ACTIVE_VERSION = `coalesce(bool_or(v.status = 'ACTIVE'), false)`;

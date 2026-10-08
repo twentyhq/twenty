@@ -14,6 +14,7 @@ import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentF
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { TooltipTextContent } from '@/ui/layout/tooltip/components/TooltipTextContent';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -258,31 +259,38 @@ export const OnboardingFreeCreditsPill = ({
       <Tooltip.Root
         open={!isPopoverShown && !isModalFocused && isDefined(tooltipContent)}
       >
-        <Tooltip.Popup
-          anchor={pillRef}
-          side="bottom"
-          align="end"
-          arrow
-          withExitAnimation
-        >
-          <StyledTooltipContents>
-            <AnimatePresence initial={false}>
-              {isDefined(tooltipContent) && (
-                <StyledTooltipContent
-                  key={tooltipContent.title}
-                  initial={{ opacity: 0, y: tooltipSlideOffset }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -tooltipSlideOffset }}
-                  transition={{ duration: theme.animation.duration.normal }}
-                >
-                  <Tooltip.Content description={tooltipContent.description}>
-                    {tooltipContent.title}
-                  </Tooltip.Content>
-                </StyledTooltipContent>
-              )}
-            </AnimatePresence>
-          </StyledTooltipContents>
-        </Tooltip.Popup>
+        <Tooltip.Portal>
+          <Tooltip.Positioner
+            anchor={pillRef}
+            side="bottom"
+            align="end"
+            sideOffset={10}
+            style={{ maxWidth: '300px' }}
+          >
+            <Tooltip.Popup withExitAnimation>
+              <StyledTooltipContents>
+                <AnimatePresence initial={false}>
+                  {isDefined(tooltipContent) && (
+                    <StyledTooltipContent
+                      key={tooltipContent.title}
+                      initial={{ opacity: 0, y: tooltipSlideOffset }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -tooltipSlideOffset }}
+                      transition={{ duration: theme.animation.duration.normal }}
+                    >
+                      <TooltipTextContent
+                        description={tooltipContent.description}
+                      >
+                        {tooltipContent.title}
+                      </TooltipTextContent>
+                    </StyledTooltipContent>
+                  )}
+                </AnimatePresence>
+              </StyledTooltipContents>
+              <Tooltip.Arrow />
+            </Tooltip.Popup>
+          </Tooltip.Positioner>
+        </Tooltip.Portal>
       </Tooltip.Root>
     </StyledContainer>
   );

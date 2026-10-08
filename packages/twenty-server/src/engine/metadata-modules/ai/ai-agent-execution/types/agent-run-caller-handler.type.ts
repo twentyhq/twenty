@@ -1,5 +1,4 @@
 import { type AgentRunSummary } from 'twenty-shared/ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
@@ -14,10 +13,6 @@ export type AgentRunCallerHandler<
     input: AgentRunCallerInput<TCaller>,
   ): Promise<AgentRunExecutionContext>;
 
-  resolveTurnAuthor(
-    input: AgentRunCallerInput<TCaller>,
-  ): Promise<ActorMetadata>;
-
   getWaitingState(
     input: AgentRunCallerInput<TCaller>,
   ): Promise<AgentRunCallerWaitingState>;
@@ -27,7 +22,7 @@ export type AgentRunCallerHandler<
     input: AgentRunCallerInput<TCaller> & {
       threadId: string;
       outcome: AgentRunCallerOutcome;
-      // null for a call the caller posted itself, which no agent ran
+      // null when the run recorded none
       summary: AgentRunSummary | null;
     },
   ): Promise<void>;

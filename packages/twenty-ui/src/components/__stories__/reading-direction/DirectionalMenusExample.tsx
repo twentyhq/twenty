@@ -63,7 +63,11 @@ export const DirectionalMenusExample = ({
         </Dropdown.Root>
         <Tooltip.Root>
           <Tooltip.Trigger render={<Button>Tooltip target</Button>} />
-          <Tooltip.Popup>Directional tooltip</Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+              <Tooltip.Popup>Directional tooltip</Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       </div>
     </ThemeProvider>
