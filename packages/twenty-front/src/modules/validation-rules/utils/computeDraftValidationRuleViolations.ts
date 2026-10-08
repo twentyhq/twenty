@@ -1,15 +1,17 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import {
   fieldMetadataDefaultValueFunctionName,
+  FieldMetadataType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
   isDefined,
+  isPlainObject,
 } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -27,6 +29,11 @@ const isServerFilledField = (
 ): boolean =>
   fieldMetadataItem.isSystem ||
   FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
+
+const isRichTextAwaitingServerMarkdown = (value: unknown): boolean =>
+  isPlainObject(value) &&
+  isNonEmptyString(value.blocknote) &&
+  !isNonEmptyString(value.markdown);
 
 const withStaticDefaultValues = ({
   draftRecord,
@@ -59,11 +66,13 @@ const canEvaluateOnDraft = ({
   fields,
   draftRecord,
   serverFilledFieldNames,
+  richTextFieldNamesAwaitingServerMarkdown,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
   draftRecord: Record<string, unknown>;
   serverFilledFieldNames: string[];
+  richTextFieldNamesAwaitingServerMarkdown: string[];
 }): boolean => {
   const compilationResult = compileValidationRuleExpression({
     expression,
@@ -90,7 +99,18 @@ const canEvaluateOnDraft = ({
     .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
     .every((fieldName) => fieldName in draftRecord);
 
-  return isEveryReferencedRelationLoaded && isEveryServerFilledFieldInDraft;
+  const isNoReferencedRichTextAwaitingServerMarkdown = bindingPaths
+    .map((bindingPath) => bindingPath.split('.')[0])
+    .every(
+      (fieldName) =>
+        !richTextFieldNamesAwaitingServerMarkdown.includes(fieldName),
+    );
+
+  return (
+    isEveryReferencedRelationLoaded &&
+    isEveryServerFilledFieldInDraft &&
+    isNoReferencedRichTextAwaitingServerMarkdown
+  );
 };
 
 const withRelationPresenceFromJoinColumns = ({
@@ -140,6 +160,14 @@ export const computeDraftValidationRuleViolations = ({
     .filter(isServerFilledField)
     .map((fieldMetadataItem) => fieldMetadataItem.name);
 
+  const richTextFieldNamesAwaitingServerMarkdown = fields
+    .filter(
+      (field) =>
+        field.type === FieldMetadataType.RICH_TEXT &&
+        isRichTextAwaitingServerMarkdown(draftRecord[field.name]),
+    )
+    .map((field) => field.name);
+
   return validationRules
     .filter((validationRule) => validationRule.isActive)
     .filter((validationRule) =>
@@ -148,6 +176,7 @@ export const computeDraftValidationRuleViolations = ({
         fields,
         draftRecord: draftRecordWithDefaultValues,
         serverFilledFieldNames,
+        richTextFieldNamesAwaitingServerMarkdown,
       }),
     )
     .filter(
