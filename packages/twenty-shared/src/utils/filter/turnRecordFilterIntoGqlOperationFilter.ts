@@ -52,6 +52,7 @@ import {
   resolveRelativeDateFilterStringified,
   type RecordFilter,
 } from '@/utils';
+import { convertCurrencyAmountToCurrencyMicros } from '@/utils/currency/convertCurrencyAmountToCurrencyMicros';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import {
   actorSourceFilterValueSchema,
@@ -804,7 +805,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  gte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  gte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -812,7 +815,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  lte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  lte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -820,7 +825,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  eq: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  eq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -828,7 +835,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  neq: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  neq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
                 },
               } as CurrencyFilter,
             };

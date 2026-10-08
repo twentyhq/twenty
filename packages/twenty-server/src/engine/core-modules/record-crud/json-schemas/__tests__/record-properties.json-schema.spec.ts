@@ -30,7 +30,7 @@ const FIELDS = [
 ];
 
 describe('generateRecordPropertiesJsonSchema', () => {
-  it('should describe writable fields and require the non-nullable ones', () => {
+  it('should describe writable fields and require the non-nullable ones without a default value', () => {
     expect(
       generateRecordPropertiesJsonSchema({
         objectMetadata: { fields: FIELDS },
@@ -64,5 +64,41 @@ describe('generateRecordPropertiesJsonSchema', () => {
         restrictedFields: { 'field-id-name': { canUpdate: false } },
       }).properties,
     ).not.toHaveProperty('name');
+  });
+
+  it('should not require non-nullable fields that have a default value', () => {
+    expect(
+      generateRecordPropertiesJsonSchema({
+        objectMetadata: {
+          fields: [
+            getToolSchemaFieldMock({
+              name: 'name',
+              type: FieldMetadataType.TEXT,
+              isNullable: false,
+              defaultValue: null,
+            }),
+            getToolSchemaFieldMock({
+              name: 'stage',
+              type: FieldMetadataType.SELECT,
+              isNullable: false,
+              defaultValue: "'NEW'",
+            }),
+            getToolSchemaFieldMock({
+              name: 'position',
+              type: FieldMetadataType.POSITION,
+              isNullable: false,
+              defaultValue: 0,
+            }),
+            getToolSchemaFieldMock({
+              name: 'isAutomaticallyAssigned',
+              type: FieldMetadataType.BOOLEAN,
+              isNullable: false,
+              defaultValue: false,
+            }),
+          ],
+        },
+        definitions: {},
+      }).required,
+    ).toEqual(['name']);
   });
 });

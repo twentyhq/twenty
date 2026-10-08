@@ -690,7 +690,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Destination URL. Enables native link semantics instead of button semantics."
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
           },
           {
             "name": "loading",
@@ -707,11 +707,25 @@
             "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
           },
           {
             "name": "shortcut",
@@ -1546,9 +1560,16 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Required accessible name describing the action."
+        "description": "Accessible name describing the action. Required unless `aria-labelledby` supplies the name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element supplying the accessible name. Can be used instead of `aria-label`."
       },
       {
         "name": "children",
@@ -1597,7 +1618,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1607,11 +1628,25 @@
         "description": "Shows a loading indicator and disables activation."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shape",
@@ -1667,7 +1702,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1679,9 +1714,16 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": true,
+        "required": false,
         "defaultValue": null,
-        "description": "Required accessible name describing the action."
+        "description": "Accessible name describing the action. Required unless `aria-labelledby` supplies the name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element supplying the accessible name. Can be used instead of `aria-label`."
       },
       {
         "name": "children",
@@ -1701,7 +1743,7 @@
         "name": "color",
         "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "neutral",
         "description": "Semantic color of the button."
       },
       {
@@ -1723,7 +1765,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1733,11 +1775,25 @@
         "description": "Shows a loading indicator and disables activation."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true (false for the built-in href anchor)",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shape",
@@ -1792,8 +1848,8 @@
         "name": "variant",
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "defaultValue": "outline",
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1849,7 +1905,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1866,11 +1922,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -1912,7 +1982,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -1975,7 +2045,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -1992,11 +2062,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -2038,7 +2122,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -2094,7 +2178,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
       },
       {
         "name": "loading",
@@ -2111,11 +2195,25 @@
         "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
       },
       {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true (false for the built-in href anchor)",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "shortcut",
@@ -2157,7 +2255,7 @@
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics."
       }
     ]
   },
@@ -2178,7 +2276,7 @@
         "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared semantic color that overrides the color of buttons in the group."
+        "description": "Default semantic color for children without an explicit color."
       },
       {
         "name": "framed",
@@ -2199,14 +2297,14 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared button height that overrides the size of buttons in the group."
+        "description": "Default button height for children without an explicit size."
       },
       {
         "name": "variant",
         "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Shared surface treatment that overrides the variant of buttons in the group."
+        "description": "Default surface treatment for children without an explicit variant."
       }
     ]
   },
@@ -10556,14 +10654,28 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Destination URL. Enables native link semantics instead of button semantics."
+        "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+        "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Role of the root element. Use `link` for custom navigation renderers."
       },
       {
         "name": "size",
@@ -10981,7 +11093,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Destination URL. Enables native link semantics instead of button semantics."
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
           },
           {
             "name": "loading",
@@ -10998,11 +11110,25 @@
             "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
           },
           {
             "name": "shortcut",
@@ -11170,7 +11296,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Destination URL. Enables native link semantics instead of button semantics."
+            "description": "Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract."
           },
           {
             "name": "loading",
@@ -11187,11 +11313,25 @@
             "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence."
+          },
+          {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
             "required": false,
             "defaultValue": null,
-            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+            "description": "Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role=\"link\"` for a custom navigation anchor. Router integration belongs to the caller."
+          },
+          {
+            "name": "role",
+            "type": "AriaRole",
+            "required": false,
+            "defaultValue": null,
+            "description": "Role of the root element. Use `link` for custom navigation renderers."
           },
           {
             "name": "shortcut",
