@@ -4,7 +4,11 @@ import { type useRender } from '@base-ui/react/use-render';
 import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 export type TextareaProps = Omit<
-  useRender.ComponentProps<'textarea'>,
+  useRender.ComponentProps<
+    'textarea',
+    InputPrimitive.State,
+    useRender.ElementProps<'textarea'>
+  >,
   'className'
 > & {
   /**
