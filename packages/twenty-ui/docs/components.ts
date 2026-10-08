@@ -1,3 +1,6 @@
+import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
+import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -286,12 +289,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Input/Input.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input',
+    propDescriptions: INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'InputGroup',
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+    propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
     name: 'NumberStepper',
@@ -305,6 +310,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Textarea/Textarea.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/textarea',
+    propDescriptions: TEXTAREA_PROP_DESCRIPTIONS,
   },
   {
     name: 'Checkbox',
