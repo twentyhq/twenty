@@ -22,6 +22,32 @@ export class MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand implemen
          AND newer."ownerId" = wake_up."ownerId"
          AND (newer."createdAt", newer.id) > (wake_up."createdAt", wake_up.id)`,
     );
+    const waits: { id: string; workspaceId: string; threadId: string }[] =
+      await dataSource.query(
+        `SELECT wake_up.id, wake_up."workspaceId", suspension."threadId"
+         FROM "core"."pendingWakeUp" wake_up
+         JOIN "core"."agentRunSuspension" suspension ON suspension.id = wake_up."ownerId"
+         WHERE wake_up."ownerType" = 'AGENT_RUN' AND suspension."runSpec" IS NOT NULL`,
+      );
+
+    // a run paused on a question and a wait at once waits on the answer, as the runner now pauses it.
+    // A fresh id leaves the wait's scheduled resolution nothing to claim
+    for (const { id, workspaceId, threadId } of waits) {
+      const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+
+      await dataSource.query(
+        `UPDATE "core"."pendingWakeUp" SET id = uuid_generate_v4(), "eventName" = NULL, "resumeAt" = NULL,
+           "condition" = jsonb_build_object('type', 'ANSWER', 'threadId', $2::uuid::text)
+         WHERE id = $1 AND EXISTS (
+           SELECT 1 FROM ${schemaName}."agentChatThread" thread
+           JOIN ${schemaName}."agentMessagePart" part ON part."messageId" = thread."pendingQuestionMessageId"
+           WHERE thread.id = $2::uuid AND part."toolName" NOT IN ('wait_for_event', 'wait_for_duration')
+             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+         )`,
+        [id, threadId],
+      );
+    }
+
     await dataSource.query(
       `UPDATE "core"."pendingWakeUp" wake_up
        SET "ownerId" = suspension."threadId", "ownerKey" = 'RUN', "payload" = ${SUSPENSION_PAYLOAD_SQL}

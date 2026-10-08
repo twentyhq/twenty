@@ -123,6 +123,7 @@ const buildService = (execution = buildExecution()) => {
       condition: { type: 'ANSWER', threadId: 'thread-id' },
       payload: SUSPENSION,
     }),
+    cancel: jest.fn().mockResolvedValue([]),
   };
 
   jest.spyOn(Logger.prototype, 'error').mockImplementation();
@@ -393,5 +394,50 @@ describe('AgentRunnerService', () => {
         isAwaitingAnswer: true,
       }),
     );
+  });
+
+  it('fails a claimed run whose caller cannot be read, rather than dropping it', async () => {
+    const { service, callerHandler, agentRunSuspensionService } =
+      buildService();
+
+    callerHandler.getWaitingState.mockRejectedValue(new Error('db down'));
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'db down' },
+      }),
+    );
+  });
+
+  it('drops the pause of a continued run whose caller stopped waiting while it ran', async () => {
+    const {
+      service,
+      callerHandler,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      pendingWakeUpService,
+    } = buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+    callerHandler.getWaitingState
+      .mockResolvedValueOnce('WAITING')
+      .mockResolvedValueOnce('GONE');
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunSuspensionService.suspend).toHaveBeenCalled();
+    expect(pendingWakeUpService.cancel).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      owner: { type: 'AGENT_RUN', id: 'thread-id' },
+    });
+    expect(agentRunSuspensionService.closeAwaitedCalls).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      isAwaitingAnswer: true,
+    });
   });
 });

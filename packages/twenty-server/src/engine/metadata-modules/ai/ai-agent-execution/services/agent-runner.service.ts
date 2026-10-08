@@ -95,21 +95,22 @@ export class AgentRunnerService {
           caller.type,
         );
 
-        if (
-          (await handler.getWaitingState({ workspaceId, caller })) === 'GONE'
-        ) {
-          await this.agentRunSuspensionService.closeAwaitedCalls({
-            workspaceId,
-            threadId,
-            isAwaitingAnswer,
-          });
-
-          return;
-        }
-
         let result: AgentRunnerResult;
 
+        // the wake-up is claimed, so a run that cannot go on is settled rather than left paused
         try {
+          if (
+            (await handler.getWaitingState({ workspaceId, caller })) === 'GONE'
+          ) {
+            await this.agentRunSuspensionService.closeAwaitedCalls({
+              workspaceId,
+              threadId,
+              isAwaitingAnswer,
+            });
+
+            return;
+          }
+
           if (outcome.type === 'ANSWERED' && 'error' in outcome.answer) {
             throw new Error(outcome.answer.error);
           }
@@ -352,7 +353,24 @@ export class AgentRunnerService {
             suspension: { caller, runSpec: spec, summary, continuationCount },
           });
 
-          return true;
+          // a caller that stopped waiting while a continued run went on found no wake-up to release,
+          // and it stops waiting before it releases, so reading it after the pause is saved misses none.
+          // A caller that cannot be read fails the run, rather than leave a pause no one may release
+          const isCallerGone =
+            isDefined(suspension) &&
+            (await this.callerHandlerRegistry
+              .getHandlerOrThrow(caller.type)
+              .getWaitingState({ workspaceId, caller })
+              .catch(() => 'GONE')) === 'GONE';
+
+          if (isCallerGone) {
+            await this.pendingWakeUpService.cancel({
+              workspaceId,
+              owner: { type: 'AGENT_RUN', id: threadId },
+            });
+          }
+
+          return !isCallerGone;
         },
       )) === true;
 
