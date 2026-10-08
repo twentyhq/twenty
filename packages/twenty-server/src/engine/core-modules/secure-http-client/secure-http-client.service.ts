@@ -67,28 +67,10 @@ export class SecureHttpClientService {
         })
       : axios.create(boundedAxiosConfig);
 
-    const callerSignalByRequestSignal = new WeakMap<
-      AbortSignal,
-      AbortSignal | undefined
-    >();
-
     client.interceptors.request.use((requestConfig) => {
-      const currentSignal = requestConfig.signal as AbortSignal | undefined;
-      const callerSignal =
-        isDefined(currentSignal) &&
-        callerSignalByRequestSignal.has(currentSignal)
-          ? callerSignalByRequestSignal.get(currentSignal)
-          : currentSignal;
-
-      const deadlineSignal = AbortSignal.timeout(
+      requestConfig.signal = AbortSignal.timeout(
         requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
       );
-      const requestSignal = isDefined(callerSignal)
-        ? AbortSignal.any([callerSignal, deadlineSignal])
-        : deadlineSignal;
-
-      callerSignalByRequestSignal.set(requestSignal, callerSignal);
-      requestConfig.signal = requestSignal;
 
       return requestConfig;
     });
