@@ -9,6 +9,8 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './Chip.module.scss';
 import { type ChipProps } from './types/ChipProps';
 
+const MEDIUM_LABEL_STYLE: CSSProperties = { height: 'var(--t-spacing-4)' };
+
 export const Chip = ({
   children,
   size = 'sm',
@@ -70,9 +72,7 @@ export const Chip = ({
             (hasContent ? (
               typeof children === 'string' ? (
                 <OverflowingTextWithTooltip
-                  style={{
-                    height: size === 'md' ? 'var(--t-spacing-4)' : undefined,
-                  }}
+                  style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
                   text={children}
                   tooltipContent={tooltipLabel}
                   tooltipPlace={tooltipPlace}
