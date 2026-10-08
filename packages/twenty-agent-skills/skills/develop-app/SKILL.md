@@ -69,24 +69,13 @@ When a front component triggers a logic function for selected records, always pr
 
 ## Adding New Entities
 
-Use the app CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate automatically:
+Use a CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate. Check first for the standalone CLI, which works without a terminal:
 
 ```bash
-yarn twenty dev:add
+command -v twenty && twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. `dev:add object` also offers the table view, navigation menu item and record page layout that make the object usable.
-
-`dev:add` prompts for every value, so it needs an interactive terminal. When your shell has none, use the standalone `twenty` CLI if it is installed globally; it never prompts with `--no-input`:
-
-```bash
-twenty app add object --name invoice --name-plural invoices --no-input
-twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
-twenty app add logic-function --name send-invoice --no-input
-twenty app add front-component --name invoice-panel --no-input
-```
-
-It does not generate object companions or other entity types. When neither CLI can run, follow rule 3 of the operating rules linked above: ask the user to run `dev:add` in their terminal, or write the file by hand from the docs example and the `twenty-sdk/define` types.
+Otherwise run `yarn twenty dev:add` in an interactive terminal. The full order of options, including what to do when neither CLI can run, is rule 3 of the operating rules linked above.
 
 ## After Entity Changes
 

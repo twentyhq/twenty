@@ -46,7 +46,22 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 
 ## Scaffolding entities
 
-`yarn twenty dev:add` generates the file, a valid `universalIdentifier` and the right imports. Prefer it over writing entity files by hand. It prompts for names and options, so it needs an interactive terminal. Without one, use the standalone `twenty` CLI when it is installed: `twenty app add object --name invoice --name-plural invoices --no-input`, or `twenty app add field --name amount --type NUMBER --object <uuid> --no-input`. It covers objects, fields, logic functions and front components, never prompts with `--no-input` or `--json`, and exits with code 2 when a required value is missing. When the shell has no terminal and the standalone CLI is not installed, `dev:add` fails at once with `User force closed the prompt`. If the user is available, ask them to run the exact `yarn twenty dev:add <entityType>` command in their own terminal; for an object this is the best option, since it also generates the table view, navigation menu item and record page layout. Otherwise write the file by hand: follow the example on the matching docs page (append `.md` to its URL), or an existing file of the same kind in the app, check the shape against the types exported by `twenty-sdk/define`, and generate every identifier with `crypto.randomUUID()` instead of inventing one.
+Generate entities with a CLI rather than writing them by hand: it produces the file, valid identifiers and the right imports. Take the first option that works:
+
+1. **The standalone `twenty` CLI, when `command -v twenty` finds it.** Run it directly, not through `yarn`. It works with or without a terminal: with `--no-input` it never prompts and exits with code 2 when a required value is missing. It covers objects, fields, logic functions and front components. For an object, pass the three `--create-*` flags so it also generates the table view, navigation menu item and record page layout that make the object visible in the UI:
+
+   ```bash
+   twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
+   twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+   twenty app add logic-function --name send-invoice --no-input
+   twenty app add front-component --name invoice-panel --no-input
+   ```
+
+2. **`yarn twenty dev:add <entityType>`, in an interactive terminal only.** It covers every entity type, but it prompts for each value: in an agent's shell it fails at once with `User force closed the prompt`.
+3. **Neither runs, and the user is available**: ask them to run the exact `yarn twenty dev:add <entityType>` command in their own terminal. For an object, prefer this over writing four files by hand.
+4. **Otherwise, write the file by hand.** Follow the example on the matching docs page (append `.md` to its URL), or an existing file of the same kind in the app, check it against the types exported by `twenty-sdk/define`, and generate every identifier with `crypto.randomUUID()` instead of inventing one.
+
+The table below lists what `dev:add` can generate.
 
 | Entity type            | Command                                    | Generated file                          |
 | ---------------------- | ------------------------------------------ | --------------------------------------- |
