@@ -6,6 +6,7 @@ import { z } from 'zod';
 import {
   GRANOLA_RETRY_AFTER_FALLBACK_MILLISECONDS,
   GRANOLA_RETRY_AFTER_MAX_MILLISECONDS,
+  GRANOLA_RETRY_AFTER_MIN_MILLISECONDS,
 } from 'src/constants/granola-api.constant';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
@@ -82,9 +83,12 @@ export const createGranolaClientOrThrow = ({
       throw new GranolaUnavailableError({
         status: response.status,
         retryAfterMilliseconds: Math.min(
-          parseRetryAfterHeaderMilliseconds(
-            response.headers.get('retry-after'),
-          ) ?? GRANOLA_RETRY_AFTER_FALLBACK_MILLISECONDS,
+          Math.max(
+            parseRetryAfterHeaderMilliseconds(
+              response.headers.get('retry-after'),
+            ) ?? GRANOLA_RETRY_AFTER_FALLBACK_MILLISECONDS,
+            GRANOLA_RETRY_AFTER_MIN_MILLISECONDS,
+          ),
           GRANOLA_RETRY_AFTER_MAX_MILLISECONDS,
         ),
       });

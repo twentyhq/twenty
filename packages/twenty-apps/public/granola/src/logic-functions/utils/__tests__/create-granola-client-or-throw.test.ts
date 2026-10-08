@@ -99,6 +99,7 @@ describe('createGranolaClientOrThrow', () => {
     { retryAfter: undefined, expected: 60_000 },
     { retryAfter: 'soon', expected: 60_000 },
     { retryAfter: '86400', expected: 300_000 },
+    { retryAfter: '0', expected: 5_000 },
   ])(
     'carries a bounded Retry-After of $retryAfter on HTTP 429',
     async ({ retryAfter, expected }) => {
