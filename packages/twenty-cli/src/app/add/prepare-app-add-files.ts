@@ -172,7 +172,10 @@ export const prepareAppAddFiles = async ({
         createPageLayout: readBooleanOption(options, 'createPageLayout'),
       };
 
-      if (interactive && !Object.values(companions).some(Boolean)) {
+      if (
+        interactive &&
+        !Object.values(companions).some((isSelected) => isSelected)
+      ) {
         const shouldCreateCompanions = await confirmInTerminal({
           question:
             'Also create a view, navigation menu item, and record page layout for this object?',
