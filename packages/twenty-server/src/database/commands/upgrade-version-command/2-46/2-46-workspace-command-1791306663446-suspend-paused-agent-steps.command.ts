@@ -6,18 +6,20 @@ import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-h
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import {
+  buildPausedAgentStepRunSpec,
+  type PausedAgentStepDefinition,
+} from 'src/database/commands/upgrade-version-command/2-46/suspend-paused-agent-steps-run-spec.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
-import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type PausedAgentStep = {
   workflowRunId: string;
   stepId: string;
   threadId: string;
-  step: WorkflowAiAgentAction;
+  step: PausedAgentStepDefinition;
   applicationId: string | null;
   summary: object | null;
 };
@@ -25,7 +27,9 @@ type PausedAgentStep = {
 // An agent step that paused on a question before 2.46 is PENDING with its conversation on
 // stepInfo.threadId, and was continued by running the step again. The engine now continues the
 // agent itself, so the step gets the suspension the engine continues it from, and its pending
-// calls the mark that hands their answer to it.
+// calls the mark that hands their answer to it. A step whose question was
+// answered meanwhile has no call left to settle its suspension, which would then
+// block its conversation for good, so it gets none.
 @RegisteredWorkspaceCommand('2.46.0', 1791306663446)
 @Command({
   name: 'upgrade:2-46:suspend-paused-agent-steps',
@@ -84,25 +88,42 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
              AND run."deletedAt" IS NULL
              AND step.value ->> 'status' = 'PENDING'
              AND step.value ->> 'threadId' IS NOT NULL
-             AND flow_step.value ->> 'type' = 'AI_AGENT'`,
+             AND flow_step.value ->> 'type' = 'AI_AGENT'
+             AND EXISTS (
+               SELECT 1 FROM ${table('agentMessagePart')} part
+               JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+               WHERE message."threadId" = (step.value ->> 'threadId')::uuid
+                 AND jsonb_typeof(part."toolOutput") = 'object'
+                 AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+             )`,
         );
 
         if (pausedSteps.length === 0 || (options.dryRun ?? false)) {
           return pausedSteps.length;
         }
 
-        await manager.query(
+        // an answer settled between the select and this update leaves its
+        // thread unmarked, and that thread gets no suspension
+        const [markedThreads]: [{ threadId: string }[], number] =
+          await manager.query(
           `UPDATE ${table('agentMessagePart')} part
            SET "toolOutput" = part."toolOutput" || '{"awaitedByCaller": true}'::jsonb
            FROM ${table('agentMessage')} message
            WHERE part."messageId" = message.id
              AND message."threadId" = ANY($1::uuid[])
              AND jsonb_typeof(part."toolOutput") = 'object'
-             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'`,
+             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+           RETURNING message."threadId" AS "threadId"`,
           [pausedSteps.map(({ threadId }) => threadId)],
         );
+        const markedThreadIds = new Set(
+          markedThreads.map(({ threadId }) => threadId),
+        );
+        const suspendedSteps = pausedSteps.filter(({ threadId }) =>
+          markedThreadIds.has(threadId),
+        );
 
-        for (const pausedStep of pausedSteps) {
+        for (const pausedStep of suspendedSteps) {
           await manager.query(
             `INSERT INTO "core"."agentRunSuspension" ("workspaceId", "threadId", "caller", "runSpec", "summary")
              VALUES ($1, $2, $3, $4, $5)
@@ -118,7 +139,7 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
                 },
               }),
               JSON.stringify(
-                buildWorkflowAgentRunSpec({
+                buildPausedAgentStepRunSpec({
                   step: pausedStep.step,
                   isApplicationBound: isDefined(pausedStep.applicationId),
                 }),
@@ -130,7 +151,7 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
           );
         }
 
-        return pausedSteps.length;
+        return suspendedSteps.length;
       },
     );
 

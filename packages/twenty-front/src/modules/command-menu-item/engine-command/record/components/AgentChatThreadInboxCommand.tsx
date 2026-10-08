@@ -1,6 +1,7 @@
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 
 type AgentChatThreadInboxCommandProps = {
@@ -10,6 +11,7 @@ type AgentChatThreadInboxCommandProps = {
     | 'done'
     | 'reopen'
     | 'snooze'
+    | 'assign'
     | 'subscribe'
     | 'unsubscribe';
 };
@@ -27,6 +29,7 @@ export const AgentChatThreadInboxCommand = ({
     unsubscribeFromAgentChatThread,
   } = useAgentChatThreadParticipants();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
   const handleExecute = async () => {
     const threadIds = selectedRecords.map(({ id }) => id);
@@ -37,6 +40,10 @@ export const AgentChatThreadInboxCommand = ({
 
     if (action === 'snooze') {
       return openSnoozeAiChatInSidePanel(threadIds);
+    }
+
+    if (action === 'assign') {
+      return openAssignAiChatInSidePanel(threadIds);
     }
 
     const updateThread = {

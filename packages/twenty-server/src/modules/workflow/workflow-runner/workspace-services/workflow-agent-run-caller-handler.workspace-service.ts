@@ -1,8 +1,6 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -20,6 +18,7 @@ import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/work
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { getWorkflowStepWaitingState } from 'src/modules/workflow/workflow-runner/utils/get-workflow-step-waiting-state.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -49,46 +48,27 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
     workspaceId,
     caller,
   }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunExecutionContext> {
-    return buildWorkflowAgentRunExecutionContext(
-      await this.workflowExecutionContextService.getExecutionContext({
-        workflowRunId: caller.ref.workflowRunId,
-        workspaceId,
-      }),
-    );
-  }
+    const runInfo = { workflowRunId: caller.ref.workflowRunId, workspaceId };
 
-  async resolveTurnAuthor({
-    workspaceId,
-    caller,
-  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<ActorMetadata> {
-    return this.workflowAgentConversationService.findTurnCreatedBy({
-      workflowRunId: caller.ref.workflowRunId,
-      workspaceId,
+    return buildWorkflowAgentRunExecutionContext({
+      executionContext:
+        await this.workflowExecutionContextService.getExecutionContext(runInfo),
+      turnCreatedBy:
+        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
     });
   }
 
-  // a step handing its work off still runs until the executor marks it pending, and an outcome may come first
   async getWaitingState({
     workspaceId,
     caller,
   }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunCallerWaitingState> {
-    const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
-      workflowRunId: caller.ref.workflowRunId,
-      workspaceId,
+    return getWorkflowStepWaitingState({
+      workflowRun: await this.workflowRunWorkspaceService.getWorkflowRun({
+        workflowRunId: caller.ref.workflowRunId,
+        workspaceId,
+      }),
+      stepId: caller.ref.stepId,
     });
-    const stepInfo = workflowRun?.state?.stepInfos?.[caller.ref.stepId];
-
-    if (workflowRun?.status !== WorkflowRunStatus.RUNNING) {
-      return 'GONE';
-    }
-
-    if (stepInfo?.status === StepStatus.RUNNING) {
-      return 'NOT_READY';
-    }
-
-    return stepInfo?.status === StepStatus.PENDING && !isDefined(stepInfo.error)
-      ? 'WAITING'
-      : 'GONE';
   }
 
   // The run job ends the step with the outcome through the executor's usual path, so a failure is
@@ -114,16 +94,10 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
       });
     }
 
-    // the member's answer already ran the call, so a Send Message step only reports it
     const actionOutput =
       outcome.status === 'FAILED'
         ? { error: outcome.error }
-        : {
-            result:
-              outcome.status === 'ANSWERED'
-                ? { threadId, ...outcome.answer }
-                : outcome.result,
-          };
+        : { result: outcome.result };
 
     // the step stays pending until the job claims it, so the run must not stay running without one
     try {

@@ -281,6 +281,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.UNSUBSCRIBE_FROM_AI_CHAT]: (
     <AgentChatThreadInboxCommand action="unsubscribe" />
   ),
+  [EngineComponentKey.ASSIGN_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action="assign" />
+  ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (

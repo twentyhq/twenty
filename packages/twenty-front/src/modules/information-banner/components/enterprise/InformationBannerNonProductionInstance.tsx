@@ -18,7 +18,7 @@ export const InformationBannerNonProductionInstance = () => {
   return (
     <InformationBanner
       componentInstanceId="information-banner-non-production-instance"
-      variant="secondary"
+      variant="soft"
       message={t`This is a non-production instance.`}
     />
   );

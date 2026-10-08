@@ -1,22 +1,27 @@
 ---
 title: InlineBanner
-description: A compact banner with a message, icon, and optional button or link.
+description: Inline feedback with node content, icons, and actions.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
 
-`InlineBanner` builds on [Banner](/ui/primitives/feedback/banner). Its standard appearance fills the available width and truncates the message. Keyboard focus, pointer hover, or touch reveals the full message in a tooltip. Your application owns whether the banner is rendered.
+`InlineBanner` composes [Banner](/ui/primitives/feedback/banner) with a rounded inline layout and a decorative information icon. It shares Banner's independent `status`, `variant`, `color`, `icon` and `action` contracts. Its default appearance is `soft` and its default status is `info`.
+
+The `standard` layout fills the available width. Plain string children truncate, with keyboard focus, pointer hover or touch revealing the full string in a tooltip. Rich node children render directly, so embedded links and controls retain their own semantics. Compose explicit typography when rich content needs truncation.
 
 ```tsx
 import { InlineBanner } from 'twenty-ui/components/feedback';
 
 export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
   <InlineBanner
-    color="danger"
-    message="Contact sync could not finish."
-    button={{ title: 'Retry sync', onClick: onRetry }}
-  />
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onRetry}>Retry sync</InlineBanner.Action>
+    }
+  >
+    Contact sync could not finish.
+  </InlineBanner>
 );
 ```
 
@@ -26,17 +31,26 @@ export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
   height={280}
 />
 
-Use `variant="compact"` for wrapping text, closer spacing, and a maximum content width of 512px. This appearance has no bottom margin. Both appearances support `color="blue"` and `color="danger"`.
+Use `layout="compact"` for wrapping content, closer spacing and a maximum content width of 512px. It has no bottom margin. Layout is independent of `solid` or `soft` appearance. `embedded` removes the standard layout's bottom margin.
 
 ```tsx
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
 
 export const ConnectionBanner = () => (
   <InlineBanner
-    variant="compact"
-    message="Connect your account to sync contacts."
-    button={{ title: 'Connection settings', href: '/settings/accounts' }}
-  />
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
 );
 ```
 
@@ -46,9 +60,15 @@ export const ConnectionBanner = () => (
   height={280}
 />
 
-`button` accepts `title`, `onClick`, `disabled`, `hidden`, and an `Icon` component. Supply `href` for a native destination link, with optional `target`, `rel`, and `download`. Pair `href` with `render` for an application-owned router link. An action without `href` remains a native button. Use `aria-label` when the action has no visible title.
+`InlineBanner.Action` provides a small outline button that inherits the banner’s displayed color, including explicit palette overrides and solid appearances. It supports Button interactions, links, refs and custom rendering. The `action` slot also accepts arbitrary controls.
 
-`LeftIcon` changes the leading icon. `embedded` removes the standard banner's bottom margin. Use a separate live-region wrapper when changes should be announced.
+The root target is a `div`. Native props, `className`, `style` and `ref` target that root; Base UI `render` can compose another element and receives resolved Banner state. `action` accepts any ReactNode, including multiple controls with their complete Button or link APIs. `icon={null}` removes the default icon.
+
+The caller owns whether the banner is rendered and whether changes should be announced. Supply `role="status"` and `aria-live="polite"`, or an appropriate live-region wrapper, when needed. Status does not assign live-region semantics. Name action controls and mark decorative custom icons with `aria-hidden`.
+
+## Migration
+
+Replace `message` with `children`, `LeftIcon={Icon}` with `icon={<Icon />}`, and `button` configuration with an `action` node. Use `InlineBanner.Action` to keep action styling aligned with the banner. Replace `variant="compact"` with `layout="compact"`; standard is now the default layout. Use `status="error"` for error meaning or `color="red"` for a palette override.
 
 ## Props
 

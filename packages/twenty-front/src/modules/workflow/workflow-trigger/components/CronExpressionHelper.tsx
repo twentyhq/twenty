@@ -10,8 +10,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const getNextExecutions = (
   cronExpression: string,

@@ -27,8 +27,8 @@ import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   RefreshUpgradeStatusDocument,
 } from '~/generated-admin/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const StyledRefreshButtonContainer = styled.div`
   display: flex;

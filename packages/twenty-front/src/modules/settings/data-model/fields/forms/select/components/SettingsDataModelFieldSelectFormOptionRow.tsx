@@ -19,7 +19,7 @@ import {
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,

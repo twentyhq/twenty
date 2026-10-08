@@ -14,6 +14,8 @@ import { BackfillFailedAgentTurnsCommand } from 'src/database/commands/upgrade-v
 import { SuspendPausedAgentStepsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791306663446-suspend-paused-agent-steps.command';
 import { AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { DeleteOrphanedWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791369613345-delete-orphaned-workflow-runs.command';
+import { AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791385745099-add-agent-chat-thread-assignee.command';
+import { ClosePendingAskQuestionsCallsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791398841984-close-pending-ask-questions-calls.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -39,6 +41,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SuspendPausedAgentStepsCommand,
     AddAgentChatThreadSubscriptionsCommand,
     DeleteOrphanedWorkflowRunsCommand,
+    AddAgentChatThreadAssigneeCommand,
+    ClosePendingAskQuestionsCallsCommand,
   ],
 })
 export class V2_46_UpgradeVersionCommandModule {}

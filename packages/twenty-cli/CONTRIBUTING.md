@@ -127,12 +127,23 @@ or templates are missing, when `dist` was built for another version, when one of
 its CLI runs fails or times out, or when `app init` would pin versions that are
 not on npm. An unreachable registry is reported separately from a missing
 version. The check does not read tags: it confirms that the pinned versions are
-published, and tagging the SDK release commit remains a release step. Its tests
-run with `twenty-cli:test:package`. To run the check itself before tagging:
+published, and tagging the SDK release commit remains a release step.
+
+`prepublish` then runs `scripts/generate-template-lock.mjs`. It resolves the app
+template's dependencies with the repository's Yarn against the public registry,
+under a 3-day minimum release age that exempts the pinned Twenty packages, and
+writes `dist/app-template/yarn.lock`. Apps created with `app init` then install
+exact, integrity-checked versions, including for people who enforce a minimum
+release age. The lockfile keeps the template's placeholder name, and the first
+`yarn install` renames that root entry.
+
+The tests of both scripts run with `twenty-cli:test:package`. To run the scripts
+before tagging:
 
 ```bash
 yarn nx build twenty-cli
 node packages/twenty-cli/scripts/check-publish.mjs
+node packages/twenty-cli/scripts/generate-template-lock.mjs
 ```
 
 ## App integration tests

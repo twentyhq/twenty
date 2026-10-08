@@ -16,10 +16,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
+import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { updatedObjectNamePluralState } from '@/settings/data-model/object-details/states/updatedObjectNamePluralState';
 
 export const TRANSLATION_INTENT_MODAL_ID =
   'object-label-translation-intent-modal';

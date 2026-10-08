@@ -40,6 +40,15 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface AgentChatOpenThreadsSummary {
+    hasUnreadAssignedThread: Scalars['Boolean']
+    hasUnreadMentionThread: Scalars['Boolean']
+    hasUnreadOpenThread: Scalars['Boolean']
+    needsInputThreadCount: Scalars['Int']
+    openThreadCount: Scalars['Int']
+    __typename: 'AgentChatOpenThreadsSummary'
+}
+
 export interface AgentChatThread {
     contextWindowTokens?: Scalars['Int']
     conversationSize: Scalars['Int']
@@ -1252,7 +1261,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ASK_AI' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -1329,7 +1338,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1995,6 +2004,7 @@ export interface Mutation {
     addAgentChatThreadParticipants: Scalars['UUID'][]
     addQueryToEventStream: Scalars['Boolean']
     archiveAgentChatThread: AgentChatThreadParticipant
+    assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
     authorizeApp: AuthorizeApp
@@ -2693,6 +2703,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     apiKey?: ApiKey
@@ -3935,6 +3946,16 @@ export interface AgentGenqlSelection{
 export interface AgentChatEventGenqlSelection{
     event?: boolean | number
     threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatOpenThreadsSummaryGenqlSelection{
+    hasUnreadAssignedThread?: boolean | number
+    hasUnreadMentionThread?: boolean | number
+    hasUnreadOpenThread?: boolean | number
+    needsInputThreadCount?: boolean | number
+    openThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6163,6 +6184,7 @@ export interface MutationGenqlSelection{
     addAgentChatThreadParticipants?: { __args: {threadId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
@@ -6896,6 +6918,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -8454,6 +8477,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatOpenThreadsSummary_possibleTypes: string[] = ['AgentChatOpenThreadsSummary']
+    export const isAgentChatOpenThreadsSummary = (obj?: { __typename?: any } | null): obj is AgentChatOpenThreadsSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatOpenThreadsSummary"')
+      return AgentChatOpenThreadsSummary_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11275,6 +11306,7 @@ export const enumEngineComponentKey = {
    ADD_NODE_WORKFLOW: 'ADD_NODE_WORKFLOW' as const,
    ADD_TO_FAVORITES: 'ADD_TO_FAVORITES' as const,
    ASK_AI: 'ASK_AI' as const,
+   ASSIGN_AI_CHAT: 'ASSIGN_AI_CHAT' as const,
    CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
    CANCEL_MESSAGE_CAMPAIGN: 'CANCEL_MESSAGE_CAMPAIGN' as const,
    COMPOSE_CAMPAIGN: 'COMPOSE_CAMPAIGN' as const,
@@ -11371,6 +11403,7 @@ export const enumEventLogTable = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_APPLICATION_WORKFLOWS_ENABLED: 'IS_APPLICATION_WORKFLOWS_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
