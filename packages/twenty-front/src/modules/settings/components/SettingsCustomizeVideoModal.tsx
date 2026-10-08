@@ -126,7 +126,7 @@ export const SettingsCustomizeVideoModal = ({
       {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={activeTab.title}
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
           style={{ padding: 0 }}
         >

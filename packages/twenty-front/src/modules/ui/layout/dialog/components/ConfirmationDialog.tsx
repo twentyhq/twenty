@@ -92,7 +92,7 @@ export const ConfirmationDialog = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           data-globally-prevent-click-outside
           style={{
             padding: 'var(--t-spacing-6)',

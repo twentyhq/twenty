@@ -90,7 +90,7 @@ export const FrontComponentMediaPermissionModal = ({
       renderInDocumentBody
     >
       {({ onKeyDown }) => (
-        <Dialog.Popup {...{ onKeyDown }} size="sm">
+        <Dialog.Popup onKeyDown={onKeyDown} size="sm">
           <StyledContent>
             <Dialog.Title>{t`Allow media access for ${applicationName}?`}</Dialog.Title>
             {buildApplicationCapabilitySummary(request.capabilities).map(

@@ -108,7 +108,7 @@ export const SettingsApplicationScreenshotLightbox = ({
       {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={displayName}
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >

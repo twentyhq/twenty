@@ -27,7 +27,7 @@ const DialogInstanceExample = (props: DialogInstanceExampleProps) => {
       <Button onClick={() => openDialog(DIALOG_ID)}>Open dialog</Button>
       <DialogInstance {...props} dialogId={DIALOG_ID}>
         {({ onKeyDown }) => (
-          <Dialog.Popup {...{ onKeyDown }}>
+          <Dialog.Popup onKeyDown={onKeyDown}>
             <Dialog.Header>
               <Dialog.Title>Workspace preferences</Dialog.Title>
               <Dialog.Description>Choose a preference.</Dialog.Description>

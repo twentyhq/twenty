@@ -44,7 +44,7 @@ export const AddCreditCardModal = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

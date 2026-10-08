@@ -200,7 +200,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

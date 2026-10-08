@@ -157,7 +157,7 @@ export const EnterprisePlanModal = () => {
       {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Get Organization`}
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           style={{ padding: 0 }}
         >

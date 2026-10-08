@@ -131,7 +131,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Install ${appDisplayName} on your workspace`}
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >

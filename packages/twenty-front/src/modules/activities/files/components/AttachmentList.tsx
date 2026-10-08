@@ -182,7 +182,7 @@ export const AttachmentList = ({
           {({ onKeyDown }) => (
             <Dialog.Popup
               aria-label={previewedAttachment.name}
-              {...{ onKeyDown }}
+              onKeyDown={onKeyDown}
               size="lg"
               style={{
                 padding: 'var(--t-spacing-2)',

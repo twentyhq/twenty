@@ -107,7 +107,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
       {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={filePreview.label ?? t`File preview`}
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
           style={{ padding: 'var(--t-spacing-4)' }}
         >

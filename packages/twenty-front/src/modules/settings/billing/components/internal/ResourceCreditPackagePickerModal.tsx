@@ -257,7 +257,7 @@ export const ResourceCreditPackagePickerModal = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{
