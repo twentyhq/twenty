@@ -275,6 +275,8 @@ Entries are matched on the hostname only, without wildcards: for an OIDC issuer 
 
 `OUTBOUND_HTTP_SAFE_MODE_ENABLED` is deprecated. While it is set to `false`, the protection stays fully off and `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` is ignored, so remove it when you migrate to the list.
 
+This list does not cover AI file attachments: images and PDFs reach the model as links built from `SERVER_URL`, fetched either by the AI provider or by the AI SDK in the worker, which refuses private addresses. For attachments to work, `SERVER_URL` must be public; with a `localhost` or private `SERVER_URL`, AI chats and agents only work with text.
+
 ## Email Configuration
 
 1. Go to **Settings → Admin Panel → Configuration Variables**
