@@ -138,9 +138,9 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           data-globally-prevent-click-outside
           style={{

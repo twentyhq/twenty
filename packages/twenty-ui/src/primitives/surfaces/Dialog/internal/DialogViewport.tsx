@@ -4,21 +4,19 @@ import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvide
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';
-import { type DialogPopupProps } from '../types/DialogPopupProps';
+import { type DialogViewportProps } from '../types/DialogViewportProps';
 
-export const DialogPopup = ({
-  size = 'md',
+export const DialogViewport = ({
   className,
   ...props
-}: DialogPopupProps) => {
+}: DialogViewportProps) => {
   const direction = useProvidedTextDirection();
 
   return (
-    <DialogPrimitive.Popup
+    <DialogPrimitive.Viewport
       dir={direction}
       {...props}
-      data-size={size}
-      className={mergeClassNames(styles.popup, className)}
+      className={mergeClassNames(styles.viewport, className)}
     />
   );
 };
