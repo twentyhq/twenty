@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -169,9 +169,12 @@ describe('Popover portal destinations', () => {
         </Popover.Portal>
       </Popover.Root>,
     );
-    expect(
-      await within(shadowRoot as unknown as HTMLElement).findByRole('dialog'),
-    ).toHaveAttribute('aria-label', 'Shadow details');
+    await waitFor(() =>
+      expect(shadowRoot.querySelector('[role="dialog"]')).toHaveAttribute(
+        'aria-label',
+        'Shadow details',
+      ),
+    );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     unmount();
     expect(shadowRoot.childNodes).toHaveLength(0);
