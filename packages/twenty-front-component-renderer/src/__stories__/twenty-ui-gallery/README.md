@@ -78,7 +78,8 @@ those bounds. Dropdown stories cover page navigation, selection, closing and
 reopening in React and Preact. The portal fixture also verifies nearby
 overflow, a tall menu that stays attached to its trigger and scrolls within the
 area, callbacks, removal, an unchanged page scroll size, and a host control
-that stays usable outside the allowed area.
+that stays usable outside the allowed area. Two widgets rendered side by side
+keep separate portals, callbacks and removal.
 
 The Autocomplete fixture uses the public inline list interface to isolate input
 behavior from popup support. Its Empty section runs Base UI's live-region marker

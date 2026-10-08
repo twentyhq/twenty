@@ -69,6 +69,8 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Portal action',
   });
   expect(portalAction).toBeVisible();
+  expect(ownerRoot).toContainElement(trigger);
+  expect(ownerRoot).not.toContainElement(portalAction);
   await waitFor(() =>
     expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
   );
