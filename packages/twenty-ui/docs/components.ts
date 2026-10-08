@@ -69,6 +69,7 @@ import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
+import { POPOVER_PART_PROP_DESCRIPTIONS } from './popoverPartPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
@@ -477,6 +478,21 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Backdrop',
+      'Title',
+      'Description',
+      'Close',
+      'Viewport',
+    ],
+    partPropDescriptions: POPOVER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Positioner: { sideOffset: '8' } },
   },
   {
     name: 'Tooltip',

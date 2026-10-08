@@ -9,6 +9,8 @@ so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
 Textarea auto-resize growth and shrinking remain known renderer failures. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. The growth failure also reproduces with main's unchanged Textarea. The fixture pins them with the existing known-failure helper; these assertions do not count as resize acceptance. Standalone Textarea browser checks pass.
 
+Popover composes Portal, Positioner, Popup, Arrow and Viewport. Its focused React/Preact cases check controlled trigger requests, native attributes, Button render composition, DOM refs and callback reasons. These checks do not establish popup visibility, geometry or dismissal support. The omitted-container popup still requires C04/C05/C07 renderer acceptance.
+
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
 Scenarios share their checks between runtimes where behavior matches. The story

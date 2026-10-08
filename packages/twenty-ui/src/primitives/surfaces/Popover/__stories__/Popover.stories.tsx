@@ -13,15 +13,14 @@ import {
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Popover } from '../Popover';
-import { type PopoverPopupProps } from '../types/PopoverPopupProps';
+import { type PopoverPortalProps } from '../types/PopoverPortalProps';
+import { type PopoverPositionerProps } from '../types/PopoverPositionerProps';
 import { type PopoverRootProps } from '../types/PopoverRootProps';
 import { type PopoverSide } from '../types/PopoverSide';
 
 type PopoverStoryProps = PopoverRootProps &
-  Pick<
-    PopoverPopupProps,
-    'side' | 'align' | 'arrow' | 'keepMounted' | 'container'
-  >;
+  Pick<PopoverPositionerProps, 'side' | 'align'> &
+  Pick<PopoverPortalProps, 'keepMounted' | 'container'> & { arrow?: boolean };
 
 const PopoverStory = ({
   side,
@@ -38,23 +37,24 @@ const PopoverStory = ({
         style={{ alignSelf: 'flex-start', marginInline: 'auto' }}
         render={<Button>Open</Button>}
       />
-      <Popover.Popup
-        side={side}
-        align={align}
-        arrow={arrow}
-        keepMounted={keepMounted}
-        container={container}
-      >
-        <Popover.Title>Details</Popover.Title>
-        <Popover.Description>More information</Popover.Description>
-        <Button type="button" aria-label="First action">
-          First action
-        </Button>
-        <Popover.Close
-          style={{ alignSelf: 'flex-start' }}
-          render={<Button aria-label="Close" size="sm" startIcon={<IconX />} />}
-        />
-      </Popover.Popup>
+      <Popover.Portal container={container} keepMounted={keepMounted}>
+        <Popover.Positioner side={side} align={align}>
+          <Popover.Popup>
+            {arrow && <Popover.Arrow />}
+            <Popover.Title>Details</Popover.Title>
+            <Popover.Description>More information</Popover.Description>
+            <Button type="button" aria-label="First action">
+              First action
+            </Button>
+            <Popover.Close
+              style={{ alignSelf: 'flex-start' }}
+              render={
+                <Button aria-label="Close" size="sm" startIcon={<IconX />} />
+              }
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
     <Button type="button" aria-label="Outside">
       Outside
@@ -138,13 +138,17 @@ export const Documentation: Story = {
         style={{ alignSelf: 'flex-start' }}
         render={<Button>Show details</Button>}
       />
-      <Popover.Popup>
-        <Popover.Title>Contact details</Popover.Title>
-        <Popover.Description>
-          Add notes and contact information here.
-        </Popover.Description>
-        <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
-      </Popover.Popup>
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup>
+            <Popover.Title>Contact details</Popover.Title>
+            <Popover.Description>
+              Add notes and contact information here.
+            </Popover.Description>
+            <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
   ),
 };
@@ -327,9 +331,13 @@ export const WithoutTabbableContent: Story = {
   render: (args) => (
     <Popover.Root {...args}>
       <Popover.Trigger aria-label="Open" render={<Button>Open</Button>} />
-      <Popover.Popup>
-        <Popover.Title>Details</Popover.Title>
-      </Popover.Popup>
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup>
+            <Popover.Title>Details</Popover.Title>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
   ),
   play: async ({ canvasElement }) => {
@@ -446,14 +454,20 @@ const PopoverCatalogCell = ({ side = 'bottom', arrow }: PopoverStoryProps) => {
     >
       <Popover.Root open modal={false}>
         <Popover.Trigger
+          render={<Button />}
           aria-label={`Open ${side} popover ${arrow ? 'with' : 'without'} arrow`}
         >
           Open
         </Popover.Trigger>
-        <Popover.Popup container={cellElement} side={side} arrow={arrow}>
-          <Popover.Title>Details</Popover.Title>
-          <Popover.Description>More information</Popover.Description>
-        </Popover.Popup>
+        <Popover.Portal container={cellElement}>
+          <Popover.Positioner side={side}>
+            <Popover.Popup>
+              {arrow && <Popover.Arrow />}
+              <Popover.Title>Details</Popover.Title>
+              <Popover.Description>More information</Popover.Description>
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
       </Popover.Root>
     </div>
   );
