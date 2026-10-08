@@ -69,7 +69,7 @@ export const granolaBackfillWorkerHandler = async (
             ...notePayload,
             updatedAt: updatedAtByNoteId.get(noteId),
             selectedFolderIds: [...(registration?.folderIds ?? [])].sort(),
-            runDay: payload.runDay,
+            runHour: payload.runHour,
           },
         }),
         delayMs: schedule.noteDelays[index],

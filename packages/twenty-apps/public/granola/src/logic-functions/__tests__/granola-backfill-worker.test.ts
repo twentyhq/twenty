@@ -46,13 +46,13 @@ const listNoteJobIds = async ({
   createdAfter,
   updatedAfter,
   folderId,
-  runDay = '2026-09-06',
+  runHour = '2026-09-06T10',
   updatedAt = '2026-09-05T11:00:00Z',
 }: {
   createdAfter?: string;
   updatedAfter?: string;
   folderId?: string;
-  runDay?: string;
+  runHour?: string;
   updatedAt?: string;
 }): Promise<(string | undefined)[]> => {
   mocks.enqueueJobs.mockClear();
@@ -71,7 +71,7 @@ const listNoteJobIds = async ({
     updatedAfter,
     folderId,
     pageIndex: 0,
-    runDay,
+    runHour,
   });
 
   return mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs?.[0]?.jobId);
@@ -96,7 +96,7 @@ describe('granolaBackfillWorkerHandler', () => {
     mocks.store.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, buildRegistration([]));
   });
 
-  it('gives an unchanged note the same import job across same-day runs', async () => {
+  it('gives an unchanged note the same import job across runs started in the same hour', async () => {
     const manualImport = await listNoteJobIds({
       createdAfter: '2026-08-07T10:00:00.123Z',
     });
@@ -109,11 +109,11 @@ describe('granolaBackfillWorkerHandler', () => {
     expect(catchUp).toEqual(manualImport);
   });
 
-  it('gives a note a new import job on a later day', async () => {
-    const today = await listNoteJobIds({});
-    const tomorrow = await listNoteJobIds({ runDay: '2026-09-07' });
+  it('gives a note a new import job in a later hour', async () => {
+    const thisHour = await listNoteJobIds({});
+    const nextHour = await listNoteJobIds({ runHour: '2026-09-06T11' });
 
-    expect(tomorrow[0]).not.toBe(today[0]);
+    expect(nextHour[0]).not.toBe(thisHour[0]);
   });
 
   it('gives a note a separate import job per folder', async () => {

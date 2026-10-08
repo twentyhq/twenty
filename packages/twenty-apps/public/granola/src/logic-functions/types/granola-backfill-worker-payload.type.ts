@@ -5,5 +5,5 @@ export type GranolaBackfillWorkerPayload = {
   folderId?: string;
   cursor?: string;
   pageIndex: number;
-  runDay: string;
+  runHour: string;
 };
