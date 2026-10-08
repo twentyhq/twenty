@@ -1027,6 +1027,7 @@ export interface ClientConfig {
     publicFeatureFlags: PublicFeatureFlag[]
     publicFunctionDomain?: Scalars['String']
     sentry: Sentry
+    serverUrl: Scalars['String']
     signInPrefilled: Scalars['Boolean']
     support: Support
     __typename: 'ClientConfig'
@@ -4975,6 +4976,7 @@ export interface ClientConfigGenqlSelection{
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
     publicFunctionDomain?: boolean | number
     sentry?: SentryGenqlSelection
+    serverUrl?: boolean | number
     signInPrefilled?: boolean | number
     support?: SupportGenqlSelection
     __typename?: boolean | number

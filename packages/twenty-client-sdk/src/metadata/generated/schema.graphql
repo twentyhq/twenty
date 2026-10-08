@@ -1139,6 +1139,7 @@ type ClientConfig {
   publicFeatureFlags: [PublicFeatureFlag!]!
   publicFunctionDomain: String
   sentry: Sentry!
+  serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
 }
