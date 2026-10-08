@@ -230,18 +230,25 @@ describe('computeDraftValidationRuleViolations', () => {
   });
 
   it('should leave a rich text rule to the server until the server computes its markdown', () => {
+    const descriptionAwaitingMarkdown = {
+      blocknote:
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]',
+      markdown: null,
+    };
+
+    expect(
+      compute({ description: descriptionAwaitingMarkdown }, [DESCRIPTION_RULE]),
+    ).toEqual([]);
     expect(
       compute(
         {
-          description: {
-            blocknote:
-              '[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]',
-            markdown: null,
-          },
+          description: descriptionAwaitingMarkdown,
+          stage: 'CUSTOMER',
+          amount: { amountMicros: null, currencyCode: 'USD' },
         },
-        [DESCRIPTION_RULE],
-      ),
-    ).toEqual([]);
+        [DESCRIPTION_RULE, AMOUNT_RULE],
+      ).map((violation) => violation.ruleId),
+    ).toEqual(['amount-rule']);
   });
 
   it('should still report an empty rich text', () => {

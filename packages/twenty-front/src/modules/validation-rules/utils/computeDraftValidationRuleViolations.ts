@@ -30,10 +30,40 @@ const isServerFilledField = (
   fieldMetadataItem.isSystem ||
   FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
 
-const isRichTextAwaitingServerMarkdown = (value: unknown): boolean =>
-  isPlainObject(value) &&
-  isNonEmptyString(value.blocknote) &&
-  !isNonEmptyString(value.markdown);
+const IS_DRAFT_VALUE_COMPLETED_BY_SERVER_BY_FIELD_TYPE: Partial<
+  Record<FieldMetadataType, (draftValue: unknown) => boolean>
+> = {
+  [FieldMetadataType.RICH_TEXT]: (draftValue) =>
+    isPlainObject(draftValue) &&
+    isNonEmptyString(draftValue.blocknote) &&
+    !isNonEmptyString(draftValue.markdown),
+};
+
+const computeFieldNamesResolvedByServer = ({
+  draftRecord,
+  fields,
+  fieldMetadataItems,
+}: {
+  draftRecord: Record<string, unknown>;
+  fields: ValidationRuleFieldDescriptor[];
+  fieldMetadataItems: DraftFieldMetadataItem[];
+}): string[] => [
+  ...fieldMetadataItems
+    .filter(
+      (fieldMetadataItem) =>
+        isServerFilledField(fieldMetadataItem) &&
+        !(fieldMetadataItem.name in draftRecord),
+    )
+    .map((fieldMetadataItem) => fieldMetadataItem.name),
+  ...fields
+    .filter(
+      (field) =>
+        IS_DRAFT_VALUE_COMPLETED_BY_SERVER_BY_FIELD_TYPE[field.type]?.(
+          draftRecord[field.name],
+        ) === true,
+    )
+    .map((field) => field.name),
+];
 
 const withStaticDefaultValues = ({
   draftRecord,
@@ -65,14 +95,12 @@ const canEvaluateOnDraft = ({
   expression,
   fields,
   draftRecord,
-  serverFilledFieldNames,
-  richTextFieldNamesAwaitingServerMarkdown,
+  fieldNamesResolvedByServer,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
   draftRecord: Record<string, unknown>;
-  serverFilledFieldNames: string[];
-  richTextFieldNamesAwaitingServerMarkdown: string[];
+  fieldNamesResolvedByServer: string[];
 }): boolean => {
   const compilationResult = compileValidationRuleExpression({
     expression,
@@ -94,23 +122,11 @@ const canEvaluateOnDraft = ({
       return typeof relatedRecord === 'object' && isDefined(relatedRecord);
     });
 
-  const isEveryServerFilledFieldInDraft = bindingPaths
+  const isNoReferencedFieldResolvedByServer = bindingPaths
     .map((bindingPath) => bindingPath.split('.')[0])
-    .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
-    .every((fieldName) => fieldName in draftRecord);
+    .every((fieldName) => !fieldNamesResolvedByServer.includes(fieldName));
 
-  const isNoReferencedRichTextAwaitingServerMarkdown = bindingPaths
-    .map((bindingPath) => bindingPath.split('.')[0])
-    .every(
-      (fieldName) =>
-        !richTextFieldNamesAwaitingServerMarkdown.includes(fieldName),
-    );
-
-  return (
-    isEveryReferencedRelationLoaded &&
-    isEveryServerFilledFieldInDraft &&
-    isNoReferencedRichTextAwaitingServerMarkdown
-  );
+  return isEveryReferencedRelationLoaded && isNoReferencedFieldResolvedByServer;
 };
 
 const withRelationPresenceFromJoinColumns = ({
@@ -156,17 +172,11 @@ export const computeDraftValidationRuleViolations = ({
     fieldMetadataItems,
   });
 
-  const serverFilledFieldNames = fieldMetadataItems
-    .filter(isServerFilledField)
-    .map((fieldMetadataItem) => fieldMetadataItem.name);
-
-  const richTextFieldNamesAwaitingServerMarkdown = fields
-    .filter(
-      (field) =>
-        field.type === FieldMetadataType.RICH_TEXT &&
-        isRichTextAwaitingServerMarkdown(draftRecord[field.name]),
-    )
-    .map((field) => field.name);
+  const fieldNamesResolvedByServer = computeFieldNamesResolvedByServer({
+    draftRecord: draftRecordWithDefaultValues,
+    fields,
+    fieldMetadataItems,
+  });
 
   return validationRules
     .filter((validationRule) => validationRule.isActive)
@@ -175,8 +185,7 @@ export const computeDraftValidationRuleViolations = ({
         expression: validationRule.expression,
         fields,
         draftRecord: draftRecordWithDefaultValues,
-        serverFilledFieldNames,
-        richTextFieldNamesAwaitingServerMarkdown,
+        fieldNamesResolvedByServer,
       }),
     )
     .filter(
