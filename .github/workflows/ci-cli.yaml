@@ -25,6 +25,8 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-oxlint-rules/**
         .github/actions/yarn-install/**
+        .github/actions/restore-cache/**
+        .github/actions/save-cache/**
         .github/workflows/ci-cli.yaml
         package.json
         yarn.lock
@@ -62,6 +64,11 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Restore CLI test cache
+        id: restore-cli-test-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: cli-test
       - name: Build the CLI and the SDK used by parity tests
         run: npx nx run-many --target=build --projects=twenty-sdk,twenty-cli
       - name: Lint
@@ -71,6 +78,10 @@ jobs:
       - name: Unit tests
         run: npx vitest run --maxWorkers=2
         working-directory: packages/twenty-cli
+      - name: Save CLI test cache
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.restore-cli-test-cache.outputs.cache-primary-key }}
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
