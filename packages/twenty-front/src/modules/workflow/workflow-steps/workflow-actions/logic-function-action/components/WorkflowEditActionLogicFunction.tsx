@@ -261,7 +261,7 @@ export const WorkflowEditActionLogicFunction = ({
             />
           ) : (
             <Callout
-              variant={'neutral'}
+              status={'neutral'}
               title={t`No input fields for this action`}
               description={t`You can see the function logic in your application settings.`}
             />

@@ -1,25 +1,16 @@
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 
+import { FEEDBACK_STATUS_COLORS } from '@ui/primitives/feedback/internal/constants/FeedbackStatusColors';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 
 import styles from '../Banner.module.scss';
-import { type BannerColor } from '../types/BannerColor';
 import { type BannerProps } from '../types/BannerProps';
-import { type BannerStatus } from '../types/BannerStatus';
-
-const BANNER_STATUS_COLORS = {
-  neutral: 'gray',
-  info: 'blue',
-  success: 'green',
-  warning: 'orange',
-  error: 'red',
-} satisfies Record<BannerStatus, BannerColor>;
 
 export const BannerComponent = ({
   status = 'info',
   variant = 'solid',
-  color = BANNER_STATUS_COLORS[status],
+  color = FEEDBACK_STATUS_COLORS[status],
   icon,
   action,
   className,

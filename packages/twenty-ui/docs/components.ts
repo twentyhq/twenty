@@ -659,10 +659,21 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Callout',
+    nativeProps: 'div',
     source: 'components/feedback/Callout/Callout.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      closeLabel: 'Close',
+      color: 'status palette',
+      fullWidth: 'false',
+      icon: 'decorative help icon',
+      status: 'info',
+      variant: 'soft',
+    },
   },
   {
     name: 'InlineBanner',
