@@ -17,7 +17,8 @@ describe('computeCreditAllowanceMicro', () => {
   it('is the plan allowance when there is no grant', () => {
     expect(
       computeCreditAllowanceMicro({
-        schedule: { planAllowanceMicro: 1_000, grants: [] },
+        planAllowanceMicro: 1_000,
+        grants: [],
         nowMs: NOW_MS,
       }),
     ).toBe(1_000);
@@ -26,13 +27,11 @@ describe('computeCreditAllowanceMicro', () => {
   it('adds every grant in effect', () => {
     expect(
       computeCreditAllowanceMicro({
-        schedule: {
-          planAllowanceMicro: 1_000,
-          grants: [
-            buildGrant({ amountMicro: 500 }),
-            buildGrant({ amountMicro: 300, expiresAtMs: NOW_MS + DAY_MS }),
-          ],
-        },
+        planAllowanceMicro: 1_000,
+        grants: [
+          buildGrant({ amountMicro: 500 }),
+          buildGrant({ amountMicro: 300, expiresAtMs: NOW_MS + DAY_MS }),
+        ],
         nowMs: NOW_MS,
       }),
     ).toBe(1_800);
@@ -41,10 +40,8 @@ describe('computeCreditAllowanceMicro', () => {
   it('leaves out a grant that is not effective yet', () => {
     expect(
       computeCreditAllowanceMicro({
-        schedule: {
-          planAllowanceMicro: 1_000,
-          grants: [buildGrant({ effectiveAtMs: NOW_MS + 1 })],
-        },
+        planAllowanceMicro: 1_000,
+        grants: [buildGrant({ effectiveAtMs: NOW_MS + 1 })],
         nowMs: NOW_MS,
       }),
     ).toBe(1_000);
@@ -53,10 +50,8 @@ describe('computeCreditAllowanceMicro', () => {
   it('counts a grant from the instant it becomes effective', () => {
     expect(
       computeCreditAllowanceMicro({
-        schedule: {
-          planAllowanceMicro: 1_000,
-          grants: [buildGrant({ effectiveAtMs: NOW_MS })],
-        },
+        planAllowanceMicro: 1_000,
+        grants: [buildGrant({ effectiveAtMs: NOW_MS })],
         nowMs: NOW_MS,
       }),
     ).toBe(1_500);
@@ -65,10 +60,8 @@ describe('computeCreditAllowanceMicro', () => {
   it('leaves out a grant from the instant it expires', () => {
     expect(
       computeCreditAllowanceMicro({
-        schedule: {
-          planAllowanceMicro: 1_000,
-          grants: [buildGrant({ expiresAtMs: NOW_MS })],
-        },
+        planAllowanceMicro: 1_000,
+        grants: [buildGrant({ expiresAtMs: NOW_MS })],
         nowMs: NOW_MS,
       }),
     ).toBe(1_000);

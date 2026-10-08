@@ -1,15 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CreditAllowanceSchedule } from 'src/engine/core-modules/usage-limit/types/credit-allowance-schedule.type';
+import { type CreditAllowanceGrant } from 'src/engine/core-modules/usage-limit/types/credit-allowance-grant.type';
 
 export const computeCreditAllowanceMicro = ({
-  schedule,
+  planAllowanceMicro,
+  grants,
   nowMs,
 }: {
-  schedule: CreditAllowanceSchedule;
+  planAllowanceMicro: number;
+  grants: CreditAllowanceGrant[];
   nowMs: number;
 }): number =>
-  schedule.grants
+  grants
     .filter(
       ({ effectiveAtMs, expiresAtMs }) =>
         effectiveAtMs <= nowMs &&
@@ -17,5 +19,5 @@ export const computeCreditAllowanceMicro = ({
     )
     .reduce(
       (allowanceMicro, { amountMicro }) => allowanceMicro + amountMicro,
-      schedule.planAllowanceMicro,
+      planAllowanceMicro,
     );
