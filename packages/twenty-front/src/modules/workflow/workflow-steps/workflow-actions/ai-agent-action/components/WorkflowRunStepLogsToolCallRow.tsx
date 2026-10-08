@@ -198,49 +198,51 @@ export const WorkflowRunStepLogsToolCallRow = ({
       </StyledToggleButton>
 
       {isExpandable && (
-        <Collapsible isExpanded={isExpanded}>
-          <StyledContentContainer>
-            {hasError && isDefined(toolCall.errorMessage) ? (
-              <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
-            ) : (
-              <>
-                <StyledTabContainer>
-                  <StyledTab
-                    type="button"
-                    isActive={activeTab === 'output'}
-                    onClick={() => setActiveTab('output')}
-                  >
-                    {t`Output`}
-                  </StyledTab>
-                  <StyledTab
-                    type="button"
-                    isActive={activeTab === 'input'}
-                    onClick={() => setActiveTab('input')}
-                  >
-                    {t`Input`}
-                  </StyledTab>
-                </StyledTabContainer>
+        <Collapsible.Root open={isExpanded}>
+          <Collapsible.Panel>
+            <StyledContentContainer>
+              {hasError && isDefined(toolCall.errorMessage) ? (
+                <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
+              ) : (
+                <>
+                  <StyledTabContainer>
+                    <StyledTab
+                      type="button"
+                      isActive={activeTab === 'output'}
+                      onClick={() => setActiveTab('output')}
+                    >
+                      {t`Output`}
+                    </StyledTab>
+                    <StyledTab
+                      type="button"
+                      isActive={activeTab === 'input'}
+                      onClick={() => setActiveTab('input')}
+                    >
+                      {t`Input`}
+                    </StyledTab>
+                  </StyledTabContainer>
 
-                <StyledJsonTreeContainer>
-                  <JsonTree
-                    value={
-                      (activeTab === 'output'
-                        ? (toolCall.output ?? t`No output`)
-                        : (toolCall.input ?? t`No input`)) as JsonValue
-                    }
-                    shouldExpandNodeInitially={() => false}
-                    emptyArrayLabel={t`Empty Array`}
-                    emptyObjectLabel={t`Empty Object`}
-                    emptyStringLabel={t`[empty string]`}
-                    arrowButtonCollapsedLabel={t`Expand`}
-                    arrowButtonExpandedLabel={t`Collapse`}
-                    onNodeValueClick={copyToClipboard}
-                  />
-                </StyledJsonTreeContainer>
-              </>
-            )}
-          </StyledContentContainer>
-        </Collapsible>
+                  <StyledJsonTreeContainer>
+                    <JsonTree
+                      value={
+                        (activeTab === 'output'
+                          ? (toolCall.output ?? t`No output`)
+                          : (toolCall.input ?? t`No input`)) as JsonValue
+                      }
+                      shouldExpandNodeInitially={() => false}
+                      emptyArrayLabel={t`Empty Array`}
+                      emptyObjectLabel={t`Empty Object`}
+                      emptyStringLabel={t`[empty string]`}
+                      arrowButtonCollapsedLabel={t`Expand`}
+                      arrowButtonExpandedLabel={t`Collapse`}
+                      onNodeValueClick={copyToClipboard}
+                    />
+                  </StyledJsonTreeContainer>
+                </>
+              )}
+            </StyledContentContainer>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       )}
     </StyledContainer>
   );
