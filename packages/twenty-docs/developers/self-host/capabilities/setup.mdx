@@ -405,7 +405,20 @@ Twenty always uses path-style addressing, so requests go to `https://endpoint/bu
 
 ### CORS
 
-When `STORAGE_S3_PRESIGNED_URL_ENABLED` is `true`, browsers talk to the bucket directly, so its CORS policy must allow `GET` and `PUT` from your Twenty origin. Without presigned URLs, all file traffic goes through the server and the bucket needs no CORS configuration.
+When `STORAGE_S3_PRESIGNED_URL_ENABLED` is `true`, browsers talk to the bucket directly. Downloads are `GET` requests, and uploads are `PUT` requests that carry a `Content-Type` header, which makes the browser send a preflight request first. The bucket's CORS policy must therefore allow your Twenty origin, both methods and that header:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.example.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Without presigned URLs, all file traffic goes through the server and the bucket needs no CORS configuration.
 
 ### Troubleshooting
 
