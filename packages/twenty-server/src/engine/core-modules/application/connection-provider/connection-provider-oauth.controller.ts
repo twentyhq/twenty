@@ -113,6 +113,7 @@ export class ConnectionProviderOAuthController {
       personalRedirectPath = getAppPreferencesOAuthRedirectPath({
         applicationId,
         redirectLocation,
+        reconnectingConnectedAccountId,
       });
 
       const provider =
@@ -189,6 +190,8 @@ export class ConnectionProviderOAuthController {
         personalRedirectPath = getAppPreferencesOAuthRedirectPath({
           applicationId: statePayload.applicationId,
           redirectLocation: statePayload.redirectLocation,
+          reconnectingConnectedAccountId:
+            statePayload.reconnectingConnectedAccountId,
         });
       }
 

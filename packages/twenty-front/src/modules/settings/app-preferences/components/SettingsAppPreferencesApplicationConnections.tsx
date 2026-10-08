@@ -26,10 +26,12 @@ import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTrigg
 
 type SettingsAppPreferencesApplicationConnectionsProps = {
   application: AppPreferencesApplication;
+  connectedAccountId?: string;
 };
 
 export const SettingsAppPreferencesApplicationConnections = ({
   application,
+  connectedAccountId,
 }: SettingsAppPreferencesApplicationConnectionsProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
@@ -57,7 +59,9 @@ export const SettingsAppPreferencesApplicationConnections = ({
     useState<AppPreferencesConnectedAccount>();
   const disconnectDialogId = `disconnect-app-preferences-account-${application.id}`;
   const appAccounts = accounts.filter(
-    (account) => account.applicationId === application.id,
+    (account) =>
+      account.applicationId === application.id &&
+      (!isDefined(connectedAccountId) || account.id === connectedAccountId),
   );
   const canEditAccount = (account: AppPreferencesConnectedAccount) =>
     canManageConnectedAccounts &&
@@ -93,10 +97,13 @@ export const SettingsAppPreferencesApplicationConnections = ({
         providerName: provider.name,
         visibility: 'user',
         reconnectingConnectedAccountId: account?.id,
-        redirectLocation: getSettingsPath(
-          SettingsPath.AppPreferencesApplication,
-          { applicationId: application.id },
-        ),
+        redirectLocation: isDefined(connectedAccountId)
+          ? getSettingsPath(SettingsPath.AppPreferencesAccount, {
+              connectedAccountId,
+            })
+          : getSettingsPath(SettingsPath.AppPreferencesApplication, {
+              applicationId: application.id,
+            }),
       });
     } catch {
       setActionError(t`Unable to connect account. Try again.`);
@@ -206,7 +213,9 @@ export const SettingsAppPreferencesApplicationConnections = ({
               openDialog(disconnectDialogId);
             }}
           >
-            {availableProviders.length > 1 ? (
+            {isDefined(
+              connectedAccountId,
+            ) ? undefined : availableProviders.length > 1 ? (
               <DropdownRoot
                 type="menu"
                 dropdownId={`add-app-preferences-account-${application.id}`}

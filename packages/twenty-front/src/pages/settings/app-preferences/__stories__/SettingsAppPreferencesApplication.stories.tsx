@@ -1,3 +1,4 @@
+import { type ComponentProps } from 'react';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
 import { type AppPreferenceVariable } from '@/settings/app-preferences/types/AppPreferenceVariable';
@@ -171,7 +172,9 @@ const getPreferenceMocks = ({
   ],
 });
 
-const meta: Meta<PageDecoratorArgs> = {
+const meta: Meta<
+  PageDecoratorArgs & ComponentProps<typeof SettingsAppPreferencesApplication>
+> = {
   title: 'Pages/Settings/AppPreferences/SettingsAppPreferencesApplication',
   component: SettingsAppPreferencesApplication,
   decorators: [PageDecorator],

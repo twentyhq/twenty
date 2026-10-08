@@ -6,6 +6,7 @@ export enum SettingsPath {
   AppPreferences = 'app-preferences',
   AppPreferencesBuiltInApplication = 'app-preferences/built-in/:builtInAppId',
   AppPreferencesApplication = 'app-preferences/apps/:applicationId',
+  AppPreferencesAccount = 'app-preferences/accounts/:connectedAccountId',
   NewAccount = 'accounts/new',
   AccountsConfiguration = 'accounts/configuration/:connectedAccountId',
   AccountsCalendars = 'accounts/calendars',

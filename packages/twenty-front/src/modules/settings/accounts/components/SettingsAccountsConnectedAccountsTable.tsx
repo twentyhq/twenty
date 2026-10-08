@@ -11,8 +11,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -34,6 +35,8 @@ const StyledStatusHeader = styled(TableHeader)`
 `;
 
 export const StyledAccountsTableRow = styled(TableRow)`
+  position: relative;
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     && {
       grid-template-columns: minmax(0, 1fr) minmax(80px, max-content) 28px;
@@ -61,6 +64,32 @@ export const StyledAccountsTableRow = styled(TableRow)`
       grid-area: menu;
     }
   }
+`;
+
+export const StyledAccountLink = styled(Link)`
+  align-items: center;
+  color: inherit;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+  text-decoration: none;
+  width: 100%;
+
+  > svg {
+    flex-shrink: 0;
+  }
+
+  &::after {
+    border-radius: ${themeCssVariables.border.radius.md};
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+`;
+
+export const StyledAccountMenuCell = styled(TableCell)`
+  position: relative;
+  z-index: 1;
 `;
 
 const StyledTableRows = styled.div`
@@ -115,6 +144,10 @@ export const SettingsAccountsConnectedAccountsTable = ({
               <StyledAccountsTableRow
                 key={account.id}
                 gridTemplateColumns={ACCOUNTS_GRID_TEMPLATE_COLUMNS}
+                isClickable
+                hoverBackgroundColor={
+                  themeCssVariables.background.transparent.light
+                }
               >
                 <TableCell
                   color={themeCssVariables.font.color.primary}
@@ -122,11 +155,17 @@ export const SettingsAccountsConnectedAccountsTable = ({
                   minWidth="0"
                   overflow="hidden"
                 >
-                  <ProviderIcon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                  <OverflowingTextWithTooltip text={account.handle} />
+                  <StyledAccountLink
+                    to={getSettingsPath(SettingsPath.AppPreferencesAccount, {
+                      connectedAccountId: account.id,
+                    })}
+                  >
+                    <ProviderIcon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                    <OverflowingTextWithTooltip text={account.handle} />
+                  </StyledAccountLink>
                 </TableCell>
                 <TableCell align="right">
                   <SettingsAccountsConnectionStatus account={account} />
@@ -134,9 +173,9 @@ export const SettingsAccountsConnectedAccountsTable = ({
                 <TableCell align="right">
                   <SettingsAccountsAccountUsage account={account} />
                 </TableCell>
-                <TableCell align="right" padding="0">
+                <StyledAccountMenuCell align="right" padding="0">
                   <SettingsAccountsRowDropdownMenu account={account} />
-                </TableCell>
+                </StyledAccountMenuCell>
               </StyledAccountsTableRow>
             );
           })}

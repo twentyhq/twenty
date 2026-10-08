@@ -1,4 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
+import {
+  StyledAccountLink,
+  StyledAccountMenuCell,
+} from '@/settings/accounts/components/SettingsAccountsConnectedAccountsTable';
 import { SettingsAppPreferencesApplicationAccountStatus } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationAccountStatus';
 import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
 import { type AppPreferencesConnectedAccount } from '@/settings/app-preferences/types/AppPreferencesConnectedAccount';
@@ -14,7 +18,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconRefresh, IconUnlink } from 'twenty-ui/icon';
@@ -25,6 +34,8 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 const ACCOUNTS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 180px) minmax(0, 1fr) 28px';
 
 const StyledRow = styled(TableRow)`
+  position: relative;
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     && {
       grid-template-columns: minmax(0, 1fr) 28px;
@@ -52,14 +63,6 @@ const StyledAccountCell = styled(TableCell)`
   gap: ${themeCssVariables.spacing[1]};
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledIdentity = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  width: 100%;
 `;
 
 const StyledRows = styled.div`
@@ -117,9 +120,17 @@ export const SettingsAppPreferencesApplicationAccountsTable = ({
               <StyledRow
                 key={account.id}
                 gridTemplateColumns={ACCOUNTS_GRID_TEMPLATE_COLUMNS}
+                isClickable
+                hoverBackgroundColor={
+                  themeCssVariables.background.transparent.light
+                }
               >
                 <StyledAccountCell height="auto" minWidth="0" overflow="hidden">
-                  <StyledIdentity>
+                  <StyledAccountLink
+                    to={getSettingsPath(SettingsPath.AppPreferencesAccount, {
+                      connectedAccountId: account.id,
+                    })}
+                  >
                     <AppChip
                       applicationId={application.id}
                       logoUrl={provider?.logoUrl ?? application.logoUrl}
@@ -135,7 +146,7 @@ export const SettingsAppPreferencesApplicationAccountsTable = ({
                           : account.handle
                       }
                     />
-                  </StyledIdentity>
+                  </StyledAccountLink>
                   <SettingsAppPreferencesApplicationAccountStatus
                     account={account}
                   />
@@ -152,7 +163,7 @@ export const SettingsAppPreferencesApplicationAccountsTable = ({
                     }
                   />
                 </TableCell>
-                <TableCell align="right" padding="0">
+                <StyledAccountMenuCell align="right" padding="0">
                   {canEditAccount(account) && (
                     <DropdownRoot
                       type="menu"
@@ -188,13 +199,13 @@ export const SettingsAppPreferencesApplicationAccountsTable = ({
                       </DropdownContent>
                     </DropdownRoot>
                   )}
-                </TableCell>
+                </StyledAccountMenuCell>
               </StyledRow>
             );
           })}
         </StyledRows>
       </Table>
-      <StyledFooter>{children}</StyledFooter>
+      {isDefined(children) && <StyledFooter>{children}</StyledFooter>}
     </>
   );
 };

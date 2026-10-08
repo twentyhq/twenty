@@ -1,5 +1,9 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsConnectionStatus } from '@/settings/accounts/components/SettingsAccountsConnectionStatus';
+import {
+  StyledAccountLink,
+  StyledAccountMenuCell,
+} from '@/settings/accounts/components/SettingsAccountsConnectedAccountsTable';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { getAccountPermissions } from '@/settings/app-preferences/utils/getAccountPermissions';
@@ -10,7 +14,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -19,6 +24,8 @@ import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 const ACCOUNTS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 180px) minmax(0, 1fr) 28px';
 
 const StyledRow = styled(TableRow)`
+  position: relative;
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     && {
       grid-template-columns: minmax(0, 1fr) 28px;
@@ -47,18 +54,6 @@ const StyledPermissionsHeader = styled(TableHeader)`
 
 const StyledRows = styled.div`
   padding: ${themeCssVariables.spacing[2]} 0;
-`;
-
-const StyledIdentity = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  width: 100%;
-
-  > svg {
-    flex-shrink: 0;
-  }
 `;
 
 const StyledAccountCell = styled(TableCell)`
@@ -116,6 +111,10 @@ export const SettingsAppPreferencesBuiltInAccountsTable = ({
               <StyledRow
                 key={account.id}
                 gridTemplateColumns={ACCOUNTS_GRID_TEMPLATE_COLUMNS}
+                isClickable
+                hoverBackgroundColor={
+                  themeCssVariables.background.transparent.light
+                }
               >
                 <StyledAccountCell
                   height="auto"
@@ -123,10 +122,14 @@ export const SettingsAppPreferencesBuiltInAccountsTable = ({
                   overflow="hidden"
                   color={themeCssVariables.font.color.primary}
                 >
-                  <StyledIdentity>
+                  <StyledAccountLink
+                    to={getSettingsPath(SettingsPath.AppPreferencesAccount, {
+                      connectedAccountId: account.id,
+                    })}
+                  >
                     <ProviderIcon size={theme.icon.size.md} />
                     <OverflowingTextWithTooltip text={account.handle} />
-                  </StyledIdentity>
+                  </StyledAccountLink>
                   {isDefined(account.archivedAt) && (
                     <SettingsAccountsConnectionStatus account={account} />
                   )}
@@ -140,9 +143,9 @@ export const SettingsAppPreferencesBuiltInAccountsTable = ({
                     }
                   />
                 </StyledPermissionsCell>
-                <TableCell align="right" padding="0">
+                <StyledAccountMenuCell align="right" padding="0">
                   <SettingsAccountsRowDropdownMenu account={account} />
-                </TableCell>
+                </StyledAccountMenuCell>
               </StyledRow>
             );
           })}

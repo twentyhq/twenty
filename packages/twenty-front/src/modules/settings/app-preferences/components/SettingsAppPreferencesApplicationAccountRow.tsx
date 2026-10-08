@@ -1,6 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
 import {
   ACCOUNTS_GRID_TEMPLATE_COLUMNS,
+  StyledAccountLink,
+  StyledAccountMenuCell,
   StyledAccountsTableRow,
 } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsTable';
 import { SettingsAppPreferencesApplicationAccountStatus } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationAccountStatus';
@@ -34,6 +36,8 @@ export const SettingsAppPreferencesApplicationAccountRow = ({
   return (
     <StyledAccountsTableRow
       gridTemplateColumns={ACCOUNTS_GRID_TEMPLATE_COLUMNS}
+      isClickable
+      hoverBackgroundColor={themeCssVariables.background.transparent.light}
     >
       <TableCell
         gap={themeCssVariables.spacing[2]}
@@ -41,15 +45,23 @@ export const SettingsAppPreferencesApplicationAccountRow = ({
         overflow="hidden"
         color={themeCssVariables.font.color.primary}
       >
-        <AppChip
-          applicationId={application.id}
-          logoUrl={application.logoUrl}
-          fallbackApplicationData={{ name: application.name }}
-          chipOnly
-        />
-        <OverflowingTextWithTooltip
-          text={isNonEmptyString(account.name) ? account.name : account.handle}
-        />
+        <StyledAccountLink
+          to={getSettingsPath(SettingsPath.AppPreferencesAccount, {
+            connectedAccountId: account.id,
+          })}
+        >
+          <AppChip
+            applicationId={application.id}
+            logoUrl={application.logoUrl}
+            fallbackApplicationData={{ name: application.name }}
+            chipOnly
+          />
+          <OverflowingTextWithTooltip
+            text={
+              isNonEmptyString(account.name) ? account.name : account.handle
+            }
+          />
+        </StyledAccountLink>
       </TableCell>
       <TableCell align="right">
         <SettingsAppPreferencesApplicationAccountStatus account={account} />
@@ -65,7 +77,7 @@ export const SettingsAppPreferencesApplicationAccountRow = ({
           />
         </span>
       </TableCell>
-      <TableCell align="right" padding="0">
+      <StyledAccountMenuCell align="right" padding="0">
         <DropdownRoot
           type="menu"
           dropdownId={`app-preferences-overview-account-${account.id}`}
@@ -93,7 +105,7 @@ export const SettingsAppPreferencesApplicationAccountRow = ({
             </Dropdown.Section>
           </DropdownContent>
         </DropdownRoot>
-      </TableCell>
+      </StyledAccountMenuCell>
     </StyledAccountsTableRow>
   );
 };

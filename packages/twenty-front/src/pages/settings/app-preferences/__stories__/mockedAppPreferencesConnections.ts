@@ -272,6 +272,7 @@ export const getAppPreferencesConnectionMocks = ({
         accounts: builtInAccounts,
         canManageConnectedAccounts,
         isAppPreferencesEnabled,
+        userWorkspaceId: OWN_USER_WORKSPACE_ID,
       }).handlers,
     ],
   };

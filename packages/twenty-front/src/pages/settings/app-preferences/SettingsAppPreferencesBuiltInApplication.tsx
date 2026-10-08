@@ -4,15 +4,16 @@ import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnected
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { SettingsAppPreferencesBuiltInAccountsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesBuiltInAccountsTable';
-import { SettingsAppPreferencesMessaging } from '@/settings/app-preferences/components/SettingsAppPreferencesMessaging';
+import { SettingsAppPreferencesMessageChannelContent } from '@/settings/app-preferences/components/SettingsAppPreferencesMessageChannelContent';
 import { useBuiltInApps } from '@/settings/app-preferences/hooks/useBuiltInApps';
+import { getAccountPreferenceChannels } from '@/settings/app-preferences/utils/getAccountPreferenceChannels';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { Select } from '@/ui/input/components/Select';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -23,13 +24,7 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import {
-  CalendarChannelSyncStage,
-  ConnectedAccountProvider,
-  MessageChannelSyncStage,
-  MessageChannelType,
-  SettingsPath,
-} from 'twenty-shared/types';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
@@ -38,7 +33,6 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 
 const StyledSecondaryContent = styled.div`
   width: 100%;
@@ -74,10 +68,9 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const requestedAccountId = searchParams.get('connectedAccountId');
-  const [
-    settingsAccountsSelectedMessageChannel,
-    setSettingsAccountsSelectedMessageChannel,
-  ] = useAtomState(settingsAccountsSelectedMessageChannelState);
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
+    settingsAccountsSelectedMessageChannelState,
+  );
   const builtInApp = builtInApps.find(
     (application) => application.id === builtInAppId,
   );
@@ -88,20 +81,14 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
   const availableAccounts = appAccounts.filter(
     (account) => !isDefined(account.archivedAt),
   );
-  const messageChannels = availableAccounts
-    .flatMap((account) => account.messageChannels)
-    .filter(
-      (channel) =>
-        channel.type === MessageChannelType.EMAIL &&
-        channel.isSyncEnabled &&
-        channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
-    );
-  const calendarChannels = availableAccounts
-    .flatMap((account) => account.calendarChannels)
-    .filter(
-      (channel) =>
-        channel.syncStage !== CalendarChannelSyncStage.PENDING_CONFIGURATION,
-    );
+  const { messageChannels, calendarChannels } = getAccountPreferenceChannels({
+    messageChannels: availableAccounts.flatMap(
+      (account) => account.messageChannels,
+    ),
+    calendarChannels: availableAccounts.flatMap(
+      (account) => account.calendarChannels,
+    ),
+  });
   const selectedMessageChannel = isDefined(requestedAccountId)
     ? messageChannels.find(
         (channel) => channel.connectedAccountId === requestedAccountId,
@@ -112,6 +99,9 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
         (channel) => channel.connectedAccountId === requestedAccountId,
       )
     : calendarChannels[0];
+  const selectedMessageAccount = availableAccounts.find(
+    (account) => account.id === selectedMessageChannel?.connectedAccountId,
+  );
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
     ...(builtInApp?.hasMessaging
@@ -251,21 +241,14 @@ export const SettingsAppPreferencesBuiltInApplication = () => {
               >{t`Go to General`}</Button>
             </StyledEmptyContent>
           </Card.Root>
-        ) : activeTabId === 'messaging' && isDefined(selectedMessageChannel) ? (
-          <>
-            <SettingsAccountsConfigurationSelectedMessageChannelEffect
-              messageChannel={selectedMessageChannel}
-            />
-            {settingsAccountsSelectedMessageChannel?.id ===
-            selectedMessageChannel.id ? (
-              <SettingsAppPreferencesMessaging
-                key={selectedMessageChannel.id}
-                messageChannel={selectedMessageChannel}
-              />
-            ) : (
-              <SettingsSectionSkeletonLoader />
-            )}
-          </>
+        ) : activeTabId === 'messaging' &&
+          isDefined(selectedMessageChannel) &&
+          isDefined(selectedMessageAccount) ? (
+          <SettingsAppPreferencesMessageChannelContent
+            key={selectedMessageChannel.id}
+            messageChannel={selectedMessageChannel}
+            connectedAccount={selectedMessageAccount}
+          />
         ) : (
           isDefined(selectedCalendarChannel) && (
             <SettingsAccountsCalendarChannelDetails

@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import request from 'supertest';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { insertAppPreferencesConnectedAccount } from 'test/integration/metadata/suites/connection-provider/utils/insert-app-preferences-connected-account.util';
 import { setupAppPreferencesConnectionApplication } from 'test/integration/metadata/suites/connection-provider/utils/setup-app-preferences-connection-application.util';
 import { startAppPreferencesAuthorization } from 'test/integration/metadata/suites/connection-provider/utils/start-app-preferences-authorization.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
@@ -12,12 +13,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 describe('Personal application OAuth return routes', () => {
   let application: Awaited<
     ReturnType<typeof setupAppPreferencesConnectionApplication>
   >;
   let unconfiguredApplication: typeof application;
+  const connectedAccountId = uuidv4();
   const httpMock = setupHttpMock();
 
   const personalPath = () =>
@@ -61,6 +64,12 @@ describe('Personal application OAuth return routes', () => {
     });
     unconfiguredApplication = await setupAppPreferencesConnectionApplication({
       name: 'OAuth Unconfigured Preferences',
+    });
+    await insertAppPreferencesConnectedAccount({
+      id: connectedAccountId,
+      applicationId: application.id,
+      connectionProviderId: application.providerId,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
   }, 120000);
 
@@ -130,6 +139,66 @@ describe('Personal application OAuth return routes', () => {
         'errorMessage',
       ),
     ).toContain('does not have permission');
+  });
+
+  it('returns a stale provider authorization error to the canonical account route', async () => {
+    const pathname = getSettingsPath(SettingsPath.AppPreferencesAccount, {
+      connectedAccountId,
+    });
+    const { data } = await generateTransientTokenResponse({
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+    const response = await request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/authorize')
+      .query({
+        applicationId: application.id,
+        providerName: 'removed',
+        reconnectingConnectedAccountId: connectedAccountId,
+        transientToken: data.generateTransientToken.transientToken.token,
+        redirectLocation: pathname,
+      });
+
+    expect(response.status).toBe(302);
+    expect(
+      expectPersonalError(response.headers.location, pathname).searchParams.get(
+        'errorMessage',
+      ),
+    ).toContain('not found for application');
+  });
+
+  it('returns a signed vendor denial to the canonical account route', async () => {
+    const pathname = getSettingsPath(SettingsPath.AppPreferencesAccount, {
+      connectedAccountId,
+    });
+    const authorization = await startAppPreferencesAuthorization({
+      applicationId: application.id,
+      reconnectingConnectedAccountId: connectedAccountId,
+      redirectLocation: pathname,
+    });
+    const authorizationUrl = new URL(authorization.headers.location);
+    const state = authorizationUrl.searchParams.get('state');
+
+    expect(authorization.status).toBe(302);
+    expect(authorizationUrl.origin).toBe('https://example.com');
+
+    if (!isDefined(state)) {
+      throw new Error('Provider authorization did not return signed state');
+    }
+
+    const response = await request(`http://localhost:${APP_PORT}`)
+      .get('/auth/apps/callback')
+      .query({
+        state,
+        error: 'access_denied',
+        error_description: 'Synthetic account reconnect denial',
+      });
+
+    expect(response.status).toBe(302);
+    expect(
+      expectPersonalError(response.headers.location, pathname).searchParams.get(
+        'errorMessage',
+      ),
+    ).toContain('Synthetic account reconnect denial');
   });
 
   it('does not trust a personal route until the transient caller is a workspace member', async () => {

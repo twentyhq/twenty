@@ -3,6 +3,7 @@ import { SettingsAppPreferencesApplicationForm } from '@/settings/app-preference
 import { SettingsAppPreferencesApplicationConnections } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationConnections';
 import { useMyAppPreferencesApplicationVariables } from '@/settings/app-preferences/hooks/useMyAppPreferencesApplicationVariables';
 import { useMyAppPreferencesApplications } from '@/settings/app-preferences/hooks/useMyAppPreferencesApplications';
+import { type AppPreferencesConnectedAccount } from '@/settings/app-preferences/types/AppPreferencesConnectedAccount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -13,7 +14,16 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
-export const SettingsAppPreferencesApplication = () => {
+type SettingsAppPreferencesApplicationProps = {
+  connectedAccount?: Pick<
+    AppPreferencesConnectedAccount,
+    'id' | 'handle' | 'applicationId'
+  >;
+};
+
+export const SettingsAppPreferencesApplication = ({
+  connectedAccount,
+}: SettingsAppPreferencesApplicationProps) => {
   const { t } = useLingui();
   const { applicationId } = useParams<{ applicationId: string }>();
   const {
@@ -22,7 +32,9 @@ export const SettingsAppPreferencesApplication = () => {
     error: applicationsError,
     refetch: refetchApplications,
   } = useMyAppPreferencesApplications();
-  const application = applications.find(({ id }) => id === applicationId);
+  const application = applications.find(
+    ({ id }) => id === (connectedAccount?.applicationId ?? applicationId),
+  );
   const {
     applicationVariables,
     hasLoaded: variablesHaveLoaded,
@@ -41,17 +53,20 @@ export const SettingsAppPreferencesApplication = () => {
         application={application}
         applicationVariables={applicationVariables}
         onRefetch={refetchVariables}
+        connectedAccount={connectedAccount}
       >
         {application.hasConnectionProviders ? (
           <SettingsAppPreferencesApplicationConnections
             application={application}
+            connectedAccountId={connectedAccount?.id}
           />
         ) : undefined}
       </SettingsAppPreferencesApplicationForm>
     );
   }
 
-  const title = application?.name ?? t`App preferences`;
+  const title =
+    connectedAccount?.handle ?? application?.name ?? t`App preferences`;
 
   return (
     <SettingsPageLayout

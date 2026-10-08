@@ -22,19 +22,32 @@ const EMAIL_AND_CALENDAR_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
 // providers (OIDC, SAML) and app-managed OAuth (APP) also live in
 // connectedAccount, but they're surfaced elsewhere — keep them off this
 // page by filtering to the email/calendar provider set.
-export const useMyConnectedAccounts = () => {
+export const useMyConnectedAccounts = (connectedAccountId?: string) => {
   const apolloClient = useApolloClient();
 
-  const { data, loading: accountsLoading } = useQuery<{
+  const {
+    data,
+    loading: accountsLoading,
+    error: accountsError,
+    refetch: refetchAccounts,
+  } = useQuery<{
     myConnectedAccounts: CoreConnectedAccount[];
   }>(GET_MY_CONNECTED_ACCOUNTS, {
     client: apolloClient,
   });
 
-  const { channels: messageChannels, loading: messageChannelsLoading } =
-    useMyMessageChannels();
-  const { channels: calendarChannels, loading: calendarChannelsLoading } =
-    useMyCalendarChannels();
+  const {
+    channels: messageChannels,
+    loading: messageChannelsLoading,
+    error: messageChannelsError,
+    refetch: refetchMessageChannels,
+  } = useMyMessageChannels();
+  const {
+    channels: calendarChannels,
+    loading: calendarChannelsLoading,
+    error: calendarChannelsError,
+    refetch: refetchCalendarChannels,
+  } = useMyCalendarChannels(connectedAccountId);
 
   const accounts = useMemo<ConnectedAccount[]>(() => {
     if (!data?.myConnectedAccounts) {
@@ -54,9 +67,18 @@ export const useMyConnectedAccounts = () => {
       }));
   }, [data, messageChannels, calendarChannels]);
 
+  const refetch = () =>
+    Promise.all([
+      refetchAccounts(),
+      refetchMessageChannels(),
+      refetchCalendarChannels(),
+    ]);
+
   return {
     accounts,
     loading:
       accountsLoading || messageChannelsLoading || calendarChannelsLoading,
+    error: accountsError ?? messageChannelsError ?? calendarChannelsError,
+    refetch,
   };
 };

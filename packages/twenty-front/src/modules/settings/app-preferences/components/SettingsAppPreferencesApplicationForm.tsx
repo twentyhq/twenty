@@ -1,12 +1,14 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsAppPreferencesVariableInput } from '@/settings/app-preferences/components/SettingsAppPreferencesVariableInput';
 import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
+import { type AppPreferencesConnectedAccount } from '@/settings/app-preferences/types/AppPreferencesConnectedAccount';
 import { type AppPreferenceVariable } from '@/settings/app-preferences/types/AppPreferenceVariable';
 import { getAppPreferenceVariableError } from '@/settings/app-preferences/utils/getAppPreferenceVariableError';
 import { getAppPreferenceVariableUpdates } from '@/settings/app-preferences/utils/getAppPreferenceVariableUpdates';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -27,6 +29,7 @@ type SettingsAppPreferencesApplicationFormProps = {
   applicationVariables: AppPreferenceVariable[];
   onRefetch: () => Promise<unknown>;
   children?: ReactNode;
+  connectedAccount?: Pick<AppPreferencesConnectedAccount, 'id' | 'handle'>;
 };
 
 export const SettingsAppPreferencesApplicationForm = ({
@@ -34,6 +37,7 @@ export const SettingsAppPreferencesApplicationForm = ({
   applicationVariables,
   onRefetch,
   children,
+  connectedAccount,
 }: SettingsAppPreferencesApplicationFormProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
@@ -135,7 +139,7 @@ export const SettingsAppPreferencesApplicationForm = ({
 
   return (
     <SettingsPageLayout
-      title={application.name}
+      title={connectedAccount?.handle ?? application.name}
       icon={
         <AppChip
           applicationId={application.id}
@@ -150,8 +154,18 @@ export const SettingsAppPreferencesApplicationForm = ({
           children: t`Apps`,
           href: getSettingsPath(SettingsPath.AppPreferences),
         },
-        { children: application.name },
+        { children: connectedAccount?.handle ?? application.name },
       ]}
+      secondaryBar={
+        isDefined(connectedAccount) ? (
+          <SettingsTabBar
+            aria-label={t`Account preferences tabs`}
+            componentInstanceId={`app-preferences-account-${connectedAccount.id}`}
+            selectedTabId={application.id}
+            tabs={[{ id: application.id, title: application.name }]}
+          />
+        ) : undefined
+      }
       actionButton={
         updates.length > 0 ? (
           <SaveAndCancelButtons

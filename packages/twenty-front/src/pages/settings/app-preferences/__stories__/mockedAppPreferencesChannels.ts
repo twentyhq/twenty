@@ -10,6 +10,7 @@ import {
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type PermissionFlagType } from '~/generated-metadata/graphql';
 import {
   MOCKED_GOOGLE_CONNECTED_ACCOUNT,
   MOCKED_OUTLOOK_CALENDAR_ACCOUNT,
@@ -92,13 +93,17 @@ export const calendarChannelUpdates =
 export const messageFolderUpdates = fn<(input: MessageFolderUpdate) => void>();
 export const messageFolderQueries =
   fn<(messageChannelId: string | undefined) => void>();
+export const calendarChannelQueries =
+  fn<(connectedAccountId: string | undefined) => void>();
 
 export const getAppPreferencesChannelMocks = ({
   accounts,
   clientConfig = {},
+  permissionFlags,
 }: {
   accounts: ConnectedAccount[];
   clientConfig?: Partial<ClientConfig>;
+  permissionFlags?: PermissionFlagType[];
 }) => {
   let messageChannels: MessageChannel[] = [];
   let calendarChannels: CalendarChannel[] = [];
@@ -115,12 +120,35 @@ export const getAppPreferencesChannelMocks = ({
     calendarChannelUpdates.mockClear();
     messageFolderUpdates.mockClear();
     messageFolderQueries.mockClear();
+    calendarChannelQueries.mockClear();
   };
   reset();
 
   return {
     reset,
     handlers: [
+      graphql.query('MyMessageChannels', () =>
+        HttpResponse.json({ data: { myMessageChannels: messageChannels } }),
+      ),
+      graphql.query<
+        { myCalendarChannels: CalendarChannel[] },
+        { connectedAccountId?: string }
+      >('MyCalendarChannels', ({ variables }) => {
+        calendarChannelQueries(variables.connectedAccountId);
+        return HttpResponse.json({
+          data: {
+            myCalendarChannels: calendarChannels.filter((channel) =>
+              isDefined(variables.connectedAccountId)
+                ? channel.connectedAccountId === variables.connectedAccountId
+                : accounts.some(
+                    (account) =>
+                      account.id === channel.connectedAccountId &&
+                      account.userWorkspaceId === 'user-workspace',
+                  ),
+            ),
+          },
+        });
+      }),
       graphql.mutation<
         { updateMessageChannel: MessageChannel },
         { input: MessageChannelUpdate }
@@ -180,7 +208,8 @@ export const getAppPreferencesChannelMocks = ({
         );
         return HttpResponse.json({ data: { updateMessageFolders: folders } });
       }),
-      ...getAppPreferencesMocks({ accounts, clientConfig }).handlers,
+      ...getAppPreferencesMocks({ accounts, clientConfig, permissionFlags })
+        .handlers,
     ],
   };
 };

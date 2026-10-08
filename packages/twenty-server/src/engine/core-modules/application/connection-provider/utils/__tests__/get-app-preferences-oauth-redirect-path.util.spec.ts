@@ -4,12 +4,54 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { getAppPreferencesOAuthRedirectPath } from 'src/engine/core-modules/application/connection-provider/utils/get-app-preferences-oauth-redirect-path.util';
 
 const APPLICATION_ID = '1f326c86-5378-4eae-8d21-d0af79a311b4';
+const CONNECTED_ACCOUNT_ID = 'd4c26188-3ba8-4ac3-b97f-17fe4eb716d5';
+const ACCOUNT_PATH = getSettingsPath(SettingsPath.AppPreferencesAccount, {
+  connectedAccountId: CONNECTED_ACCOUNT_ID,
+});
 const APPLICATION_PATH = getSettingsPath(
   SettingsPath.AppPreferencesApplication,
   { applicationId: APPLICATION_ID },
 );
 
 describe('getAppPreferencesOAuthRedirectPath', () => {
+  it('retains the account entry only for the account being reconnected', () => {
+    expect(
+      getAppPreferencesOAuthRedirectPath({
+        applicationId: APPLICATION_ID,
+        redirectLocation: ACCOUNT_PATH,
+        reconnectingConnectedAccountId: CONNECTED_ACCOUNT_ID,
+      }),
+    ).toBe(ACCOUNT_PATH);
+  });
+
+  it.each([undefined, null, 'not-a-uuid', APPLICATION_ID])(
+    'rejects an account route with a different or invalid reconnecting ID %s',
+    (reconnectingConnectedAccountId) => {
+      expect(
+        getAppPreferencesOAuthRedirectPath({
+          applicationId: APPLICATION_ID,
+          redirectLocation: ACCOUNT_PATH,
+          reconnectingConnectedAccountId,
+        }),
+      ).toBeNull();
+    },
+  );
+
+  it.each([
+    `https://example.com${ACCOUNT_PATH}`,
+    `${ACCOUNT_PATH}?redirect=https://example.com`,
+    `${ACCOUNT_PATH}#custom`,
+    `/settings/app-preferences/accounts/../accounts/${CONNECTED_ACCOUNT_ID}`,
+  ])('rejects noncanonical account redirects %s', (redirectLocation) => {
+    expect(
+      getAppPreferencesOAuthRedirectPath({
+        applicationId: APPLICATION_ID,
+        reconnectingConnectedAccountId: CONNECTED_ACCOUNT_ID,
+        redirectLocation,
+      }),
+    ).toBeNull();
+  });
+
   it.each([getSettingsPath(SettingsPath.AppPreferences), APPLICATION_PATH])(
     'allows the canonical personal route %s',
     (redirectLocation) => {

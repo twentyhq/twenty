@@ -1,3 +1,4 @@
+import { type ComponentProps } from 'react';
 import { SettingsAppPreferencesRouteGuard } from '@/settings/app-preferences/components/SettingsAppPreferencesRouteGuard';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isFunction } from '@sniptt/guards';
@@ -21,6 +22,7 @@ import {
   FATHOM_PROVIDER,
   FATHOM_USER_PREFERENCE,
   getAppPreferencesConnectionMocks,
+  OWN_USER_WORKSPACE_ID,
   PERSONAL_FATHOM_ACCOUNT,
   prepareConnectionOwner,
   readConnectedAccounts,
@@ -93,7 +95,9 @@ const ConnectionsWithNavigation = ({
   );
 };
 
-const meta: Meta<PageDecoratorArgs> = {
+const meta: Meta<
+  PageDecoratorArgs & ComponentProps<typeof SettingsAppPreferencesApplication>
+> = {
   title:
     'Pages/Settings/AppPreferences/SettingsAppPreferencesApplicationConnections',
   component: SettingsAppPreferencesApplication,
@@ -127,7 +131,9 @@ const meta: Meta<PageDecoratorArgs> = {
 };
 
 export default meta;
-type Story = StoryObj<PageDecoratorArgs>;
+type Story = StoryObj<
+  PageDecoratorArgs & ComponentProps<typeof SettingsAppPreferencesApplication>
+>;
 
 export const ConnectionOnlyPersonalConnect: Story = {
   play: async ({ canvasElement }) => {
@@ -598,9 +604,9 @@ export const DisconnectedAccountShowsMissingAccount: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('Disconnected');
     await expect(
-      within(canvas.getByRole('link', { name: /Fathom/ })).getByText(
-        'Missing account',
-      ),
+      within(
+        canvas.getByRole('link', { name: 'Fathom Missing account' }),
+      ).getByText('Missing account'),
     ).toBeVisible();
   },
 };
@@ -610,7 +616,12 @@ export const CombinedAccountsKeepActualAppUsage: Story = {
   render: () => <ConnectionsWithNavigation />,
   parameters: {
     msw: getAppPreferencesConnectionMocks({
-      builtInAccounts: [MOCKED_GOOGLE_CONNECTED_ACCOUNT],
+      builtInAccounts: [
+        {
+          ...MOCKED_GOOGLE_CONNECTED_ACCOUNT,
+          userWorkspaceId: OWN_USER_WORKSPACE_ID,
+        },
+      ],
       accounts: [
         {
           ...PERSONAL_FATHOM_ACCOUNT,
