@@ -1,16 +1,34 @@
 import { type gmail_v1 } from 'googleapis';
 import { http, HttpResponse } from 'msw';
+import { isDefined } from 'twenty-shared/utils';
 
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 import { type MockEntityStore } from 'test/integration/utils/mock-entity-store.util';
 
+const BATCH_SUB_REQUEST_PATH_REGEX = /(messages|threads)\/([\w-]+)/g;
+
+const resolveBatchSubRequest = (
+  inbox: gmail_v1.Schema$Message[],
+  resource: string,
+  id: string,
+): gmail_v1.Schema$Message | gmail_v1.Schema$Thread | undefined => {
+  if (resource === 'threads') {
+    return {
+      id,
+      messages: inbox.filter((message) => message.threadId === id),
+    };
+  }
+
+  return inbox.find((message) => message.id === id);
+};
+
 const buildBatchMultipartResponse = (
-  messages: gmail_v1.Schema$Message[],
+  resources: (gmail_v1.Schema$Message | gmail_v1.Schema$Thread)[],
 ): { body: string; contentType: string } => {
   const boundary = 'batch_boundary';
-  const subResponses = messages
-    .map((message) =>
+  const subResponses = resources
+    .map((resource) =>
       [
         `--${boundary}`,
         'Content-Type: application/http',
@@ -18,7 +36,7 @@ const buildBatchMultipartResponse = (
         'HTTP/1.1 200 OK',
         'Content-Type: application/json; charset=UTF-8',
         '',
-        JSON.stringify(message),
+        JSON.stringify(resource),
       ].join('\r\n'),
     )
     .join('\r\n');
@@ -60,15 +78,14 @@ export const gmailMailboxHandlers = (
     return HttpResponse.json<gmail_v1.Schema$Message>(message);
   }),
   http.post('*/batch', async ({ request }) => {
-    const requestedIds = [
-      ...(await request.text()).matchAll(/messages\/([\w-]+)/g),
-    ].map((match) => match[1]);
-    const requestedMessages = inbox.filter((message) =>
-      requestedIds.includes(message.id ?? ''),
-    );
+    const requestedResources = [
+      ...(await request.text()).matchAll(BATCH_SUB_REQUEST_PATH_REGEX),
+    ]
+      .map(([, resource, id]) => resolveBatchSubRequest(inbox, resource, id))
+      .filter(isDefined);
 
     const { body, contentType } =
-      buildBatchMultipartResponse(requestedMessages);
+      buildBatchMultipartResponse(requestedResources);
 
     return new HttpResponse(body, {
       headers: { 'Content-Type': contentType },

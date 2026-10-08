@@ -111,6 +111,7 @@ export class MessagingMessageService {
           messages,
           messageAccumulatorMap,
           existingMessagesInDB,
+          messageChannelMessageAssociationsReferencingMessageThread,
         );
 
         await this.enrichMessageAccumulatorWithExistingMessageThreadIds(
@@ -123,7 +124,10 @@ export class MessagingMessageService {
         await this.enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
           messages,
           messageAccumulatorMap,
-          existingMessageChannelMessageAssociations,
+          [
+            ...existingMessageChannelMessageAssociations,
+            ...messageChannelMessageAssociationsReferencingMessageThread,
+          ],
         );
 
         await this.enrichMessageAccumulatorWithMessageThreadToCreate(
@@ -336,12 +340,21 @@ export class MessagingMessageService {
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
     existingMessagesInDB: MessageWorkspaceEntity[],
+    messageChannelMessageAssociationsReferencingMessageThread: MessageChannelMessageAssociationWorkspaceEntity[],
   ) {
     for (const message of messages) {
-      const existingMessage = existingMessagesInDB.find(
+      const messageWithSameExternalIdInChannel =
+        messageChannelMessageAssociationsReferencingMessageThread.find(
+          (association) => association.messageExternalId === message.externalId,
+        )?.message;
+
+      const messageWithSameHeaderMessageId = existingMessagesInDB.find(
         (existingMessage) =>
           existingMessage.headerMessageId === message.headerMessageId,
       );
+
+      const existingMessage =
+        messageWithSameExternalIdInChannel ?? messageWithSameHeaderMessageId;
 
       if (!isDefined(existingMessage)) {
         messageAccumulatorMap.set(message.externalId, {});
