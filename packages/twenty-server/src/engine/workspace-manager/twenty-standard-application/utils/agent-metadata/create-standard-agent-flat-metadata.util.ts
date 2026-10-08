@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { type ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
+import { type ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/model-configuration.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.constant';
@@ -19,8 +19,8 @@ export type CreateStandardAgentContext = {
   modelId: ModelId;
   responseFormat: AgentResponseFormat;
   isCustom: boolean;
+  isSystem: boolean;
   modelConfiguration: ModelConfiguration | null;
-  evaluationInputs: string[];
 };
 
 export type CreateStandardAgentArgs = StandardBuilderArgs<'agent'> & {
@@ -38,8 +38,8 @@ export const createStandardAgentFlatMetadata = ({
     modelId,
     responseFormat,
     isCustom,
+    isSystem,
     modelConfiguration,
-    evaluationInputs,
   },
   workspaceId,
   twentyStandardApplicationId,
@@ -58,8 +58,9 @@ export const createStandardAgentFlatMetadata = ({
     modelId,
     responseFormat,
     isCustom,
+    isSystem,
     modelConfiguration,
-    evaluationInputs,
+    triggers: [],
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

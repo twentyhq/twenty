@@ -12,11 +12,15 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertWaitForEventStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
 export function assertVersionCanBeActivated(
-  workflowVersion: WorkflowVersionWorkspaceEntity,
-  workflow: WorkflowWorkspaceEntity,
+  workflowVersion: Pick<
+    WorkflowVersionWorkspaceEntity,
+    'id' | 'status' | 'trigger' | 'steps'
+  >,
+  workflow: Pick<WorkflowWorkspaceEntity, 'lastPublishedVersionId'>,
 ) {
   assertVersionIsValid(workflowVersion);
 
@@ -40,7 +44,12 @@ export function assertVersionCanBeActivated(
   }
 }
 
-function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
+function assertVersionIsValid(
+  workflowVersion: Pick<
+    WorkflowVersionWorkspaceEntity,
+    'id' | 'status' | 'trigger' | 'steps'
+  >,
+) {
   if (!workflowVersion.trigger) {
     throw new WorkflowTriggerException(
       'Workflow version does not contain trigger',
@@ -266,6 +275,9 @@ function assertStepIsValid(step: WorkflowAction) {
   switch (step.type) {
     case WorkflowActionType.FORM:
       assertFormStepIsValid(step.settings);
+      break;
+    case WorkflowActionType.WAIT_FOR_EVENT:
+      assertWaitForEventStepIsValid(step.settings);
       break;
     default:
       break;

@@ -62,6 +62,7 @@ export class SendEmailService {
 
   private toSendMessageInput(data: ComposedEmail): SendMessageInput {
     return {
+      fromHandle: data.fromHandle,
       to: data.recipients.to,
       cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
       bcc: data.recipients.bcc.length > 0 ? data.recipients.bcc : undefined,

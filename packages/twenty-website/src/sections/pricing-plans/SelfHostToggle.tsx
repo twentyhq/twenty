@@ -76,7 +76,7 @@ export function SelfHostToggle({
         onChange={() => onHostingChange(isSelfHost ? 'cloud' : 'selfHost')}
         type="checkbox"
       />
-      <LabelText>{i18n._(msg`Selfhosting`)}</LabelText>
+      <LabelText>{i18n._(msg`Self-hosting`)}</LabelText>
       <Checkbox data-checked={isSelfHost ? '' : undefined}>
         {isSelfHost ? <CheckMark /> : null}
       </Checkbox>

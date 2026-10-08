@@ -16,7 +16,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationVariableInputProps = {
   type?: string | null;

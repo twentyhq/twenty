@@ -10,5 +10,6 @@ export const settingsObjectFieldsFamilyState = createAtomFamilyState<
   SortedFieldByTableFamilyStateKey
 >({
   key: 'settingsObjectFieldsFamilyState',
+  scope: 'routed-flow',
   defaultValue: null,
 });

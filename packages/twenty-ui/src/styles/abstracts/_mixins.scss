@@ -5,11 +5,28 @@
   }
 }
 
+@mixin square-button {
+  --tw-button-padding-inline: 0;
+
+  inline-size: var(--tw-button-size, var(--t-spacing-8));
+  max-inline-size: none;
+
+  &[data-size='sm'] {
+    inline-size: var(--tw-button-size, var(--t-spacing-6));
+  }
+}
+
 // A tap leaves :hover applied until the next tap lands elsewhere, so anything
 // that paints on hover has to be limited to pointers that can actually hover.
 // Mirrors useIsTouchDevice.
 @mixin hover-capable {
   @media (hover: hover) {
+    @content;
+  }
+}
+
+@mixin hover-capable-without-touch {
+  @media (hover: hover) and (not (any-pointer: coarse)) {
     @content;
   }
 }

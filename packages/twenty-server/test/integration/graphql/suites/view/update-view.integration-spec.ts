@@ -6,6 +6,10 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
+import {
+  DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+  VIEW_GROUP_LOAD_LIMIT_OPTIONS,
+} from 'twenty-shared/constants';
 import { ViewType } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
@@ -113,6 +117,41 @@ describe('Update core view', () => {
       kanbanColumnWidth: 250,
     });
   });
+
+  it.each(VIEW_GROUP_LOAD_LIMIT_OPTIONS)(
+    'should update the group load limit to %s',
+    async (groupLoadLimit) => {
+      const {
+        data: { createView: view },
+      } = await createOneView({
+        input: {
+          icon: '123Icon',
+          name: 'Group Load Limit View',
+          // A grouped TABLE view is what exposes the control; the board pages on
+          // its own constant and never reads groupLoadLimit.
+          type: ViewType.TABLE,
+          mainGroupByFieldMetadataId: testSelectFieldMetadataId,
+          objectMetadataId: testObjectMetadataId,
+        },
+        gqlFields: `${VIEW_GQL_FIELDS}
+    groupLoadLimit`,
+        expectToFail: false,
+      });
+
+      expect(view.groupLoadLimit).toBe(DEFAULT_VIEW_GROUP_LOAD_LIMIT);
+
+      const { data, errors } = await updateOneView({
+        viewId: view.id,
+        input: { id: view.id, groupLoadLimit },
+        gqlFields: `${VIEW_GQL_FIELDS}
+    groupLoadLimit`,
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.updateView).toMatchObject({ id: view.id, groupLoadLimit });
+    },
+  );
 
   it('should throw error when updating non-existent view', async () => {
     const { errors } = await updateOneView({

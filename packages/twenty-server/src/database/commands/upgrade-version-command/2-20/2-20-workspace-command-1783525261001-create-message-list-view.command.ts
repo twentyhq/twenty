@@ -22,9 +22,15 @@ const LIST = STANDARD_OBJECTS.messageList;
 const LIST_VIEW_UNIVERSAL_IDENTIFIER =
   LIST.views.allMessageLists.universalIdentifier;
 
-const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST.views.allMessageLists.viewFields,
-).map((viewField) => viewField.universalIdentifier);
+// Pinned to the columns the view had in 2.20: the description column and its
+// field only exist from 2.39, so reading the current standard definition here
+// would reference field metadata that later commands have not created yet.
+const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+  LIST.views.allMessageLists.viewFields.name.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.members.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.campaigns.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.createdAt.universalIdentifier,
+];
 
 @RegisteredWorkspaceCommand('2.20.0', 1783525261001)
 @Command({

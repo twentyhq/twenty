@@ -1,5 +1,4 @@
 import { css } from '@linaria/core';
-import { Aleo, Azeret_Mono, Host_Grotesk, VT323 } from 'next/font/google';
 import localFont from 'next/font/local';
 import { type ReactNode } from 'react';
 
@@ -14,38 +13,39 @@ import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
 import { color, fontFamily, tokenCssVariables } from '@/tokens';
 
-const hostGrotesk = Host_Grotesk({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+const hostGrotesk = localFont({
+  src: '../../fonts/host-grotesk-latin-variable.woff2',
+  weight: '300 800',
+  style: 'normal',
   variable: '--font-sans',
   display: 'swap',
 });
 
-const aleo = Aleo({
-  subsets: ['latin'],
-  weight: ['300'],
+const aleo = localFont({
+  src: '../../fonts/aleo-latin-300.woff2',
+  weight: '300',
+  style: 'normal',
   variable: '--font-serif',
   display: 'swap',
 });
 
-const azeretMono = Azeret_Mono({
-  subsets: ['latin'],
-  weight: ['300', '500'],
+const azeretMono = localFont({
+  src: '../../fonts/azeret-mono-latin-variable.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-mono',
   display: 'swap',
 });
 
-const vt323 = VT323({
-  subsets: ['latin'],
+const vt323 = localFont({
+  src: '../../fonts/vt323-latin-400.woff2',
   weight: '400',
+  style: 'normal',
   variable: '--font-retro',
   display: 'swap',
 });
 
-// Inter is twenty-front's product font; the app-preview/CRM mockups render in it
-// (exposed as --font-product so the preview surfaces can rebind to it). Pinned to
-// the exact classic Inter (v12, weights 400/500/600) twenty-front self-hosts, so
-// the mockups match the product pixel-for-pixel rather than Google's current Inter.
+// Pinned to the classic Inter v12 twenty-front self-hosts, so mockups match the product pixel for pixel.
 const inter = localFont({
   src: [
     {
@@ -69,9 +69,6 @@ const inter = localFont({
 });
 
 const globalStyles = css`
-  /* One root rule instead of per-component guards: motion collapses to
-     instant for users who prefer reduced motion. State still applies;
-     only the travel disappears. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

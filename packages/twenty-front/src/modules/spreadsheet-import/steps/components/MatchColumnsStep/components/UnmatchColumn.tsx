@@ -6,12 +6,12 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 const getExpandableContainerTitle = (
   fields: SpreadsheetImportFields,
@@ -72,24 +72,21 @@ export const UnmatchColumn = ({
         isExpanded={isExpanded}
         allMatched={allMatched}
       />
-      <AnimatedExpandableContainer
-        isExpanded={isExpanded}
-        dimension="height"
-        mode="scroll-height"
-        containAnimation
-      >
-        <StyledContentWrapper>
-          {column.matchedOptions?.map((option) => (
-            <SubMatchingSelectRow
-              option={option}
-              column={column}
-              onSubChange={onSubChange}
-              key={option.entry}
-              placeholder={t`Select an option`}
-            />
-          ))}
-        </StyledContentWrapper>
-      </AnimatedExpandableContainer>
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel dimension="height" containAnimation>
+          <StyledContentWrapper>
+            {column.matchedOptions?.map((option) => (
+              <SubMatchingSelectRow
+                option={option}
+                column={column}
+                onSubChange={onSubChange}
+                key={option.entry}
+                placeholder={t`Select an option`}
+              />
+            ))}
+          </StyledContentWrapper>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </StyledContainer>
   );
 };

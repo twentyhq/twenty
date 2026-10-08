@@ -2,11 +2,16 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { Button, Checkbox } from 'twenty-ui/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components/layout';
+import {
+  Button,
+  Checkbox,
+  Radio,
+  RadioGroup,
+} from 'twenty-ui/primitives/input';
+import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
 const StyledViewport = styled.div`
@@ -19,7 +24,7 @@ const StyledViewport = styled.div`
   padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled(Card.Root)`
   --card-background-color: ${themeCssVariables.background.primary};
 
   display: flex;
@@ -52,6 +57,23 @@ const StyledTopicRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledTrackingSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  text-align: left;
+`;
+
+const StyledTrackingTitle = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+const StyledTrackingHint = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 export const SettingsUnsubscribePreview = () => {
   const { t } = useLingui();
   const { unsubscribeTopics, loading } = useUnsubscribeTopics();
@@ -63,69 +85,70 @@ export const SettingsUnsubscribePreview = () => {
   const hasPublicTopics = publicTopics.length > 0;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Unsubscribe page`}
-        description={
-          hasPublicTopics
-            ? t`Preview of the page recipients see when they unsubscribe`
-            : t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
-        }
+        description={t`Preview of the page recipients see when they unsubscribe`}
       />
       <StyledViewport>
         {!loading && (
           <StyledCard rounded>
             <StyledHeader>
-              <H2Title
+              <Section.Header
                 title={t`Do you want to unsubscribe?`}
-                description={
-                  hasPublicTopics
-                    ? t`Confirm your preferences:`
-                    : t`You will stop receiving these emails.`
-                }
+                description={t`Confirm your preferences:`}
               />
             </StyledHeader>
-            {hasPublicTopics ? (
-              <>
-                <StyledTopics>
-                  {publicTopics.map((topic) => (
-                    <StyledTopicRow key={topic.id}>
-                      <Checkbox
-                        checked
-                        onChange={() => {}}
-                        aria-label={topic.name ?? t`Untitled topic`}
-                      />
-                      {topic.name ?? t`Untitled topic`}
-                    </StyledTopicRow>
-                  ))}
-                </StyledTopics>
-                <Button
-                  title={t`Update`}
-                  variant="primary"
-                  accent="blue"
-                  fullWidth
-                  justify="center"
-                />
-                <HorizontalSeparator text={t`Or`} noMargin />
-                <Button
-                  title={t`Unsubscribe all`}
-                  variant="secondary"
-                  fullWidth
-                  justify="center"
-                />
-              </>
-            ) : (
-              <Button
-                title={t`Unsubscribe`}
-                variant="primary"
-                accent="blue"
-                fullWidth
-                justify="center"
-              />
+            {hasPublicTopics && (
+              <StyledTopics>
+                {publicTopics.map((topic) => (
+                  <StyledTopicRow key={topic.id}>
+                    <Checkbox
+                      checked
+                      onCheckedChange={() => {}}
+                      aria-label={topic.name ?? t`Untitled topic`}
+                    />
+                    {topic.name ?? t`Untitled topic`}
+                  </StyledTopicRow>
+                ))}
+              </StyledTopics>
             )}
+            <StyledTrackingSection>
+              <StyledTrackingTitle>{t`Email tracking`}</StyledTrackingTitle>
+              <StyledTrackingHint>
+                {t`This sender records which links you click in its emails. You can opt out for this email address.`}
+              </StyledTrackingHint>
+              <RadioGroup
+                value="TRACKED"
+                onValueChange={() => {}}
+                aria-label={t`Email tracking`}
+              >
+                <StyledTopicRow>
+                  <Radio
+                    value="TRACKED"
+                    aria-label={t`Keep tracking my clicks`}
+                  />
+                  {t`Keep tracking my clicks`}
+                </StyledTopicRow>
+                <StyledTopicRow>
+                  <Radio
+                    value="OPTED_OUT"
+                    aria-label={t`Opt out of click tracking`}
+                  />
+                  {t`Opt out of click tracking`}
+                </StyledTopicRow>
+              </RadioGroup>
+            </StyledTrackingSection>
+            <Button fullWidth variant="solid" color="accent">
+              {t`Update`}
+            </Button>
+            <LabeledDivider noMargin>{t`Or`}</LabeledDivider>
+            <Button fullWidth variant="outline">
+              {t`Unsubscribe all`}
+            </Button>
           </StyledCard>
         )}
       </StyledViewport>
-    </Section>
+    </Section.Root>
   );
 };

@@ -4,8 +4,7 @@ const require = createRequire(import.meta.url);
 const isCI = process.env.CI === 'true';
 
 const jestConfig = {
-  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
-  // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+  // Prettier v3 is only supported from jest v30 (https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1)
   prettierPath: null,
   // to enable logs, comment out the following line
   silent: true,
@@ -17,11 +16,8 @@ const jestConfig = {
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./setupTests.ts'],
   transformIgnorePatterns: [
-    // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
-    // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine),
-    // and e2b/@e2b pull ESM-only chalk.
-    // jest's CJS runtime can't load their `export` syntax, so let swc transform them.
-    '/node_modules/(?!(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk)/)',
+    // ESM-only deps jest's CJS runtime cannot load; (.*/node_modules/)? also matches nested copies like sanitize-html's htmlparser2
+    '/node_modules/(?!(.*/node_modules/)?(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|ai|@ai-sdk|@workflow|htmlparser2|marked|domhandler|domutils|dom-serializer|domelementtype|@faker-js|twenty-oxlint-rules)/)',
   ],
   testRegex: '.*\\.spec\\.ts$',
   transform: {

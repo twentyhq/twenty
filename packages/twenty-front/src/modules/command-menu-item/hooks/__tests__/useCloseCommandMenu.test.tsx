@@ -1,6 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
-import { type CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { ContextStorePageType } from 'twenty-shared/types';
@@ -86,7 +86,9 @@ beforeEach(() => {
 describe('useCloseCommandMenu', () => {
   describe('when containerType is command-menu-list', () => {
     it('should call closeSidePanelMenu by default', () => {
-      const wrapper = getWrapper({ containerType: 'command-menu-list' });
+      const wrapper = getWrapper({
+        containerType: CommandMenuItemContainerType.CommandMenuList,
+      });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
@@ -99,7 +101,9 @@ describe('useCloseCommandMenu', () => {
     });
 
     it('should not call closeSidePanelMenu when closeSidePanelOnCommandMenuListExecution is false', () => {
-      const wrapper = getWrapper({ containerType: 'command-menu-list' });
+      const wrapper = getWrapper({
+        containerType: CommandMenuItemContainerType.CommandMenuList,
+      });
 
       const { result } = renderHook(
         () =>
@@ -118,7 +122,9 @@ describe('useCloseCommandMenu', () => {
     });
 
     it('should not call closeDropdown', () => {
-      const wrapper = getWrapper({ containerType: 'command-menu-list' });
+      const wrapper = getWrapper({
+        containerType: CommandMenuItemContainerType.CommandMenuList,
+      });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
@@ -132,7 +138,9 @@ describe('useCloseCommandMenu', () => {
 
   describe('when containerType is index-page-dropdown', () => {
     it('should call closeDropdown with the correct dropdown id', () => {
-      const wrapper = getWrapper({ containerType: 'index-page-dropdown' });
+      const wrapper = getWrapper({
+        containerType: CommandMenuItemContainerType.IndexPageDropdown,
+      });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
@@ -146,7 +154,9 @@ describe('useCloseCommandMenu', () => {
     });
 
     it('should not call closeSidePanelMenu', () => {
-      const wrapper = getWrapper({ containerType: 'index-page-dropdown' });
+      const wrapper = getWrapper({
+        containerType: CommandMenuItemContainerType.IndexPageDropdown,
+      });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
@@ -159,9 +169,9 @@ describe('useCloseCommandMenu', () => {
   });
 
   describe('when containerType is command-menu-show-page-dropdown', () => {
-    it('should call closeDropdown with the correct dropdown id', () => {
+    it('should close the side panel dropdown', () => {
       const wrapper = getWrapper({
-        containerType: 'command-menu-show-page-dropdown',
+        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
       });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
@@ -171,13 +181,13 @@ describe('useCloseCommandMenu', () => {
       });
 
       expect(mockCloseDropdown).toHaveBeenCalledWith(
-        `command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
+        `side-panel-command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
       );
     });
 
     it('should not call closeSidePanelMenu by default', () => {
       const wrapper = getWrapper({
-        containerType: 'command-menu-show-page-dropdown',
+        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
       });
 
       const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
@@ -191,7 +201,7 @@ describe('useCloseCommandMenu', () => {
 
     it('should call closeSidePanelMenu when closeSidePanelOnShowPageOptionsExecution is true', () => {
       const wrapper = getWrapper({
-        containerType: 'command-menu-show-page-dropdown',
+        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
       });
 
       const { result } = renderHook(
@@ -211,9 +221,9 @@ describe('useCloseCommandMenu', () => {
   });
 
   describe('when isInSidePanel is true', () => {
-    it('should use side panel dropdown id for closeDropdown', () => {
+    it('should close the index page dropdown it was opened from', () => {
       const wrapper = getWrapper({
-        containerType: 'index-page-dropdown',
+        containerType: CommandMenuItemContainerType.IndexPageDropdown,
         isInSidePanel: true,
       });
 
@@ -224,7 +234,7 @@ describe('useCloseCommandMenu', () => {
       });
 
       expect(mockCloseDropdown).toHaveBeenCalledWith(
-        `side-panel-command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
+        `command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
       );
     });
   });

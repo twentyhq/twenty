@@ -2,7 +2,7 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { camelToSnakeCase, performQuery } from './setup-db-utils';
 
-rawDataSource
+void rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
@@ -22,6 +22,11 @@ rawDataSource
     await performQuery(
       'CREATE EXTENSION IF NOT EXISTS "unaccent"',
       'create extension "unaccent"',
+    );
+
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "citext"',
+      'create extension "citext"',
     );
 
     await performQuery(
@@ -84,6 +89,12 @@ $$;`,
   .catch((err) => {
     // oxlint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
+    process.exitCode = 1;
+  })
+  .then(async () => {
+    if (rawDataSource.isInitialized) {
+      await rawDataSource.destroy();
+    }
   });
 
 async function checkForeignDataWrapperExists(

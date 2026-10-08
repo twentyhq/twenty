@@ -1,0 +1,484 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+
+import { IconPlus, IconSearch, IconTrash } from '@ui/icon';
+import { Text } from '@ui/primitives/typography';
+import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
+import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
+import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
+
+import { IconButton } from '../IconButton';
+import { type IconButtonProps } from '../types/IconButtonProps';
+
+const meta: Meta<typeof IconButton> = {
+  id: 'ui-components-iconbutton',
+  title: 'UI/Components/Input/IconButton',
+  component: IconButton,
+  args: { children: <IconSearch />, 'aria-label': 'Search' },
+};
+
+export default meta;
+type Story = StoryObj<typeof IconButton>;
+
+export const Default: Story = { decorators: [ComponentDecorator] };
+
+export const Elevated: Story = {
+  ...Default,
+  args: { elevated: true, size: 'sm' },
+};
+
+export const ElevatedTooltip: Story = {
+  ...Elevated,
+  args: { ...Elevated.args, tooltip: 'Search records', tooltipDelay: 0 },
+};
+
+export const ElevatedAppearance: Story = {
+  ...Default,
+  args: { onClick: fn() },
+  render: (args) => (
+    <>
+      <IconButton {...args} aria-label="Regular action" />
+      <IconButton {...args} elevated aria-label="Elevated action" />
+      <IconButton {...args} elevated size="sm" aria-label="Compact action" />
+      <IconButton
+        {...args}
+        href="#search"
+        aria-label="Link without elevation"
+      />
+      <IconButton {...args} variant="solid" aria-label="Solid action" />
+      <IconButton
+        {...args}
+        variant="solid"
+        elevated
+        aria-label="Elevated solid action"
+      />
+      <IconButton {...args} color="accent" aria-label="Accent action" />
+      <IconButton
+        {...args}
+        color="accent"
+        elevated
+        aria-label="Elevated accent action"
+      />
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const regular = canvas.getByRole('button', { name: 'Regular action' });
+    const elevated = canvas.getByRole('button', { name: 'Elevated action' });
+    const compact = canvas.getByRole('button', { name: 'Compact action' });
+    const link = canvas.getByRole('link', { name: 'Link without elevation' });
+
+    await expect(regular.getBoundingClientRect().width).toBe(32);
+    await expect(getComputedStyle(regular).boxShadow).toBe('none');
+    await expect(getComputedStyle(regular).backdropFilter).toBe('none');
+    await expect(getComputedStyle(elevated).backgroundColor).not.toBe(
+      getComputedStyle(regular).backgroundColor,
+    );
+    await expect(getComputedStyle(elevated).borderColor).not.toBe(
+      getComputedStyle(regular).borderColor,
+    );
+    await expect(elevated.getBoundingClientRect().width).toBe(32);
+    await expect(elevated).toHaveAttribute('type', 'button');
+    await expect(compact.getBoundingClientRect().width).toBe(24);
+    await expect(compact.getBoundingClientRect().height).toBe(24);
+
+    for (const button of [elevated, compact]) {
+      await expect(getComputedStyle(button).boxShadow).not.toBe('none');
+      await expect(getComputedStyle(button).backdropFilter).not.toBe('none');
+      await expect(
+        button.querySelector('svg')?.getBoundingClientRect().width,
+      ).toBe(16);
+    }
+
+    for (const [regularName, elevatedName] of [
+      ['Solid action', 'Elevated solid action'],
+      ['Accent action', 'Elevated accent action'],
+    ]) {
+      const regularButton = canvas.getByRole('button', { name: regularName });
+      const elevatedButton = canvas.getByRole('button', { name: elevatedName });
+
+      for (const property of [
+        'backgroundColor',
+        'borderColor',
+        'color',
+      ] as const) {
+        await expect(getComputedStyle(elevatedButton)[property]).toBe(
+          getComputedStyle(regularButton)[property],
+        );
+      }
+      await expect(getComputedStyle(elevatedButton).boxShadow).not.toBe('none');
+      await expect(getComputedStyle(elevatedButton).backdropFilter).not.toBe(
+        'none',
+      );
+    }
+
+    elevated.focus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(link).toHaveAttribute('href', '#search');
+    await expect(getComputedStyle(link).boxShadow).toBe('none');
+    await expect(getComputedStyle(link).backdropFilter).toBe('none');
+  },
+};
+
+export const ElevatedAppearanceDark: Story = {
+  ...ElevatedAppearance,
+  globals: { colorScheme: 'dark' },
+};
+
+export const Keyboard: Story = {
+  ...Default,
+  args: { onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    button.focus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const Disabled: Story = {
+  ...Default,
+  args: { disabled: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const Loading: Story = {
+  ...Disabled,
+  args: { loading: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+    await expect(button.getBoundingClientRect().width).toBe(
+      button.getBoundingClientRect().height,
+    );
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const Link: Story = {
+  ...Default,
+  args: { href: '#search', onClick: fn((event) => event.preventDefault()) },
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Search' });
+
+    await expect(link).toHaveAttribute('href', '#search');
+    link.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const Tooltip: Story = {
+  ...Default,
+  args: { tooltip: 'Search records', tooltipDelay: 0 },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    button.focus();
+    await expect(button).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+  },
+};
+
+export const TooltipDocumentation: Story = {
+  decorators: Tooltip.decorators,
+  args: Tooltip.args,
+};
+
+export const TooltipDisabled: Story = {
+  ...Tooltip,
+  args: { ...Tooltip.args, disabled: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await expect(button).toBeDisabled();
+    await userEvent.hover(button);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const TooltipLoading: Story = {
+  ...TooltipDisabled,
+  args: { ...Tooltip.args, loading: true, onClick: fn() },
+};
+
+export const TooltipLink: Story = {
+  ...Tooltip,
+  args: {
+    ...Tooltip.args,
+    href: '#search',
+    nativeButton: false,
+    role: 'link',
+    render: (props) => (
+      <a {...props} data-custom-render>
+        {props.children}
+      </a>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Search' });
+
+    await expect(link).toHaveAttribute('href', '#search');
+    await expect(link).toHaveAttribute('data-custom-render');
+    await expect(link).not.toHaveAttribute('type');
+    link.focus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+  },
+};
+
+export const Grouped: Story = {
+  ...Default,
+  render: () => (
+    <ButtonGroup
+      aria-label="Record actions"
+      size="sm"
+      variant="solid"
+      color="accent"
+    >
+      <IconButton aria-label="Search">
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create" tooltip="Create record">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const buttons = within(canvasElement).getAllByRole('button');
+
+    for (const button of buttons) {
+      await expect(button).toHaveAttribute('data-variant', 'solid');
+      await expect(button.getBoundingClientRect().width).toBe(24);
+      await expect(button.getBoundingClientRect().height).toBe(24);
+    }
+  },
+};
+
+const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
+  default: {},
+  small: { size: 'sm' },
+  elevated: { elevated: true },
+  hover: { className: 'hover' },
+  pressed: { className: 'pressed' },
+  focused: { className: 'focused' },
+  disabled: { disabled: true },
+  loading: { loading: true },
+};
+
+export const Catalog: CatalogStory<Story, typeof IconButton> = {
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: {
+      hover: ['.hover'],
+      active: ['.pressed'],
+      focusVisible: ['.focused'],
+    },
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(CATALOG_STATES),
+          props: (state: string) => CATALOG_STATES[state] ?? {},
+        },
+        {
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
+        },
+        {
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+
+export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const Round: Story = {
+  ...Default,
+  render: () => (
+    <>
+      <IconButton
+        aria-label="Compact round"
+        size="xs"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Small round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Disabled round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+        disabled
+      >
+        <IconPlus />
+      </IconButton>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const [name, size] of [
+      ['Compact round', 20],
+      ['Small round', 24],
+      ['Disabled round', 24],
+    ] as const) {
+      const button = canvas.getByRole('button', { name });
+      await expect(button.getBoundingClientRect().width).toBe(size);
+      await expect(button.getBoundingClientRect().height).toBe(size);
+      await expect(getComputedStyle(button).borderTopLeftRadius).toBe('50%');
+    }
+    const disabled = canvas.getByRole('button', { name: 'Disabled round' });
+    await expect(disabled).toBeDisabled();
+    await expect(getComputedStyle(disabled).opacity).toBe('1');
+  },
+};
+
+export const LabelledBy: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <Text render={<span />} id="search-records-label">
+        Search records
+      </Text>
+      <IconButton
+        aria-labelledby="search-records-label"
+        tooltip="Find a record"
+        tooltipDelay={0}
+      >
+        <IconSearch />
+      </IconButton>
+    </>
+  ),
+};
+
+export const LabelledByInteraction: Story = {
+  ...LabelledBy,
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search records',
+    });
+
+    await expect(button).not.toHaveAttribute('aria-label');
+    button.focus();
+    await expect(button).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Find a record');
+    await expect(button).toHaveAccessibleName('Search records');
+  },
+};
+
+export const GroupedOverrides: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <ButtonGroup
+      aria-label="Record appearance"
+      variant="solid"
+      color="accent"
+      size="sm"
+    >
+      <IconButton
+        variant="outline"
+        color="neutral"
+        size="xs"
+        aria-label="Search records"
+        tooltip="Search records"
+      >
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create record" tooltip="Create record">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+};
+
+export const GroupedOverridesInteraction: Story = {
+  ...GroupedOverrides,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const searchButton = canvas.getByRole('button', { name: 'Search records' });
+    const createButton = canvas.getByRole('button', { name: 'Create record' });
+
+    await expect(searchButton).toHaveAttribute('data-variant', 'outline');
+    await expect(searchButton).toHaveAttribute('data-color', 'neutral');
+    await expect(searchButton).toHaveAttribute('data-icon-size', 'xs');
+    await expect(searchButton.getBoundingClientRect().width).toBe(20);
+    await expect(searchButton.getBoundingClientRect().height).toBe(20);
+    await expect(createButton).toHaveAttribute('data-variant', 'solid');
+    await expect(createButton).toHaveAttribute('data-color', 'accent');
+    await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(createButton.getBoundingClientRect().width).toBe(24);
+    await expect(createButton.getBoundingClientRect().height).toBe(24);
+  },
+};
+
+export const FramedGroupDocumentation: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <ButtonGroup framed attached={false} aria-label="Record actions">
+      <IconButton size="xs" aria-label="Add" variant="ghost">
+        <IconPlus />
+      </IconButton>
+      <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+        <IconTrash />
+      </IconButton>
+    </ButtonGroup>
+  ),
+};

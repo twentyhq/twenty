@@ -10,7 +10,6 @@ export class InsertFieldData {
   private readonly countrySelect: Locator;
   private readonly arrayValueInput: Locator;
   private readonly arrayAddValueButton: Locator;
-  // boolean react after click so no need to write special locator
   private readonly currencySelect: Locator;
   private readonly currencyAmountInput: Locator;
   private readonly monthSelect: Locator;
@@ -21,7 +20,7 @@ export class InsertFieldData {
   private readonly dateInput: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
-  private readonly addURLButton: Locator;
+  private readonly addUrlButton: Locator;
   private readonly setAsPrimaryButton: Locator;
   private readonly addPhoneButton: Locator;
   private readonly addMailButton: Locator;
@@ -47,9 +46,7 @@ export class InsertFieldData {
       '//span[contains(., "COUNTRY")]/../div[last()]/div',
     );
     this.arrayValueInput = page.locator("//input[@placeholder='Enter value']");
-    this.arrayAddValueButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(.,'Add item')]",
-    );
+    this.arrayAddValueButton = page.getByText('Add item', { exact: true });
     this.currencySelect = page.locator(
       '//body/div[last()]/div/div/div[first()]/div/div',
     );
@@ -58,27 +55,16 @@ export class InsertFieldData {
     this.yearSelect;
     this.previousMonthButton;
     this.nextMonthButton;
-    this.clearDateButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Clear')]",
-    );
+    this.clearDateButton = page.getByText('Clear', { exact: true });
     this.dateInput = page.locator("//input[@placeholder='Type date and time']");
     this.firstNameInput = page.locator("//input[@placeholder='First name']"); // may fail if placeholder is `F&zwnj;&zwnj;irst name` instead of `First name`
     this.lastNameInput = page.locator("//input[@placeholder='Last name']"); // may fail if placeholder is `L&zwnj;&zwnj;ast name` instead of `Last name`
-    this.addURLButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add URL')]",
-    );
-    this.setAsPrimaryButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Set as primary')]",
-    );
-    this.addPhoneButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add Phone')]",
-    );
-    this.addMailButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add Email')]",
-    );
+    this.addUrlButton = page.getByText('Add URL', { exact: true });
+    this.setAsPrimaryButton = page.getByText('Set as primary', { exact: true });
+    this.addPhoneButton = page.getByText('Add Phone', { exact: true });
+    this.addMailButton = page.getByText('Add Email', { exact: true });
   }
 
-  // address
   async typeAddress1(value: string) {
     await this.address1Input.fill(value);
   }
@@ -101,12 +87,9 @@ export class InsertFieldData {
 
   async selectCountry(value: string) {
     await this.countrySelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
-  // array
   async typeArrayValue(value: string) {
     await this.arrayValueInput.fill(value);
   }
@@ -115,35 +98,27 @@ export class InsertFieldData {
     await this.arrayAddValueButton.click();
   }
 
-  // currency
   async selectCurrency(value: string) {
     await this.currencySelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async typeCurrencyAmount(value: string) {
     await this.currencyAmountInput.fill(value);
   }
 
-  // date(-time)
   async typeDate(value: string) {
     await this.dateInput.fill(value);
   }
 
   async selectMonth(value: string) {
     await this.monthSelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async selectYear(value: string) {
     await this.yearSelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async clickPreviousMonthButton() {
@@ -164,7 +139,6 @@ export class InsertFieldData {
     await this.clearDateButton.click();
   }
 
-  // email
   async typeEmail(value: string) {
     await this.page.locator(`//input[@placeholder='Email']`).fill(value);
   }
@@ -173,7 +147,6 @@ export class InsertFieldData {
     await this.addMailButton.click();
   }
 
-  // full name
   async typeFirstName(name: string) {
     await this.firstNameInput.fill(name);
   }
@@ -182,45 +155,32 @@ export class InsertFieldData {
     await this.lastNameInput.fill(name);
   }
 
-  // JSON
-  // placeholder is dependent on the name of field
   async typeJSON(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
       .fill(value);
   }
 
-  // link
   async typeLink(value: string) {
     await this.page.locator("//input[@placeholder='URL']").fill(value);
   }
 
   async clickAddURL() {
-    await this.addURLButton.click();
+    await this.addUrlButton.click();
   }
 
-  // (multi-)select
   async selectValue(value: string) {
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
-  // number
-  // placeholder is dependent on the name of field
   async typeNumber(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
       .fill(value);
   }
 
-  // phones
   async selectCountryPhoneCode(countryCode: string) {
-    await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${countryCode}')]`,
-      )
-      .click();
+    await this.page.getByText(countryCode).click();
   }
 
   async typePhoneNumber(value: string) {
@@ -231,14 +191,11 @@ export class InsertFieldData {
     await this.addPhoneButton.click();
   }
 
-  // rating
   // if adding rating for the first time, hover must be used
   async selectRating(rating: number) {
     await this.page.locator(`//div[@role='slider']/div[${rating}]`).click();
   }
 
-  // text
-  // placeholder is dependent on the name of field
   async typeText(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
@@ -254,14 +211,10 @@ export class InsertFieldData {
   }
 
   async clickEditButton() {
-    await this.page
-      .locator("//div[@data-testid='tooltip' and contains(., 'Edit')]")
-      .click();
+    await this.page.getByText('Edit', { exact: true }).click();
   }
 
   async clickDeleteButton() {
-    await this.page
-      .locator("//div[@data-testid='tooltip' and contains(., 'Delete')]")
-      .click();
+    await this.page.getByText('Delete', { exact: true }).click();
   }
 }

@@ -33,6 +33,8 @@ export enum ErrorCode {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   METADATA_VALIDATION_FAILED = 'METADATA_VALIDATION_FAILED',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
+  RATE_LIMITED = 'RATE_LIMITED',
+  QUOTA_EXHAUSTED = 'QUOTA_EXHAUSTED',
 }
 
 type RestrictedGraphQLErrorExtensions = {
@@ -246,10 +248,6 @@ export class InternalServerError extends BaseGraphQLError {
   }
 }
 
-/**
- * Converts a GraphQLError to a BaseGraphQLError with the appropriate ErrorCode
- * based on HTTP status code if present in extensions.
- */
 export const convertGraphQLErrorToBaseGraphQLError = (
   error: GraphQLError,
 ): BaseGraphQLError => {
@@ -282,10 +280,8 @@ export const convertGraphQLErrorToBaseGraphQLError = (
         break;
       default:
         if (httpStatus >= 400 && httpStatus < 500) {
-          // Other 4xx errors
           errorCode = ErrorCode.BAD_USER_INPUT;
         } else {
-          // 5xx errors default to internal server error
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
     }

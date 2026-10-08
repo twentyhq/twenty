@@ -12,7 +12,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
@@ -42,7 +42,7 @@ describe('people resolvers (integration)', () => {
       ],
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.createPeople).toHaveLength(2);
 
@@ -75,7 +75,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const createdPerson = response.body.data.createPerson;
 
@@ -100,7 +100,7 @@ describe('people resolvers (integration)', () => {
       gqlFields: PERSON_GQL_FIELDS,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const data = response.body.data.people;
 
@@ -135,7 +135,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const person = response.body.data.person;
 
@@ -167,7 +167,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const updatedPeople = response.body.data.updatePeople;
 
@@ -189,7 +189,7 @@ describe('people resolvers (integration)', () => {
       recordId: TEST_PERSON_3_ID,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const updatedPerson = response.body.data.updatePerson;
 
@@ -208,7 +208,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.people.edges).toHaveLength(2);
   });
@@ -224,7 +224,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.person.jobTitle).toEqual('New City');
   });
@@ -241,7 +241,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     const deletePeople = response.body.data.deletePeople;
 
@@ -260,7 +260,7 @@ describe('people resolvers (integration)', () => {
       recordId: TEST_PERSON_3_ID,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.deletePerson.deletedAt).toBeTruthy();
   });
@@ -277,7 +277,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const findPeopleResponse = await makeGraphqlAPIRequest(graphqlOperation);
+    const findPeopleResponse = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(findPeopleResponse.body.data.people.edges).toHaveLength(0);
   });
@@ -293,7 +293,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.person).toBeNull();
   });
@@ -315,7 +315,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.people.edges).toHaveLength(2);
   });
@@ -336,7 +336,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.person.id).toEqual(TEST_PERSON_3_ID);
   });
@@ -353,7 +353,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.destroyPeople).toHaveLength(2);
   });
@@ -365,7 +365,7 @@ describe('people resolvers (integration)', () => {
       recordId: TEST_PERSON_3_ID,
     });
 
-    const destroyPeopleResponse = await makeGraphqlAPIRequest(graphqlOperation);
+    const destroyPeopleResponse = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(destroyPeopleResponse.body.data.destroyPerson).toBeTruthy();
   });
@@ -387,7 +387,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.people.edges).toHaveLength(0);
   });
@@ -408,7 +408,7 @@ describe('people resolvers (integration)', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data.person).toBeNull();
   });

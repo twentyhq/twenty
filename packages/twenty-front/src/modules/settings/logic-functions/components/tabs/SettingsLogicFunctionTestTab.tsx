@@ -11,6 +11,8 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconClock,
   IconDatabase,
@@ -19,10 +21,8 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type TriggerButton = {
   kind: TriggerKind;
@@ -125,8 +125,8 @@ export const SettingsLogicFunctionTestTab = ({
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Test your function`}
         description={t`Insert a JSON input, then press "Run Function".`}
       />
@@ -138,30 +138,32 @@ export const SettingsLogicFunctionTestTab = ({
               {triggerButtons.map((trigger) => (
                 <Button
                   key={trigger.kind}
-                  Icon={trigger.Icon}
-                  title={trigger.label}
-                  variant="secondary"
-                  size="small"
+                  startIcon={
+                    isDefined(trigger.Icon) ? <trigger.Icon /> : undefined
+                  }
+                  size="sm"
                   onClick={() => fillSamplePayload(trigger.kind)}
-                />
+                  variant="outline"
+                >
+                  {trigger.label}
+                </Button>
               ))}
             </StyledTriggerButtonRow>
           </div>
         )}
         <StyledCodeEditorContainer>
-          <CoreEditorHeader
+          <CodeEditorHeader
             title={t`Input`}
-            rightNodes={[
+            endElement={
               <Button
-                title={t`Run Function`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconPlayerPlay}
+                size="sm"
+                startIcon={<IconPlayerPlay />}
                 onClick={handleExecute}
                 disabled={isTesting}
-              />,
-            ]}
+                variant="solid"
+                color="accent"
+              >{t`Run Function`}</Button>
+            }
           />
           <CodeEditor
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}
@@ -170,6 +172,7 @@ export const SettingsLogicFunctionTestTab = ({
             onChange={onChange}
             variant="with-header"
             resizable
+            resizeLabel={t`Resize input`}
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
@@ -185,6 +188,6 @@ export const SettingsLogicFunctionTestTab = ({
           </StyledCodeEditorContainer>
         )}
       </StyledInputsContainer>
-    </Section>
+    </Section.Root>
   );
 };

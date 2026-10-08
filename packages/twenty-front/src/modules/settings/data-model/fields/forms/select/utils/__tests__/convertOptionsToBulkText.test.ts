@@ -3,7 +3,6 @@ import { convertOptionsToBulkText } from '@/settings/data-model/fields/forms/sel
 
 describe('convertOptionsToBulkText', () => {
   it('converts options to newline-separated text', () => {
-    // Given
     const options: FieldMetadataItemOption[] = [
       {
         id: '1',
@@ -28,26 +27,20 @@ describe('convertOptionsToBulkText', () => {
       },
     ];
 
-    // When
     const result = convertOptionsToBulkText(options);
 
-    // Then
     expect(result).toBe('Option 1\nOption 2\nOption 3');
   });
 
   it('returns empty string for empty options array', () => {
-    // Given
     const options: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertOptionsToBulkText(options);
 
-    // Then
     expect(result).toBe('');
   });
 
   it('handles single option', () => {
-    // Given
     const options: FieldMetadataItemOption[] = [
       {
         id: '1',
@@ -58,15 +51,12 @@ describe('convertOptionsToBulkText', () => {
       },
     ];
 
-    // When
     const result = convertOptionsToBulkText(options);
 
-    // Then
     expect(result).toBe('Single Option');
   });
 
   it('preserves special characters in labels', () => {
-    // Given
     const options: FieldMetadataItemOption[] = [
       {
         id: '1',
@@ -91,10 +81,8 @@ describe('convertOptionsToBulkText', () => {
       },
     ];
 
-    // When
     const result = convertOptionsToBulkText(options);
 
-    // Then
     expect(result).toBe(
       'Option with spaces\nOption-with-dashes\nOption_with_underscores',
     );

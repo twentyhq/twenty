@@ -1,10 +1,9 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
+import { type ComponentProps, useRef, useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   IconBolt,
@@ -16,16 +15,8 @@ import {
   IconTag,
   IconTarget,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
-
-type RenderProps = {
-  values: FieldMultiSelectValue;
-  options: SelectOption[];
-  onOptionSelected: (value: FieldMultiSelectValue) => void;
-  onCancel?: () => void;
-  dropdownWidth?: number;
-};
 
 const sampleOptions: SelectOption[] = [
   {
@@ -76,33 +67,15 @@ const priorityOptions: SelectOption[] = [
   { value: 'urgent', label: 'Urgent', color: 'red' },
 ];
 
-const instanceId = getRecordFieldInputInstanceId({
-  recordId: '123',
-  fieldName: 'Relation',
-  prefix: 'multi-select-story',
-});
-
 const Render = ({
   values,
   options,
   onOptionSelected,
-  onCancel,
-  dropdownWidth,
-}: RenderProps) => {
+  onAddSelectOption,
+}: ComponentProps<typeof MultiSelectInput>) => {
   const [currentValues, setCurrentValues] =
     useState<FieldMultiSelectValue>(values);
-
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-
-  useEffect(() => {
-    pushFocusItemToFocusStack({
-      focusId: instanceId,
-      component: {
-        type: FocusComponentType.DROPDOWN,
-        instanceId,
-      },
-    });
-  }, [pushFocusItemToFocusStack]);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   const handleOptionSelected = (newValues: FieldMultiSelectValue) => {
     setCurrentValues(newValues);
@@ -111,15 +84,17 @@ const Render = ({
 
   return (
     <div style={{ height: '400px', padding: '20px' }}>
-      <MultiSelectInput
-        selectableListComponentInstanceId="multi-select-story"
-        values={currentValues}
-        options={options}
-        focusId={instanceId}
-        onCancel={onCancel}
-        onOptionSelected={handleOptionSelected}
-        dropdownWidth={dropdownWidth}
-      />
+      <div ref={anchorRef} />
+      <Dropdown.Root type="picker" multiple open>
+        <DropdownContent anchor={anchorRef} aria-label="Options">
+          <MultiSelectInput
+            values={currentValues}
+            options={options}
+            onOptionSelected={handleOptionSelected}
+            onAddSelectOption={onAddSelectOption}
+          />
+        </DropdownContent>
+      </Dropdown.Root>
     </div>
   );
 };
@@ -145,10 +120,10 @@ export const Default: Story = {
     options: sampleOptions,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await waitFor(() => {
-      expect(canvas.getByRole('textbox')).toBeVisible();
+      expect(canvas.getByRole('searchbox')).toBeVisible();
     });
 
     for (const option of sampleOptions) {
@@ -163,16 +138,16 @@ export const WithPreselectedValues: Story = {
     options: sampleOptions,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await waitFor(() => {
-      expect(canvas.getByRole('textbox')).toBeVisible();
+      expect(canvas.getByRole('searchbox')).toBeVisible();
     });
 
     await waitFor(() => {
-      const checkboxes = canvas.getAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.getAllByRole('button', { pressed: true });
 
-      expect(checkboxes).toHaveLength(2);
+      expect(selectedOptions).toHaveLength(2);
     });
 
     for (const option of sampleOptions) {
@@ -187,16 +162,16 @@ export const SingleSelection: Story = {
     options: sampleOptions,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await waitFor(() => {
-      expect(canvas.getByRole('textbox')).toBeVisible();
+      expect(canvas.getByRole('searchbox')).toBeVisible();
     });
 
     await waitFor(() => {
-      const checkboxes = canvas.getAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.getAllByRole('button', { pressed: true });
 
-      expect(checkboxes).toHaveLength(1);
+      expect(selectedOptions).toHaveLength(1);
     });
 
     for (const option of sampleOptions) {
@@ -206,9 +181,11 @@ export const SingleSelection: Story = {
     await userEvent.click(canvas.getByText('Professional Network'));
 
     await waitFor(() => {
-      const checkboxes = canvas.queryAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.queryAllByRole('button', {
+        pressed: true,
+      });
 
-      expect(checkboxes).toHaveLength(0);
+      expect(selectedOptions).toHaveLength(0);
     });
 
     await userEvent.unhover(canvas.getByText('Professional Network'));
@@ -225,10 +202,10 @@ export const EmptyOptions: Story = {
     options: [],
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await waitFor(() => {
-      expect(canvas.getByRole('textbox')).toBeVisible();
+      expect(canvas.getByRole('searchbox')).toBeVisible();
     });
 
     expect(canvas.getByText('No option found')).toBeVisible();
@@ -259,10 +236,10 @@ export const LongLabels: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     await waitFor(() => {
-      expect(canvas.getByRole('textbox')).toBeVisible();
+      expect(canvas.getByRole('searchbox')).toBeVisible();
     });
 
     expect(
@@ -280,9 +257,9 @@ export const SearchFiltering: Story = {
     options: sampleOptions,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
-    const searchInput = canvas.getByRole('textbox');
+    const searchInput = canvas.getByRole('searchbox');
 
     await userEvent.type(searchInput, 'marketing');
 
@@ -292,7 +269,11 @@ export const SearchFiltering: Story = {
     });
 
     expect(canvas.queryByText('Social Media')).not.toBeInTheDocument();
-    expect(canvas.getAllByRole('checkbox')).toHaveLength(2);
+    expect(
+      within(canvas.getByRole('dialog', { name: 'Options' })).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
   },
 };
 
@@ -302,9 +283,9 @@ export const NoResultsFound: Story = {
     options: sampleOptions,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
-    const searchInput = canvas.getByRole('textbox');
+    const searchInput = canvas.getByRole('searchbox');
 
     await userEvent.type(searchInput, 'xyz123');
 
@@ -320,9 +301,9 @@ export const KeyboardNavigation: Story = {
     options: priorityOptions,
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
-    const searchInput = await canvas.findByRole('textbox');
+    const searchInput = await canvas.findByRole('searchbox');
 
     await userEvent.click(searchInput);
 
@@ -341,5 +322,45 @@ export const KeyboardNavigation: Story = {
     await waitFor(() => {
       expect(args.onOptionSelected).toHaveBeenCalledWith(['medium']);
     });
+  },
+};
+
+export const SearchThenEnter: Story = {
+  args: {
+    values: [],
+    options: priorityOptions,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const searchInput = await canvas.findByRole('searchbox');
+
+    await userEvent.type(searchInput, 'high{Enter}');
+
+    await waitFor(() => {
+      expect(args.onOptionSelected).toHaveBeenCalledWith(['high']);
+    });
+    expect(canvas.getByRole('dialog', { name: 'Options' })).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'High Priority' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+export const AddOption: Story = {
+  args: {
+    values: [],
+    options: priorityOptions,
+    onAddSelectOption: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const searchInput = await canvas.findByRole('searchbox');
+
+    await userEvent.type(searchInput, 'New priority{Enter}');
+    expect(args.onAddSelectOption).not.toHaveBeenCalled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add "New priority" to options' }),
+    );
+    expect(args.onAddSelectOption).toHaveBeenCalledWith('New priority');
   },
 };

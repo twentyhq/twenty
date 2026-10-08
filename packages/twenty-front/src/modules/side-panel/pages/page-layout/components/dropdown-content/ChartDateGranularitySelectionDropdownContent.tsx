@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
@@ -15,7 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type FieldsConfiguration,
   type WidgetConfiguration,
@@ -74,7 +74,7 @@ const isChartConfiguration = (
 export const ChartDateGranularitySelectionDropdownContent = ({
   axis,
 }: ChartDateGranularitySelectionDropdownContentProps) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -160,14 +160,18 @@ export const ChartDateGranularitySelectionDropdownContent = ({
                 handleSelectDateGranularityOption(option);
               }}
             >
-              <MenuItemSelect
-                text={getDateGranularityLabel(option)}
-                selected={currentDateGranularity === option}
+              <ListItem
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectDateGranularityOption(option);
                 }}
-              />
+                role="option"
+                aria-selected={currentDateGranularity === option}
+                selected={currentDateGranularity === option}
+                indicator="check"
+              >
+                {getDateGranularityLabel(option)}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

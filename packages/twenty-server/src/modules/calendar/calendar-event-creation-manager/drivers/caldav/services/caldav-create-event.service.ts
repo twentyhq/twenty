@@ -12,7 +12,8 @@ import { type CalendarEventCreationDriver } from 'src/modules/calendar/calendar-
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 @Injectable()
 export class CalDavCreateEventService implements CalendarEventCreationDriver {
@@ -106,7 +107,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         participants: input.attendees.map((attendee) => ({
           displayName: attendee.displayName ?? '',
           handle: attendee.email,
-          responseStatus: 'needsAction',
+          responseStatus: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
           isOrganizer: false,
         })),
       };

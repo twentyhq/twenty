@@ -5,6 +5,18 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
     workspaceBillingAdminPanel(workspaceId: $workspaceId) {
       stripeCustomerId
       creditBalance
+      creditGrants {
+        id
+        amount
+        type
+        effectiveAt
+        expiresAt
+        revokedAt
+        sourceGrantId
+        reason
+        isActive
+        createdAt
+      }
       usage {
         periodStart
         periodEnd

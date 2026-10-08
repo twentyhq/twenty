@@ -1,5 +1,5 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 
 export const expectGqlCreateInputValidationError = async (
   objectMetadataSingularName: string,
@@ -11,7 +11,7 @@ export const expectGqlCreateInputValidationError = async (
     data: input,
   });
 
-  const createManyResponse = await makeGraphqlAPIRequestWithApiKey(
+  const createManyResponse = await makeGraphqlApiRequestWithApiKey(
     createManyGraphqlOperation,
   );
 

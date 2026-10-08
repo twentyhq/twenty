@@ -1,8 +1,15 @@
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldInputAnchorContextProvider } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { getFieldInputAnchorPosition } from '@/object-record/record-field/ui/utils/getFieldInputAnchorPosition';
+import { isFieldInputRenderedAsDropdown } from '@/object-record/record-field/ui/utils/isFieldInputRenderedAsDropdown';
+import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { FIELD_INPUT_ANCHOR_WIDTH_CSS_VARIABLE } from '@/ui/field/input/constants/FieldInputAnchorWidthCssVariable';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -13,11 +20,17 @@ import {
   flip,
   offset,
   shift,
+  size,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
+
+const INLINE_FIELD_INPUT_SIDE_OFFSET = -29;
+const INLINE_FIELD_INPUT_CENTERED_SIDE_OFFSET = -26;
+const INLINE_FIELD_INPUT_ALIGN_OFFSET = -5;
+const INLINE_FIELD_INPUT_COLLISION_PADDING = 8;
 
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
@@ -38,6 +51,10 @@ export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
   const { isCentered } = useContext(RecordInlineCellContext);
+  const sideOffset = isCentered
+    ? INLINE_FIELD_INPUT_CENTERED_SIDE_OFFSET
+    : INLINE_FIELD_INPUT_SIDE_OFFSET;
+  const alignOffset = isCentered ? 0 : INLINE_FIELD_INPUT_ALIGN_OFFSET;
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -68,22 +85,31 @@ export const RecordInlineCellEditMode = ({
     recordFieldInputIsFieldInErrorComponentState,
   );
 
+  const { fieldDefinition } = useContext(FieldContext);
+  const isDropdownFieldInput = isFieldInputRenderedAsDropdown(fieldDefinition);
+
   const { refs, floatingStyles } = useFloating({
     placement: isCentered ? 'bottom' : 'bottom-start',
+    strategy: 'fixed',
     middleware: [
       flip(),
-      offset(
-        isCentered
-          ? {
-              mainAxis: -26,
-              crossAxis: 0,
-            }
-          : {
-              mainAxis: -29,
-              crossAxis: -5,
-            },
-      ),
-      shift({ padding: 8 }),
+      offset((state) => {
+        const referenceScale = getFloatingReferenceScale(state);
+
+        return {
+          mainAxis: sideOffset * referenceScale,
+          crossAxis: alignOffset * referenceScale,
+        };
+      }),
+      shift({ padding: INLINE_FIELD_INPUT_COLLISION_PADDING }),
+      size({
+        apply: ({ rects, elements }) => {
+          elements.floating.style.setProperty(
+            FIELD_INPUT_ANCHOR_WIDTH_CSS_VARIABLE,
+            `${rects.reference.width}px`,
+          );
+        },
+      }),
       setFieldInputLayoutDirectionMiddleware,
     ],
     whileElementsMounted: autoUpdate,
@@ -94,19 +120,35 @@ export const RecordInlineCellEditMode = ({
       ref={refs.setReference}
       data-testid="inline-cell-edit-mode-container"
     >
-      <>
-        {createPortal(
-          <OverlayContainer
+      {isDropdownFieldInput ? (
+        <FieldInputAnchorContextProvider
+          value={getFieldInputAnchorPosition({
+            anchorRef: refs.domReference,
+            sideOffset,
+            alignOffset,
+            align: isCentered ? 'center' : 'start',
+            collisionPadding: INLINE_FIELD_INPUT_COLLISION_PADDING,
+          })}
+        >
+          {children}
+        </FieldInputAnchorContextProvider>
+      ) : (
+        createPortal(
+          <StyledOverlayPortalLayer
+            data-floating-ui-viewport
             ref={refs.setFloating}
             style={floatingStyles}
-            borderRadius="sm"
-            hasDangerBorder={recordFieldInputIsFieldInError}
           >
-            {children}
-          </OverlayContainer>,
+            <OverlayContainer
+              borderRadius="sm"
+              hasDangerBorder={recordFieldInputIsFieldInError}
+            >
+              {children}
+            </OverlayContainer>
+          </StyledOverlayPortalLayer>,
           document.body,
-        )}
-      </>
+        )
+      )}
     </StyledInlineCellEditModeContainer>
   );
 };

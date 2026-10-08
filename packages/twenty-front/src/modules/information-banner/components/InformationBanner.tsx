@@ -1,24 +1,29 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import {
   Banner,
   type BannerColor,
+  type BannerStatus,
   type BannerVariant,
-} from 'twenty-ui/feedback';
-import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
 `;
 
-const StyledInvertedIconButton = styled(IconButton)`
-  color: ${themeCssVariables.font.color.inverted} !important;
+const BANNER_ICON_BUTTON_CLASS_NAME = css`
+  &[data-variant='ghost'] {
+    color: inherit;
+  }
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
@@ -28,14 +33,16 @@ const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   gap: ${themeCssVariables.spacing[3]};
   justify-content: center;
   margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
+  min-width: 0;
 `;
 
 export const InformationBanner = ({
   message,
-  color = 'blue',
-  variant = 'primary',
+  color,
+  status = 'info',
+  variant = 'solid',
   buttonTitle,
-  buttonIcon,
+  buttonIcon: ButtonIcon,
   buttonOnClick,
   isButtonDisabled = false,
   onClose,
@@ -43,6 +50,7 @@ export const InformationBanner = ({
 }: {
   message: string;
   color?: BannerColor;
+  status?: BannerStatus;
   variant?: BannerVariant;
   buttonTitle?: string;
   buttonIcon?: IconComponent;
@@ -56,9 +64,6 @@ export const InformationBanner = ({
     componentInstanceId,
   );
 
-  const isPrimary = variant === 'primary';
-  const buttonAccent = color === 'danger' ? 'danger' : 'blue';
-
   return (
     <InformationBannerComponentInstanceContext.Provider
       value={{
@@ -66,41 +71,36 @@ export const InformationBanner = ({
       }}
     >
       {informationBannerIsOpen && (
-        <Banner color={color} variant={variant}>
-          <StyledContent hasCloseButton={!!onClose}>
-            <StyledText>{message}</StyledText>
+        <Banner color={color} status={status} variant={variant}>
+          <StyledContent hasCloseButton={isDefined(onClose)}>
+            <StyledText>
+              <OverflowingTextWithTooltip
+                isFocusable
+                text={<>{message}</>}
+                tooltipContent={message}
+              />
+            </StyledText>
             {buttonTitle && buttonOnClick && (
-              <Button
-                variant="secondary"
-                accent={buttonAccent}
-                title={buttonTitle}
-                Icon={buttonIcon}
-                size="small"
-                inverted={isPrimary}
+              <Banner.Action
+                startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
-              />
+              >
+                {buttonTitle}
+              </Banner.Action>
             )}
           </StyledContent>
-          {onClose &&
-            (isPrimary ? (
-              <StyledInvertedIconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
-            ) : (
-              <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                accent={buttonAccent}
-                onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
-            ))}
+          {isDefined(onClose) && (
+            <IconButton
+              className={BANNER_ICON_BUTTON_CLASS_NAME}
+              size="sm"
+              variant="ghost"
+              onClick={onClose}
+              aria-label={t`Close banner`}
+            >
+              <IconX />
+            </IconButton>
+          )}
         </Banner>
       )}
     </InformationBannerComponentInstanceContext.Provider>

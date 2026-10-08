@@ -1,6 +1,7 @@
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { RECIPIENT_ON_POST_CARD_RECIPIENT_ID } from './post-card-recipients-on-recipient.field';
 
 export const POST_CARD_RECIPIENTS_ON_POST_CARD_ID =
   'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';
@@ -19,5 +20,6 @@ export default defineField({
     POST_CARD_ON_POST_CARD_RECIPIENT_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_ON_POST_CARD_RECIPIENT_ID,
   },
 });

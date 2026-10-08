@@ -1,21 +1,33 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import {
+  isUsageOperationTypeValue,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
+
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// Each operation type has one canonical counting unit — matches how
-// `ai-billing.service.ts` emits native usage events.
-const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
+type AppChargeableOperationType =
+  (typeof UsageOperationType)[UsageOperationTypeValue];
+
+// Apps send a quantity, never a unit, so the platform names what it counts.
+// Keyed on the app-facing vocabulary so a new USAGE_OPERATION_TYPES value fails to compile until it has a unit
+const USAGE_UNIT_BY_OPERATION_TYPE: Record<
+  AppChargeableOperationType,
+  UsageUnit
+> = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: UsageUnit.TOKEN,
   [UsageOperationType.WORKFLOW_EXECUTION]: UsageUnit.INVOCATION,
@@ -25,17 +37,16 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<UsageOperationType, UsageUnit> = {
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
 };
 
-// `workspaceId` + `applicationId` come from the application-access token,
-// never from the body — an app can't charge a different workspace or
-// masquerade as a different app.
+// workspaceId and applicationId come from the token, never the body, so an app can't charge another workspace or pose as another app
 @Injectable()
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
 
   constructor(
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly billingService: BillingService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async emitChargeEvent(params: {
@@ -45,43 +56,116 @@ export class AppBillingService {
     charge: ChargeDto;
   }): Promise<void> {
     const { workspaceId, applicationId, userWorkspaceId, charge } = params;
-    const unit = USAGE_UNIT_BY_OPERATION_TYPE[charge.operationType];
+
+    const [operationType, attributedUserWorkspaceId] = await Promise.all([
+      this.resolveOperationType({ workspaceId, applicationId, charge }),
+      userWorkspaceId ??
+        this.findWorkspaceScopedUserWorkspaceId({
+          workspaceId,
+          userWorkspaceId: charge.userWorkspaceId,
+        }),
+    ]);
+
+    const unit = USAGE_UNIT_BY_OPERATION_TYPE[operationType];
 
     this.logger.log(
       `App charge from applicationId=${applicationId} workspaceId=${workspaceId}: ` +
-        `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${charge.operationType})`,
+        `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
-    let periodStart: Date | undefined;
-
-    if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
-
-      periodStart =
-        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-          ? undefined
-          : currentBillingSubscription.currentPeriodStart;
-    }
-
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
+    await this.usageLimitQuotaService.charge({
+      workspaceId,
+      events: [
         {
           resourceType: UsageResourceType.APP,
-          operationType: charge.operationType,
+          operationType,
           creditsUsedMicro: charge.creditsUsedMicro,
           quantity: charge.quantity,
           unit,
           resourceId: applicationId,
-          resourceContext: charge.resourceContext ?? null,
-          userWorkspaceId: userWorkspaceId ?? null,
-          periodStart,
+          resourceContext: charge.operation ?? charge.resourceContext ?? null,
+          spenders: {
+            userWorkspaceId: attributedUserWorkspaceId,
+            applicationId,
+          },
         },
       ],
-      workspaceId,
+    });
+  }
+
+  private async resolveOperationType({
+    workspaceId,
+    applicationId,
+    charge,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    charge: ChargeDto;
+  }): Promise<AppChargeableOperationType> {
+    if (!isDefined(charge.operation)) {
+      if (!isDefined(charge.operationType)) {
+        throw new BadRequestException(
+          'A charge must name either an operation or an operationType.',
+        );
+      }
+
+      return UsageOperationType[charge.operationType];
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
     );
+    // Undefined until the upgrade that adds the column has run.
+    const billableOperations = application?.billing?.operations ?? {};
+    // Own-property only: `constructor` or `__proto__` would resolve to inherited values and charge under no category
+    const billableOperation = Object.prototype.hasOwnProperty.call(
+      billableOperations,
+      charge.operation,
+    )
+      ? billableOperations[charge.operation]
+      : undefined;
+
+    if (!isDefined(billableOperation)) {
+      throw new BadRequestException(
+        `Application declares no billable operation named "${charge.operation}".`,
+      );
+    }
+
+    // jsonb is untrusted: an unknown value would record a row with no category or unit,
+    // and a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
+    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+      throw new BadRequestException(
+        `Billable operation "${charge.operation}" declares an unknown operationType.`,
+      );
+    }
+
+    // Indexing by the manifest literal makes a drifted USAGE_OPERATION_TYPES value fail to compile
+    return UsageOperationType[billableOperation.operationType];
+  }
+
+  // Scoped to the token's workspace so an app cannot attribute spend outside it
+  private async findWorkspaceScopedUserWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | null> {
+    if (!isDefined(userWorkspaceId)) {
+      return null;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: userWorkspaceId, workspaceId },
+      select: { id: true },
+    });
+
+    return userWorkspace?.id ?? null;
   }
 }

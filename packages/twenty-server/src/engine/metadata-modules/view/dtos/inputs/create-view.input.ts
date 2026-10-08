@@ -12,6 +12,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -25,6 +26,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
+import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
 
 @InputType()
 export class CreateViewInput {
@@ -79,9 +81,17 @@ export class CreateViewInput {
   kanbanColumnWidth?: number;
 
   @IsOptional()
+  @Field(() => Int, {
+    nullable: true,
+    defaultValue: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+  })
+  groupLoadLimit?: number;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
+    description: `Deprecated: ${VIEW_OPEN_RECORD_IN_DEPRECATION}`,
     defaultValue: ViewOpenRecordIn.SIDE_PANEL,
   })
   openRecordIn?: ViewOpenRecordIn;

@@ -4,7 +4,7 @@ import {
   TEST_PERSON_1_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
@@ -23,7 +23,7 @@ describe('Core REST API Update One endpoint', () => {
 
   beforeAll(async () => {
     await deleteAllRecords('person');
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -33,7 +33,7 @@ describe('Core REST API Update One endpoint', () => {
         },
       },
     });
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: {
@@ -44,7 +44,7 @@ describe('Core REST API Update One endpoint', () => {
   });
 
   it('should update an existing person (name, emails, and jobTitle)', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'patch',
       path: `/people/${TEST_PERSON_1_ID}`,
       body: updatedData,
@@ -67,8 +67,42 @@ describe('Core REST API Update One endpoint', () => {
     expect(updatedPerson.companyId).toBe(TEST_COMPANY_1_ID);
   });
 
+  it.each([
+    {
+      path: `/people/${TEST_PERSON_1_ID}`,
+      responseKey: 'updatePerson',
+      isMany: false,
+    },
+    {
+      path: `/people?filter=id[eq]:${TEST_PERSON_1_ID}`,
+      responseKey: 'updatePeople',
+      isMany: true,
+    },
+  ])(
+    'should return only selected fields for $responseKey',
+    async ({ path, responseKey, isMany }) => {
+      const jobTitle = `Selected fields update ${responseKey}`;
+      const response = await makeRestApiRequest({
+        method: 'patch',
+        path: `${path}${path.includes('?') ? '&' : '?'}fields=id`,
+        body: { ...updatedData, jobTitle },
+      }).expect(200);
+
+      expect(response.body.data[responseKey]).toEqual(
+        isMany ? [{ id: TEST_PERSON_1_ID }] : { id: TEST_PERSON_1_ID },
+      );
+
+      const readResponse = await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle`,
+      }).expect(200);
+
+      expect(readResponse.body.data.person.jobTitle).toBe(jobTitle);
+    },
+  );
+
   it('should support depth 0 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'patch',
       path: `/people/${TEST_PERSON_1_ID}?depth=0`,
       body: updatedData,
@@ -83,7 +117,7 @@ describe('Core REST API Update One endpoint', () => {
   });
 
   it('should support depth 1 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'patch',
       path: `/people/${TEST_PERSON_1_ID}?depth=1`,
       body: updatedData,
@@ -98,7 +132,7 @@ describe('Core REST API Update One endpoint', () => {
   });
 
   it('should support depth 2 parameter', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'patch',
       path: `/people/${TEST_PERSON_1_ID}?depth=2`,
       body: updatedData,
@@ -106,7 +140,7 @@ describe('Core REST API Update One endpoint', () => {
   });
 
   it('should return a EntityNotFoundError when trying to update a non-existing person', async () => {
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'patch',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     });

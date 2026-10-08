@@ -3,7 +3,7 @@
 /.idea
 .claude/*
 !.claude/settings.json
-.cursor/debug-*.log
+!.claude/skills/
 **/**/node_modules/
 .cache
 

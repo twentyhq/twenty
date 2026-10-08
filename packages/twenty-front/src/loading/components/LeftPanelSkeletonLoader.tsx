@@ -1,13 +1,12 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAnimatedContainer = styled(motion.div)`
   box-sizing: border-box;
@@ -47,7 +46,7 @@ const StyledSkeletonTitleContainer = styled.div`
 `;
 
 export const LeftPanelSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isMobile = useIsMobile();
   return (
     <StyledAnimatedContainer
@@ -62,16 +61,11 @@ export const LeftPanelSkeletonLoader = () => {
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
-          <SkeletonTheme
-            baseColor={theme.background.quaternary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton
-              width={96}
-              height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-            />
-          </SkeletonTheme>
+          <SkeletonLine
+            width={96}
+            height={SKELETON_HEIGHT_SIZES.s}
+            baseColor={themeCssVariables.background.quaternary}
+          />
         </StyledSkeletonTitleContainer>
         <StyledSkeletonContainer>
           <MainNavigationDrawerItemsSkeletonLoader length={3} />

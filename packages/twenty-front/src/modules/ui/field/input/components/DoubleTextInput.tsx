@@ -7,21 +7,21 @@ import {
   type ClipboardEvent,
 } from 'react';
 import { Key } from 'ts-key-enum';
-
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { splitFullName } from '~/utils/format/spiltFullName';
+import { splitFullName } from '~/utils/format/splitFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
 
   & > input:last-child {
     border-left: 1px solid ${themeCssVariables.border.color.strong};
@@ -35,6 +35,7 @@ type DoubleTextInputProps = {
   secondValue: string;
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
+  selectOnFocus?: boolean;
   onEnter: (newDoubleTextValue: FieldDoubleText) => void;
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
@@ -53,6 +54,7 @@ export const DoubleTextInput = ({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
+  selectOnFocus = false,
   onClickOutside,
   onEnter,
   onEscape,
@@ -190,6 +192,9 @@ export const DoubleTextInput = ({
   ) => {
     event.stopPropagation();
     event.preventDefault();
+    if (selectOnFocus) {
+      event.currentTarget.select();
+    }
   };
 
   return (
@@ -198,7 +203,12 @@ export const DoubleTextInput = ({
         <StyledTextInput
           autoComplete="off"
           autoFocus
-          onFocus={() => setFocusPosition('left')}
+          onFocus={(event) => {
+            setFocusPosition('left');
+            if (selectOnFocus) {
+              event.currentTarget.select();
+            }
+          }}
           ref={firstValueInputRef}
           placeholder={firstValuePlaceholder}
           value={firstInternalValue}
@@ -212,10 +222,18 @@ export const DoubleTextInput = ({
             handleOnPaste(event)
           }
           onClick={handleClickToPreventParentClickEvents}
+          onMouseUp={
+            selectOnFocus ? handleClickToPreventParentClickEvents : undefined
+          }
         />
         <StyledTextInput
           autoComplete="off"
-          onFocus={() => setFocusPosition('right')}
+          onFocus={(event) => {
+            setFocusPosition('right');
+            if (selectOnFocus) {
+              event.currentTarget.select();
+            }
+          }}
           ref={secondValueInputRef}
           placeholder={secondValuePlaceholder}
           value={secondInternalValue}
@@ -226,6 +244,9 @@ export const DoubleTextInput = ({
             );
           }}
           onClick={handleClickToPreventParentClickEvents}
+          onMouseUp={
+            selectOnFocus ? handleClickToPreventParentClickEvents : undefined
+          }
         />
       </StyledContainer>
     </FieldInputContainer>

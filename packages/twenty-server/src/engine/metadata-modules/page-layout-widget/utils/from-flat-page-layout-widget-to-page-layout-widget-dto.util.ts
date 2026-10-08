@@ -1,22 +1,19 @@
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
 export const fromFlatPageLayoutWidgetToPageLayoutWidgetDto = (
   flatPageLayoutWidget: FlatPageLayoutWidget,
 ): PageLayoutWidgetDTO => {
-  const {
-    createdAt,
-    updatedAt,
-    deletedAt,
-    objectMetadataId,
-    overrides,
-    ...rest
-  } = flatPageLayoutWidget;
+  const effectiveFlatPageLayoutWidget = resolveEffectiveFlatEntity({
+    metadataName: 'pageLayoutWidget',
+    flatEntity: flatPageLayoutWidget,
+  });
+  const { createdAt, updatedAt, deletedAt, objectMetadataId, ...rest } =
+    effectiveFlatPageLayoutWidget;
 
   return {
     ...rest,
-    ...(overrides ?? {}),
-    overrides,
     isOverridden: false,
     objectMetadataId: objectMetadataId ?? undefined,
     createdAt: new Date(createdAt),

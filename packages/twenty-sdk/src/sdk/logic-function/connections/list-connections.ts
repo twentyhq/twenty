@@ -10,9 +10,11 @@ const LIST_APP_CONNECTIONS_QUERY = `
       handle
       visibility
       userWorkspaceId
+      workspaceMemberId
       accessToken
       scopes
       authFailedAt
+      authFailedReason
     }
   }
 `;

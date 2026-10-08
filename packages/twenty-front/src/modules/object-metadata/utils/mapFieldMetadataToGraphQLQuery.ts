@@ -244,7 +244,10 @@ ${mapObjectMetadataToGraphQLQuery({
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }`;
   }
 
@@ -285,7 +288,9 @@ ${mapObjectMetadataToGraphQLQuery({
     source
     workspaceMemberId
     name
-    context
+    context {
+      provider
+    }
 }`;
   }
 
@@ -303,7 +308,11 @@ ${mapObjectMetadataToGraphQLQuery({
       primaryPhoneNumber
       primaryPhoneCountryCode
       primaryPhoneCallingCode
-      additionalPhones
+      additionalPhones {
+        number
+        callingCode
+        countryCode
+      }
     }`;
   }
 

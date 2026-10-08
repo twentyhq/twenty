@@ -3,17 +3,16 @@ import { useCallback } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
+import { usePerformViewGroupApiPersist } from '@/views/hooks/internal/usePerformViewGroupApiPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { performViewGroupAPIUpdate } = usePerformViewGroupAPIPersist();
+  const { performViewGroupApiUpdate } = usePerformViewGroupApiPersist();
 
   const { getViewFromState } = useGetViewFromState();
 
@@ -37,7 +36,7 @@ export const useSaveCurrentViewGroups = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -48,7 +47,7 @@ export const useSaveCurrentViewGroups = () => {
           currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
       );
 
-      if (isUndefinedOrNull(existingField)) {
+      if (!isDefined(existingField)) {
         return;
       }
 
@@ -67,7 +66,7 @@ export const useSaveCurrentViewGroups = () => {
         return;
       }
 
-      await performViewGroupAPIUpdate({
+      await performViewGroupApiUpdate({
         inputs: [
           {
             id: existingField.id,
@@ -85,7 +84,7 @@ export const useSaveCurrentViewGroups = () => {
       canPersistChanges,
       currentViewIdCallbackState,
       getViewFromState,
-      performViewGroupAPIUpdate,
+      performViewGroupApiUpdate,
     ],
   );
 
@@ -103,7 +102,7 @@ export const useSaveCurrentViewGroups = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -116,7 +115,7 @@ export const useSaveCurrentViewGroups = () => {
               currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
           );
 
-          if (isUndefinedOrNull(existingField)) {
+          if (!isDefined(existingField)) {
             return undefined;
           }
 
@@ -150,14 +149,14 @@ export const useSaveCurrentViewGroups = () => {
         throw new Error('mainGroupByFieldMetadataId is required');
       }
 
-      await performViewGroupAPIUpdate({ inputs: viewGroupInputsToUpdate });
+      await performViewGroupApiUpdate({ inputs: viewGroupInputsToUpdate });
     },
     [
       store,
       canPersistChanges,
       currentViewIdCallbackState,
       getViewFromState,
-      performViewGroupAPIUpdate,
+      performViewGroupApiUpdate,
     ],
   );
 

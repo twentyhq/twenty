@@ -1,7 +1,7 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { Buffer } from 'buffer';
-import { isDefined } from 'twenty-shared/utils';
+import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 export const encodeCursor = (record: ObjectRecord) => {
   if (!('id' in record) || !isDefined(record.id)) {
@@ -16,5 +16,5 @@ export const encodeCursor = (record: ObjectRecord) => {
     id: record.id,
   };
 
-  return Buffer.from(JSON.stringify(payload), 'utf-8').toString('base64');
+  return base64UrlEncode(Buffer.from(JSON.stringify(payload), 'utf-8'));
 };

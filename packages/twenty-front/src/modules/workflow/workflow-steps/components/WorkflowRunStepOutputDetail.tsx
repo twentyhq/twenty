@@ -8,9 +8,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type GetJsonNodeHighlighting,
-  isTwoFirstDepths,
   JsonTree,
-} from 'twenty-ui/json-visualizer';
+} from 'twenty-ui/components/data-display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
@@ -52,7 +51,6 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       <WorkflowRunStepJsonContainer>
         <JsonTree
           value={stepInfoToDisplay ?? t`No output available`}
-          shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
           emptyStringLabel={t`[empty string]`}

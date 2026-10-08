@@ -1,39 +1,17 @@
 import { z } from 'zod';
 
+import { agentRunSummarySchema } from '@/ai/schemas/agent-run-summary-schema';
+
 const stepLogEntrySchema = z.object({
   timestamp: z.string(),
   level: z.enum(['debug', 'info', 'warn', 'error']),
   message: z.string(),
 });
 
-const aiToolCallLogSchema = z.object({
-  toolName: z.string(),
-  toolCallId: z.string(),
-  providerExecuted: z.boolean().optional(),
-  input: z.unknown().optional(),
-  output: z.unknown().optional(),
-  errorMessage: z.string().optional(),
-  state: z.enum(['started', 'success', 'error', 'awaiting-approval']),
-});
-
-const aiAgentStepLogDetailsSchema = z.object({
+const aiAgentStepLogDetailsSchema = agentRunSummarySchema.extend({
   type: z.literal('AI_AGENT'),
-  modelId: z.string(),
-  usage: z.object({
-    inputTokens: z.number(),
-    outputTokens: z.number(),
-    reasoningTokens: z.number().optional(),
-    cacheReadTokens: z.number().optional(),
-    cacheCreationTokens: z.number().optional(),
-    totalTokens: z.number(),
-  }),
-  cost: z.object({
-    totalCostInDollars: z.number(),
-    creditsUsedMicro: z.number(),
-  }),
-  nativeWebSearchCallCount: z.number(),
-  toolCalls: z.array(aiToolCallLogSchema),
-  durationMs: z.number(),
+  // the conversation the agent ran in
+  threadId: z.string().optional(),
 });
 
 const codeStepLogDetailsSchema = z.object({
@@ -60,8 +38,6 @@ const httpRequestStepLogDetailsSchema = z.object({
     bodyBytes: z.number().optional(),
     bodyTruncated: z.boolean().optional(),
   }),
-  // `response` is absent for transport-level failures (DNS, timeout, TLS,
-  // etc.) — only `error` is set in that case.
   response: z
     .object({
       status: z.number(),
@@ -90,6 +66,7 @@ const emailStepLogDetailsSchema = z.object({
   bodyBytes: z.number().optional(),
   bodyTruncated: z.boolean().optional(),
   connectedAccountId: z.string().optional(),
+  fromHandle: z.string().optional(),
   attachmentCount: z.number().optional(),
   inReplyTo: z.string().optional(),
   error: z.string().optional(),
@@ -130,11 +107,4 @@ export const workflowRunStepLogSchema = z.object({
   sizeBytes: z.number(),
 });
 
-// We intentionally keep the runtime schema permissive: the column is a
-// JSONB blob written by the server and the consumers don't validate
-// individual `details` shapes. The strict per-step type (with the
-// discriminated `details` union) lives in `WorkflowRunStepLog` and is
-// applied at the boundaries that *produce* logs (server-side writers).
-// Tighter zod parsing here would collapse the discriminated union to `{}`
-// when inferred through `z.record`, breaking front-end indexing.
 export const workflowRunStepLogsSchema = z.record(z.string(), z.unknown());

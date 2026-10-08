@@ -94,8 +94,9 @@ export const WorkflowDiagramStepNodeReadonly = ({
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
         selected={selected}
+        targetHandleCount={data.targetHandleIds?.length}
       >
-        <WorkflowDiagramHandleTarget />
+        <WorkflowDiagramHandleTarget targetHandleIds={data.targetHandleIds} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>

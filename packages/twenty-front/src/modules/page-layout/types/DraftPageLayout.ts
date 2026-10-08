@@ -8,4 +8,5 @@ export type DraftPageLayout = Pick<
   | 'objectMetadataId'
   | 'tabs'
   | 'defaultTabToFocusOnMobileAndSidePanelId'
+  | 'isFirstTabPinned'
 >;

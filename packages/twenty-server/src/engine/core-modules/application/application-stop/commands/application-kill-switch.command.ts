@@ -32,6 +32,9 @@ export class ApplicationKillSwitchCommand extends CommandRunner {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // Counts installations of a registration across every workspace to report the
+    // blast radius of the kill switch.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationStopService: ApplicationStopService,

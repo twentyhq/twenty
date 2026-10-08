@@ -29,7 +29,7 @@ import {
   isFieldMetadataDateKind,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   aggregateFieldMetadataId: string,
@@ -110,7 +110,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const { recordGqlOperationFilter: anyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
-      fields: objectMetadataItem.fields,
+      fields: objectMetadataItem.readableFields,
       filterValue: anyFieldFilterValue,
     });
 

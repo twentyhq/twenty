@@ -1,0 +1,76 @@
+---
+title: Storybook helpers
+description: Present component previews and variant catalogs with twenty-ui/testing.
+---
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+
+`twenty-ui/testing` exposes Storybook decorators and preview layout helpers. Configure styles and a [ThemeProvider](/ui/theming) in your Storybook preview before rendering themed components.
+
+## ComponentDecorator
+
+`ComponentDecorator` wraps a story in `ComponentStorybookLayout`. Set `parameters.container.width` and `parameters.container.height` in pixels. It also reads the story's `inverted` and `accent` args to choose an optional background.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Default = { args: { children: 'Save changes' } };
+```
+
+## CatalogDecorator
+
+`CatalogDecorator` renders combinations of up to four dimensions from `parameters.catalog.dimensions`. Each dimension has a `name`, `values`, a `props(value)` mapper, and an optional `labels(value)` formatter. The mapper returns the props for that cell. `parameters.catalog.options.elementContainer` accepts `width`, `style`, and `className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const Variants = {
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+Use the layout directly when composing a preview outside a decorator. It accepts one child element.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## Documentation previews
+
+Stories embedded in the documentation must be presentational and have no `play` function. Keep interaction tests in separate stories. Share explicit `args`, `render`, `decorators`, and `parameters` when needed, rather than spreading an interaction story into a preview. The documentation embed check rejects stories marked with Storybook's `play-fn` tag, including inherited play functions.

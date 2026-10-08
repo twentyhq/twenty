@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -9,7 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import {
   SettingsToolTableRow,
@@ -43,7 +42,7 @@ export const SettingsAgentToolsTable = ({
   marketplaceAppByUniversalIdentifier,
   currentWorkspace,
 }: SettingsAgentToolsTableProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
 
   return (
@@ -57,14 +56,7 @@ export const SettingsAgentToolsTable = ({
       </StyledTableHeaderRowContainer>
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonTheme
-              key={index}
-              baseColor={theme.background.tertiary}
-              highlightColor={theme.background.transparent.lighter}
-              borderRadius={4}
-            >
-              <Skeleton height={32} borderRadius={4} />
-            </SkeletonTheme>
+            <SkeletonLine height={32} key={index} />
           ))
         : tools.map((tool) => {
             const application = isDefined(tool.applicationId)

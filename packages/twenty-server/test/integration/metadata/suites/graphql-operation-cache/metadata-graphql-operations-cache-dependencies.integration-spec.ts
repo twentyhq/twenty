@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ASTNode } from 'graphql';
@@ -7,7 +7,7 @@ import { type ASTNode } from 'graphql';
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
 import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 // Mirrors OBJECT_METADATA_FRAGMENT from twenty-front
 // (packages/twenty-front/src/modules/object-metadata/graphql/fragment.ts):
@@ -159,6 +159,7 @@ const FIND_ALL_VIEWS_QUERY = gql`
       mainGroupByFieldMetadataId
       shouldHideEmptyGroups
       kanbanColumnWidth
+      groupLoadLimit
       anyFieldFilterValue
       calendarFieldMetadataId
       calendarEndFieldMetadataId
@@ -232,17 +233,17 @@ const FIND_ALL_VIEWS_BASELINE_QUERY = gql`
 describe('metadata GraphQL operations cache dependencies', () => {
   const recordAccessedCacheKeys = async (
     query: ASTNode,
-  ): Promise<Set<WorkspaceCacheKeyName>> => {
+  ): Promise<Set<WorkspaceCacheOrDerivedCacheKeyName>> => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
     const spy = jest.spyOn(workspaceCacheService, 'getOrRecomputeWithHashes');
 
     try {
-      const response = await makeMetadataAPIRequest({ query });
+      const response = await makeMetadataApiRequest({ query });
 
       expect(response.body.errors).toBeUndefined();
 
-      return new Set<WorkspaceCacheKeyName>(
+      return new Set<WorkspaceCacheOrDerivedCacheKeyName>(
         spy.mock.calls.flatMap(([, cacheKeyNames]) => cacheKeyNames),
       );
     } finally {
@@ -258,8 +259,8 @@ describe('metadata GraphQL operations cache dependencies', () => {
     operationName: string;
     fullQuery: ASTNode;
     baselineQuery: ASTNode;
-  }): Promise<WorkspaceCacheKeyName[]> => {
-    const declaredDependencies = new Set<WorkspaceCacheKeyName>(
+  }): Promise<WorkspaceCacheOrDerivedCacheKeyName[]> => {
+    const declaredDependencies = new Set<WorkspaceCacheOrDerivedCacheKeyName>(
       METADATA_GRAPHQL_OPERATIONS_TO_CACHE[operationName].dependencies,
     );
     const requestInfrastructureKeys =

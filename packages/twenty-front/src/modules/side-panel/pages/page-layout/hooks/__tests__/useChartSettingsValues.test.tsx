@@ -184,7 +184,6 @@ describe('useChartSettingsValues', () => {
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
       );
 
-      // Critical test: horizontal should return the SAME value as vertical
       expect(value).toBe('Company Name');
     });
 
@@ -195,7 +194,6 @@ describe('useChartSettingsValues', () => {
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y,
       );
 
-      // Critical test: horizontal should return the SAME value as vertical
       expect(value).toBe('Amount (Sum)');
     });
 
@@ -655,7 +653,6 @@ describe('useChartSettingsValues', () => {
       const { result: horizontalResult } =
         renderUseChartSettingsValues(horizontalConfig);
 
-      // Test all setting IDs return IDENTICAL values
       const settingIds = [
         CHART_CONFIGURATION_SETTING_IDS.SOURCE,
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,

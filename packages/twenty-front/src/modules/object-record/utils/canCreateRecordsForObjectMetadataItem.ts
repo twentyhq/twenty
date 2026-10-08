@@ -1,23 +1,17 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type ObjectPermissions } from 'twenty-shared/types';
 
 type CanCreateRecordsForObjectMetadataItemParams = {
-  objectPermissions?: ObjectPermission;
+  objectPermissions?: Pick<ObjectPermissions, 'canUpdateObjectRecords'>;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    'isUICreatable' | 'isUIEditable' | 'isSystem' | 'isRemote' | 'applicationId'
+    'isUICreatable' | 'isUIEditable' | 'isRemote' | 'writability'
   >;
 };
 
-// Single predicate for every generic "create a record" UI affordance.
-// Creatability is driven solely by isUICreatable: isSystem only controls
-// Data-Model visibility, so a system object can still be user-creatable
-// (e.g. marketing message lists kept out of the Data Model).
-// Creation requires effective editability because today's inline creation UX
-// creates a blank record that the user must then be able to edit.
-// There is no CREATE permission yet, so canUpdateObjectRecords (checked
-// through isObjectMetadataReadOnly) acts as a proxy.
+// isSystem only controls Data Model visibility; isUICreatable and OPEN writability govern creation.
+// No CREATE permission exists yet, so canUpdateObjectRecords is the proxy (inline creation edits a blank record).
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
   objectMetadataItem,

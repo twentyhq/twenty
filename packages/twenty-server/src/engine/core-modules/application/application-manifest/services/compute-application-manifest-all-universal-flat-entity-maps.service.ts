@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import {
   type Manifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  normalizePageLayoutTabManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
@@ -29,6 +32,9 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
+import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
+import { fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-settings-menu-item-manifest-to-universal-flat-settings-menu-item.util';
+import { getLegacySettingsMenuItemManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-settings-menu-item-manifests.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -36,9 +42,12 @@ import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -52,35 +61,25 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  private encryptApplicationVariableValue(
-    plaintext: string,
-    workspaceId: string,
-  ): EncryptedString | '' {
-    if (plaintext === '') {
-      return '';
-    }
-
-    return this.secretEncryptionService.encryptVersioned(
-      plaintext as PlaintextString,
-      { workspaceId },
-    );
-  }
-
   compute({
     manifest,
     ownerFlatApplication,
+    fromAllFlatEntityMaps,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
+    fromAllFlatEntityMaps: AllFlatEntityMaps;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
-    const { universalIdentifier: applicationUniversalIdentifier } =
-      ownerFlatApplication;
+    const {
+      universalIdentifier: applicationUniversalIdentifier,
+      sourceType: applicationSourceType,
+    } = ownerFlatApplication;
 
     for (const objectManifest of manifest.objects) {
       const flatObjectMetadata =
@@ -107,6 +106,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             fieldManifest: enrichedFieldManifest,
             applicationUniversalIdentifier,
             now,
+            objectLabelIdentifierFieldMetadataUniversalIdentifier:
+              objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
+            objectIsSearchable: flatObjectMetadata.isSearchable,
           },
         );
 
@@ -123,6 +125,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         fieldManifest: fieldManifest,
         applicationUniversalIdentifier,
         now,
+        objectLabelIdentifierFieldMetadataUniversalIdentifier:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.labelIdentifierFieldMetadataUniversalIdentifier,
+        objectIsSearchable:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.isSearchable,
       });
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -208,6 +218,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
             logicFunctionManifest,
             applicationUniversalIdentifier,
+            applicationSourceType,
+            existingFlatLogicFunctionMaps:
+              fromAllFlatEntityMaps.flatLogicFunctionMaps,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -520,36 +533,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const pageLayoutTabManifest of pageLayoutManifest.tabs ?? []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-              pageLayoutTabManifest,
-              pageLayoutUniversalIdentifier:
-                pageLayoutManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+        this.addPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier: pageLayoutManifest.universalIdentifier,
+          pageLayoutType: pageLayoutManifest.type,
+          applicationUniversalIdentifier,
+          now,
+          allUniversalFlatEntityMaps,
         });
-
-        for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-          []) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity:
-                fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-                  pageLayoutWidgetManifest,
-                  pageLayoutTabUniversalIdentifier:
-                    pageLayoutTabManifest.universalIdentifier,
-                  applicationUniversalIdentifier,
-                  now,
-                }),
-              universalFlatEntityMapsToMutate:
-                allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
-            },
-          );
-        }
       }
     }
 
@@ -560,51 +551,71 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         );
       }
 
+      const referencedPageLayoutManifest = manifest.pageLayouts?.find(
+        (pageLayoutManifest) =>
+          pageLayoutManifest.universalIdentifier ===
+          pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+      );
+
+      this.addPageLayoutTab({
+        pageLayoutTabManifest,
+        pageLayoutUniversalIdentifier:
+          pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+        pageLayoutType: referencedPageLayoutManifest?.type,
+        applicationUniversalIdentifier,
+        now,
+        allUniversalFlatEntityMaps,
+      });
+    }
+
+    for (const pageLayoutWidgetManifest of manifest.pageLayoutWidgets ?? []) {
+      if (
+        !isDefined(pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier)
+      ) {
+        throw new Error(
+          `Top-level pageLayoutWidget "${pageLayoutWidgetManifest.universalIdentifier}" is missing required pageLayoutTabUniversalIdentifier`,
+        );
+      }
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
-          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-            pageLayoutTabManifest,
-            pageLayoutUniversalIdentifier:
-              pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier,
             applicationUniversalIdentifier,
             now,
           }),
         universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
       });
-
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-              pageLayoutWidgetManifest,
-              pageLayoutTabUniversalIdentifier:
-                pageLayoutTabManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
-        });
-      }
     }
 
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
       const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
+      const isSecret = applicationVariableManifest.isSecret;
 
-      const plaintextValue =
-        'value' in applicationVariableManifest
+      const defaultValue =
+        !isSecret &&
+        'value' in applicationVariableManifest &&
+        isDefined(applicationVariableManifest.value)
           ? serializeApplicationVariableValue(
               applicationVariableManifest.value,
               type,
             )
-          : '';
+          : null;
 
-      const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : plaintextValue;
+      // A user variable's values belong to each member, so it has no
+      // workspace value: the manifest value is only its default.
+      const encryptedValue =
+        applicationVariableManifest.scope === 'USER'
+          ? null
+          : this.secretEncryptionService.encryptVersioned(
+              (defaultValue ?? '') as PlaintextString,
+              { workspaceId },
+            );
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -612,14 +623,16 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             key,
             universalIdentifier:
               applicationVariableManifest.universalIdentifier,
-            encryptedValue: this.encryptApplicationVariableValue(
-              rawValue,
-              workspaceId,
-            ),
+            encryptedValue,
+            defaultValue,
             description: applicationVariableManifest.description,
+            label: applicationVariableManifest.label,
             isSecret,
+            isDeprecated: applicationVariableManifest.isDeprecated,
+            isRequired: applicationVariableManifest.isRequired,
             type,
             options: applicationVariableManifest.options,
+            scope: applicationVariableManifest.scope,
             applicationUniversalIdentifier,
             now,
           }),
@@ -649,6 +662,94 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    for (const timelineActivityTypeManifest of manifest.timelineActivityTypes ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType({
+            timelineActivityTypeManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatTimelineActivityTypeMaps,
+      });
+    }
+
+    const settingsMenuItemManifests = [
+      ...(manifest.settingsMenuItems ?? []),
+      ...getLegacySettingsMenuItemManifests(manifest),
+    ];
+
+    for (const settingsMenuItemManifest of settingsMenuItemManifests) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem({
+            settingsMenuItemManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
+      });
+    }
+
     return allUniversalFlatEntityMaps;
+  }
+
+  private addPageLayoutTab({
+    pageLayoutTabManifest,
+    pageLayoutUniversalIdentifier,
+    pageLayoutType,
+    applicationUniversalIdentifier,
+    now,
+    allUniversalFlatEntityMaps,
+  }: {
+    pageLayoutTabManifest: PageLayoutTabManifest;
+    pageLayoutUniversalIdentifier: string;
+    pageLayoutType: PageLayoutManifest['type'] | undefined;
+    applicationUniversalIdentifier: string;
+    now: string;
+    allUniversalFlatEntityMaps: AllFlatEntityMaps;
+  }): void {
+    const result = normalizePageLayoutTabManifest({
+      pageLayoutTabManifest,
+      pageLayoutType,
+    });
+
+    if (result.status === 'fail') {
+      throw new ApplicationException(
+        result.errors.join('\n'),
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const { pageLayoutTab } = result;
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest: pageLayoutTab,
+          pageLayoutUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    for (const pageLayoutWidgetManifest of pageLayoutTab.widgets) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier: pageLayoutTab.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
+    }
   }
 }

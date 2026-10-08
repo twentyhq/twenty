@@ -1,69 +1,75 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
-import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import {
+  IconArchiveOff,
+  IconDotsVertical,
+  IconEye,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
+  objectMetadataItemNamePlural: string;
   onActivate: () => void;
   onDelete: () => void;
-  objectMetadataItemNamePlural: string;
+  onEdit: () => void;
+  isReadOnly?: boolean;
 };
 
 export const SettingsObjectInactiveMenuDropDown = ({
-  onActivate,
   objectMetadataItemNamePlural,
+  onActivate,
   onDelete,
+  onEdit,
   isCustomObject,
+  isReadOnly = false,
 }: SettingsObjectInactiveMenuDropDownProps) => {
-  const dropdownId = `${objectMetadataItemNamePlural}-settings-object-inactive-menu-dropdown`;
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleActivate = () => {
-    onActivate();
-    closeDropdown(dropdownId);
-  };
-
-  const handleDelete = () => {
-    onDelete();
-    closeDropdown(dropdownId);
-  };
+  const isEditable = isCustomObject && !isReadOnly;
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <LightIconButton
-          aria-label={t`Inactive Object Options`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
-      }
-      dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Activate`}
-              LeftIcon={IconArchiveOff}
-              onClick={handleActivate}
-            />
-            {isCustomObject && (
-              <MenuItem
-                text={t`Delete`}
-                LeftIcon={IconTrash}
-                accent="danger"
-                onClick={handleDelete}
-              />
-            )}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot
+      type="menu"
+      dropdownId={`${objectMetadataItemNamePlural}-settings-object-inactive-menu-dropdown`}
+    >
+      <Dropdown.Trigger
+        render={
+          <LightIconButton
+            aria-label={t`Inactive Object Options`}
+            emphasis="subtle"
+          >
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={isEditable ? <IconPencil /> : <IconEye />}
+            onClick={onEdit}
+          >
+            {isEditable ? t`Edit` : t`View`}
+          </Dropdown.ActionItem>
+          {!isReadOnly && (
+            <Dropdown.ActionItem
+              startIcon={<IconArchiveOff />}
+              onClick={onActivate}
+            >{t`Activate`}</Dropdown.ActionItem>
+          )}
+          {isCustomObject && !isReadOnly && (
+            <Dropdown.ActionItem
+              startIcon={<IconTrash />}
+              color="danger"
+              onClick={onDelete}
+            >{t`Delete`}</Dropdown.ActionItem>
+          )}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

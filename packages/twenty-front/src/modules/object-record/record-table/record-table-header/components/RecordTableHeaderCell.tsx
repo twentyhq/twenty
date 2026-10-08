@@ -104,7 +104,7 @@ export const RecordTableHeaderCell = ({
           position="left"
         />
       )}
-      <DragDropItemSortableHandle>
+      <DragDropItemSortableHandle disabled={isRecordTableColumnHeadersReadOnly}>
         {isRecordTableColumnHeadersReadOnly ? (
           <RecordTableColumnHead recordField={recordField} />
         ) : (

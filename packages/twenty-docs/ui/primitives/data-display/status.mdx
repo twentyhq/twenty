@@ -1,0 +1,77 @@
+---
+title: Status
+description: Show a named state with a colored indicator and optional loading feedback.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+`Status` combines a colored dot, a text label, and an optional loader. Use it for workflow or record states. Use [Tag](/ui/primitives/data-display/tag) for a category without the status indicator.
+
+<StoryEmbed
+  storyId="ui-data-display-status--documentation"
+  title="Status example"
+/>
+
+## Record state
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+export const RecordStatus = () => <Status color="green">Active</Status>;
+```
+
+`color` is required and uses the theme palette. The label communicates the meaning independently of the color. The default element is a `span`; `weight="medium"` emphasizes its text.
+
+## Loading and announcements
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type SaveStatusProps = { isSaving: boolean };
+
+export const SaveStatus = ({ isSaving }: SaveStatusProps) => (
+  <div role="status">
+    <Status color={isSaving ? 'blue' : 'green'} loading={isSaving}>
+      {isSaving ? 'Saving' : 'Saved'}
+    </Status>
+  </div>
+);
+```
+
+`loading` shows a loader after the label. The component does not add a live region or change its text automatically. Keep a `role="status"` container mounted when updates should be announced to assistive technology, and provide a label that describes the current state.
+
+## Change a state
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type ChangeStatusActionProps = {
+  isUpdating: boolean;
+  onChangeStatus: () => void;
+};
+
+export const ChangeStatusAction = ({
+  isUpdating,
+  onChangeStatus,
+}: ChangeStatusActionProps) => (
+  <Status
+    color="blue"
+    loading={isUpdating}
+    disabled={isUpdating}
+    onClick={onChangeStatus}
+    aria-label="Change record status"
+  >
+    {isUpdating ? 'Updating' : 'In progress'}
+  </Status>
+);
+```
+
+`onClick` renders a native button with pointer, Enter, and Space activation. `loading` does not prevent repeat activation; pass `disabled` when the action should wait. If `render` replaces the button with a non-button element, set `nativeButton={false}`.
+
+## Props
+
+Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
+
+<StatusReference />

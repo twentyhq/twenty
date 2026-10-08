@@ -48,7 +48,6 @@ describe('View Filter Group update should fail with circular dependency', () => 
     createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
 
-    // Create a standalone view filter group for self-reference test
     const { data: filterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
@@ -60,7 +59,6 @@ describe('View Filter Group update should fail with circular dependency', () => 
     viewFilterGroupId = filterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(viewFilterGroupId);
 
-    // Create parent view filter group for chain test
     const { data: parentFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
@@ -72,7 +70,6 @@ describe('View Filter Group update should fail with circular dependency', () => 
     parentViewFilterGroupId = parentFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(parentViewFilterGroupId);
 
-    // Create child view filter group with parent reference for chain test
     const { data: childFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {

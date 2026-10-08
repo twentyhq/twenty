@@ -7,20 +7,10 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export interface MessageQueueProcessorOptions {
-  /**
-   * Specifies the name of the queue to subscribe to.
-   */
   queueName: MessageQueue;
-  /**
-   * Specifies the lifetime of an injected Processor.
-   */
   scope?: Scope;
 }
 
-/**
- * Represents a worker that is able to process jobs from the queue.
- * @param processorOptions processor options
- */
 export function Processor(
   queueNameOrOptions: string | MessageQueueProcessorOptions,
 ): ClassDecorator {

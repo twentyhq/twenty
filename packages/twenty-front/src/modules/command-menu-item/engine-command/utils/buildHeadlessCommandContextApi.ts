@@ -1,3 +1,4 @@
+import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 import type { Store } from 'jotai/vanilla/store';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -25,12 +26,16 @@ export const buildHeadlessCommandContextApi = ({
   contextStoreInstanceId,
   engineComponentKey,
   payload,
+  navigationTargetObjectMetadataId,
+  creationTargetObjectMetadataId,
   isInSidePanel,
 }: {
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
   payload?: CommandMenuItemPayload | null;
+  navigationTargetObjectMetadataId?: string | null;
+  creationTargetObjectMetadataId?: string;
   isInSidePanel?: boolean;
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
@@ -121,6 +126,9 @@ export const buildHeadlessCommandContextApi = ({
 
   return {
     engineComponentKey,
+    hasAnySoftDeleteFilterOnView: filters.some((recordFilter) =>
+      isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
+    ),
     contextStoreInstanceId,
     objectMetadataItem: objectMetadataItem ?? null,
     currentViewId,
@@ -129,6 +137,8 @@ export const buildHeadlessCommandContextApi = ({
     selectedRecords,
     graphqlFilter,
     payload: payload ?? null,
+    navigationTargetObjectMetadataId: navigationTargetObjectMetadataId ?? null,
+    creationTargetObjectMetadataId,
     isInSidePanel: isInSidePanel ?? false,
   };
 };

@@ -2,11 +2,11 @@ import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type TextAreaInputProps = {
   instanceId: string;
@@ -26,6 +26,8 @@ export type TextAreaInputProps = {
 };
 
 const StyledTextAreaContainer = styled.div`
+  width: 100%;
+
   > textarea {
     align-items: center;
     background-color: transparent;

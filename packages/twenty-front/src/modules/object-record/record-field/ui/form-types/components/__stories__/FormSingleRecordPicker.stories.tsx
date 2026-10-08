@@ -2,13 +2,14 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof FormSingleRecordPicker> = {
   title: 'UI/Data/Field/Form/Input/FormSingleRecordPicker',
@@ -22,7 +23,7 @@ const meta: Meta<typeof FormSingleRecordPicker> = {
     ObjectMetadataItemsDecorator,
     ComponentDecorator,
     WorkspaceDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 
@@ -62,8 +63,8 @@ export const WithVariables: Story = {
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-    RouterDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
   ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -90,11 +91,9 @@ export const Disabled: Story = {
     const dropdown = canvas.queryByRole('button');
     expect(dropdown).not.toBeInTheDocument();
 
-    // Variable picker should not be visible when disabled
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
 
-    // Clicking should not trigger onChange
     if (isDefined(dropdown)) {
       await userEvent.click(dropdown);
     }

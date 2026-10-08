@@ -1,12 +1,9 @@
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode } from 'react';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
+import { useSyncSelectableListItems } from '@/ui/layout/selectable-list/hooks/internal/useSyncSelectableListItems';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
-import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { isDefined } from 'twenty-shared/utils';
-import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 type SelectableListProps = {
   children: ReactNode;
@@ -15,6 +12,7 @@ type SelectableListProps = {
   onSelect?: (selected: string) => void;
   selectableListInstanceId: string;
   focusId: string;
+  shouldPreselectFirstItem?: boolean;
 };
 
 export const SelectableList = ({
@@ -24,29 +22,16 @@ export const SelectableList = ({
   selectableListInstanceId,
   onSelect,
   focusId,
+  shouldPreselectFirstItem = true,
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
-  const setSelectableItemIds = useSetAtomComponentState(
-    selectableItemIdsComponentState,
+  useSyncSelectableListItems({
     selectableListInstanceId,
-  );
-
-  useEffect(() => {
-    if (!selectableItemIdArray && !selectableItemIdMatrix) {
-      throw new Error(
-        'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
-      );
-    }
-
-    if (isDefined(selectableItemIdMatrix)) {
-      setSelectableItemIds(selectableItemIdMatrix);
-    }
-
-    if (isDefined(selectableItemIdArray)) {
-      setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
-    }
-  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
+    selectableItemIdArray,
+    selectableItemIdMatrix,
+    shouldPreselectFirstItem,
+  });
 
   return (
     <SelectableListComponentInstanceContext.Provider

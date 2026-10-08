@@ -6,9 +6,9 @@ export class DataModelSection {
   private readonly objectSingularNameInput: Locator;
   private readonly objectPluralNameInput: Locator;
   private readonly objectDescription: Locator;
-  private readonly synchronizeLabelAPIToggle: Locator;
-  private readonly objectAPISingularNameInput: Locator;
-  private readonly objectAPIPluralNameInput: Locator;
+  private readonly synchronizeLabelApiToggle: Locator;
+  private readonly objectApiSingularNameInput: Locator;
+  private readonly objectApiPluralNameInput: Locator;
   private readonly objectMoreOptionsButton: Locator;
   private readonly editObjectButton: Locator;
   private readonly deleteObjectButton: Locator;
@@ -36,29 +36,29 @@ export class DataModelSection {
       exact: true,
     });
     this.objectDescription = page.getByPlaceholder('Write a description');
-    this.synchronizeLabelAPIToggle = page.getByRole('checkbox').nth(1);
-    this.objectAPISingularNameInput = page.getByPlaceholder('listing', {
+    this.synchronizeLabelApiToggle = page.getByRole('checkbox').nth(1);
+    this.objectApiSingularNameInput = page.getByPlaceholder('listing', {
       exact: true,
     });
-    this.objectAPIPluralNameInput = page.getByPlaceholder('listings', {
+    this.objectApiPluralNameInput = page.getByPlaceholder('listings', {
       exact: true,
     });
     this.objectMoreOptionsButton = page.getByLabel('Object Options');
-    this.editObjectButton = page.getByTestId('tooltip').getByText('Edit');
-    this.deactivateMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('Deactivate');
-    this.activateMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('Activate');
-    this.deleteObjectButton = page.getByTestId('tooltip').getByText('Delete');
+    this.editObjectButton = page.getByText('Edit', { exact: true });
+    this.deactivateMoreOptionsButton = page.getByText('Deactivate', {
+      exact: true,
+    });
+    this.activateMoreOptionsButton = page.getByText('Activate', {
+      exact: true,
+    });
+    this.deleteObjectButton = page.getByText('Delete', { exact: true });
     this.activeSection = page.getByText('Active', { exact: true });
     this.inactiveSection = page.getByText('Inactive');
     this.searchFieldInput = page.getByPlaceholder('Search a field...');
     this.addFieldButton = page.getByRole('button', { name: 'Add field' });
-    this.viewFieldDetailsMoreOptionsButton = page
-      .getByTestId('tooltip')
-      .getByText('View');
+    this.viewFieldDetailsMoreOptionsButton = page.getByText('View', {
+      exact: true,
+    });
     this.nameFieldInput = page.getByPlaceholder('Employees');
     this.descriptionFieldInput = page.getByPlaceholder('Write a description');
     this.deactivateButton = page.getByRole('button', { name: 'Deactivate' });
@@ -87,16 +87,16 @@ export class DataModelSection {
     await this.objectDescription.fill(name);
   }
 
-  async toggleSynchronizeLabelAPI() {
-    await this.synchronizeLabelAPIToggle.click();
+  async toggleSynchronizeLabelApi() {
+    await this.synchronizeLabelApiToggle.click();
   }
 
-  async typeObjectSingularAPIName(name: string) {
-    await this.objectAPISingularNameInput.fill(name);
+  async typeObjectSingularApiName(name: string) {
+    await this.objectApiSingularNameInput.fill(name);
   }
 
-  async typeObjectPluralAPIName(name: string) {
-    await this.objectAPIPluralNameInput.fill(name);
+  async typeObjectPluralApiName(name: string) {
+    await this.objectApiPluralNameInput.fill(name);
   }
 
   async checkObjectDetails(name: string) {

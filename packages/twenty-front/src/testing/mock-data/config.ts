@@ -3,6 +3,8 @@ import { CaptchaDriverType, SupportDriver } from '~/generated-metadata/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   aiModels: [],
+  aiEvaluationModels: [],
+  aiModelTiers: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
@@ -14,6 +16,7 @@ export const mockedClientConfig: ClientConfig = {
     sso: [],
   },
   frontDomain: 'localhost',
+  serverUrl: 'http://localhost:3000',
   defaultSubdomain: 'app',
   analyticsEnabled: true,
   support: {
@@ -46,10 +49,10 @@ export const mockedClientConfig: ClientConfig = {
   api: { mutationMaximumAffectedRecords: 100 },
   onboarding: {
     importContactsCreditsReward: 2,
-    inviteTeamMaxCreditsReward: 9,
     inviteTeamCreditsRewardPerUser: 3,
-    upgradeCreditsReward: 5,
-    installAppsCreditsRewardPerApp: 1,
+    createProfileCreditsReward: 0.5,
+    upgradeCreditsReward: 2,
+    inviteTeamMaxInvites: 10,
   },
   canManageFeatureFlags: true,
   publicFeatureFlags: [],
@@ -67,4 +70,6 @@ export const mockedClientConfig: ClientConfig = {
   isClickHouseConfigured: false,
   isWorkspaceSchemaDDLLocked: false,
   isOnboardingAiChatEnabled: false,
+  isBookCallOnboardingStepEnabled: false,
+  isCompanyEnrichmentEnabled: false,
 };

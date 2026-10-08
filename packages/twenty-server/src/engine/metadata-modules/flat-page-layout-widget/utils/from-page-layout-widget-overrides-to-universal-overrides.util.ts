@@ -6,11 +6,13 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/overrides/utils/map-authored-override-entries.util';
 
 type UniversalPageLayoutWidgetOverrides =
   FormatRecordSerializedRelationProperties<PageLayoutWidgetOverrides>;
 
-export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
+const fromPageLayoutWidgetOverridesToUniversalOverridesEntry = ({
   overrides,
   pageLayoutTabUniversalIdentifierById,
   shouldThrowOnMissingIdentifier = true,
@@ -52,3 +54,23 @@ export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
     pageLayoutTabUniversalIdentifier,
   };
 };
+
+export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
+  overrides,
+  pageLayoutTabUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier,
+}: {
+  overrides: AuthoredOverrides<PageLayoutWidgetOverrides>;
+  pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier?: boolean;
+}): AuthoredOverrides<UniversalPageLayoutWidgetOverrides> =>
+  mapAuthoredOverrideEntries({
+    metadataName: 'pageLayoutWidget',
+    overrides,
+    mapEntry: (entry) =>
+      fromPageLayoutWidgetOverridesToUniversalOverridesEntry({
+        overrides: entry,
+        pageLayoutTabUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier,
+      }),
+  });

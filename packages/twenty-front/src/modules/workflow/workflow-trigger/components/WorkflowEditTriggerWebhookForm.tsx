@@ -6,7 +6,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
-import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
@@ -14,7 +14,7 @@ import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -24,7 +24,7 @@ import { IconCopy } from 'twenty-ui/icon';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;
@@ -50,7 +50,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerWebhookFormProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
@@ -110,7 +110,7 @@ export const WorkflowEditTriggerWebhookForm = ({
               { computeOutputSchema: false },
             );
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.httpMethod === 'POST' && (

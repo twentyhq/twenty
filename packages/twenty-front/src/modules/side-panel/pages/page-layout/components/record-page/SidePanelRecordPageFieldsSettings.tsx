@@ -1,14 +1,14 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
-import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
+import { NewFieldDefaultVisibilitySwitch } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
@@ -36,10 +36,10 @@ const StyledSidePanelContainer = styled.div`
 export const SidePanelRecordPageFieldsSettings = () => {
   const { t } = useLingui();
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
-  const { pageLayoutId, objectNameSingular } =
-    usePageLayoutIdFromContextStore();
+  const { pageLayoutId, targetRecordIdentifier } =
+    usePageLayoutSidePanelTarget();
 
-  const { placementSelectableItemIds } =
+  const { placementSelectableItemIds, widgetSettingsPlacement } =
     useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
 
   const { updateCurrentWidgetConfig } =
@@ -53,7 +53,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
 
   const { groups } = useFieldsWidgetGroups({
     viewId: fieldsConfiguration?.viewId ?? null,
-    objectNameSingular,
+    objectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
 
   if (!isDefined(widgetInEditMode)) {
@@ -116,21 +116,32 @@ export const SidePanelRecordPageFieldsSettings = () => {
               itemId="display-more-fields-button"
               onEnter={handleToggleShouldAllowUserToSeeHiddenFields}
             >
-              <CommandMenuItemToggle
+              <CommandMenuItemSwitch
                 LeftIcon={IconChevronDown}
                 text={t`Display "More fields" button`}
                 id="display-more-fields-button"
-                toggled={isShouldAllowUserToSeeHiddenFieldsToggled}
-                onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
+                checked={isShouldAllowUserToSeeHiddenFieldsToggled}
+                onCheckedChange={handleToggleShouldAllowUserToSeeHiddenFields}
               />
             </SelectableListItem>
-            <NewFieldDefaultVisibilityToggle
+            <NewFieldDefaultVisibilitySwitch
               pageLayoutId={pageLayoutId}
               widgetId={widgetInEditMode.id}
             />
           </SidePanelGroup>
           <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
-          <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
+          <WidgetSettingsPlacementSection
+            pageLayoutId={pageLayoutId}
+            isPlacementSectionVisible={
+              widgetSettingsPlacement.isPlacementSectionVisible
+            }
+            pageLayoutEditingWidgetId={
+              widgetSettingsPlacement.pageLayoutEditingWidgetId
+            }
+            showAddWidgetBelow={widgetSettingsPlacement.showAddWidgetBelow}
+            showMoveDown={widgetSettingsPlacement.showMoveDown}
+            showMoveUp={widgetSettingsPlacement.showMoveUp}
+          />
         </SidePanelList>
       </StyledSidePanelContainer>
     </StyledContainer>

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CommonMergeManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-merge-many-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
-import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
 @Injectable()
@@ -19,16 +21,19 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { depth, ...restArgs } = await this.parseRequestArgs(request);
+      const { depth, requestedFields, ...restArgs } =
+        await this.parseRequestArgs(request);
       const {
         authContext,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -44,24 +49,45 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatIndexMaps,
             objectIdByNameSingular,
           },
         );
 
-      return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
+      return this.formatRestResponse({
+        record,
+        objectNameSingular: flatObjectMetadata.nameSingular,
+        selectedFields,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(record: ObjectRecord, objectNamePlural: string) {
-    return { data: { [`merge${capitalize(objectNamePlural)}`]: record } };
+  private formatRestResponse({
+    record,
+    objectNameSingular,
+    selectedFields,
+  }: {
+    record: ObjectRecord;
+    objectNameSingular: string;
+    selectedFields: CommonSelectedFields;
+  }) {
+    return {
+      data: {
+        [`merge${capitalize(objectNameSingular)}`]: pickRestResponseFields({
+          record,
+          selectedFields,
+        }),
+      },
+    };
   }
 
   private async parseRequestArgs(request: AuthenticatedRequest) {
     const depth = parseDepthRestRequest(request);
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       conflictPriorityIndex: request.body.conflictPriorityIndex,
       dryRun: request.body.dryRun,
       ids: request.body.ids,

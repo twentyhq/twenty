@@ -8,7 +8,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDeviceFloppy } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsAccountsConfigurationStepCalendarProps = {
   calendarChannel: CalendarChannel;
@@ -46,14 +46,13 @@ export const SettingsAccountsConfigurationStepCalendar = ({
       ]}
       actionButton={
         <Button
-          Icon={IconDeviceFloppy}
-          title={t`Finish Setup`}
-          accent="blue"
-          size="small"
-          variant="primary"
+          startIcon={<IconDeviceFloppy />}
+          size="sm"
           onClick={onAddAccount}
           disabled={isSubmitting}
-        />
+          variant="solid"
+          color="accent"
+        >{t`Finish Setup`}</Button>
       }
     >
       <SettingsPageContainer>

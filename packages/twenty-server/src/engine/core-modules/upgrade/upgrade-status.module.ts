@@ -26,7 +26,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
     UpgradeCommandRegistryService,
     UpgradeMigrationService,
     UpgradeSequenceReaderService,
-    UpgradeStatusCacheService,
     UpgradeStatusService,
   ],
 })

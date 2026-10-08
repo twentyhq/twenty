@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AdminChatMessagePartDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-message-part.dto';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 
 // Ensure the enum is registered with GraphQL
 import 'src/engine/core-modules/admin-panel/enums/agent-message-role.enum';
@@ -14,6 +14,9 @@ export class AdminChatMessageDTO {
 
   @Field(() => AgentMessageRole)
   role: AgentMessageRole;
+
+  @Field(() => Boolean)
+  isHidden: boolean;
 
   @Field(() => [AdminChatMessagePartDTO])
   parts: AdminChatMessagePartDTO[];

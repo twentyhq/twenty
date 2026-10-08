@@ -128,7 +128,6 @@ describe('DatabaseHealthIndicator', () => {
   });
 
   it('should maintain state history across health checks', async () => {
-    // First check - healthy state
     const mockResponses = [
       [{ version: 'PostgreSQL 15.6' }],
       [{ count: '5' }],
@@ -149,7 +148,6 @@ describe('DatabaseHealthIndicator', () => {
 
     expect(firstResult.database.status).toBe('up');
 
-    // Second check - error state
     dataSource.query.mockRejectedValueOnce(
       new Error(HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED),
     );

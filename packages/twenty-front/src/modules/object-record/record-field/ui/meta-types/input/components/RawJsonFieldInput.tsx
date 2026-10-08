@@ -1,20 +1,19 @@
-import { styled } from '@linaria/react';
-
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { JsonTree } from 'twenty-ui/components/data-display';
+import { IconButton } from 'twenty-ui/components/input';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { IconPencil } from 'twenty-ui/icon';
-import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
-import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 
 const CONTAINER_HEIGHT = 300;
 
@@ -176,10 +175,14 @@ export const RawJsonFieldInput = () => {
         <>
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
-              <FloatingIconButton
-                Icon={IconPencil}
+              <IconButton
+                elevated
+                size="sm"
                 onClick={handleStartEditing}
-              />
+                aria-label={t`Edit JSON`}
+              >
+                <IconPencil />
+              </IconButton>
             </StyledSwitchModeButtonContainer>
           )}
 
@@ -191,7 +194,6 @@ export const RawJsonFieldInput = () => {
               emptyStringLabel={t`[empty string]`}
               arrowButtonCollapsedLabel={t`Expand`}
               arrowButtonExpandedLabel={t`Collapse`}
-              shouldExpandNodeInitially={isTwoFirstDepths}
               onNodeValueClick={copyToClipboard}
             />
           </StyledJsonTreeContainer>

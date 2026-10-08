@@ -1,5 +1,6 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useTriggerEventStreamCreation } from '@/sse-db-event/hooks/useTriggerEventStreamCreation';
 import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEventStreamDestroy';
@@ -15,6 +16,7 @@ import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
 
   const sseEventStreamId = useAtomStateValue(sseEventStreamIdState);
   const isCreatingSseEventStream = useAtomStateValue(
@@ -27,7 +29,7 @@ export const SSEEventStreamEffect = () => {
     isDestroyingEventStreamState,
   );
 
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
 
   const { triggerEventStreamCreation } = useTriggerEventStreamCreation();
@@ -39,9 +41,10 @@ export const SSEEventStreamEffect = () => {
 
     const willCreateEventStream =
       isSseClientAvailable &&
-      hasAccessTokenPair &&
+      isLogged &&
       isDefined(currentUser) &&
       currentUser.onboardingStatus === OnboardingStatus.COMPLETED &&
+      isMinimalMetadataReady &&
       !shouldDestroyEventStream &&
       !isNonEmptyString(sseEventStreamId) &&
       isNonEmptyArray(objectMetadataItems);
@@ -59,13 +62,14 @@ export const SSEEventStreamEffect = () => {
   }, [
     isCreatingSseEventStream,
     triggerEventStreamCreation,
-    hasAccessTokenPair,
+    isLogged,
     currentUser,
     isDestroyingEventStream,
     triggerEventStreamDestroy,
     shouldDestroyEventStream,
     sseEventStreamId,
     objectMetadataItems,
+    isMinimalMetadataReady,
   ]);
 
   return null;

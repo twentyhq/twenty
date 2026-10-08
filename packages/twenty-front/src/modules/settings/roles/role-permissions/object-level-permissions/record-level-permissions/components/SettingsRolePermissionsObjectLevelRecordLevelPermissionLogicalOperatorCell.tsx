@@ -7,12 +7,12 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   align-items: center;
@@ -53,7 +53,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
               dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
               value={recordFilterGroup.logicalOperator}
               options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
-              dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
+              dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
               disabled
             />
           ) : (

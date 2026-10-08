@@ -272,7 +272,7 @@ export const workflowQueryResult = {
                         },
                         errorHandlingOptions: {
                           retryOnFailure: {
-                            value: false,
+                            value: 0,
                           },
                           continueOnFailure: {
                             value: false,

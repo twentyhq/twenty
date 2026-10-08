@@ -1,9 +1,9 @@
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableTimeZoneOption';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/localization/constants/AvailableTimezoneOptions';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 type DateTimeSettingsTimeZoneSelectProps = {
   value?: string;

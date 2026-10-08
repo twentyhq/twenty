@@ -13,6 +13,7 @@ concurrency:
 
 env:
   SERVER_BUILD_CACHE_KEY: server-build
+  NODE_COMPILE_CACHE: ${{ github.workspace }}/.cache/node-compile
 
 jobs:
   changed-files-check:
@@ -92,7 +93,7 @@ jobs:
           tag: scope:backend
           tasks: lingui:compile
 
-  server-previous-version-upgrade-mutation-guard:
+  server-upgrade-mutation-guard:
     if: github.event_name != 'merge_group'
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -119,6 +120,7 @@ jobs:
         with:
           base_sha: ${{ steps.merged-base.outputs.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
+          allow_next_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-next-version-upgrade-mutation') }}
 
   server-validation:
     needs: server-build
@@ -175,7 +177,7 @@ jobs:
         run: npx nx start:ci twenty-server &
       - name: Waiting for server starting...
         run: |
-          for i in {1..10}; do
+          for i in {1..60}; do
             if curl -f http://localhost:3000/healthz; then
               echo "Server ready!"
               exit 0
@@ -258,13 +260,27 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
+      - name: Restore jest transform cache
+        id: restore-jest-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (restore)
+        with:
+          key: v4-jest-server-unit-${{ matrix.shard }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: v4-jest-server-unit-${{ matrix.shard }}-${{ github.ref_name }}-
+          path: .cache/jest/packages/twenty-server
       - name: Server / Run Tests (shard ${{ matrix.shard }}/4)
         run: npx nx run twenty-server:test:ci --shard=${{ matrix.shard }}/4
+      - name: Save jest transform cache
+        if: always() && steps.restore-jest-cache.outputs.cache-hit != 'true' && format('{0}', github.event.pull_request.head.repo.fork) != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
+        with:
+          key: ${{ steps.restore-jest-cache.outputs.cache-primary-key }}
+          path: .cache/jest/packages/twenty-server
 
   server-integration-test:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    needs: server-build
     strategy:
       fail-fast: false
       matrix:
@@ -305,6 +321,7 @@ jobs:
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 16
+      INTEGRATION_TEST_DB_RESET_STATUS_FILE: ${{ github.workspace }}/.cache/integration-db-reset-status
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -326,24 +343,57 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Server / Build
         run: npx nx build twenty-server
-      - name: Build dependencies
-        run: |
-          npx nx build twenty-shared
-          npx nx build twenty-emails
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
-      - name: Run ClickHouse seeds
-        run: npx nx clickhouse:seed twenty-server
+      - name: Server / Reset Test DB in background
+        env:
+          RESET_LOG_FILE: ${{ github.workspace }}/.cache/integration-db-reset.log
+          NODE_OPTIONS: --max-old-space-size=12288
+        run: |
+          mkdir -p "$(dirname "$INTEGRATION_TEST_DB_RESET_STATUS_FILE")"
+          {
+            if npx nx database:reset twenty-server --excludeTaskDependencies > "$RESET_LOG_FILE" 2>&1; then
+              echo ready > "$INTEGRATION_TEST_DB_RESET_STATUS_FILE.tmp"
+            else
+              echo failed > "$INTEGRATION_TEST_DB_RESET_STATUS_FILE.tmp"
+            fi
+            mv "$INTEGRATION_TEST_DB_RESET_STATUS_FILE.tmp" "$INTEGRATION_TEST_DB_RESET_STATUS_FILE"
+          } &
+      - name: Restore jest transform cache
+        id: restore-jest-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (restore)
+        with:
+          key: v4-jest-server-integration-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: v4-jest-server-integration-${{ github.ref_name }}-
+          path: .cache/jest/packages/twenty-server-integration
       - name: Server / Run Integration Tests
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
           tasks: 'test:integration'
-          configuration: 'with-db-reset'
-          args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+          args: ${{ format('--shard={0}/{1}', matrix.shard, env.SHARD_COUNTER) }}
+      # The secure-deployment suite boots the app as a production https
+      # deployment (SERVER_URL is env-only, forced by its jest config), so it
+      # cannot ride the main run. One shard is enough. Gated like the main run
+      # because it reuses the database that run sets up.
+      - name: Server / Run secure-deployment integration tests
+        if: matrix.shard == 1
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: 'test:integration:secure'
+      - name: Print Test DB reset log
+        if: failure()
+        run: cat "${{ github.workspace }}/.cache/integration-db-reset.log" || true
+      - name: Save jest transform cache
+        if: always() && matrix.shard == 1 && steps.restore-jest-cache.outputs.cache-hit != 'true' && format('{0}', github.event.pull_request.head.repo.fork) != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
+        with:
+          key: ${{ steps.restore-jest-cache.outputs.cache-primary-key }}
+          path: .cache/jest/packages/twenty-server-integration
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
@@ -395,7 +445,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
-        server-previous-version-upgrade-mutation-guard,
+        server-upgrade-mutation-guard,
         server-validation,
         server-test,
         server-integration-test,
@@ -405,5 +455,5 @@ jobs:
       ]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

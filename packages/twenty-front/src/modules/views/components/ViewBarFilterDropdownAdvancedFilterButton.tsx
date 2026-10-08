@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -6,31 +7,32 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/data-display';
 import { IconFilter } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Pill } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 const StyledPillContainer = styled.span`
-  & > * {
+  & > span {
     background: ${themeCssVariables.color.blue3};
     color: ${themeCssVariables.color.blue};
   }
@@ -59,6 +61,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const { openDropdown: openAdvancedFilterDropdown } = useOpenDropdown();
 
   const { closeDropdown: closeObjectFilterDropdown } = useCloseDropdown();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -101,14 +104,6 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     const alreadyHasAdvancedFilterGroup = currentRecordFilterGroups.length > 0;
 
     if (!alreadyHasAdvancedFilterGroup) {
-      const newRecordFilterGroup = {
-        id: v4(),
-        viewId: currentView.id,
-        logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      };
-
-      upsertRecordFilterGroup(newRecordFilterGroup);
-
       const defaultFieldMetadataItem =
         availableFieldMetadataItemsForFilter.find(
           (fieldMetadataItem) =>
@@ -120,20 +115,32 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         throw new Error('Missing default filter definition');
       }
 
-      const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-        defaultFieldMetadataItem,
-      );
+      flushSync(() => {
+        const newRecordFilterGroup = {
+          id: v4(),
+          viewId: currentView.id,
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        };
 
-      newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
+        upsertRecordFilterGroup(newRecordFilterGroup);
 
-      upsertRecordFilter(newRecordFilter);
+        const { newRecordFilter } =
+          createEmptyRecordFilterFromFieldMetadataItem(
+            defaultFieldMetadataItem,
+          );
 
-      setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+        newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
+
+        upsertRecordFilter(newRecordFilter);
+
+        setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+      });
     }
 
-    closeObjectFilterDropdown(ViewBarFilterDropdownIds.MAIN);
+    closeObjectFilterDropdown();
     openAdvancedFilterDropdown({
-      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.ADVANCED,
+      dropdownComponentInstanceIdFromProps:
+        getViewBarAdvancedFilterDropdownId(recordIndexId),
     });
   };
 
@@ -142,19 +149,18 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <MenuItem
-        text={t`Advanced filter`}
+      <ListItem
         onClick={handleClick}
-        LeftIcon={IconFilter}
+        startIcon={<IconFilter />}
         focused={isSelectedItemId}
-        RightComponent={
+        endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
             <StyledPillContainer>
               <Pill label={advancedFilterQuerySubFilterCount.toString()} />
             </StyledPillContainer>
           ) : undefined
         }
-      />
+      >{t`Advanced filter`}</ListItem>
     </SelectableListItem>
   );
 };

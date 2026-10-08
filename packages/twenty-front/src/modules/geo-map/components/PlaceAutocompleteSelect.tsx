@@ -1,71 +1,30 @@
-import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { styled } from '@linaria/react';
-import { useMemo, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
-const StyledContainer = styled.div<{ fullWidth?: boolean }>`
-  margin-bottom: 0px !important;
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
+import { type PlaceAutocompleteResult } from '@/geo-map/types/PlaceApi';
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Autocomplete } from 'twenty-ui/primitives/input';
+
+type PlaceAutocompleteSelectProps = {
+  list: PlaceAutocompleteResult[];
+  onChange: (placeId: string) => void;
+};
 
 export const PlaceAutocompleteSelect = ({
   list,
   onChange,
-  dropdownId,
-}: {
-  list: PlaceAutocompleteResult[];
-  onChange: (placeId: string) => void;
-  dropdownId: string;
-}) => {
-  const selectContainerRef = useRef<HTMLDivElement>(null);
-  const options: SelectOption<string>[] = useMemo(() => {
-    return list?.map<SelectOption<string>>(({ placeId, text }) => ({
-      label: text,
-      value: placeId,
-    }));
-  }, [list]);
-
-  if (!isDefined(options) || options.length <= 0) return null;
-
-  const selectableItemIdArray = options.map((option) => option.value);
-
-  return (
-    <StyledContainer tabIndex={0} ref={selectContainerRef} fullWidth={true}>
-      <SelectableList
-        selectableListInstanceId={dropdownId}
-        selectableItemIdArray={selectableItemIdArray}
-        focusId={dropdownId}
-      >
-        <DropdownContent
-          ref={selectContainerRef}
-          selectDisabled
-          widthInPixels={345}
+}: PlaceAutocompleteSelectProps) => (
+  <AutocompleteContent width={345}>
+    <Autocomplete.List>
+      {list.map((place) => (
+        <Autocomplete.Item
+          key={place.placeId}
+          value={place}
+          onClick={() => onChange(place.placeId)}
         >
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {options.map((option) => {
-              return (
-                <SelectableListItem
-                  key={option.value}
-                  itemId={option.value}
-                  onEnter={() => onChange(option.value)}
-                >
-                  <MenuItemSelectTag
-                    key={option.value}
-                    text={option.label}
-                    color="transparent"
-                    onClick={() => onChange(option.value)}
-                  />
-                </SelectableListItem>
-              );
-            })}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      </SelectableList>
-    </StyledContainer>
-  );
-};
+          <Tag color="transparent" borderStyle="dashed" variant="soft">
+            {place.text}
+          </Tag>
+        </Autocomplete.Item>
+      ))}
+    </Autocomplete.List>
+  </AutocompleteContent>
+);

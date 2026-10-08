@@ -5,11 +5,15 @@ import 'tsconfig-paths/register';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { createApp } from './create-app';
+import { createWorkflowTestServices } from './create-workflow-test-services';
+import { waitForTestDatabaseReset } from './wait-for-test-database-reset.util';
 
 export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
   // node-fetch rides node:http, which msw patches; native undici fetch
   // escapes interception.
   globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
+
+  await waitForTestDatabaseReset();
 
   const app = await createApp({});
 
@@ -22,5 +26,6 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
   await app.listen(projectConfig.globals.APP_PORT as number);
 
   global.app = app;
+  global.workflowTestServices = createWorkflowTestServices(app);
   global.testDataSource = rawDataSource;
 };

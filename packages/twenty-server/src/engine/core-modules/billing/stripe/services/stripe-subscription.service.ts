@@ -37,23 +37,50 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async collectLastInvoice(stripeSubscriptionId: string) {
-    const subscription = await this.stripe.subscriptions.retrieve(
-      stripeSubscriptionId,
-      { expand: ['latest_invoice'] },
-    );
-    const latestInvoice = subscription.latest_invoice;
+  async payOpenInvoices({
+    stripeSubscriptionId,
+    stripePaymentMethodId,
+  }: {
+    stripeSubscriptionId: string;
+    stripePaymentMethodId: string;
+  }) {
+    const openInvoices: Stripe.Invoice[] = [];
 
-    if (
-      !(
-        latestInvoice &&
-        typeof latestInvoice !== 'string' &&
-        latestInvoice.status === 'draft'
-      )
-    ) {
-      return;
+    for await (const invoice of this.stripe.invoices.list({
+      subscription: stripeSubscriptionId,
+      status: 'open',
+      collection_method: 'charge_automatically',
+      limit: 100,
+    })) {
+      openInvoices.push(invoice);
     }
-    await this.stripe.invoices.pay(latestInvoice.id);
+
+    // Stripe lists the most recent invoices first, settle the oldest overdue period first
+    for (const invoice of openInvoices.reverse()) {
+      try {
+        await this.stripe.invoices.pay(invoice.id, {
+          payment_method: stripePaymentMethodId,
+        });
+      } catch (error) {
+        // A decline is final for this webhook; Stripe dunning retries on its own schedule
+        if (error instanceof this.stripe.errors.StripeCardError) {
+          this.logger.error(
+            `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
+          );
+
+          continue;
+        }
+
+        // Dunning or a concurrent webhook may have settled it; only a still-open invoice merits a retry
+        const refreshedInvoice = await this.stripe.invoices.retrieve(
+          invoice.id,
+        );
+
+        if (refreshedInvoice.status === 'open') {
+          throw error;
+        }
+      }
+    }
   }
 
   async updateSubscription(

@@ -1,23 +1,20 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { Select } from '@/ui/input/components/Select';
 
-import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
-import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
+import { getDatePickerDropdownIds } from '@/ui/input/components/internal/date/utils/getDatePickerDropdownIds';
+import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
-  'date-picker-month-and-year-dropdown-month-select';
-const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
-  'date-picker-month-and-year-dropdown-year-select';
 const YEARS_SELECT_OPTIONS = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 50 - i,
@@ -35,6 +32,7 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 type DatePickerHeaderProps = {
+  instanceId: string;
   date: string | null;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
@@ -47,6 +45,7 @@ type DatePickerHeaderProps = {
 };
 
 export const DatePickerHeader = ({
+  instanceId,
   date,
   onChange,
   onChangeMonth,
@@ -60,50 +59,45 @@ export const DatePickerHeader = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
+  const { monthSelectDropdownId, yearSelectDropdownId } =
+    getDatePickerDropdownIds(instanceId);
+
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
   return (
     <>
       {!hideInput && <DatePickerInput date={date} onChange={onChange} />}
       <StyledCustomDatePickerHeader>
-        <ClickOutsideListenerContext.Provider
-          value={{
-            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-          }}
-        >
-          <Select
-            dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-            options={getMonthSelectOptions(userLocale)}
-            onChange={onChangeMonth}
-            value={dateParsed?.month}
-            fullWidth
-          />
-        </ClickOutsideListenerContext.Provider>
-        <ClickOutsideListenerContext.Provider
-          value={{
-            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-          }}
-        >
-          <Select
-            dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-            onChange={onChangeYear}
-            value={dateParsed?.year}
-            options={YEARS_SELECT_OPTIONS}
-            fullWidth
-          />
-        </ClickOutsideListenerContext.Provider>
+        <Select
+          dropdownId={monthSelectDropdownId}
+          options={getMonthSelectOptions(userLocale)}
+          onChange={onChangeMonth}
+          value={dateParsed?.month}
+          fullWidth
+        />
+        <Select
+          dropdownId={yearSelectDropdownId}
+          onChange={onChangeYear}
+          value={dateParsed?.year}
+          options={YEARS_SELECT_OPTIONS}
+          fullWidth
+        />
         <LightIconButton
-          Icon={IconChevronLeft}
           onClick={onSubtractMonth}
-          size="medium"
+          size="md"
           disabled={prevMonthButtonDisabled}
-        />
+          aria-label={t`Previous`}
+        >
+          <IconChevronLeft />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconChevronRight}
           onClick={onAddMonth}
-          size="medium"
+          size="md"
           disabled={nextMonthButtonDisabled}
-        />
+          aria-label={t`Next`}
+        >
+          <IconChevronRight />
+        </LightIconButton>
       </StyledCustomDatePickerHeader>
     </>
   );

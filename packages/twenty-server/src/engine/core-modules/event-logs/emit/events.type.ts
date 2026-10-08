@@ -15,6 +15,14 @@ import {
   type ObjectRecordUpsertedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-upserted';
 import {
+  type OBJECT_RECORD_RESTORED_EVENT,
+  type ObjectRecordRestoredTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-restored';
+import {
+  type OBJECT_RECORD_DESTROYED_EVENT,
+  type ObjectRecordDestroyedTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-destroyed';
+import {
   type CUSTOM_DOMAIN_ACTIVATED_EVENT,
   type CustomDomainActivatedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated';
@@ -26,6 +34,10 @@ import {
   type LOGIC_FUNCTION_EXECUTED_EVENT,
   type LogicFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
+import {
+  type AUTH_SESSION_EVENT,
+  type AuthSessionTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/auth-session/auth-session';
 import {
   type IMPERSONATION_EVENT,
   type ImpersonationTrackEvent,
@@ -52,6 +64,7 @@ import {
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
 
 export type TrackEventName =
+  | typeof AUTH_SESSION_EVENT
   | typeof CUSTOM_DOMAIN_ACTIVATED_EVENT
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
   | typeof LOGIC_FUNCTION_EXECUTED_EVENT
@@ -61,12 +74,15 @@ export type TrackEventName =
   | typeof OBJECT_RECORD_UPDATED_EVENT
   | typeof OBJECT_RECORD_DELETED_EVENT
   | typeof OBJECT_RECORD_UPSERTED_EVENT
+  | typeof OBJECT_RECORD_RESTORED_EVENT
+  | typeof OBJECT_RECORD_DESTROYED_EVENT
   | typeof USER_SIGNUP_EVENT
   | typeof WORKSPACE_CREATED_EVENT
   | typeof PAYMENT_RECEIVED_EVENT
   | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT;
 
 export interface TrackEvents {
+  [AUTH_SESSION_EVENT]: AuthSessionTrackEvent;
   [CUSTOM_DOMAIN_ACTIVATED_EVENT]: CustomDomainActivatedTrackEvent;
   [CUSTOM_DOMAIN_DEACTIVATED_EVENT]: CustomDomainDeactivatedTrackEvent;
   [LOGIC_FUNCTION_EXECUTED_EVENT]: LogicFunctionExecutedTrackEvent;
@@ -77,6 +93,8 @@ export interface TrackEvents {
   [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
   [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;
   [OBJECT_RECORD_UPSERTED_EVENT]: ObjectRecordUpsertedTrackEvent;
+  [OBJECT_RECORD_RESTORED_EVENT]: ObjectRecordRestoredTrackEvent;
+  [OBJECT_RECORD_DESTROYED_EVENT]: ObjectRecordDestroyedTrackEvent;
   [WORKSPACE_CREATED_EVENT]: WorkspaceCreatedTrackEvent;
   [PAYMENT_RECEIVED_EVENT]: PaymentReceivedTrackEvent;
   [SERVER_ADMIN_ACCESS_CHANGED_EVENT]: ServerAdminAccessChangedTrackEvent;

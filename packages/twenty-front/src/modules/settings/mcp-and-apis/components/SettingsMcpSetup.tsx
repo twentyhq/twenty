@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import ModelContextProtocolLogo from '@/settings/mcp-and-apis/assets/model-context-protocol-logo.svg?react';
 import { SettingsMcpSetupCard } from '@/settings/mcp-and-apis/components/SettingsMcpSetupCard';
 import { buildMcpSetupCategories } from '@/settings/mcp-and-apis/utils/buildMcpSetupCategories';
@@ -11,10 +11,9 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/components/layout';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMcpEditorHeaderTitle = styled.div`
@@ -58,8 +57,8 @@ export const SettingsMcpSetup = () => {
     <StyledMcpSetupContainer>
       {categories.map((category) => (
         <Fragment key={category.title}>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={category.title}
               description={category.description}
             />
@@ -68,27 +67,22 @@ export const SettingsMcpSetup = () => {
                 <SettingsMcpSetupCard key={card.title} card={card} />
               ))}
             </StyledCardsGrid>
-          </Section>
+          </Section.Root>
 
           {category.showManualConfigurationAfter && (
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Manual configuration`}
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />
-              <CoreEditorHeader
-                leftNodes={[
-                  <StyledMcpEditorHeaderTitle key="mcp-editor-header-title">
+              <CodeEditorHeader
+                startElement={
+                  <StyledMcpEditorHeaderTitle>
                     <StyledMcpIcon aria-hidden />
                     <span>{t`MCP client configuration`}</span>
-                  </StyledMcpEditorHeaderTitle>,
-                ]}
-                rightNodes={[
-                  <LightCopyIconButton
-                    key="mcp-config-copy-button"
-                    copyText={mcpConfig}
-                  />,
-                ]}
+                  </StyledMcpEditorHeaderTitle>
+                }
+                endElement={<LightCopyIconButton copyText={mcpConfig} />}
               />
               <CodeEditor
                 value={mcpConfig}
@@ -108,7 +102,7 @@ export const SettingsMcpSetup = () => {
                   wordWrap: 'on',
                 }}
               />
-            </Section>
+            </Section.Root>
           )}
         </Fragment>
       ))}

@@ -8,7 +8,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -58,70 +57,18 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
-  async findByRole(
-    workspaceId: string,
-    roleId: string,
-  ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return [];
-    }
-
-    const { flatRowLevelPermissionPredicateGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateGroupMaps'],
-        },
-      );
-
-    return Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((group) => group.deletedAt === null && group.roleId === roleId)
-      .sort(
-        (a, b) =>
-          (a.positionInRowLevelPermissionPredicateGroup ?? 0) -
-          (b.positionInRowLevelPermissionPredicateGroup ?? 0),
-      )
-      .map(fromFlatRowLevelPermissionPredicateGroupToDto);
-  }
-
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<RowLevelPermissionPredicateGroupDTO | null> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return null;
-    }
-
-    const { flatRowLevelPermissionPredicateGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateGroupMaps'],
-        },
-      );
-
-    const flatGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-    });
-
-    if (!isDefined(flatGroup) || flatGroup.deletedAt !== null) {
-      return null;
-    }
-
-    return fromFlatRowLevelPermissionPredicateGroupToDto(flatGroup);
-  }
-
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
+    // Checking first keeps the common no-op a read and lets cleanup retry on every pass after a failed attempt
+    const hasPredicateGroups =
+      (await this.rowLevelPermissionPredicateGroupRepository.count(
+        workspaceId,
+        {},
+      )) > 0;
+
+    if (!hasPredicateGroups) {
+      return;
+    }
+
     await this.rowLevelPermissionPredicateGroupRepository.delete(
       workspaceId,
       {},

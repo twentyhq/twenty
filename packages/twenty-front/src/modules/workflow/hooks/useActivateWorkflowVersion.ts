@@ -1,3 +1,10 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  ActivateCoreWorkflowVersionDocument,
+  type ActivateWorkflowVersionMutation,
+  type ActivateWorkflowVersionMutationVariables,
+} from '~/generated/graphql';
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useMutation } from '@apollo/client/react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -16,13 +23,13 @@ import {
   type WorkflowVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ActivateWorkflowVersionMutation,
-  type ActivateWorkflowVersionMutationVariables,
-} from '~/generated/graphql';
 
 export const useActivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const [mutateCore] = useMutation(ActivateCoreWorkflowVersionDocument, {
+    client: apolloCoreClient,
+  });
   const [mutate] = useMutation<
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
@@ -50,6 +57,14 @@ export const useActivateWorkflowVersion = () => {
     workflowVersionId: string;
     workflowId: string;
   }) => {
+    if (isCore) {
+      await mutateCore({
+        variables: { coreWorkflowVersionId: workflowVersionId },
+      });
+      await invalidateCoreWorkflowVersions(apolloCoreClient);
+      return;
+    }
+
     await mutate({
       variables: {
         workflowVersionId,
@@ -162,6 +177,8 @@ export const useActivateWorkflowVersion = () => {
         }
       },
     });
+
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
   return { activateWorkflowVersion };

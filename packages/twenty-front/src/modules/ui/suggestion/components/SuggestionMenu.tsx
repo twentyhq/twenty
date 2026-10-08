@@ -16,10 +16,14 @@ import {
 } from 'react';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
+import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
+import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
 
@@ -28,13 +32,34 @@ const SuggestionMenuInner = <TItem,>(
   props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
 ) => {
-  const { items, onSelect, editor, range, getItemKey, renderItem, onKeyDown } =
-    props;
+  const {
+    items,
+    onSelect,
+    editor,
+    range,
+    getItemKey,
+    renderItem,
+    selectedItemPreview,
+    getItemSection,
+    onKeyDown,
+  } = props;
+
+  const isMobile = useIsMobile();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const clampedSelectedIndex =
     items.length > 0 ? Math.min(selectedIndex, items.length - 1) : 0;
+
+  const selectedItem = items[clampedSelectedIndex];
+
+  const [isSelectedItemVisible, setIsSelectedItemVisible] = useState(true);
+
+  const shouldDisplayPreview =
+    !isMobile &&
+    isSelectedItemVisible &&
+    selectedItemPreview !== undefined &&
+    selectedItem !== undefined;
 
   const activeItemRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -137,6 +162,34 @@ const SuggestionMenuInner = <TItem,>(
     scrollableContainer.scrollTop = offsetTop - offsetHeight;
   }, [clampedSelectedIndex]);
 
+  // The preview is anchored to the selected row, so it would float detached once that row scrolls out
+  useLayoutEffect(() => {
+    const scrollableContainer =
+      listContainerRef.current?.firstElementChild ?? null;
+    const activeItemContainer = activeItemRef.current;
+
+    if (
+      !scrollableContainer ||
+      !activeItemContainer ||
+      typeof IntersectionObserver === 'undefined'
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSelectedItemVisible(entry.isIntersecting);
+      },
+      { root: scrollableContainer, threshold: 0.99 },
+    );
+
+    observer.observe(activeItemContainer);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [clampedSelectedIndex, items]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -151,26 +204,42 @@ const SuggestionMenuInner = <TItem,>(
           zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
         }}
       >
-        <DropdownContent ref={listContainerRef}>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {items.map((item, index) => {
-              const isSelected = index === clampedSelectedIndex;
+        <OverlayMenuList ref={listContainerRef}>
+          {items.map((item, index) => {
+            const isSelected = index === clampedSelectedIndex;
+            const section = getItemSection?.(item);
+            const isFirstOfSection =
+              isDefined(section) &&
+              (index === 0 ||
+                getItemSection?.(items[index - 1])?.key !== section.key);
 
-              return (
-                <div
-                  key={getItemKey(item)}
-                  ref={isSelected ? activeItemRef : null}
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                  }}
-                >
-                  {renderItem(item, isSelected)}
-                </div>
-              );
-            })}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
+            return (
+              <div
+                key={getItemKey(item)}
+                id={getSuggestionMenuItemAnchorId(getItemKey(item))}
+                ref={isSelected ? activeItemRef : null}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                }}
+              >
+                {isFirstOfSection && (
+                  <DropdownMenuSectionLabel label={section.label} />
+                )}
+                {renderItem(item, isSelected)}
+              </div>
+            );
+          })}
+        </OverlayMenuList>
       </OverlayContainer>
+      {shouldDisplayPreview && (
+        <SuggestionItemPreviewTooltip
+          key={getItemKey(selectedItem)}
+          anchor={activeItemRef}
+          width={selectedItemPreview.width}
+        >
+          {selectedItemPreview.render(selectedItem)}
+        </SuggestionItemPreviewTooltip>
+      )}
     </motion.div>
   );
 };

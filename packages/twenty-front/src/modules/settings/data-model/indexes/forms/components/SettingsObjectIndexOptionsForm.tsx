@@ -2,9 +2,9 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { IndexType } from '~/generated-metadata/graphql';
-import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';
+import { type SettingsObjectNewIndexFormValues } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 const StyledContent = styled.div`
   display: flex;

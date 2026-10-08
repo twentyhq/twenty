@@ -6,6 +6,7 @@ import { ApplicationKeyValueService } from 'src/engine/core-modules/application/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -15,7 +16,10 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
       ApplicationRegistrationEntity,
     ]),
   ],
-  providers: [ApplicationKeyValueService, ApplicationKeyValueResolver],
-  exports: [ApplicationKeyValueService],
+  providers: [
+    ApplicationKeyValueService,
+    ApplicationKeyValueResolver,
+    provideWorkspaceScopedRepository(ApplicationEntity),
+  ],
 })
 export class ApplicationKeyValueModule {}

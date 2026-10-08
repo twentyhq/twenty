@@ -1,0 +1,532 @@
+import '@/testing/setupServerRenderingGlobals';
+
+import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import userEvent from '@testing-library/user-event';
+import { act, createElement, type ComponentType } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { jsx } from 'react/jsx-runtime';
+
+import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
+
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
+
+const renderWrapper = (
+  htmlTag: string,
+  props: Record<string, unknown>,
+  children?: string,
+): string =>
+  renderToStaticMarkup(
+    createElement(createHtmlHostWrapper(htmlTag), props, children),
+  );
+
+const createWrapperElement = (
+  Wrapper: ComponentType<never>,
+  props: Record<string, unknown>,
+) => jsx(Wrapper as never, { ...props } as never);
+
+describe('createHtmlHostWrapper prop hardening', () => {
+  it('should drop an on* attribute whose value is not a function', () => {
+    const markup = renderWrapper('div', { onmouseover: 'alert(1)' });
+
+    expect(markup).not.toContain('onmouseover');
+    expect(markup).not.toContain('alert(1)');
+  });
+
+  it('should drop a normalized event attribute whose value is not a function', () => {
+    const markup = renderWrapper('div', { onClick: 'alert(1)' });
+
+    expect(markup).not.toContain('alert(1)');
+  });
+
+  it('should drop a javascript: url on href', () => {
+    const markup = renderWrapper('a', { href: 'javascript:alert(1)' }, 'link');
+
+    expect(markup).not.toContain('javascript:');
+  });
+
+  it('should drop a data: url on href', () => {
+    const markup = renderWrapper(
+      'a',
+      { href: 'data:text/html,<script>alert(1)</script>' },
+      'link',
+    );
+
+    expect(markup).not.toContain('data:');
+  });
+
+  it('should drop a vbscript: url on href', () => {
+    const markup = renderWrapper('a', { href: 'vbscript:msgbox(1)' }, 'link');
+
+    expect(markup).not.toContain('vbscript:');
+  });
+
+  it('should drop a javascript: url on an anchor xlink:href', () => {
+    const markup = renderWrapper(
+      'a',
+      { 'xlink:href': 'javascript:alert(1)' },
+      'link',
+    );
+
+    expect(markup).not.toContain('javascript:');
+  });
+
+  it('should drop a javascript: url on a React-style anchor xlinkHref', () => {
+    const markup = renderWrapper(
+      'a',
+      { xlinkHref: 'javascript:alert(1)' },
+      'link',
+    );
+
+    expect(markup).not.toContain('javascript:');
+  });
+
+  it('should drop a javascript: url obfuscated with control characters', () => {
+    const markup = renderWrapper(
+      'a',
+      { href: 'java\tscript:alert(1)' },
+      'link',
+    );
+
+    expect(markup).not.toContain('script:');
+  });
+
+  it('should keep a safe href', () => {
+    const markup = renderWrapper('a', { href: 'https://twenty.com' }, 'link');
+
+    expect(markup).toContain('href="https://twenty.com"');
+  });
+
+  it('should keep a data: image on src', () => {
+    const dataImageUrl = 'data:image/png;base64,iVBORw0KGgo=';
+    const markup = renderWrapper('img', { src: dataImageUrl });
+
+    expect(markup).toContain(dataImageUrl);
+  });
+
+  it('should not leak the remote element symbol prop into the markup', () => {
+    const markup = renderToStaticMarkup(
+      createWrapperElement(createHtmlHostWrapper('div'), {
+        [REMOTE_ELEMENT_PROP]: { id: '7' },
+      }),
+    );
+
+    expect(markup).toBe('<div></div>');
+  });
+});
+
+describe('createHtmlHostWrapper client events', () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  it('should forward focusin through a native listener', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(createElement(Wrapper, { onFocusin: handleFocusIn }));
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).toHaveBeenCalledTimes(1);
+    expect(handleFocusIn).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'focusin' }),
+    );
+  });
+
+  it('should forward a click once, from the innermost element listening for it', () => {
+    const handleOuterClick = jest.fn();
+    const handleInnerClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('button');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, { onClick: handleInnerClick }),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('button')?.click();
+    });
+
+    expect(handleInnerClick).toHaveBeenCalledTimes(1);
+    expect(handleInnerClick).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', bubbles: true }),
+    );
+    expect(handleOuterClick).not.toHaveBeenCalled();
+  });
+
+  it('should forward a click on an element without a listener from its listening ancestor', () => {
+    const handleOuterClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('span');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, {}, 'label'),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('span')?.click();
+    });
+
+    expect(handleOuterClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should forward a native focusin once, from the innermost element listening for it', () => {
+    const handleOuterFocusIn = jest.fn();
+    const handleInnerFocusIn = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onFocusin: handleOuterFocusIn },
+          createElement(InnerWrapper, { onFocusin: handleInnerFocusIn }),
+        ),
+      );
+    });
+
+    act(() => {
+      container
+        .querySelector('input')
+        ?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+    });
+
+    expect(handleInnerFocusIn).toHaveBeenCalledTimes(1);
+    expect(handleOuterFocusIn).not.toHaveBeenCalled();
+  });
+
+  it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'fixed' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'fixed-typed';
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'text',
+          value: 'fixed',
+          className: 'rerendered',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('fixed');
+  });
+
+  it('should write a numeric controlled value to the host input', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 42 }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('42');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'number', value: 43 }));
+    });
+
+    expect(node.value).toBe('43');
+  });
+
+  it('should clear the host input when a controlled value becomes empty', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: 'abc' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('abc');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+  });
+
+  it('should mount a file input whose worker element already holds a selected file path', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('');
+    expect(node.hasAttribute('value')).toBe(false);
+  });
+
+  it('should keep the selected file when the worker echoes its path, then accept a new selection', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const user = userEvent.setup();
+    const Wrapper = createHtmlHostWrapper('input');
+    const handleChange = jest.fn();
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, { type: 'file', onChange: handleChange }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['report'], 'report.pdf'));
+    });
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          onChange: handleChange,
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('C:\\fakepath\\report.pdf');
+    expect(node.files?.[0]?.name).toBe('report.pdf');
+
+    await act(async () => {
+      await user.upload(node, new File(['summary'], 'summary.pdf'));
+    });
+
+    expect(node.files?.[0]?.name).toBe('summary.pdf');
+    expect(handleChange).toHaveBeenCalledTimes(2);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should clear the selected file when the worker resets the file input value', async () => {
+    const user = userEvent.setup();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['image'], 'avatar.png'));
+    });
+
+    expect(node.value).toBe('C:\\fakepath\\avatar.png');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+    expect(node.files).toHaveLength(0);
+  });
+
+  it('should forward focusin through a handler prop that arrives after mount', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, { [REMOTE_ELEMENT_PROP]: { id: '7' } }),
+      );
+    });
+
+    act(() => {
+      root.render(
+        createWrapperElement(Wrapper, {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          onFocusin: handleFocusIn,
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not pass the remote dom instance ref to the dom element', () => {
+    const instanceRef = { current: null as unknown };
+
+    act(() => {
+      root.render(
+        createWrapperElement(createHtmlHostWrapper('div'), {
+          [REMOTE_ELEMENT_PROP]: { id: '7' },
+          ref: instanceRef,
+        }),
+      );
+    });
+
+    expect(instanceRef.current).toBeNull();
+  });
+
+  it('should stop forwarding focusin after the handler prop is removed', () => {
+    const handleFocusIn = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(createElement(Wrapper, { onFocusin: handleFocusIn }));
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+
+    act(() => {
+      root.render(createElement(Wrapper, {}));
+    });
+    act(() => {
+      node.dispatchEvent(new Event('focusin', { bubbles: true }));
+    });
+
+    expect(handleFocusIn).not.toHaveBeenCalled();
+  });
+
+  it('should forward beforeinput on a text input through a native listener', () => {
+    const handleBeforeInput = jest.fn();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          onBeforeinput: handleBeforeInput,
+          type: 'text',
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    act(() => {
+      node.dispatchEvent(
+        new InputEvent('beforeinput', {
+          bubbles: true,
+          inputType: 'insertText',
+          data: 'a',
+        }),
+      );
+    });
+
+    expect(handleBeforeInput).toHaveBeenCalledTimes(1);
+    expect(handleBeforeInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'beforeinput',
+        inputType: 'insertText',
+        data: 'a',
+      }),
+    );
+  });
+
+  it('should forward the input type and data of a typed input event', () => {
+    const handleInput = jest.fn();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, { onInput: handleInput, type: 'text' }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    node.value = 'a';
+    act(() => {
+      node.dispatchEvent(
+        new InputEvent('input', {
+          bubbles: true,
+          inputType: 'insertText',
+          data: 'a',
+        }),
+      );
+    });
+
+    expect(handleInput).toHaveBeenCalledTimes(1);
+    expect(handleInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'input',
+        inputType: 'insertText',
+        data: 'a',
+        isComposing: false,
+        value: 'a',
+      }),
+    );
+  });
+
+  it('should prevent default on dragover when a remote drop handler exists', () => {
+    const handleDrop = jest.fn();
+    const Wrapper = createHtmlHostWrapper('div');
+
+    act(() => {
+      root.render(createElement(Wrapper, { onDrop: handleDrop }));
+    });
+
+    const node = container.firstElementChild as HTMLElement;
+    const dragOverEvent = new Event('dragover', {
+      bubbles: true,
+      cancelable: true,
+    });
+    act(() => {
+      node.dispatchEvent(dragOverEvent);
+    });
+
+    expect(dragOverEvent.defaultPrevented).toBe(true);
+
+    const dropEvent = new Event('drop', { bubbles: true, cancelable: true });
+    act(() => {
+      node.dispatchEvent(dropEvent);
+    });
+
+    expect(dropEvent.defaultPrevented).toBe(true);
+    expect(handleDrop).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'drop' }),
+    );
+  });
+});

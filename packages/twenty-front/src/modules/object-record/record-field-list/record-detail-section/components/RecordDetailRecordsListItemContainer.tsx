@@ -1,6 +1,6 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled.div<{
@@ -25,7 +25,8 @@ const StyledListItem = styled.div<{
       calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   }
 
-  &:hover .displayOnHover {
+  &:hover .displayOnHover,
+  &:focus-within .displayOnHover {
     opacity: 1;
     pointer-events: auto;
   }

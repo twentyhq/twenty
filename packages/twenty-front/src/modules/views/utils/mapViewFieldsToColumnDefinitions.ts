@@ -2,7 +2,6 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewField } from '@/views/types/ViewField';
@@ -26,7 +25,7 @@ export const mapViewFieldsToColumnDefinitions = ({
       const correspondingColumnDefinition =
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
-      if (isUndefinedOrNull(correspondingColumnDefinition)) return null;
+      if (!isDefined(correspondingColumnDefinition)) return null;
 
       const { isLabelIdentifier } = correspondingColumnDefinition;
 
@@ -58,15 +57,12 @@ export const mapViewFieldsToColumnDefinitions = ({
     })
     .filter(isDefined);
 
-  // No label identifier set for this object
   if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;
 
   const labelIdentifierIndex = columnDefinitionsFromViewFields.findIndex(
     ({ fieldMetadataId }) => fieldMetadataId === labelIdentifierFieldMetadataId,
   );
 
-  // Label identifier field found in view fields
-  // => move it to the start of the list
   return moveArrayItem(columnDefinitionsFromViewFields, {
     fromIndex: labelIdentifierIndex,
     toIndex: 0,

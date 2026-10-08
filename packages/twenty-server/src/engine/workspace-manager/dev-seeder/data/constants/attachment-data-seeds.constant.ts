@@ -96,7 +96,6 @@ export const ATTACHMENT_SAMPLE_FILES = [
 ];
 
 const FILE_NAME_VARIATIONS = [
-  // Documents
   { name: 'Service Agreement.pdf', sampleFileIndex: 0 },
   { name: 'NDA Document.pdf', sampleFileIndex: 0 },
   { name: 'Project Proposal.pdf', sampleFileIndex: 0 },
@@ -104,27 +103,23 @@ const FILE_NAME_VARIATIONS = [
   { name: 'Meeting Notes.pdf', sampleFileIndex: 0 },
   { name: 'Report Final.pdf', sampleFileIndex: 0 },
   { name: 'Contract Signed.pdf', sampleFileIndex: 0 },
-  // Spreadsheets
   { name: 'Financial Forecast.xlsx', sampleFileIndex: 1 },
   { name: 'Sales Report Q4.xlsx', sampleFileIndex: 1 },
   { name: 'Team Roster.xlsx', sampleFileIndex: 1 },
   { name: 'Expense Report.xlsx', sampleFileIndex: 1 },
   { name: 'Inventory List.xlsx', sampleFileIndex: 1 },
   { name: 'Data Export.csv', sampleFileIndex: 1 },
-  // Presentations
   { name: 'Pitch Deck.pptx', sampleFileIndex: 2 },
   { name: 'Q4 Results.pptx', sampleFileIndex: 2 },
   { name: 'Roadmap 2024.pptx', sampleFileIndex: 2 },
   { name: 'Company Overview.pptx', sampleFileIndex: 2 },
   { name: 'Training Materials.pptx', sampleFileIndex: 2 },
-  // Images
   { name: 'Company Logo.png', sampleFileIndex: 3 },
   { name: 'Product Photo.jpg', sampleFileIndex: 3 },
   { name: 'Diagram.png', sampleFileIndex: 3 },
   { name: 'Wireframe.png', sampleFileIndex: 3 },
   { name: 'Mockup Design.png', sampleFileIndex: 3 },
   { name: 'Headshot.jpg', sampleFileIndex: 3 },
-  // Archives
   { name: 'Project Files.zip', sampleFileIndex: 4 },
   { name: 'Backup Data.zip', sampleFileIndex: 4 },
   { name: 'Source Code.zip', sampleFileIndex: 4 },

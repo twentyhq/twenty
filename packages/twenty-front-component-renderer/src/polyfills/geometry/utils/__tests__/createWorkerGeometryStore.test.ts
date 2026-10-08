@@ -1,5 +1,5 @@
-import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
-import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
+import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
 import { createWorkerGeometryStore } from '../createWorkerGeometryStore';
@@ -164,6 +164,35 @@ describe('createWorkerGeometryStore', () => {
 
     store.applyGeometryBatch({ viewport: createViewport(1200) });
     expect(store.getViewportSnapshot()?.innerWidth).toBe(1200);
+  });
+
+  it('should notify geometry subscribers after each applied batch', () => {
+    const { store } = createRootedStore();
+    const geometryUpdateListener = jest.fn(() => store.getViewportSnapshot());
+
+    store.subscribeToGeometryUpdates(geometryUpdateListener);
+
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(5) } });
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(1);
+
+    store.applyGeometryBatch({ viewport: createViewport(800) });
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(2);
+    expect(geometryUpdateListener).toHaveLastReturnedWith(createViewport(800));
+  });
+
+  it('should stop notifying an unsubscribed geometry listener', () => {
+    const { store } = createRootedStore();
+    const geometryUpdateListener = jest.fn();
+
+    const unsubscribe = store.subscribeToGeometryUpdates(
+      geometryUpdateListener,
+    );
+
+    store.applyGeometryBatch({ viewport: createViewport(800) });
+    unsubscribe();
+    store.applyGeometryBatch({ viewport: createViewport(1200) });
+
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(1);
   });
 
   it('should stop enrolling once the observation limit is reached', async () => {

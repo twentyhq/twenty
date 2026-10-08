@@ -1,0 +1,58 @@
+{
+  "name": "twenty-companion",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/twenty-companion/src",
+  "implicitDependencies": ["twenty-ui"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [],
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn build"
+      },
+      "inputs": ["default", "^default"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [],
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn typecheck"
+      },
+      "inputs": ["default", "^default"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [],
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn test"
+      },
+      "inputs": ["default", "^default"]
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": [],
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn package"
+      }
+    },
+    "package:archive": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": [],
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn package:archive"
+      }
+    }
+  }
+}

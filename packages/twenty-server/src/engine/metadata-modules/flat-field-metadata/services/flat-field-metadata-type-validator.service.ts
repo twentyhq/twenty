@@ -12,6 +12,7 @@ import {
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
+import { validateLinksFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
 import { validatePositionFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util';
@@ -64,7 +65,7 @@ export class FlatFieldMetadataTypeValidatorService {
       EMAILS: DEFAULT_NO_VALIDATION,
       FILES: validateFilesFlatFieldMetadata,
       FULL_NAME: DEFAULT_NO_VALIDATION,
-      LINKS: DEFAULT_NO_VALIDATION,
+      LINKS: validateLinksFlatFieldMetadata,
       NUMBER: DEFAULT_NO_VALIDATION,
       NUMERIC: rejectUserCreation(
         FieldMetadataType.NUMERIC,

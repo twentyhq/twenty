@@ -29,11 +29,7 @@ const computeUpdatedNextStepIds = ({
     : [];
 
   return [
-    ...new Set([
-      ...filteredNextStepIds,
-      // We automatically link parent and child steps together
-      ...(stepToDeleteChildrenIds || []),
-    ]),
+    ...new Set([...filteredNextStepIds, ...(stepToDeleteChildrenIds || [])]),
   ];
 };
 
@@ -75,7 +71,7 @@ const createReplacementEmptyNode = ({
       outputSchema: {},
       errorHandlingOptions: {
         continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
       },
       input: {},
     },
@@ -172,6 +168,7 @@ const updateIfElseStepOnDeletion = ({
 
   return {
     ...step,
+    nextStepIds: [],
     settings: {
       ...step.settings,
       input: {

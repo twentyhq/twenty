@@ -7,16 +7,20 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
@@ -31,18 +35,31 @@ import {
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
-import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
-import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
-import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
-@Controller('rest/metadata/viewFilterGroups')
-@UseGuards(WorkspaceAuthGuard)
+@Controller(`${ApiPath.Rest}/metadata/viewFilterGroups`)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ViewFilterGroupRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 export class ViewFilterGroupController {
   constructor(
@@ -52,14 +69,15 @@ export class ViewFilterGroupController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
-  ): Promise<ViewFilterGroupDTO[]> {
-    if (viewId) {
-      return this.viewFilterGroupService.findByViewId(workspace.id, viewId);
-    }
+  ) {
+    const items = viewId
+      ? await this.viewFilterGroupService.findByViewId(workspace.id, viewId)
+      : await this.viewFilterGroupService.findByWorkspaceId(workspace.id);
 
-    return this.viewFilterGroupService.findByWorkspaceId(workspace.id);
+    return paginateMetadataRestItems({ items, request });
   }
 
   @Get(':id')
@@ -93,7 +111,7 @@ export class ViewFilterGroupController {
   }
 
   @Post()
-  @UseGuards(CreateViewFilterGroupPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async create(
     @Body() input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -105,7 +123,7 @@ export class ViewFilterGroupController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewFilterGroupPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewFilterGroup'))
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterGroupInput,
@@ -119,7 +137,7 @@ export class ViewFilterGroupController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewFilterGroupPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewFilterGroup'))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

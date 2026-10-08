@@ -2,7 +2,12 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  lexicographicSortSchema,
+  printSchema,
+} from 'graphql';
 
 import { generateMetadataClient } from '../src/generate/generate-metadata-client';
 
@@ -21,7 +26,12 @@ const introspectSchema = async (url: string): Promise<string> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: getIntrospectionQuery() }),
+    // Deprecated input fields are omitted from introspection by default, which
+    // would drop them from the client and break callers a deprecation is meant
+    // to keep working
+    body: JSON.stringify({
+      query: getIntrospectionQuery({ inputValueDeprecation: true }),
+    }),
   });
 
   const json = await response.json();
@@ -32,7 +42,8 @@ const introspectSchema = async (url: string): Promise<string> => {
     );
   }
 
-  return printSchema(buildClientSchema(json.data));
+  // Sorted so the output does not depend on the server's module registration order
+  return printSchema(lexicographicSortSchema(buildClientSchema(json.data)));
 };
 
 const main = async () => {

@@ -1,514 +1,274 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useStore } from 'jotai';
-import React, {
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactElement, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
-  IconButton,
-  type IconButtonSize,
-  type IconButtonVariant,
-  LightIconButton,
-} from 'twenty-ui/input';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+  type ButtonSize,
+  type ButtonVariant,
+} from 'twenty-ui/primitives/input';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
-import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
+import { ICON_PICKER_DEFAULT_VISIBLE_COUNT } from '@/ui/input/components/constants/IconPickerDefaultVisibleCount';
 import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
-import {
-  ICON_PICKER_DEFAULT_VISIBLE_COUNT,
-  iconPickerVisibleCountState,
-} from '@/ui/input/states/iconPickerVisibleCountState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
+import { getIconPickerLabel } from '@/ui/input/utils/getIconPickerLabel';
+import { getIconPickerSearchScore } from '@/ui/input/utils/getIconPickerSearchScore';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { arrayToChunks } from '~/utils/array/arrayToChunks';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
-export type IconPickerProps = {
+type IconPickerProps = {
   disabled?: boolean;
   dropdownId?: string;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
-  onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
-  variant?: IconButtonVariant;
+  variant?: ButtonVariant;
   className?: string;
-  size?: IconButtonSize;
-  clickableComponent?: ReactNode;
+  size?: ButtonSize;
+  clickableComponent?: ReactElement;
   dropdownWidth?: number;
-  dropdownOffset?: DropdownOffset;
+  dropdownSideOffset?: number;
   maxIconsVisible?: number;
+  iconColor?: ThemeColor;
   iconColorPicker?: {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
   };
 };
 
-const StyledIconPickerSearchRow = styled.div`
+const ICON_CELL_WIDTH = 32;
+const ICON_GRID_GAP = 2;
+const ICON_GRID_PADDING = 8;
+
+const StyledSearchRow = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
-`;
 
-type IconPickerSearchRowProps = {
-  closeDropdown: (dropdownId: string) => void;
-  dropdownWidth: number | undefined;
-  iconColorPicker: IconPickerProps['iconColorPicker'];
-  iconColorPickerDropdownId: string;
-  onSearchChange: (searchString: string) => void;
-};
-
-const IconPickerSearchRow = ({
-  closeDropdown,
-  dropdownWidth,
-  iconColorPicker,
-  iconColorPickerDropdownId,
-  onSearchChange,
-}: IconPickerSearchRowProps) => {
-  const searchInput = (
-    <DropdownMenuSearchInput
-      placeholder={t`Search icon`}
-      autoFocus
-      onChange={(event) => {
-        onSearchChange(event.target.value);
-      }}
-    />
-  );
-
-  if (!isDefined(iconColorPicker)) {
-    return searchInput;
+  > :first-child {
+    flex: 1;
+    min-width: 0;
   }
-
-  return (
-    <StyledIconPickerSearchRow>
-      {searchInput}
-      <ClickOutsideListenerContext.Provider
-        value={{
-          excludedClickOutsideId: iconColorPickerDropdownId,
-        }}
-      >
-        <Dropdown
-          dropdownId={iconColorPickerDropdownId}
-          dropdownOffset={{
-            x: 24,
-            y: -24,
-          }}
-          dropdownPlacement="right-start"
-          clickableComponent={
-            <LightIconButton
-              accent="secondary"
-              Icon={() => (
-                <ColorSample
-                  colorName={iconColorPicker.selectedColor}
-                  variant="circle"
-                />
-              )}
-              size="small"
-            />
-          }
-          dropdownComponents={
-            <DropdownContent
-              widthInPixels={
-                dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
-              }
-            >
-              <ThemeColorPickerMenu
-                selectedColor={iconColorPicker.selectedColor}
-                onSelectColor={(nextColor) => {
-                  iconColorPicker.onColorChange(nextColor);
-                  closeDropdown(iconColorPickerDropdownId);
-                }}
-              />
-            </DropdownContent>
-          }
-        />
-      </ClickOutsideListenerContext.Provider>
-    </StyledIconPickerSearchRow>
-  );
-};
-
-const StyledMenuIconItemsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-const selectedIconButtonStyle = css`
-  background: ${themeCssVariables.background.transparent.medium};
+const StyledPopupContent = styled.div`
+  display: contents;
 `;
 
-const focusedIconButtonStyle = css`
-  background: ${themeCssVariables.background.transparent.light};
+const iconButtonStyles = css`
+  &[data-selected] {
+    background: ${themeCssVariables.background.transparent.medium};
+  }
 `;
-
-type StyledLightIconButtonProps = React.ComponentProps<
-  typeof LightIconButton
-> & {
-  isSelected?: boolean;
-  isFocused?: boolean;
-};
-
-const StyledLightIconButton = ({
-  isSelected,
-  isFocused,
-  className,
-  'aria-label': ariaLabel,
-  size,
-  title,
-  Icon,
-  onClick,
-  testId,
-  active,
-  accent,
-  disabled,
-  focus,
-}: StyledLightIconButtonProps) => (
-  <LightIconButton
-    aria-label={ariaLabel}
-    size={size}
-    title={title}
-    Icon={Icon}
-    onClick={onClick}
-    testId={testId}
-    active={active}
-    accent={accent}
-    disabled={disabled}
-    focus={focus}
-    className={`${className ?? ''} ${isSelected ? selectedIconButtonStyle : isFocused ? focusedIconButtonStyle : ''}`}
-  />
-);
-
-const StyledLoadingMore = styled.div`
-  align-items: center;
-  display: flex;
-  font-size: 14px;
-  height: 40px;
-  justify-content: center;
-`;
-
-const StyledMatrixItem = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-  width: 32px;
-`;
-
-const convertIconKeyToLabel = (iconKey: string) =>
-  iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
-
-type IconPickerIconProps = {
-  iconKey: string;
-  onSelect: () => void;
-  selectedIconKey?: string;
-  Icon: IconComponent;
-  focusedIconKey?: string;
-  color?: ThemeColor;
-};
-
-const IconPickerIcon = ({
-  iconKey,
-  onSelect,
-  selectedIconKey,
-  Icon,
-  focusedIconKey,
-  color,
-}: IconPickerIconProps) => {
-  const { theme } = useContext(ThemeContext);
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    iconKey,
-  );
-
-  return (
-    <StyledMatrixItem>
-      <SelectableListItem itemId={iconKey} onEnter={onSelect}>
-        <StyledLightIconButton
-          key={iconKey}
-          aria-label={convertIconKeyToLabel(iconKey)}
-          size="medium"
-          title={iconKey}
-          isSelected={iconKey === selectedIconKey || !!selectedItemId}
-          isFocused={iconKey === focusedIconKey}
-          Icon={(iconProps) => (
-            <Icon
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...iconProps}
-              color={isDefined(color) ? theme.color[color] : iconProps.color}
-            />
-          )}
-          onClick={onSelect}
-        />
-      </SelectableListItem>
-    </StyledMatrixItem>
-  );
-};
 
 export const IconPicker = ({
   disabled,
   dropdownId = 'icon-picker',
   onChange,
   selectedIconKey,
-  onClickOutside,
   onClose,
   onOpen,
-  variant = 'secondary',
+  variant = 'outline',
   className,
-  size = 'medium',
+  size = 'md',
   clickableComponent,
-  dropdownWidth,
-  dropdownOffset,
-  maxIconsVisible,
+  dropdownWidth = ICON_PICKER_DROPDOWN_CONTENT_WIDTH,
+  dropdownSideOffset,
+  maxIconsVisible = ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconColorPicker,
+  iconColor,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
-
-  const [isMouseInsideIconList, setIsMouseInsideIconList] = useState(false);
-
-  const handleMouseEnter = () => {
-    if (!isMouseInsideIconList) {
-      setIsMouseInsideIconList(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (isMouseInsideIconList) {
-      setIsMouseInsideIconList(false);
-    }
-  };
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const store = useStore();
-
-  const iconPickerVisibleCount =
-    useAtomFamilyStateValue(iconPickerVisibleCountState, dropdownId) ??
-    maxIconsVisible;
-
-  const resetIconPickerVisibleCount = useCallback(() => {
-    store.set(
-      iconPickerVisibleCountState.atomFamily(dropdownId),
-      ICON_PICKER_DEFAULT_VISIBLE_COUNT,
-    );
-  }, [store, dropdownId]);
-
+  const [visibleCount, setVisibleCount] = useAtomFamilyState(
+    iconPickerVisibleCountState,
+    dropdownId,
+  );
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
+  const matchingIconKeys = useMemo(() => {
+    if (!isDefined(icons)) {
+      return [];
+    }
 
-  const totalMatchingIconsCount = useMemo(() => {
-    if (!isDefined(icons)) return 0;
-
-    return Object.keys(icons).filter((iconKey) => {
-      const iconLabel = convertIconKeyToLabel(iconKey)
-        .toLowerCase()
-        .replace('icon ', '')
-        .replace(/\s/g, '');
-
-      const searchLower = searchString.toLowerCase().trim().replace(/\s/g, '');
-
-      return (
-        iconKey === searchLower ||
-        iconLabel === searchLower ||
-        iconKey.startsWith(searchLower) ||
-        iconLabel.startsWith(searchLower) ||
-        iconKey.includes(searchLower) ||
-        iconLabel.includes(searchLower)
-      );
-    }).length;
-  }, [icons, searchString]);
-
-  const matchingSearchIconKeys = useMemo(() => {
-    if (icons == null) return [];
-    const scoreIconMatch = (iconKey: string, searchString: string) => {
-      const iconLabel = convertIconKeyToLabel(iconKey)
-        .toLowerCase()
-        .replace('icon ', '')
-        .replace(/\s/g, '');
-
-      const searchLower = searchString
-        .toLowerCase()
-        .trimEnd()
-        .replace(/\s/g, '');
-
-      if (iconKey === searchString || iconLabel === searchString) return 100;
-      if (iconKey.startsWith(searchLower) || iconLabel.startsWith(searchLower))
-        return 75;
-      if (iconKey.includes(searchLower) || iconLabel.includes(searchLower))
-        return 50;
-
-      return 0;
-    };
-    const scoredIcons = Object.keys(icons).map((iconKey) => ({
-      iconKey,
-      score: scoreIconMatch(iconKey, searchString),
-    }));
-
-    const filteredAndSortedIconKeys = scoredIcons
+    const matchingIcons = Object.keys(icons)
+      .map((iconKey) => ({
+        iconKey,
+        score: getIconPickerSearchScore({ iconKey, search: searchString }),
+      }))
       .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort((first, second) => second.score - first.score)
       .map(({ iconKey }) => iconKey);
 
-    const isSelectedIconMatchingFilter =
-      isDefined(selectedIconKey) &&
-      filteredAndSortedIconKeys.includes(selectedIconKey);
+    if (
+      !isDefined(selectedIconKey) ||
+      !matchingIcons.includes(selectedIconKey)
+    ) {
+      return matchingIcons;
+    }
 
-    return isSelectedIconMatchingFilter
-      ? [
-          selectedIconKey,
-          ...filteredAndSortedIconKeys.filter(
-            (iconKey) => iconKey !== selectedIconKey,
-          ),
-        ].slice(0, iconPickerVisibleCount)
-      : filteredAndSortedIconKeys.slice(0, iconPickerVisibleCount);
-  }, [icons, searchString, selectedIconKey, iconPickerVisibleCount]);
-
-  const iconKeys2d = useMemo(
-    () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
-    [matchingSearchIconKeys],
+    return [
+      selectedIconKey,
+      ...matchingIcons.filter((iconKey) => iconKey !== selectedIconKey),
+    ];
+  }, [icons, searchString, selectedIconKey]);
+  const visibleIconKeys = matchingIconKeys.slice(0, visibleCount);
+  const isLoadingMore = visibleCount < matchingIconKeys.length;
+  const columns = Math.max(
+    1,
+    Math.floor(
+      (dropdownWidth - ICON_GRID_PADDING + ICON_GRID_GAP) /
+        (ICON_CELL_WIDTH + ICON_GRID_GAP),
+    ),
   );
-
-  const { theme } = useContext(ThemeContext);
-
-  const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
-
-  const displayIcon: IconComponent = !isDefined(iconColorPicker)
-    ? BaseIcon
-    : (iconProps) => (
-        <BaseIcon
-          className={iconProps.className}
-          color={theme.color[iconColorPicker.selectedColor]}
-          size={iconProps.size}
-          stroke={iconProps.stroke}
-          style={iconProps.style}
-        />
-      );
-
-  const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
-
-  const selectableListInstanceId = 'icon-list';
-
-  const focusedIconKey =
-    useAtomComponentStateValue(
-      selectedItemIdComponentState,
-      selectableListInstanceId,
-    ) ?? undefined;
-
-  const isLoadingMore =
-    iconPickerVisibleCount !== undefined &&
-    iconPickerVisibleCount < totalMatchingIconsCount;
-
-  const iconAriaLabel = selectedIconKey
+  const DisplayIcon = isNonEmptyString(selectedIconKey)
+    ? getIcon(selectedIconKey)
+    : IconApps;
+  const selectedColor = iconColorPicker?.selectedColor ?? iconColor;
+  const displayColor = isDefined(selectedColor)
+    ? getIconTileColorShades(selectedColor).iconColor
+    : undefined;
+  const iconAriaLabel = isNonEmptyString(selectedIconKey)
     ? t`(selected: ${selectedIconKey})`
     : t`(no icon selected)`;
+  const colorDropdownId = `${dropdownId}-icon-color-picker`;
 
   return (
     <div className={className}>
-      <Dropdown
+      <DropdownRoot
         dropdownId={dropdownId}
-        dropdownOffset={dropdownOffset}
-        excludedClickOutsideIds={
-          isDefined(iconColorPicker) ? [iconColorPickerDropdownId] : undefined
-        }
-        clickableComponent={
-          clickableComponent ?? (
-            <IconButton
-              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
-              disabled={disabled}
-              Icon={displayIcon}
-              variant={variant}
-              size={size}
-            />
-          )
-        }
-        dropdownComponents={
-          <ScrollWrapper componentInstanceId="icon-picker-scroll">
-            <DropdownContent
-              widthInPixels={
-                dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
-              }
-            >
-              <SelectableList
-                selectableListInstanceId={selectableListInstanceId}
-                selectableItemIdMatrix={iconKeys2d}
-                focusId={dropdownId}
-              >
-                <IconPickerSearchRow
-                  closeDropdown={closeDropdown}
-                  dropdownWidth={dropdownWidth}
-                  iconColorPicker={iconColorPicker}
-                  iconColorPickerDropdownId={iconColorPickerDropdownId}
-                  onSearchChange={setSearchString}
-                />
-                <DropdownMenuSeparator />
-                <div
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <DropdownMenuItemsContainer hasMaxHeight>
-                    <StyledMenuIconItemsContainer>
-                      {matchingSearchIconKeys.map((iconKey) => (
-                        <IconPickerIcon
-                          key={iconKey}
-                          iconKey={iconKey}
-                          onSelect={() => {
-                            onChange({ iconKey, Icon: getIcon(iconKey) });
-                            closeDropdown(dropdownId);
-                          }}
-                          selectedIconKey={selectedIconKey}
-                          Icon={getIcon(iconKey)}
-                          focusedIconKey={focusedIconKey}
-                          color={iconColorPicker?.selectedColor}
-                        />
-                      ))}
-                    </StyledMenuIconItemsContainer>
-                    <IconPickerScrollEffect
-                      sentinelId="icon-picker-scroll-sentinel"
-                      dropdownId={dropdownId}
-                    />
-                    <StyledLoadingMore id="icon-picker-scroll-sentinel">
-                      {isLoadingMore ? t`Loading more...` : null}
-                    </StyledLoadingMore>
-                  </DropdownMenuItemsContainer>
-                </div>
-              </SelectableList>
-            </DropdownContent>
-          </ScrollWrapper>
-        }
-        onClickOutside={onClickOutside}
-        onClose={() => {
-          onClose?.();
+        type="picker"
+        onOpenChange={(open) => {
+          if (!open) {
+            onClose?.();
+            return;
+          }
+
           setSearchString('');
-          resetIconPickerVisibleCount();
+          setVisibleCount(maxIconsVisible);
+          onOpen?.();
         }}
-        onOpen={onOpen}
-      />
+      >
+        <Dropdown.Trigger
+          disabled={disabled}
+          nativeButton={!isDefined(clickableComponent)}
+          render={
+            clickableComponent ?? (
+              <IconButton
+                aria-label={t`Click to select icon ${iconAriaLabel}`}
+                variant={variant}
+                size={size}
+              >
+                <DisplayIcon color={displayColor} />
+              </IconButton>
+            )
+          }
+        />
+        <DropdownContent
+          aria-label={t`Choose icon`}
+          align="end"
+          width={dropdownWidth}
+          sideOffset={dropdownSideOffset}
+        >
+          <StyledPopupContent data-click-outside-id={dropdownId}>
+            <StyledSearchRow>
+              <Dropdown.Search
+                aria-label={t`Search icon`}
+                placeholder={t`Search icon`}
+                value={searchString}
+                onValueChange={setSearchString}
+              />
+              {isDefined(iconColorPicker) && (
+                <DropdownRoot dropdownId={colorDropdownId} type="picker">
+                  <Dropdown.Trigger
+                    render={
+                      <LightIconButton aria-label={t`Choose icon color`}>
+                        <ColorSample
+                          colorName={iconColorPicker.selectedColor}
+                          variant="circle"
+                        />
+                      </LightIconButton>
+                    }
+                  />
+                  <DropdownContent
+                    side="right"
+                    align="start"
+                    sideOffset={-24}
+                    alignOffset={24}
+                    width={dropdownWidth}
+                  >
+                    <StyledPopupContent data-click-outside-id={colorDropdownId}>
+                      <ThemeColorPickerMenu
+                        selectedColor={iconColorPicker.selectedColor}
+                        onSelectColor={iconColorPicker.onColorChange}
+                      />
+                    </StyledPopupContent>
+                  </DropdownContent>
+                </DropdownRoot>
+              )}
+            </StyledSearchRow>
+            <Dropdown.Separator />
+            <Dropdown.Section
+              scrollable
+              ref={scrollContainerRef}
+              aria-label={t`Icons`}
+            >
+              <Dropdown.Section columns={columns}>
+                {visibleIconKeys.map((iconKey) => {
+                  const Icon = getIcon(iconKey);
+
+                  return (
+                    <Dropdown.OptionItem
+                      key={iconKey}
+                      aria-label={getIconPickerLabel(iconKey)}
+                      title={iconKey}
+                      selected={iconKey === selectedIconKey}
+                      indicator="none"
+                      nativeButton
+                      className={iconButtonStyles}
+                      render={
+                        <LightIconButton
+                          size="md"
+                          aria-label={getIconPickerLabel(iconKey)}
+                        >
+                          <Icon color={displayColor} />
+                        </LightIconButton>
+                      }
+                      onSelect={() => onChange({ iconKey, Icon })}
+                    />
+                  );
+                })}
+              </Dropdown.Section>
+              <div ref={sentinelRef}>
+                {isLoadingMore && (
+                  <Dropdown.Loading>{t`Loading more...`}</Dropdown.Loading>
+                )}
+              </div>
+              <IconPickerScrollEffect
+                dropdownId={dropdownId}
+                sentinelRef={sentinelRef}
+                scrollContainerRef={scrollContainerRef}
+                enabled={isLoadingMore}
+              />
+            </Dropdown.Section>
+          </StyledPopupContent>
+        </DropdownContent>
+      </DropdownRoot>
     </div>
   );
 };

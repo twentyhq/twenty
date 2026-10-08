@@ -1,0 +1,64 @@
+.banner {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  font-family: Inter;
+  font-size: var(--t-font-size-md);
+  font-style: normal;
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-3);
+  justify-content: center;
+  line-height: 150%;
+  min-height: 40px;
+  padding: var(--t-spacing-2);
+  width: 100%;
+
+  &[data-color='gray'] {
+    --banner-solid-background: var(--t-color-gray);
+    --banner-soft-background: var(--t-background-transparent-secondary);
+    --banner-soft-color: var(--t-font-color-primary);
+  }
+
+  &[data-color='blue'] {
+    --banner-solid-background: var(--t-color-blue);
+    --banner-soft-background: var(--t-background-transparent-blue);
+    --banner-soft-color: var(--t-color-blue);
+  }
+
+  &[data-color='green'] {
+    --banner-solid-background: var(--t-color-green);
+    --banner-soft-background: var(--t-background-transparent-success);
+    --banner-soft-color: var(--t-color-green);
+  }
+
+  &[data-color='orange'] {
+    --banner-solid-background: var(--t-color-orange);
+    --banner-soft-background: var(--t-background-transparent-orange);
+    --banner-soft-color: var(--t-color-orange);
+  }
+
+  &[data-color='red'] {
+    --banner-solid-background: var(--t-color-red);
+    --banner-soft-background: var(--t-background-transparent-danger);
+    --banner-soft-color: var(--t-color-red);
+  }
+
+  &[data-variant='solid'] {
+    backdrop-filter: blur(5px);
+    background: var(--banner-solid-background);
+    color: var(--t-font-color-inverted);
+  }
+
+  &[data-variant='soft'] {
+    backdrop-filter: none;
+    background: var(--banner-soft-background);
+    color: var(--banner-soft-color);
+  }
+}
+
+.icon,
+.action {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+}

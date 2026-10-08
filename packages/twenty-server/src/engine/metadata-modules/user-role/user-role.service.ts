@@ -2,9 +2,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -12,8 +13,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -27,23 +29,85 @@ export class UserRoleService {
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly roleValidationService: RoleValidationService,
   ) {}
+
+  public async assignRoleToWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+    roleId,
+    actingUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    roleId: string;
+    actingUserWorkspaceId?: string;
+  }): Promise<{
+    workspaceMember: WorkspaceMemberWorkspaceEntity;
+    userWorkspaceId: string;
+  }> {
+    const workspaceMember = await this.getWorkspaceMemberByIdOrThrow({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId: workspaceMember.userId,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.USER_WORKSPACE_NOT_FOUND,
+        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    // Before role validation so a self-assignment reports the self-role error even for an unknown role
+    this.validateNotSelfAssignmentOrThrow({
+      userWorkspaceIds: [userWorkspace.id],
+      actingUserWorkspaceId,
+    });
+
+    await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+      roleId,
+      workspaceId,
+    );
+
+    await this.assignRoleToManyUserWorkspace({
+      workspaceId,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId,
+      actingUserWorkspaceId,
+    });
+
+    return { workspaceMember, userWorkspaceId: userWorkspace.id };
+  }
 
   public async assignRoleToManyUserWorkspace({
     workspaceId,
     userWorkspaceIds,
     roleId,
+    actingUserWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceIds: string[];
     roleId: string;
+    actingUserWorkspaceId?: string;
   }): Promise<void> {
     if (userWorkspaceIds.length === 0) {
       return;
     }
+
+    this.validateNotSelfAssignmentOrThrow({
+      userWorkspaceIds,
+      actingUserWorkspaceId,
+    });
 
     const userWorkspaceIdsToAssign =
       await this.validateAssignRoleInputsAndGetUserWorkspaceIdsToAssign({
@@ -140,41 +204,79 @@ export class UserRoleService {
   public async getWorkspaceMembersAssignedToRole(
     roleId: string,
     workspaceId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
+  ): Promise<FlatWorkspaceMember[]> {
     const userWorkspaceIdsWithRole =
       await this.getUserWorkspaceIdsAssignedToRole(roleId, workspaceId);
 
-    const userIds = await this.userWorkspaceRepository
-      .find({
-        where: {
-          id: In(userWorkspaceIdsWithRole),
-        },
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return userWorkspaceIdsWithRole
+      .map((userWorkspaceId) => {
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
+
+        return isDefined(workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+          : undefined;
       })
-      .then((userWorkspaces) =>
-        userWorkspaces.map((userWorkspace) => userWorkspace.userId),
+      .filter(isDefined);
+  }
+
+  private validateNotSelfAssignmentOrThrow({
+    userWorkspaceIds,
+    actingUserWorkspaceId,
+  }: {
+    userWorkspaceIds: string[];
+    actingUserWorkspaceId?: string;
+  }): void {
+    if (
+      isDefined(actingUserWorkspaceId) &&
+      userWorkspaceIds.includes(actingUserWorkspaceId)
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
+        PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
+        {
+          userFriendlyMessage: msg`You cannot change your own role. Please ask another administrator to update your role.`,
+        },
       );
+    }
+  }
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+  private async getWorkspaceMemberByIdOrThrow({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceMemberWorkspaceEntity> {
+    const authContext = buildSystemAuthContext(workspaceId);
 
-        const workspaceMembers = await workspaceMemberRepository.find({
-          where: {
-            userId: In(userIds),
-          },
-        });
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        return workspaceMembers;
-      },
-      authContext,
-    );
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: {
+          id: workspaceMemberId,
+        },
+      });
+
+      if (!isDefined(workspaceMember)) {
+        throw new PermissionsException(
+          'Workspace member not found',
+          PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
+        );
+      }
+
+      return workspaceMember;
+    }, authContext);
   }
 
   public async getUserWorkspaceIdsAssignedToRole(
@@ -315,5 +417,53 @@ export class UserRoleService {
         },
       );
     }
+  }
+
+  async resolveCustodianUserWorkspace({
+    removedUserWorkspace,
+    actingUserWorkspaceId,
+  }: {
+    removedUserWorkspace: UserWorkspaceEntity;
+    actingUserWorkspaceId?: string;
+  }): Promise<UserWorkspaceEntity | undefined> {
+    const otherUserWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId: removedUserWorkspace.workspaceId,
+        id: Not(removedUserWorkspace.id),
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    if (otherUserWorkspaces.length === 0) {
+      return undefined;
+    }
+
+    const actingUserWorkspace = otherUserWorkspaces.find(
+      (otherUserWorkspace) => otherUserWorkspace.id === actingUserWorkspaceId,
+    );
+
+    if (isDefined(actingUserWorkspace)) {
+      return actingUserWorkspace;
+    }
+
+    const rolesByUserWorkspaceId = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: otherUserWorkspaces.map(
+        (otherUserWorkspace) => otherUserWorkspace.id,
+      ),
+      workspaceId: removedUserWorkspace.workspaceId,
+    });
+
+    const oldestAdminUserWorkspace = otherUserWorkspaces.find(
+      (otherUserWorkspace) =>
+        rolesByUserWorkspaceId
+          .get(otherUserWorkspace.id)
+          ?.some(
+            (role) =>
+              role.universalIdentifier ===
+              STANDARD_ROLE.admin.universalIdentifier,
+          ),
+    );
+
+    return oldestAdminUserWorkspace ?? otherUserWorkspaces[0];
   }
 }

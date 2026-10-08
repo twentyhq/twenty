@@ -15,12 +15,12 @@ export const QueryParamsCleanupEffect = () => {
 
   const [hasCleanedQueryParams, setHasCleanedQueryParams] = useState(false);
 
-  const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+  const currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {
     if (
-      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem ||
+      currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem ||
       hasCleanedQueryParams
     ) {
       return;
@@ -35,6 +35,7 @@ export const QueryParamsCleanupEffect = () => {
     Array.from(newParams.keys()).forEach((key) => {
       if (
         key.startsWith('filter[') ||
+        key.startsWith('filterDisplayValue[') ||
         key.startsWith('filterGroup[') ||
         key.startsWith('sort[')
       ) {
@@ -45,7 +46,7 @@ export const QueryParamsCleanupEffect = () => {
     setSearchParams(newParams, { replace: true });
     setHasCleanedQueryParams(true);
   }, [
-    currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
+    currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem,
     hasFiltersQueryParams,
     hasSortsQueryParams,
     hasCleanedQueryParams,

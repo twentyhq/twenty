@@ -4,11 +4,11 @@ import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectReco
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
@@ -59,22 +59,22 @@ export const UpdateMultipleRecordsFooter = ({
     <StyledFooterContainer>
       <StyledFooterActions>
         <Button
-          title={t`Cancel`}
-          variant="secondary"
-          size="small"
+          size="sm"
           onClick={onCancel}
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
         <Button
-          title={isUpdating ? t`Apply${progressText}` : t`Apply`}
-          variant="primary"
-          accent="blue"
-          size="small"
-          Icon={IconBoxMultiple}
-          isLoading={isUpdating && !progressText}
-          hotkeys={isUpdating ? undefined : ['⌘', '⏎']}
+          size="sm"
+          startIcon={<IconBoxMultiple />}
+          loading={isUpdating && !progressText}
+          shortcut={isUpdating ? undefined : ['Mod', 'Enter']}
           onClick={onUpdate}
           disabled={isUpdating || isUpdateDisabled}
-        />
+          variant="solid"
+          color="accent"
+        >
+          {isUpdating ? t`Apply${progressText}` : t`Apply`}
+        </Button>
       </StyledFooterActions>
     </StyledFooterContainer>
   );

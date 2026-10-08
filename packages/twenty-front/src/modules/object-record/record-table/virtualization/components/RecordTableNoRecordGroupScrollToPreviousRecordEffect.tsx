@@ -7,12 +7,17 @@ import { useTriggerFetchPages } from '@/object-record/record-table/virtualizatio
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const store = useStore();
+
+  const lastShowPageRecordIdAtom = useAtomComponentStateCallbackState(
+    lastShowPageRecordIdState,
+  );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
@@ -32,16 +37,15 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
   useEffect(() => {
-    // Read directly from the Jotai store to avoid stale values from useAtom's
-    // internal useReducer, which can desync under high-frequency store updates.
-    const lastShowPageRecordId = store.get(lastShowPageRecordIdState.atom);
+    // Read from the store directly: useAtom's useReducer can desync under high-frequency updates.
+    const lastShowPageRecordId = store.get(lastShowPageRecordIdAtom);
 
     if (!isNonEmptyString(lastShowPageRecordId)) {
       return;
     }
 
     const run = async () => {
-      store.set(lastShowPageRecordIdState.atom, null);
+      store.set(lastShowPageRecordIdAtom, null);
 
       const recordPosition = allRecordIds.findIndex(
         (recordId) => recordId === lastShowPageRecordId,
@@ -85,6 +89,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     run();
   }, [
     store,
+    lastShowPageRecordIdAtom,
     hasInitializedScroll,
     scrollTableToPosition,
     allRecordIds,

@@ -5,7 +5,7 @@ exports[`computeSchemaComponents Float without decimals 1`] = `
   "ObjectName": {
     "description": undefined,
     "example": {
-      "number2": 692.1852368365229,
+      "number2": 312.53387874865376,
     },
     "properties": {
       "number2": {
@@ -29,7 +29,7 @@ exports[`computeSchemaComponents Float without decimals 1`] = `
   "ObjectNameForUpdate": {
     "description": undefined,
     "example": {
-      "number2": 316.2001153750569,
+      "number2": 312.53387874865376,
     },
     "properties": {
       "number2": {
@@ -46,7 +46,7 @@ exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
   "ObjectName": {
     "description": undefined,
     "example": {
-      "number1": 957.9316406203515,
+      "number1": 420.981408197018,
     },
     "properties": {
       "number1": {
@@ -70,7 +70,7 @@ exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
   "ObjectNameForUpdate": {
     "description": undefined,
     "example": {
-      "number1": 533.6321196880441,
+      "number1": 420.981408197018,
     },
     "properties": {
       "number1": {
@@ -87,7 +87,7 @@ exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
   "ObjectName": {
     "description": undefined,
     "example": {
-      "number3": 686.8144267539021,
+      "number3": 240.28247834791884,
     },
     "properties": {
       "number3": {
@@ -111,7 +111,7 @@ exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
   "ObjectNameForUpdate": {
     "description": undefined,
     "example": {
-      "number3": 834.7910462254755,
+      "number3": 240.28247834791884,
     },
     "properties": {
       "number3": {

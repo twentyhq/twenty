@@ -1,5 +1,5 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
@@ -7,23 +7,23 @@ import {
   type RecordId,
   type Variable,
 } from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useId } from 'react';
+import { useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -94,7 +94,7 @@ export const FormSingleRecordPicker = ({
   VariablePicker,
   shouldDisplayRecordFieldsInVariablePicker = false,
 }: FormSingleRecordPickerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const resolvedObjectNameSingular =
     selectedObjectNameSingular ?? objectNameSingulars[0];
@@ -197,7 +197,7 @@ export const FormSingleRecordPicker = ({
 
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
       <FormFieldInputRowContainer>
         {disabled ? (
           <StyledFormSelectContainerWrapper readonly>

@@ -6,7 +6,7 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { type PageLayoutTabMoreButtonDropData } from '@/page-layout/types/PageLayoutTabMoreButtonDropData';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type PageLayoutTabListDroppableMoreButtonProps = {
   hiddenTabsCount: number;
@@ -44,6 +44,7 @@ export const PageLayoutTabListDroppableMoreButton = ({
         <TabMoreButton
           hiddenTabsCount={hiddenTabsCount}
           active={isActiveTabHidden}
+          isDropdownTrigger
         />
       </StyledTabMoreButtonWrapper>
     </div>

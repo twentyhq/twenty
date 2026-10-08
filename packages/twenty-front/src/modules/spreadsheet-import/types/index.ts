@@ -1,5 +1,3 @@
-// Import all types we need for re-export or alias
-
 export type { SpreadsheetImportDialogOptions } from './SpreadsheetImportDialogOptions';
 export type { SpreadsheetImportErrorLevel } from './SpreadsheetImportErrorLevel';
 export type { SpreadsheetImportField } from './SpreadsheetImportField';

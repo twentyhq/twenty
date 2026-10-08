@@ -14,7 +14,7 @@ import { buildRecordingStatusBadge } from 'src/logic-functions/domain/build-reco
 
 const JPEG_QUALITY_STEP = 10;
 
-type SharpFactory = typeof import('sharp');
+type SharpFactory = typeof import('sharp').default;
 
 export const buildBotImage = async ({
   logoBuffer,

@@ -5,25 +5,10 @@ import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-quer
 import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
 import { WorkspaceQueryHookExplorer } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.explorer';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { BlocklistQueryHookModule } from 'src/modules/blocklist/query-hooks/blocklist-query-hook.module';
-import { CalendarQueryHookModule } from 'src/modules/calendar/common/query-hooks/calendar-query-hook.module';
-import { DashboardQueryHookModule } from 'src/modules/dashboard/query-hooks/dashboard-query-hook.module';
-import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hooks/messaging-query-hook.module';
-import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
-import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
-import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
+import { AgentChatThreadQueryHookModule } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/agent-chat-thread-query-hook.module';
 
 @Module({
-  imports: [
-    MessagingQueryHookModule,
-    CalendarQueryHookModule,
-    DashboardQueryHookModule,
-    BlocklistQueryHookModule,
-    WorkspaceMemberQueryHookModule,
-    NoteQueryHookModule,
-    TaskQueryHookModule,
-    DiscoveryModule,
-  ],
+  imports: [AgentChatThreadQueryHookModule, DiscoveryModule],
   providers: [
     WorkspaceQueryHookService,
     WorkspaceQueryHookExplorer,

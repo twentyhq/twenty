@@ -6,8 +6,7 @@ import { type AxisLayerConfig } from '@/page-layout/widgets/graph/chart-core/typ
 import { getAxisLayerLayout } from '@/page-layout/widgets/graph/chart-core/utils/getAxisLayerLayout';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type AxisLayerProps = {
   bottomAxisTickRotation: number;
@@ -54,7 +53,7 @@ export const AxisLayer = ({
   yAxisLabel,
   axisConfig,
 }: AxisLayerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const tickFontSize = axisConfig.tickFontSize;
   const legendFontSize = axisConfig.legendFontSize;

@@ -1,10 +1,13 @@
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
+
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
@@ -13,11 +16,13 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
 
 @Module({
   imports: [
+    WorkflowVersionCoreModule,
+    WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
-    CacheStorageModule,
     CronModule,
+    RecordShareModule,
     WorkflowCommonModule,
-    WorkspaceDataSourceModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     AutomatedTriggerWorkspaceService,

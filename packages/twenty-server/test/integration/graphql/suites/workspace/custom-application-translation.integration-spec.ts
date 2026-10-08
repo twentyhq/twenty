@@ -12,7 +12,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { generateMessageId } from 'twenty-shared/i18n';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -78,9 +78,7 @@ describe('custom application translation resolve path', () => {
   });
 
   it('translates a custom object label from the application translation catalog, and falls back to the source label otherwise', async () => {
-    // A fresh workspace guarantees its Custom application registration has never
-    // had its translation catalog loaded, so the seeded row below is read
-    // straight from the database rather than from a warm (empty) cache.
+    // A fresh workspace ensures the catalog is read from the database, not a warm empty cache.
     const uniqueEmail = `test-custom-translation-${randomUUID()}@example.com`;
 
     const { data: signUpData } = await signUp({
@@ -145,9 +143,14 @@ describe('custom application translation resolve path', () => {
     expect(applicationRegistrationId).toEqual(expect.any(String));
 
     const messages = {
-      [generateMessageId(SOURCE_LABEL_SINGULAR)]: TRANSLATED_LABEL_SINGULAR,
-      [generateMessageId(SOURCE_LABEL_PLURAL)]: TRANSLATED_LABEL_PLURAL,
-      [generateMessageId(SOURCE_DESCRIPTION)]: TRANSLATED_DESCRIPTION,
+      [generateMessageId(
+        SOURCE_LABEL_SINGULAR,
+        'objectMetadata.labelSingular',
+      )]: TRANSLATED_LABEL_SINGULAR,
+      [generateMessageId(SOURCE_LABEL_PLURAL, 'objectMetadata.labelPlural')]:
+        TRANSLATED_LABEL_PLURAL,
+      [generateMessageId(SOURCE_DESCRIPTION, 'objectMetadata.description')]:
+        TRANSLATED_DESCRIPTION,
     };
 
     await testDataSource.query(

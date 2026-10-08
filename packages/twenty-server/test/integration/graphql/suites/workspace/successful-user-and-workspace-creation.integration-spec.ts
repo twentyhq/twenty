@@ -106,7 +106,7 @@ describe('Successful user and workspace creation', () => {
     });
 
     expect(currentUserAfterSyncEmailSkip.onboardingStatus).toBe(
-      OnboardingStatus.APPS_INSTALLATION,
+      OnboardingStatus.PROFILE_CREATION,
     );
 
     const {
@@ -391,7 +391,6 @@ describe('Successful user and workspace creation', () => {
       expectToFail: false,
     });
 
-    // Create a logic function for workspace deletion test
     await createOneLogicFunction({
       input: {
         name: 'test-function-for-deletion',

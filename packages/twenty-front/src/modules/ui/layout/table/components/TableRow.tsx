@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTableRow = styled.div<{
   isSelected?: boolean;
@@ -60,6 +60,10 @@ type TableRowProps = {
   isExpanded?: boolean;
   isClickable?: boolean;
   onClick?: () => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
+  role?: React.AriaRole;
+  tabIndex?: number;
+  ariaExpanded?: boolean;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
   to?: string;
@@ -79,6 +83,10 @@ export const TableRow = ({
   isExpanded,
   isClickable,
   onClick,
+  onKeyDown,
+  role,
+  tabIndex,
+  ariaExpanded,
   onMouseEnter,
   onMouseLeave,
   to,
@@ -97,6 +105,10 @@ export const TableRow = ({
     isSelected={isSelected}
     isExpanded={isExpanded}
     onClick={onClick}
+    onKeyDown={onKeyDown}
+    role={role}
+    tabIndex={tabIndex}
+    aria-expanded={ariaExpanded}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
     gridAutoColumns={gridAutoColumns}
@@ -104,6 +116,7 @@ export const TableRow = ({
     className={className}
     style={style}
     data-clickable={isClickable}
+    data-expanded={isExpanded || undefined}
     data-table-row
     mobileGridAutoColumns={mobileGridAutoColumns}
     height={height}

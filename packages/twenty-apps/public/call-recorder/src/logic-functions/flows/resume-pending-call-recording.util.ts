@@ -17,9 +17,6 @@ export type ResumePendingCallRecordingResult =
   | { status: 'skipped'; reason: string }
   | { status: 'deferred'; reason: string };
 
-// Single-recording variant of the recovery sweep: finishes bot scheduling for
-// one row that transitioned back to pending. Deferred outcomes are retried by
-// the queue and ultimately by the recovery cron.
 export const resumePendingCallRecording = async ({
   client,
   callRecordingId,
@@ -65,7 +62,7 @@ export const resumePendingCallRecording = async ({
       now,
     })
   ) {
-    // The recovery cron owns failing rows whose meeting is over.
+    // The follow-up owns failing rows whose meeting is over.
     return { status: 'skipped', reason: 'meeting already ended' };
   }
 
@@ -80,12 +77,9 @@ export const resumePendingCallRecording = async ({
     return scheduleBot({ client, callRecording, calendarEvent });
   }
 
-  // Ambiguous attempts need a Recall bot lookup; doing one per event could
-  // burst past the shared list budget, so the recovery cron owns them and
-  // amortizes a single lookup across all ambiguous rows.
   return {
     status: 'deferred',
-    reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
+    reason: 'ambiguous prior attempt; the follow-up will look it up at Recall',
   };
 };
 
@@ -98,15 +92,19 @@ const scheduleBot = async ({
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord;
 }): Promise<ResumePendingCallRecordingResult> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
-    client,
-    {
-      callRecording,
-      calendarEvent,
-    },
-  );
+  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
+    callRecording,
+    calendarEvent,
+  });
 
-  return didScheduleRecallBot
-    ? { status: 'scheduled' }
-    : { status: 'deferred', reason: 'Recall bot scheduling failed' };
+  switch (scheduleResult.status) {
+    case 'scheduled':
+      return { status: 'scheduled' };
+    case 'blocked':
+      return { status: 'skipped', reason: scheduleResult.failureReason };
+    case 'skipped':
+      return { status: 'skipped', reason: scheduleResult.reason };
+    case 'failed':
+      return { status: 'deferred', reason: 'Recall bot scheduling failed' };
+  }
 };

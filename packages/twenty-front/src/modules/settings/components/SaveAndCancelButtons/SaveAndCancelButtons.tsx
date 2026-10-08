@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import type { IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CancelButton } from './CancelButton';
 import { SaveButton } from './SaveButton';

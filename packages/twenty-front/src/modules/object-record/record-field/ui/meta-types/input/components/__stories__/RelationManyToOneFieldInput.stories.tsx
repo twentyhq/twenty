@@ -9,28 +9,28 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const personMetadata = getMockObjectMetadataItemOrThrow('person');
 const companyMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -149,7 +149,7 @@ const meta: Meta = {
     MemoryRouterDecorator,
     clearMocksDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: {
     clearMocks: true,

@@ -1,3 +1,9 @@
+import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -6,12 +12,11 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/constants/PlaceholderRecordIndexId';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const DeleteRecordsCommand = () => {
+const DeleteWorkspaceRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
@@ -21,7 +26,7 @@ export const DeleteRecordsCommand = () => {
 
   const recordId = selectedRecords[0]?.id;
 
-  const { resetTableRowSelection } = useResetTableRowSelection(
+  const { resetRecordSelection } = useResetRecordSelection(
     recordIndexId ?? PLACEHOLDER_RECORD_INDEX_ID,
   );
 
@@ -50,7 +55,7 @@ export const DeleteRecordsCommand = () => {
   const handleExecute = async () => {
     if (isDefined(recordIndexId)) {
       removeSelectedRecordsFromRecordBoard();
-      resetTableRowSelection();
+      resetRecordSelection();
     }
     closeSidePanelMenu();
 
@@ -73,4 +78,15 @@ export const DeleteRecordsCommand = () => {
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+};
+
+export const DeleteRecordsCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
+  const { objectMetadataItem } = useHeadlessCommandContextApi();
+  return isCore &&
+    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Workflow ? (
+    <DeleteCoreWorkflowsCommand />
+  ) : (
+    <DeleteWorkspaceRecordsCommand />
+  );
 };

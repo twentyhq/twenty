@@ -6,11 +6,6 @@ import {
 } from '@nestjs/graphql';
 
 import {
-  Authorize,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
-import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -37,20 +32,10 @@ registerEnumType(LogicFunctionExecutionMode, {
 });
 
 @ObjectType('LogicFunction')
-@Authorize({
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  maxResultsSize: 1000,
-})
 export class LogicFunctionDTO {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsString()

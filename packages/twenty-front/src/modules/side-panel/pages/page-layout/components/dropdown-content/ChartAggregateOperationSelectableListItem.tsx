@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
@@ -13,7 +13,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const isExtendedAggregateOperation = (
   operation: AggregateChartOperation,
@@ -30,7 +30,7 @@ export const ChartAggregateOperationSelectableListItem = ({
   label: string;
   currentFieldMetadataId: string;
 }) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -81,12 +81,16 @@ export const ChartAggregateOperationSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={operation} onEnter={handleClick}>
-      <MenuItemSelect
-        text={label}
-        selected={isSelected}
+      <ListItem
         focused={isFocused}
         onClick={handleClick}
-      />
+        role="option"
+        aria-selected={isSelected}
+        selected={isSelected}
+        indicator="check"
+      >
+        {label}
+      </ListItem>
     </SelectableListItem>
   );
 };

@@ -1,30 +1,31 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { type ReadonlyDeep } from 'type-fest';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { MatchColumnSelectFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent';
 import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown, MenuItem } from 'twenty-ui/components/navigation';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-interface MatchColumnToFieldSelectProps {
+type MatchColumnToFieldSelectProps = {
   columnIndex: string;
-  onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
+  onChange: (value: ReadonlyDeep<SelectOption>) => void;
   value?: ReadonlyDeep<SelectOption>;
   options: readonly Readonly<SpreadsheetImportFieldOption>[];
   suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
-}
+};
 
 const StyledMenuItemContainer = styled.div`
   > div {
@@ -34,12 +35,6 @@ const StyledMenuItemContainer = styled.div`
   }
 `;
 
-const StyledMenuItem = (props: React.ComponentProps<typeof MenuItem>) => (
-  <StyledMenuItemContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <MenuItem {...props} />
-  </StyledMenuItemContainer>
-);
 export const MatchColumnToFieldSelect = ({
   onChange,
   value,
@@ -48,8 +43,8 @@ export const MatchColumnToFieldSelect = ({
   placeholder,
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
+  const { t } = useLingui();
   const dropdownId = `match-column-select-dropdown-${columnIndex}`;
-  const { closeDropdown } = useCloseDropdown();
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
 
@@ -58,103 +53,82 @@ export const MatchColumnToFieldSelect = ({
   );
 
   const handleFieldMetadataItemSelect = (
-    selectedFieldMetadataItem: FieldMetadataItem,
+    fieldMetadataItem: FieldMetadataItem,
   ) => {
-    setSelectedFieldMetadataItem(selectedFieldMetadataItem);
-
-    if (!isCompositeFieldType(selectedFieldMetadataItem.type)) {
-      const correspondingOption = options.find(
-        (option) => option.value === selectedFieldMetadataItem.name,
-      );
-
-      if (isDefined(correspondingOption)) {
-        setSelectedFieldMetadataItem(null);
-        onChange(correspondingOption);
-        closeDropdown(dropdownId);
-      }
-    }
-  };
-
-  const handleSubFieldSelect = (subFieldNameSelected: string) => {
-    if (!isDefined(selectedFieldMetadataItem)) {
+    if (hasNestedFields(fieldMetadataItem)) {
+      setSelectedFieldMetadataItem(fieldMetadataItem);
       return;
     }
 
-    const correspondingOption = options.find((option) => {
-      return option.value === subFieldNameSelected;
-    });
+    const correspondingOption = options.find(
+      (option) => option.value === fieldMetadataItem.name,
+    );
 
     if (isDefined(correspondingOption)) {
-      setSelectedFieldMetadataItem(null);
       onChange(correspondingOption);
-      closeDropdown(dropdownId);
     }
   };
 
-  const handleSelectSuggestedOption = (
-    selectedSuggestedOption: SelectOption,
-  ) => {
-    onChange(selectedSuggestedOption);
-    closeDropdown(dropdownId);
-  };
+  const handleSubFieldSelect = (subFieldName: string) => {
+    const correspondingOption = options.find(
+      (option) => option.value === subFieldName,
+    );
 
-  const handleDoNotImportSelect = () => {
-    if (isDefined(doNotImportOption)) {
-      onChange(doNotImportOption);
-      closeDropdown(dropdownId);
+    if (isDefined(correspondingOption)) {
+      onChange(correspondingOption);
     }
   };
-
-  const handleClickOutside = () => {
-    setSelectedFieldMetadataItem(null);
-  };
-
-  const handleSubFieldBack = () => {
-    setSelectedFieldMetadataItem(null);
-  };
-
-  const handleCancelSelectClick = () => {
-    setSelectedFieldMetadataItem(null);
-    closeDropdown(dropdownId);
-  };
-
-  const shouldShowNestedField =
-    isDefined(selectedFieldMetadataItem) &&
-    hasNestedFields(selectedFieldMetadataItem);
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      clickableComponent={
-        <StyledMenuItem
+      type="picker"
+      onOpenChange={(open) => {
+        if (!open) {
+          setSelectedFieldMetadataItem(null);
+        }
+      }}
+    >
+      <Dropdown.Trigger
+        render={<StyledMenuItemContainer />}
+        nativeButton={false}
+      >
+        <MenuItem
           LeftIcon={value?.Icon}
           text={value?.label ?? placeholder ?? ''}
-          accent={value?.label ? 'default' : 'placeholder'}
+          accent={isDefined(value) ? 'default' : 'placeholder'}
           RightIcon={IconChevronDown}
         />
-      }
-      dropdownComponents={
-        shouldShowNestedField ? (
-          <MatchColumnSelectSubFieldSelectDropdownContent
-            fieldMetadataItem={selectedFieldMetadataItem}
-            onSubFieldSelect={handleSubFieldSelect}
-            options={options}
-            onBack={handleSubFieldBack}
-          />
-        ) : (
+      </Dropdown.Trigger>
+      <DropdownContent
+        align="start"
+        width={GenericDropdownContentWidth.ExtraLarge}
+        aria-label={t`Select matching field`}
+      >
+        <Dropdown.Page id="root">
           <MatchColumnSelectFieldSelectDropdownContent
             selectedValue={value}
             onSelectFieldMetadataItem={handleFieldMetadataItemSelect}
-            onSelectSuggestedOption={handleSelectSuggestedOption}
-            onCancelSelect={handleCancelSelectClick}
-            onDoNotImportSelect={handleDoNotImportSelect}
+            onSelectSuggestedOption={onChange}
+            onDoNotImportSelect={() => {
+              if (isDefined(doNotImportOption)) {
+                onChange(doNotImportOption);
+              }
+            }}
             suggestedOptions={suggestedOptions}
           />
-        )
-      }
-      onClickOutside={handleClickOutside}
-      isDropdownInModal
-    />
+        </Dropdown.Page>
+        <Dropdown.Page id="sub-field">
+          {isDefined(selectedFieldMetadataItem) && (
+            <MatchColumnSelectSubFieldSelectDropdownContent
+              fieldMetadataItem={selectedFieldMetadataItem}
+              selectedValue={value}
+              onSubFieldSelect={handleSubFieldSelect}
+              options={options}
+            />
+          )}
+        </Dropdown.Page>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

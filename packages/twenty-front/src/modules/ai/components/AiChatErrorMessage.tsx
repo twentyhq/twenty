@@ -1,13 +1,13 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { useContext } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatError } from '@/ai/types/AiChatError';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledErrorContainer = styled.div`
@@ -47,14 +47,18 @@ const StyledErrorMessage = styled.div`
 
 type AiChatErrorMessageProps = {
   error: AiChatError;
+  hint?: string;
   onRetry?: () => void;
+  action?: ReactNode;
 };
 
 export const AiChatErrorMessage = ({
   error,
+  hint,
   onRetry,
+  action,
 }: AiChatErrorMessageProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const errorMessage = CombinedGraphQLErrors.is(error)
     ? getErrorMessageFromApolloError(error)
     : error.message;
@@ -69,16 +73,17 @@ export const AiChatErrorMessage = ({
         <StyledErrorMessage>
           {errorMessage || t`An error occurred while processing your message`}
         </StyledErrorMessage>
+        {isDefined(hint) && <StyledErrorMessage>{hint}</StyledErrorMessage>}
       </StyledErrorContent>
       {isDefined(onRetry) && (
         <Button
-          variant="secondary"
-          size="small"
-          Icon={IconRefresh}
+          size="sm"
+          startIcon={<IconRefresh />}
           onClick={onRetry}
-          title={t`Retry`}
-        />
+          variant="outline"
+        >{t`Retry`}</Button>
       )}
+      {action}
     </StyledErrorContainer>
   );
 };

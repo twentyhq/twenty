@@ -56,26 +56,19 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
       CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
     ];
 
-    // Create associations for each event
     EVENT_IDS.forEach((eventId, index) => {
-      // Distribute events across channels with weighted distribution
       let CHANNEL_ID: string;
       const CHANNEL_RAND = Math.random();
 
       if (CHANNEL_RAND < 0.3) {
-        // 30% - Tim's personal calendar
         CHANNEL_ID = CHANNEL_IDS[0]; // TIM
       } else if (CHANNEL_RAND < 0.45) {
-        // 15% - Jony's personal calendar
         CHANNEL_ID = CHANNEL_IDS[1]; // JONY
       } else if (CHANNEL_RAND < 0.6) {
-        // 15% - Phil's personal calendar
         CHANNEL_ID = CHANNEL_IDS[2]; // PHIL
       } else if (CHANNEL_RAND < 0.8) {
-        // 20% - Company main calendar
         CHANNEL_ID = CHANNEL_IDS[3]; // COMPANY_MAIN
       } else {
-        // 20% - Team calendar
         CHANNEL_ID = CHANNEL_IDS[4]; // TEAM_CALENDAR
       }
 

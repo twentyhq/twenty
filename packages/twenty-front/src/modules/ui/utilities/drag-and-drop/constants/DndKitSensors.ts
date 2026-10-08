@@ -1,15 +1,9 @@
-import { PointerActivationConstraints } from '@dnd-kit/dom';
-import { KeyboardSensor, PointerSensor } from '@dnd-kit/react';
+import { KeyboardSensor } from '@dnd-kit/react';
 
-import { shouldPreventDragActivation } from '@/ui/utilities/drag-and-drop/utils/shouldPreventDragActivation';
+import { DND_KIT_POINTER_SENSOR_OPTIONS } from '@/ui/utilities/drag-and-drop/constants/DndKitPointerSensorOptions';
+import { PointerSensorWithSourceGuard } from '@/ui/utilities/drag-and-drop/sensors/PointerSensorWithSourceGuard';
 
-// Pointer drags only start past 8px so clicks on draggable items still register.
 export const DND_KIT_SENSORS = [
-  PointerSensor.configure({
-    activationConstraints: [
-      new PointerActivationConstraints.Distance({ value: 8 }),
-    ],
-    preventActivation: shouldPreventDragActivation,
-  }),
+  PointerSensorWithSourceGuard.configure(DND_KIT_POINTER_SENSOR_OPTIONS),
   KeyboardSensor,
 ];

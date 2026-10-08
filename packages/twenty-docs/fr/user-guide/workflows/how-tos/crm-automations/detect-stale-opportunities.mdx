@@ -1,0 +1,136 @@
+---
+title: Détecter les opportunités stagnantes
+description: Avertissez automatiquement les responsables lorsque les opportunités n'ont pas été mises à jour.
+---
+
+Maintenez la santé de votre pipeline en alertant les responsables lorsque des opportunités deviennent stagnantes. Ce flux de travail vérifie les opportunités qui n'ont pas été mises à jour depuis un nombre de jours défini.
+
+## Le problème
+
+Des opportunités laissées sans mise à jour entraînent :
+
+* Affaires qui se refroidissent
+* Prévisions peu fiables
+* Perte de revenus
+
+## La solution
+
+Créez un flux de travail planifié qui identifie les opportunités stagnantes et envoie un e-mail à leurs responsables.
+
+## Configuration pas à pas
+
+### Étape 1 : Créer le flux de travail
+
+1. Allez dans **Paramètres → Flux de travail**
+2. Cliquez sur **+ Nouveau flux de travail**
+3. Nommez-le "Alerte d'opportunités stagnantes"
+
+### Étape 2 : Configurer le déclencheur
+
+1. Sélectionnez **Selon un calendrier**
+2. Définissez l'exécution quotidienne (par ex., chaque jour à 8 h)
+
+### Étape 3 : Rechercher les opportunités stagnantes
+
+1. Ajoutez l'action **Rechercher des enregistrements**
+2. Configurer:
+
+| Champ      | Valeur                                                  |
+| ---------- | ------------------------------------------------------- |
+| **Objet**  | Opportunités                                            |
+| **Filtre** | Updated At est antérieur à (today - 7 days)             |
+| **Filtre** | Stage n'est pas "Closed Won" ET n'est pas "Closed Lost" |
+| **Limite** | 100                                                     |
+
+### Étape 4 : Vérifier si des résultats ont été trouvés
+
+1. Ajoutez l'action **Filtre**
+2. Condition : `{{searchRecords.length}}` est supérieur à 0
+3. S'il n'y a pas d'opportunités stagnantes, le flux de travail s'arrête ici
+
+### Étape 5 : Formater l'alerte (action Code)
+
+Ajoutez une action **Code** pour formater l'e-mail :
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Étape 6 : Envoyer l'e-mail d'alerte
+
+Ajoutez l'action **Envoyer un e-mail** :
+
+| Champ                | Valeur                                                                       |
+| -------------------- | ---------------------------------------------------------------------------- |
+| **À**                | sales-manager@yourcompany.com                                                |
+| **Objet**            | `🚨 {{code.totalCount}} opportunités stagnantes nécessitent votre attention` |
+| **Corps du message** | `{{code.summary}}`                                                           |
+
+### Étape 7 : Tester et activer
+
+1. Cliquez sur **Test** pour exécuter le flux de travail
+2. Vérifiez que l'e-mail contient les bonnes données
+3. Activez lorsque vous êtes prêt
+
+## Options de personnalisation
+
+### Modifier le seuil de stagnation
+
+Modifiez le filtre Rechercher des enregistrements pour changer de 7 jours à la période de votre choix :
+
+* 3 jours pour les ventes à cadence élevée
+* 14 jours pour les affaires grands comptes
+* 30 jours pour les cycles de vente longs
+
+### Alerter les commerciaux individuellement
+
+Au lieu d'un seul e-mail au responsable, utilisez **Iterator** pour envoyer des e-mails personnalisés à chaque commercial au sujet de ses propres affaires stagnantes.
+
+### Ajouter une escalade
+
+Créez plusieurs flux de travail avec une sévérité croissante :
+
+1. Jour 7 : e-mail au commercial
+2. Jour 14 : e-mail au commercial + au responsable
+3. Jour 21 : créer une tâche pour que le responsable intervienne
+
+### Inclure dans Slack
+
+Utilisez **HTTP Request** pour publier vers un webhook Slack à la place d'un e-mail ou en complément.
+
+## Articles connexes
+
+* [Actions de workflows](/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Envoyer des e-mails depuis des workflows](/fr/user-guide/workflows/capabilities/send-emails-from-workflows)

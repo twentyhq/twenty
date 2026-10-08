@@ -8,15 +8,14 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -45,7 +44,7 @@ export const UsageByUserTableSection = ({
   getDetailPath,
   showAvatar = false,
 }: UsageByUserTableSectionProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatUsageValue } = useUsageValueFormatter();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -77,11 +76,11 @@ export const UsageByUserTableSection = ({
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${title.replace(/\s+/g, '-').toLowerCase()}-period`}
             value={period}
@@ -96,7 +95,7 @@ export const UsageByUserTableSection = ({
         <SearchInput
           placeholder={t`Search for a user...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
       <Table>
@@ -117,10 +116,10 @@ export const UsageByUserTableSection = ({
             >
               {showAvatar && (
                 <Avatar
-                  type="rounded"
+                  shape="circle"
                   size="md"
-                  placeholder={item.label ?? item.key}
-                  placeholderColorSeed={item.key}
+                  name={item.label ?? item.key}
+                  colorSeed={item.key}
                 />
               )}
               {item.label ?? item.key}
@@ -139,6 +138,6 @@ export const UsageByUserTableSection = ({
           </TableRow>
         ))}
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

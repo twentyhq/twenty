@@ -1,0 +1,2 @@
+export const ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME =
+  '2.46.0_AddIsSystemToAgentAndWorkflowFastInstanceCommand_1791130291063';

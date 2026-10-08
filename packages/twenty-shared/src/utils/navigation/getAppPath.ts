@@ -11,7 +11,7 @@ export const getAppPath = <T extends AppPath>(
   let path: string = to;
 
   if (isDefined(params)) {
-    path = generatePath<T>(to, params);
+    path = generatePath(path, params);
   }
 
   if (isDefined(queryParams)) {

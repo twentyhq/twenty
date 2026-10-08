@@ -41,5 +41,5 @@ export const webhookOperationSchema = z
   )
   .min(1)
   .describe(
-    "Events that trigger the webhook. Record events compile to '<object>.<event>' (e.g. 'person.created'). Metadata events compile to 'metadata.<metadataName>.<operation>' (e.g. 'metadata.workflow.updated'). Use [{kind:'record',object:'*',event:'*'}] to subscribe to all record events.",
+    "Events that trigger the webhook. Record events compile to '<object>.<event>' (e.g. 'person.created'). Metadata events compile to 'metadata.<metadataName>.<operation>' (e.g. 'metadata.workflow.updated'). Use [{kind:'record',object:'*',event:'*'}] to subscribe to all record events. Exception: 'workflowRun.updated' never matches wildcards and requires an explicit {kind:'record',object:'workflowRun',event:'updated'} entry.",
   );

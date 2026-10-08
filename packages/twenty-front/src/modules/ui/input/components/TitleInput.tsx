@@ -1,15 +1,16 @@
-import { TextInput, type TextInputSize } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { type TextInputSize } from '@/ui/input/types/TextInputSize';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { TitleInputAutoOpenEffect } from '@/ui/input/components/TitleInputAutoOpenEffect';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type CommonInputProps = {
   instanceId: string;

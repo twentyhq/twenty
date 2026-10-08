@@ -1,9 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -11,7 +11,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   type EventLogRecord,
@@ -96,7 +96,6 @@ export const EventLogResultsTable = ({
   onLoadMore,
   selectedTable,
 }: EventLogResultsTableProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const baseColumns = getColumnsForEventLogTable(selectedTable);
@@ -187,15 +186,7 @@ export const EventLogResultsTable = ({
               <TableRow gridTemplateColumns={gridTemplateColumns}>
                 {baseColumns.map((column, index) => (
                   <TableCell key={column.id}>
-                    {index === 0 && (
-                      <SkeletonTheme
-                        baseColor={theme.background.tertiary}
-                        highlightColor={theme.background.transparent.lighter}
-                        borderRadius={4}
-                      >
-                        <Skeleton width={120} height={16} />
-                      </SkeletonTheme>
-                    )}
+                    {index === 0 && <SkeletonLine width={120} height={16} />}
                   </TableCell>
                 ))}
               </TableRow>

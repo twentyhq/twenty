@@ -2,9 +2,9 @@ import { v4 } from 'uuid';
 
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
-import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-import { getNextThemeColor } from 'twenty-ui/theme-constants';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { MAIN_COLOR_NAMES, getNextThemeColor } from 'twenty-ui/theme';
+
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 export const generateNewSelectOption = (
   options: FieldMetadataItemOption[],

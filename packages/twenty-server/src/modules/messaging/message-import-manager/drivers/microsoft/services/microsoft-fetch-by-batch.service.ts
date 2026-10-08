@@ -53,7 +53,7 @@ export class MicrosoftFetchByBatchService {
         url: `/me/messages/${messageId}?$select=${selectedFields}`,
         headers: {
           'Content-Type': 'application/json',
-          Prefer: 'outlook.body-content-type="text"',
+          Prefer: 'outlook.body-content-type="text", IdType="ImmutableId"',
         },
       }));
 

@@ -17,7 +17,11 @@ export const TEST_OBJECT_GQL_FIELDS = `
         primaryPhoneNumber
         primaryPhoneCallingCode
         primaryPhoneCountryCode
-        additionalPhones
+        additionalPhones {
+          number
+          callingCode
+          countryCode
+        }
     }
     emailsField {
         primaryEmail
@@ -30,7 +34,10 @@ export const TEST_OBJECT_GQL_FIELDS = `
     linksField {
         primaryLinkUrl
         primaryLinkLabel
-        secondaryLinks
+        secondaryLinks {
+          label
+          url
+        }
     }
     currencyField {
         amountMicros

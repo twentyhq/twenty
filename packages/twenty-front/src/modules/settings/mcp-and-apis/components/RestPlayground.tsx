@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { RestPlaygroundSchemaFetchEffect } from '@/settings/mcp-and-apis/components/RestPlaygroundSchemaFetchEffect';
 import {
   isPlaygroundApiKeyFresh,
@@ -5,13 +6,13 @@ import {
 } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -54,7 +55,7 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const { theme, colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 
@@ -63,15 +64,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     return null;
   }
 
-  const fallback = (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <Skeleton width="100%" height="100%" />
-    </SkeletonTheme>
-  );
+  const fallback = <SkeletonLine width="100%" height="100%" />;
 
   return (
     <StyledContainer>

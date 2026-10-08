@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAccordionHeaderButton = styled.button`
   align-items: center;
@@ -82,7 +82,7 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
   const hasWorkspaces = workspaces.length > 0;
 
   return (
-    <Card rounded={true}>
+    <Card.Root rounded={true}>
       {hasWorkspaces ? (
         <StyledAccordionHeaderButton
           onClick={() => setIsExpanded((currentValue) => !currentValue)}
@@ -100,31 +100,29 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
         </StyledAccordionHeaderButtonDisabled>
       )}
       {hasWorkspaces && (
-        <AnimatedExpandableContainer
-          isExpanded={isExpanded}
-          dimension="height"
-          mode="scroll-height"
-        >
-          <StyledAccordionContent>
-            <StyledWorkspaceList>
-              {workspaces.map((workspace) => (
-                <StyledWorkspaceListItem key={workspace.id}>
-                  <StyledWorkspaceLink
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceDetail,
-                      { workspaceId: workspace.id },
-                    )}
-                  >
-                    {workspace.name ?? t`Unknown workspace`}
-                    {' - '}
-                    {workspace.id}
-                  </StyledWorkspaceLink>
-                </StyledWorkspaceListItem>
-              ))}
-            </StyledWorkspaceList>
-          </StyledAccordionContent>
-        </AnimatedExpandableContainer>
+        <Collapsible.Root open={isExpanded}>
+          <Collapsible.Panel dimension="height">
+            <StyledAccordionContent>
+              <StyledWorkspaceList>
+                {workspaces.map((workspace) => (
+                  <StyledWorkspaceListItem key={workspace.id}>
+                    <StyledWorkspaceLink
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
+                    >
+                      {workspace.name ?? t`Unknown workspace`}
+                      {' - '}
+                      {workspace.id}
+                    </StyledWorkspaceLink>
+                  </StyledWorkspaceListItem>
+                ))}
+              </StyledWorkspaceList>
+            </StyledAccordionContent>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       )}
-    </Card>
+    </Card.Root>
   );
 };

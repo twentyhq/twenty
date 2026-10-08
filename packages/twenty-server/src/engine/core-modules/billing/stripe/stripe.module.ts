@@ -3,18 +3,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
-import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-sdk/stripe-sdk.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -35,10 +34,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingPortalService,
     StripeBillingMeterService,
     StripeCustomerService,
+    StripeEntitlementService,
     StripePriceService,
     StripeProductService,
-    StripeBillingMeterEventService,
-    StripeCreditGrantService,
     StripeInvoiceService,
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
@@ -47,14 +45,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingPortalService,
     StripeBillingMeterService,
     StripeCustomerService,
+    StripeEntitlementService,
     StripePriceService,
     StripeCheckoutService,
     StripeSubscriptionItemService,
     StripeSubscriptionService,
     StripeProductService,
-    StripeBillingMeterEventService,
     StripeSubscriptionScheduleService,
-    StripeCreditGrantService,
     StripeInvoiceService,
   ],
 })

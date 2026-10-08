@@ -2,10 +2,9 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { billingState } from '@/client-config/states/billingState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -13,10 +12,10 @@ import { SettingsOptionCardContentButton } from '@/settings/components/SettingsO
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 const StyledContent = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -44,44 +43,43 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
 
   if (!hasOrganizationPlan) {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
-          adornment={<OrganizationAdornment />}
+          actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentButton
               Icon={IconLock}
               title={t`Upgrade to access`}
-              description={t`This feature is part of the Enterprise Plan`}
+              description={t`This feature is part of the Organization plan`}
               Button={
                 <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
+                  size="sm"
+                  startIcon={<IconArrowUp />}
                   onClick={() =>
                     navigateSettings(
                       isBillingEnabled
                         ? SettingsPath.BillingPlans
-                        : SettingsPath.AdminPanelEnterprise,
+                        : SettingsPath.AdminPanelOrganization,
                     )
                   }
-                />
+                  variant="solid"
+                  color="accent"
+                >{t`Upgrade`}</Button>
               }
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Record-level`}
         description={t`Ability to filter the records a user can interact with.`}
       />
@@ -91,6 +89,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           objectMetadataItem={objectMetadataItem}
         />
       </StyledContent>
-    </Section>
+    </Section.Root>
   );
 };

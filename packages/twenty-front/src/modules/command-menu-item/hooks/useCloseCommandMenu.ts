@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
@@ -14,9 +15,7 @@ export const useCloseCommandMenu = ({
   closeSidePanelOnShowPageOptionsExecution?: boolean;
   closeSidePanelOnCommandMenuListExecution?: boolean;
 } = {}) => {
-  const { containerType, commandMenuContextApi } =
-    useContext(CommandMenuContext);
-  const isInSidePanel = commandMenuContextApi.isInSidePanel;
+  const { containerType } = useContext(CommandMenuContext);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -26,12 +25,13 @@ export const useCloseCommandMenu = ({
     CommandMenuComponentInstanceContext,
   );
 
-  const dropdownId = isInSidePanel
-    ? getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId)
-    : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
+  const dropdownId =
+    containerType === CommandMenuItemContainerType.CommandMenuShowPageDropdown
+      ? getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId)
+      : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const closeCommandMenu = () => {
-    if (containerType === 'command-menu-list') {
+    if (containerType === CommandMenuItemContainerType.CommandMenuList) {
       if (!closeSidePanelOnCommandMenuListExecution) {
         return;
       }
@@ -39,14 +39,15 @@ export const useCloseCommandMenu = ({
     }
 
     if (
-      containerType === 'index-page-dropdown' ||
-      containerType === 'command-menu-show-page-dropdown'
+      containerType === CommandMenuItemContainerType.IndexPageDropdown ||
+      containerType === CommandMenuItemContainerType.CommandMenuShowPageDropdown
     ) {
       closeDropdown(dropdownId);
     }
 
     if (
-      containerType === 'command-menu-show-page-dropdown' &&
+      containerType ===
+        CommandMenuItemContainerType.CommandMenuShowPageDropdown &&
       closeSidePanelOnShowPageOptionsExecution
     ) {
       closeSidePanelMenu();

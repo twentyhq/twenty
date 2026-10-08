@@ -1,0 +1,93 @@
+---
+title: Input
+description: A text input with native attributes, field integration, and two sizes.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+`Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
+
+<StoryEmbed
+  storyId="ui-input-input--default"
+  title="Input example"
+  height={240}
+/>
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial email address. The input owns subsequent changes.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same email address in React state. The callback receives the next string value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
+
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Add an adornment
+
+`InputGroup` owns the surrounding border and layout height. Input size resolves from the explicit child `size`, then the group default, then `md`. The grouped input stretches within the shared border, so use the group's `size` to change the overall field height.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## Native control and wrapper customization
+
+Native attributes, handlers, `className`, `style`, and `ref` target the input. The ref receives an `HTMLInputElement`. Use `render` to compose another input component and forward the supplied props and ref to its native input.
+
+`onChange` receives a React change event for the native input. `onValueChange(value, details)` receives the next string and Base UI event details, including `event`, `reason`, `cancel`, and `allowPropagation`. The event targets the input. Canceling the details preserves Base UI's validation policy; it does not undo a native edit. Controlled callers decide which value to commit.
+
+Put layout styles, attributes, and refs on `InputGroup` when customizing the surrounding wrapper. The group owns no value. Native `name`, `form`, `required`, `readOnly`, `disabled`, submission, and reset behavior remain on the input, with Field naming and validation supplied through `Field.Root`.
+
+## Props
+
+The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, an omitted input `size` inherits the group's size.
+
+<InputReference />

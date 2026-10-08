@@ -1,5 +1,4 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-
 import { SettingsPath } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -7,12 +6,13 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
-import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
@@ -26,7 +26,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -67,7 +67,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly commonSelectFieldsHelper: CommonSelectFieldsHelper;
+  protected readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder;
   @Inject()
   protected readonly userRoleService: UserRoleService;
   @Inject()
@@ -135,20 +135,53 @@ export abstract class RestApiBaseHandler {
     flatFieldMetadataMaps,
   }: {
     authContext: WorkspaceAuthContext;
-    depth?: Depth | undefined;
+    depth?: SelectionDepth | undefined;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
-    return this.commonSelectFieldsHelper.computeFromDepth({
+    const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
+    });
+
+    return selectedFields;
+  }
+
+  async computeRecordSelectedFields({
+    requestedFields,
+    authContext,
+    depth,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    requestedFields?: ReadonlySet<string>;
+    authContext: WorkspaceAuthContext;
+    depth?: SelectionDepth | undefined;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): Promise<{
+    selectedFields: CommonSelectedFields;
+  }> {
+    const { objectsPermissions } =
+      await this.getObjectsPermissions(authContext);
+
+    return this.commonSelectFieldsBuilder.buildFromDepth({
+      objectsPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      depth,
+      requestedFields,
+      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
     });
   }
 
@@ -181,7 +214,7 @@ export abstract class RestApiBaseHandler {
   ): Promise<{
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     objectIdByNameSingular: Record<string, string>;
   }> {
@@ -206,17 +239,20 @@ export abstract class RestApiBaseHandler {
       }
     }
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: workspace.id,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
-        },
-      );
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm: flatFieldMetadataMaps,
+      flatIndexMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId: workspace.id,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMapsOrm',
+          'flatIndexMaps',
+        ],
+      },
+    );
 
     if (!isDefined(flatObjectMetadataMaps)) {
       throw new BadRequestException(

@@ -65,6 +65,12 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
             response,
             403,
           );
+        case ViewExceptionCode.INTERNAL_SERVER_ERROR:
+          return this.httpExceptionHandlerService.handleError(
+            exception as CustomException,
+            response,
+            500,
+          );
         default:
           // TODO: change to 500 when we have input validation
           return this.httpExceptionHandlerService.handleError(
@@ -75,7 +81,6 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
       }
     }
 
-    // Fallback for any other exception type
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',

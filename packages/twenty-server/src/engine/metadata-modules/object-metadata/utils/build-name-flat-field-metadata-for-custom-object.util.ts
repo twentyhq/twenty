@@ -1,5 +1,5 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -23,6 +23,8 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     type: FieldMetadataType.TEXT,
     isLabelSyncedWithName: false,
     isUnique: false,
+    isSearchable: true,
+    isAuditLogged: true,
     universalIdentifier: getFieldUniversalIdentifier({
       applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,
@@ -37,6 +39,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: true,
+    writability: MetadataWritability.OPEN,
     defaultValue: null,
     createdAt: now,
     updatedAt: now,

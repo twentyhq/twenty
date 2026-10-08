@@ -1,12 +1,11 @@
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
+import { Link } from 'react-router-dom';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
@@ -23,50 +22,36 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
 }: SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps) => {
   const dropdownId = `settings-role-object-level-options-${objectMetadataId}`;
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { resetObjectPermission } = useResetObjectPermission(roleId);
 
-  const handleRemove = () => {
-    closeDropdown(dropdownId);
-    resetObjectPermission(objectMetadataId);
-  };
-
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <IconButton
-          aria-label={t`Object permission options`}
-          variant="tertiary"
-          size="small"
-          Icon={IconDotsVertical}
-        />
-      }
-      dropdownComponents={
-        <DropdownContent>
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <Dropdown.Trigger
+        render={
+          <IconButton
+            aria-label={t`Object permission options`}
+            variant="ghost"
+            size="sm"
+          >
+            <IconDotsVertical />
+          </IconButton>
+        }
+      />
+      <DropdownContent align="end">
+        <Dropdown.Section>
           {isEditable && (
-            <DropdownMenuItemsContainer>
-              <UndecoratedLink
-                fullWidth
-                to={objectPermissionDetailUrl}
-                onClick={() => closeDropdown(dropdownId)}
-              >
-                <MenuItem text={t`Edit`} LeftIcon={IconPencil} />
-              </UndecoratedLink>
-            </DropdownMenuItemsContainer>
+            <Dropdown.ActionItem
+              startIcon={<IconPencil />}
+              render={<Link to={objectPermissionDetailUrl} />}
+            >{t`Edit`}</Dropdown.ActionItem>
           )}
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Remove rule`}
-              onClick={handleRemove}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownPlacement="bottom-end"
-    />
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            color="danger"
+            onClick={() => resetObjectPermission(objectMetadataId)}
+          >{t`Remove rule`}</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

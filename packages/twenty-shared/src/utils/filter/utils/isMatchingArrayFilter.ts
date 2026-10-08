@@ -1,4 +1,6 @@
 import { type ArrayFilter } from '@/types';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
 
 export const isMatchingArrayFilter = ({
   arrayFilter,
@@ -16,14 +18,19 @@ export const isMatchingArrayFilter = ({
       }
     }
     case arrayFilter.isEmptyArray !== undefined: {
-      return Array.isArray(value) && value.length === 0;
+      return arrayFilter.isEmptyArray !== isNonEmptyArray(value);
     }
     case arrayFilter.containsIlike !== undefined: {
-      const searchTerm = arrayFilter.containsIlike.toLowerCase();
-      return (
-        Array.isArray(value) &&
-        value.some((item) => item.toLowerCase().includes(searchTerm))
-      );
+      if (!isNonEmptyArray(value)) {
+        return false;
+      }
+
+      const regexCaseInsensitive = convertLikePatternToRegexOrThrow({
+        pattern: arrayFilter.containsIlike,
+        isCaseInsensitive: true,
+      });
+
+      return value.some((item) => regexCaseInsensitive.test(item));
     }
     default: {
       throw new Error(

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconRefresh } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type AppConnectionHeaderProps = {
   appLogoUrl?: string | null;
@@ -57,7 +57,7 @@ export const AppConnectionHeader = ({
   appLogoUrl,
   appName,
 }: AppConnectionHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [hasAppLogoError, setHasAppLogoError] = useState(false);
 
@@ -79,12 +79,7 @@ export const AppConnectionHeader = ({
             onError={() => setHasAppLogoError(true)}
           />
         ) : (
-          <Avatar
-            size="xl"
-            placeholder={appName}
-            placeholderColorSeed={appName}
-            type="squared"
-          />
+          <Avatar size="xl" name={appName} colorSeed={appName} shape="square" />
         )}
       </StyledAppLogoTile>
     </StyledContainer>

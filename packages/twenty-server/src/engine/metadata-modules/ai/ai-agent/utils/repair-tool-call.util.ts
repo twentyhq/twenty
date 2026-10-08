@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import {
   type LanguageModel,
   type LanguageModelUsage,
@@ -7,12 +9,15 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+
+const logger = new Logger('repairToolCall');
 
 type ToolCall = {
   type: 'tool-call';
@@ -26,6 +31,7 @@ type RepairToolCallBillingContext = {
   modelId: string;
   workspaceId: string;
   userWorkspaceId: string | null;
+  agentId: string | null;
   operationType: UsageOperationType;
 };
 
@@ -42,9 +48,8 @@ export const repairToolCall = async ({
   inputSchema: (toolCall: { toolName: string }) => unknown;
   error: Error;
   model: LanguageModel;
-  billingContext?: RepairToolCallBillingContext;
+  billingContext: RepairToolCallBillingContext;
 }): Promise<ToolCall | null> => {
-  // Don't attempt to fix invalid tool names
   if (NoSuchToolError.isInstance(error)) {
     return null;
   }
@@ -83,7 +88,11 @@ export const repairToolCall = async ({
         `- Object structures must match the schema shape`,
         `- Array items must follow the specified format`,
       ].join('\n'),
-      experimental_telemetry: AI_TELEMETRY_CONFIG,
+      ...buildAiTelemetry({
+        functionId: 'repair-tool-call',
+        workspaceId: billingContext.workspaceId,
+        userWorkspaceId: billingContext.userWorkspaceId,
+      }),
     });
 
     usage = result.usage;
@@ -102,22 +111,28 @@ export const repairToolCall = async ({
       input: JSON.stringify(repairedInput),
     };
   } catch {
-    // If repair fails, return null to let the error propagate
     return null;
   } finally {
-    if (billingContext && usage) {
+    if (isDefined(usage)) {
       const cacheCreationTokens = steps
         ? extractCacheCreationTokensFromSteps(steps)
         : 0;
 
-      void billingContext.aiBillingService.calculateAndBillUsage(
-        billingContext.modelId,
-        { usage, cacheCreationTokens },
-        billingContext.workspaceId,
-        billingContext.operationType,
-        null,
-        billingContext.userWorkspaceId,
-      );
+      void billingContext.aiBillingService
+        .calculateAndBillUsage(
+          billingContext.modelId,
+          { usage, cacheCreationTokens },
+          billingContext.workspaceId,
+          billingContext.operationType,
+          billingContext.agentId,
+          billingContext.userWorkspaceId,
+        )
+        .catch((error: unknown) =>
+          logger.error(
+            `Could not bill the repair of tool call ${toolCall.toolCallId} in workspace ${billingContext.workspaceId}`,
+            error instanceof Error ? error.stack : error,
+          ),
+        );
     }
   }
 };

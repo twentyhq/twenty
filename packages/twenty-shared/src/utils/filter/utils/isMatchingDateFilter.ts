@@ -7,21 +7,25 @@ export const isMatchingDateFilter = ({
   value,
 }: {
   dateFilter: DateFilter;
-  value: string | null | undefined;
+  value: Date | string | null | undefined;
 }) => {
   if (!isDefined(value)) {
     return dateFilter.is === 'NULL';
   }
 
+  const valueDate = value instanceof Date ? value : parseISO(value);
+
   switch (true) {
     case dateFilter.eq !== undefined: {
-      return isEqual(parseISO(value), parseISO(dateFilter.eq));
+      return isEqual(valueDate, parseISO(dateFilter.eq));
     }
     case dateFilter.neq !== undefined: {
-      return !isEqual(parseISO(value), parseISO(dateFilter.neq));
+      return !isEqual(valueDate, parseISO(dateFilter.neq));
     }
     case dateFilter.in !== undefined: {
-      return dateFilter.in.includes(value);
+      return dateFilter.in.some((filterValue) =>
+        isEqual(valueDate, parseISO(filterValue)),
+      );
     }
     case dateFilter.is !== undefined: {
       if (dateFilter.is === 'NULL') {
@@ -31,24 +35,24 @@ export const isMatchingDateFilter = ({
       }
     }
     case dateFilter.gt !== undefined: {
-      return isAfter(parseISO(value), parseISO(dateFilter.gt));
+      return isAfter(valueDate, parseISO(dateFilter.gt));
     }
     case dateFilter.gte !== undefined: {
-      const valueDate = parseISO(value);
       const filterDate = parseISO(dateFilter.gte);
+
       return isAfter(valueDate, filterDate) || isEqual(valueDate, filterDate);
     }
     case dateFilter.lt !== undefined: {
-      return isBefore(parseISO(value), parseISO(dateFilter.lt));
+      return isBefore(valueDate, parseISO(dateFilter.lt));
     }
     case dateFilter.lte !== undefined: {
-      const valueDate = parseISO(value);
       const filterDate = parseISO(dateFilter.lte);
+
       return isBefore(valueDate, filterDate) || isEqual(valueDate, filterDate);
     }
     default: {
       throw new Error(
-        `Unexpected value for string filter : ${JSON.stringify(dateFilter)}`,
+        `Unexpected value for date filter : ${JSON.stringify(dateFilter)}`,
       );
     }
   }

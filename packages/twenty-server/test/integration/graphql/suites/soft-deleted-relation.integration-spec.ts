@@ -4,7 +4,7 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 
 const PERSON_WITH_COMPANY_GQL_FIELDS = `
@@ -21,7 +21,7 @@ describe('soft-deleted relation', () => {
   const personId = randomUUID();
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id name',
@@ -29,7 +29,7 @@ describe('soft-deleted relation', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_WITH_COMPANY_GQL_FIELDS,
@@ -43,8 +43,7 @@ describe('soft-deleted relation', () => {
   });
 
   afterAll(async () => {
-    // Ensure records are not soft-deleted before destroying
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       restoreOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id',
@@ -52,7 +51,7 @@ describe('soft-deleted relation', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id',
@@ -60,7 +59,7 @@ describe('soft-deleted relation', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id',
@@ -70,7 +69,7 @@ describe('soft-deleted relation', () => {
   });
 
   it('should return company relation when company is live', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_WITH_COMPANY_GQL_FIELDS,
@@ -87,7 +86,7 @@ describe('soft-deleted relation', () => {
   });
 
   it('should nullify companyId when company is soft-deleted', async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       deleteOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id deletedAt',
@@ -95,7 +94,7 @@ describe('soft-deleted relation', () => {
       }),
     );
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_WITH_COMPANY_GQL_FIELDS,
@@ -110,7 +109,7 @@ describe('soft-deleted relation', () => {
   });
 
   it('should restore company relation when company is restored', async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       restoreOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id deletedAt',
@@ -118,7 +117,7 @@ describe('soft-deleted relation', () => {
       }),
     );
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_WITH_COMPANY_GQL_FIELDS,

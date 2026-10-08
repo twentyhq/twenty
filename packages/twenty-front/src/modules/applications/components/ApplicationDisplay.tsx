@@ -1,6 +1,6 @@
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
 import { AppChip } from '@/applications/components/AppChip';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 
 type ApplicationDisplayProps = {

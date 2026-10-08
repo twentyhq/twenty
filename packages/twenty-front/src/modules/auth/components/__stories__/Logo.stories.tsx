@@ -1,18 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Logo } from '@/auth/components/Logo';
-import {
-  AVATAR_URL_MOCK,
-  ComponentDecorator,
-  RouterDecorator,
-} from 'twenty-ui/testing';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const logoUrl = AVATAR_URL_MOCK;
 
 const meta: Meta<typeof Logo> = {
   title: 'Modules/Auth/Logo',
   component: Logo,
-  decorators: [ComponentDecorator, RouterDecorator],
+  decorators: [ComponentDecorator, MemoryRouterDecorator],
 };
 
 export default meta;

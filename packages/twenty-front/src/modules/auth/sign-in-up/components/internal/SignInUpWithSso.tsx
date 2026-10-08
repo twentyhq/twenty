@@ -1,0 +1,63 @@
+import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
+import { useSso } from '@/auth/sign-in-up/hooks/useSso';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components/input';
+import { IconLock } from 'twenty-ui/icon';
+import { LastUsedPill } from './LastUsedPill';
+import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
+import { useTheme } from 'twenty-ui/theme';
+import { SignInUpSeparator } from './SignInUpSeparator';
+
+export const SignInUpWithSso = () => {
+  const theme = useTheme();
+  const { t } = useLingui();
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
+    lastAuthenticatedMethodState,
+  );
+  const hasMultipleAuthMethods = useHasMultipleAuthMethods();
+
+  const { redirectToSsoLoginPage } = useSso();
+
+  const signInWithSso = () => {
+    setLastAuthenticatedMethod(AuthenticatedMethod.SSO);
+    if (
+      isDefined(workspaceAuthProviders) &&
+      workspaceAuthProviders.sso.length === 1
+    ) {
+      return redirectToSsoLoginPage(workspaceAuthProviders.sso[0].id);
+    }
+
+    setSignInUpStep(SignInUpStep.SsoIdentityProviderSelection);
+  };
+
+  const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.SSO;
+
+  return (
+    <>
+      <StyledSsoButtonContainer>
+        <MainButton
+          startIcon={<IconLock size={theme.icon.size.md} />}
+          onClick={signInWithSso}
+          fullWidth
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+        >{t`Single sign-on (SSO)`}</MainButton>
+        {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
+      </StyledSsoButtonContainer>
+      <SignInUpSeparator />
+    </>
+  );
+};

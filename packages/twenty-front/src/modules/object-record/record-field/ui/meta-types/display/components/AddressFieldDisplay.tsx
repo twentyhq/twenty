@@ -1,6 +1,6 @@
 import { useAddressFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useAddressFieldDisplay';
-import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
-import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
+import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDisplay';
+import { formatAddressDisplay } from '@/object-record/record-field/ui/utils/formatAddressDisplay';
 
 export const AddressFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useAddressFieldDisplay();

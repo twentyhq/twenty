@@ -4,6 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -66,8 +73,34 @@ type CallRecordingNode = {
   endedAt?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptedAt?: string | null;
   externalRecordingId?: string | null;
+  callRecorderFailureReason?: string | null;
 };
+
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
+  });
 
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
@@ -144,6 +177,25 @@ class FakeCoreApiClient {
       };
     }
 
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+        this.mutations.push({
+          name: 'updateCallRecording',
+          args: { id: callRecording.id, data },
+        });
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
       const callRecording = this.callRecordings.find(
@@ -164,6 +216,31 @@ class FakeCoreApiClient {
         updateCallRecording: {
           id,
         },
+      };
+    }
+
+    if (mutation.updateCalendarEvents !== undefined) {
+      const { filter, data } = mutation.updateCalendarEvents.__args;
+      const updatedCalendarEvents = this.calendarEvents.filter(
+        (calendarEvent) =>
+          filter.id.in.includes(calendarEvent.id) &&
+          (filter.callRecorderPreference.is === 'NULL'
+            ? (calendarEvent.callRecorderPreference ?? null) === null
+            : calendarEvent.callRecorderPreference ===
+              filter.callRecorderPreference.eq),
+      );
+
+      for (const calendarEvent of updatedCalendarEvents) {
+        Object.assign(calendarEvent, data);
+      }
+
+      this.mutations.push({
+        name: 'updateCalendarEvents',
+        args: { filter, data },
+      });
+
+      return {
+        updateCalendarEvents: updatedCalendarEvents.map(({ id }) => ({ id })),
       };
     }
 
@@ -231,6 +308,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    enqueueJobsMock.mockReset();
     fetchMock.mockReset();
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
@@ -479,6 +557,16 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       }),
     );
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: `credit-check.${buildCustomerSyncCallRecordingId()}.recall-bot-1.${new Date(FUTURE_RECALL_BOT_JOIN_AT).getTime()}`,
+            payload: { callRecordingId: buildCustomerSyncCallRecordingId() },
+          },
+        ],
+      }),
+    );
   });
 
   it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {
@@ -517,6 +605,47 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         recordingRequestStatus: 'REQUESTED',
       }),
     ]);
+  });
+
+  it('clears recordingOn before an enqueue failure and re-arms the canceled request on retry', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({ isCanceled: true, callRecorderPreference: 'ON' }),
+      ],
+      callRecordings: [
+        {
+          id: 'call-recording-1',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          botScheduleAttemptedAt: NOW.toISOString(),
+        },
+      ],
+    });
+    const enqueueError = new Error('queue unavailable');
+    enqueueJobsMock.mockRejectedValueOnce(enqueueError);
+    const reconcile = () =>
+      reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        now: NOW,
+      });
+
+    await expect(reconcile()).rejects.toThrow(enqueueError.message);
+    expect(client.callRecordings[0].recordingRequestStatus).toBe('CANCELED');
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
+
+    enqueueJobsMock.mockClear();
+    await reconcile();
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            payload: { callRecordingId: 'call-recording-1', attempt: 0 },
+          }),
+        ],
+      }),
+    );
   });
 
   it('cancels an existing scheduled request when the policy no longer requests a bot', async () => {
@@ -564,7 +693,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('persists the cancel intent and leaves the bot for the planned stale-state cron when the Recall cancel fails', async () => {
+  it('persists the cancel intent and leaves the bot for recovery when the Recall cancel fails', async () => {
     vi.useFakeTimers();
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ detail: 'server error' }), {
@@ -655,6 +784,45 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         id: buildCustomerSyncCallRecordingId(),
         title: 'Renamed Customer Sync',
         status: 'JOINING',
+      }),
+    ]);
+  });
+
+  it('resets a NOT_RECORDED recording to SCHEDULED and clears its reason for an upcoming meeting', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent()],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'NOT_RECORDED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'timeout_exceeded_noone_joined',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'UPDATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        status: 'SCHEDULED',
+        callRecorderFailureReason: null,
       }),
     ]);
   });
@@ -841,8 +1009,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     class CancelCleanupFailureFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (
-          mutation.updateCallRecording !== undefined &&
-          mutation.updateCallRecording.__args.data.externalBotId === null
+          mutation.updateCallRecordings !== undefined &&
+          mutation.updateCallRecordings.__args.data.externalBotId === null
         ) {
           throw new Error('recall exploded');
         }
@@ -947,7 +1115,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('clears the stale bot id for the stale-state cron to re-create when the existing Recall bot no longer exists', async () => {
+  it('clears the stale bot id for recovery to re-create when the existing Recall bot no longer exists', async () => {
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
         if (requestInit.method === 'PATCH') {

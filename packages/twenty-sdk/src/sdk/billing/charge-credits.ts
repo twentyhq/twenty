@@ -1,31 +1,43 @@
 import {
   DEFAULT_API_URL_NAME,
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
+  type UsageOperationTypeValue,
 } from 'twenty-shared/application';
+
+import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
 const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 
 export type ChargeCreditsParams = {
   creditsUsedMicro: number;
-  operationType: string;
   quantity?: number;
-  resourceContext?: string;
-};
+  // Who the spend belongs to when no user triggered the run (webhook, cron); ignored otherwise
+  userWorkspaceId?: string;
+} & (
+  | {
+      // An operation declared in the manifest's `billing.operations`; the platform resolves its category and label
+      operation: string;
+      operationType?: never;
+      resourceContext?: never;
+    }
+  | {
+      // For applications that declare no billable operations: names the platform billing category directly
+      operationType: UsageOperationTypeValue;
+      operation?: never;
+      resourceContext?: string;
+    }
+);
 
-// Records credit usage against the running application via the Twenty
-// server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and
-// `TWENTY_APP_ACCESS_TOKEN` from the execution env (injected by the
-// logic-function runtime). No-ops silently when either is missing so
-// local/test runs don't crash. Failures are non-fatal — a billing error
-// never surfaces as a tool failure.
+// No-ops without an API URL or access token, and never throws: a billing error must not fail a tool
 export const chargeCredits = async ({
   creditsUsedMicro,
-  operationType,
   quantity = 1,
+  operation,
+  operationType,
   resourceContext,
+  userWorkspaceId,
 }: ChargeCreditsParams): Promise<void> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const token = process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
+  const token = getApplicationAccessToken();
 
   if (!apiUrl || !token) {
     return;
@@ -43,8 +55,10 @@ export const chargeCredits = async ({
         body: JSON.stringify({
           creditsUsedMicro,
           quantity,
+          operation,
           operationType,
           resourceContext,
+          userWorkspaceId,
         }),
         signal: AbortSignal.timeout(BILLING_CHARGE_TIMEOUT_MS),
       },

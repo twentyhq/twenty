@@ -1,7 +1,7 @@
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 
 const BUILT_COMPONENT_PATH = 'src/front-components/test-endpoint.mjs';
@@ -43,7 +43,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should serve the built JS file with correct content type', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -56,7 +56,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should serve the built JS from the checksum-fingerprinted path with an immutable cache header', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}/test-checksum-123.js`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -72,7 +72,7 @@ describe('Front component built JS endpoint', () => {
   it('should return 404 for a non-existent front component ID', async () => {
     const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
-    const response = await makeRestAPIRequest({
+    const response = await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${nonExistentId}`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -104,7 +104,7 @@ describe('Front component built JS endpoint', () => {
     cleanup();
 
     try {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/front-components/${missingFileComponentId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -120,7 +120,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should return 403 when no token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}`,
       bearer: '',
@@ -128,7 +128,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should return 401 when an invalid token is provided', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}`,
       bearer: INVALID_ACCESS_TOKEN,

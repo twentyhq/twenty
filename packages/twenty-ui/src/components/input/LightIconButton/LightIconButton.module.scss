@@ -1,0 +1,17 @@
+.button {
+  --tw-icon-button-icon-size: var(--t-icon-size-sm);
+
+  &[data-size='md'] {
+    --tw-icon-button-icon-size: var(--t-icon-size-md);
+  }
+
+  &[data-emphasis='subtle'][data-color='neutral']:not([data-variant='solid']) {
+    --tw-button-color: var(--t-font-color-tertiary);
+  }
+
+  &[data-disabled][data-color='neutral'][data-variant='ghost'] {
+    --tw-button-color: var(--t-font-color-extra-light);
+
+    opacity: 1;
+  }
+}

@@ -25,7 +25,7 @@ describe('computeWorkflowVersionStepChanges', () => {
         input: [],
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -49,7 +49,7 @@ describe('computeWorkflowVersionStepChanges', () => {
         },
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         outputSchema: {},
       },
@@ -76,9 +76,8 @@ describe('computeWorkflowVersionStepChanges', () => {
       { path: ['trigger', 'nextStepIds', 1], type: 'CREATE', value: 'step-3' },
     ]);
     expect(result.stepsDiff).toMatchObject([]);
-    expect(result.stepsDiff.length).toBe(0); // No steps changed
+    expect(result.stepsDiff.length).toBe(0);
 
-    // Verify the trigger diff contains the nextStepIds change
     const nextStepIdsDiff = result.triggerDiff.find((diff) =>
       diff.path.includes('nextStepIds'),
     );
@@ -105,7 +104,7 @@ describe('computeWorkflowVersionStepChanges', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -124,9 +123,8 @@ describe('computeWorkflowVersionStepChanges', () => {
     expect(result.stepsDiff).toBeDefined();
     expect(result.stepsDiff.length).toBeGreaterThan(0);
     expect(result.triggerDiff).toBeDefined();
-    expect(result.triggerDiff.length).toBe(0); // No trigger changed
+    expect(result.triggerDiff.length).toBe(0);
 
-    // Verify the steps diff contains the new step
     const createDiff = result.stepsDiff.find((diff) => diff.type === 'CREATE');
 
     expect(createDiff).toBeDefined();
@@ -162,7 +160,6 @@ describe('computeWorkflowVersionStepChanges', () => {
     expect(result.stepsDiff).toBeDefined();
     expect(result.stepsDiff.length).toBeGreaterThan(0);
 
-    // Verify change diffs are present
     const triggerChangeDiff = result.triggerDiff.find(
       (diff) => diff.type === 'CHANGE',
     );
@@ -180,7 +177,6 @@ describe('computeWorkflowVersionStepChanges', () => {
     const result = computeWorkflowVersionStepChanges({
       existingTrigger: mockTrigger,
       existingSteps: mockSteps,
-      // updatedTrigger and updatedSteps are undefined
     });
 
     expect(result.triggerDiff).toBeDefined();

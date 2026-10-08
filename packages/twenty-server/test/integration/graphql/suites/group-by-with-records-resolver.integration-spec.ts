@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const OPPORTUNITY_GQL_FIELDS = `
   id
@@ -44,8 +44,7 @@ describe('basic group-by with records', () => {
   const COMPANY_2_EMPLOYEES = 20;
 
   beforeAll(async () => {
-    //   Create test companies
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -58,7 +57,7 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -71,8 +70,7 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    // Create test opportunities with different stages and dates
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -88,7 +86,7 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -104,7 +102,7 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -120,7 +118,7 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
         gqlFields: OPPORTUNITY_GQL_FIELDS,
@@ -138,14 +136,13 @@ describe('basic group-by with records', () => {
   });
 
   afterAll(async () => {
-    // Cleanup created opportunities
     for (const id of [
       testOpportunityId1,
       testOpportunityId2,
       testOpportunityId3,
       testOpportunityId4,
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'opportunity',
           gqlFields: 'id',
@@ -154,9 +151,8 @@ describe('basic group-by with records', () => {
       );
     }
 
-    // Cleanup created companies
     for (const id of [testCompanyId1, testCompanyId2]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',
@@ -167,7 +163,7 @@ describe('basic group-by with records', () => {
   });
 
   it('groups by stage and createdAt with records', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         query OpportunitiesGroupBy(
           $groupBy: [OpportunityGroupByInput!]!
@@ -295,8 +291,7 @@ describe('basic group-by with records', () => {
   });
 
   it('groups by stage and createdAt with records and filters', async () => {
-    // Test with filter to only include NEW stage opportunities
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         query OpportunitiesGroupBy(
           $groupBy: [OpportunityGroupByInput!]!
@@ -383,7 +378,7 @@ describe('basic group-by with records', () => {
   });
 
   it('groups companies by employees with relations', async () => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         query CompaniesGroupBy(
           $groupBy: [CompanyGroupByInput!]!
@@ -523,7 +518,7 @@ describe('basic group-by with records', () => {
     };
 
     it('sorts by name in ascending order', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         getQueryWithOrderByForRecords('AscNullsFirst'),
       );
 
@@ -545,7 +540,7 @@ describe('basic group-by with records', () => {
     });
 
     it('sorts by name in descending order', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         getQueryWithOrderByForRecords('DescNullsFirst'),
       );
 
@@ -567,7 +562,7 @@ describe('basic group-by with records', () => {
     });
 
     it('sorts by relation field (company name) in ascending order', async () => {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query OpportunitiesGroupBy(
             $groupBy: [OpportunityGroupByInput!]!
@@ -634,7 +629,7 @@ describe('basic group-by with records', () => {
     });
 
     it('sorts by relation field (company name) in descending order', async () => {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query OpportunitiesGroupBy(
             $groupBy: [OpportunityGroupByInput!]!
@@ -693,7 +688,6 @@ describe('basic group-by with records', () => {
       expect(newGroup).toBeDefined();
       expect(newGroup.edges).toHaveLength(3);
 
-      // Descending by company name: Company 2 > Company 1
       expect(newGroup.edges[0].node.company.name).toBe('Company 2');
       expect(newGroup.edges[1].node.company.name).toBe('Company 1');
       expect(newGroup.edges[2].node.company.name).toBe('Company 1');

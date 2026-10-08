@@ -1,0 +1,49 @@
+---
+title: ProgressBar
+description: Show measured progress with a horizontal bar.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+`ProgressBar` displays a value from 0 to 100 and exposes progressbar semantics. Give it an `ariaLabel` that identifies the operation, and show a text status when users need the numeric value.
+
+<StoryEmbed
+  storyId="ui-feedback-progressbar-progressbar--default"
+  title="ProgressBar example"
+/>
+
+## Usage
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { percentage: number };
+
+export const ImportProgress = ({ percentage }: ImportProgressProps) => (
+  <>
+    <Text>Importing records: {percentage}%</Text>
+    <ProgressBar
+      value={percentage}
+      ariaLabel="Importing records"
+      withBorderRadius
+    />
+  </>
+);
+```
+
+## State ownership
+
+`value` is required and controlled by the application. There is no `defaultValue` mode. The component does not start a request or advance numeric progress by itself. Use [Loader](/ui/primitives/feedback/loader) when progress is unknown.
+
+Use [Toast](/ui/components/feedback/toast) for notifications with a dismiss countdown and hover pause.
+
+## Appearance
+
+`barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `className` styles the root; other native attributes are not forwarded.
+
+## Props
+
+<ProgressBarReference />

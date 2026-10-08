@@ -59,7 +59,7 @@ const getUtilityComponentSchemas = (): ComponentSchema[] => [
     },
     events: [],
     customHostRenderer: 'RemoteStyleRenderer',
-    customHostRendererPath: '../components/RemoteStyleRenderer',
+    customHostRendererPath: '@/host/components/RemoteStyleRenderer',
   },
 ];
 
@@ -102,12 +102,12 @@ const main = (): void => {
     hostRegistry.getFullText(),
   );
 
-  const remoteElements = generateRemoteElements(
+  const remoteElements = generateRemoteElements({
     project,
-    allComponents,
-    HTML_COMMON_PROPERTIES,
-    COMMON_HTML_EVENTS,
-  );
+    components: allComponents,
+    commonProperties: HTML_COMMON_PROPERTIES,
+    commonEvents: COMMON_HTML_EVENTS,
+  });
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
     OUTPUT_FILES.REMOTE_ELEMENTS,

@@ -1,19 +1,22 @@
 import { Command } from 'nest-commander';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { toPre231RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -21,12 +24,16 @@ const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
     .universalIdentifier;
-const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+const CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.callRecording.views.allCallRecordings.universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
-    .recordingRequestStatus.universalIdentifier,
-  STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields.viewFields
-    .recordingRequestStatus.universalIdentifier,
-];
+    .recordingRequestStatus.universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
+      .viewFields.recordingRequestStatus.universalIdentifier,
+  );
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
 @RegisteredWorkspaceCommand('2.14.0', 1799000065000)
@@ -56,12 +63,17 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
         { workspaceId },
       );
 
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatViewFieldMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-        'flatViewFieldMaps',
-      ]);
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+    ]);
 
     const existingCallRecordingObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
@@ -97,8 +109,8 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -112,13 +124,62 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
           CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
         ],
       });
-    const recordingRequestStatusViewFieldsToCreate =
+
+    // Runs before the 2-26 reconcile moves INDEX views onto the derived
+    // identifier the shared constants resolve to, so it is resolved by key.
+    const callRecordingIndexFlatView = [
+      CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      ...existingCallRecordingObjectMetadata.viewUniversalIdentifiers,
+    ]
+      .map(
+        (viewUniversalIdentifier) =>
+          flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+      )
+      .filter(isDefined)
+      .find(
+        (flatView) =>
+          flatView.key === ViewKey.INDEX &&
+          !isDefined(flatView.deletedAt) &&
+          flatView.applicationUniversalIdentifier ===
+            existingCallRecordingObjectMetadata.applicationUniversalIdentifier,
+      );
+
+    if (!isDefined(callRecordingIndexFlatView)) {
+      this.logger.warn(
+        `No INDEX view found for CallRecording in workspace ${workspaceId}, skipping its ${CALL_RECORDING_REQUEST_STATUS_FIELD_NAME} view field`,
+      );
+    }
+
+    const indexViewFieldsToCreate = isDefined(callRecordingIndexFlatView)
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+          existingFlatEntityMaps: flatViewFieldMaps,
+          universalIdentifiers: [
+            CALL_RECORDING_REQUEST_STATUS_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          ],
+        }).map((flatViewField) => ({
+          ...flatViewField,
+          viewUniversalIdentifier:
+            callRecordingIndexFlatView.universalIdentifier,
+        }))
+      : [];
+
+    const recordPageViewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
         existingFlatEntityMaps: flatViewFieldMaps,
-        universalIdentifiers:
-          CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+        universalIdentifiers: [
+          CALL_RECORDING_REQUEST_STATUS_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        ],
       });
+
+    const recordingRequestStatusViewFieldsToCreate = [
+      ...indexViewFieldsToCreate,
+      ...recordPageViewFieldsToCreate,
+    ].filter(
+      (flatViewField) =>
+        !isFieldAlreadyInView({ flatViewField, flatViewFieldMaps }),
+    );
 
     const totalOperationCount =
       recordingRequestStatusFieldsToCreate.length +
@@ -190,4 +251,19 @@ const hasFieldNameConflict = ({
       flatFieldMetadata.objectMetadataUniversalIdentifier ===
         callRecordingObjectMetadata.universalIdentifier &&
       flatFieldMetadata.name === CALL_RECORDING_REQUEST_STATUS_FIELD_NAME,
+  );
+
+const isFieldAlreadyInView = ({
+  flatViewField,
+  flatViewFieldMaps,
+}: {
+  flatViewField: FlatViewField;
+  flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
+}): boolean =>
+  Object.values(flatViewFieldMaps.byUniversalIdentifier).some(
+    (existingFlatViewField) =>
+      existingFlatViewField?.viewUniversalIdentifier ===
+        flatViewField.viewUniversalIdentifier &&
+      existingFlatViewField.fieldMetadataUniversalIdentifier ===
+        flatViewField.fieldMetadataUniversalIdentifier,
   );

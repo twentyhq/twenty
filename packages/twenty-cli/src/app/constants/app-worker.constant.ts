@@ -1,0 +1,4 @@
+export const APP_WORKER = {
+  CANCEL_GRACE_MILLISECONDS: 3000,
+  OUTPUT_LIMIT_BYTES: 64 * 1024,
+} as const;

@@ -17,6 +17,7 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 
 @Injectable()
 export class BillingPriceService {
@@ -131,9 +132,6 @@ export class BillingPriceService {
     ).sort((a, b) => a.tiers[0].up_to - b.tiers[0].up_to);
   }
 
-  // V2 counterpart of findEquivalentMeteredPrice.
-  // Finds a RESOURCE_CREDIT price matching the target interval and plan,
-  // with the largest credit_amount that does not exceed the reference credit_amount.
   async findEquivalentResourceCreditPrice({
     targetInterval,
     targetPlanKey,
@@ -171,7 +169,7 @@ export class BillingPriceService {
       .filter(
         (p) =>
           p.billingProduct?.metadata?.productKey ===
-          BillingProductKey.RESOURCE_CREDIT,
+            BillingProductKey.RESOURCE_CREDIT && isSellableCatalogPrice(p),
       )
       .sort(
         (a, b) =>

@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     box-sizing: border-box;
     display: flex;
@@ -17,16 +17,22 @@ const StyledRowContainer = styled.div`
     height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
+
+    > svg {
+      flex-shrink: 0;
+    }
   }
 `;
 
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledContent = styled.div`
+  align-items: center;
   display: flex;
   flex: 1 1 0;
   gap: ${themeCssVariables.spacing[1]};
@@ -35,16 +41,23 @@ const StyledContent = styled.div`
 `;
 
 const StyledLabel = styled.span`
+  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
+// Rows are fixed-height, so the description truncates first rather than wrapping or squeezing the label
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
+  flex: 1 1 0;
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
+  min-width: 0;
+  overflow: hidden;
   padding-left: ${themeCssVariables.spacing[1]};
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledLinkContainer = styled.div`
@@ -75,15 +88,16 @@ export const SettingsListItemCardContent = ({
   rightComponent,
   to,
 }: SettingsListItemCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
+  const isInteractive = isDefined(onClick) || isDefined(to);
 
   const content = (
     <StyledRowContainer>
-      <CardContent
+      <Card.Content
         onClick={onClick}
         divider={divider}
-        isClickable={!!onClick || !!to}
-        hasHoverHighlight={!!to}
+        isClickable={isInteractive}
+        hasHoverHighlight={isInteractive}
       >
         {!!LeftIcon && (
           <LeftIcon
@@ -106,7 +120,7 @@ export const SettingsListItemCardContent = ({
             />
           )}
         </StyledRightContainer>
-      </CardContent>
+      </Card.Content>
     </StyledRowContainer>
   );
 

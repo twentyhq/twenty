@@ -1,10 +1,9 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { getRecordIndexId } from '@/command-menu-item/edit/utils/getRecordIndexId';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { ViewType } from '@/views/types/ViewType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -25,6 +24,15 @@ export const useSelectFirstRecordForEditMode = () => {
 
     resetRecordIndexSelection();
 
+    const viewType = store.get(
+      recordIndexViewTypeState.atomFamily({ instanceId: recordIndexId }),
+    );
+
+    // Calendar keeps its own selection over its own records
+    if (viewType !== ViewType.TABLE && viewType !== ViewType.KANBAN) {
+      return;
+    }
+
     const allRecordIds = store.get(
       recordIndexAllRecordIdsComponentSelector.selectorFamily({
         instanceId: recordIndexId,
@@ -37,30 +45,13 @@ export const useSelectFirstRecordForEditMode = () => {
       return;
     }
 
-    const viewType = store.get(recordIndexViewTypeState.atom);
-
-    switch (viewType) {
-      case ViewType.TABLE: {
-        store.set(
-          isRowSelectedComponentFamilyState.atomFamily({
-            instanceId: recordIndexId,
-            familyKey: firstRecordId,
-          }),
-          true,
-        );
-        break;
-      }
-      case ViewType.KANBAN: {
-        store.set(
-          isRecordBoardCardSelectedComponentFamilyState.atomFamily({
-            instanceId: recordIndexId,
-            familyKey: firstRecordId,
-          }),
-          true,
-        );
-        break;
-      }
-    }
+    store.set(
+      isRecordSelectedComponentFamilyState.atomFamily({
+        instanceId: recordIndexId,
+        familyKey: firstRecordId,
+      }),
+      true,
+    );
   }, [store, resetRecordIndexSelection]);
 
   return { selectFirstRecordForEditMode };

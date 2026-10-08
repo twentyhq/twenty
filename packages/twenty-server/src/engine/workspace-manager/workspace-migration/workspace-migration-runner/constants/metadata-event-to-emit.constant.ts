@@ -31,5 +31,10 @@ export const METADATA_EVENTS_TO_EMIT = {
   webhook: false,
   applicationVariable: false,
   connectionProvider: true,
+  timelineActivityType: true,
+  validationRule: true,
   searchFieldMetadata: true,
+  settingsMenuItem: true,
+  workflow: true,
+  workflowVersion: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

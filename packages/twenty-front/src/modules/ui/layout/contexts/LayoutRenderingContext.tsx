@@ -3,14 +3,12 @@ import { createRequiredContext } from '~/utils/createRequiredContext';
 import { type TargetRecordIdentifier } from './TargetRecordIdentifier';
 
 export type LayoutRenderingContextType = {
-  // Optional target record - only present for record pages that display data about a specific record
-  // Undefined for dashboards which are standalone
-  // Uses ActivityTargetableObject shape for compatibility with existing components
   targetRecordIdentifier: TargetRecordIdentifier | undefined;
 
   layoutType: PageLayoutType;
 
-  isInSidePanel: boolean;
+  // A page that already shows the record's title can drop the identifier bar
+  isRecordIdentifierBarHidden?: boolean;
 };
 
 export const [LayoutRenderingProvider, useLayoutRenderingContext] =

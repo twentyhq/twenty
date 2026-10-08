@@ -8,8 +8,10 @@ type GetRecallRecordingResult =
 
 export const getRecallRecording = async ({
   externalRecordingId,
+  signal,
 }: {
   externalRecordingId: string;
+  signal?: AbortSignal;
 }): Promise<GetRecallRecordingResult> => {
   const configResult = getRecallApiConfig();
 
@@ -19,6 +21,7 @@ export const getRecallRecording = async ({
 
   const result = await recallBotApiRequest<Record<string, unknown>>({
     config: configResult.config,
+    signal,
     path: `/recording/${externalRecordingId}/`,
     method: 'GET',
   });

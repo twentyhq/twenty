@@ -1,4 +1,4 @@
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 
 describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
@@ -27,6 +27,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
       result.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
     ).toBeNull();
     expect(result.tabUniversalIdentifiers).toEqual([]);
+    expect(result.isFirstTabPinned).toBe(true);
   });
 
   it('should convert a record page layout manifest', () => {
@@ -65,5 +66,21 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
     expect(
       result.defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
     ).toBe('tab-uuid-1');
+  });
+
+  it('should keep the first tab unpinned when the manifest says so', () => {
+    const result = fromPageLayoutManifestToUniversalFlatPageLayout({
+      pageLayoutManifest: {
+        universalIdentifier: 'pl-uuid-4',
+        name: 'Unpinned Record Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectUniversalIdentifier: 'obj-uuid-1',
+        isFirstTabPinned: false,
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.isFirstTabPinned).toBe(false);
   });
 });

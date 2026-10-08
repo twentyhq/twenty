@@ -7,7 +7,7 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -168,7 +168,6 @@ const ScrollableDragSelectDemo = () => {
           <DragSelect
             selectableItemsContainerRef={containerRef}
             onDragSelectionChange={handleSelectionChange}
-            scrollWrapperComponentInstanceId="scrollable-demo"
           />
         </div>
       </ScrollWrapper>
@@ -197,7 +196,7 @@ The DragSelect component enables users to select multiple items by dragging a se
 **Usage:**
 - Items must have \`data-selectable-id\` attribute
 - Use \`data-select-disable="true"\` to disable selection on specific elements
-- For auto-scroll functionality, wrap in ScrollWrapper and provide \`scrollWrapperComponentInstanceId\`
+- For auto-scroll functionality, render inside a ScrollWrapper
 - Can work without ScrollWrapper for basic drag selection (auto-scroll gracefully disabled)
         `,
       },

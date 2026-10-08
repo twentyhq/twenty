@@ -1,0 +1,97 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { ANCHORED_USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/AnchoredUsageLimitPeriodUnits';
+import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
+import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
+import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
+import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
+import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
+import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
+import {
+  UsageOperationType,
+  type UsageQuotaDefinitionsQuery,
+  type UsageResourceType,
+  UsageUnit,
+} from '~/generated-metadata/graphql';
+
+type UsageLimitDefinitions =
+  UsageQuotaDefinitionsQuery['usageQuotaDefinitions'];
+
+type UsageLimitFormOptions = {
+  resourceTypes: UsageResourceType[];
+  operationTypes: UsageOperationType[];
+  spenderTypes: UsageLimitSpenderType[];
+  units: UsageUnit[];
+  periodUnits: UsageLimitPeriodUnit[];
+};
+
+export const getUsageLimitFormOptions = ({
+  definitions,
+  values,
+}: {
+  definitions: UsageLimitDefinitions;
+  values: UsageLimitFormValues;
+}): UsageLimitFormOptions => {
+  const resourceTypes = [
+    ...new Set(
+      definitions.definitions.map((definition) => definition.resourceType),
+    ),
+  ];
+
+  const definition = definitions.definitions.find(
+    (candidate) => candidate.resourceType === values.resourceType,
+  );
+
+  if (!isDefined(definition)) {
+    return {
+      resourceTypes,
+      operationTypes: [],
+      spenderTypes: [],
+      units: [],
+      periodUnits: [],
+    };
+  }
+
+  const operationTypes = definition.allowedOperations.map(
+    (allowedOperation) => allowedOperation.operationType,
+  );
+
+  const units =
+    definition.allowedOperations.find(
+      (allowedOperation) =>
+        allowedOperation.operationType === values.operationType,
+    )?.allowedUnits ??
+    (values.operationType === UsageOperationType.ALL ? [UsageUnit.CREDIT] : []);
+
+  const isOperatorOnlyPeriodUnit = (periodUnit: UsageLimitPeriodUnit) => {
+    const scope = buildUsageQuotaScopeInput({ ...values, periodUnit });
+
+    return (
+      isDefined(scope) &&
+      !isDefined(scope.spenderId) &&
+      definition.operatorOnlyScopes.some(
+        (operatorOnlyScope) =>
+          operatorOnlyScope.operationType === scope.operationType &&
+          operatorOnlyScope.spenderType === scope.spenderType &&
+          operatorOnlyScope.unit === scope.unit &&
+          operatorOnlyScope.periodUnit === scope.periodUnit,
+      )
+    );
+  };
+
+  const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
+    (periodUnit) =>
+      (periodUnit !== 'allowancePeriod' || definitions.hasAllowancePeriod) &&
+      !isOperatorOnlyPeriodUnit(periodUnit),
+  );
+
+  return {
+    resourceTypes,
+    operationTypes,
+    spenderTypes: definition.allowedSpenderTypes.filter((spenderType) =>
+      isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_LABELS, spenderType),
+    ),
+    units,
+    periodUnits,
+  };
+};

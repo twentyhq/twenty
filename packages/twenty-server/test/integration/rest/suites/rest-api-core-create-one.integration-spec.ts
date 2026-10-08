@@ -2,9 +2,9 @@ import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.c
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+  TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldActorSource } from 'twenty-shared/types';
@@ -15,7 +15,7 @@ describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
     await deleteAllRecords('person');
     await deleteAllRecords('company');
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -32,6 +32,24 @@ describe('Core REST API Create One endpoint', () => {
     await deleteAllRecords('company');
   });
 
+  it('should return only selected fields while storing all submitted fields', async () => {
+    const person = { id: TEST_PERSON_1_ID, jobTitle: 'Selected fields test' };
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/people?fields=id',
+      body: person,
+    }).expect(201);
+
+    expect(response.body.data.createPerson).toEqual({ id: TEST_PERSON_1_ID });
+
+    const fetched = await makeRestApiRequest({
+      method: 'get',
+      path: `/people/${TEST_PERSON_1_ID}`,
+    }).expect(200);
+
+    expect(fetched.body.data.person).toMatchObject(person);
+  });
+
   it('should create a new person', async () => {
     const personJobTitle = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
@@ -40,7 +58,7 @@ describe('Core REST API Create One endpoint', () => {
       companyId: TEST_COMPANY_1_ID,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
@@ -67,7 +85,7 @@ describe('Core REST API Create One endpoint', () => {
       },
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
@@ -89,7 +107,7 @@ describe('Core REST API Create One endpoint', () => {
       companyId: TEST_COMPANY_1_ID,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
@@ -114,7 +132,7 @@ describe('Core REST API Create One endpoint', () => {
       companyId: TEST_COMPANY_1_ID,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people?depth=0`,
       body: requestBody,
@@ -136,7 +154,7 @@ describe('Core REST API Create One endpoint', () => {
       companyId: TEST_COMPANY_1_ID,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people?depth=1`,
       body: requestBody,
@@ -147,7 +165,7 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.company).toBeDefined();
         expect(createdPerson.company.domainName.primaryLinkUrl).toBe(
-          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+          TEST_PRIMARY_LINK_URL_AS_DOMAIN,
         );
         expect(createdPerson.company.people).not.toBeDefined();
       });
@@ -161,7 +179,7 @@ describe('Core REST API Create One endpoint', () => {
       companyId: TEST_COMPANY_1_ID,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people?depth=2`,
       body: requestBody,
@@ -175,13 +193,13 @@ describe('Core REST API Create One endpoint', () => {
       jobTitle: personJobTitle,
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
     });
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/people`,
       body: requestBody,
@@ -200,7 +218,7 @@ describe('Core REST API Create One endpoint', () => {
       stage: 'INVALID_ENUM_VALUE',
     };
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: `/opportunities`,
       body: requestBody,

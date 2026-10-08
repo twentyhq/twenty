@@ -1,4 +1,4 @@
-import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
+import { formatValueForCSV } from 'twenty-shared/utils';
 
 describe('formatValueForCSV', () => {
   it('should format values with commas, quotes, newlines and carriage returns', () => {

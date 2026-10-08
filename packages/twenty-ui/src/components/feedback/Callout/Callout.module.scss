@@ -1,0 +1,113 @@
+.container {
+  align-items: flex-start;
+  background-color: var(--callout-background);
+  border: 1px solid var(--callout-border);
+  border-radius: var(--t-border-radius-md);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-spacing-2);
+  max-width: 512px;
+  padding: var(--t-spacing-3) var(--t-spacing-3) var(--t-spacing-2);
+  width: 100%;
+
+  &[data-color='gray'] {
+    --callout-background: var(--t-color-gray1);
+    --callout-border: var(--t-color-gray6);
+    --callout-icon: var(--t-color-gray9);
+  }
+
+  &[data-color='blue'] {
+    --callout-background: var(--t-color-blue1);
+    --callout-border: var(--t-color-blue6);
+    --callout-icon: var(--t-color-blue9);
+  }
+
+  &[data-color='green'] {
+    --callout-background: var(--t-color-green1);
+    --callout-border: var(--t-color-green6);
+    --callout-icon: var(--t-color-green9);
+  }
+
+  &[data-color='orange'] {
+    --callout-background: var(--t-color-orange1);
+    --callout-border: var(--t-color-orange6);
+    --callout-icon: var(--t-color-orange9);
+  }
+
+  &[data-color='red'] {
+    --callout-background: var(--t-color-red1);
+    --callout-border: var(--t-color-red6);
+    --callout-icon: var(--t-color-red9);
+  }
+}
+
+.containerFullWidth {
+  max-width: none;
+}
+
+.header {
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  gap: var(--t-spacing-2);
+  min-height: var(--t-spacing-6);
+}
+
+.iconContainer {
+  color: var(--callout-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: calc(var(--t-icon-size-md) * 1px);
+  width: calc(var(--t-icon-size-md) * 1px);
+}
+
+.title {
+  flex: 1;
+  color: var(--t-font-color-primary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.descriptionWrapper {
+  align-items: center;
+  display: flex;
+  align-self: stretch;
+  padding-bottom: var(--t-spacing-2);
+}
+
+.descriptionWrapperWithIcon {
+  padding-inline-start: calc(var(--t-icon-size-md) * 1px + var(--t-spacing-2));
+}
+
+.descriptionWrapperWithAction {
+  padding-bottom: 0;
+}
+
+.description {
+  flex: 1;
+  color: var(--t-font-color-tertiary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-regular);
+  line-height: 1.4;
+}
+
+.footer {
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.closeButton {
+  @include square-button;
+}

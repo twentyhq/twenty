@@ -1,128 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import {
-  CalendarChannelSyncStage,
-  MessageChannelSyncStage,
-} from 'twenty-shared/types';
-import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import {
-  CalendarEventListFetchJob,
-  type CalendarEventListFetchJobData,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
+import { CalendarEventWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
+import { type CalendarEventWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-job-data.type';
+import { MessagingMessageWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/jobs/messaging-message-webhook-sync.job';
+import { type MessagingMessageWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/types/messaging-message-webhook-sync-job-data.type';
 
 @Injectable()
 export class WebhookSyncTriggerService {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messagingQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.calendarQueue)
-    private readonly calendarQueueService: MessageQueueService,
-    @InjectRepository(MessageChannelEntity)
-    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectMessageQueue(MessageQueue.connectedAccountSyncWebhookQueue)
+    private readonly connectedAccountSyncWebhookQueueService: MessageQueueService,
+    private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
   async triggerMessagingSync(
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const updateResult = await this.messageChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: messageChannelId,
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
         workspaceId,
-        isSyncEnabled: true,
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
+      );
 
-    if (updateResult.raw.length === 0) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 
-    try {
-      await this.messagingQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        { workspaceId, messageChannelId },
-      );
-    } catch (error) {
-      await this.messageChannelRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        })
-        .where({
-          id: messageChannelId,
-          workspaceId,
-        })
-        .execute();
-
-      throw error;
-    }
+    await this.connectedAccountSyncWebhookQueueService.add<MessagingMessageWebhookSyncJobData>(
+      MessagingMessageWebhookSyncJob.name,
+      { workspaceId, messageChannelId },
+      {
+        deduplication: {
+          id: `messaging-message-webhook-sync:${workspaceId}:${messageChannelId}`,
+          keepLastIfActive: true,
+        },
+      },
+    );
   }
 
   async triggerCalendarSync(
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const updateResult = await this.calendarChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: calendarChannelId,
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
         workspaceId,
-        isSyncEnabled: true,
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
+      );
 
-    if (updateResult.raw.length === 0) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 
-    try {
-      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-        CalendarEventListFetchJob.name,
-        { workspaceId, calendarChannelId },
-      );
-    } catch (error) {
-      await this.calendarChannelRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-        })
-        .where({
-          id: calendarChannelId,
-          workspaceId,
-        })
-        .execute();
-
-      throw error;
-    }
+    await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
+      CalendarEventWebhookSyncJob.name,
+      { workspaceId, calendarChannelId },
+      {
+        deduplication: {
+          id: `calendar-event-webhook-sync:${workspaceId}:${calendarChannelId}`,
+          keepLastIfActive: true,
+        },
+      },
+    );
   }
 }

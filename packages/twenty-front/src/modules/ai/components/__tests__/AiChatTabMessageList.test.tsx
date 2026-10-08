@@ -1,32 +1,39 @@
 import { render } from '@testing-library/react';
-import { type ReactNode } from 'react';
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 
-const renderWithPreamble = (preamble: ReactNode) =>
-  render(
-    <AiChatMessageListPreambleContext.Provider value={preamble}>
-      <AiChatTabMessageList />
-    </AiChatMessageListPreambleContext.Provider>,
-  );
+const mockUseAtomStateValue = jest.fn();
+const mockUseIsWorkspaceSetupChat = jest.fn(() => false);
 
-const mockUseAtomComponentSelectorValue = jest.fn();
+jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
+  useIsWorkspaceSetupChat: () => mockUseIsWorkspaceSetupChat(),
+}));
 
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
-  () => ({
-    useAtomComponentSelectorValue: () => mockUseAtomComponentSelectorValue(),
-  }),
-);
+jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
+  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+}));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => false,
+  useAtomStateValue: () => mockUseAtomStateValue(),
 }));
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
-  ScrollWrapper: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="scroll-wrapper">{children}</div>
+  ScrollWrapper: ({
+    children,
+    componentInstanceId,
+  }: {
+    children: React.ReactNode;
+    componentInstanceId: string;
+  }) => (
+    <div
+      data-testid="scroll-wrapper"
+      data-component-instance-id={componentInstanceId}
+    >
+      {children}
+    </div>
   ),
 }));
 
@@ -38,6 +45,9 @@ jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
 }));
 jest.mock('@/ai/components/AiChatPendingResponseIndicator', () => ({
   AiChatPendingResponseIndicator: () => null,
+}));
+jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+  AiChatThreadInboxStateNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
@@ -51,17 +61,18 @@ jest.mock(
     AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
-jest.mock('@/ai/components/AgentChatScrollToBottomOnMountLayoutEffect', () => ({
-  AgentChatScrollToBottomOnMountLayoutEffect: () => null,
+jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
+  AgentChatStreamingAutoScrollEffect: () => null,
 }));
 
 describe('AiChatTabMessageList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsWorkspaceSetupChat.mockReturnValue(false);
   });
 
   it('should render nothing with no messages and no preamble', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(false);
+    mockUseAtomStateValue.mockReturnValue(false);
 
     const { container } = render(<AiChatTabMessageList />);
 
@@ -69,23 +80,43 @@ describe('AiChatTabMessageList', () => {
   });
 
   it('should render the preamble outside the scroll container with no messages', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(false);
+    mockUseAtomStateValue.mockReturnValue(false);
 
-    const { getByTestId, queryByTestId } = renderWithPreamble(
-      <div data-testid="preamble" />,
-    );
+    mockUseIsWorkspaceSetupChat.mockReturnValue(true);
+
+    const { getByTestId, queryByTestId } = render(<AiChatTabMessageList />);
 
     expect(getByTestId('preamble')).toBeInTheDocument();
     expect(queryByTestId('scroll-wrapper')).not.toBeInTheDocument();
   });
 
   it('should render the preamble inside the message list once messages exist', () => {
-    mockUseAtomComponentSelectorValue.mockReturnValue(true);
+    mockUseAtomStateValue.mockReturnValue(true);
 
-    const { getByTestId } = renderWithPreamble(<div data-testid="preamble" />);
+    mockUseIsWorkspaceSetupChat.mockReturnValue(true);
+
+    const { getByTestId } = render(<AiChatTabMessageList />);
 
     expect(getByTestId('scroll-wrapper')).toContainElement(
       getByTestId('preamble'),
     );
+  });
+
+  it('should give each surface its own scroll wrapper instance id', () => {
+    mockUseAtomStateValue.mockReturnValue(true);
+
+    const renderForSurface = (surface: AiChatSurface) =>
+      render(
+        <AiChatSurfaceContext.Provider value={surface}>
+          <AiChatTabMessageList />
+        </AiChatSurfaceContext.Provider>,
+      )
+        .container.querySelector('[data-testid="scroll-wrapper"]')
+        ?.getAttribute('data-component-instance-id');
+
+    const pageInstanceId = renderForSurface(AI_CHAT_SURFACE.PAGE);
+    const sidePanelInstanceId = renderForSurface(AI_CHAT_SURFACE.SIDE_PANEL);
+
+    expect(pageInstanceId).not.toBe(sidePanelInstanceId);
   });
 });

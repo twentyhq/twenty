@@ -17,6 +17,30 @@ describe('isEmailBlocklisted', () => {
 
     expect(result).toBe(false);
   });
+  it('should ignore case when matching a blocklisted email', () => {
+    const channelHandles = ['abc@example.com'];
+    const email = 'john.doe@acme.com';
+    const blocklist = ['John.Doe@Acme.com'];
+    const result = isEmailBlocklisted(channelHandles, email, blocklist);
+
+    expect(result).toBe(true);
+  });
+  it('should ignore case when matching a blocklisted domain', () => {
+    const channelHandles = ['abc@example.com'];
+    const email = 'John@Acme.com';
+    const blocklist = ['@acme.com'];
+    const result = isEmailBlocklisted(channelHandles, email, blocklist);
+
+    expect(result).toBe(true);
+  });
+  it('should ignore case when the email is a channel handle', () => {
+    const channelHandles = ['Abc@Example.com'];
+    const email = 'abc@example.com';
+    const blocklist = ['@example.com'];
+    const result = isEmailBlocklisted(channelHandles, email, blocklist);
+
+    expect(result).toBe(false);
+  });
   it('should return false if email is null', () => {
     const channelHandles = ['abc@twenty.com'];
     const email = null;

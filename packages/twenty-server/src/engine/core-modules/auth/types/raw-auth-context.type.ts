@@ -22,4 +22,6 @@ export type RawAuthContext = {
     impersonatedUserWorkspaceId?: string;
   };
   tokenType?: JwtTokenTypeEnum;
+  // Sessions only: a JWT's iat is its renewal time, not when the user authenticated
+  authenticatedAt?: Date;
 };

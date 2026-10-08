@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -27,15 +27,11 @@ export const NavigationMenuItemSection = ({
   contentWrapper,
 }: NavigationMenuItemSectionProps) => {
   const content = (
-    <AnimatedExpandableContainer
-      isExpanded={isOpen || forceExpanded}
-      dimension="height"
-      mode="fit-content"
-      containAnimation
-      initial={false}
-    >
-      {children}
-    </AnimatedExpandableContainer>
+    <Collapsible.Root open={isOpen || forceExpanded}>
+      <Collapsible.Panel dimension="height" containAnimation>
+        {children}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 
   return (

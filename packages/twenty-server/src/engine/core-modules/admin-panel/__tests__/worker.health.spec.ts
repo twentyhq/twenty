@@ -22,6 +22,9 @@ jest.mock('bullmq', () => ({
   Queue: jest.fn(() => mockQueueInstance),
 }));
 
+const drainWorkerChecksLeftRunningByTheTimeout = () =>
+  new Promise((resolve) => setImmediate(resolve));
+
 describe('WorkerHealthIndicator', () => {
   let service: WorkerHealthIndicator;
   let mockRedis: jest.Mocked<Pick<Redis, 'ping'>>;
@@ -36,6 +39,7 @@ describe('WorkerHealthIndicator', () => {
     const mockRedisService = {
       getClient: () => mockRedis,
       getQueueClient: () => mockRedis,
+      getQueuePrefix: () => 'bull',
     } as unknown as RedisClientService;
 
     healthIndicatorService = {
@@ -70,7 +74,6 @@ describe('WorkerHealthIndicator', () => {
       .mockImplementation(() => {});
     jest.useFakeTimers();
 
-    // Reset mocks to their default success state before each test
     mockQueueInstance.getWorkers.mockResolvedValue([]);
     mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
     mockQueueInstance.getWaitingCount.mockResolvedValue(0);
@@ -131,6 +134,8 @@ describe('WorkerHealthIndicator', () => {
       expect(result.worker.error).toBe(HEALTH_ERROR_MESSAGES.WORKER_TIMEOUT);
     }
     jest.useRealTimers();
+
+    await drainWorkerChecksLeftRunningByTheTimeout();
   });
 
   it('should check all message queues', async () => {
@@ -242,7 +247,6 @@ describe('WorkerHealthIndicator', () => {
 
   describe('getQueueDetails', () => {
     beforeEach(() => {
-      // Reset mocks to clean state before each test in this describe block
       mockQueueInstance.getWorkers.mockResolvedValue([{ id: 'worker1' }]);
       mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
     });

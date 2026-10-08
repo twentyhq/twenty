@@ -40,39 +40,67 @@ describe('isMatchingArrayFilter', () => {
   });
 
   describe('isEmptyArray filter', () => {
-    it('should return true when array is empty and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: [],
-        }),
-      ).toBe(true);
-    });
-
-    it('should return false when array is not empty and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: ['test'],
-        }),
-      ).toBe(false);
-    });
-
-    it('should return false when value is null and checking for empty array', () => {
-      expect(
-        isMatchingArrayFilter({
-          arrayFilter: { isEmptyArray: true },
-          value: null,
-        }),
-      ).toBe(false);
-    });
+    it.each([
+      { isEmptyArray: true, value: [], expected: true },
+      { isEmptyArray: true, value: null, expected: true },
+      { isEmptyArray: true, value: ['test'], expected: false },
+      { isEmptyArray: false, value: [], expected: false },
+      { isEmptyArray: false, value: null, expected: false },
+      { isEmptyArray: false, value: ['test'], expected: true },
+    ])(
+      'should return $expected for isEmptyArray $isEmptyArray on $value',
+      ({ isEmptyArray, value, expected }) => {
+        expect(
+          isMatchingArrayFilter({ arrayFilter: { isEmptyArray }, value }),
+        ).toBe(expected);
+      },
+    );
   });
 
   describe('containsIlike filter', () => {
+    it.each([
+      { pattern: '%', value: [], expected: false },
+      { pattern: '%', value: [''], expected: true },
+      { pattern: '', value: ['item'], expected: false },
+      { pattern: '', value: [''], expected: true },
+      { pattern: '%user-1%', value: ['other', 'user-1'], expected: true },
+      { pattern: 'a_c', value: ['abc'], expected: true },
+      { pattern: 'a_c', value: ['abxc'], expected: false },
+      { pattern: 'a_c', value: ['a😀c'], expected: true },
+      { pattern: '%foo%', value: ['before\nfoo\nafter'], expected: true },
+      { pattern: 'a\\_c', value: ['a_c'], expected: true },
+      { pattern: 'a\\_c', value: ['abc'], expected: false },
+      { pattern: '50\\%', value: ['50%'], expected: true },
+      { pattern: '50\\%', value: ['500'], expected: false },
+      { pattern: 'a.c', value: ['abc'], expected: false },
+      { pattern: 'a.c', value: ['a.c'], expected: true },
+      { pattern: 'a\\', value: [], expected: false },
+      { pattern: 'a\\', value: null, expected: false },
+    ])(
+      'matches $pattern against $value: $expected',
+      ({ pattern, value, expected }) => {
+        expect(
+          isMatchingArrayFilter({
+            arrayFilter: { containsIlike: pattern },
+            value,
+          }),
+        ).toBe(expected);
+      },
+    );
+
+    it('rejects a dangling escape when evaluating an array item', () => {
+      expect(() =>
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'a\\' },
+          value: ['a\\'],
+        }),
+      ).toThrow('LIKE pattern must not end with escape character');
+    });
+
     it('should return true when array contains item matching case-insensitive search', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'TEST' },
+          arrayFilter: { containsIlike: '%TEST%' },
           value: ['test item'],
         }),
       ).toBe(true);
@@ -81,7 +109,7 @@ describe('isMatchingArrayFilter', () => {
     it('should return false when array does not contain item matching search', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'missing' },
+          arrayFilter: { containsIlike: '%missing%' },
           value: ['test item'],
         }),
       ).toBe(false);
@@ -90,7 +118,7 @@ describe('isMatchingArrayFilter', () => {
     it('should return false when value is null and using containsIlike', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'test' },
+          arrayFilter: { containsIlike: '%test%' },
           value: null,
         }),
       ).toBe(false);
@@ -99,10 +127,42 @@ describe('isMatchingArrayFilter', () => {
     it('should match partial strings case-insensitively', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'TE' },
+          arrayFilter: { containsIlike: '%TE%' },
           value: ['Test Item', 'Another Item'],
         }),
       ).toBe(true);
+    });
+
+    it('should treat percent signs as SQL ILIKE wildcards', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-1%' },
+          value: ['user-1'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-1%' },
+          value: ['user-2'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should treat a pattern without percent signs as a whole-string ILIKE match', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['TEST'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['test item'],
+        }),
+      ).toBe(false);
     });
   });
 

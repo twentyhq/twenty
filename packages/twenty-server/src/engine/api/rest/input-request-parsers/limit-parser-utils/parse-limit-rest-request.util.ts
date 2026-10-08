@@ -7,12 +7,13 @@ import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
+import { type RequestContext } from 'src/engine/api/rest/types/request-context.type';
 
 export const parseLimitRestRequest = (
   request: AuthenticatedRequest | RequestContext,
   defaultLimit = QUERY_DEFAULT_LIMIT_RECORDS,
+  maxLimit = QUERY_MAX_RECORDS,
 ): number => {
   if (!request.query?.limit) {
     return defaultLimit;
@@ -26,5 +27,5 @@ export const parseLimitRestRequest = (
     );
   }
 
-  return Math.min(limit, QUERY_MAX_RECORDS);
+  return Math.min(limit, maxLimit);
 };

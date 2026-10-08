@@ -1,0 +1,2582 @@
+import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import {
+  MetadataReadability,
+  type ObjectRecord,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  DeleteResult,
+  In,
+  InsertResult,
+  type ObjectLiteral,
+  UpdateResult,
+} from 'typeorm';
+
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import {
+  type OperationType,
+  validateOperationIsPermittedOrThrow,
+} from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
+import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
+import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
+import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
+import { type InheritedReadabilityParentLink } from 'src/engine/core-modules/record-share/types/inherited-readability-parent-link.type';
+import {
+  type RowAccessExpression,
+  type RowAccessPolicy,
+  type RowAccessCompilationEnvironment,
+  type RowAccessPolicyEnvironment,
+  type RowAccessPolicySubject,
+  type SqlCondition,
+} from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
+import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+import {
+  evaluateRowAccessPolicy,
+  type RowAccessEvaluationContext,
+  type RowAccessRecord,
+} from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import {
+  getUpdateEventRecords,
+  mergeRecordsWithUpdateValues,
+} from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
+import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
+import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
+import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
+import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
+import { validateRecordsAgainstValidationRulesOrThrow } from 'src/engine/twenty-orm/utils/validate-records-against-validation-rules.util';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import {
+  buildInsertStatement,
+  type InsertRowValue,
+} from 'src/engine/twenty-orm/sql/utils/build-insert-statement.util';
+import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import {
+  applyFindOptionsToQueryBuilder,
+  normalizeFindOptionsRelations,
+  splitFindOptionsOrder,
+  type WorkspaceFindOptionsRelations,
+  type WorkspaceFindOptions,
+} from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
+import {
+  applyMutationCriteriaToQueryBuilder,
+  type MutationCriteria,
+} from 'src/engine/twenty-orm/query-builder/utils/apply-mutation-criteria.util';
+import {
+  type ObjectWhereLike,
+  type OrderByConditionLike,
+} from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
+import {
+  attachToManyRelationToRecords,
+  attachToOneRelationToRecords,
+  collectForeignKeys,
+  collectRecordIds,
+} from 'src/engine/twenty-orm/repository/utils/attach-relations.util';
+import {
+  matchEntitiesForUpsert,
+  partitionEntitiesForSave,
+} from 'src/engine/twenty-orm/repository/utils/resolve-save-and-upsert.util';
+import {
+  getUpdateEventColumnsToReturn,
+  mergeReturnedUpdateTimestamps,
+} from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
+import {
+  type WorkspaceRelationShape,
+  type WorkspaceTableShape,
+} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+
+const ALWAYS_FALSE_CONDITION = '1=0';
+const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
+  MutationKind,
+  DatabaseEventAction[]
+> = {
+  delete: [DatabaseEventAction.DESTROYED],
+  restore: [DatabaseEventAction.RESTORED],
+  'soft-delete': [DatabaseEventAction.DELETED],
+  update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
+};
+
+type ValidateWrittenRecords = (writtenRecords: ObjectRecord[]) => Promise<void>;
+
+type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
+  tableShape: WorkspaceTableShape;
+  flatObjectMetadata: FlatObjectMetadata;
+  internalContext: WorkspaceInternalContext;
+  authContext: WorkspaceAuthContext;
+  executor: QueryExecutor;
+  objectRecordsPermissions: ObjectsPermissions;
+  shouldBypassPermissionChecks: boolean;
+  // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
+  // and timeline activities will NOT fire
+  shouldSkipEventEmission: boolean;
+  tableShapeByObjectMetadataId: (
+    objectMetadataId: string,
+  ) => WorkspaceTableShape;
+  flatObjectMetadataByObjectMetadataId: (
+    objectMetadataId: string,
+  ) => FlatObjectMetadata;
+  getRepositoryForObjectMetadataId: <
+    Entity extends ObjectLiteral = ObjectRecord,
+  >(
+    objectMetadataId: string,
+  ) => WorkspaceRepository<Entity>;
+  isTransactional: boolean;
+  runInNewTransaction: <T>(
+    work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
+  ) => Promise<T>;
+};
+
+export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
+  readonly objectRecordsPermissions: ObjectsPermissions;
+
+  private readonly options: WorkspaceRepositoryOptions<TEntity>;
+
+  private _filesFieldSync?: FilesFieldSync;
+
+  constructor(options: WorkspaceRepositoryOptions<TEntity>) {
+    this.options = options;
+    this.objectRecordsPermissions = options.objectRecordsPermissions;
+  }
+
+  private get filesFieldSync(): FilesFieldSync {
+    return (this._filesFieldSync ??= new FilesFieldSync(
+      this.options.internalContext,
+    ));
+  }
+
+  async executeRaw<T extends Record<string, unknown>>(
+    sql: string,
+    parameters: Record<string, unknown>,
+  ): Promise<T[]> {
+    const compiled = compileNamedParameters(sql, parameters);
+
+    return this.options.executor.execute(compiled) as Promise<T[]>;
+  }
+
+  createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
+    return new WorkspaceSelectQueryBuilder(
+      alias ?? this.options.tableShape.nameSingular,
+      {
+        tableShape: this.options.tableShape,
+        executor: this.options.executor,
+        objectRecordsPermissions: this.options.objectRecordsPermissions,
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+        onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
+        formatResult: (records) => this.formatResult(records),
+      },
+    );
+  }
+
+  formatResult<T>(records: unknown): T {
+    return formatResult<T>(
+      records,
+      this.options.flatObjectMetadata,
+      this.options.internalContext.flatObjectMetadataMaps,
+      this.options.internalContext.flatFieldMetadataMaps,
+    );
+  }
+
+  // Strip undefined like TypeORM does, so they neither throw as unknown fields nor bind as NULL
+  private formatWriteData(
+    data: Partial<ObjectRecord>,
+  ): Record<string, unknown> {
+    const definedData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    );
+
+    return formatData(
+      definedData,
+      this.options.flatObjectMetadata,
+      this.options.internalContext.flatFieldMetadataMaps,
+    );
+  }
+
+  applyWriteRowLevelPermissions(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+    kind: MutationKind,
+  ): void {
+    this.applyRowLevelPermissionPredicates(queryBuilder, kind);
+  }
+
+  async findRecordIdsAllowedForOperation({
+    recordIds,
+    operationType,
+    updatedColumns = [],
+    withDeleted = false,
+  }: {
+    recordIds: string[];
+    operationType: OperationType;
+    updatedColumns?: string[];
+    withDeleted?: boolean;
+  }): Promise<string[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+    try {
+      if (operationType !== 'select') {
+        this.validateWriteIsPermitted({
+          operationType,
+          columnsToReturn: ['id'],
+          updatedColumns,
+        });
+      }
+      const queryBuilder = this.createQueryBuilder()
+        .select(['id'])
+        .where({ id: In(recordIds) });
+      if (withDeleted) {
+        queryBuilder.withDeleted();
+      }
+      this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
+      const records = await queryBuilder.getMany<ObjectRecord>();
+      return records.map(({ id }) => id);
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return [];
+      }
+      throw error;
+    }
+  }
+
+  get internalContext(): WorkspaceInternalContext {
+    return this.options.internalContext;
+  }
+
+  getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
+    objectMetadataId: string,
+  ): WorkspaceRepository<Entity> {
+    return this.options.getRepositoryForObjectMetadataId<Entity>(
+      objectMetadataId,
+    );
+  }
+
+  async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
+    const records = await applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getMany<ObjectRecord>();
+
+    if (isDefined(options?.relations)) {
+      await this.loadRelations(
+        records,
+        normalizeFindOptionsRelations(options.relations),
+        options.withDeleted ?? false,
+        splitFindOptionsOrder(this.options.tableShape, options.order)
+          .orderByRelationFieldName,
+      );
+    }
+
+    return records as unknown as TEntity[];
+  }
+
+  async findBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<TEntity[]> {
+    return this.find({ where });
+  }
+
+  async findAndCount(
+    options?: WorkspaceFindOptions,
+  ): Promise<[TEntity[], number]> {
+    const records = await this.find(options);
+    const totalCount = await this.count(options);
+
+    return [records, totalCount];
+  }
+
+  async findAndCountBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<[TEntity[], number]> {
+    return this.findAndCount({ where });
+  }
+
+  async findOne(options?: WorkspaceFindOptions): Promise<TEntity | null> {
+    if (!isDefined(options?.where)) {
+      throw new TwentyOrmException(
+        'findOne requires a "where" condition',
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
+    const record = await applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getOne<ObjectRecord>();
+
+    if (isDefined(record) && isDefined(options?.relations)) {
+      await this.loadRelations(
+        [record],
+        normalizeFindOptionsRelations(options.relations),
+        options.withDeleted ?? false,
+        splitFindOptionsOrder(this.options.tableShape, options.order)
+          .orderByRelationFieldName,
+      );
+    }
+
+    return record as unknown as TEntity | null;
+  }
+
+  async findOneBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<TEntity | null> {
+    return this.findOne({ where });
+  }
+
+  async findOneOrFail(options?: WorkspaceFindOptions): Promise<TEntity> {
+    const record = await this.findOne(options);
+
+    if (!isDefined(record)) {
+      throw new TwentyOrmException(
+        `No "${this.options.tableShape.nameSingular}" record matches the given criteria`,
+        TwentyOrmExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    return record;
+  }
+
+  async findOneByOrFail(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<TEntity> {
+    return this.findOneOrFail({ where });
+  }
+
+  async count(options?: WorkspaceFindOptions): Promise<number> {
+    return applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getCount();
+  }
+
+  async countBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<number> {
+    return this.count({ where });
+  }
+
+  async exists(options?: WorkspaceFindOptions): Promise<boolean> {
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      {
+        where: options?.where,
+        withDeleted: options?.withDeleted,
+      },
+    );
+
+    queryBuilder.select(['id']);
+
+    return isDefined(await queryBuilder.getRawOne());
+  }
+
+  async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {
+    return this.exists({ where });
+  }
+
+  async minimum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('MIN', columnName, where);
+  }
+
+  async maximum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('MAX', columnName, where);
+  }
+
+  async sum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('SUM', columnName, where);
+  }
+
+  async average(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('AVG', columnName, where);
+  }
+
+  private async aggregate(
+    sqlFunction: 'MIN' | 'MAX' | 'SUM' | 'AVG',
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    if (
+      !isDefined(this.options.tableShape.columnShapeByColumnName[columnName])
+    ) {
+      throw new TwentyOrmException(
+        `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
+      );
+    }
+
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      isDefined(where) ? { where } : undefined,
+    );
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect(
+      `${sqlFunction}(${escapeIdentifier(
+        this.options.tableShape.nameSingular,
+      )}.${escapeIdentifier(columnName)})`,
+      'value',
+    );
+
+    const row = await queryBuilder.getRawOne<{
+      value: string | number | null;
+    }>();
+
+    return isDefined(row?.value) ? Number(row.value) : null;
+  }
+
+  private async loadRelations(
+    records: ObjectRecord[],
+    relations: WorkspaceFindOptionsRelations,
+    withDeleted: boolean,
+    orderByRelationFieldName: Record<string, OrderByConditionLike> = {},
+  ): Promise<void> {
+    if (records.length === 0) {
+      return;
+    }
+
+    for (const [fieldName, nested] of Object.entries(relations)) {
+      if (nested === false) {
+        continue;
+      }
+
+      const relationShape =
+        this.options.tableShape.relationShapeByFieldName[fieldName];
+
+      if (!isDefined(relationShape)) {
+        throw new TwentyOrmException(
+          `Relation "${fieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+          TwentyOrmExceptionCode.UNKNOWN_RELATION,
+        );
+      }
+
+      const nestedRelations = typeof nested === 'object' ? nested : undefined;
+      const targetRepository = this.options.getRepositoryForObjectMetadataId(
+        relationShape.targetObjectMetadataId,
+      );
+
+      if (relationShape.relationType === RelationType.MANY_TO_ONE) {
+        await this.attachToOneRelation({
+          records,
+          fieldName,
+          joinColumnName: relationShape.joinColumnName,
+          targetRepository,
+          nestedRelations,
+        });
+      } else if (relationShape.relationType === RelationType.ONE_TO_MANY) {
+        await this.attachToManyRelation({
+          records,
+          fieldName,
+          relationShape,
+          targetRepository,
+          nestedRelations,
+          withDeleted,
+          order: orderByRelationFieldName[fieldName],
+        });
+      } else {
+        throw new TwentyOrmException(
+          `Loading "${relationShape.relationType}" relations through find is not supported yet`,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+    }
+  }
+
+  private async attachToOneRelation({
+    records,
+    fieldName,
+    joinColumnName,
+    targetRepository,
+    nestedRelations,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    joinColumnName?: string;
+    targetRepository: WorkspaceRepository;
+    nestedRelations?: WorkspaceFindOptionsRelations;
+  }): Promise<void> {
+    if (!isDefined(joinColumnName)) {
+      throw new TwentyOrmException(
+        `Relation "${fieldName}" has no join column to resolve`,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    const foreignKeys = collectForeignKeys(records, joinColumnName);
+
+    const targets =
+      foreignKeys.length > 0
+        ? await targetRepository.find({
+            where: { id: In(foreignKeys) },
+            withDeleted: true,
+            relations: nestedRelations,
+          })
+        : [];
+
+    attachToOneRelationToRecords({
+      records,
+      fieldName,
+      joinColumnName,
+      targets,
+    });
+  }
+
+  private async attachToManyRelation({
+    records,
+    fieldName,
+    relationShape,
+    targetRepository,
+    nestedRelations,
+    withDeleted,
+    order,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    relationShape: WorkspaceRelationShape;
+    targetRepository: WorkspaceRepository;
+    nestedRelations?: WorkspaceFindOptionsRelations;
+    withDeleted: boolean;
+    order?: OrderByConditionLike;
+  }): Promise<void> {
+    const inverseForeignKeyColumnName =
+      this.resolveInverseForeignKeyColumnName(relationShape);
+
+    const parentIds = collectRecordIds(records);
+
+    const children =
+      parentIds.length > 0
+        ? await targetRepository.find({
+            where: { [inverseForeignKeyColumnName]: In(parentIds) },
+            relations: nestedRelations,
+            withDeleted,
+            order,
+          })
+        : [];
+
+    attachToManyRelationToRecords({
+      records,
+      fieldName,
+      inverseForeignKeyColumnName,
+      children,
+    });
+  }
+
+  private resolveInverseForeignKeyColumnName(
+    relationShape: WorkspaceRelationShape,
+  ): string {
+    const targetTableShape = this.options.tableShapeByObjectMetadataId(
+      relationShape.targetObjectMetadataId,
+    );
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (candidate) =>
+        candidate.fieldMetadataId === relationShape.targetFieldMetadataId,
+    );
+
+    if (!isDefined(inverseRelationShape?.joinColumnName)) {
+      throw new TwentyOrmException(
+        `Could not resolve the inverse foreign key for a to-many relation on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    return inverseRelationShape.joinColumnName;
+  }
+
+  async insert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+    options?: { onConflictDoNothing?: boolean },
+  ): Promise<InsertResult> {
+    const records = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    const { identifiers, generatedMaps, raw } = await this.runInsert({
+      records,
+      columnsToReturn: this.options.shouldBypassPermissionChecks
+        ? Object.keys(this.options.tableShape.columnShapeByColumnName)
+        : ['id'],
+      onConflictDoNothing: options?.onConflictDoNothing,
+    });
+
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = identifiers;
+    insertResult.generatedMaps = generatedMaps;
+    insertResult.raw = raw;
+
+    return insertResult;
+  }
+
+  async update(
+    criteria: MutationCriteria,
+    partialEntity: Partial<ObjectRecord>,
+    options?: { columnsToReturn?: string[] },
+  ): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'update',
+      columnsToReturn: options?.columnsToReturn ?? ['id'],
+      data: partialEntity,
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async updateMany(
+    inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
+  ): Promise<UpdateResult> {
+    if (inputs.length > QUERY_MAX_RECORDS) {
+      throw new TwentyOrmException(
+        `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
+      );
+    }
+
+    const { generatedMaps, raw } = await this.runBatchUpdate({
+      inputs: inputs.map((input) => ({
+        id: input.criteria,
+        data: input.partialEntity,
+      })),
+      columnsToReturn: ['id'],
+    });
+
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = raw;
+    updateResult.affected = raw.length;
+    updateResult.generatedMaps = generatedMaps;
+
+    return updateResult;
+  }
+
+  async delete(
+    criteria: MutationCriteria,
+    options?: { columnsToReturn?: string[] },
+  ): Promise<DeleteResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'delete',
+      columnsToReturn: options?.columnsToReturn ?? ['id'],
+    });
+
+    const deleteResult = new DeleteResult();
+
+    deleteResult.raw = records;
+    deleteResult.affected = records.length;
+
+    return deleteResult;
+  }
+
+  async softDelete(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'soft-delete',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async restore(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'restore',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  private buildUpdateResult(records: ObjectRecord[]): UpdateResult {
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = records;
+    updateResult.affected = records.length;
+    updateResult.generatedMaps = records;
+
+    return updateResult;
+  }
+
+  private runAtomically<T>(
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
+  ): Promise<T> {
+    return this.options.isTransactional
+      ? work(this)
+      : this.options.runInNewTransaction(work);
+  }
+
+  private runWithValidationRules<TResult>({
+    write,
+    inputRecordIds,
+  }: {
+    write: (
+      repository: WorkspaceRepository<TEntity>,
+      validateWrittenRecords?: ValidateWrittenRecords,
+    ) => Promise<TResult>;
+    inputRecordIds?: (string | undefined)[];
+  }): Promise<TResult> {
+    const validationRules = getActiveValidationRules({
+      flatValidationRuleMaps:
+        this.options.internalContext.flatValidationRuleMaps,
+      objectMetadataId: this.options.flatObjectMetadata.id,
+    });
+
+    if (validationRules.length === 0) {
+      return write(this);
+    }
+
+    return this.runAtomically((repository) =>
+      write(repository, (writtenRecords) =>
+        validateRecordsAgainstValidationRulesOrThrow({
+          repository,
+          tableShape: this.options.tableShape,
+          validationRules,
+          writtenRecords,
+          inputRecordIds,
+        }),
+      ),
+    );
+  }
+
+  private async findExistingIds(ids: string[]): Promise<Set<string>> {
+    if (ids.length === 0) {
+      return new Set<string>();
+    }
+
+    const { schemaName, tableName } = this.options.tableShape;
+    const rows = await this.executeRaw<{ id: string }>(
+      `SELECT "id" FROM ${escapeIdentifier(schemaName)}.${escapeIdentifier(
+        tableName,
+      )} WHERE "id" IN (:...ids)`,
+      { ids },
+    );
+
+    return new Set(rows.map((row) => row.id));
+  }
+
+  async save(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<TEntity[]> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    if (entities.length === 0) {
+      return [];
+    }
+
+    return this.runAtomically(async (repository) => {
+      const existingIds = await repository.findExistingIds(
+        entities.map((entity) => entity.id).filter(isNonEmptyString),
+      );
+
+      const { toUpdate, toInsert } = partitionEntitiesForSave(
+        entities,
+        existingIds,
+      );
+
+      if (toUpdate.length > 0) {
+        await repository.runBatchUpdate({
+          inputs: toUpdate.flatMap((entity) =>
+            isNonEmptyString(entity.id)
+              ? [{ id: entity.id, data: entity }]
+              : [],
+          ),
+          columnsToReturn: ['id'],
+        });
+      }
+
+      const insertedIds =
+        toInsert.length > 0
+          ? (
+              await repository.runInsert({
+                records: toInsert,
+                columnsToReturn: ['id'],
+              })
+            ).identifiers.map((identifier) => identifier.id)
+          : [];
+
+      const savedIds = [
+        ...toUpdate.map((entity) => entity.id).filter(isNonEmptyString),
+        ...insertedIds.filter(isNonEmptyString),
+      ];
+
+      const savedById = new Map(
+        savedIds.length > 0
+          ? (
+              await repository.find({
+                where: { id: In(savedIds) },
+                withDeleted: true,
+              })
+            ).map((record) => [record.id, record])
+          : [],
+      );
+
+      let insertCursor = 0;
+
+      return entities.flatMap((entity) => {
+        const savedId =
+          isNonEmptyString(entity.id) && existingIds.has(entity.id)
+            ? entity.id
+            : insertedIds[insertCursor++];
+        const record = isNonEmptyString(savedId)
+          ? savedById.get(savedId)
+          : undefined;
+
+        return isDefined(record) ? [record] : [];
+      }) as unknown as TEntity[];
+    });
+  }
+
+  async upsert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+    conflictPathsOrOptions: string[] | { conflictPaths: string[] },
+  ): Promise<InsertResult> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    const conflictPaths = Array.isArray(conflictPathsOrOptions)
+      ? conflictPathsOrOptions
+      : conflictPathsOrOptions.conflictPaths;
+
+    if (conflictPaths.length === 0) {
+      throw new TwentyOrmException(
+        'upsert requires at least one conflict path',
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
+    if (entities.length === 0) {
+      return new InsertResult();
+    }
+
+    return this.runAtomically(async (repository) => {
+      const conflictWhere = entities.map((entity) =>
+        Object.fromEntries(
+          conflictPaths.map((path) => [path, entity[path] ?? null]),
+        ),
+      );
+
+      const existingRecords = await applyFindOptionsToQueryBuilder(
+        repository.buildBypassingEventSelectQueryBuilder(
+          repository.options.tableShape.nameSingular,
+        ),
+        { where: conflictWhere, withDeleted: true },
+      ).getMany<ObjectRecord>();
+
+      const { toUpdate, toInsert } = matchEntitiesForUpsert(
+        entities,
+        existingRecords,
+        conflictPaths,
+      );
+
+      const emptyOutcome = { identifiers: [], generatedMaps: [], raw: [] };
+
+      const updateOutcome =
+        toUpdate.length > 0
+          ? await repository.runBatchUpdate({
+              inputs: toUpdate.map((match) => ({
+                id: match.id,
+                data: match.entity,
+              })),
+              columnsToReturn: ['id'],
+            })
+          : emptyOutcome;
+
+      const insertOutcome =
+        toInsert.length > 0
+          ? await repository.runInsert({
+              records: toInsert,
+              columnsToReturn: ['id'],
+            })
+          : emptyOutcome;
+
+      const insertResult = new InsertResult();
+
+      insertResult.identifiers = [
+        ...updateOutcome.identifiers,
+        ...insertOutcome.identifiers,
+      ];
+      insertResult.generatedMaps = [
+        ...updateOutcome.generatedMaps,
+        ...insertOutcome.generatedMaps,
+      ];
+      insertResult.raw = [...updateOutcome.raw, ...insertOutcome.raw];
+
+      return insertResult;
+    });
+  }
+
+  private assertNoNestedRelationObjects(
+    entities: Partial<ObjectRecord>[],
+  ): void {
+    for (const entity of entities) {
+      for (const key of Object.keys(entity)) {
+        const value = entity[key];
+
+        if (
+          isDefined(this.options.tableShape.relationShapeByFieldName[key]) &&
+          typeof value === 'object' &&
+          value !== null
+        ) {
+          throw new TwentyOrmException(
+            `Writing nested relation "${key}" through the ORM v2 repository is not supported yet`,
+            TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
+          );
+        }
+      }
+    }
+  }
+
+  async runInsert(args: {
+    records: Partial<ObjectRecord>[];
+    columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    return this.runWithValidationRules({
+      inputRecordIds: args.records.map((record) => record.id),
+      write: (repository, validateWrittenRecords) =>
+        repository.performInsert({ ...args, validateWrittenRecords }),
+    });
+  }
+
+  private async performInsert({
+    records,
+    columnsToReturn,
+    onConflictDoNothing,
+    validateWrittenRecords,
+  }: {
+    records: Partial<ObjectRecord>[];
+    columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
+    validateWrittenRecords?: ValidateWrittenRecords;
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    if (records.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    const filesFieldDiff =
+      this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
+        records,
+        this.options.tableShape.nameSingular,
+      );
+
+    let filesFieldFileIds = null;
+    let recordsToInsert = records;
+
+    if (isDefined(filesFieldDiff)) {
+      const enriched = await this.filesFieldSync.enrichFilesFields({
+        entities: records,
+        filesFieldDiffByEntityIndex: filesFieldDiff,
+        workspaceId: this.options.internalContext.workspaceId,
+        target: this.options.tableShape.nameSingular,
+      });
+
+      filesFieldFileIds = enriched.fileIds;
+      recordsToInsert = enriched.entities as Partial<ObjectRecord>[];
+    }
+
+    const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
+      this.buildInsertRows(recordsToInsert);
+
+    this.validateWriteIsPermitted({
+      operationType: 'insert',
+      columnsToReturn,
+      updatedColumns: insertedColumns,
+    });
+
+    validateRLSPredicatesForRecords({
+      records: this.formatResult<ObjectRecord[]>(formattedRecords),
+      objectMetadata: this.options.flatObjectMetadata,
+      internalContext: this.options.internalContext,
+      authContext: this.options.authContext,
+      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
+    });
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: formattedRecords,
+      affectedRecords: formattedRecords,
+    });
+
+    await this.assertRecordStockAvailable(recordsToInsert.length);
+
+    const sql = buildInsertStatement({
+      tableShape: this.options.tableShape,
+      columnNames,
+      rows,
+      returningColumns: columnsToReturn,
+      onConflictDoNothing,
+    });
+
+    const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+
+    await validateWrittenRecords?.(rawRows);
+
+    await this.acquireRecordStock(rawRows.length);
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
+
+    const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
+    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+
+    await this.emitCreateEvents(insertedIds);
+
+    return {
+      identifiers: insertedIds.map((id) => ({ id })),
+      generatedMaps,
+      raw: rawRows,
+    };
+  }
+
+  async runBatchUpdate(args: {
+    inputs: { id: string; data: Partial<ObjectRecord> }[];
+    columnsToReturn: string[];
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    return this.runWithValidationRules({
+      inputRecordIds: args.inputs.map((input) => input.id),
+      write: (repository, validateWrittenRecords) =>
+        repository.performBatchUpdate({ ...args, validateWrittenRecords }),
+    });
+  }
+
+  private async performBatchUpdate({
+    inputs,
+    columnsToReturn,
+    validateWrittenRecords,
+  }: {
+    inputs: { id: string; data: Partial<ObjectRecord> }[];
+    columnsToReturn: string[];
+    validateWrittenRecords?: ValidateWrittenRecords;
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    if (inputs.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    const writableRecordIds = await this.resolveWritableRecordIds({
+      ids: inputs.map((input) => input.id),
+      operationType: 'update',
+    });
+    const writableInputs = inputs.filter((input) =>
+      writableRecordIds.has(input.id),
+    );
+
+    const recordsBefore: ObjectRecord[] = [];
+    const recordsAfter: ObjectRecord[] = [];
+    const generatedMaps: ObjectRecord[] = [];
+    const updateEventColumnsToReturn = getUpdateEventColumnsToReturn(
+      columnsToReturn,
+      this.options.tableShape,
+    );
+
+    const rawBeforeByInputIndex: ObjectRecord[][] = [];
+    const existingRecordsMapById: Record<string, ObjectRecord> = {};
+
+    for (const input of writableInputs) {
+      const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
+        input.id,
+      ]).getMany<ObjectRecord>({ noFormatting: true });
+
+      rawBeforeByInputIndex.push(rawBefore);
+
+      for (const formattedRecord of this.formatResult<ObjectRecord[]>(
+        rawBefore,
+      )) {
+        if (isDefined(formattedRecord.id)) {
+          existingRecordsMapById[formattedRecord.id] = formattedRecord;
+        }
+      }
+    }
+
+    let dataByInputIndex = writableInputs.map((input) => input.data);
+    let filesFieldFileIds = null;
+
+    const filesFieldDiff =
+      this.filesFieldSync.computeFilesFieldDiffBeforeUpsert(
+        dataByInputIndex,
+        this.options.tableShape.nameSingular,
+        existingRecordsMapById,
+      );
+
+    if (isDefined(filesFieldDiff)) {
+      const enriched = await this.filesFieldSync.enrichFilesFields({
+        entities: dataByInputIndex,
+        filesFieldDiffByEntityIndex: filesFieldDiff,
+        workspaceId: this.options.internalContext.workspaceId,
+        target: this.options.tableShape.nameSingular,
+      });
+
+      filesFieldFileIds = enriched.fileIds;
+      dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
+    }
+
+    const writtenRecords = dataByInputIndex.map((data) =>
+      this.formatWriteData(data),
+    );
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords,
+      affectedRecords: writtenRecords.flatMap((writtenRecord, index) =>
+        rawBeforeByInputIndex[index].flatMap((rawBefore) => [
+          rawBefore,
+          { ...rawBefore, ...writtenRecord },
+        ]),
+      ),
+    });
+
+    const setColumnsByInputIndex = writtenRecords.map(
+      ({ id: _id, ...setColumns }) => setColumns,
+    );
+
+    for (const setColumns of setColumnsByInputIndex) {
+      this.validateWriteIsPermitted({
+        operationType: 'update',
+        columnsToReturn,
+        updatedColumns: Object.keys(setColumns),
+      });
+    }
+
+    await this.validateRLSPredicatesForUpdatedRecords(
+      setColumnsByInputIndex.flatMap((setColumns, index) =>
+        rawBeforeByInputIndex[index].map((rawRecordBefore) => ({
+          rawRecordBefore,
+          setColumns,
+        })),
+      ),
+    );
+
+    for (const [index, input] of writableInputs.entries()) {
+      const setColumns = setColumnsByInputIndex[index];
+      const rawBeforeForInput = rawBeforeByInputIndex[index];
+
+      const selectQueryBuilder = this.createQueryBuilder().where({
+        id: input.id,
+      });
+
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'update');
+
+      const result = await this.morphAndExecute({
+        selectQueryBuilder,
+        kind: 'update',
+        columnsToReturn: updateEventColumnsToReturn,
+        setColumns,
+      });
+
+      generatedMaps.push(...result.generatedMaps);
+
+      if (result.generatedMaps.length === 0) {
+        continue;
+      }
+
+      recordsBefore.push(...rawBeforeForInput);
+
+      const recordsAfterWrite = this.options.shouldSkipEventEmission
+        ? []
+        : await this.buildIdsEventSnapshotQueryBuilder([
+            input.id,
+          ]).getMany<ObjectRecord>({
+            noFormatting: true,
+          });
+
+      recordsAfter.push(
+        ...mergeReturnedUpdateTimestamps(
+          mergeRecordsWithUpdateValues(
+            getUpdateEventRecords(rawBeforeForInput, recordsAfterWrite),
+            setColumns,
+          ),
+          result.generatedMaps,
+        ),
+      );
+    }
+
+    await validateWrittenRecords?.(generatedMaps);
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
+
+    this.emitMutationEvent({ kind: 'update', recordsBefore, recordsAfter });
+
+    return {
+      identifiers: generatedMaps.map((record) => ({ id: String(record.id) })),
+      generatedMaps,
+      raw: generatedMaps,
+    };
+  }
+
+  private buildInsertRows(records: Partial<ObjectRecord>[]): {
+    columnNames: string[];
+    rows: InsertRowValue[][];
+    parameters: Record<string, unknown>;
+    insertedColumns: string[];
+    formattedRecords: Record<string, unknown>[];
+  } {
+    const formattedRecords = records.map((record) =>
+      this.formatWriteData(record),
+    );
+
+    const columnNameSet = new Set<string>();
+
+    for (const record of formattedRecords) {
+      for (const columnName of Object.keys(record)) {
+        if (
+          !isDefined(
+            this.options.tableShape.columnShapeByColumnName[columnName],
+          )
+        ) {
+          throw new TwentyOrmException(
+            `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+            TwentyOrmExceptionCode.UNKNOWN_COLUMN,
+          );
+        }
+        columnNameSet.add(columnName);
+      }
+    }
+
+    const columnNames = [...columnNameSet];
+    const parameters: Record<string, unknown> = {};
+    let parameterSequence = 0;
+
+    const rows = formattedRecords.map((record) => {
+      const valueByColumnName: Record<string, unknown> = { ...record };
+
+      return columnNames.map((columnName): InsertRowValue => {
+        if (!(columnName in valueByColumnName)) {
+          return { kind: 'default' };
+        }
+
+        const parameterName = `ormInsert_${parameterSequence++}`;
+
+        parameters[parameterName] = serializeJsonbWriteValue(
+          this.options.tableShape.columnShapeByColumnName[columnName],
+          valueByColumnName[columnName],
+        );
+
+        return { kind: 'parameter', parameterName };
+      });
+    });
+
+    return {
+      columnNames,
+      rows,
+      parameters,
+      insertedColumns: columnNames,
+      formattedRecords,
+    };
+  }
+
+  private async assertRecordStockAvailable(quantity: number): Promise<void> {
+    if (!isRecordStockTrackedObject(this.options.flatObjectMetadata)) {
+      return;
+    }
+
+    await this.options.internalContext.recordStock.assertRecordStockAvailable({
+      workspaceId: this.options.internalContext.workspaceId,
+      quantity,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+    });
+  }
+
+  private async acquireRecordStock(quantity: number): Promise<void> {
+    if (!isRecordStockTrackedObject(this.options.flatObjectMetadata)) {
+      return;
+    }
+
+    await this.options.internalContext.recordStock.acquireRecordStock({
+      workspaceId: this.options.internalContext.workspaceId,
+      quantity,
+    });
+  }
+
+  private async releaseRecordStock(quantity: number): Promise<void> {
+    if (!isRecordStockTrackedObject(this.options.flatObjectMetadata)) {
+      return;
+    }
+
+    await this.options.internalContext.recordStock.releaseRecordStock({
+      workspaceId: this.options.internalContext.workspaceId,
+      quantity,
+    });
+  }
+
+  private async emitCreateEvents(insertedIds: string[]): Promise<void> {
+    if (insertedIds.length === 0 || this.options.shouldSkipEventEmission) {
+      return;
+    }
+
+    const recordsAfter = await this.buildIdsEventSnapshotQueryBuilder(
+      insertedIds,
+    ).getMany<ObjectRecord>({ noFormatting: true });
+
+    const formattedAfter = this.formatResult<ObjectRecord[]>(recordsAfter);
+
+    for (const action of [
+      DatabaseEventAction.CREATED,
+      DatabaseEventAction.UPSERTED,
+    ]) {
+      const event = formatTwentyOrmEventToDatabaseBatchEvent({
+        action,
+        objectMetadataItem: this.options.flatObjectMetadata,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        workspaceId: this.options.internalContext.workspaceId,
+        recordsAfter: formattedAfter,
+        authContext: this.options.authContext,
+      });
+
+      if (isDefined(event)) {
+        this.options.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+          event,
+        );
+      }
+    }
+  }
+
+  async findRecordSnapshotsBypassingPermissions({
+    ids,
+    fieldNames,
+  }: {
+    ids: string[];
+    fieldNames?: string[];
+  }): Promise<ObjectRecord[]> {
+    const queryBuilder = this.buildIdsEventSnapshotQueryBuilder(ids);
+
+    if (!isDefined(fieldNames)) {
+      return queryBuilder.getMany<ObjectRecord>({ noFormatting: true });
+    }
+
+    const { columnNames, columnShapeByColumnName } = this.options.tableShape;
+
+    return queryBuilder
+      .select(
+        columnNames.filter((columnName) => {
+          const columnShape = columnShapeByColumnName[columnName];
+
+          return (
+            columnName === 'id' ||
+            columnName === 'deletedAt' ||
+            (isDefined(columnShape) &&
+              (fieldNames.includes(columnShape.fieldName) ||
+                fieldNames.includes(
+                  columnShape.compositeParentFieldName ?? '',
+                )))
+          );
+        }),
+      )
+      .getMany<ObjectRecord>({ noFormatting: true });
+  }
+
+  private buildBypassingEventSelectQueryBuilder(
+    alias: string,
+  ): WorkspaceSelectQueryBuilder {
+    return new WorkspaceSelectQueryBuilder(alias, {
+      tableShape: this.options.tableShape,
+      executor: this.options.executor,
+      objectRecordsPermissions: this.options.objectRecordsPermissions,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+      onBeforeExecute: () => undefined,
+      formatResult: (records) => this.formatResult(records),
+    });
+  }
+
+  private buildIdsEventSnapshotQueryBuilder(
+    ids: string[],
+  ): WorkspaceSelectQueryBuilder {
+    return this.buildBypassingEventSelectQueryBuilder(
+      this.options.tableShape.nameSingular,
+    )
+      .where({ id: In(ids) })
+      .withDeleted();
+  }
+
+  // Re-parenting or creating under a parent is a write on that parent, so the destination must grant READ_WRITE
+  // Inheriting records are checked before and after any write, since creating, changing, deleting or restoring the row changes what they expose
+  private async validateInheritedParentsAreWritableOrThrow({
+    writtenRecords,
+    affectedRecords,
+  }: {
+    writtenRecords: Record<string, unknown>[];
+    affectedRecords: Record<string, unknown>[];
+  }): Promise<void> {
+    if (!this.shouldValidateInheritedParents()) {
+      return;
+    }
+
+    for (const parent of this.resolveOwnParentLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: writtenRecords,
+      });
+    }
+
+    for (const parent of this.resolveInheritingRecordLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: affectedRecords,
+      });
+    }
+  }
+
+  private shouldValidateInheritedParents(): boolean {
+    return !this.options.shouldBypassPermissionChecks;
+  }
+
+  private async validateParentRecordsAreWritableOrThrow({
+    parent,
+    records,
+  }: {
+    parent: InheritedReadabilityParentLink;
+    records: Record<string, unknown>[];
+  }): Promise<void> {
+    const parentIds = [
+      ...new Set(
+        records
+          .map((record) => record[parent.joinColumnName])
+          .filter(isNonEmptyString),
+      ),
+    ];
+
+    if (parentIds.length === 0) {
+      return;
+    }
+
+    const parentRepository = this.options.getRepositoryForObjectMetadataId(
+      parent.parentFlatObjectMetadata.id,
+    );
+    const queryBuilder = parentRepository
+      .createQueryBuilder()
+      .where({ id: In(parentIds) })
+      .withDeleted();
+
+    parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
+    queryBuilder.select(['id']);
+
+    const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    if (writableParentRows.length !== parentIds.length) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+
+  private resolveOwnParentLinks(): InheritedReadabilityParentLink[] {
+    const { flatObjectMetadata } = this.options;
+
+    if (
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
+      isOwningApplicationAuthContext({
+        authContext: this.options.authContext,
+        owningApplicationId: flatObjectMetadata.applicationId,
+      })
+    ) {
+      return [];
+    }
+
+    return this.resolveInheritedReadabilityParents(flatObjectMetadata).filter(
+      (parent): parent is InheritedReadabilityColumnParent =>
+        parent.kind === 'column',
+    );
+  }
+
+  private resolveInheritingRecordLinks(): InheritedReadabilityParentLink[] {
+    return resolveInheritedReadabilityChildLinks({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+    });
+  }
+
+  private async resolveWritableRecordIds({
+    ids,
+    operationType,
+  }: {
+    ids: string[];
+    operationType: OperationType;
+  }): Promise<Set<string>> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return new Set(ids);
+    }
+
+    const queryBuilder = this.createQueryBuilder()
+      .where({ id: In(ids) })
+      .withDeleted();
+
+    this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
+    queryBuilder.select(['id']);
+
+    const rows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    return new Set(rows.map((row) => String(row.id)));
+  }
+
+  async runMutation(args: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+  }): Promise<ObjectRecord[]> {
+    if (args.kind !== 'update') {
+      return this.performMutation(args);
+    }
+
+    return this.runWithValidationRules({
+      write: (repository, validateWrittenRecords) =>
+        repository.performMutation({
+          ...args,
+          selectQueryBuilder:
+            repository === this
+              ? args.selectQueryBuilder
+              : args.selectQueryBuilder.clone(repository.options.executor),
+          validateWrittenRecords,
+        }),
+    });
+  }
+
+  private async performMutation({
+    selectQueryBuilder,
+    rowLevelPermissionsApplied,
+    kind,
+    columnsToReturn,
+    data,
+    validateWrittenRecords,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    validateWrittenRecords?: ValidateWrittenRecords;
+  }): Promise<ObjectRecord[]> {
+    this.validateWriteIsPermitted({
+      operationType: kind,
+      columnsToReturn,
+      updatedColumns: isDefined(data)
+        ? Object.keys(this.formatWriteData(data)).filter(
+            (column) => column !== 'id',
+          )
+        : [],
+    });
+
+    if (!rowLevelPermissionsApplied) {
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
+    }
+
+    // The before-image only feeds events, scoped-write checks and files field diffs
+    const canSkipBeforeImage =
+      this.options.shouldBypassPermissionChecks &&
+      this.options.shouldSkipEventEmission &&
+      !(
+        kind === 'update' &&
+        isDefined(data) &&
+        this.filesFieldSync.isUpdatingFilesField(
+          data,
+          this.options.flatObjectMetadata.id,
+        )
+      );
+
+    const eventSelectQueryBuilder =
+      this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
+
+    const recordsBefore = canSkipBeforeImage
+      ? []
+      : await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        });
+
+    if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
+      throw new TwentyOrmException(
+        `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
+      );
+    }
+
+    let filesFieldFileIds = null;
+    let dataToWrite = data;
+
+    if (kind === 'update' && isDefined(data)) {
+      const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+      const filesFieldDiff =
+        this.filesFieldSync.computeFilesFieldDiffBeforeUpdateOne(
+          data,
+          this.options.tableShape.nameSingular,
+          formattedBefore,
+        );
+
+      if (isDefined(filesFieldDiff)) {
+        const enriched = await this.filesFieldSync.enrichFilesFields({
+          entities: formattedBefore.map(() => data),
+          filesFieldDiffByEntityIndex: filesFieldDiff,
+          workspaceId: this.options.internalContext.workspaceId,
+          target: this.options.tableShape.nameSingular,
+        });
+
+        filesFieldFileIds = enriched.fileIds;
+        dataToWrite = enriched.entities[0] as Partial<ObjectRecord>;
+      }
+    }
+
+    let setColumns: Record<string, unknown> | undefined;
+
+    if (kind === 'update' && isDefined(dataToWrite)) {
+      const { id: _id, ...columns } = this.formatWriteData(dataToWrite);
+
+      setColumns = columns;
+    }
+
+    if (kind === 'update' && isDefined(setColumns)) {
+      await this.validateRLSPredicatesForUpdatedRecords(
+        recordsBefore.map((rawRecordBefore) => ({
+          rawRecordBefore,
+          setColumns,
+        })),
+      );
+    }
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: isDefined(setColumns) ? [setColumns] : [],
+      affectedRecords: isDefined(setColumns)
+        ? recordsBefore.flatMap((record) => [
+            record,
+            { ...record, ...setColumns },
+          ])
+        : recordsBefore,
+    });
+
+    const inheritedReadabilityChildRecordsByRecordId =
+      kind === 'delete' || kind === 'soft-delete'
+        ? await this.fetchInheritedReadabilityChildRecords(recordsBefore)
+        : undefined;
+
+    const mutationResult = await this.morphAndExecute({
+      selectQueryBuilder,
+      kind,
+      columnsToReturn:
+        kind === 'update'
+          ? getUpdateEventColumnsToReturn(
+              columnsToReturn,
+              this.options.tableShape,
+            )
+          : columnsToReturn,
+      setColumns,
+    });
+
+    if (kind === 'delete') {
+      await this.releaseRecordStock(mutationResult.generatedMaps.length);
+    }
+
+    await validateWrittenRecords?.(mutationResult.generatedMaps);
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
+
+    const recordsAfterWrite =
+      kind === 'delete' || this.options.shouldSkipEventEmission
+        ? undefined
+        : await eventSelectQueryBuilder.getMany<ObjectRecord>({
+            noFormatting: true,
+          });
+
+    const recordsAfter =
+      kind === 'update' && isDefined(setColumns)
+        ? mergeReturnedUpdateTimestamps(
+            mergeRecordsWithUpdateValues(
+              getUpdateEventRecords(recordsBefore, recordsAfterWrite ?? []),
+              setColumns,
+            ),
+            mutationResult.generatedMaps,
+          )
+        : recordsAfterWrite;
+
+    this.emitMutationEvent({
+      kind,
+      recordsBefore,
+      recordsAfter,
+      inheritedReadabilityChildRecordsByRecordId,
+    });
+
+    return mutationResult.generatedMaps;
+  }
+
+  private async fetchInheritedReadabilityChildRecords(
+    records: ObjectRecord[],
+  ): Promise<Map<string, InheritedReadabilityChildRecords> | undefined> {
+    const { flatObjectMetadata } = this.options;
+
+    if (
+      records.length === 0 ||
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED
+    ) {
+      return undefined;
+    }
+
+    const childrenParents = this.resolveInheritedReadabilityParents(
+      flatObjectMetadata,
+    ).filter(
+      (parent): parent is InheritedReadabilityChildrenParent =>
+        parent.kind === 'children',
+    );
+
+    if (childrenParents.length === 0) {
+      return undefined;
+    }
+
+    const recordById = new Map(
+      records.map((record) => [String(record.id), record]),
+    );
+    const recordIds = [...recordById.keys()];
+    const childRecordsByRecordId = new Map(
+      recordIds.map((recordId): [string, InheritedReadabilityChildRecords] => [
+        recordId,
+        Object.fromEntries(
+          childrenParents.map((parent) => [
+            parent.childFlatObjectMetadata.nameSingular,
+            [],
+          ]),
+        ),
+      ]),
+    );
+
+    for (const parent of childrenParents) {
+      const childRepository = this.options.getRepositoryForObjectMetadataId(
+        parent.childFlatObjectMetadata.id,
+      );
+      const childRecords = await childRepository
+        .buildBypassingEventSelectQueryBuilder(
+          parent.childFlatObjectMetadata.nameSingular,
+        )
+        .where({ [parent.childJoinColumnName]: In(recordIds) })
+        .withDeleted()
+        .getMany<ObjectRecord>();
+
+      for (const childRecord of childRecords) {
+        const recordId = String(childRecord[parent.childJoinColumnName]);
+        const record = recordById.get(recordId);
+
+        if (
+          !isDefined(record) ||
+          !isChildRecordBoundAtDeletion({ childRecord, record })
+        ) {
+          continue;
+        }
+
+        childRecordsByRecordId
+          .get(recordId)
+          ?.[parent.childFlatObjectMetadata.nameSingular].push(childRecord);
+      }
+    }
+
+    return childRecordsByRecordId;
+  }
+
+  private async morphAndExecute({
+    selectQueryBuilder,
+    kind,
+    columnsToReturn,
+    setColumns,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    setColumns?: Record<string, unknown>;
+  }): Promise<{ generatedMaps: ObjectRecord[] }> {
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder,
+        kind,
+      );
+
+    if (kind === 'update') {
+      mutationQueryBuilder.set(setColumns ?? {});
+    }
+
+    return mutationQueryBuilder.returning(columnsToReturn).execute();
+  }
+
+  private buildEventSnapshotQueryBuilder(
+    source: WorkspaceSelectQueryBuilder,
+  ): WorkspaceSelectQueryBuilder {
+    return this.buildBypassingEventSelectQueryBuilder(source.alias)
+      .copyWhereFrom(source)
+      .withDeleted();
+  }
+
+  validateWriteIsPermitted({
+    operationType,
+    columnsToReturn,
+    updatedColumns,
+  }: {
+    operationType: MutationKind | 'insert';
+    columnsToReturn: string[];
+    updatedColumns: string[];
+  }): void {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    validateOperationIsPermittedOrThrow({
+      entityName: this.options.tableShape.nameSingular,
+      operationType,
+      objectsPermissions: this.options.objectRecordsPermissions,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      objectIdByNameSingular:
+        this.options.internalContext.objectIdByNameSingular,
+      selectedColumns: columnsToReturn,
+      updatedColumns,
+      authContext: this.options.authContext,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+    });
+  }
+
+  // An update must not move a record out of the update policy. Records it
+  // did not admit before are left to the update query, which skips them
+  private async validateRLSPredicatesForUpdatedRecords(
+    updates: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[],
+  ): Promise<void> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const policy = this.buildRowAccessPolicy({
+      subject: this.resolveRowAccessPolicySubject(),
+      operationType: 'update',
+    });
+
+    // Without a role filter the policy reads nothing an update can change:
+    // shares are keyed by id and parents are checked on their own
+    if (
+      policy.kind !== 'gated' ||
+      !isRowAccessExpressionReadingRoleFilter(policy.expression)
+    ) {
+      return;
+    }
+
+    const context = this.buildWriteRowAccessEvaluationContext(
+      updates.map(({ rawRecordBefore }) => String(rawRecordBefore.id)),
+    );
+    const evaluate = (records: ObjectRecord[]) =>
+      evaluateRowAccessPolicy({
+        policy,
+        records: this.formatResult<ObjectRecord[]>(records).filter(
+          (record): record is RowAccessRecord => isNonEmptyString(record.id),
+        ),
+        context,
+      });
+
+    const admittedRecordIdsBefore = await evaluate(
+      updates.map(({ rawRecordBefore }) => rawRecordBefore),
+    );
+    const admittedRecordIdsAfter = await evaluate(
+      updates
+        .filter(({ rawRecordBefore }) =>
+          admittedRecordIdsBefore.has(String(rawRecordBefore.id)),
+        )
+        .map(({ rawRecordBefore, setColumns }) => ({
+          ...rawRecordBefore,
+          ...setColumns,
+        })),
+    );
+
+    if (
+      [...admittedRecordIdsBefore].some((id) => !admittedRecordIdsAfter.has(id))
+    ) {
+      throw new TwentyOrmException(
+        'Updated record does not satisfy row-level security constraints of your current role',
+        TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
+      );
+    }
+  }
+
+  private buildWriteRowAccessEvaluationContext(
+    recordIds: string[],
+  ): RowAccessEvaluationContext<RowAccessRecord> {
+    const recordShareGrantsByObjectMetadataId = new Map<
+      string,
+      Promise<RecordShareGrant[]>
+    >();
+
+    return {
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      shouldIgnoreSoftDeleteDefaultFilter: false,
+      fetchRecordShares: async ({
+        objectMetadataId,
+        recordIds: requestedRecordIds,
+      }) => {
+        const recordShareGrants =
+          recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
+          this.findRecordShareGrants({ objectMetadataId, recordIds });
+
+        recordShareGrantsByObjectMetadataId.set(
+          objectMetadataId,
+          recordShareGrants,
+        );
+
+        const requestedRecordIdSet = new Set(requestedRecordIds);
+
+        return (await recordShareGrants).filter((recordShareGrant) =>
+          requestedRecordIdSet.has(recordShareGrant.recordId),
+        );
+      },
+      // Writes check parents before and after through
+      // validateInheritedParentsAreWritableOrThrow, so this branch only has to
+      // leave the rest of the policy to decide
+      resolveRecordIdsReadableThroughParents: async ({ records }) =>
+        new Set(records.map((record) => record.id)),
+    };
+  }
+
+  private async findRecordShareGrants({
+    objectMetadataId,
+    recordIds,
+  }: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<RecordShareGrant[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    return this.executeRaw<RecordShareGrant>(
+      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
+      { objectMetadataId, recordIds },
+    );
+  }
+
+  private emitMutationEvent({
+    kind,
+    recordsBefore,
+    recordsAfter,
+    inheritedReadabilityChildRecordsByRecordId,
+  }: {
+    kind: MutationKind;
+    recordsBefore: ObjectRecord[];
+    recordsAfter?: ObjectRecord[];
+    inheritedReadabilityChildRecordsByRecordId?: Map<
+      string,
+      InheritedReadabilityChildRecords
+    >;
+  }): void {
+    if (this.options.shouldSkipEventEmission) {
+      return;
+    }
+
+    const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
+
+    const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+    const formattedAfter = isDefined(recordsAfter)
+      ? this.formatResult<ObjectRecord[]>(recordsAfter)
+      : undefined;
+
+    for (const action of actions) {
+      const event = formatTwentyOrmEventToDatabaseBatchEvent({
+        action,
+        objectMetadataItem: this.options.flatObjectMetadata,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        workspaceId: this.options.internalContext.workspaceId,
+        recordsBefore: formattedBefore,
+        recordsAfter: formattedAfter,
+        authContext: this.options.authContext,
+        inheritedReadabilityChildRecordsByRecordId,
+      });
+
+      if (isDefined(event)) {
+        this.options.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+          event,
+        );
+      }
+    }
+  }
+
+  private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilder): void {
+    this.applyRowLevelPermissionPredicates(queryBuilder);
+    this.validateQueryIsPermitted(queryBuilder);
+  }
+
+  private validateQueryIsPermitted(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): void {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
+
+    for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
+      const nameSingular =
+        alias === queryBuilder.alias
+          ? this.options.tableShape.nameSingular
+          : queryBuilder.getJoinedTableShape(alias)?.nameSingular;
+
+      if (!isDefined(nameSingular)) {
+        continue;
+      }
+
+      validateOperationIsPermittedOrThrow({
+        entityName: nameSingular,
+        operationType: 'select',
+        objectsPermissions: this.options.objectRecordsPermissions,
+        flatObjectMetadataMaps:
+          this.options.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular:
+          this.options.internalContext.objectIdByNameSingular,
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        selectedColumns: columnNames,
+        updatedColumns: [],
+      });
+    }
+  }
+
+  private applyRowLevelPermissionPredicates(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+    operationType: OperationType = 'select',
+  ): void {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    this.applyRowLevelPermissionPredicateForAlias({
+      queryBuilder,
+      alias: queryBuilder.alias,
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      operationType,
+    });
+
+    for (const joinAlias of queryBuilder.getJoinAliases()) {
+      const joinedTableShape = queryBuilder.getJoinedTableShape(joinAlias.name);
+
+      if (!isDefined(joinedTableShape)) {
+        continue;
+      }
+
+      this.applyRowLevelPermissionPredicateForAlias({
+        queryBuilder,
+        alias: joinAlias.name,
+        flatObjectMetadata: this.options.flatObjectMetadataByObjectMetadataId(
+          joinedTableShape.objectMetadataId,
+        ),
+        operationType: 'select',
+      });
+    }
+  }
+
+  private applyRowLevelPermissionPredicateForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+    operationType,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): void {
+    if (!queryBuilder.markRowLevelPermissionApplied(alias)) {
+      return;
+    }
+
+    const policy = this.buildRowAccessPolicyForAlias({
+      alias,
+      isMainAlias: alias === queryBuilder.alias,
+      flatObjectMetadata,
+      operationType,
+      joinParentRelationShape: queryBuilder.getJoinParentRelationShape(alias),
+    });
+
+    switch (policy.kind) {
+      case 'open':
+        return;
+      case 'denied':
+        this.denyAccessForAlias({
+          queryBuilder,
+          alias,
+          flatObjectMetadata,
+          operationType,
+        });
+
+        return;
+      case 'gated':
+        this.addConditionForAlias({
+          queryBuilder,
+          alias,
+          ...this.compileRowAccessExpression(policy.expression),
+        });
+
+        return;
+      default:
+        assertUnreachable(policy);
+    }
+  }
+
+  private buildRowAccessPolicyForAlias({
+    alias,
+    isMainAlias,
+    flatObjectMetadata,
+    operationType,
+    joinParentRelationShape,
+  }: {
+    alias: string;
+    isMainAlias: boolean;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
+    if (
+      isMainAlias &&
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !resolveObjectSharing({
+        flatObjectMetadata,
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      }).operationTypesGrantedBeyondRole.includes(operationType)
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return buildRowAccessPolicy({
+      subject: this.resolveRowAccessPolicySubject(),
+      environment: this.resolveRowAccessPolicyEnvironment(),
+      tableAlias: alias,
+      flatObjectMetadata,
+      operationType,
+      depth: 0,
+      joinParentRelationShape,
+    });
+  }
+
+  // Applies the checks of findRecordIdsAllowedForOperation to several
+  // operations in one query, with a boolean column per gated operation;
+  // deleted records are included
+  async findRecordIdsAllowedForOperations<
+    TOperationType extends OperationType,
+  >({
+    recordIds,
+    operationTypes,
+  }: {
+    recordIds: string[];
+    operationTypes: TOperationType[];
+  }): Promise<Record<TOperationType, Set<string>>> {
+    const allowedRecordIdsByOperationType = Object.fromEntries(
+      operationTypes.map((operationType) => [operationType, new Set<string>()]),
+    ) as Record<TOperationType, Set<string>>;
+
+    if (recordIds.length === 0) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const tableAlias = this.options.tableShape.nameSingular;
+    const recordAccesses = operationTypes.map((operationType, index) => ({
+      operationType,
+      access: this.resolveRecordAccessForOperation({
+        operationType,
+        tableAlias,
+      }),
+      columnAlias: `isAllowed_${index}`,
+    }));
+
+    if (recordAccesses.every(({ access }) => access === false)) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select([])
+      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
+
+    for (const { access, columnAlias } of recordAccesses) {
+      if (typeof access === 'boolean') {
+        continue;
+      }
+
+      queryBuilder
+        .addSelect(
+          `CASE WHEN ${access.sql} THEN TRUE ELSE FALSE END`,
+          columnAlias,
+        )
+        .setParameters(access.parameters);
+    }
+
+    const rows = await queryBuilder.getRawMany<Record<string, unknown>>();
+
+    for (const row of rows) {
+      for (const { operationType, access, columnAlias } of recordAccesses) {
+        if (access === true || row[columnAlias] === true) {
+          allowedRecordIdsByOperationType[operationType].add(String(row.id));
+        }
+      }
+    }
+
+    return allowedRecordIdsByOperationType;
+  }
+
+  private resolveRecordAccessForOperation({
+    operationType,
+    tableAlias,
+  }: {
+    operationType: OperationType;
+    tableAlias: string;
+  }): boolean | SqlCondition {
+    if (this.options.shouldBypassPermissionChecks) {
+      return true;
+    }
+
+    try {
+      if (operationType !== 'select') {
+        this.validateWriteIsPermitted({
+          operationType,
+          columnsToReturn: ['id'],
+          updatedColumns: [],
+        });
+      }
+
+      this.validateQueryIsPermitted(
+        this.createQueryBuilder(tableAlias).select(['id']),
+      );
+
+      const policy = this.buildRowAccessPolicyForAlias({
+        alias: tableAlias,
+        isMainAlias: true,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      });
+
+      switch (policy.kind) {
+        case 'open':
+          return true;
+        case 'denied':
+          return false;
+        case 'gated':
+          return this.compileRowAccessExpression(policy.expression);
+        default:
+          return assertUnreachable(policy);
+      }
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  // Records already in hand, deleted ones included, filtered by a policy;
+  // the alias must be the one the policy was built with
+  async findRecordIdsAdmittedByRowAccessPolicy({
+    recordIds,
+    policy,
+    tableAlias = this.options.tableShape.nameSingular,
+  }: {
+    recordIds: string[];
+    policy: RowAccessPolicy;
+    tableAlias?: string;
+  }): Promise<Set<string>> {
+    if (recordIds.length === 0 || policy.kind === 'denied') {
+      return new Set();
+    }
+
+    if (policy.kind === 'open') {
+      return new Set(recordIds);
+    }
+
+    const condition = this.compileRowAccessExpression(policy.expression);
+    const admittedRecords = await this.buildBypassingEventSelectQueryBuilder(
+      tableAlias,
+    )
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select(['id'])
+      .addRowAccessCondition(condition.sql, condition.parameters)
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return new Set(admittedRecords.map((record) => String(record.id)));
+  }
+
+  private compileRowAccessExpression(
+    expression: RowAccessExpression,
+  ): SqlCondition {
+    return compileRowAccessExpression({
+      expression,
+      environment: this.resolveRowAccessPolicyEnvironment(),
+    });
+  }
+
+  // Whether the role alone permits the operation, regardless of any record
+  // grant that may reach beyond it
+  isObjectOperationPermittedByRole(operationType: OperationType): boolean {
+    return (
+      this.options.shouldBypassPermissionChecks ||
+      this.isObjectOperationPermitted({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      })
+    );
+  }
+
+  private isObjectOperationPermitted({
+    flatObjectMetadata,
+    operationType,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): boolean {
+    return isObjectOperationPermitted({
+      objectMetadata: flatObjectMetadata,
+      operationType,
+      objectsPermissions: this.options.objectRecordsPermissions,
+    });
+  }
+
+  buildRowAccessPolicy({
+    subject,
+    operationType,
+    depth = 0,
+  }: {
+    subject: RowAccessPolicySubject;
+    operationType: OperationType;
+    depth?: number;
+  }): RowAccessPolicy {
+    return buildRowAccessPolicy({
+      subject,
+      environment: this.resolveRowAccessPolicyEnvironment(),
+      tableAlias: this.options.tableShape.nameSingular,
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      operationType,
+      depth,
+    });
+  }
+
+  isReadDeniedByReadability(): boolean {
+    const subject = this.resolveRowAccessPolicySubject();
+
+    return (
+      !subject.isSystemContext &&
+      resolveRecordShareGateKind({
+        readability: this.options.flatObjectMetadata.readability,
+        isOwningApplication: subject.isOwningApplication(
+          this.options.flatObjectMetadata,
+        ),
+      }) === 'deny'
+    );
+  }
+
+  private resolveRowAccessPolicySubject(): RowAccessPolicySubject {
+    const roleMaps = {
+      authContext: this.options.authContext,
+      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+    };
+
+    return {
+      isSystemContext: this.options.authContext?.type === 'system',
+      objectsPermissions: this.options.objectRecordsPermissions,
+      principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
+      canAccessAllRecords: canRolesAccessAllRecords({
+        roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+        roleIdsWithAllRecordsAccess:
+          this.options.internalContext.roleIdsWithAllRecordsAccess,
+      }),
+      isOwningApplication: (objectMetadata) =>
+        isOwningApplicationAuthContext({
+          authContext: this.options.authContext,
+          owningApplicationId: objectMetadata.applicationId,
+        }),
+      resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
+        resolveRowLevelPermissionRecordFilter({
+          internalContext: this.options.internalContext,
+          authContext: this.options.authContext,
+          objectMetadata,
+        }),
+    };
+  }
+
+  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment &
+    RowAccessCompilationEnvironment {
+    return {
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+      recordShareTableExpression: this.getTableExpression(
+        this.options.internalContext.objectIdByNameSingular.recordShare,
+      ),
+      resolveTableExpression: (objectMetadataId) =>
+        this.getTableExpression(objectMetadataId),
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+    };
+  }
+
+  private resolveInheritedReadabilityParents(
+    flatObjectMetadata: FlatObjectMetadata,
+  ): InheritedReadabilityParent[] {
+    return resolveInheritedReadabilityParents({
+      flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+    });
+  }
+
+  private getTableExpression(objectMetadataId: string): string {
+    const tableShape =
+      this.options.tableShapeByObjectMetadataId(objectMetadataId);
+
+    return `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
+      tableShape.tableName,
+    )}`;
+  }
+
+  private denyAccessForAlias({
+    queryBuilder,
+    alias,
+    flatObjectMetadata,
+    operationType,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): void {
+    if (alias === queryBuilder.alias) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'select' ? 'readable' : 'writable'} through the API`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    queryBuilder.addJoinCondition(alias, ALWAYS_FALSE_CONDITION);
+  }
+
+  private addConditionForAlias({
+    queryBuilder,
+    alias,
+    sql,
+    parameters,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    alias: string;
+    sql: string;
+    parameters: ObjectLiteral;
+  }): void {
+    if (alias === queryBuilder.alias) {
+      queryBuilder.addRowAccessCondition(sql, parameters);
+
+      return;
+    }
+
+    queryBuilder.addJoinCondition(alias, sql);
+    queryBuilder.setParameters(parameters);
+  }
+}

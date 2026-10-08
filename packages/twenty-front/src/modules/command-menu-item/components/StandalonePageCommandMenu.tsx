@@ -1,67 +1,50 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useStore } from 'jotai';
+import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
 import {
   ContextStorePageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
-  const store = useStore();
-  const isMobile = useIsMobile();
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const currentUser = useAtomStateValue(currentUserState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { targetObjectReadPermissions, targetObjectWritePermissions } =
+    useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
-    const featureFlags: Record<string, boolean> = {};
-
-    for (const flag of currentWorkspace?.featureFlags ?? []) {
-      featureFlags[flag.key] = flag.value === true;
-    }
-
-    const permissionFlags: Record<string, boolean> = {};
-
-    for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
-      permissionFlags[flag] = true;
-    }
-
-    const targetObjectReadPermissions: Record<string, boolean> = {};
-    const targetObjectWritePermissions: Record<string, boolean> = {};
-
-    for (const metadataItem of objectMetadataItems) {
-      const permissions = store.get(
-        objectPermissionsFamilySelector.selectorFamily({
-          objectNameSingular: metadataItem.nameSingular,
-        }),
-      );
-      targetObjectReadPermissions[metadataItem.nameSingular] =
-        permissions.canRead;
-      targetObjectWritePermissions[metadataItem.nameSingular] =
-        permissions.canUpdate;
-    }
+    const featureFlags = getWorkspaceFeatureFlagsMap(
+      currentWorkspace?.featureFlags,
+    );
 
     return {
       pageType: ContextStorePageType.Standalone,
@@ -72,19 +55,10 @@ export const StandalonePageCommandMenu = () => {
       isSelectAll: false,
       hasAnySoftDeleteFilterOnView: false,
       numberOfSelectedRecords: 0,
-      objectPermissions: {
-        canReadObjectRecords: false,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-        restrictedFields: {},
-        objectMetadataId: '',
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      },
+      objectPermissions: EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions,
       selectedRecords: [],
       featureFlags,
-      permissionFlags,
+      permissionFlags: permissionFlagMap,
       targetObjectReadPermissions,
       targetObjectWritePermissions,
       canImpersonate: currentUser?.canImpersonate === true,
@@ -94,16 +68,22 @@ export const StandalonePageCommandMenu = () => {
     };
   }, [
     currentWorkspace?.featureFlags,
-    currentUserWorkspace?.permissionFlags,
+    permissionFlagMap,
     currentUser?.canImpersonate,
     currentUser?.canAccessFullAdminPanel,
     isLayoutCustomizationModeEnabled,
-    objectMetadataItems,
-    store,
+    targetObjectReadPermissions,
+    targetObjectWritePermissions,
   ]);
 
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
+      .filter(
+        (item) =>
+          item.engineComponentKey !==
+            EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
+          isLayoutCustomizationAllowedOnCurrentPage,
+      )
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
       .filter(
         (item) =>
@@ -119,22 +99,28 @@ export const StandalonePageCommandMenu = () => {
           commandMenuContextApi,
         ),
       )
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
-  }, [commandMenuItems, commandMenuContextApi, currentPageLayoutId]);
+  }, [
+    commandMenuItems,
+    commandMenuContextApi,
+    currentPageLayoutId,
+    isLayoutCustomizationAllowedOnCurrentPage,
+  ]);
 
   return (
     <CommandMenuContext.Provider
       value={{
         displayType: 'button',
-        containerType: 'standalone-page-header',
+        containerType: CommandMenuItemContainerType.StandalonePageHeader,
         commandMenuItems: filteredCommandMenuItems,
         commandMenuContextApi,
         isInPreviewMode: false,
       }}
     >
-      {!isMobile && <PinnedCommandMenuItemButtons />}
+      <PinnedCommandMenuItemButtons />
       <CommandMenuItemEditButton />
     </CommandMenuContext.Provider>
   );

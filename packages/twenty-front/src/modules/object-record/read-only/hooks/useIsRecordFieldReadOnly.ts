@@ -1,10 +1,10 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export type UseFieldIsReadOnlyParams = {
   fieldMetadataId: string;
@@ -25,35 +25,31 @@ export const useIsRecordFieldReadOnly = ({
     (field) => field.id === fieldMetadataId,
   );
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
-
-  const objectPermissions = getObjectPermissionsForObject(
-    objectPermissionsByObjectMetadataId,
-    objectMetadataId,
+  const fieldDefinition = useMemo(
+    () =>
+      isDefined(fieldMetadataItem)
+        ? formatFieldMetadataItemAsFieldDefinition({
+            field: fieldMetadataItem,
+            objectMetadataItem,
+          })
+        : undefined,
+    [fieldMetadataItem, objectMetadataItem],
   );
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
     objectMetadataId,
   });
 
-  if (!fieldMetadataItem) {
+  if (!isDefined(fieldMetadataItem)) {
     return false;
   }
 
-  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
-    field: fieldMetadataItem,
-    objectMetadataItem,
-  });
-
   return isRecordFieldReadOnly({
     isRecordReadOnly,
-    isSystemObject: objectMetadataItem.isSystem,
-    isFieldFromStandardApplication:
-      getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-    objectPermissions,
+    objectMetadataId,
     fieldMetadataItem,
     fieldDefinition,
     objectPermissionsByObjectMetadataId,

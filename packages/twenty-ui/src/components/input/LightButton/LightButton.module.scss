@@ -1,0 +1,7 @@
+.button {
+  --tw-button-font-weight: var(--t-font-weight-regular);
+
+  &[data-emphasis='subtle'][data-color='neutral']:not([data-variant='solid']) {
+    --tw-button-color: var(--t-font-color-tertiary);
+  }
+}

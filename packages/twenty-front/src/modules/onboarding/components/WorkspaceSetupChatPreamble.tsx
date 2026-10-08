@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
@@ -94,7 +94,7 @@ export const WorkspaceSetupChatPreamble = () => {
         <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
       </StyledSingleLineHandoffRun>{' '}
       <StyledContinuation className={revealClassName}>
-        {t`It natively comes with 7 standard objects.`}
+        {t`Let's set it up around the way you work.`}
       </StyledContinuation>
     </StyledPreamble>
   );

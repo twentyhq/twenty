@@ -2,14 +2,15 @@ import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -24,7 +25,7 @@ const DEFAULT_ACTION = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -47,8 +48,8 @@ const meta: Meta<typeof WorkflowEditActionFindRecords> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-    RouterDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 };
@@ -62,6 +63,51 @@ export const Default: Story = {
     actionOptions: {
       onActionUpdate: fn(),
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'People' }),
+    );
+
+    const dropdown = within(
+      await screen.findByRole('dialog', { name: 'Object' }),
+    );
+    const options = dropdown.getAllByRole('button');
+
+    expect(
+      options.indexOf(dropdown.getByRole('button', { name: 'People' })),
+    ).toBeLessThan(
+      options.indexOf(
+        dropdown.getByRole('button', { name: 'Calendar events' }),
+      ),
+    );
+
+    await userEvent.type(dropdown.getByRole('searchbox'), 'Person');
+    expect(dropdown.getByRole('button', { name: 'People' })).toBeVisible();
+    expect(
+      dropdown.queryByRole('button', { name: 'Companies' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Object' }),
+      ).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(canvas.getByRole('button', { name: 'People' }));
+
+    expect(
+      await screen.findByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
+    expect(
+      await screen.findByRole('button', { name: 'Companies' }),
+    ).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
   },
 };
 
@@ -77,6 +123,8 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
           objectName: 'person',
           limit: 100,
           offset: 20,
+          filter: { recordFilters: [], recordFilterGroups: [] },
+          orderBy: { recordSorts: [] },
         },
       },
     },
@@ -96,7 +144,13 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
       'Companies',
     );
 
-    await userEvent.click(await screen.findByText('Companies'));
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Object' }),
+      ).not.toBeInTheDocument();
+    });
 
     await waitFor(
       () => {
@@ -107,6 +161,8 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
                 objectName: 'company',
                 limit: 100,
                 offset: 20,
+                filter: undefined,
+                orderBy: undefined,
               }),
             }),
           }),
@@ -132,7 +188,7 @@ export const DisabledWithEmptyValues: Story = {
 
     {
       const searchInputInSelectDropdown =
-        canvas.queryByPlaceholderText('Search');
+        screen.queryByPlaceholderText('Search');
 
       expect(searchInputInSelectDropdown).not.toBeInTheDocument();
     }

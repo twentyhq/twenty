@@ -8,9 +8,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IconTrash, useIcons } from 'twenty-ui/icon';
-import { IconButton, type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { type SettingsObjectNewIndexFormValues } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 type SettingsObjectIndexFieldsFormProps = {
   indexableFields: FieldMetadataItem[];
@@ -118,12 +119,13 @@ export const SettingsObjectIndexFieldsForm = ({
                     <StyledPlaceholder />
                   ) : (
                     <IconButton
-                      Icon={IconTrash}
-                      variant="tertiary"
-                      size="medium"
+                      variant="ghost"
+                      size="md"
                       onClick={() => handleRemove(rowIndex)}
-                      ariaLabel={t`Remove field`}
-                    />
+                      aria-label={t`Remove field`}
+                    >
+                      <IconTrash />
+                    </IconButton>
                   )}
                 </StyledFieldRow>
               );

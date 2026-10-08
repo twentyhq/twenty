@@ -42,6 +42,17 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
     );
   });
 
+  it('should throw ConflictError when application uninstall blocks reactivation', () => {
+    const error = new WorkspaceException(
+      'Application uninstall in progress',
+      WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
+    );
+
+    expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
+      ConflictError,
+    );
+  });
+
   it('should throw the original error if it is not a WorkspaceException', () => {
     const genericError = new Error('Generic error');
 

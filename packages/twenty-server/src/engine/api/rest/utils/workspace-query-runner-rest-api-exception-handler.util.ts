@@ -4,13 +4,18 @@ import { type QueryFailedError } from 'typeorm';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-rest-api-exception-handler.util';
+import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
+import { recordShareRestApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-rest-api-exception-handler.util';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
-import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { usageLimitToRestApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-rest-api-exception-handler.util';
+import { RecordValidationRuleHttpException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule-http.exception';
+import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
@@ -22,12 +27,22 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
   switch (true) {
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToRestApiExceptionHandler(error);
+    case error instanceof RecordShareException:
+      return recordShareRestApiExceptionHandler(error);
+    case error instanceof CommonSelectFieldsException:
+      throw new BadRequestException(
+        `'fields' parameter invalid. ${error.message}`,
+      );
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
+    case error instanceof UsageLimitException:
+      return usageLimitToRestApiExceptionHandler(error);
+    case error instanceof RecordValidationRuleException:
+      throw new RecordValidationRuleHttpException(error);
     case error instanceof ThrottlerException:
       return throttlerToRestApiExceptionHandler(error);
-    case error instanceof TwentyORMException &&
-      error.code === TwentyORMExceptionCode.INVALID_INPUT:
+    case error instanceof TwentyOrmException &&
+      isTwentyOrmUserInputError(error):
       throw new BadRequestException(error.message);
     default:
       throw error;

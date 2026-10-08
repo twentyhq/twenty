@@ -1,10 +1,12 @@
 import request from 'supertest';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
   runWorkflowVersion,
   waitForWorkflowCompletion,
   waitForWorkflowRunStatus,
+  waitForWorkflowRunStepStatus,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -83,18 +85,15 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(workflowVersion).toBeDefined();
       expect(workflowVersion.status).toBe('ACTIVE');
 
-      // Verify trigger structure
       const trigger = workflowVersion.trigger;
 
       expect(trigger.type).toBe('MANUAL');
       expect(trigger.nextStepIds).toContain(FORM_STEP_ID);
 
-      // Verify steps structure
       const steps = workflowVersion.steps;
 
       expect(steps).toHaveLength(3);
 
-      // Form step
       const formStep = steps.find(
         (step: { id: string }) => step.id === FORM_STEP_ID,
       );
@@ -103,7 +102,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(formStep.type).toBe('FORM');
       expect(formStep.name).toBe('Quick Lead Form');
 
-      // Create Company step
       const createCompanyStep = steps.find(
         (step: { id: string }) =>
           step.id === '0715b6cd-7cc1-4b98-971b-00f54dfe643b',
@@ -113,7 +111,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(createCompanyStep.type).toBe('CREATE_RECORD');
       expect(createCompanyStep.name).toBe('Create Company');
 
-      // Create Person step
       const createPersonStep = steps.find(
         (step: { id: string }) =>
           step.id === '6f553ea7-b00e-4371-9d88-d8298568a246',
@@ -131,9 +128,12 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       createdWorkflowRunId = workflowRunId;
 
-      const workflowRun = await waitForWorkflowRunStatus(
+      await waitForWorkflowRunStatus(workflowRunId, 'RUNNING');
+
+      const workflowRun = await waitForWorkflowRunStepStatus(
         workflowRunId,
-        'RUNNING',
+        FORM_STEP_ID,
+        'PENDING',
       );
 
       expect(workflowRun).toBeDefined();
@@ -202,7 +202,6 @@ describe('Quick Lead Workflow (e2e)', () => {
     let createdPersonId: string | null = null;
 
     afterAll(async () => {
-      // Clean up created records in reverse order of creation
       if (createdPersonId) {
         await client
           .post('/graphql')
@@ -247,9 +246,12 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      let workflowRun = await waitForWorkflowRunStatus(
+      await waitForWorkflowRunStatus(testWorkflowRunId as string, 'RUNNING');
+
+      let workflowRun = await waitForWorkflowRunStepStatus(
         testWorkflowRunId as string,
-        'RUNNING',
+        FORM_STEP_ID,
+        'PENDING',
       );
 
       expect(workflowRun?.status).toBe('RUNNING');
@@ -267,23 +269,11 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyDomain: `https://test-${testId}.example.com`,
       };
 
-      const submitFormResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation SubmitFormStep($input: SubmitFormStepInput!) {
-              submitFormStep(input: $input)
-            }
-          `,
-          variables: {
-            input: {
-              stepId: FORM_STEP_ID,
-              workflowRunId: testWorkflowRunId,
-              response: testFormData,
-            },
-          },
-        });
+      const submitFormResponse = await submitFormStep({
+        workflowRunId: testWorkflowRunId as string,
+        stepId: FORM_STEP_ID,
+        response: testFormData,
+      });
 
       expect(submitFormResponse.body.errors).toBeUndefined();
       expect(submitFormResponse.body.data.submitFormStep).toBe(true);

@@ -1,88 +1,59 @@
-import { styled } from '@linaria/react';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { t } from '@lingui/core/macro';
+import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { CurrencyPicker } from 'twenty-ui/components/input';
 
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useContext } from 'react';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledDropdownButtonContainer = styled.div`
-  align-items: center;
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
-  color: ${({ color }) => color ?? 'none'};
-  cursor: pointer;
-  display: flex;
-  height: 32px;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  user-select: none;
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+import { CURRENCY_PICKER_CURRENCIES } from '@/ui/input/components/internal/currency/constants/CurrencyPickerCurrencies';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+
+type CurrencyPickerDropdownButtonProps = {
+  selectedCurrencyCode: string;
+  onChange: (currencyCode: string) => void;
+};
+
+const keepEnterAwayFromFieldHotkeys = (
+  event: KeyboardEvent<HTMLButtonElement>,
+) => {
+  if (event.key !== 'Enter') {
+    return;
   }
-`;
 
-const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-
-  svg {
-    align-items: center;
-    display: flex;
-    height: 16px;
-    justify-content: center;
-  }
-`;
+  event.stopPropagation();
+};
 
 export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode,
   onChange,
-}: {
-  selectedCurrencyCode: string;
-  onChange: (currency: Currency) => void;
-}) => {
-  const { theme } = useContext(ThemeContext);
-  const dropdownId = 'currency-picker-dropdown-id';
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleChange = (currency: Currency) => {
-    onChange(currency);
-    closeDropdown(dropdownId);
-  };
-
-  const currency = CURRENCIES.find(
-    ({ value }) => value === selectedCurrencyCode,
+}: CurrencyPickerDropdownButtonProps) => {
+  const dropdownId = useId();
+  const selectedCurrency = CURRENCY_PICKER_CURRENCIES.find(
+    ({ code }) => code === selectedCurrencyCode,
   );
-
-  const currencyCode = currency?.value ?? CurrencyCode.USD;
+  const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <StyledDropdownButtonContainer>
-          <StyledIconContainer>
-            {currencyCode}
-            <IconChevronDown size={theme.icon.size.sm} />
-          </StyledIconContainer>
-        </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <CurrencyPickerDropdownSelect
-          selectedCurrency={currency}
-          onChange={handleChange}
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <CurrencyPicker.Trigger
+        value={currencyCode}
+        aria-label={t`Currency: ${currencyCode}`}
+        onKeyDown={keepEnterAwayFromFieldHotkeys}
+      />
+      <DropdownContent
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        alignOffset={0}
+        aria-label={t`Currency`}
+      >
+        <CurrencyPicker.Options
+          currencies={CURRENCY_PICKER_CURRENCIES}
+          value={selectedCurrency?.code}
+          onValueChange={onChange}
+          searchLabel={t`Search`}
+          emptyLabel={t`No results`}
         />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

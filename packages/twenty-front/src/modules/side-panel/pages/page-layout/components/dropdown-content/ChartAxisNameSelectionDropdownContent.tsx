@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
@@ -11,11 +11,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 export const ChartAxisNameSelectionDropdownContent = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -76,14 +76,18 @@ export const ChartAxisNameSelectionDropdownContent = () => {
                 handleSelectAxisNameOption(option);
               }}
             >
-              <MenuItemSelect
-                text={getChartAxisNameDisplayOptions(option)}
-                selected={currentAxisNameDisplay?.toUpperCase() === option}
+              <ListItem
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectAxisNameOption(option);
                 }}
-              />
+                role="option"
+                aria-selected={currentAxisNameDisplay?.toUpperCase() === option}
+                selected={currentAxisNameDisplay?.toUpperCase() === option}
+                indicator="check"
+              >
+                {getChartAxisNameDisplayOptions(option)}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

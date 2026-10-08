@@ -3,9 +3,12 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
+
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -66,7 +69,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
   it('returns the provider with type read from the entity and oauth.scopes from oauthConfig', async () => {
     const applicationId = await findApplicationDbId(TEST_APP_ID);
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query ApplicationConnectionProviders($applicationId: UUID!) {
           applicationConnectionProviders(applicationId: $applicationId) {
@@ -75,6 +78,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
             type
             name
             displayName
+            logoUrl
             oauth {
               scopes
               isClientCredentialsConfigured
@@ -96,6 +100,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
       type: 'oauth',
       name: 'linear',
       displayName: 'Linear',
+      logoUrl: null,
       oauth: {
         scopes: ['read', 'write'],
         // The fixture registration's OAuth client_id / client_secret server
@@ -106,6 +111,56 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
     });
   }, 60000);
 
+  it('resolves logoUrl through the public-assets route when the manifest declares a logo', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        connectionProviders: [
+          {
+            universalIdentifier: TEST_PROVIDER_ID,
+            name: 'linear',
+            displayName: 'Linear',
+            logo: 'public/linear-logomark.svg',
+            type: 'oauth',
+            oauth: {
+              authorizationEndpoint: 'https://linear.app/oauth/authorize',
+              tokenEndpoint: 'https://api.linear.app/oauth/token',
+              scopes: ['read', 'write'],
+              clientIdVariable: 'LINEAR_CLIENT_ID',
+              clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+            },
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const applicationId = await findApplicationDbId(TEST_APP_ID);
+
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        query ApplicationConnectionProviders($applicationId: UUID!) {
+          applicationConnectionProviders(applicationId: $applicationId) {
+            logoUrl
+          }
+        }
+      `,
+      variables: { applicationId },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.errors).toBeUndefined();
+
+    const providers = response.body.data.applicationConnectionProviders;
+
+    const serverUrl =
+      process.env.SERVER_URL ?? new ConfigVariables().SERVER_URL;
+
+    expect(providers).toHaveLength(1);
+    expect(providers[0].logoUrl).toBe(
+      `${serverUrl}/public-assets/${SEED_APPLE_WORKSPACE_ID}/${applicationId}/public/linear-logomark.svg`,
+    );
+  }, 60000);
+
   it('returns an empty array when the application has no connection providers', async () => {
     await syncApplication({
       manifest: buildManifest({ connectionProviders: [] }),
@@ -114,7 +169,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
 
     const applicationId = await findApplicationDbId(TEST_APP_ID);
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query ApplicationConnectionProviders($applicationId: UUID!) {
           applicationConnectionProviders(applicationId: $applicationId) {

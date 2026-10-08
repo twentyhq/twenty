@@ -1,7 +1,12 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
+import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +16,7 @@ import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils
 import {
   computeAggregateParameters,
   computeDepthParameters,
+  computeFieldsParameters,
   computeEndingBeforeParameters,
   computeFilterParameters,
   computeGroupByParameters,
@@ -28,6 +34,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataRequiredOnCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-required-on-create.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
@@ -47,8 +54,7 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    // If field is required
-    if (!field.isNullable && field.defaultValue === null) {
+    if (isFlatFieldMetadataRequiredOnCreate(field)) {
       return {
         ...node,
         [field.name]: generateRandomFieldValue({
@@ -172,7 +178,7 @@ const getRequiredFields = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): string[] => {
   return flatFieldMetadatas.reduce((required, field) => {
-    if (!field.isNullable && field.defaultValue === null) {
+    if (isFlatFieldMetadataRequiredOnCreate(field)) {
       required.push(field.name);
 
       return required;
@@ -202,7 +208,6 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  // Create a temporary object that looks like ObjectMetadataEntity for the converter
   const tempItem = {
     ...item,
     fields: flatFieldMetadatas,
@@ -292,19 +297,21 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (
-  fromMetadata = false,
-): Record<string, OpenAPIV3_1.ParameterObject> => {
+export const computeParameterComponents = (): Record<
+  string,
+  OpenAPIV3_1.ParameterObject
+> => {
   return {
     idPath: computeIdPathParameter(),
     startingAfter: computeStartingAfterParameters(),
     endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
+    fields: computeFieldsParameters(),
     upsert: computeUpsertParameters(),
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(fromMetadata),
+    limit: computeLimitParameters(),
     groupBy: computeGroupByParameters(),
     viewId: computeViewIdParameters(),
     aggregate: computeAggregateParameters(),
@@ -416,7 +423,11 @@ export const computeMetadataSchemaComponents = (
                 items: {
                   type: 'object',
                   properties: {
-                    color: { type: 'string' },
+                    color: {
+                      type: 'string',
+                      enum: [...TAG_COLORS],
+                      default: DEFAULT_SELECT_OPTION_COLOR,
+                    },
                     label: { type: 'string' },
                     value: {
                       type: 'string',
@@ -1217,7 +1228,8 @@ export const computeMetadataSchemaComponents = (
         case 'pageLayoutWidget': {
           schemas['GridPosition'] = {
             type: 'object',
-            description: 'Grid position for widget placement',
+            description: 'Legacy grid position for widget placement',
+            deprecated: true,
             properties: {
               row: { type: 'number', minimum: 0 },
               column: { type: 'number', minimum: 0 },
@@ -1225,6 +1237,50 @@ export const computeMetadataSchemaComponents = (
               columnSpan: { type: 'number', minimum: 1 },
             },
             required: ['row', 'column', 'rowSpan', 'columnSpan'],
+          };
+
+          schemas['PageLayoutWidgetPosition'] = {
+            oneOf: [
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['GRID'] },
+                  row: { type: 'integer', minimum: 0 },
+                  column: { type: 'integer', minimum: 0 },
+                  rowSpan: { type: 'integer', minimum: 1 },
+                  columnSpan: { type: 'integer', minimum: 1 },
+                },
+                required: [
+                  'layoutMode',
+                  'row',
+                  'column',
+                  'rowSpan',
+                  'columnSpan',
+                ],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['VERTICAL_LIST'] },
+                  index: { type: 'integer', minimum: 0 },
+                  heightBehavior: {
+                    type: 'string',
+                    enum: [
+                      PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                      PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+                    ],
+                  },
+                },
+                required: ['layoutMode', 'index'],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['CANVAS'] },
+                },
+                required: ['layoutMode'],
+              },
+            ],
           };
 
           schemas[`${capitalize(item.nameSingular)}`] = {
@@ -1250,15 +1306,15 @@ export const computeMetadataSchemaComponents = (
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
                 description: 'Widget-specific configuration',
               },
             },
-            required: ['pageLayoutTabId', 'title', 'gridPosition'],
+            required: ['pageLayoutTabId', 'title'],
           };
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
@@ -1277,8 +1333,8 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
@@ -1299,7 +1355,14 @@ export const computeMetadataSchemaComponents = (
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+                oneOf: [
+                  { $ref: '#/components/schemas/GridPosition' },
+                  { type: 'null' },
+                ],
+                deprecated: true,
+              },
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',

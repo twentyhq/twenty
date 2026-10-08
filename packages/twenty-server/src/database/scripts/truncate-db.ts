@@ -6,7 +6,6 @@ async function dropSchemasSequentially() {
   try {
     await rawDataSource.initialize();
 
-    // Fetch all schemas excluding the ones we want to keep
     const schemas =
       (await performQuery<{ schema_name: string }[]>(
         `
@@ -38,6 +37,11 @@ async function dropSchemasSequentially() {
   } catch (err) {
     // oxlint-disable-next-line no-console
     console.error('Error during schema dropping:', err);
+    process.exitCode = 1;
+  } finally {
+    if (rawDataSource.isInitialized) {
+      await rawDataSource.destroy();
+    }
   }
 }
 

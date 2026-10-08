@@ -1,144 +1,120 @@
+import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  AnimatedPlaceholderErrorContainer,
-  AnimatedPlaceholderErrorSubTitle,
-  AnimatedPlaceholderErrorTextContainer,
-  AnimatedPlaceholderErrorTitle,
   Banner,
-  Callout,
-  CircularProgressBar,
-  Info,
-  InlineBanner,
   Loader,
   ProgressBar,
-  SidePanelInformationBanner,
-} from 'twenty-ui/feedback';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+  Skeleton,
+} from 'twenty-ui/primitives/feedback';
+import { isDefined } from 'twenty-shared/utils';
+import 'twenty-ui/style.css';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
+import { CalloutGalleryExample } from './callout-gallery-example';
 
 const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AnimatedPlaceholder',
-    node: <AnimatedPlaceholder type="error404" />,
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyContainer',
-    node: (
-      <AnimatedPlaceholderEmptyContainer>
-        Empty
-      </AnimatedPlaceholderEmptyContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyTextContainer',
-    node: (
-      <AnimatedPlaceholderEmptyTextContainer>
-        Empty text
-      </AnimatedPlaceholderEmptyTextContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyTitle',
-    node: (
-      <AnimatedPlaceholderEmptyTitle>No records</AnimatedPlaceholderEmptyTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptySubTitle',
-    node: (
-      <AnimatedPlaceholderEmptySubTitle>
-        Try adding one
-      </AnimatedPlaceholderEmptySubTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorContainer',
-    node: (
-      <AnimatedPlaceholderErrorContainer>
-        Error
-      </AnimatedPlaceholderErrorContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorTextContainer',
-    node: (
-      <AnimatedPlaceholderErrorTextContainer>
-        Error text
-      </AnimatedPlaceholderErrorTextContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorTitle',
-    node: (
-      <AnimatedPlaceholderErrorTitle>Went wrong</AnimatedPlaceholderErrorTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorSubTitle',
-    node: (
-      <AnimatedPlaceholderErrorSubTitle>
-        Please retry
-      </AnimatedPlaceholderErrorSubTitle>
-    ),
-  },
-  {
     name: 'Banner',
     node: (
-      <Banner color="blue" variant="primary">
+      <Banner
+        status="error"
+        color="blue"
+        variant="soft"
+        role="status"
+        aria-live="polite"
+        aria-label="Banner result"
+        className="custom-banner"
+        style={{ marginTop: 7 }}
+        render={<section data-composed="true" />}
+        ref={(element) => {
+          if (isDefined(element)) element.dataset.refTag = element.tagName;
+        }}
+      >
         Heads up
       </Banner>
     ),
   },
   {
     name: 'Callout',
+    node: <CalloutGalleryExample />,
+  },
+  {
+    name: 'InlineBanner compact link',
     node: (
-      <Callout variant="info" title="Info" description="A short description." />
+      <InlineBanner
+        layout="compact"
+        action={
+          <InlineBanner.Action href={'#connection-settings'}>
+            {'Connection settings'}
+          </InlineBanner.Action>
+        }
+      >
+        {'Connect your account to keep your contacts in sync.'}
+      </InlineBanner>
     ),
   },
   {
-    name: 'CircularProgressBar',
-    node: <CircularProgressBar size={50} barWidth={5} />,
-  },
-  {
-    name: 'Info',
-    node: <Info accent="blue" text="Some information" />,
-  },
-  {
     name: 'InlineBanner',
-    node: <InlineBanner color="blue" message="Inline message" />,
+    node: <InlineBanner status="info">{'Inline message'}</InlineBanner>,
   },
   {
     name: 'Loader',
-    node: <Loader color="blue" />,
+    node: (
+      <Loader
+        color="blue"
+        role="status"
+        aria-label="Loading results"
+        className="custom-loader"
+        style={{ borderColor: '#123456' }}
+        render={(props) =>
+          createElement('span', { ...props, 'data-composed': 'true' })
+        }
+        ref={(element) => {
+          if (isDefined(element)) {
+            element.dataset.refTag = element.tagName;
+          }
+        }}
+      />
+    ),
+  },
+  {
+    name: 'DecorativeLoader',
+    node: <Loader aria-hidden="true" />,
   },
   {
     name: 'ProgressBar',
     node: <ProgressBar value={50} ariaLabel="Progress" />,
   },
   {
-    name: 'SidePanelInformationBanner',
-    node: <SidePanelInformationBanner message="Panel info" variant="default" />,
+    name: 'Skeleton',
+    node: <Skeleton width={180} height={16} />,
+  },
+  {
+    name: 'StaticSkeleton',
+    node: (
+      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+    ),
   },
 ];
 
 const FeedbackGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/feedback" entries={FEEDBACK_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/feedback"
+      entries={FEEDBACK_ENTRIES}
+    />
   </ThemeProvider>
 );
 
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000102',
   name: 'twenty-ui-feedback-gallery',
-  description: 'Renders every twenty-ui/feedback component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/feedback component in the sandbox',
   component: FeedbackGallery,
 });

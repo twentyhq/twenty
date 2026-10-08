@@ -134,9 +134,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
 
     const relaunchedChannel = await queryCalendarChannel(throttledChannel);
 
-    expect(relaunchedChannel.syncStatus).toBe(
-      CalendarChannelSyncStatus.ACTIVE,
-    );
+    expect(relaunchedChannel.syncStatus).toBe(CalendarChannelSyncStatus.ACTIVE);
     expect(relaunchedChannel.syncStage).toBe(
       CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
     );

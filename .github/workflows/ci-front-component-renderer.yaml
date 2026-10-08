@@ -20,6 +20,7 @@ jobs:
         packages/twenty-front-component-renderer/**
         packages/twenty-sdk/**
         packages/twenty-shared/**
+        packages/twenty-ui/**
         !packages/twenty-sdk/package.json
   renderer-task:
     needs: changed-files-check
@@ -96,7 +97,7 @@ jobs:
         run: |
           npx http-server packages/twenty-front-component-renderer/storybook-static --port 6008 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6008 > /dev/null 2>&1; do sleep 1; done'
-          npx nx storybook:test twenty-front-component-renderer
+          npx nx storybook:test:no-coverage twenty-front-component-renderer
   ci-front-component-renderer-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -110,5 +111,5 @@ jobs:
       ]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

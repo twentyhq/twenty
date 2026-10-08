@@ -1,13 +1,11 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
-import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
 import { t } from '@lingui/core/macro';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
 } from '@/settings/roles/types/RoleWithPartialMembers';
-import { type RoleMaps } from '@/settings/roles/role-assignment/types/role-maps';
+import { type RoleMaps } from '@/settings/roles/role-assignment/types/RoleMaps';
 
 export const ROLE_TARGET_CONFIG = {
   member: {
@@ -24,8 +22,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToUsers,
     buttonTitle: () => t`Assign to member`,
-    dropdownComponent: SettingsRoleAssignmentWorkspaceMemberPickerDropdown,
-    // Tooltip configuration for member type
     tooltip: {
       anchorId: 'assign-member',
       content: () => t`All workspace members already have this role`,
@@ -43,8 +39,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToAgents,
     buttonTitle: () => t`Assign to agent`,
-    dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
-    // No tooltip for agent type
     tooltip: null,
   },
   apiKey: {
@@ -59,8 +53,6 @@ export const ROLE_TARGET_CONFIG = {
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToApiKeys,
     buttonTitle: () => t`Assign to API key`,
-    dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
-    // No tooltip for apiKey type
     tooltip: null,
   },
 } as const;

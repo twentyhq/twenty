@@ -3,10 +3,9 @@ import { useQuery } from '@apollo/client/react';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
-import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
-import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
+import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
   item: MessageChannel;
@@ -26,10 +25,9 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
     return null;
   }
 
-  return (
-    <Status
-      color={getColorByEmailingDomainStatus(emailingDomain.status)}
-      text={getTextByEmailingDomainStatus(emailingDomain.status)}
-    />
+  const { label, color } = getEmailingDomainStatusDisplay(
+    emailingDomain.status,
   );
+
+  return <Status color={color}>{label}</Status>;
 };

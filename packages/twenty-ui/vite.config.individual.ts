@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import { Features } from 'lightningcss';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
@@ -13,6 +14,12 @@ const depNames = Object.keys({
 const isExternal = (id: string): boolean =>
   depNames.some((dep) => id === dep || id.startsWith(dep + '/'));
 
+const entries = Object.keys(packageJson.exports)
+  .filter((subpath) => !subpath.endsWith('.css'))
+  .map((subpath) =>
+    subpath === '.' ? 'src/individual-entry.ts' : `src/${subpath}/index.ts`,
+  );
+
 export default defineConfig(() => {
   return {
     resolve: {
@@ -26,6 +33,9 @@ export default defineConfig(() => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      lightningcss: {
+        exclude: Features.DirSelector,
       },
       preprocessorOptions: {
         scss: {
@@ -57,7 +67,7 @@ export default defineConfig(() => {
         requireReturnsDefault: 'auto',
       },
       lib: {
-        entry: 'src/individual-entry.ts',
+        entry: entries,
         formats: ['es'],
       },
       rollupOptions: {

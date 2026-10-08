@@ -1,26 +1,32 @@
 import { useStore } from 'jotai';
 
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
-import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const useSwitchToNewAiChat = () => {
-  const setThreadIdCreatedFromDraft = useSetAtomState(
-    threadIdCreatedFromDraftState,
-  );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+type UseSwitchToNewAiChatParams = {
+  shouldOpenInFullPage?: boolean;
+};
+
+export const useSwitchToNewAiChat = ({
+  shouldOpenInFullPage = false,
+}: UseSwitchToNewAiChatParams = {}) => {
+  const { selectAiChatThread } = useSelectAiChatThread();
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   const switchToNewChat = () => {
-    setThreadIdCreatedFromDraft(null);
-    store.set(hasTriggeredCreateForDraftState.atom, false);
-    switchThreadWithDraft(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-    openAskAiPage();
+    selectAiChatThread(store.get(newAiChatThreadIdState.atom));
+
+    if (shouldOpenInFullPage) {
+      navigateToAiChatPage();
+    } else {
+      openAskAiPage();
+    }
+
     store.set(shouldFocusChatEditorState.atom, true);
   };
 

@@ -6,7 +6,7 @@
 
 - **+30 rich data fields** per Person and Company — seniority, skills, firmographics, funding, socials & more
 - **Run it anywhere** — from the command menu, as a workflow step, or straight from AI chat
-- **Smart matching** — finds the right profile from a LinkedIn, email, or domain, and only writes confident matches
+- **Smart matching** — finds the right profile from a LinkedIn, email, or domain, and only writes confident matches. Set the minimum likelihood in the app settings to adapt matching to your needs
 
 ## 💳 Billing
 

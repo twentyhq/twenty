@@ -1,26 +1,25 @@
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingInviteTeamSkipDialog } from '@/onboarding/components/OnboardingInviteTeamSkipDialog';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledForm = styled.div`
   display: flex;
@@ -45,20 +44,25 @@ export const InviteTeam = () => {
     control,
     fields,
     remove,
-    handleSubmit,
-    onSubmit,
     handleSkip,
+    handleInvite,
+    openSkipDialog,
+    emailIndexToFocus,
     getPlaceholder,
     isValid,
     isSubmitting,
     isNavigating,
   } = useInviteTeam();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
+  const { inviteTeamButtonReward } = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  );
+  const emailInputToFocusRef = useRef<HTMLInputElement>(null);
   const transition = useOnboardingMotionTransition();
 
+  const canRemoveEmailField = fields.length > 1;
+
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-invite-team-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Invite your team`}</StyledOnboardingStepTitle>
@@ -68,19 +72,9 @@ export const InviteTeam = () => {
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerUser) && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerUser}
-                suffix={t`free credits per user`}
-              />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <StyledForm>
           <AnimatePresence initial={false}>
             {fields.map((field, index) => (
@@ -100,6 +94,11 @@ export const InviteTeam = () => {
                     fieldState: { error },
                   }) => (
                     <TextInput
+                      ref={
+                        index === emailIndexToFocus
+                          ? emailInputToFocusRef
+                          : undefined
+                      }
                       autoFocus={index === 0}
                       type="email"
                       value={value}
@@ -107,8 +106,10 @@ export const InviteTeam = () => {
                       onBlur={onBlur}
                       error={error?.message}
                       onChange={onChange}
-                      RightIcon={IconX}
-                      onRightIconClick={() => remove(index)}
+                      RightIcon={canRemoveEmailField ? IconX : undefined}
+                      onRightIconClick={
+                        canRemoveEmailField ? () => remove(index) : undefined
+                      }
                       noErrorHelper
                       fullWidth
                     />
@@ -120,20 +121,28 @@ export const InviteTeam = () => {
         </StyledForm>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
-          <MainButton
-            title={t`Invite`}
-            disabled={!isValid || isSubmitting || isNavigating}
-            onClick={handleSubmit(onSubmit)}
-            fullWidth
+          <OnboardingRewardMainButton
+            label={t`Invite`}
+            creditsReward={inviteTeamButtonReward.creditsReward}
+            isRewardPerItem={inviteTeamButtonReward.isRewardPerItem}
+            disabled={!isValid}
+            isLoading={isSubmitting || isNavigating}
+            onClick={handleInvite}
           />
           <OnboardingSkipButton
-            onClick={handleSkip}
+            onClick={() => void openSkipDialog()}
             disabled={isSubmitting || isNavigating}
           />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
+      <OnboardingInviteTeamSkipDialog
+        isValid={isValid}
+        finalFocus={emailInputToFocusRef}
+        onInvite={handleInvite}
+        onSkip={() => void handleSkip()}
+      />
     </StyledOnboardingStepPage>
   );
 };

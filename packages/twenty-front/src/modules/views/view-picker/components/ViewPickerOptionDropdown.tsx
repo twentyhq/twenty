@@ -1,10 +1,8 @@
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
@@ -22,7 +20,6 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,
@@ -51,7 +48,6 @@ export const ViewPickerOptionDropdown = ({
   const dropdownId = `view-picker-options-${view.id}`;
 
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
   const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetAtomComponentState(
@@ -65,7 +61,6 @@ export const ViewPickerOptionDropdown = ({
 
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
     hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
@@ -80,33 +75,32 @@ export const ViewPickerOptionDropdown = ({
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
     destroyViewFromCurrentState();
-    closeDropdown(dropdownId);
   };
 
   const handleToggleFavorite = () => {
-    if (!isFavorite) {
-      const relevantItems = navigationMenuItems.filter(
-        (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
-      );
-
-      const maxPosition = Math.max(
-        ...relevantItems.map((item) => item.position),
-        0,
-      );
-
-      createManyNavigationMenuItems([
-        {
-          id: uuidv4(),
-          type: NavigationMenuItemType.VIEW,
-          viewId: view.id,
-          userWorkspaceId: currentUserWorkspaceId,
-          position: maxPosition + 1,
-        },
-      ]);
-    } else {
+    if (isFavorite) {
       deleteManyNavigationMenuItems([currentNavigationMenuItem.id]);
+      return;
     }
-    closeDropdown(dropdownId);
+
+    const relevantItems = navigationMenuItems.filter(
+      (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
+    );
+
+    const maxPosition = Math.max(
+      ...relevantItems.map((item) => item.position),
+      0,
+    );
+
+    createManyNavigationMenuItems([
+      {
+        id: uuidv4(),
+        type: NavigationMenuItemType.VIEW,
+        viewId: view.id,
+        userWorkspaceId: currentUserWorkspaceId,
+        position: maxPosition + 1,
+      },
+    ]);
   };
 
   const getVisibilityIcon = () => {
@@ -127,39 +121,35 @@ export const ViewPickerOptionDropdown = ({
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!shouldShowIconAlways}
         RightIcon={getVisibilityIcon()}
-        dropdownPlacement="bottom-start"
-        dropdownId={`view-picker-options-${view.id}`}
+        dropdownAlign="start"
+        dropdownId={dropdownId}
         selected={isCurrentView}
         dropdownContent={
-          <DropdownContent>
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-                onClick={handleToggleFavorite}
-              />
-              {!isIndexView && canEditView && (
-                <>
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text={t`Edit`}
-                    onClick={(event) => {
-                      onEdit(event, view.id);
-                      closeDropdown(dropdownId);
-                    }}
-                  />
-                  {!isLastView && (
-                    <MenuItem
-                      LeftIcon={IconTrash}
-                      text={t`Delete`}
-                      onClick={handleDelete}
-                      accent="danger"
-                    />
-                  )}
-                </>
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
+          <Dropdown.Section>
+            <Dropdown.ActionItem
+              startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
+              onClick={handleToggleFavorite}
+            >
+              {isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+            </Dropdown.ActionItem>
+            {!isIndexView && canEditView && (
+              <>
+                <Dropdown.ActionItem
+                  startIcon={<IconPencil />}
+                  onClick={(event) => {
+                    onEdit(event, view.id);
+                  }}
+                >{t`Edit`}</Dropdown.ActionItem>
+                {!isLastView && (
+                  <Dropdown.ActionItem
+                    startIcon={<IconTrash />}
+                    onClick={handleDelete}
+                    color="danger"
+                  >{t`Delete`}</Dropdown.ActionItem>
+                )}
+              </>
+            )}
+          </Dropdown.Section>
         }
       />
     </>

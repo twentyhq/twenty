@@ -1,41 +1,47 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { useDebounce } from 'use-debounce';
-
-import {
-  MultiItemBaseInput,
-  type MultiItemBaseInputProps,
-} from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
+import { OverlayMenuListSearchRow } from '@/ui/layout/overlay/components/OverlayMenuListSearchRow';
+import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
+import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { normalizeSearchText } from 'twenty-ui/utilities';
+
+const StyledAddItemContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
+`;
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
   onEscape: (newItemsValue: T[]) => void;
   onEnter: (newItemsValue: T[]) => void;
+  onSubmit: (newItemsValue: T[]) => void;
   onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
@@ -55,13 +61,13 @@ type MultiItemFieldInputProps<T> = {
   maxItemCount?: number;
 };
 
-// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
-// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
+// TODO: replace renderInput/renderItem/formatInput with a hook exposing them through context.
 export const MultiItemFieldInput = <T,>({
   items,
   onChange,
   onEscape,
   onEnter,
+  onSubmit,
   onError,
   placeholder,
   validateInput,
@@ -225,9 +231,13 @@ export const MultiItemFieldInput = <T,>({
     }
 
     onChange(updatedItems);
+
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
+    } else if (!isDeeplyEqual(items, updatedItems)) {
+      onSubmit(updatedItems);
     }
+
     setIsInputDisplayed(false);
     setIsAddingNewItem(false);
     setInputValue('');
@@ -283,11 +293,13 @@ export const MultiItemFieldInput = <T,>({
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
     onChange(updatedItems);
+    onSubmit(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    onSubmit(updatedItems);
     showInputIfNoItemsRemain(updatedItems);
   };
 
@@ -302,78 +314,90 @@ export const MultiItemFieldInput = <T,>({
     dependencies: [handleEscape],
   });
 
+  const shouldShowItems =
+    isNonEmptyArray(filteredItems) &&
+    (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
+
   return (
-    <DropdownContent ref={containerRef}>
-      {shouldShowSearch && !isInputDisplayed && (
-        <>
-          <DropdownMenuSearchInput
-            value={searchFilter}
-            onChange={(event) =>
-              setSearchFilter(
-                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
-              )
-            }
-            autoFocus
-          />
-          <DropdownMenuSeparator />
-        </>
-      )}
-      {!!filteredItems.length &&
-        (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed) && (
+    <OverlayMenuList
+      ref={containerRef}
+      header={
+        shouldShowSearch && !isInputDisplayed ? (
           <>
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {filteredItems.map((item) => {
-                const originalIndex = items.indexOf(item);
-                return renderItem({
-                  value: item,
-                  index: originalIndex,
-                  handleEdit: () => handleEditButtonClick(originalIndex),
-                  handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
-                  handleDelete: () => {
-                    handleDeleteItem(originalIndex);
-                  },
-                });
-              })}
-            </DropdownMenuItemsContainer>
-            {isInputDisplayed || !isLimitReached ? (
-              <DropdownMenuSeparator />
-            ) : null}
+            <OverlayMenuListSearchRow
+              value={searchFilter}
+              onChange={(event) =>
+                setSearchFilter(
+                  turnIntoEmptyStringIfWhitespacesOnly(
+                    event.currentTarget.value,
+                  ),
+                )
+              }
+            />
+            <OverlayMenuListSeparator />
           </>
-        )}
-      {isInputDisplayed ? (
-        <MultiItemBaseInput
-          instanceId={instanceId}
-          autoFocus={!shouldShowSearch}
-          placeholder={placeholder}
-          value={inputValue}
-          hasError={!errorData.isValid}
-          renderInput={renderInput}
-          onEscape={handleEscape}
-          onChange={(value) => {
-            value
-              ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
-              : handleInputChange('');
-          }}
-          onEnter={handleEnter}
-          hasItem={!!items.length}
-          rightComponent={
-            items.length ? (
-              <LightIconButton
-                Icon={isAddingNewItem ? IconPlus : IconCheck}
-                onClick={handleEnter}
-              />
-            ) : null
-          }
-        />
-      ) : !isLimitReached ? (
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={handleAddButtonClick}
-            LeftIcon={IconPlus}
-            text={newItemLabel || `Add ${placeholder}`}
-          />
-        </DropdownMenuItemsContainer>
-      ) : null}
-    </DropdownContent>
+        ) : undefined
+      }
+      footer={
+        <>
+          {shouldShowItems && (isInputDisplayed || !isLimitReached) && (
+            <OverlayMenuListSeparator />
+          )}
+          {isInputDisplayed ? (
+            <MultiItemBaseInput
+              instanceId={instanceId}
+              autoFocus={!shouldShowSearch}
+              placeholder={placeholder}
+              value={inputValue}
+              hasError={!errorData.isValid}
+              renderInput={renderInput}
+              onEscape={handleEscape}
+              onChange={(value) => {
+                value
+                  ? handleInputChange(
+                      turnIntoEmptyStringIfWhitespacesOnly(value),
+                    )
+                  : handleInputChange('');
+              }}
+              onEnter={handleEnter}
+              preventTabNavigation
+              hasItem={isNonEmptyArray(items)}
+              rightComponent={
+                isNonEmptyArray(items) ? (
+                  <LightIconButton
+                    onClick={handleEnter}
+                    aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+                  >
+                    {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+                  </LightIconButton>
+                ) : null
+              }
+            />
+          ) : !isLimitReached ? (
+            <StyledAddItemContainer>
+              <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
+                <OverflowingTextWithTooltip
+                  text={newItemLabel || `Add ${placeholder}`}
+                />
+              </ListItem>
+            </StyledAddItemContainer>
+          ) : null}
+        </>
+      }
+    >
+      {shouldShowItems
+        ? filteredItems.map((item) => {
+            const originalIndex = items.indexOf(item);
+
+            return renderItem({
+              value: item,
+              index: originalIndex,
+              handleEdit: () => handleEditButtonClick(originalIndex),
+              handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
+              handleDelete: () => handleDeleteItem(originalIndex),
+            });
+          })
+        : undefined}
+    </OverlayMenuList>
   );
 };

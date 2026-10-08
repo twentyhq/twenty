@@ -1,16 +1,15 @@
 import {
   type FieldMetadataTypesToTestForCreateInputValidation,
   type FieldMetadataTypesToTestForFilterInputValidation,
-} from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+} from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.type';
 import {
+  type FieldMetadataComplexOption,
   type FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationType,
   type FieldMetadataMultiItemSettings,
   type RelationCreationPayload,
 } from 'twenty-shared/types';
-
-import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type FieldMetadataCreationInput = {
   name: string;
@@ -220,18 +219,6 @@ export const getFieldMetadataCreationInputs = (
           },
         ],
       },
-      // {
-      //   name: 'oneToManyRelationField',
-      //   label: 'oneToManyRelationField',
-      //   type: FieldMetadataType.RELATION,
-      //   objectMetadataId,
-      //   relationCreationPayload: {
-      //     targetObjectMetadataId: targetObjectMetadata1Id,
-      //     targetFieldLabel: 'manyToOneTargetRelationField',
-      //     targetFieldIcon: 'IconListOpportunity',
-      //     type: RelationType.ONE_TO_MANY,
-      //   },
-      // },
     ],
   };
 

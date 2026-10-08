@@ -1,6 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -9,19 +9,18 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
 
   const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
 
@@ -52,28 +51,53 @@ export const useOpenRecordFromIndexView = () => {
 
       const parentViewFilterGroups = store.get(currentRecordFilterGroups);
 
-      store.set(
-        contextStoreRecordShowParentViewComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-        {
-          parentViewComponentId: recordIndexId,
-          parentViewObjectNameSingular: objectNameSingular,
-          parentViewFilterGroups,
-          parentViewFilters,
-          parentViewSorts,
-        },
-      );
+      const parentView = {
+        parentViewComponentId: recordIndexId,
+        parentViewObjectNameSingular: objectNameSingular,
+        parentViewFilterGroups,
+        parentViewFilters,
+        parentViewSorts,
+      };
 
-      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
-        openRecordInSidePanel({
+      // Related lists read this from their own surface's store, so set it on the destination.
+      const setParentViewOn = (instanceId: string) =>
+        store.set(
+          contextStoreRecordShowParentViewComponentState.atomFamily({
+            instanceId,
+          }),
+          parentView,
+        );
+
+      if (workspaceSurface.type === 'side-panel') {
+        const destinationSurfaceInstanceId = openRecordInSidePanel({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack: false,
+        });
+
+        setParentViewOn(
+          destinationSurfaceInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID,
+        );
+
+        return;
+      }
+
+      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+        const sidePanelPageInstanceId = openRecordInSidePanel({
           recordId,
           objectNameSingular,
           resetNavigationStack: true,
         });
+
+        setParentViewOn(
+          sidePanelPageInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID,
+        );
       } else {
+        setParentViewOn(MAIN_CONTEXT_STORE_INSTANCE_ID);
+
         const isSidePanelAiChat =
-          store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
+          store.get(sidePanelPageInfoSelector.atom).page ===
+          SidePanelPages.AskAI;
 
         if (!isSidePanelAiChat) {
           closeSidePanelMenu();
@@ -96,6 +120,7 @@ export const useOpenRecordFromIndexView = () => {
       openRecordIn,
       closeSidePanelMenu,
       store,
+      workspaceSurface.type,
     ],
   );
 

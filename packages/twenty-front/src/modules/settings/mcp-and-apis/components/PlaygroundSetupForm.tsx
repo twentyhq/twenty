@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 
 const playgroundSetupFormSchema = z.object({
@@ -89,12 +89,11 @@ export const PlaygroundSetupForm = () => {
         )}
       />
       <Button
-        title={t`Launch`}
-        variant="primary"
-        accent="blue"
         type="submit"
         disabled={isSubmitting}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Launch`}</Button>
     </StyledForm>
   );
 };

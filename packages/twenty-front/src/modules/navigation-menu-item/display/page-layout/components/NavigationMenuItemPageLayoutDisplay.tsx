@@ -1,9 +1,7 @@
 import { useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
+import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -22,14 +20,11 @@ export const NavigationMenuItemPageLayoutDisplay = ({
     isLayoutCustomizationModeEnabledState,
   );
 
-  const { getIcon } = useIcons();
   const location = useLocation();
 
   const label = item.name ?? '';
   const computedLink = getPageLayoutNavigationMenuItemComputedLink(item);
-  const pageLayoutColor = getNavigationMenuItemColor(item);
 
-  const Icon = isDefined(item.icon) ? getIcon(item.icon) : undefined;
   const isActive = computedLink !== '' && location.pathname === computedLink;
 
   return (
@@ -45,8 +40,7 @@ export const NavigationMenuItemPageLayoutDisplay = ({
           ? editModeProps?.onEditModeClick
           : undefined
       }
-      Icon={Icon}
-      iconColor={pageLayoutColor}
+      Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={isActive}
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}

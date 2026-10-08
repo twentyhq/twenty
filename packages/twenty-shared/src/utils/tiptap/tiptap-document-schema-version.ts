@@ -1,0 +1,1 @@
+export const TIPTAP_DOCUMENT_SCHEMA_VERSION = 1;

@@ -2,9 +2,9 @@ import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily'
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconCopy, IconTerminal } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -156,12 +156,14 @@ export const TerminalOutput = ({
             </StyledTab>
           )}
           <LightIconButton
-            Icon={IconCopy}
             onClick={() => copyToClipboard(currentOutput)}
             title={t`Copy output`}
-            size="small"
-            accent="tertiary"
-          />
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Copy output`}
+          >
+            <IconCopy />
+          </LightIconButton>
         </StyledTabContainer>
       </StyledHeader>
       <StyledOutputArea isError={activeTab === 'stderr'}>

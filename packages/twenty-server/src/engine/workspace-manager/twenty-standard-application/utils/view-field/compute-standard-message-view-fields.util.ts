@@ -92,5 +92,100 @@ export const computeStandardMessageViewFields = (
         size: 150,
       },
     }),
+
+    messageRecordPageFieldsMessageThread: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        viewFieldName: 'messageThread',
+        fieldName: 'messageThread',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    messageRecordPageFieldsMessageParticipants:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'message',
+        context: {
+          viewName: 'messageRecordPageFields',
+          viewFieldName: 'messageParticipants',
+          fieldName: 'messageParticipants',
+          position: 1,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      }),
+    messageRecordPageFieldsReceivedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        viewFieldName: 'receivedAt',
+        fieldName: 'receivedAt',
+        position: 2,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    messageRecordPageFieldsText: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        viewFieldName: 'text',
+        fieldName: 'text',
+        position: 3,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    messageRecordPageFieldsHeaderMessageId: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'message',
+        context: {
+          viewName: 'messageRecordPageFields',
+          viewFieldName: 'headerMessageId',
+          fieldName: 'headerMessageId',
+          position: 4,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      },
+    ),
+    messageRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    messageRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
   };
 };

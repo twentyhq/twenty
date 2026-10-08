@@ -1,22 +1,25 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { HttpResponse, graphql } from 'msw';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { Toaster } from 'twenty-ui/components/feedback';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   title: 'Modules/Settings/Developers/Components/SettingsDevelopersWebhookForm',
   component: SettingsDevelopersWebhookForm,
   decorators: [
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
@@ -25,7 +28,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersWebhookForm>;
+type Story = StoryObj<typeof SettingsDevelopersWebhookForm>;
 
 export const CreateMode: Story = {
   args: {
@@ -64,5 +67,99 @@ export const EditMode: Story = {
 
     await canvas.findByText('Danger zone');
     await canvas.findByText('Delete this webhook');
+  },
+};
+
+export const EntityPicker: Story = {
+  args: {
+    mode: WebhookFormMode.Edit,
+    webhookId: '1234',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [trigger] = await canvas.findAllByRole(
+      'button',
+      { name: 'All Objects' },
+      { timeout: 3000 },
+    );
+
+    await userEvent.click(trigger);
+    const picker = await body.findByRole('dialog', { name: 'Select entity' });
+    const search = within(picker).getByRole('searchbox', { name: 'Search' });
+
+    await waitFor(() => expect(search).toHaveFocus());
+    expect(
+      within(picker).getByRole('group', { name: 'Core Objects' }),
+    ).toBeVisible();
+    expect(
+      within(picker).getByRole('group', { name: 'Metadata' }),
+    ).toBeVisible();
+
+    await userEvent.type(search, 'compan');
+    expect(
+      within(picker).queryByRole('group', { name: 'Metadata' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(picker).getByRole('button', { name: 'Companies' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+    expect(trigger).toHaveTextContent('Companies');
+
+    await userEvent.click(trigger);
+    const reopenedPicker = await body.findByRole('dialog', {
+      name: 'Select entity',
+    });
+
+    expect(
+      within(reopenedPicker).getByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
+    expect(
+      within(reopenedPicker).getByRole('button', {
+        name: 'Companies',
+        pressed: true,
+      }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopenedPicker).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const QueryError: Story = {
+  args: {
+    mode: WebhookFormMode.Edit,
+    webhookId: 'unavailable-webhook',
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('GetWebhook', () =>
+          HttpResponse.json({
+            errors: [{ message: 'Connection lost' }],
+          }),
+        ),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const toast = await canvas.findByRole('status');
+
+    expect(toast).toHaveTextContent('Failed to load webhook');
+    expect(canvas.getAllByRole('status')).toHaveLength(1);
+    expect(canvas.queryByText('Connection lost')).not.toBeInTheDocument();
   },
 };

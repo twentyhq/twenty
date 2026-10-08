@@ -7,13 +7,12 @@ import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 
 export const SettingsGraphQLPlayground = () => {
   const navigateSettings = useNavigateSettings();
   const { schema: urlSchema = 'core' } = useParams<{ schema: string }>();
 
-  // Convert lowercase URL parameter to PlaygroundSchemas enum
   const schema =
     urlSchema === 'metadata'
       ? PlaygroundSchemas.METADATA

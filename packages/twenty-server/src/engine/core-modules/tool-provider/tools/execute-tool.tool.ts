@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
@@ -9,7 +10,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 const executeToolInputZodSchema = z.object({
-  toolName: z.string().describe('Exact tool name. Do not guess.'),
+  toolName: z.string().describe('Tool name, as confirmed by learn_tools.'),
   arguments: z
     .record(z.string(), z.unknown())
     .describe('Arguments matching the schema returned by learn_tools.'),
@@ -55,13 +56,22 @@ export const createExecuteToolTool = (
     'Execute a tool by name with arguments. Call learn_tools first to discover the required input schema.',
   inputSchema: executeToolInputSchema,
   execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
+    if (!isNonEmptyString(parameters?.toolName)) {
+      return {
+        success: false,
+        message: 'Tool name is required',
+        error:
+          'Tool name is required. Pass the tool name confirmed by learn_tools as toolName.',
+      };
+    }
+
     const { toolName, arguments: args = {} } = parameters;
 
     if (options?.isToolAllowed?.(toolName) === false) {
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,
-        error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to discover available tools.`,
+        error: `Tool "${toolName}" is not available in this context and cannot be called here. Do not retry it.`,
       };
     }
 

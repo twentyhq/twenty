@@ -1,6 +1,8 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
@@ -9,47 +11,43 @@ import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
+import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
+import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule
-// directly: their service graphs transitively reach AiAgentExecutionModule which
-// forwardRef's back into ToolProviderModule. Those two @Global() modules provide
-// a service token that their respective providers consume via @Optional()
-// @Inject, breaking the cycle.
-//
-// Webhook and NavigationMenuItem do NOT have that cycle, so we import their
-// entity modules directly and the providers inject the services the normal way
-// (same pattern as views/objects/metadata).
+// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
+// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     ToolModule,
     RecordCrudModule,
-    AiModelsModule,
-    forwardRef(() => AiAgentExecutionModule),
+    FilesFieldModule,
     ObjectMetadataModule,
     FieldMetadataModule,
     PermissionsModule,
@@ -59,29 +57,29 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    LogicFunctionModule,
     NavigationMenuItemModule,
     WebhookModule,
+    RoleModule,
     UserRoleModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    EmailingModule,
+    TypeOrmModule.forFeature([UserEntity, FileEntity]),
   ],
   providers: [
     ToolIndexResolver,
     ToolExecutorService,
+    RecordFilesResolverService,
+    provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
+    RoleToolProvider,
     ViewToolProvider,
     WebhookToolProvider,
     WorkflowToolProvider,
     {
-      // TOOL_PROVIDERS contains only providers implementing ToolProvider
-      // (registry tools with descriptors). The native tool binder is a
-      // parallel concept and is exported for surfaces that bind SDK-native
-      // tools directly into their model ToolSet.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
@@ -89,6 +87,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
+        roleProvider: RoleToolProvider,
         viewProvider: ViewToolProvider,
         webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
@@ -99,6 +98,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider,
         logicFunctionProvider,
         navigationMenuItemProvider,
+        roleProvider,
         viewProvider,
         webhookProvider,
         workflowProvider,
@@ -110,6 +110,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         MetadataToolProvider,
         LogicFunctionToolProvider,
         NavigationMenuItemToolProvider,
+        RoleToolProvider,
         ViewToolProvider,
         WebhookToolProvider,
         WorkflowToolProvider,

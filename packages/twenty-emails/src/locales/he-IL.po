@@ -11,12 +11,17 @@ msgstr ""
 "PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n"
 "X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
 "X-Crowdin-Project-ID: 1\n"
 "X-Crowdin-Language: he\n"
 "X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
 "X-Crowdin-File-ID: 27\n"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
+msgstr "{actorName} עדכן/ה את גישת מנהל המערכת של {targetName} ({targetEmail})."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,6 +94,11 @@ msgid "Enabled"
 msgstr "מופעל"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Full admin panel access: {fullAdminStatus}"
+msgstr "גישה מלאה ללוח הניהול: {fullAdminStatus}"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
 msgstr "Github"
@@ -123,6 +133,11 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "אם Twenty מתאימה לך, אתה מסודר — אין צורך לעשות דבר. אם זה לא מתאים, תוכל לבטל בלחיצה אחת לפני כן ולא תחויב."
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "If you did not expect this change, review your server administrators immediately."
+msgstr "אם שינוי זה לא היה צפוי, בדוק/י מיד את מנהלי המערכת של השרת שלך."
+
+#. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "אם לא אתה התחלת את השינוי הזה, אנא פנה מיד לבעל מרחב העבודה שלך."
@@ -136,6 +151,11 @@ msgstr "אם לא תעשה דבר, נשהה את מרחב העבודה שלך ו
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
 msgstr "אם תרצה אי פעם לתת ל-Twenty הזדמנות נוספת, תוכל להתחיל מרחב עבודה חדש תוך דקות — נשמח לקבל אותך בחזרה."
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Impersonation: {impersonateStatus}"
+msgstr "התחזות: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -207,26 +227,6 @@ msgstr "סן פרנסיסקו / פריז"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "גישה של מנהל השרת השתנתה"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

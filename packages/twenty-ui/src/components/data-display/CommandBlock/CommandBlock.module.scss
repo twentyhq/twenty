@@ -1,0 +1,35 @@
+.container {
+  align-items: center;
+  background: var(--t-background-secondary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-sm);
+  display: flex;
+  gap: var(--t-spacing-3);
+  justify-content: space-between;
+  min-inline-size: 0;
+  padding: var(--t-spacing-3);
+}
+
+.commands {
+  color: var(--t-font-color-primary);
+  font-family: var(--t-code-font-family);
+  margin: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+
+  code {
+    font: inherit;
+  }
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-2);
+}
+
+.prompt {
+  color: var(--t-code-text-orange);
+}

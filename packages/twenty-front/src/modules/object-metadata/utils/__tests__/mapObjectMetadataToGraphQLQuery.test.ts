@@ -1,6 +1,6 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
+import { normalizeGQLQuery } from '~/testing/utils/normalizeGQLQuery';
 
 const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',
@@ -71,7 +71,10 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     company
     {
@@ -82,7 +85,10 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     annualRecurringRevenue
     {
@@ -107,7 +113,10 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     createdAt
     accountOwnerId
@@ -115,7 +124,10 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     updatedAt
     }
@@ -125,7 +137,10 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     }`),
     );

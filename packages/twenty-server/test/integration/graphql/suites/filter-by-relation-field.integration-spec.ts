@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const TEST_COMPANY_IDS = {
   AIRBNB: '20202020-cccc-4000-8000-000000000001',
@@ -65,7 +65,7 @@ describe('Filter by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createCompanies);
+    await makeGraphqlApiRequest(createCompanies);
 
     const createPeople = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -101,7 +101,7 @@ describe('Filter by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createPeople);
+    await makeGraphqlApiRequest(createPeople);
 
     const createRockets = createManyOperationFactory({
       objectMetadataSingularName: 'rocket',
@@ -114,7 +114,7 @@ describe('Filter by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createRockets);
+    await makeGraphqlApiRequest(createRockets);
 
     const createPets = createManyOperationFactory({
       objectMetadataSingularName: 'pet',
@@ -135,7 +135,7 @@ describe('Filter by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createPets);
+    await makeGraphqlApiRequest(createPets);
   });
 
   it('should filter people by company name (exact match)', async () => {
@@ -161,7 +161,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
@@ -198,7 +198,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -235,7 +235,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -245,6 +245,68 @@ describe('Filter by relation field (e2e)', () => {
 
     expect(ids).toEqual([TEST_PERSON_IDS.AIRBNB_DESIGNER]);
   });
+
+  it.each([
+    {
+      description:
+        'a foreign key compared to a company, keeping people without one',
+      filter: { companyId: { neq: TEST_COMPANY_IDS.AIRBNB } },
+      expectedIds: [
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+        TEST_PERSON_IDS.UNAFFILIATED,
+      ],
+    },
+    {
+      description:
+        'a company field compared to a value, keeping people without a company',
+      filter: { company: { name: { neq: 'Airbnb' } } },
+      expectedIds: [
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+        TEST_PERSON_IDS.UNAFFILIATED,
+      ],
+    },
+    {
+      description:
+        'a foreign key compared to null, keeping only people with a company',
+      filter: { companyId: { neq: null } },
+      expectedIds: [
+        TEST_PERSON_IDS.AIRBNB_ENGINEER,
+        TEST_PERSON_IDS.AIRBNB_DESIGNER,
+        TEST_PERSON_IDS.STRIPE_ENGINEER,
+        TEST_PERSON_IDS.NOTION_ENGINEER,
+      ],
+    },
+  ])(
+    'should filter people with neq on $description',
+    async ({ filter, expectedIds }) => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query People($filter: PersonFilterInput) {
+            people(filter: $filter, first: 10) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          filter: { and: [{ id: { in: ALL_TEST_PERSON_IDS } }, filter] },
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const ids = response.body.data.people.edges.map(
+        (edge: { node: { id: string } }) => edge.node.id,
+      );
+
+      expect(ids.sort()).toEqual([...expectedIds].sort());
+    },
+  );
 
   it('should combine a relation filter with an order-by on the same relation (join dedupe)', async () => {
     const queryData = {
@@ -276,7 +338,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -318,7 +380,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -356,7 +418,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors.length).toBeGreaterThan(0);
@@ -369,7 +431,7 @@ describe('Filter by relation field (e2e)', () => {
     const liveId = '20202020-dddd-4000-8000-000000000098';
     const softDeletedId = '20202020-dddd-4000-8000-000000000099';
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -382,7 +444,7 @@ describe('Filter by relation field (e2e)', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       deleteManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -413,7 +475,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -447,7 +509,7 @@ describe('Filter by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.errors).toBeUndefined();
 

@@ -7,6 +7,7 @@ const FIELD_ID_TEXT = 'field-text-id';
 const FIELD_ID_DATE_TIME = 'field-date-time-id';
 const FIELD_ID_ADDRESS = 'field-address-id';
 const FIELD_ID_NUMBER = 'field-number-id';
+const FIELD_ID_RELATION = 'field-relation-id';
 const FIELD_ID_UNKNOWN = 'field-unknown-id';
 
 const mockObjectMetadataItem = {
@@ -16,6 +17,13 @@ const mockObjectMetadataItem = {
       name: 'companyName',
       type: 'TEXT',
       options: null,
+    },
+    {
+      id: FIELD_ID_RELATION,
+      name: 'company',
+      type: 'RELATION',
+      options: null,
+      relation: { type: 'MANY_TO_ONE' },
     },
     {
       id: FIELD_ID_DATE_TIME,
@@ -228,5 +236,48 @@ describe('buildRecordInputFromFilter', () => {
     });
 
     expect(result).toEqual({ revenue: 42 });
+  });
+
+  it('should prefill the join column for a direct relation filter on the current record', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_RELATION,
+          type: 'RELATION',
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify({
+            isCurrentRecordSelected: true,
+            selectedRecordIds: [],
+          }),
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      currentRecordId: 'current-record-id',
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ companyId: 'current-record-id' });
+  });
+
+  it('should skip relation traversal filters instead of prefilling the join column', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_RELATION,
+          type: 'RELATION',
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify({
+            isCurrentRecordSelected: true,
+            selectedRecordIds: [],
+          }),
+          relationTargetFieldMetadataId: 'relation-target-field-id',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      currentRecordId: 'current-record-id',
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({});
   });
 });

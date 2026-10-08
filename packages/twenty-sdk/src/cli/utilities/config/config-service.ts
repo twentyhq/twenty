@@ -1,7 +1,9 @@
-import { readFile, writeFile } from 'node:fs/promises';
-import * as path from 'path';
+import { readFile } from 'node:fs/promises';
 
-import { ensureDir, ensureFile } from '@/cli/utilities/file/fs-utils';
+import {
+  ensurePrivateFile,
+  writePrivateFile,
+} from '@/cli/utilities/file/fs-utils';
 
 import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 
@@ -16,8 +18,6 @@ export type RemoteConfig = {
   // App registration credentials (from `createApplicationRegistration`)
   appRegistrationId?: string;
   appRegistrationClientId?: string;
-  appAccessToken?: string;
-  appRefreshToken?: string;
 };
 
 type PersistedConfig = {
@@ -51,7 +51,7 @@ export class ConfigService {
   }
 
   private async readRawConfig(): Promise<PersistedConfig> {
-    await ensureFile(this.configPath);
+    await ensurePrivateFile(this.configPath);
     const content = await readFile(this.configPath, 'utf8');
     const raw = JSON.parse(content || '{}');
 
@@ -97,8 +97,6 @@ export class ConfigService {
         str(source.applicationRefreshToken),
       appRegistrationId: str(source.appRegistrationId),
       appRegistrationClientId: str(source.appRegistrationClientId),
-      appAccessToken: str(source.appAccessToken),
-      appRefreshToken: str(source.appRefreshToken),
     });
 
     const profiles =
@@ -136,8 +134,7 @@ export class ConfigService {
         legacyDefault === 'default' ? DEFAULT_REMOTE_NAME : legacyDefault;
     }
 
-    await ensureDir(path.dirname(this.configPath));
-    await writeFile(this.configPath, JSON.stringify(migrated, null, 2));
+    await writePrivateFile(this.configPath, JSON.stringify(migrated, null, 2));
 
     return migrated;
   }
@@ -167,8 +164,6 @@ export class ConfigService {
         twentyCLIRefreshToken: remoteConfig.twentyCLIRefreshToken,
         appRegistrationId: remoteConfig.appRegistrationId,
         appRegistrationClientId: remoteConfig.appRegistrationClientId,
-        appAccessToken: remoteConfig.appAccessToken,
-        appRefreshToken: remoteConfig.appRefreshToken,
       };
     } catch {
       return defaultConfig;
@@ -189,8 +184,7 @@ export class ConfigService {
 
     raw.remotes[remote] = { ...currentRemote, ...config };
 
-    await ensureDir(path.dirname(this.configPath));
-    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await writePrivateFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   async clearConfig(): Promise<void> {
@@ -205,8 +199,7 @@ export class ConfigService {
       delete raw.remotes[remote];
     }
 
-    await ensureDir(path.dirname(this.configPath));
-    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await writePrivateFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   private getDefaultConfig(): RemoteConfig {
@@ -247,7 +240,6 @@ export class ConfigService {
 
     raw.defaultRemote = name;
 
-    await ensureDir(path.dirname(this.configPath));
-    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await writePrivateFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 }

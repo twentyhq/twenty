@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
 
-export const useIsSettingsPage = () =>
-  useLocation().pathname.match(/\/settings\//g) !== null;
+import { isSettingsPath } from '~/utils/isSettingsPath';
+
+export const useIsSettingsPage = () => isSettingsPath(useLocation().pathname);

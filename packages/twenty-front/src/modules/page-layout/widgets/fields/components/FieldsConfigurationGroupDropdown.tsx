@@ -5,15 +5,13 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 type FieldsConfigurationGroupDropdownProps = {
   groupId: string;
@@ -32,58 +30,32 @@ export const FieldsConfigurationGroupDropdown = ({
 
   const dropdownId = getFieldsConfigurationGroupEditDropdownId(groupId);
 
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleRename = () => {
-    closeDropdown(dropdownId);
-    onStartRename();
-  };
-
-  const handleDelete = () => {
-    closeDropdown(dropdownId);
-    onDelete();
-  };
-
-  const handleAddGroup = () => {
-    closeDropdown(dropdownId);
-    onAddGroup?.();
-  };
-
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <LightIconButton
-          Icon={IconDotsVertical}
-          accent="tertiary"
-          aria-label={t`More options`}
-        />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPencil}
-              onClick={handleRename}
-              accent="default"
-              text={t`Rename`}
-            />
-            <MenuItem
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-              accent="danger"
-              text={t`Delete`}
-            />
-            <MenuItem
-              LeftIcon={IconNewSection}
-              onClick={handleAddGroup}
-              accent="default"
-              text={t`Add a Group`}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <Dropdown.Trigger
+        render={
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent width={GenericDropdownContentWidth.Narrow}>
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconPencil />}
+            onClick={onStartRename}
+          >{t`Rename`}</Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            onClick={onDelete}
+            color="danger"
+          >{t`Delete`}</Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconNewSection />}
+            onClick={() => onAddGroup?.()}
+          >{t`Add a Group`}</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

@@ -18,6 +18,8 @@ export type WorkflowRunState = {
     {
       status: string;
       result?: Record<string, unknown>;
+      error?: string;
+      history?: Array<{ status: string; error?: string }>;
     }
   >;
   flow?: {
@@ -67,13 +69,15 @@ export const getWorkflowRun = async (
 export const runWorkflowVersion = async ({
   workflowVersionId,
   payload,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 }: {
   workflowVersionId: string;
   payload?: object;
+  token?: string;
 }): Promise<string> => {
   const response = await client
     .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${token}`)
     .send({
       query: `
         mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
@@ -136,6 +140,30 @@ export const waitForWorkflowCompletion = async (
     workflowRun !== null &&
     PENDING_WORKFLOW_RUN_STATUSES.includes(workflowRun.status) &&
     attempts < maxAttempts
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    workflowRun = await getWorkflowRun(workflowRunId);
+    attempts++;
+  }
+
+  return workflowRun;
+};
+
+export const waitForWorkflowRunStepStatus = async (
+  workflowRunId: string,
+  stepId: string,
+  expectedStatus: string,
+  maxAttempts = 30,
+  intervalMs = 500,
+): Promise<WorkflowRunResponse | null> => {
+  let workflowRun = await getWorkflowRun(workflowRunId);
+  let attempts = 0;
+
+  while (
+    attempts < maxAttempts &&
+    workflowRun?.state?.stepInfos?.[stepId]?.status !== expectedStatus &&
+    (workflowRun === null ||
+      PENDING_WORKFLOW_RUN_STATUSES.includes(workflowRun.status))
   ) {
     await new Promise((resolve) => setTimeout(resolve, intervalMs));
     workflowRun = await getWorkflowRun(workflowRunId);

@@ -3,7 +3,6 @@ import { cloneRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   ViewFilterGroupLogicalOperator,
-  ViewOpenRecordIn,
   ViewSortDirection,
   ViewType,
   ViewVisibility,
@@ -22,7 +21,6 @@ const sourceSnapshot: RecordTableWidgetViewSnapshot = {
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
     isActive: true,

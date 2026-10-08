@@ -1,36 +1,29 @@
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { DEFAULT_VIEW_OPEN_RECORD_IN } from '@/object-record/record-index/constants/DefaultViewOpenRecordIn';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
-import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
-import { useAtomValue } from 'jotai';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { openRecordInPreferenceState } from '@/workspace-member/states/openRecordInPreferenceState';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useResolveOpenRecordIn = (objectNameSingular: string) => {
-  // Record chips also render where no context store is mounted at all, such as
-  // a mention inside a note, and those have no view to take a setting from.
-  const contextStoreInstanceId = useAvailableComponentInstanceId(
-    ContextStoreComponentInstanceContext,
+  // Non-throwing on purpose: a chip must not crash while metadata is loading.
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
+    },
   );
 
-  const contextStoreCurrentViewId = useAtomValue(
-    contextStoreCurrentViewIdComponentState.atomFamily({
-      instanceId: contextStoreInstanceId ?? '',
-    }),
-  );
-
-  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
-    viewId: contextStoreCurrentViewId ?? '',
-  });
+  const openRecordInPreference = useAtomStateValue(openRecordInPreferenceState);
 
   const isMobile = useIsMobile();
 
   return resolveOpenRecordIn({
-    openRecordInViewSetting:
-      currentView?.openRecordIn ?? DEFAULT_VIEW_OPEN_RECORD_IN,
-    objectNameSingular,
+    objectOpenRecordIn:
+      objectMetadataItem?.openRecordIn ?? ObjectOpenRecordIn.USER_CHOICE,
+    openRecordInPreference,
     canDisplaySidePanel: !isMobile,
   });
 };

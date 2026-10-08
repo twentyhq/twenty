@@ -2,17 +2,25 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, MainButton } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+
+const StyledCheckoutButton = styled(MainButton)`
+  width: 200px;
+`;
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
@@ -89,8 +97,8 @@ const StyledIntervalSubtitle = styled.div`
 
 export const EnterprisePlanModal = () => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { closeDialog } = useDialog();
+  const { enqueueToast } = useToast();
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
   const [isLoading, setIsLoading] = useState(false);
@@ -124,16 +132,20 @@ export const EnterprisePlanModal = () => {
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
-        window.open(checkoutUrl, '_blank', 'noopener');
-        closeModal(ENTERPRISE_PLAN_MODAL_ID);
+        openUrlInNewTab(checkoutUrl);
+        closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Could not open Stripe. Please contact support.`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Could not open Stripe. Please contact support.`,
         });
       }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Error opening Stripe`,
+    } catch (error) {
+      enqueueToast({
+        variant: 'error',
+        children: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Error opening Stripe`,
       });
     } finally {
       setIsLoading(false);
@@ -141,57 +153,68 @@ export const EnterprisePlanModal = () => {
   };
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={ENTERPRISE_PLAN_MODAL_ID}
-      size="medium"
-      padding="none"
-      isClosable
-    >
-      <ModalContent isVerticallyCentered>
-        <Title noMarginTop>{t`Get Enterprise`}</Title>
-        <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
-
-        <StyledSubscriptionContainer>
-          <StyledPriceContainer>
-            <StyledPrice>{`$${price}`}</StyledPrice>
-            <StyledPriceUnit>{priceUnit}</StyledPriceUnit>
-          </StyledPriceContainer>
-          <StyledBenefitsContainer>
-            {benefits.map((benefit) => (
-              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-            ))}
-          </StyledBenefitsContainer>
-        </StyledSubscriptionContainer>
-
-        <StyledIntervalContainer>
-          <CardPicker
-            checked={selectedInterval === 'monthly'}
-            handleChange={() => setSelectedInterval('monthly')}
+    <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
+      {({ onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={t`Get Organization`}
+          onKeyDown={onKeyDown}
+          size="md"
+          style={{ padding: 0 }}
+        >
+          <Dialog.Body
+            style={{
+              display: 'flex',
+              flex: '1 1 0%',
+              flexDirection: 'column',
+              padding: 'var(--t-spacing-10)',
+              alignItems: 'center',
+            }}
           >
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
-              <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
-            </StyledIntervalCardContent>
-          </CardPicker>
-          <CardPicker
-            checked={selectedInterval === 'yearly'}
-            handleChange={() => setSelectedInterval('yearly')}
-          >
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
-              <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
-            </StyledIntervalCardContent>
-          </CardPicker>
-        </StyledIntervalContainer>
+            <Title noMarginTop>{t`Get Organization`}</Title>
+            <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
-        <MainButton
-          title={t`Continue`}
-          onClick={handleContinue}
-          width={200}
-          Icon={() => isLoading && <Loader />}
-          disabled={isLoading}
-        />
-      </ModalContent>
-    </ModalStatefulWrapper>
+            <StyledSubscriptionContainer>
+              <StyledPriceContainer>
+                <StyledPrice>{`$${price}`}</StyledPrice>
+                <StyledPriceUnit>{priceUnit}</StyledPriceUnit>
+              </StyledPriceContainer>
+              <StyledBenefitsContainer>
+                {benefits.map((benefit) => (
+                  <SubscriptionBenefit key={benefit}>
+                    {benefit}
+                  </SubscriptionBenefit>
+                ))}
+              </StyledBenefitsContainer>
+            </StyledSubscriptionContainer>
+
+            <RadioGroup
+              render={<StyledIntervalContainer />}
+              aria-label={t`Billing interval`}
+              value={selectedInterval}
+              onValueChange={setSelectedInterval}
+            >
+              <Radio variant="card" value="monthly">
+                <StyledIntervalCardContent>
+                  <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
+                  <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+                </StyledIntervalCardContent>
+              </Radio>
+              <Radio variant="card" value="yearly">
+                <StyledIntervalCardContent>
+                  <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
+                  <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+                </StyledIntervalCardContent>
+              </Radio>
+            </RadioGroup>
+
+            <StyledCheckoutButton
+              onClick={handleContinue}
+              startIcon={isLoading && <Loader />}
+              disabled={isLoading}
+            >{t`Continue`}</StyledCheckoutButton>
+          </Dialog.Body>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

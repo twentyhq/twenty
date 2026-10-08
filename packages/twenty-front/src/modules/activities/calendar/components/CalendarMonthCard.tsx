@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
 type CalendarMonthCardProps = {
   dayTimes: number[];
@@ -12,7 +12,7 @@ export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
   const { calendarEventsByDayTime } = useContext(CalendarContext);
 
   return (
-    <Card fullWidth>
+    <Card.Root fullWidth>
       {dayTimes.map((dayTime, index) => {
         const dayCalendarEvents = calendarEventsByDayTime[dayTime] || [];
 
@@ -24,6 +24,6 @@ export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
           />
         );
       })}
-    </Card>
+    </Card.Root>
   );
 };

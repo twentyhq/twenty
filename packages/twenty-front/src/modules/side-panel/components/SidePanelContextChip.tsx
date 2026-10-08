@@ -2,10 +2,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
-import { type SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { type SidePanelNavigationStackItem } from '@/side-panel/states/sidePanelNavigationStackState';
 
 const StyledChip = styled.button<{
   withText: boolean;
@@ -22,7 +23,6 @@ const StyledChip = styled.button<{
   cursor: ${({ onClick }) => (isDefined(onClick) ? 'pointer' : 'default')};
   display: flex;
   font-family: inherit;
-  /* If the chip has text, we add extra padding to have a more balanced design */
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
@@ -58,10 +58,7 @@ export type SidePanelContextChipProps = {
   testId?: string;
   maxWidth?: string;
   forceEmptyText?: boolean;
-  page?: {
-    page: SidePanelPages;
-    pageId: string;
-  };
+  page?: SidePanelNavigationStackItem;
 };
 
 export const SidePanelContextChip = ({

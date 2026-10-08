@@ -1,5 +1,5 @@
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconChevronLeft, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItemNavigate } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();
@@ -20,7 +20,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
   const { onContentChange, resetContent } = useObjectOptionsDropdown();
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -45,14 +45,15 @@ export const ObjectOptionsDropdownFieldsContent = () => {
           <ViewFieldsVisibleDropdownSection />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItemNavigate
+            <ListItem
               onClick={() => onContentChange('hiddenFields')}
-              LeftIcon={IconEyeOff}
-              text={t`Hidden Fields`}
-            />
+              startIcon={<IconEyeOff />}
+              render={<button type="button" />}
+              hasSubmenu
+            >{t`Hidden Fields`}</ListItem>
           </DropdownMenuItemsContainer>
         </>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

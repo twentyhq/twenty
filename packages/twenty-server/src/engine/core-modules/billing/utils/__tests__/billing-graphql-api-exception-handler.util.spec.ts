@@ -20,17 +20,17 @@ const catchGraphqlError = (error: Error): BaseGraphQLError => {
 };
 
 describe('billingGraphqlApiExceptionHandler', () => {
-  it('maps credits exhausted to a GraphQL error with the billing subCode', () => {
+  it('maps an inactive subscription to a GraphQL error with the billing subCode', () => {
     const error = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      'No active subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
     );
 
     const graphqlError = catchGraphqlError(error);
 
     expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
     expect(graphqlError.extensions.subCode).toBe(
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
     );
     expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });
@@ -47,6 +47,21 @@ describe('billingGraphqlApiExceptionHandler', () => {
     expect(graphqlError.extensions.subCode).toBe(
       BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
     );
+  });
+
+  it('maps an already existing subscription to BAD_USER_INPUT', () => {
+    const error = new BillingException(
+      'Customer already has a non-canceled billing subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
+    );
+
+    const graphqlError = catchGraphqlError(error);
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+    expect(graphqlError.extensions.subCode).toBe(
+      BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
+    );
+    expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });
 
   it('maps internal billing failures to INTERNAL_SERVER_ERROR', () => {

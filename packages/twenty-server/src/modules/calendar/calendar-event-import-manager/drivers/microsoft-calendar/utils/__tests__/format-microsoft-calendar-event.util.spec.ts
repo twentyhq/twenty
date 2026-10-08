@@ -53,6 +53,24 @@ describe('formatMicrosoftCalendarEvents', () => {
     },
   };
 
+  it('should lowercase attendee handles', () => {
+    const [formattedEvent] = formatMicrosoftCalendarEvents([
+      {
+        ...mockMicrosoftEvent,
+        attendees: [
+          {
+            emailAddress: {
+              address: 'John.Doe@Example.com',
+              name: 'John Doe',
+            },
+          },
+        ],
+      },
+    ]);
+
+    expect(formattedEvent.participants[0].handle).toBe('john.doe@example.com');
+  });
+
   it('should correctly format a normal Microsoft Calendar event', () => {
     const result = formatMicrosoftCalendarEvents([mockMicrosoftEvent]);
 

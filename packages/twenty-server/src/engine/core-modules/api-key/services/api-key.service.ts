@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isNull } from '@sniptt/guards';
 import { IsNull } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -28,10 +29,13 @@ export class ApiKeyService {
   ) {}
 
   async create(
-    apiKeyData: Partial<ApiKeyEntity> & { roleId: string; workspaceId: string },
+    apiKeyData: Pick<ApiKeyEntity, 'name' | 'expiresAt' | 'revokedAt'> & {
+      roleId: string;
+      workspaceId: string;
+    },
   ): Promise<ApiKeyEntity> {
     const { roleId, workspaceId, ...apiKeyFields } = apiKeyData;
-    const savedApiKey = await this.apiKeyRepository.save(
+    const savedApiKey = await this.apiKeyRepository.insertAndReturnOne(
       workspaceId,
       apiKeyFields,
     );
@@ -65,12 +69,15 @@ export class ApiKeyService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
-    return this.apiKeyRepository.find(workspaceId);
+    return this.apiKeyRepository.find(workspaceId, {
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   }
 
   async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
     return this.apiKeyRepository.find(workspaceId, {
       where: { revokedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
   }
 
@@ -85,7 +92,24 @@ export class ApiKeyService {
       return null;
     }
 
-    await this.apiKeyRepository.update(workspaceId, { id }, updateData);
+    const { revokedAt, ...updateDataWithoutRevokedAt } = updateData;
+    const isClearingRevokedAt = isNull(revokedAt);
+
+    if (isClearingRevokedAt && this.isRevoked(apiKey)) {
+      throw new ApiKeyException(
+        `API Key with id ${id} is revoked and cannot be reactivated`,
+        ApiKeyExceptionCode.API_KEY_REVOKED,
+        {
+          userFriendlyMessage: msg`This API key has been revoked and cannot be reactivated. Please create a new API key.`,
+        },
+      );
+    }
+
+    await this.apiKeyRepository.update(
+      workspaceId,
+      { id },
+      isClearingRevokedAt ? updateDataWithoutRevokedAt : updateData,
+    );
     await this.invalidateApiKeyCache(workspaceId);
 
     return this.findById(id, workspaceId);

@@ -8,6 +8,7 @@ import {
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -27,6 +28,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { ModulesModule } from 'src/modules/modules.module';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: FlatAuthContextUser;
@@ -81,11 +83,12 @@ export class GraphQLConfigService implements GqlOptionsFactory<
 
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
-      include: [CoreEngineModule],
+      include: [CoreEngineModule, ModulesModule],
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,
+      path: `/${ApiPath.GraphQL}`,
       context: () => ({
         loaders: this.dataloaderService.createLoaders(),
       }),

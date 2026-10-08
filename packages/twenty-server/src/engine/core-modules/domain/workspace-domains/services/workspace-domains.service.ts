@@ -75,7 +75,7 @@ export class WorkspaceDomainsService {
       order: {
         createdAt: 'DESC',
       },
-      relations: ['workspaceSSOIdentityProviders'],
+      relations: ['workspaceSsoIdentityProviders'],
     });
 
     if (workspaces.length > 1) {
@@ -103,88 +103,92 @@ export class WorkspaceDomainsService {
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
-    isIsolatedOrigin: boolean;
+    isPublicDomain: boolean;
   }> {
-    const { subdomain, domain, isPublicDomainOrigin } =
-      this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
+    const { subdomain, customDomain, isUnderPublicDomainUrl } =
+      this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      // Single-workspace: workspace is always the default. Still resolve a
-      // matching public domain so the route trigger can scope by application.
-      const publicDomain = isDefined(domain)
-        ? await this.publicDomainRepository.findOne({ where: { domain } })
+      // Still resolve the public domain so route triggers can scope by application.
+      const publicDomain = isDefined(customDomain)
+        ? await this.publicDomainRepository.findOne({
+            where: { domain: customDomain },
+          })
         : null;
 
       return {
         workspace: await this.getDefaultWorkspace(),
         publicDomain: publicDomain ?? null,
-        isIsolatedOrigin: isPublicDomainOrigin || isDefined(publicDomain),
+        isPublicDomain: isUnderPublicDomainUrl || isDefined(publicDomain),
       };
     }
 
-    if (isPublicDomainOrigin) {
+    if (isUnderPublicDomainUrl) {
       const hostname = new URL(origin).hostname;
 
       const registeredPublicDomain = await this.publicDomainRepository.findOne({
         where: { domain: hostname },
-        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+        relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
       });
 
       if (isDefined(registeredPublicDomain)) {
         return {
           workspace: registeredPublicDomain.workspace ?? undefined,
           publicDomain: registeredPublicDomain,
-          isIsolatedOrigin: true,
+          isPublicDomain: true,
         };
       }
 
       const workspaceFromSubdomain = isDefined(subdomain)
         ? ((await this.workspaceRepository.findOne({
             where: { subdomain },
-            relations: ['workspaceSSOIdentityProviders'],
+            relations: ['workspaceSsoIdentityProviders'],
           })) ?? undefined)
         : undefined;
 
       return {
         workspace: workspaceFromSubdomain,
         publicDomain: null,
-        isIsolatedOrigin: true,
+        isPublicDomain: true,
       };
     }
 
-    if (!domain && !subdomain) {
+    if (!customDomain && !subdomain) {
       return {
         workspace: undefined,
         publicDomain: null,
-        isIsolatedOrigin: false,
+        isPublicDomain: false,
       };
     }
 
-    const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
+    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
 
     const workspaceFromCustomDomainOrSubdomain =
       (await this.workspaceRepository.findOne({
         where,
-        relations: ['workspaceSSOIdentityProviders'],
+        relations: ['workspaceSsoIdentityProviders'],
       })) ?? undefined;
 
-    if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
+    if (
+      isDefined(workspaceFromCustomDomainOrSubdomain) ||
+      !isDefined(customDomain)
+    ) {
       return {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
-        isIsolatedOrigin: false,
+        isPublicDomain: false,
       };
     }
 
     const publicDomain = await this.publicDomainRepository.findOne({
-      where: { domain },
-      relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+      where: { domain: customDomain },
+      relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
     });
 
     return {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
-      isIsolatedOrigin: isDefined(publicDomain),
+      isPublicDomain: isDefined(publicDomain),
     };
   }
 

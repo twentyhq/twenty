@@ -1,18 +1,17 @@
 import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
+import { type ClipboardEvent } from 'react';
 
-import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
+import { CustomSlashMenu } from '@/blocknote-editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu';
 import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
 type DashboardsBlockEditorProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
@@ -20,16 +19,18 @@ type DashboardsBlockEditorProps = {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
-  boundaryElement?: HTMLElement | null;
 };
+
+const StyledEditor = styled.div`
+  width: 100%;
+`;
 
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
 // (DashboardEditorSideMenu, DashboardColorSelectionMenu).
 // Test removing each selector and move necessary styles to appropriate components.
+// BlockNote shares this class with its body portal to preserve menu styles outside the widget.
 // oxlint-disable-next-line twenty/no-hardcoded-colors
-const StyledEditor = styled.div`
-  width: 100%;
-
+const editorStyles = css`
   & .editor {
     background: transparent;
     color: ${themeCssVariables.font.color.primary};
@@ -48,7 +49,7 @@ const StyledEditor = styled.div`
     height: 20px;
     width: 20px;
   }
-  & .bn-container .bn-drag-handle {
+  & .bn-drag-handle {
     height: 20px;
     width: 20px;
   }
@@ -90,7 +91,7 @@ const StyledEditor = styled.div`
     min-width: 0;
   }
 
-  & .bn-container .bn-suggestion-menu-item:hover {
+  & .bn-suggestion-menu-item:hover {
     background-color: blue;
   }
 
@@ -125,7 +126,7 @@ const StyledEditor = styled.div`
     width: 16px;
   }
 
-  & .bn-mantine .bn-side-menu > [draggable='true'] {
+  & .bn-side-menu > [draggable='true'] {
     margin-bottom: 5px;
   }
   & .bn-color-picker-dropdown {
@@ -154,9 +155,8 @@ export const DashboardsBlockEditor = ({
   onChange,
   onPaste,
   readonly,
-  boundaryElement,
 }: DashboardsBlockEditorProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
 
   const handleFocus = () => {
@@ -178,6 +178,7 @@ export const DashboardsBlockEditor = ({
   return (
     <StyledEditor>
       <BlockNoteView
+        className={editorStyles}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onPaste={handlePaste}
@@ -188,10 +189,11 @@ export const DashboardsBlockEditor = ({
         sideMenu={false}
         formattingToolbar={false}
         editable={!readonly}
+        portalElements={{ default: null }}
       >
         {!readonly && (
           <>
-            <DashboardFormattingToolbar boundaryElement={boundaryElement} />
+            <DashboardFormattingToolbar />
             <DashboardEditorSideMenu editor={editor} />
             <SuggestionMenuController
               triggerCharacter="/"

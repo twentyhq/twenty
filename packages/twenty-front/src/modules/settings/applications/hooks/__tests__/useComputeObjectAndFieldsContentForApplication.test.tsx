@@ -30,6 +30,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        isUninstallBlockedByOtherWorkspaceInstallations: false,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -61,6 +62,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        isUninstallBlockedByOtherWorkspaceInstallations: false,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -90,6 +92,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        isUninstallBlockedByOtherWorkspaceInstallations: false,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -120,6 +123,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        isUninstallBlockedByOtherWorkspaceInstallations: false,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -278,6 +282,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        isUninstallBlockedByOtherWorkspaceInstallations: false,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -310,7 +315,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         { wrapper },
       );
 
-      // Should use installed data, not manifest
       expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
       expect(
         result.current.objectRows.some((r) => r.key === 'manifestObj'),

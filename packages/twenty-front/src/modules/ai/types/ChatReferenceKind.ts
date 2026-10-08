@@ -1,3 +1,3 @@
-import { type CHAT_REFERENCE_KINDS } from '@/ai/constants/ChatReferenceKinds';
+import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 
-export type ChatReferenceKind = (typeof CHAT_REFERENCE_KINDS)[number];
+export type ChatReferenceKind = ChatReferenceIdentity['kind'];

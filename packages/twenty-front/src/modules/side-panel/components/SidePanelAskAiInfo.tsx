@@ -1,30 +1,36 @@
+import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledPageTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 export const SidePanelAskAiInfo = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
-    currentAiChatThreadTitleComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const currentAiChatThreadTitle = useAtomFamilySelectorValue(
+    agentChatThreadRecordFamilySelector,
+    currentAiChatThread ?? '',
+  )?.title;
 
   return (
-    <StyledPageTitle>
-      <OverflowingTextWithTooltip
-        text={currentAiChatThreadTitle ?? t`Ask AI`}
-      />
-    </StyledPageTitle>
+    <StyledContainer>
+      <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />
+      {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
+        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+      )}
+    </StyledContainer>
   );
 };

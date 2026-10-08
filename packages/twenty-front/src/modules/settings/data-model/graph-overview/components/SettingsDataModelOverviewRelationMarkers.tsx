@@ -1,7 +1,6 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 export const SettingsDataModelOverviewRelationMarkers = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <svg style={{ position: 'absolute', top: 0, left: 0 }}>

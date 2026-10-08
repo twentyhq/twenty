@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerformViewFieldApiPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
@@ -12,12 +12,12 @@ import {
   type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveCurrentViewFields = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
-    usePerformViewFieldAPIPersist();
+  const { performViewFieldApiCreate, performViewFieldApiUpdate } =
+    usePerformViewFieldApiPersist();
 
   const { getViewFromState } = useGetViewFromState();
 
@@ -41,7 +41,7 @@ export const useSaveCurrentViewFields = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -71,7 +71,7 @@ export const useSaveCurrentViewFields = () => {
                 createViewFieldInput.fieldMetadataId,
             );
 
-            if (isUndefinedOrNull(existingField)) {
+            if (!isDefined(existingField)) {
               return {
                 viewFieldsToCreate: [
                   ...viewFieldsToCreate,
@@ -129,17 +129,17 @@ export const useSaveCurrentViewFields = () => {
         );
 
       await Promise.all([
-        performViewFieldAPICreate({ inputs: viewFieldsToCreate }),
-        performViewFieldAPIUpdate(viewFieldsToUpdate),
+        performViewFieldApiCreate({ inputs: viewFieldsToCreate }),
+        performViewFieldApiUpdate(viewFieldsToUpdate),
       ]);
     },
     [
       store,
       canPersistChanges,
-      performViewFieldAPICreate,
+      performViewFieldApiCreate,
       currentViewIdCallbackState,
       getViewFromState,
-      performViewFieldAPIUpdate,
+      performViewFieldApiUpdate,
     ],
   );
 

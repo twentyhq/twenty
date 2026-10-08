@@ -37,10 +37,13 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE:
     case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
     case ApplicationExceptionCode.INVALID_WORKSPACE_VERSION:
+    case ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE:
+    case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
       return 400;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
     case ApplicationExceptionCode.POST_INSTALL_ERROR:
     case ApplicationExceptionCode.PRE_INSTALL_ERROR:
+    case ApplicationExceptionCode.UNINSTALL_ERROR:
     case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
     case ApplicationExceptionCode.UPGRADE_FAILED:
     case ApplicationExceptionCode.INVALID_SERVER_VERSION:

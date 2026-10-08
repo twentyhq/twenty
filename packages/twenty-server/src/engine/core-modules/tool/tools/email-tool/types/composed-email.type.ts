@@ -1,5 +1,5 @@
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 export type ComposedEmail = {
   recipients: { to: string[]; cc: string[]; bcc: string[] };
@@ -9,6 +9,7 @@ export type ComposedEmail = {
   sanitizedHtmlBody: string;
   attachments: MessageAttachment[];
   connectedAccount: ConnectedAccountEntity;
+  fromHandle?: string;
   messageChannelId?: string;
   shouldPersistMessage: boolean;
   inReplyTo?: string;

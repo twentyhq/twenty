@@ -2,26 +2,24 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
-import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
-import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekRange';
+import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
+import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -32,13 +30,10 @@ import {
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-} from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -77,9 +72,7 @@ export const RecordCalendarTopBar = () => {
     isRecordCalendarReadOnlyComponentState,
   );
 
-  // The layout switcher persists via updateCurrentView (an index-page write),
-  // so it must never render inside a dashboard widget; widget calendars drive
-  // their layout from the side-panel settings instead.
+  // The layout switcher writes the index view, so widget calendars must never render it.
   const widgetInstanceId = useAvailableComponentInstanceId(
     WidgetComponentInstanceContext,
   );
@@ -87,19 +80,14 @@ export const RecordCalendarTopBar = () => {
 
   const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
     useAtomComponentState(recordIndexCalendarLayoutComponentState);
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
-    calendarLayout: recordIndexCalendarLayout,
-    isCalendarWeekViewEnabled,
-  });
 
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { timeZone } = useDateTimeFormat();
-  const { firstDayOfWeek, lastDayOfWeek } = useRecordCalendarWeekDaysRange(
-    recordCalendarSelectedDate,
-  );
+  const { firstDay: firstDayOfWeek, lastDay: lastDayOfWeek } =
+    useRecordCalendarDaysRange(
+      recordCalendarSelectedDate,
+      recordIndexCalendarLayout,
+    );
 
   const { updateCurrentView } = useUpdateCurrentView();
 
@@ -115,9 +103,9 @@ export const RecordCalendarTopBar = () => {
 
   const handlePreviousPeriod = () => {
     const previousDate =
-      supportedCalendarLayout === ViewCalendarLayout.DAY
+      recordIndexCalendarLayout === ViewCalendarLayout.DAY
         ? recordCalendarSelectedDate.subtract({ days: 1 })
-        : supportedCalendarLayout === ViewCalendarLayout.WEEK
+        : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
           ? recordCalendarSelectedDate.subtract({ weeks: 1 })
           : recordCalendarSelectedDate.subtract({ months: 1 });
 
@@ -126,9 +114,9 @@ export const RecordCalendarTopBar = () => {
 
   const handleNextPeriod = () => {
     const nextDate =
-      supportedCalendarLayout === ViewCalendarLayout.DAY
+      recordIndexCalendarLayout === ViewCalendarLayout.DAY
         ? recordCalendarSelectedDate.add({ days: 1 })
-        : supportedCalendarLayout === ViewCalendarLayout.WEEK
+        : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
           ? recordCalendarSelectedDate.add({ weeks: 1 })
           : recordCalendarSelectedDate.add({ months: 1 });
 
@@ -136,14 +124,6 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
-    const isTimeGridLayout =
-      calendarLayout === ViewCalendarLayout.DAY ||
-      calendarLayout === ViewCalendarLayout.WEEK;
-
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
-      return;
-    }
-
     setRecordIndexCalendarLayout(calendarLayout);
     void updateCurrentView({ calendarLayout });
   };
@@ -153,11 +133,11 @@ export const RecordCalendarTopBar = () => {
   };
 
   const formattedDate =
-    supportedCalendarLayout === ViewCalendarLayout.DAY
+    recordIndexCalendarLayout === ViewCalendarLayout.DAY
       ? recordCalendarSelectedDate.toLocaleString(dateLocale.locale, {
           dateStyle: 'full',
         })
-      : supportedCalendarLayout === ViewCalendarLayout.WEEK
+      : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
         ? formatRecordCalendarWeekRange({
             firstDayOfWeek,
             lastDayOfWeek,
@@ -171,30 +151,25 @@ export const RecordCalendarTopBar = () => {
             { locale: dateLocale.localeCatalog },
           );
 
-  const dropdownContentOffset = { x: 140, y: 0 } satisfies DropdownOffset;
-
   return (
     <StyledContainer>
       <StyledLeftSection>
-        {isCalendarWeekViewEnabled &&
-          !isRecordCalendarReadOnly &&
-          !isInWidget && (
-            <Select
-              dropdownId={`record-calendar-layout-${recordCalendarId}`}
-              value={supportedCalendarLayout}
-              options={[
-                { label: t`Day`, value: ViewCalendarLayout.DAY },
-                { label: t`Week`, value: ViewCalendarLayout.WEEK },
-                { label: t`Month`, value: ViewCalendarLayout.MONTH },
-              ]}
-              selectSizeVariant="small"
-              dropdownWidth={120}
-              onChange={handleCalendarLayoutChange}
-            />
-          )}
-        <Dropdown
-          dropdownId={datePickerDropdownId}
-          clickableComponent={
+        {!isRecordCalendarReadOnly && !isInWidget && (
+          <Select
+            dropdownId={`record-calendar-layout-${recordCalendarId}`}
+            value={recordIndexCalendarLayout}
+            options={[
+              { label: t`Day`, value: ViewCalendarLayout.DAY },
+              { label: t`Week`, value: ViewCalendarLayout.WEEK },
+              { label: t`Month`, value: ViewCalendarLayout.MONTH },
+            ]}
+            selectSizeVariant="small"
+            dropdownWidth={120}
+            onChange={handleCalendarLayoutChange}
+          />
+        )}
+        <DropdownRoot dropdownId={datePickerDropdownId} type="panel">
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               selectedOption={{
                 label: formattedDate,
@@ -202,49 +177,49 @@ export const RecordCalendarTopBar = () => {
               }}
               selectSizeVariant="small"
             />
-          }
-          dropdownComponents={
-            <DropdownContent widthInPixels={280}>
-              <DatePickerWithoutCalendar
-                instanceId={recordCalendarId}
-                date={recordCalendarSelectedDate.toString()}
-                onChange={handleDateChange}
-                onClose={handleDateChange}
-                onEnter={handleDateChange}
-                onEscape={handleDateChange}
-              />
-            </DropdownContent>
-          }
-          dropdownOffset={dropdownContentOffset}
-        />
-        {supportedCalendarLayout === ViewCalendarLayout.MONTH && (
-          <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
-        )}
+          </Dropdown.Trigger>
+          <DropdownContent
+            initialFocus={false}
+            width="fit-content"
+            align="end"
+            alignOffset={-140}
+            aria-label={t`Select date`}
+          >
+            <DatePickerWithoutCalendar
+              instanceId={recordCalendarId}
+              date={recordCalendarSelectedDate.toString()}
+              onChange={handleDateChange}
+              onClose={handleDateChange}
+              onEnter={handleDateChange}
+              onEscape={handleDateChange}
+            />
+          </DropdownContent>
+        </DropdownRoot>
+        <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
       </StyledLeftSection>
 
       <StyledNavigationSection>
         <StyledNavigationButtonContainer>
           <Button
-            ariaLabel={t`Previous period`}
-            size="small"
-            variant="tertiary"
-            Icon={IconChevronLeft}
+            aria-label={t`Previous period`}
+            size="sm"
+            startIcon={<IconChevronLeft />}
             onClick={handlePreviousPeriod}
+            variant="ghost"
           />
         </StyledNavigationButtonContainer>
         <Button
-          size="small"
-          variant="tertiary"
-          title={t`Today`}
+          size="sm"
           onClick={handleTodayClick}
-        />
+          variant="ghost"
+        >{t`Today`}</Button>
         <StyledNavigationButtonContainer>
           <Button
-            ariaLabel={t`Next period`}
-            size="small"
-            variant="tertiary"
-            Icon={IconChevronRight}
+            aria-label={t`Next period`}
+            size="sm"
+            startIcon={<IconChevronRight />}
             onClick={handleNextPeriod}
+            variant="ghost"
           />
         </StyledNavigationButtonContainer>
       </StyledNavigationSection>

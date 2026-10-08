@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -10,25 +10,18 @@ import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPref
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import {
+  StyledWidgetContentContainer,
+  StyledWidgetScrollContainer,
+} from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-`;
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -38,7 +31,7 @@ export const EmailThreadWidget = ({
   widget: _widget,
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
     targetRecord.id,
@@ -100,19 +93,40 @@ export const EmailThreadWidget = ({
     composerIntent === 'opened' ||
     (composerIntent === null && isDefined(trailingDraft));
 
-  if (threadLoading || !thread || !messages.length) {
+  if (threadLoading) {
     return (
-      <StyledWrapper>
-        <StyledContainer>
+      <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
+        <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
-        </StyledContainer>
-      </StyledWrapper>
+        </StyledWidgetScrollContainer>
+      </StyledWidgetContentContainer>
+    );
+  }
+
+  if (!isDefined(thread) || !isDefined(lastMessage)) {
+    return (
+      <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
+        <StyledWidgetScrollContainer>
+          <EmptyState.Root>
+            <AnimatedPlaceholder type="emptyInbox" />
+            <EmptyState.Content>
+              <EmptyState.Title>{t`No messages to show`}</EmptyState.Title>
+              <EmptyState.Description>
+                {t`The messages in this thread are missing or incomplete.`}
+              </EmptyState.Description>
+            </EmptyState.Content>
+          </EmptyState.Root>
+        </StyledWidgetScrollContainer>
+      </StyledWidgetContentContainer>
     );
   }
 
   return (
-    <StyledWrapper>
-      <StyledContainer>
+    <StyledWidgetContentContainer>
+      <WidgetRelationsHeader />
+      <StyledWidgetScrollContainer>
         {firstMessages.map((message) => (
           <EmailThreadMessage
             key={message.id}
@@ -135,7 +149,7 @@ export const EmailThreadWidget = ({
           loading={threadLoading}
           onLastRowVisible={fetchMoreMessages}
         />
-      </StyledContainer>
+      </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
           key={draftPrefill?.messageId ?? 'reply'}
@@ -146,6 +160,6 @@ export const EmailThreadWidget = ({
           draftPrefill={draftPrefill}
         />
       )}
-    </StyledWrapper>
+    </StyledWidgetContentContainer>
   );
 };

@@ -1,17 +1,17 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { useState } from 'react';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconSparkles } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
 const StyledSearchInputContainer = styled.div`
@@ -77,9 +77,9 @@ export const SettingsApplicationsAvailableTab = () => {
 
   if (isLoading) {
     return (
-      <Section>
+      <Section.Root>
         <SettingsEmptyPlaceholder padding="4">{t`Loading applications...`}</SettingsEmptyPlaceholder>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -91,32 +91,30 @@ export const SettingsApplicationsAvailableTab = () => {
   const hasNoApplications = textFilteredApplications.length === 0;
 
   return (
-    <Section>
+    <Section.Root>
       <StyledSearchInputContainer>
         <SearchInput
           placeholder={t`Search an application`}
           value={searchTerm}
-          onChange={setSearchTerm}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
-              dropdownId="marketplace-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconSparkles}
-                      onToggleChange={() => setShowVettedOnly(!showVettedOnly)}
-                      toggled={showVettedOnly}
-                      text={t`Vetted only`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+          onValueChange={setSearchTerm}
+          filterDropdown={(filterButton) => (
+            <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconSparkles />}
+                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                    checked={showVettedOnly}
+                  >{t`Vetted only`}</SettingsRow>
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchInputContainer>
@@ -148,10 +146,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
           {!showVettedOnly && nonVettedApplications.length > 0 && (
             <StyledNotVettedContainer>
-              <InlineBanner
-                color={'danger'}
-                message={t`Applications below are not vetted. Use at your own risk.`}
-              />
+              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
                 {nonVettedApplications.map((application) => (
                   <SettingsAvailableApplicationCard
@@ -164,6 +159,6 @@ export const SettingsApplicationsAvailableTab = () => {
           )}
         </StyledContentContainer>
       )}
-    </Section>
+    </Section.Root>
   );
 };

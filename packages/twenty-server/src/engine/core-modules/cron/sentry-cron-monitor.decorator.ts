@@ -1,6 +1,14 @@
 import * as Sentry from '@sentry/node';
 
-export function SentryCronMonitor(monitorSlug: string, schedule: string) {
+const DEFAULT_MAX_RUNTIME_IN_MINUTES = 5;
+
+export function SentryCronMonitor(
+  monitorSlug: string,
+  schedule: string,
+  {
+    maxRuntimeInMinutes = DEFAULT_MAX_RUNTIME_IN_MINUTES,
+  }: { maxRuntimeInMinutes?: number } = {},
+) {
   return function (
     // oxlint-disable-next-line typescript/no-explicit-any
     _target: any,
@@ -29,7 +37,7 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
               value: schedule,
             },
             checkinMargin: 1,
-            maxRuntime: 5,
+            maxRuntime: maxRuntimeInMinutes,
             timezone: 'UTC',
           },
         );

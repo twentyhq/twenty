@@ -138,4 +138,18 @@ describe('CommandMenuItem creation should fail', () => {
       });
     },
   );
+
+  it('when the caller lacks the LAYOUTS permission', async () => {
+    const { errors } = await createCommandMenuItem({
+      expectToFail: true,
+      input: {
+        engineComponentKey: EngineComponentKey.GO_TO_PEOPLE,
+        label: 'Member Pinned Item',
+        isPinned: true,
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
 });

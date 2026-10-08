@@ -1,33 +1,32 @@
-import { useMemo, useState } from 'react';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { Info } from 'twenty-ui/feedback';
-import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
-import { slugify } from 'transliteration';
-import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
+import { getProviderIcon } from '@/ai/utils/getProviderIcon';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { slugify } from 'transliteration';
+import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
+import { SettingsPath } from 'twenty-shared/types';
+import { capitalize, getSettingsPath } from 'twenty-shared/utils';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
+import { IconPlus } from 'twenty-ui/icon';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -46,12 +45,17 @@ export const SettingsAdminNewAiProvider = () => {
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedModelsDevId, setSelectedModelsDevId] = useState<string | null>(
     null,
   );
   const [isCustomMode, setIsCustomMode] = useState(false);
+  const {
+    hasAccess: hasCustomAiProviderAccess,
+    gateDescription: customAiProviderGateDescription,
+    tooltipContent: customAiProviderTooltipContent,
+  } = useCustomAiProviderAccess();
 
   const [addAiProvider] = useMutation(ADD_AI_PROVIDER, {
     client: apolloAdminClient,
@@ -76,7 +80,7 @@ export const SettingsAdminNewAiProvider = () => {
     () =>
       modelsDevProviders.map((provider) => ({
         value: provider.id,
-        label: `${provider.id.charAt(0).toUpperCase() + provider.id.slice(1)} (${provider.modelCount} models)`,
+        label: `${capitalize(provider.id)} (${provider.modelCount} models)`,
         Icon: getProviderIcon(provider.id),
       })),
     [modelsDevProviders],
@@ -112,10 +116,7 @@ export const SettingsAdminNewAiProvider = () => {
 
     form.setValue('npm', suggestion?.npm ?? '@ai-sdk/openai-compatible');
 
-    form.setValue(
-      'label',
-      providerId.charAt(0).toUpperCase() + providerId.slice(1),
-    );
+    form.setValue('label', capitalize(providerId));
   };
 
   const handleCustomMode = () => {
@@ -176,11 +177,27 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
-      if (values.accessKeyId.trim()) {
-        config.accessKeyId = values.accessKeyId.trim();
+      const accessKeyId = values.accessKeyId.trim();
+      const secretAccessKey = values.secretAccessKey.trim();
+
+      // Role auth ignores both fields, so half a key pair would run under an identity nobody chose
+      if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
+        form.setError(
+          isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',
+          {
+            type: 'manual',
+            message: t`Enter both keys, or neither to use the instance IAM role`,
+          },
+        );
+
+        return;
       }
-      if (values.secretAccessKey.trim()) {
-        config.secretAccessKey = values.secretAccessKey.trim();
+
+      if (isNonEmptyString(accessKeyId)) {
+        config.accessKeyId = accessKeyId;
+        config.secretAccessKey = secretAccessKey;
+      } else {
+        config.authType = 'role';
       }
     }
 
@@ -216,14 +233,13 @@ export const SettingsAdminNewAiProvider = () => {
         ],
       });
 
-      enqueueSuccessSnackBar({
-        message: t`Provider "${values.label.trim()}" added`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to add provider`,
-      });
+      enqueueToast({ variant: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
     }
@@ -243,16 +259,44 @@ export const SettingsAdminNewAiProvider = () => {
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(AI_ADMIN_PATH)}
-            isSaveDisabled={isSubmitting || !hasSelected}
+            isSaveDisabled={
+              isSubmitting || !hasSelected || !hasCustomAiProviderAccess
+            }
             onSave={handleSave}
           />
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title
+          {!hasCustomAiProviderAccess && (
+            <InlineBanner
+              layout="compact"
+              status="error"
+              action={
+                <InlineBanner.Action
+                  href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  nativeButton={false}
+                  role="link"
+                  render={
+                    <Link
+                      to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                    />
+                  }
+                >{t`Activate`}</InlineBanner.Action>
+              }
+            >
+              {customAiProviderGateDescription}
+            </InlineBanner>
+          )}
+
+          <Section.Root>
+            <Section.Header
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
+              actions={
+                <OrganizationAdornment
+                  tooltipContent={customAiProviderTooltipContent}
+                />
+              }
             />
             <Select
               dropdownId="ai-provider-models-dev-select"
@@ -267,19 +311,19 @@ export const SettingsAdminNewAiProvider = () => {
                 Icon: IconPlus,
               }}
             />
-          </Section>
+          </Section.Root>
 
           {isModelsDevWithoutNativeSdk && (
-            <Info
-              accent="blue"
-              text={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
-            />
+            <InlineBanner
+              layout="compact"
+              status="info"
+            >{t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}</InlineBanner>
           )}
 
           {hasSelected && (
             <>
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Label`}
                   description={t`A display name for this provider`}
                 />
@@ -303,11 +347,11 @@ export const SettingsAdminNewAiProvider = () => {
                     />
                   )}
                 />
-              </Section>
+              </Section.Root>
 
               {needsApiKey && (
-                <Section>
-                  <H2Title
+                <Section.Root>
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Your provider API key for authentication`}
                   />
@@ -328,12 +372,12 @@ export const SettingsAdminNewAiProvider = () => {
                       />
                     )}
                   />
-                </Section>
+                </Section.Root>
               )}
 
               {isOpenAiCompatible && (
-                <Section>
-                  <H2Title
+                <Section.Root>
+                  <Section.Header
                     title={t`Base URL`}
                     description={t`The API endpoint for your OpenAI-compatible provider`}
                   />
@@ -353,11 +397,11 @@ export const SettingsAdminNewAiProvider = () => {
                       />
                     )}
                   />
-                </Section>
+                </Section.Root>
               )}
 
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Data Residency`}
                   description={t`Region where inference data is processed (optional)`}
                 />
@@ -377,12 +421,12 @@ export const SettingsAdminNewAiProvider = () => {
                     />
                   )}
                 />
-              </Section>
+              </Section.Root>
 
               {isBedrock && (
                 <>
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Region`}
                       description={t`The AWS region for Bedrock`}
                     />
@@ -402,45 +446,53 @@ export const SettingsAdminNewAiProvider = () => {
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
 
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Access Key ID`}
                       description={t`Optional — uses IAM role if empty`}
                     />
                     <Controller
                       name="accessKeyId"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           placeholder={t`AKIA...`}
                           fullWidth
+                          error={error?.message}
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
 
-                  <Section>
-                    <H2Title
+                  <Section.Root>
+                    <Section.Header
                       title={t`Secret Access Key`}
                       description={t`Optional — uses IAM role if empty`}
                     />
                     <Controller
                       name="secretAccessKey"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           fullWidth
                           type="password"
+                          error={error?.message}
                         />
                       )}
                     />
-                  </Section>
+                  </Section.Root>
                 </>
               )}
             </>

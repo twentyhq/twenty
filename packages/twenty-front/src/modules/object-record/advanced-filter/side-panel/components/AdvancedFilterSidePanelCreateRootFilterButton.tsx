@@ -14,7 +14,7 @@ import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { v4 } from 'uuid';
 
 export const AdvancedFilterSidePanelCreateRootFilterButton = ({
@@ -82,14 +82,12 @@ export const AdvancedFilterSidePanelCreateRootFilterButton = ({
 
   return (
     <Button
-      Icon={IconFilter}
-      size="small"
-      variant="secondary"
-      accent="default"
+      startIcon={<IconFilter />}
+      size="sm"
       onClick={addRootRecordFilterGroup}
-      ariaLabel={t`Add filter`}
-      title={t`Add filter`}
+      aria-label={t`Add filter`}
       disabled={readonly}
-    />
+      variant="outline"
+    >{t`Add filter`}</Button>
   );
 };

@@ -5,7 +5,6 @@ import {
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
 import { createOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/create-one-view-field-group.util';
 import { deleteOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-view-field-group.util';
-import { destroyOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-view-field-group.util';
 import { assertViewFieldGroupStructure } from 'test/integration/utils/view-test.util';
 import {
   type EachTestingContext,
@@ -47,12 +46,6 @@ describe('View Field Group Resolver - Successful Create Operations', () => {
       });
 
       expect(deleteViewFieldGroup.deletedAt).not.toBeNull();
-      await destroyOneViewFieldGroup({
-        expectToFail: false,
-        input: {
-          id: createdViewFieldGroupId,
-        },
-      });
       createdViewFieldGroupId = undefined;
     }
   });

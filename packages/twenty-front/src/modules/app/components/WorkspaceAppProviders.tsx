@@ -1,25 +1,29 @@
 import { StrictMode } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
+import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
+import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { RequestFreshCaptchaTokenEffect } from '@/captcha/components/RequestFreshCaptchaTokenEffect';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
 import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
-import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
@@ -28,19 +32,15 @@ import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
-import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
-import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
+import { PageFavicon } from '@/app/components/PageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
-import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const WorkspaceAppProviders = () => {
-  const { pathname } = useLocation();
-  const pageTitle = getPageTitleFromPath(pathname);
-
   return (
     <SharedAppProviders>
       <UserMetadataProviderInitialEffect />
@@ -53,8 +53,13 @@ export const WorkspaceAppProviders = () => {
             <ApolloCoreProvider>
               <ApolloAdminProvider>
                 <SSEProvider>
+                  <ApplicationsLoadEffect />
                   <UserThemeProviderEffect />
-                  <SnackBarProvider>
+                  <UserUiScaleProviderEffect />
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+                  >
+                    <AppToaster />
                     <ErrorMessageEffect />
                     <AgentChatProvider>
                       <DialogComponentInstanceContext.Provider
@@ -65,18 +70,19 @@ export const WorkspaceAppProviders = () => {
                             <PromiseRejectionEffect />
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
-                            <PageTitle title={pageTitle} />
+                            <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <Outlet />
-                            <GlobalFilePreviewModal />
-                            <CommandMenuConfirmationModalManager />
-                            <CommandRunner />
+                            <RecordCreationFormProvider>
+                              <Outlet />
+                              <GlobalFilePreviewModal />
+                              <CommandMenuConfirmationModalManager />
+                              <CommandRunner />
+                            </RecordCreationFormProvider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>
                     </AgentChatProvider>
-                  </SnackBarProvider>
-                  <MainContextStoreProvider />
+                  </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />
                   <TrackPageViewEffect />

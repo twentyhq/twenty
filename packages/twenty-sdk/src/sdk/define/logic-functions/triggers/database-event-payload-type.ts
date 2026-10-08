@@ -1,4 +1,5 @@
 export type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
   ObjectRecordUpdateEvent,

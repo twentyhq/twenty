@@ -1,13 +1,14 @@
 import { type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 import { syncApplicationQueryFactory } from 'test/integration/metadata/suites/application/utils/sync-application-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 type WorkspaceMigration = {
   applicationUniversalIdentifier: string;
-  actions: unknown[];
+  actions: SyncAction[];
 };
 
 export const syncApplication = async ({
@@ -15,20 +16,23 @@ export const syncApplication = async ({
   expectToFail = false,
   token,
   dryRun,
+  inferDeletionFromMissingEntities,
 }: {
   manifest: Manifest;
   expectToFail?: boolean;
   token?: string;
   dryRun?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
 }): CommonResponseBody<{
   syncApplication: WorkspaceMigration;
 }> => {
   const graphqlOperation = syncApplicationQueryFactory({
     manifest,
     dryRun,
+    inferDeletionFromMissingEntities,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

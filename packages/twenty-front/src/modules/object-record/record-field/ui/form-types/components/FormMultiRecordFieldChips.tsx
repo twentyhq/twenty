@@ -3,12 +3,12 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type FormMultiRecordPickerDraftValue } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { OverflowingList } from 'twenty-ui/components/layout';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledChipsContainer = styled.div`
   align-items: center;
@@ -81,7 +81,12 @@ export const FormMultiRecordFieldChips = ({
 
   return (
     <StyledChipsContainer>
-      <ExpandableList isChipCountDisplayed={true}>{chips}</ExpandableList>
+      <OverflowingList
+        overflowLabel={t`Show all items`}
+        showOverflowCount={true}
+      >
+        {chips}
+      </OverflowingList>
     </StyledChipsContainer>
   );
 };

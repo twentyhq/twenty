@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 type RecordTableContextValue = {
@@ -9,7 +9,8 @@ type RecordTableContextValue = {
   objectNameSingular: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissions: ObjectPermission;
+  objectPermissions: ObjectPermissionsWithObjectMetadataId;
+  isObjectReadOnly: boolean;
   visibleRecordFields: RecordField[];
   onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
   triggerEvent: 'CLICK' | 'MOUSE_DOWN';

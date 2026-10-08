@@ -3,8 +3,8 @@ import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardM
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -15,10 +15,11 @@ const INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID =
 export const InformationBannerEndTrialPeriod = () => {
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
+  const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -28,8 +29,8 @@ export const InformationBannerEndTrialPeriod = () => {
     <>
       <InformationBanner
         componentInstanceId="information-banner-end-trial-period"
-        color="danger"
-        variant="secondary"
+        status="error"
+        variant="soft"
         message={
           hasPermissionToEndTrialPeriod
             ? t`End trial period to continue using Workflow or AI features.`
@@ -43,7 +44,7 @@ export const InformationBannerEndTrialPeriod = () => {
             : undefined
         }
         buttonOnClick={() =>
-          openModal(INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID)
+          openDialog(INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID)
         }
         isButtonDisabled={isLoading}
       />

@@ -1,27 +1,31 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconArchive } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { Section } from 'twenty-ui/layout';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconArchive, IconSettings } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,
   FindManySkillsDocument,
 } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -29,7 +33,7 @@ const StyledSearchContainer = styled.div`
 
 export const SettingsAgentSkillsTab = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { data, loading, refetch } = useQuery(FindManySkillsDocument);
   const [activateSkill] = useMutation(ActivateSkillDocument);
@@ -37,10 +41,32 @@ export const SettingsAgentSkillsTab = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
+  const [showSystemSkills, setShowSystemSkills] = useState(true);
 
-  const skills = data?.skills ?? [];
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const shouldShowSystemSkills = isAdvancedModeEnabled && showSystemSkills;
 
-  const sortedSkills = useSortedArray(skills, SETTINGS_SKILL_TABLE_METADATA);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const installedApplications = currentWorkspace?.installedApplications;
+
+  // not memoized: the label is translated, so a cached one would survive a locale change
+  const skillTableItems = (data?.skills ?? []).map((skill) => {
+    const application = installedApplications?.find(
+      (installedApplication) => installedApplication.id === skill.applicationId,
+    );
+
+    return {
+      ...skill,
+      applicationLabel: isDefined(application)
+        ? getApplicationDisplayName({ application, currentWorkspace })
+        : '',
+    } satisfies SettingsSkillTableItem;
+  });
+
+  const sortedSkills = useSortedArray(
+    skillTableItems,
+    SETTINGS_SKILL_TABLE_METADATA,
+  );
 
   const filteredSkills = useMemo(
     () =>
@@ -48,7 +74,10 @@ export const SettingsAgentSkillsTab = () => {
         const searchNormalized = normalizeSearchText(searchTerm);
         const matchesSearch =
           normalizeSearchText(skill.name).includes(searchNormalized) ||
-          normalizeSearchText(skill.label).includes(searchNormalized);
+          normalizeSearchText(skill.label).includes(searchNormalized) ||
+          normalizeSearchText(skill.applicationLabel).includes(
+            searchNormalized,
+          );
 
         if (!matchesSearch) {
           return false;
@@ -58,34 +87,38 @@ export const SettingsAgentSkillsTab = () => {
           return false;
         }
 
+        if (skill.isSystem && !shouldShowSystemSkills) {
+          return false;
+        }
+
         return true;
       }),
-    [sortedSkills, searchTerm, showDeactivated],
+    [sortedSkills, searchTerm, showDeactivated, shouldShowSystemSkills],
   );
 
   const handleActivate = async (skillId: string) => {
     try {
       await activateSkill({ variables: { id: skillId } });
-      enqueueSuccessSnackBar({ message: t`Skill activated` });
+      enqueueToast({ variant: 'success', children: t`Skill activated` });
       refetch();
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to activate skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to activate skill` });
     }
   };
 
   const handleDelete = async (skillId: string) => {
     try {
       await deleteSkill({ variables: { id: skillId } });
-      enqueueSuccessSnackBar({ message: t`Skill deleted` });
+      enqueueToast({ variant: 'success', children: t`Skill deleted` });
       refetch();
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to delete skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to delete skill` });
     }
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Skills`}
         description={t`Use filter to see existing skills or create your own`}
       />
@@ -94,27 +127,35 @@ export const SettingsAgentSkillsTab = () => {
         <SearchInput
           placeholder={t`Search a skill...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconArchive}
-                      onToggleChange={setShowDeactivated}
-                      toggled={showDeactivated}
-                      text={t`Deactivated`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={setShowDeactivated}
+                    checked={showDeactivated}
+                  >{t`Deactivated`}</SettingsRow>
+                  {isAdvancedModeEnabled && (
+                    <SettingsRow
+                      startIcon={<IconSettings />}
+                      onCheckedChange={setShowSystemSkills}
+                      checked={showSystemSkills}
+                    >{t`System skills`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>
@@ -124,6 +165,6 @@ export const SettingsAgentSkillsTab = () => {
         onActivate={handleActivate}
         onDelete={handleDelete}
       />
-    </Section>
+    </Section.Root>
   );
 };

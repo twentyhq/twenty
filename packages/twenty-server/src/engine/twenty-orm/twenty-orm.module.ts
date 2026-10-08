@@ -1,36 +1,23 @@
 import { Global, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { WorkspaceBillingEntitlementsCacheModule } from 'src/engine/core-modules/billing/workspace-billing-entitlements-cache.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ObjectMetadataEntity,
-      RoleTargetEntity,
-      WorkspaceEntity,
-    ]),
-    WorkspaceCacheStorageModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    PermissionsModule,
+    TypeORMModule,
     WorkspaceFeatureFlagsMapCacheModule,
-    FeatureFlagModule,
-    TwentyConfigModule,
+    WorkspaceBillingEntitlementsCacheModule,
+    UsageLimitModule,
     WorkspaceCacheModule,
   ],
-  providers: [...entitySchemaFactories],
-  exports: [EntitySchemaFactory],
+  providers: [WorkspaceOrmManager, WorkspaceDataSourceService],
+  exports: [WorkspaceOrmManager],
 })
-export class TwentyORMModule {}
+export class TwentyOrmModule {}

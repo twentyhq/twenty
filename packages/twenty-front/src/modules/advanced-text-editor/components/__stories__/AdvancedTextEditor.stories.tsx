@@ -1,15 +1,32 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { TIPTAP_DOCUMENT_SCHEMA_VERSION, isDefined } from 'twenty-shared/utils';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+
+const STORY_RICH_TEXT_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: buildFullRichTextWithVariableTagExtensions,
+} satisfies AdvancedTextEditorProfile;
+
+const STORY_MINIMAL_PROFILE = {
+  chrome: 'document',
+  minHeight: 200,
+  enableFullScreen: false,
+  buildExtensions: () => [],
+} satisfies AdvancedTextEditorProfile;
 
 const EditorWrapper = ({
   readonly = false,
@@ -17,16 +34,20 @@ const EditorWrapper = ({
   defaultValue = null,
   onUpdate = fn(),
   minHeight = 200,
-  enableSlashCommand = true,
+  extensionSet = 'richText',
 }: {
   readonly?: boolean;
   placeholder?: string;
   defaultValue?: string | null;
   onUpdate?: (content: string) => void;
   minHeight?: number;
-  enableSlashCommand?: boolean;
+  extensionSet?: 'richText' | 'minimal';
 }) => {
   const editor = useAdvancedTextEditor({
+    profile:
+      extensionSet === 'richText'
+        ? STORY_RICH_TEXT_PROFILE
+        : STORY_MINIMAL_PROFILE,
     placeholder,
     readonly,
     defaultValue,
@@ -36,12 +57,11 @@ const EditorWrapper = ({
     },
     onImageUpload: async (file: File) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`;
+      return {
+        url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
+      };
     },
-    onImageUploadError: (_error: Error, _file: File) => {
-      // Handle image upload error
-    },
-    enableSlashCommand,
+    onImageUploadError: (_error: Error, _file: File) => {},
   });
 
   if (!editor) {
@@ -68,8 +88,8 @@ const meta: Meta<typeof EditorWrapper> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-    RouterDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 };
@@ -86,6 +106,7 @@ export const WithContent: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -141,6 +162,7 @@ export const WithHeadings: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',
@@ -179,6 +201,7 @@ export const WithLinks: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -214,6 +237,7 @@ export const WithVariableTags: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -247,6 +271,7 @@ export const ReadOnly: Story = {
     readonly: true,
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
@@ -278,6 +303,25 @@ export const Empty: Story = {
   },
 };
 
+export const MinimalDocument: Story = {
+  args: {
+    extensionSet: 'minimal',
+    placeholder: 'Ask anything, @ a teammate or record, / a skill...',
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Verify placeholder hints at @ and / references', async () => {
+      await waitFor(() =>
+        expect(
+          canvasElement.querySelector('[data-placeholder]'),
+        ).toHaveAttribute(
+          'data-placeholder',
+          'Ask anything, @ a teammate or record, / a skill...',
+        ),
+      );
+    });
+  },
+};
+
 export const Interactive: Story = {
   args: {
     onUpdate: fn(),
@@ -296,6 +340,7 @@ export const WithLists: Story = {
   args: {
     defaultValue: JSON.stringify({
       type: 'doc',
+      attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'heading',
@@ -445,5 +490,60 @@ export const WithLists: Story = {
         expect(canvasElement.querySelectorAll('ol li').length).toBe(4),
       );
     });
+  },
+};
+
+export const TurnIntoHeading: Story = {
+  args: WithContent.args,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await waitFor(() =>
+      expect(canvasElement.querySelector('.tiptap')).toBeInTheDocument(),
+    );
+    const editor = canvasElement.querySelector<HTMLElement>('.tiptap')!;
+    await userEvent.tripleClick(within(editor).getByText('World'));
+    const trigger = await body.findByRole('button', { name: 'Paragraph' });
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Heading 1' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Turn into' }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      within(editor).getByRole('heading', { level: 1, name: /Hello.*World/ }),
+    ).toBeVisible();
+    await expect(
+      await body.findByRole('button', { name: 'Heading 1' }),
+    ).toBeVisible();
+    await expect(canvasElement.ownerDocument.getSelection()?.toString()).toBe(
+      'World',
+    );
+  },
+};
+
+export const SlashMenuKeepsEditorFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await within(canvasElement).findByRole('textbox');
+    await userEvent.click(editor);
+    await userEvent.keyboard('/heading');
+    await body.findByText('Heading 1');
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await waitFor(() => {
+      expect(body.queryByText('Heading 2')).not.toBeInTheDocument();
+    });
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('Heading from slash menu');
+    await expect(
+      within(editor).getByRole('heading', {
+        level: 2,
+        name: 'Heading from slash menu',
+      }),
+    ).toBeVisible();
   },
 };

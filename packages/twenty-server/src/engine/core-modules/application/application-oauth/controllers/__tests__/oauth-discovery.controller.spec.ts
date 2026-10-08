@@ -10,6 +10,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 describe('OAuthDiscoveryController', () => {
   let controller: OAuthDiscoveryController;
 
+  const findOrCreateCliRegistrationMock = jest
+    .fn()
+    .mockResolvedValue({ oAuthClientId: 'cli-client-id' });
+
   const buildMockRequest = (host: string, protocol = 'https') =>
     ({
       protocol,
@@ -37,7 +41,9 @@ describe('OAuthDiscoveryController', () => {
         },
         {
           provide: ApplicationRegistrationService,
-          useValue: { findOneByUniversalIdentifier: jest.fn() },
+          useValue: {
+            findOrCreateCliRegistration: findOrCreateCliRegistrationMock,
+          },
         },
       ],
     }).compile();
@@ -69,6 +75,81 @@ describe('OAuthDiscoveryController', () => {
           authorization_servers: ['https://workspace.twenty.com'],
         },
       );
+    });
+  });
+
+  describe('getAuthorizationServerMetadata', () => {
+    it('leaves the endpoint untouched when the api host serves /authorize itself', async () => {
+      const singleDomainModule = await Test.createTestingModule({
+        controllers: [OAuthDiscoveryController],
+        providers: [
+          {
+            provide: TwentyConfigService,
+            useValue: {
+              get: jest.fn().mockReturnValue('https://crm.acme.com'),
+            },
+          },
+          {
+            provide: DomainServerConfigService,
+            useValue: {
+              getBaseUrl: jest
+                .fn()
+                .mockReturnValue(new URL('https://crm.acme.com')),
+            },
+          },
+          {
+            provide: ApplicationRegistrationService,
+            useValue: {
+              findOrCreateCliRegistration: findOrCreateCliRegistrationMock,
+            },
+          },
+        ],
+      }).compile();
+
+      const metadata = await singleDomainModule
+        .get(OAuthDiscoveryController)
+        .getAuthorizationServerMetadata(buildMockRequest('crm.acme.com'));
+
+      expect(metadata).toMatchObject({
+        issuer: 'https://crm.acme.com',
+        authorization_endpoint: 'https://crm.acme.com/authorize',
+        authorization_response_iss_parameter_supported: true,
+      });
+    });
+
+    it('serves /authorize on its own origin when it has one', async () => {
+      const request = buildMockRequest('workspace.twenty.com');
+
+      expect(
+        await controller.getAuthorizationServerMetadata(request),
+      ).toMatchObject({
+        issuer: 'https://workspace.twenty.com',
+        authorization_endpoint: 'https://workspace.twenty.com/authorize',
+        authorization_response_iss_parameter_supported: true,
+      });
+    });
+
+    it('forwards its issuer to the frontend origin it delegates to', async () => {
+      const request = buildMockRequest('api.example.com');
+
+      expect(
+        await controller.getAuthorizationServerMetadata(request),
+      ).toMatchObject({
+        issuer: 'https://api.example.com',
+        authorization_endpoint:
+          'https://app.example.com/authorize?iss=https%3A%2F%2Fapi.example.com',
+        authorization_response_iss_parameter_supported: true,
+      });
+    });
+
+    it('exposes the CLI client id, provisioning the registration if missing', async () => {
+      const request = buildMockRequest('crm.acme.com');
+
+      expect(
+        await controller.getAuthorizationServerMetadata(request),
+      ).toMatchObject({ cli_client_id: 'cli-client-id' });
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledTimes(1);
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledWith();
     });
   });
 });

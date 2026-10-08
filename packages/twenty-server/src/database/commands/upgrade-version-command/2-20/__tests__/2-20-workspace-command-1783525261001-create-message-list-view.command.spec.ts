@@ -23,9 +23,14 @@ const STANDARD_APPLICATION = {
 const LIST = STANDARD_OBJECTS.messageList;
 const LIST_VIEW_UNIVERSAL_IDENTIFIER =
   LIST.views.allMessageLists.universalIdentifier;
-const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST.views.allMessageLists.viewFields,
-).map((viewField) => viewField.universalIdentifier);
+const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+  LIST.views.allMessageLists.viewFields.name.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.members.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.campaigns.universalIdentifier,
+  LIST.views.allMessageLists.viewFields.createdAt.universalIdentifier,
+];
+const DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  LIST.views.allMessageLists.viewFields.description.universalIdentifier;
 
 const buildByUniversalIdentifierMap = (universalIdentifiers: string[]) => ({
   byUniversalIdentifier: Object.fromEntries(
@@ -58,9 +63,10 @@ describe('CreateMessageListViewCommand', () => {
         flatViewMaps: buildByUniversalIdentifierMap([
           LIST_VIEW_UNIVERSAL_IDENTIFIER,
         ]),
-        flatViewFieldMaps: buildByUniversalIdentifierMap(
-          LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-        ),
+        flatViewFieldMaps: buildByUniversalIdentifierMap([
+          ...LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+          DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        ]),
       },
     });
 
@@ -138,6 +144,22 @@ describe('CreateMessageListViewCommand', () => {
       validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0]
         .allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
     ).toHaveLength(LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length);
+  });
+
+  it('leaves the description column to the 2.39 command', async () => {
+    mockWorkspaceCache({});
+
+    await runOnWorkspace();
+
+    const createdViewFieldUniversalIdentifiers =
+      validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0].allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate.map(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier,
+      );
+
+    expect(createdViewFieldUniversalIdentifiers).not.toContain(
+      DESCRIPTION_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+    );
   });
 
   it('creates missing view fields when the view already exists', async () => {

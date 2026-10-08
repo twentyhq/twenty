@@ -35,6 +35,8 @@ export class ApplicationConnectionProviderDTO {
   @Field()
   displayName: string;
 
+  logo: string | null;
+
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })
   oauth: ApplicationConnectionProviderOAuthConfigDTO | null;
 }

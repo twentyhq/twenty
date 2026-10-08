@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { styled } from '@linaria/react';
 
 // oxlint-disable-next-line twenty/styled-components-prefixed-with-styled

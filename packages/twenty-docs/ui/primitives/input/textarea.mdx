@@ -1,0 +1,103 @@
+---
+title: Textarea
+description: Enter multiple lines of text with optional automatic resizing.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+Use `Textarea` for notes, descriptions, and other multiline values. It integrates with [Field](/ui/primitives/input/field) for labels and validation.
+
+<StoryEmbed
+  storyId="ui-input-textarea--default"
+  title="Textarea example"
+  height={240}
+/>
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial notes. The textarea owns subsequent changes.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Native textarea attributes such as `rows`, `maxLength`, `required`, and `readOnly` are available. `size` accepts `sm` or `md` and defaults to `md`.
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same notes in React state. The callback receives the next string value and event details; native `onChange` is also available.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Automatic resizing
+
+Automatic resizing works in either state mode. This example also uses the controlled value for a character count.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` measures the committed value after controlled updates and measures uncontrolled edits directly. Rejected controlled edits do not change the height. It also updates after native form resets, `rows`, `size`, `maxRows`, and available width changes. Use `maxRows` to cap growth and scroll longer content.
+
+Automatic sizing owns inline `blockSize` while enabled. Turning it off restores the current `style.blockSize`, or clears the automatic size if none is supplied. With automatic sizing off, `rows` and native styles control height. Manual resizing is disabled by default; set `style={{ resize: 'vertical' }}` when callers should resize the control themselves.
+
+## Native control and render composition
+
+Native textarea attributes and handlers, `className`, `style`, and `ref` target the textarea. The ref receives an `HTMLTextAreaElement`. `render` accepts a textarea element or a callback receiving native textarea props and Field state. Forward the supplied props and ref to the native textarea so labels, validation, events, and automatic measurement keep working. Add a separate layout element when wrapper customization is needed.
+
+`onChange` receives a React change event for the native textarea. `onValueChange(value, details)` retains the Base UI signature, including the native `event`, `reason`, `cancel`, and `allowPropagation`. The native event targets the textarea. Canceling the details preserves Base UI's validation policy; it does not undo the native value. Controlled callers choose the committed value.
+
+Native `name`, `form`, `required`, `readOnly`, `disabled`, submission, and reset behavior remain available. Field supplies label, description, name, and validation association. Enter inserts a line break in the textarea.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<TextareaReference />

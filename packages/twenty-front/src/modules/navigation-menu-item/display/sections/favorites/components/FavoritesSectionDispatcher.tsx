@@ -1,10 +1,9 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
 
 export const FavoritesSectionDispatcher = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -14,15 +13,13 @@ export const FavoritesSectionDispatcher = () => {
 
   const hasFavorites = navigationMenuItemsSorted.some((item) => !item.folderId);
 
-  if (!hasFavorites) {
+  if (!hasFavorites || isLayoutCustomizationModeEnabled) {
     return null;
   }
 
   return (
-    <AnimatedEaseInOut isOpen={!isLayoutCustomizationModeEnabled} initial>
-      <NavigationMenuItemDndKitProvider section={NavigationSections.FAVORITES}>
-        <FavoritesSection />
-      </NavigationMenuItemDndKitProvider>
-    </AnimatedEaseInOut>
+    <NavigationMenuItemDndKitProvider section={NavigationSections.FAVORITES}>
+      <FavoritesSection />
+    </NavigationMenuItemDndKitProvider>
   );
 };

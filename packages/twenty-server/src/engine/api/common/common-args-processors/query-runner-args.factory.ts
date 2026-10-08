@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class QueryRunnerArgsFactory {
     value: any,
     fieldIdByName: Record<string, string>,
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldIdByName[key],

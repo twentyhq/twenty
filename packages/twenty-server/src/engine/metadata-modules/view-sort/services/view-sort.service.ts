@@ -7,7 +7,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
-import { fromDeleteViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -177,68 +176,10 @@ export class ViewSortService {
     deleteViewSortInput: DeleteViewSortInput;
     workspaceId: string;
   }): Promise<ViewSortDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewSortMaps: existingFlatViewSortMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewSortMaps'],
-        },
-      );
-
-    const optimisticallyUpdatedFlatViewSortWithDeletedAt =
-      fromDeleteViewSortInputToFlatViewSortOrThrow({
-        flatViewSortMaps: existingFlatViewSortMaps,
-        deleteViewSortInput,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            viewSort: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                optimisticallyUpdatedFlatViewSortWithDeletedAt,
-              ],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view sort',
-      );
-    }
-
-    const { flatViewSortMaps: recomputedExistingFlatViewSortMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewSortMaps'],
-        },
-      );
-
-    return fromFlatViewSortToViewSortDto(
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          optimisticallyUpdatedFlatViewSortWithDeletedAt.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewSortMaps,
-      }),
-    );
+    return this.destroyOne({
+      destroyViewSortInput: deleteViewSortInput,
+      workspaceId,
+    });
   }
 
   async destroyOne({
@@ -306,6 +247,7 @@ export class ViewSortService {
       where: {
         deletedAt: IsNull(),
       },
+      order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }
@@ -319,6 +261,7 @@ export class ViewSortService {
         viewId,
         deletedAt: IsNull(),
       },
+      order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }

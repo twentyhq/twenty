@@ -1,0 +1,74 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { styled } from '@linaria/react';
+import { lazy, Suspense } from 'react';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const ActivityRichTextEditor = lazy(() =>
+  import('@/activities/components/ActivityRichTextEditor').then((module) => ({
+    default: module.ActivityRichTextEditor,
+  })),
+);
+
+const StyledShowPageActivityContainer = styled.div`
+  box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
+
+const StyledSkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 ${themeCssVariables.spacing[4]};
+`;
+
+const LoadingSkeleton = () => {
+  return (
+    <StyledSkeletonContainer>
+      <SkeletonLine
+        height={SKELETON_HEIGHT_SIZES.s}
+        borderRadius={themeCssVariables.border.radius.md}
+      />
+    </StyledSkeletonContainer>
+  );
+};
+
+export const FieldRichTextCard = () => {
+  const targetRecord = useTargetRecord();
+  const activityBodyV2 = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId: targetRecord.id,
+    fieldName: 'bodyV2',
+  });
+
+  const activityObjectNameSingular = targetRecord.targetObjectNameSingular as
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
+
+  if (!isDefined(activityBodyV2)) {
+    return <LoadingSkeleton />;
+  }
+
+  return (
+    <ScrollWrapper
+      componentInstanceId={`scroll-wrapper-tab-list-${targetRecord.id}`}
+    >
+      <StyledShowPageActivityContainer>
+        <Suspense fallback={<LoadingSkeleton />}>
+          <ActivityRichTextEditor
+            activityId={targetRecord.id}
+            activityObjectNameSingular={activityObjectNameSingular}
+          />
+        </Suspense>
+      </StyledShowPageActivityContainer>
+    </ScrollWrapper>
+  );
+};

@@ -1,7 +1,8 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -20,12 +21,12 @@ import {
   IconLock,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();
-  const { recordIndexId, onContentChange } = useObjectOptionsDropdown();
+  const { recordIndexId, onContentChange, dropdownId } =
+    useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -44,14 +45,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown(recordIndexId);
   const { closeDropdown } = useCloseDropdown();
 
   const handleCreateCustomView = () => {
-    closeDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
+    closeDropdown(dropdownId);
 
     openCreateViewDropdown(currentView);
   };
@@ -62,19 +63,18 @@ export const ObjectOptionsDropdownDefaultView = () => {
   const MainIcon = getIcon(currentView?.icon);
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          text={t`Default View`}
-          LeftIcon={MainIcon}
-          RightIcon={IconLock}
+        <ListItem
+          startIcon={<SelectOptionIcon Icon={MainIcon} />}
+          endIcon={<IconLock />}
           disabled={true}
-        />
+        >{t`Default View`}</ListItem>
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+        selectableListInstanceId={dropdownId}
+        focusId={dropdownId}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer scrollable={false}>
@@ -82,15 +82,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
-              LeftIcon={IconListDetails}
-              text={t`Fields`}
-              contextualText={t`${visibleFieldsCount} shown`}
-              contextualTextPosition="right"
-              hasSubMenu
-            />
+              startIcon={<IconListDetails />}
+              description={t`${visibleFieldsCount} selected`}
+              descriptionPlacement="end"
+              hasSubmenu
+            >{t`Fields`}</ListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -102,30 +101,27 @@ export const ObjectOptionsDropdownDefaultView = () => {
               copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
                 copyToClipboard(currentUrl, t`Link copied to clipboard`);
               }}
-              LeftIcon={IconCopy}
-              text={t`Copy link to view`}
-            />
+              startIcon={<IconCopy />}
+            >{t`Copy link to view`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId="Create custom view"
             onEnter={handleCreateCustomView}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'Create custom view'}
               onClick={handleCreateCustomView}
-              LeftIcon={IconLayout}
-              text={t`Create custom view`}
-              contextualTextPosition="right"
-            />
+              startIcon={<IconLayout />}
+            >{t`Create custom view`}</ListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

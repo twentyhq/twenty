@@ -7,18 +7,18 @@ import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-t
 export const computeLastRecordTableColumnWidth = ({
   recordFields,
   tableWidth,
-  shouldCompactFirstColumn,
+  firstColumnWidthOverride,
   isDragColumnHidden,
   isCheckboxColumnHidden,
 }: {
   recordFields: Pick<RecordField, 'size'>[];
   tableWidth: number;
-  shouldCompactFirstColumn: boolean;
+  firstColumnWidthOverride?: number;
   isDragColumnHidden?: boolean;
   isCheckboxColumnHidden?: boolean;
 }) => {
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
-    shouldCompactFirstColumn,
+    firstColumnWidthOverride,
     visibleRecordFields: recordFields,
   });
 

@@ -22,15 +22,16 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 type ViewWidgetTestSetup = {
   pageLayoutId: string;
@@ -106,7 +107,13 @@ describe('upsertViewWidget', () => {
         type: WidgetType.RECORD_TABLE,
         pageLayoutTabId,
         objectMetadataId: testFieldMetadataIds.objectMetadataId,
-        gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           viewId,

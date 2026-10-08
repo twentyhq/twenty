@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-type CreateSSOConnectedAccountParams = {
+type CreateSsoConnectedAccountParams = {
   workspaceId: string;
   userId: string;
   handle: string;
@@ -17,8 +17,8 @@ type CreateSSOConnectedAccountParams = {
 };
 
 @Injectable()
-export class CreateSSOConnectedAccountService {
-  private readonly logger = new Logger(CreateSSOConnectedAccountService.name);
+export class CreateSsoConnectedAccountService {
+  private readonly logger = new Logger(CreateSsoConnectedAccountService.name);
 
   constructor(
     @InjectRepository(ConnectedAccountEntity)
@@ -27,8 +27,8 @@ export class CreateSSOConnectedAccountService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  async createOrUpdateSSOConnectedAccount(
-    params: CreateSSOConnectedAccountParams,
+  async createOrUpdateSsoConnectedAccount(
+    params: CreateSsoConnectedAccountParams,
   ): Promise<void> {
     const { workspaceId, userId, handle, provider, scopes, oidcTokenClaims } =
       params;
@@ -54,10 +54,14 @@ export class CreateSSOConnectedAccountService {
     });
 
     if (existing) {
+      const mergedScopes = Array.from(
+        new Set([...(existing.scopes ?? []), ...scopes]),
+      );
+
       await this.connectedAccountRepository.update(existing.id, {
         lastSignedInAt: new Date(),
         provider,
-        scopes,
+        scopes: mergedScopes,
         ...(oidcTokenClaims !== undefined
           ? { oidcTokenClaims: oidcTokenClaims as object }
           : {}),

@@ -1,12 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import {
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconBolt,
   IconBuildingSkyscraper,
@@ -16,14 +10,14 @@ import {
   IconWindow,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getDataResidencyDisplay } from '@/ai/utils/getDataResidencyDisplay';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { isDefined } from 'twenty-shared/utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledHoverCardWrapper = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -78,7 +72,7 @@ type HoverCardItem = {
 export const SettingsAiModelHoverCard = ({
   model,
 }: SettingsAiModelHoverCardProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const ModelIcon = getModelIcon(model.modelFamily, model.providerName);
   const providerLabel = model.providerLabel ?? model.providerName ?? '—';
@@ -90,19 +84,19 @@ export const SettingsAiModelHoverCard = ({
       value: (
         <StyledChipContainer>
           <Chip
-            size={ChipSize.Small}
-            accent={ChipAccent.TextPrimary}
-            variant={ChipVariant.Static}
-            clickable={false}
-            label={model.label}
-            leftComponent={
+            size="sm"
+            color="primary"
+            variant="soft"
+            startElement={
               <ModelIcon
                 size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
               />
             }
-            rightComponent={null}
-          />
+            endElement={null}
+          >
+            {model.label}
+          </Chip>
         </StyledChipContainer>
       ),
     },

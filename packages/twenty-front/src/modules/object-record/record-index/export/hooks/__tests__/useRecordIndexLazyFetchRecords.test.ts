@@ -1,10 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import {
-  percentage,
-  sleep,
-  useRecordIndexLazyFetchRecords,
-} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
+import { useRecordIndexLazyFetchRecords } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { ViewType } from '@/views/types/ViewType';
@@ -83,7 +79,6 @@ describe('useRecordData', () => {
   let mockFetchAllRecords: jest.Mock;
 
   beforeEach(() => {
-    // Mock the hook's implementation
     mockFetchAllRecords = jest.fn();
     (useLazyFetchAllRecords as jest.Mock).mockReturnValue({
       progress: 100,
@@ -153,20 +148,6 @@ describe('useRecordData', () => {
       await waitFor(() => {
         expect(callback).toHaveBeenCalledWith([mockPerson], []);
       });
-    });
-  });
-
-  describe('utils', () => {
-    it('should correctly calculate percentage', () => {
-      expect(percentage(50, 200)).toBe(25);
-      expect(percentage(1, 3)).toBe(33);
-    });
-
-    it('should resolve sleep after given time', async () => {
-      jest.useFakeTimers();
-      const sleepPromise = sleep(1000);
-      jest.advanceTimersByTime(1000);
-      await expect(sleepPromise).resolves.toBeUndefined();
     });
   });
 });

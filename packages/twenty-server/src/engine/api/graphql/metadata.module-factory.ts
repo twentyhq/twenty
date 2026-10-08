@@ -1,6 +1,7 @@
 import { type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -21,6 +22,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ModulesModule } from 'src/modules/modules.module';
 
 export const metadataModuleFactory = async (
   twentyConfigService: TwentyConfigService,
@@ -34,13 +36,13 @@ export const metadataModuleFactory = async (
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
-    include: [MetadataGraphQLApiModule],
+    include: [MetadataGraphQLApiModule, ModulesModule],
     resolverSchemaScope: 'metadata',
     buildSchemaOptions: {
       orphanedTypes: [ClientConfig],
     },
     renderGraphiQL() {
-      return renderApolloPlayground({ path: 'metadata' });
+      return renderApolloPlayground({ path: ApiPath.Metadata });
     },
     resolvers: { JSON: GraphQLJSON },
     plugins: [
@@ -70,7 +72,7 @@ export const metadataModuleFactory = async (
         checkDuplicateRootResolvers: true,
       }),
     ],
-    path: '/metadata',
+    path: `/${ApiPath.Metadata}`,
     context: () => ({
       loaders: dataloaderService.createLoaders(),
     }),
@@ -78,7 +80,7 @@ export const metadataModuleFactory = async (
 
   if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT) {
     config.renderGraphiQL = () => {
-      return renderApolloPlayground({ path: 'metadata' });
+      return renderApolloPlayground({ path: ApiPath.Metadata });
     };
   }
 

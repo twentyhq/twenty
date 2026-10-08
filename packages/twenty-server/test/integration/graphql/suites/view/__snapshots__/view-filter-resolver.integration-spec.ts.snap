@@ -41,7 +41,7 @@ exports[`View Filter Resolver deleteViewFilter should throw an error when deleti
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View filter to delete not found",
+  "message": "View filter to destroy not found",
   "name": "NotFoundError",
 }
 `;

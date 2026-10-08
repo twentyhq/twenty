@@ -1,4 +1,6 @@
-import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
+import { VideoPreview } from '@/activities/files/components/VideoPreview';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/constants/PreviewableExtensions';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import {
   type CsvPreviewData,
@@ -9,11 +11,11 @@ import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const MS_OFFICE_EXTENSIONS = [
@@ -30,8 +32,9 @@ const StyledDocumentViewerContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh / var(--t-zoom, 1) - 200px);
   min-height: 500px;
+  position: relative;
   width: 100%;
 
   #react-doc-viewer #header-bar {
@@ -44,7 +47,10 @@ const StyledDocumentViewerContainer = styled.div`
 
   #react-doc-viewer,
   #proxy-renderer,
-  #msdoc-renderer {
+  #msdoc-renderer,
+  #html-renderer,
+  #html-renderer iframe,
+  iframe {
     background: none;
     display: flex;
     flex-direction: column;
@@ -65,21 +71,9 @@ const StyledUnavailablePreviewContainer = styled.div`
   text-align: center;
 `;
 
-const StyledMessage = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.lg};
-  max-width: 400px;
-`;
-
 const StyledLightMessage = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCsvTable = styled.table`
@@ -121,19 +115,9 @@ type DocumentViewerProps = {
   documentExtension?: string;
 };
 
-// MS Office Online viewer requires documents to be publicly accessible from the internet.
-// For private/local URLs, Microsoft's servers cannot fetch the document.
-//
-// We explored more sophisticated detection approaches but they don't work:
-// - postMessage: Microsoft's viewer doesn't send any error messages
-// - Fetching the embed URL: Blocked by CORS (no Access-Control-Allow-Origin header)
-// - Reading iframe content: Cross-origin restrictions prevent access
-//
-// This simple URL-based detection catches the most common cases (localhost, private IPs)
-// where the preview will definitely fail. For edge cases on non-standard private networks,
-// users will see Microsoft's error page but can still download the file.
-//
-// See: https://github.com/twentyhq/twenty/issues/16900
+// MS Office Online only fetches public URLs and its failure is undetectable (no postMessage, CORS, cross-origin),
+// so localhost and private IPs are caught by URL; other private hosts get Microsoft's error page but can still download.
+// See https://github.com/twentyhq/twenty/issues/16900
 const isPrivateUrl = (url: string): boolean => {
   try {
     const { hostname } = new URL(url);
@@ -199,7 +183,7 @@ export const DocumentViewer = ({
   documentUrl,
   documentExtension,
 }: DocumentViewerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | undefined>(
     undefined,
@@ -214,6 +198,7 @@ export const DocumentViewer = ({
   const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);
 
   const mimeType = isPreviewable ? MIME_TYPE_MAPPING[fileExtension] : undefined;
+  const isVideo = mimeType?.startsWith('video/') === true;
 
   useEffect(() => {
     if (fileExtension === 'csv') {
@@ -224,12 +209,11 @@ export const DocumentViewer = ({
   if (!isPreviewable) {
     return (
       <StyledDocumentViewerContainer>
-        <StyledUnavailablePreviewContainer>
-          <StyledTitle>
-            <Trans>Preview Not Available</Trans>
-          </StyledTitle>
-          <StyledMessage>
-            {fileCategory === 'ARCHIVE' ? (
+        <UnavailableFilePreview
+          fileName={documentName}
+          fileUrl={documentUrl}
+          message={
+            fileCategory === 'ARCHIVE' ? (
               <Trans>
                 Archive files cannot be previewed. Please download the file to
                 access its contents.
@@ -239,15 +223,21 @@ export const DocumentViewer = ({
                 This file type cannot be previewed. Please download the file to
                 view it.
               </Trans>
-            )}
-          </StyledMessage>
-          <Button
-            Icon={IconDownload}
-            title={t`Download File`}
-            onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-          />
-        </StyledUnavailablePreviewContainer>
+            )
+          }
+        />
+      </StyledDocumentViewerContainer>
+    );
+  }
+
+  if (isVideo) {
+    return (
+      <StyledDocumentViewerContainer>
+        <VideoPreview
+          key={documentUrl}
+          videoName={documentName}
+          videoUrl={documentUrl}
+        />
       </StyledDocumentViewerContainer>
     );
   }
@@ -294,12 +284,11 @@ export const DocumentViewer = ({
             </Trans>
           </StyledLightMessage>
           <Button
-            Icon={IconDownload}
-            title={t`Download`}
+            startIcon={<IconDownload />}
             onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-            size="small"
-          />
+            size="sm"
+            variant="outline"
+          >{t`Download`}</Button>
         </StyledUnavailablePreviewContainer>
       </StyledDocumentViewerContainer>
     );

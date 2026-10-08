@@ -1,3 +1,4 @@
+import { type ActingAgent } from 'src/engine/core-modules/auth/types/acting-agent.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export type WorkspaceAuthContextType =
@@ -23,11 +24,15 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   user: NonNullable<RawAuthContext['user']>;
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
+  application?: NonNullable<RawAuthContext['application']>;
+  viaApplication?: NonNullable<RawAuthContext['application']>;
 }
 
 export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'application';
   application: NonNullable<RawAuthContext['application']>;
+  // Set when one of the application's agents runs on its own, so its writes are attributed to it
+  actingAgent?: ActingAgent;
 }
 
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {

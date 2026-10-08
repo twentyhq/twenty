@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
-import { forwardRef, useContext } from 'react';
+import { forwardRef } from 'react';
 import {
   IconRadiusBottomLeft,
   IconRadiusBottomRight,
   IconRadiusTopLeft,
   IconRadiusTopRight,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';
@@ -60,7 +60,8 @@ const StyledCornerIconWrapper = styled.div<{
 `;
 
 const StyledVerticalHandle = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: ${themeCssVariables.spacing[5]};
   width: calc(${themeCssVariables.icon.stroke.lg} * 1px);
 `;
@@ -82,7 +83,8 @@ const StyledVerticalHandleWrapper = styled.div<{
 `;
 
 const StyledHorizontalHandle = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: calc(${themeCssVariables.icon.stroke.lg} * 1px);
   width: ${themeCssVariables.spacing[5]};
 `;
@@ -180,7 +182,7 @@ export const PageLayoutGridResizeHandle = forwardRef<
     },
     ref,
   ) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
 
     return (
       <StyledResizeHandleWrapper

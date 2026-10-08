@@ -3,7 +3,7 @@ import { type Expect } from 'twenty-shared/testing';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
+import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 export type FromMetadataEntityToMetadataName<T extends SyncableEntity> = {

@@ -3,7 +3,6 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
-import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 
@@ -58,14 +57,6 @@ describe('Destroy core view', () => {
       },
       expectToFail: false,
     });
-
-    const { data: deleteData, errors: deleteErrors } = await deleteOneView({
-      viewId: view.id,
-      expectToFail: false,
-    });
-
-    expect(deleteErrors).toBeUndefined();
-    expect(deleteData.deleteView).toBe(true);
 
     const { data: destroyData, errors: destroyErrors } = await destroyOneView({
       viewId: view.id,

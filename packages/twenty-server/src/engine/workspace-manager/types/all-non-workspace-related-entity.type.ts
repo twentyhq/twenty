@@ -1,6 +1,7 @@
+import { type Equal, type Expect } from 'twenty-shared/testing';
+
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
@@ -10,34 +11,16 @@ import { type KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/
 import { type TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
-import { type AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
+import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-/**
- * Union of all entities that don't have a direct `workspaceId` field
- * (i.e., they don't extend `WorkspaceRelatedEntity`).
- *
- * This type is used alongside `WorkspaceRelatedEntity` to enable TypeScript
- * to properly extract entity relation properties for dynamic typing purposes.
- *
- * @see ExtractEntityRelatedEntityProperties
- * @see ExtractEntityManyToOneEntityRelationProperties
- * @see ExtractEntityOneToManyEntityRelationProperties
- */
+// Membership is about the base class (not extending `WorkspaceRelatedEntity`),
+// not the column: several members declare their own `workspaceId`, so this is
+// not a "has no workspaceId" predicate and must not be used as one.
 export type AllNonWorkspaceRelatedEntity =
-  | AgentChatThreadEntity
-  | AgentMessagePartEntity
-  | AgentMessageEntity
-  | AgentTurnEntity
-  | AgentTurnEvaluationEntity
   | IndexFieldMetadataEntity
   | ApplicationRegistrationEntity
   | ApplicationRegistrationVariableEntity
-  | ApplicationVariableEntity
   | BillingMeterEntity
   | BillingPriceEntity
   | BillingProductEntity
@@ -47,3 +30,10 @@ export type AllNonWorkspaceRelatedEntity =
   | TwoFactorAuthenticationMethodEntity
   | UserEntity
   | WorkspaceEntity;
+
+// A syncable entity extends WorkspaceRelatedEntity, so it always carries a
+// NOT NULL workspaceId and can never belong to this union.
+// oxlint-disable-next-line no-unused-vars
+type NoMemberIsSyncable = Expect<
+  Equal<Extract<AllNonWorkspaceRelatedEntity, SyncableEntity>, never>
+>;

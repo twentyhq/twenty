@@ -1,5 +1,6 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ChartAggregateOperationSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -17,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
@@ -25,7 +26,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -110,17 +111,23 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                 setSelectedFieldMetadataId(fieldMetadataItem.id);
               }}
             >
-              <MenuItemSelect
-                text={fieldMetadataItem.label}
-                selected={selectedFieldMetadataId === fieldMetadataItem.id}
+              <ListItem
                 focused={selectedItemId === fieldMetadataItem.id}
-                LeftIcon={getIcon(fieldMetadataItem.icon)}
-                hasSubMenu={true}
                 onClick={() => {
                   setIsSubMenuOpen(true);
                   setSelectedFieldMetadataId(fieldMetadataItem.id);
                 }}
-              />
+                role="option"
+                aria-selected={selectedFieldMetadataId === fieldMetadataItem.id}
+                selected={selectedFieldMetadataId === fieldMetadataItem.id}
+                indicator="check"
+                hasSubmenu={true}
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+              >
+                {fieldMetadataItem.label}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

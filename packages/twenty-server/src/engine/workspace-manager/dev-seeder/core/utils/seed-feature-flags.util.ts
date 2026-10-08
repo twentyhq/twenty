@@ -3,6 +3,20 @@ import { type QueryRunner } from 'typeorm';
 
 const tableName = 'featureFlag';
 
+const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
+  [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
+  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: true,
+  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
+  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,
+  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: true,
+  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: true,
+  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true,
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
+  [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: true,
+  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: true,
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
+};
+
 type SeedFeatureFlagsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
@@ -19,38 +33,13 @@ export const seedFeatureFlags = async ({
     .insert()
     .into(`${schemaName}.${tableName}`, ['key', 'workspaceId', 'value'])
     .orIgnore()
-    .values([
-      {
-        key: FeatureFlagKey.IS_APP_CLAIMING_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-    ])
+    .values(
+      Object.entries(DEFAULT_SEEDED_FEATURE_FLAGS).map(([key, value]) => ({
+        key,
+        workspaceId,
+        value,
+      })),
+    )
     .execute();
 };
 

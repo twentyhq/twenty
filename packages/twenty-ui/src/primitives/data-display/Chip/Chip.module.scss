@@ -1,0 +1,83 @@
+.chip {
+  @include focus-ring;
+
+  --tw-chip-padding: var(--t-spacing-1);
+  box-sizing: content-box;
+  align-items: center;
+  display: inline-flex;
+  gap: var(--t-spacing-1);
+  block-size: var(--t-spacing-3);
+  max-inline-size: var(--tw-chip-max-width, 100%);
+  overflow: hidden;
+  padding: var(--t-spacing-1) var(--tw-chip-padding);
+  user-select: none;
+  font: inherit;
+  color: var(--t-font-color-primary);
+  background: inherit;
+  border: none;
+  border-radius: var(--t-border-radius-sm-round);
+  corner-shape: round;
+  text-decoration: none;
+
+  & > svg {
+    flex-shrink: 0;
+  }
+  &[data-size='md'] {
+    block-size: var(--t-spacing-4);
+  }
+  &[data-shape='round'] {
+    border-radius: var(--t-border-radius-pill);
+  }
+  &[data-color='secondary'] {
+    color: var(--t-font-color-secondary);
+  }
+  &[data-weight='medium'] {
+    font-weight: var(--t-font-weight-medium);
+  }
+  &[data-variant='soft'] {
+    background: var(--t-background-transparent-light);
+  }
+  &[data-variant='solid'] {
+    background: var(--t-background-transparent-medium);
+  }
+  &[data-disabled] {
+    color: var(--t-font-color-light);
+    cursor: not-allowed;
+  }
+  &[data-clickable]:not([data-disabled]) {
+    cursor: pointer;
+    @include hover-capable {
+      &:hover {
+        background: var(--t-background-transparent-light);
+      }
+      &[data-variant='soft']:hover {
+        background: var(--t-background-transparent-medium);
+      }
+      &[data-variant='solid']:hover {
+        background: var(--t-background-transparent-strong);
+      }
+    }
+    &:active {
+      background: var(--t-background-transparent-medium);
+    }
+    &[data-variant='soft']:active {
+      background: var(--t-background-transparent-strong);
+    }
+    &[data-variant='solid']:active {
+      background: var(--t-color-transparent-gray8);
+    }
+  }
+}
+
+.content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.emptyLabel {
+  color: var(--t-font-color-tertiary);
+}
+.endElementDivider {
+  align-self: stretch;
+  border-inline-start: 1px solid var(--t-border-color-light);
+}

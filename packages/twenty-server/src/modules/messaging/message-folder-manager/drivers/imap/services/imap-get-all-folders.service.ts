@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   DiscoveredMessageFolder,
+  type MessageFolder,
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
@@ -15,6 +16,7 @@ import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 @Injectable()
@@ -32,6 +34,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]> {
     try {
       const client = await this.imapClientProvider.getClient(
@@ -44,6 +47,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         client,
         mailboxList,
         messageChannel,
+        existingFolders,
       );
 
       await this.imapClientProvider.closeClient(client);
@@ -63,40 +67,67 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     client: ImapFlow,
     mailboxList: ListResponse[],
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]> {
+    const normalizedMailboxList = mailboxList.map((mailbox) => ({
+      ...mailbox,
+      path: normalizeImapUnicode(mailbox.path, client),
+      name: normalizeImapUnicode(mailbox.name, client),
+      parentPath: mailbox.parentPath
+        ? normalizeImapUnicode(mailbox.parentPath, client)
+        : mailbox.parentPath,
+    }));
+    const existingExternalIdsByNormalizedId = new Map<string, string>();
+
+    for (const folder of existingFolders) {
+      if (isDefined(folder.externalId)) {
+        existingExternalIdsByNormalizedId.set(
+          normalizeImapUnicode(folder.externalId, client),
+          folder.externalId,
+        );
+      }
+    }
+
     const folders: DiscoveredMessageFolder[] = [];
     const pathToExternalIdMap = new Map<string, string>();
     const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
+    const sentFolderPath = isDefined(sentFolder)
+      ? normalizeImapUnicode(sentFolder.path, client)
+      : undefined;
 
     const sentMailbox = isDefined(sentFolder)
-      ? mailboxList.find((mailbox) => mailbox.path === sentFolder.path)
+      ? normalizedMailboxList.find((mailbox) => mailbox.path === sentFolderPath)
       : undefined;
 
     if (
       isDefined(sentFolder) &&
+      isDefined(sentFolderPath) &&
       isDefined(sentMailbox) &&
       this.isMailboxSelectable(sentMailbox)
     ) {
       const uidValidity = await this.getUidValidity(client, sentMailbox);
 
-      const externalId = uidValidity
-        ? `${sentFolder.path}:${uidValidity.toString()}`
-        : sentFolder.path;
+      const normalizedExternalId = uidValidity
+        ? `${sentFolderPath}:${uidValidity.toString()}`
+        : sentFolderPath;
+      const externalId =
+        existingExternalIdsByNormalizedId.get(normalizedExternalId) ??
+        normalizedExternalId;
 
-      pathToExternalIdMap.set(sentFolder.path, externalId);
+      pathToExternalIdMap.set(sentFolderPath, externalId);
 
       folders.push({
         externalId,
-        name: sentFolder.name,
+        name: sentMailbox.name,
         isSynced: true,
         isSentFolder: true,
         parentFolderId: sentMailbox?.parentPath || null,
       });
     }
 
-    for (const mailbox of mailboxList) {
-      if (!this.isValidMailbox(mailbox, folders)) {
+    for (const mailbox of normalizedMailboxList) {
+      if (!this.isValidMailbox(client, mailbox, folders)) {
         if (!pathToExternalIdMap.has(mailbox.path)) {
           pathToExternalIdMap.set(mailbox.path, mailbox.path);
         }
@@ -104,9 +135,12 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       }
 
       const uidValidity = await this.getUidValidity(client, mailbox);
-      const externalId = uidValidity
+      const normalizedExternalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
+      const externalId =
+        existingExternalIdsByNormalizedId.get(normalizedExternalId) ??
+        normalizedExternalId;
 
       pathToExternalIdMap.set(mailbox.path, externalId);
 
@@ -159,6 +193,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   }
 
   private isValidMailbox(
+    client: ImapFlow,
     mailbox: ListResponse,
     existingFolders: DiscoveredMessageFolder[],
   ): boolean {
@@ -167,7 +202,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     const isDuplicate = existingFolders.some(
-      (folder) => getImapFolderPath(folder?.externalId) === mailbox.path,
+      (folder) => getImapFolderPath(folder.externalId, client) === mailbox.path,
     );
 
     return !isDuplicate;

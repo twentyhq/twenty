@@ -27,11 +27,12 @@ export type CronTriggerSettings = {
 export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
+  batchMode?: boolean;
 };
 
 export type HttpRouteTriggerSettings = {
   path: string;
-  httpMethod: HTTPMethod | `${HTTPMethod}`;
+  httpMethod: HTTPMethod;
   isAuthRequired: boolean;
   forwardedRequestHeaders?: string[];
 };

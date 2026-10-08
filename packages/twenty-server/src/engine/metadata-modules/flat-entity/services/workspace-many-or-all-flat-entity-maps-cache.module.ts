@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
+import { WorkspaceOrmFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-orm-flat-field-metadata-map-cache.service';
 import { WorkspaceFlatFieldPermissionMapCacheService } from 'src/engine/metadata-modules/flat-field-permission/services/workspace-flat-field-permission-map-cache.service';
 import { WorkspaceFlatIndexMapCacheService } from 'src/engine/metadata-modules/flat-index-metadata/services/workspace-flat-index-map-cache.service';
 import { WorkspaceFlatObjectMetadataMapCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-flat-object-metadata-map-cache.service';
@@ -22,63 +20,15 @@ import { WorkspaceFlatViewFilterGroupMapCacheService } from 'src/engine/metadata
 import { WorkspaceFlatViewFilterMapCacheService } from 'src/engine/metadata-modules/flat-view-filter/services/workspace-flat-view-filter-map-cache.service';
 import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-group/services/workspace-flat-view-group-map-cache.service';
 import { WorkspaceFlatSearchFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/workspace-flat-search-field-metadata-map-cache.service';
+import { WorkspaceFlatTimelineActivityTypeMapCacheService } from 'src/engine/metadata-modules/flat-timeline-activity-type/services/workspace-flat-timeline-activity-type-map-cache.service';
+import { WorkspaceFlatSettingsMenuItemMapCacheService } from 'src/engine/metadata-modules/flat-settings-menu-item/services/workspace-flat-settings-menu-item-map-cache.service';
+import { WorkspaceFlatValidationRuleMapCacheService } from 'src/engine/metadata-modules/flat-validation-rule/services/workspace-flat-validation-rule-map-cache.service';
 import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
-import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [
-    WorkspaceCacheModule,
-    TypeOrmModule.forFeature([
-      ViewEntity,
-      ViewFieldEntity,
-      ViewFieldGroupEntity,
-      ViewFilterEntity,
-      ViewFilterGroupEntity,
-      ViewGroupEntity,
-      ViewSortEntity,
-      IndexMetadataEntity,
-      IndexFieldMetadataEntity,
-      FieldMetadataEntity,
-      ObjectMetadataEntity,
-      ObjectPermissionEntity,
-      FieldPermissionEntity,
-      PageLayoutEntity,
-      PageLayoutTabEntity,
-      PageLayoutWidgetEntity,
-      RolePermissionFlagEntity,
-      PermissionFlagEntity,
-      RowLevelPermissionPredicateEntity,
-      RowLevelPermissionPredicateGroupEntity,
-      ApplicationEntity,
-      RoleEntity,
-      FrontComponentEntity,
-      SearchFieldMetadataEntity,
-    ]),
-  ],
+  imports: [WorkspaceCacheModule],
   providers: [
     WorkspaceManyOrAllFlatEntityMapsCacheService,
     WorkspaceFlatObjectMetadataMapCacheService,
@@ -89,6 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatViewFilterGroupMapCacheService,
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
+    WorkspaceOrmFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,
@@ -101,47 +52,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatPageLayoutWidgetMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
-    provideWorkspaceScopedRepository(PermissionFlagEntity),
-    provideWorkspaceScopedRepository(SearchFieldMetadataEntity),
-    provideWorkspaceScopedRepository(IndexMetadataEntity),
-    provideWorkspaceScopedRepository(ViewEntity),
-    provideWorkspaceScopedRepository(ViewFieldEntity),
-    provideWorkspaceScopedRepository(ViewFieldGroupEntity),
-    provideWorkspaceScopedRepository(ViewFilterEntity),
-    provideWorkspaceScopedRepository(ViewFilterGroupEntity),
-    provideWorkspaceScopedRepository(ViewGroupEntity),
-    provideWorkspaceScopedRepository(ViewSortEntity),
-    provideWorkspaceScopedRepository(PageLayoutEntity),
-    provideWorkspaceScopedRepository(PageLayoutTabEntity),
-    provideWorkspaceScopedRepository(PageLayoutWidgetEntity),
-    provideWorkspaceScopedRepository(ObjectPermissionEntity),
-    provideWorkspaceScopedRepository(FieldPermissionEntity),
-    provideWorkspaceScopedRepository(RoleEntity),
-    provideWorkspaceScopedRepository(RowLevelPermissionPredicateEntity),
-    provideWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity),
+    WorkspaceFlatTimelineActivityTypeMapCacheService,
+    WorkspaceFlatSettingsMenuItemMapCacheService,
+    WorkspaceFlatValidationRuleMapCacheService,
   ],
-  exports: [
-    WorkspaceManyOrAllFlatEntityMapsCacheService,
-    WorkspaceFlatObjectMetadataMapCacheService,
-    WorkspaceFlatViewMapCacheService,
-    WorkspaceFlatViewFieldMapCacheService,
-    WorkspaceFlatViewFieldGroupMapCacheService,
-    WorkspaceFlatViewFilterMapCacheService,
-    WorkspaceFlatViewFilterGroupMapCacheService,
-    WorkspaceFlatIndexMapCacheService,
-    WorkspaceFlatFieldMetadataMapCacheService,
-    WorkspaceFlatViewGroupMapCacheService,
-    WorkspaceFlatObjectPermissionMapCacheService,
-    WorkspaceFlatFieldPermissionMapCacheService,
-    WorkspaceFlatRolePermissionFlagMapCacheService,
-    WorkspaceFlatPermissionFlagMapCacheService,
-    WorkspaceFlatViewSortMapCacheService,
-    WorkspaceFlatSearchFieldMetadataMapCacheService,
-    WorkspaceFlatPageLayoutMapCacheService,
-    WorkspaceFlatPageLayoutTabMapCacheService,
-    WorkspaceFlatPageLayoutWidgetMapCacheService,
-    WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
-    WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
-  ],
+  exports: [WorkspaceManyOrAllFlatEntityMapsCacheService],
 })
 export class WorkspaceManyOrAllFlatEntityMapsCacheModule {}

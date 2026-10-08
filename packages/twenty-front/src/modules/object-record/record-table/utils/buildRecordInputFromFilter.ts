@@ -30,6 +30,11 @@ export const buildRecordInputFromFilter = ({
       return;
     }
 
+    // A relation-traversal filter constrains the related record, not a column to prefill.
+    if (isDefined(filter.relationTargetFieldMetadataId)) {
+      return;
+    }
+
     if (fieldMetadataItem.type === 'RELATION') {
       const value = buildValueFromFilter({
         filter,

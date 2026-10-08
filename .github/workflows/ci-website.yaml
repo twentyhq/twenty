@@ -21,6 +21,7 @@ jobs:
         yarn.lock
         packages/twenty-website/**
         packages/twenty-shared/**
+        packages/twenty-ui/**
   website-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -50,5 +51,5 @@ jobs:
     needs: [changed-files-check, website-task]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

@@ -1,19 +1,18 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconUserCircle } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 
 const StyledUploader = styled.button`
   align-items: center;
@@ -52,25 +51,19 @@ export const OnboardingProfilePictureUploader = ({
 }: OnboardingProfilePictureUploaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const [uploadPicture] = useMutation(
-    UploadWorkspaceMemberProfilePictureDocument,
-  );
+  const { uploadWorkspaceMemberProfilePicture } =
+    useUploadWorkspaceMemberProfilePicture();
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File) => {
     try {
-      const { data } = await uploadPicture({ variables: { file } });
-
-      const uploadedFile = data?.uploadWorkspaceMemberProfilePicture;
-      if (!isDefined(uploadedFile)) {
-        throw new Error('Avatar upload failed');
-      }
+      const uploadedFile = await uploadWorkspaceMemberProfilePicture(file);
 
       const newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolder.CorePicture}/${uploadedFile.id}`;
 
@@ -85,8 +78,9 @@ export const OnboardingProfilePictureUploader = ({
           : previous,
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error ? error.message : t`Failed to upload picture`,
       });
     }

@@ -5,7 +5,6 @@ import {
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
-import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import {
   type EachTestingContext,
@@ -45,12 +44,6 @@ describe('View Field Resolver - Successful Create Operations', () => {
       });
 
       expect(deleteViewField.deletedAt).not.toBeNull();
-      await destroyOneViewField({
-        expectToFail: false,
-        input: {
-          id: createdViewFieldId,
-        },
-      });
       createdViewFieldId = undefined;
     }
   });

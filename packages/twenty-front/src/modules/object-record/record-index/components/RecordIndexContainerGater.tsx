@@ -16,13 +16,13 @@ import { RecordIndexViewFieldsSSESyncEffect } from '@/object-record/record-index
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndexDragSelectBoundaryClass';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -31,16 +31,18 @@ const StyledIndexContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordIndexContainerGater = () => {
-  const store = useStore();
+export const RecordIndexContainerGater = memo(() => {
+  const setLastShowPageRecordId = useSetAtomComponentState(
+    lastShowPageRecordIdState,
+  );
 
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
   const handleIndexRecordsLoaded = useCallback(() => {
     // TODO: find a better way to reset this state ?
-    store.set(lastShowPageRecordIdState.atom, null);
-  }, [store]);
+    setLastShowPageRecordId(null);
+  }, [setLastShowPageRecordId]);
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
@@ -64,61 +66,59 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   );
 
-  return (
-    <>
-      <RecordIndexContextProvider
-        value={{
-          objectPermissionsByObjectMetadataId,
-          recordIndexId,
-          viewBarInstanceId: recordIndexId,
-          objectNamePlural: objectMetadataItem.namePlural,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectMetadataItem,
-          onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl,
-          recordFieldByFieldMetadataItemId,
-          labelIdentifierFieldMetadataItem,
-          fieldMetadataItemByFieldMetadataItemId,
-          fieldDefinitionByFieldMetadataItemId,
-        }}
-      >
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
-        >
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={recordIndexId}
-          >
-            <CommandMenuComponentInstanceContext.Provider
-              value={{
-                instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
-              }}
-            >
-              <PageTitle title={objectMetadataItem.labelPlural} />
-              <PageCardLayout
-                header={<RecordIndexPageHeader />}
-                secondaryBar={
-                  hasObjectReadPermissions && <RecordIndexViewBar />
-                }
-              >
-                <StyledIndexContainer
-                  className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
-                >
-                  {hasObjectReadPermissions ? (
-                    <>
-                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                      <RecordIndexContainer />
-                    </>
-                  ) : (
-                    <RecordIndexEmptyStateNotShared />
-                  )}
-                </StyledIndexContainer>
-              </PageCardLayout>
-            </CommandMenuComponentInstanceContext.Provider>
-          </RecordComponentInstanceContextsWrapper>
-          <RecordIndexLoadBaseOnContextStoreEffect />
-          <RecordIndexViewFieldsSSESyncEffect />
-        </ViewComponentInstanceContext.Provider>
-      </RecordIndexContextProvider>
-    </>
+  const indexContent = (
+    <StyledIndexContainer className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}>
+      {hasObjectReadPermissions ? (
+        <>
+          <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+          <RecordIndexContainer />
+        </>
+      ) : (
+        <RecordIndexEmptyStateNotShared />
+      )}
+    </StyledIndexContainer>
   );
-};
+
+  return (
+    <RecordIndexContextProvider
+      value={{
+        objectPermissionsByObjectMetadataId,
+        recordIndexId,
+        viewBarInstanceId: recordIndexId,
+        objectNamePlural: objectMetadataItem.namePlural,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectMetadataItem,
+        onIndexRecordsLoaded: handleIndexRecordsLoaded,
+        indexIdentifierUrl,
+        recordFieldByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        fieldMetadataItemByFieldMetadataItemId,
+        fieldDefinitionByFieldMetadataItemId,
+      }}
+    >
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: recordIndexId }}
+      >
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={recordIndexId}
+        >
+          <CommandMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
+            }}
+          >
+            <PageTitle title={objectMetadataItem.labelPlural} />
+            <PageCardLayout
+              header={<RecordIndexPageHeader />}
+              secondaryBar={hasObjectReadPermissions && <RecordIndexViewBar />}
+            >
+              {indexContent}
+            </PageCardLayout>
+          </CommandMenuComponentInstanceContext.Provider>
+        </RecordComponentInstanceContextsWrapper>
+        <RecordIndexLoadBaseOnContextStoreEffect />
+        <RecordIndexViewFieldsSSESyncEffect />
+      </ViewComponentInstanceContext.Provider>
+    </RecordIndexContextProvider>
+  );
+});

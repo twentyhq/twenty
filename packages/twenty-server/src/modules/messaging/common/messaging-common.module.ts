@@ -6,13 +6,12 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       MessageFolderEntity,
@@ -22,7 +21,10 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
     ConnectedAccountModule,
     MetricsModule,
   ],
-  providers: [MessageChannelSyncStatusService],
+  providers: [
+    MessageChannelSyncStatusService,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
+  ],
   exports: [MessageChannelSyncStatusService],
 })
 export class MessagingCommonModule {}

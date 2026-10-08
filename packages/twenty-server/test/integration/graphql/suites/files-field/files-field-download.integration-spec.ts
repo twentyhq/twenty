@@ -1,13 +1,12 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const deleteFileMutation = gql`
@@ -51,7 +50,7 @@ type UploadedFile = {
 };
 
 const deleteFile = async (fileId: string): Promise<void> => {
-  await makeMetadataAPIRequest({
+  await makeMetadataApiRequest({
     query: deleteFileMutation,
     variables: { fileId },
   });
@@ -67,23 +66,15 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     content: string,
     contentType: string,
   ): Promise<UploadedFile> => {
-    const response = await makeMetadataAPIRequestWithFileUpload(
-      {
-        query: uploadFilesFieldFileMutation,
-        variables: { file: null, fieldMetadataId: createdFieldMetadataId },
-      },
-      {
-        field: 'file',
-        buffer: Buffer.from(content),
-        filename,
-        contentType,
-      },
-    );
-
-    expect(response.body.errors).toBeUndefined();
+    const uploadedFile = await uploadFileWithDirectUpload({
+      filename,
+      content: Buffer.from(content),
+      fileFolder: 'FilesField',
+      fieldMetadataId: createdFieldMetadataId,
+    });
 
     return {
-      id: response.body.data.uploadFilesFieldFile.id,
+      id: uploadedFile.id,
       contentType,
       content,
     };
@@ -163,7 +154,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     uploadedFiles.push(textFile);
 
-    const createResponse = await makeGraphqlAPIRequest({
+    const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
         data: [
@@ -191,7 +182,6 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(fileUrl).toBeDefined();
     expect(fileId).toBe(textFile.id);
 
-    // Extract path from full URL (remove domain)
     const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(
@@ -201,7 +191,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(downloadResponse.status).toBe(200);
     expect(downloadResponse.text).toBe(testFileContent);
 
-    await makeGraphqlAPIRequest({
+    await makeGraphqlApiRequest({
       query: deleteRecordsQuery,
       variables: {
         filter: { id: { eq: createdRecord.id } },
@@ -219,7 +209,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     uploadedFiles.push(textFile);
 
-    const createResponse = await makeGraphqlAPIRequest({
+    const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
         data: [
@@ -246,7 +236,6 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(fileUrl).toBeDefined();
     expect(createdRecord.filesField[0].extension).toBe('.txt');
 
-    // Extract path from full URL (remove domain)
     const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(
@@ -256,7 +245,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(downloadResponse.status).toBe(200);
     expect(downloadResponse.text).toBe(testFileContent);
 
-    await makeGraphqlAPIRequest({
+    await makeGraphqlApiRequest({
       query: deleteRecordsQuery,
       variables: {
         filter: { id: { eq: createdRecord.id } },
@@ -273,7 +262,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     uploadedFiles.push(textFile);
 
-    const createResponse = await makeGraphqlAPIRequest({
+    const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
         data: [
@@ -301,7 +290,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     expect(downloadResponse.status).toBe(403);
 
-    await makeGraphqlAPIRequest({
+    await makeGraphqlApiRequest({
       query: deleteRecordsQuery,
       variables: {
         filter: { id: { eq: createdRecord.id } },
@@ -318,7 +307,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     uploadedFiles.push(textFile);
 
-    const createResponse = await makeGraphqlAPIRequest({
+    const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
         data: [
@@ -346,7 +335,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
 
     expect(downloadResponse.status).toBe(403);
 
-    await makeGraphqlAPIRequest({
+    await makeGraphqlApiRequest({
       query: deleteRecordsQuery,
       variables: {
         filter: { id: { eq: createdRecord.id } },

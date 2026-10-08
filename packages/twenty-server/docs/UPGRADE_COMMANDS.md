@@ -110,19 +110,31 @@ The base class `ActiveOrSuspendedWorkspaceCommandRunner` handles workspace itera
 
 Commands that build a metadata migration go through `WorkspaceMigrationValidateBuildAndRunService`. Two entry points exist:
 
-- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so new commands should use it.
+- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so commands that create or mutate custom or application-owned metadata should use it.
 - `validateBuildAndRunLegacyWorkspaceMigration`: skips side-effect expansion and applies the matrix literally, exactly as it was authored.
 
 The side-effect engine landed in v2.19. Commands authored before then declared their companions explicitly and were never designed to flow through the engine. Running them through it retroactively changes their behavior: it can hard-fail on reserved-identifier collisions (`RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER`) and silently create rows the command never intended (for example, the deterministic `searchFieldMetadata` rows that the standalone `upgrade:2-16:backfill-search-field-metadata` backfill then re-inserts, hitting `IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE`).
 
+twenty standard metadata never flows through the engine either: `twenty-standard` declares its companions itself and syncs through the FromTo path. An upgrade command that mutates twenty standard entities (`isSystemBuild: true` with the twenty standard application universal identifier, for example updating a standard `commandMenuItem`) must apply its matrix literally with the legacy method whatever its target version, as `upgrade:2-41:move-message-campaign-commands-to-campaign-flag` and `upgrade:2-42:unpin-creation-commands-on-record-selection` do.
+
 Rule of thumb:
 
+- Operations on **twenty standard** metadata, any version → use the **legacy** method.
 - Target version **< 2.19** → use the **legacy** method.
-- Target version **>= 2.19** → use the default side-effect method.
+- Target version **>= 2.19** on custom or application-owned metadata → use the default side-effect method.
 
 All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-recording-standard-objects`: it builds its create-set from the static twenty-standard definition (which declares all of `callRecording`'s fields, including the `searchVector` system field) and runs it through the legacy path so nothing is injected on top. Its matrix contains no `searchFieldMetadata` operations; the deterministic rows are created later in the same upgrade pipeline by `upgrade:2-16:backfill-search-field-metadata`, which derives them from the standard definition.
 
 Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static declaration plus a backfill for already-upgraded workspaces land in a follow-up (twentyhq/core-team-issues#2672), which must ship in the same release as this legacy path.
+
+## Keeping command code in the command
+
+An upgrade command is frozen once released: self-hosters can jump several versions in one upgrade, so the code that runs for them is whatever the current release ships for that old command. Two rules follow.
+
+- **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. The `twenty/no-runtime-import-from-upgrade-command` lint rule rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
+- **Runtime code never branches on migration state.** Do not teach the runtime to serve both the old and the new shape. When a runtime must not run against a workspace mid-migration, fence it with one explicit check and remove that check once the command leaves the cross-upgrade window.
+
+A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
 ## Execution Order
 
@@ -134,6 +146,12 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+## Dry run
+
+`upgrade --dry-run` stops as soon as it reaches an instance command, logging `Dry run stopped before instance step "<name>"`. It does not execute that command or any later step, and records nothing in `upgradeMigration`.
+
+If the run starts within a workspace segment, pending workspace commands run with `options.dryRun` set until the next instance command or the end of the sequence. Each workspace command is responsible for simulating its own changes. Dry runs cannot preview the full upgrade sequence because later workspace commands may depend on schema changes made by preceding instance commands.
+
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
 Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.
@@ -144,19 +162,19 @@ Expect the first Ctrl+C to look like it did nothing while a long step is running
 
 ### Running detached
 
-A foreground `upgrade` dies with the shell that started it, so a dropped `kubectl exec` tunnel, a closed laptop or an expired VPN kills the run. `scripts/upgrade-background.sh` gives it its own session with no controlling terminal and streams the output from a log file instead. Use it for long upgrades over `kubectl exec` or SSH; foreground is still right locally and in CI.
+A foreground command dies with the shell that started it, so a dropped `kubectl exec` tunnel, a closed laptop or an expired VPN kills the run. `scripts/command-background.sh` wraps any nest command in its own session with no controlling terminal and streams the output from a log file instead. Use it for long runs (typically `upgrade`) over `kubectl exec` or SSH; foreground is still right locally and in CI.
 
 ```bash
-yarn upgrade:background [args]   # start detached, then stream the log
-yarn upgrade:background:logs     # re-attach from another shell
-yarn upgrade:background:stop     # graceful stop; --now immediate, --force SIGKILL
+yarn command:prod:background <command> [args]   # start detached, then stream the log
+yarn command:prod:background:logs               # re-attach from another shell
+yarn command:prod:background:stop               # graceful stop; --now immediate, --force SIGKILL
 ```
 
-`[args]` is forwarded verbatim to `upgrade`: `-d/--dry-run`, `-v/--verbose`, `-w/--workspace-id <id>` (repeatable), `--start-from-workspace-id <id>`, `--workspace-count-limit <n>`. The two workspace selectors are mutually exclusive. `--include-slow` is not among them, it belongs to `run-instance-commands`.
+`<command> [args]` is forwarded verbatim to `node dist/command/command`, so `yarn command:prod:background upgrade -w <id>` is the detached form of `yarn command:prod upgrade -w <id>`. For `upgrade` the accepted args are `-d/--dry-run`, `-v/--verbose`, `-w/--workspace-id <id>` (repeatable), `--start-from-workspace-id <id>`, `--workspace-count-limit <n>`. The two workspace selectors are mutually exclusive. `--include-slow` is not among them, it belongs to `run-instance-commands`.
 
 Ctrl+C detaches the stream only, and `logs` takes any number of concurrent readers. `logs` reports whether a run is alive before streaming, and on a finished one prints the verdict and the log tail rather than following a log that will never grow again: a segment can run for minutes without printing, so a silent log alone cannot tell a slow step from a dead process.
 
-`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code.
+`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code. Graceful handling belongs to the command, not the wrapper: `upgrade` traps `SIGTERM` and stops at its next boundary, but a command without a handler dies immediately with the same exit `143`.
 
 | Invocation | Signal | Effect |
 | --- | --- | --- |
@@ -179,7 +197,7 @@ A graceful stop is always safe to rerun: nothing is rolled back and the run resu
 Limits of this mode:
 
 - Ctrl+C cannot reach a detached run, so `stop` is the only graceful entry point and `130` only ever appears on foreground runs.
-- Log and PID files live in `/tmp` in the container (`TWENTY_UPGRADE_LOG_FILE`, `TWENTY_UPGRADE_PID_FILE`) and are lost with the pod.
+- Log and PID files live in `/tmp` in the container (`TWENTY_COMMAND_LOG_FILE`, `TWENTY_COMMAND_PID_FILE`) and are lost with the pod. There is a single PID and log file, so the wrapper runs one background command at a time per machine, enforced by a `flock` on `<pid file>.lock` held for the lifetime of the run.
 - The start refusal only sees this container. Nothing in `upgrade` prevents two concurrent sequences either: `upgradeMigration` has no in-progress state and the sequence runner takes no advisory lock. One upgrade at a time is an operational rule, not an enforced one.
 - Needs `setsid`, present in the runtime image and on Linux, absent on macOS where `start` refuses and points at the foreground command.
 - `terminationGracePeriodSeconds` does not apply. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion the detached process is torn down without ever receiving `SIGTERM`.
@@ -193,6 +211,8 @@ npx nx run twenty-server:database:migrate:generate --name <name> --type fast --v
 ```
 
 It registers and boots (versions are validated against `TWENTY_ALL_VERSIONS`) but stays **dormant** — the sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (previous + current). It activates automatically when `nx version:bump` promotes the version to current.
+
+CI rejects changes to next version directories by default, so add the `ci:allow-next-version-upgrade-mutation` label to the PR to confirm the command is meant for a future version.
 
 **Caveat:** `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator pointing at a still-dormant next-version command fails boot with `unknown-step-name`. For a deferred drop, keep the entity's `WasRemovedInUpgrade<T>` type wrapper now and add the decorator only once the version is current.
 

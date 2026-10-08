@@ -21,12 +21,11 @@ import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto'
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
-const hashSSOExchangeToken = (ssoExchangeToken: string) =>
+const hashSsoExchangeToken = (ssoExchangeToken: string) =>
   crypto.createHash('sha256').update(ssoExchangeToken).digest('hex');
 
-// A single opaque error for missing, expired and already-consumed tokens:
-// distinguishing them would turn this endpoint into a redemption oracle.
-const buildInvalidSSOExchangeTokenException = () =>
+// One opaque error for every failure, or this endpoint becomes a redemption oracle
+const buildInvalidSsoExchangeTokenException = () =>
   new AuthException(
     'Invalid SSO exchange token',
     AuthExceptionCode.INVALID_INPUT,
@@ -34,14 +33,14 @@ const buildInvalidSSOExchangeTokenException = () =>
   );
 
 @Injectable()
-export class SSOExchangeTokenService {
+export class SsoExchangeTokenService {
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async generateSSOExchangeToken({
+  async generateSsoExchangeToken({
     userId,
     authProvider,
   }: {
@@ -59,8 +58,8 @@ export class SSOExchangeTokenService {
       this.appTokenRepository.create({
         userId,
         expiresAt,
-        type: AppTokenType.SSOExchangeToken,
-        value: hashSSOExchangeToken(plainToken),
+        type: AppTokenType.SsoExchangeToken,
+        value: hashSsoExchangeToken(plainToken),
         context: { authProvider },
       }),
     );
@@ -71,24 +70,21 @@ export class SSOExchangeTokenService {
     };
   }
 
-  async validateAndConsumeSSOExchangeTokenOrThrow(
+  async validateAndConsumeSsoExchangeTokenOrThrow(
     ssoExchangeToken: string,
   ): Promise<{ userId: string; authProvider: AuthProviderEnum }> {
     const appToken = await this.appTokenRepository.findOneBy({
-      value: hashSSOExchangeToken(ssoExchangeToken),
-      type: AppTokenType.SSOExchangeToken,
+      value: hashSsoExchangeToken(ssoExchangeToken),
+      type: AppTokenType.SsoExchangeToken,
       revokedAt: IsNull(),
       deletedAt: IsNull(),
     });
 
     if (!isDefined(appToken)) {
-      throw buildInvalidSSOExchangeTokenException();
+      throw buildInvalidSsoExchangeTokenException();
     }
 
-    // Deleting the row is the single-use claim: under concurrent redemption
-    // only the request whose delete affects the row proceeds to mint a token.
-    // Re-checking revokedAt/deletedAt here keeps the claim atomic with
-    // revocation: a token revoked after the lookup cannot redeem.
+    // The delete is the single-use claim; rechecking revokedAt/deletedAt keeps it atomic with revocation
     const { affected } = await this.appTokenRepository.delete({
       id: appToken.id,
       revokedAt: IsNull(),
@@ -96,18 +92,18 @@ export class SSOExchangeTokenService {
     });
 
     if (affected !== 1) {
-      throw buildInvalidSSOExchangeTokenException();
+      throw buildInvalidSsoExchangeTokenException();
     }
 
     if (new Date() > appToken.expiresAt) {
-      throw buildInvalidSSOExchangeTokenException();
+      throw buildInvalidSsoExchangeTokenException();
     }
 
     if (
       !isDefined(appToken.userId) ||
       !isDefined(appToken.context?.authProvider)
     ) {
-      throw buildInvalidSSOExchangeTokenException();
+      throw buildInvalidSsoExchangeTokenException();
     }
 
     return {

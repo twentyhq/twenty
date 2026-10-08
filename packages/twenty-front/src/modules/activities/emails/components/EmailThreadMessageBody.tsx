@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Linkify from 'linkify-react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledThreadMessageBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: column;
   margin-top: ${themeCssVariables.spacing[4]};
   overflow-wrap: break-word;
   white-space: pre-line;
@@ -35,17 +33,19 @@ export const EmailThreadMessageBody = ({
   isDisplayed,
 }: EmailThreadMessageBodyProps) => {
   return (
-    <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>
-        <Linkify
-          options={{
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }}
-        >
-          {body}
-        </Linkify>
-      </StyledThreadMessageBody>
-    </AnimatedEaseInOut>
+    <Collapsible.Root open={isDisplayed}>
+      <Collapsible.Panel duration="fast">
+        <StyledThreadMessageBody>
+          <Linkify
+            options={{
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            }}
+          >
+            {body}
+          </Linkify>
+        </StyledThreadMessageBody>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

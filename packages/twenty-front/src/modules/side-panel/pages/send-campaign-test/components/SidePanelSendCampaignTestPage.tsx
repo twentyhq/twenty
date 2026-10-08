@@ -5,7 +5,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { useSendMessageCampaignTest } from '@/activities/emails/hooks/useSendMessageCampaignTest';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
@@ -16,7 +16,7 @@ import { sendCampaignTestCampaignIdComponentState } from '@/side-panel/pages/sen
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -88,14 +88,13 @@ export const SidePanelSendCampaignTestPage = () => {
         actions={[
           <Button
             key="send-test"
-            title={t`Send test email`}
-            Icon={IconSend}
-            variant="primary"
-            accent="blue"
-            size="small"
+            startIcon={<IconSend />}
+            size="sm"
             disabled={!canSend || loading}
             onClick={handleSend}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Send test email`}</Button>,
         ]}
       />
     </StyledContainer>

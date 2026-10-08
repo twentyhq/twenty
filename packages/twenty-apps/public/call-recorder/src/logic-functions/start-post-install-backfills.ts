@@ -4,43 +4,53 @@ import {
   type InstallPayload,
 } from 'twenty-sdk/define';
 
-import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
-import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
-import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
+import {
+  PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { enqueueWorkspaceDistributedJob } from 'src/logic-functions/data/enqueue-workspace-distributed-job.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
-// An app is allowed a single post-install hook, so the two backfills share it:
-// a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep and backfills summaries.
-type StartPostInstallBackfillsResult = {
-  calendarEventSweepOutcome: 'sweep-requested' | 'skipped-upgrade';
-  summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-requested';
-};
+type StartPostInstallBackfillsResult =
+  | { calendarEventSweepOutcome: 'sweep-enqueued' }
+  | { stuckRequestFollowUpDelayMs: number };
 
+// The async install hook is redelivered only for retryable failures.
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
 }: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
   if (isUndefined(previousVersion)) {
-    if (!(await requestUpcomingCalendarEventsReconciliation())) {
-      throw new Error(
-        '[call-recorder] Failed to start post-install backfills: upcoming calendar event sweep',
-      );
+    try {
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      });
+    } catch (error) {
+      throw buildRetryableStepFailure('post-install sweep kickoff', error);
     }
 
-    return {
-      calendarEventSweepOutcome: 'sweep-requested',
-      summaryBackfillOutcome: 'skipped-initial-install',
-    };
+    return { calendarEventSweepOutcome: 'sweep-enqueued' };
   }
 
-  if (!(await requestCallRecordingSummariesBackfill())) {
-    throw new Error(
-      '[call-recorder] Failed to start post-install backfills: call recording summary backfill',
-    );
+  // Requests that got stuck under an earlier version never had a follow-up.
+  const workspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(workspaceId)) {
+    throw new Error('workspace id unavailable');
   }
 
-  return {
-    calendarEventSweepOutcome: 'skipped-upgrade',
-    summaryBackfillOutcome: 'backfill-requested',
-  };
+  const { delayMs } = await enqueueWorkspaceDistributedJob({
+    workspaceId,
+    logicFunctionUniversalIdentifier:
+      PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    stepLabel: 'post-upgrade stuck request follow-up kickoff',
+  });
+
+  return { stuckRequestFollowUpDelayMs: delayMs };
 };
 
 export default definePostInstallLogicFunction({
@@ -48,7 +58,7 @@ export default definePostInstallLogicFunction({
     START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'start-post-install-backfills',
   description:
-    'Schedules recording bots for upcoming meetings on install, and backfills missing call recording summaries on upgrade.',
+    'Schedules recording bots for upcoming meetings when the app is installed, and follows up on requests left stuck by an earlier version when it is upgraded.',
   timeoutSeconds: 30,
   shouldRunOnVersionUpgrade: true,
   handler: startPostInstallBackfillsHandler,

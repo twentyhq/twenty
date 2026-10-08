@@ -3,7 +3,7 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();
@@ -22,11 +22,13 @@ export const NavigationDrawerOpenedSection = () => {
   }
 
   return (
-    <AnimatedExpandableContainer isExpanded>
-      <NavigationDrawerSectionForObjectMetadataItems
-        sectionTitle={t`Opened`}
-        objectMetadataItems={[objectMetadataItem]}
-      />
-    </AnimatedExpandableContainer>
+    <Collapsible.Root open>
+      <Collapsible.Panel>
+        <NavigationDrawerSectionForObjectMetadataItems
+          sectionTitle={t`Opened`}
+          objectMetadataItems={[objectMetadataItem]}
+        />
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

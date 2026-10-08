@@ -1,12 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { IconKey, IconRobot, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Checkbox } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components/layout';
+import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
@@ -49,7 +47,7 @@ export const SettingsRoleApplicability = ({
   onApplicabilityChange,
   isEditable,
 }: SettingsRoleApplicabilityProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const options = [
     {
@@ -60,7 +58,7 @@ export const SettingsRoleApplicability = ({
     {
       key: 'canBeAssignedToAgents' as const,
       label: t`Assignable to Agents`,
-      Icon: IconRobot,
+      Icon: IconLego,
     },
     {
       key: 'canBeAssignedToApiKeys' as const,
@@ -69,8 +67,8 @@ export const SettingsRoleApplicability = ({
     },
   ];
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Applicability`}
         description={t`Control which types of entities this role can be assigned to`}
       />
@@ -89,16 +87,17 @@ export const SettingsRoleApplicability = ({
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={option.label}
               checked={values[option.key]}
-              onChange={(event) => {
-                event.stopPropagation();
-                onApplicabilityChange(option.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                onApplicabilityChange(option.key, isChecked);
               }}
               disabled={!isEditable}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}
       </div>
-    </Section>
+    </Section.Root>
   );
 };

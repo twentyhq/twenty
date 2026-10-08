@@ -64,33 +64,7 @@ const mocks: MockedResponse[] = [
                   firstName
                   lastName
                 }
-                noteTargets {
-                  edges {
-                    node {
-                      __typename
-                      id
-                      note {
-                        __typename
-                        id
-                        title
-                      }
-                    }
-                  }
-                }
                 position
-                taskTargets {
-                  edges {
-                    node {
-                      __typename
-                      id
-                      task {
-                        __typename
-                        id
-                        title
-                      }
-                    }
-                  }
-                }
                 updatedAt
               }
               cursor

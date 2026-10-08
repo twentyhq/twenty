@@ -78,7 +78,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       'Ic2:instance:completed:1',
 
@@ -107,7 +106,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       'Ic2:instance:failed:1',
 
@@ -144,7 +142,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Wc1:${WS_1}:completed:1`,
@@ -173,7 +170,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       `Wc1:${WS_1}:completed:1`,
 
       // Barrier passes, runner executes Ic1
@@ -210,7 +206,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
 
       // Runner runs Ic2 (slow, no workspaces → skip data migration)
@@ -249,7 +244,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic0:instance:completed:1',
       `Ic0:${WS_1}:completed:1`,
 
@@ -297,7 +291,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Ic1:${WS_2}:completed:1`,
@@ -339,7 +332,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       `Wc0:${WS_1}:completed:1`,
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
@@ -381,7 +373,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Wc1:${WS_1}:failed:1`,
@@ -423,7 +414,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Wc1:${WS_1}:completed:1`,
@@ -466,7 +456,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Ic1:${WS_2}:completed:1`,
@@ -516,7 +505,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Wc1:${WS_1}:completed:1`,

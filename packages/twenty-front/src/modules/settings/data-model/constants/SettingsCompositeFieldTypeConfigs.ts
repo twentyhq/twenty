@@ -8,10 +8,10 @@ import {
   type FieldPhonesValue,
   type FieldRichTextValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
+  COMPOSITE_FIELD_SUB_FIELD_LABELS,
   COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
   CurrencyCode,
 } from 'twenty-shared/constants';

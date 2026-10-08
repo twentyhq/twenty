@@ -2,11 +2,9 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
-import { isRecordCalendarDayInDateRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateRange';
-import { isRecordCalendarDayInDateTimeRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateTimeRange';
-import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,10 +25,6 @@ export const calendarDayRecordIdsComponentFamilySelector =
       ({ get }) => {
         const calendarFieldMetadataId = get(
           recordIndexCalendarFieldMetadataIdComponentState,
-          { instanceId },
-        );
-        const calendarEndFieldMetadataId = get(
-          recordIndexCalendarEndFieldMetadataIdComponentState,
           { instanceId },
         );
 
@@ -56,14 +50,10 @@ export const calendarDayRecordIdsComponentFamilySelector =
           return [];
         }
 
-        const endFieldMetadataItem = objectMetadataItem.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === calendarEndFieldMetadataId,
+        const allRecordIds = get(
+          recordIndexRecordIdsByGroupComponentFamilyState,
+          { instanceId, familyKey: NO_RECORD_GROUP_FAMILY_KEY },
         );
-
-        const allRecordIds = get(recordCalendarRecordIdsComponentState, {
-          instanceId,
-        });
 
         const recordIds = allRecordIds.filter((recordId) => {
           const record = get(recordStoreFamilyState, recordId);
@@ -74,43 +64,18 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return false;
           }
 
-          if (fieldMetadataItem.type === FieldMetadataType.DATE) {
-            const recordStartDate = Temporal.PlainDate.from(recordDate);
-            const recordEndDateValue = isDefined(endFieldMetadataItem)
-              ? record?.[endFieldMetadataItem.name]
-              : undefined;
+          try {
+            const recordDay =
+              fieldMetadataItem.type === FieldMetadataType.DATE
+                ? Temporal.PlainDate.from(recordDate)
+                : Temporal.Instant.from(recordDate)
+                    .toZonedDateTimeISO(timeZone)
+                    .toPlainDate();
 
-            if (
-              endFieldMetadataItem?.type === FieldMetadataType.DATE &&
-              isNonEmptyString(recordEndDateValue)
-            ) {
-              try {
-                return isRecordCalendarDayInDateRange({
-                  day,
-                  startDate: recordStartDate,
-                  endDate: Temporal.PlainDate.from(recordEndDateValue),
-                });
-              } catch {
-                return isSamePlainDate(day, recordStartDate);
-              }
-            }
-
-            return isSamePlainDate(day, recordStartDate);
+            return isSamePlainDate(day, recordDay);
+          } catch {
+            return false;
           }
-
-          const recordEndDateValue = isDefined(endFieldMetadataItem)
-            ? record?.[endFieldMetadataItem.name]
-            : undefined;
-
-          return isRecordCalendarDayInDateTimeRange({
-            day,
-            startDateTime: recordDate,
-            endDateTime:
-              endFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
-                ? recordEndDateValue
-                : undefined,
-            timeZone,
-          });
         });
 
         if (

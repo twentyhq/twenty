@@ -8,15 +8,15 @@ import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/field
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 const StyledTopCardContentContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -24,14 +24,14 @@ const StyledTopCardContentContainer = styled.div`
 const StyledObjectSummaryCardContainer = styled.div`
   max-width: 480px;
 
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledObjectSummaryCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;
@@ -48,9 +48,9 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   }, [objectMetadataItem]);
 
   return (
-    <Card fullWidth>
+    <Card.Root fullWidth>
       <StyledTopCardContentContainer>
-        <CardContent divider>
+        <Card.Content divider>
           <SettingsDataModelCardTitle>
             <Trans>Preview</Trans>
           </SettingsDataModelCardTitle>
@@ -62,24 +62,24 @@ export const SettingsDataModelObjectSettingsFormCard = ({
             />
           ) : (
             <StyledObjectSummaryCardContainer>
-              <Card>
+              <Card.Root>
                 <StyledObjectSummaryCardContentContainer>
-                  <CardContent>
+                  <Card.Content>
                     <SettingsDataModelObjectPreview
                       objectMetadataItems={[objectMetadataItem]}
                     />
-                  </CardContent>
+                  </Card.Content>
                 </StyledObjectSummaryCardContentContainer>
-              </Card>
+              </Card.Root>
             </StyledObjectSummaryCardContainer>
           )}
-        </CardContent>
+        </Card.Content>
       </StyledTopCardContentContainer>
-      <CardContent>
+      <Card.Content>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
         />
-      </CardContent>
-    </Card>
+      </Card.Content>
+    </Card.Root>
   );
 };

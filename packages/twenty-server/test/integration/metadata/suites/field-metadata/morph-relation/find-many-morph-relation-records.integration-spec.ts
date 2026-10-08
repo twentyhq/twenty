@@ -1,5 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -136,21 +136,6 @@ xdescribe('findMany morph relation records', () => {
         type: FieldMetadataType.MORPH_RELATION,
       }),
     },
-    // {
-    //   title:
-    //     'should find many records with a MORPH_RELATION field type ONE_TO_MANY',
-    //   context: ({
-    //     objectMetadataId,
-    //     firstTargetObjectMetadataId,
-    //     secondTargetObjectMetadataId,
-    //   }) => ({
-    //     relationType: RelationType.ONE_TO_MANY,
-    //     objectMetadataId,
-    //     firstTargetObjectMetadataId,
-    //     secondTargetObjectMetadataId,
-    //     type: FieldMetadataType.MORPH_RELATION,
-    //   }),
-    // },
   ];
 
   it.each(eachTestingContextArray)('$title', async ({ context }) => {
@@ -188,48 +173,18 @@ xdescribe('findMany morph relation records', () => {
     }
   `;
 
-    // const ONE_TO_MANY_GQL_FIELDS = `
-    //   id
-    //   name
-    //   ownerPersonId
-    //   ownerPerson {
-    //     edges {
-    //       node {
-    //         id
-    //         name
-    //       }
-    //     }
-    //   }
-    //   ownerCompanyId
-    //   ownerCompany {
-    //     edges {
-    //       node {
-    //         id
-    //         name
-    //       }
-    //     }
-    //   }
-    // `;
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'opportunityForMorphRelation',
       objectMetadataPluralName: 'opportunitiesForMorphRelation',
       gqlFields: MANY_TO_ONE_GQL_FIELDS,
     });
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(
       response.body.data.opportunitiesForMorphRelation.edges,
     ).toBeDefined();
-    // const isManyToOne =
-    //   contextPayload.relationType === RelationType.MANY_TO_ONE;
-
-    // if (isManyToOne) {
-    //   );
-    // } else {
-
-    // }
 
     await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },

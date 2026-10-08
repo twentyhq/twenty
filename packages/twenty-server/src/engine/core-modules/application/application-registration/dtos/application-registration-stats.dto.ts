@@ -14,6 +14,9 @@ export class ApplicationRegistrationStatsDTO {
   @Field(() => Int)
   activeInstalls: number;
 
+  @Field(() => Int)
+  suspendedInstalls: number;
+
   @Field(() => String, { nullable: true })
   mostInstalledVersion: string | null;
 

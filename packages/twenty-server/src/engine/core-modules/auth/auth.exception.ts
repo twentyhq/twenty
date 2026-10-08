@@ -14,6 +14,7 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
   CLIENT_NOT_FOUND: 'CLIENT_NOT_FOUND',
   WORKSPACE_NOT_FOUND: 'WORKSPACE_NOT_FOUND',
+  WORKSPACE_SUSPENDED: 'WORKSPACE_SUSPENDED',
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   INVALID_INPUT: 'INVALID_INPUT',
   FORBIDDEN_EXCEPTION: 'FORBIDDEN_EXCEPTION',
@@ -50,6 +51,8 @@ const getAuthExceptionUserFriendlyMessage = (
       return msg`Email is not verified.`;
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
+    case AuthExceptionCode.WORKSPACE_SUSPENDED:
+      return msg`This workspace is suspended. Choose a plan to reactivate it.`;
     case AuthExceptionCode.APPLICATION_NOT_FOUND:
       return msg`Application not found.`;
     case AuthExceptionCode.INVALID_INPUT:
@@ -93,6 +96,47 @@ const getAuthExceptionUserFriendlyMessage = (
   }
 };
 
+const getAuthExceptionStatusCode = (
+  code: keyof typeof AuthExceptionCode,
+): number => {
+  switch (code) {
+    case AuthExceptionCode.CLIENT_NOT_FOUND:
+      return 404;
+    case AuthExceptionCode.INVALID_INPUT:
+      return 400;
+    case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+    case AuthExceptionCode.WORKSPACE_SUSPENDED:
+    case AuthExceptionCode.INSUFFICIENT_SCOPES:
+    case AuthExceptionCode.OAUTH_ACCESS_DENIED:
+    case AuthExceptionCode.SSO_AUTH_FAILED:
+    case AuthExceptionCode.USE_SSO_AUTH:
+    case AuthExceptionCode.SIGNUP_DISABLED:
+    case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
+    case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
+    case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
+    case AuthExceptionCode.EMAIL_NOT_VERIFIED:
+    case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
+    case AuthExceptionCode.USER_ALREADY_EXISTS:
+    case AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID:
+      return 403;
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED:
+    case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
+    case AuthExceptionCode.INVALID_DATA:
+    case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
+    case AuthExceptionCode.USER_NOT_FOUND:
+    case AuthExceptionCode.WORKSPACE_NOT_FOUND:
+    case AuthExceptionCode.APPLICATION_NOT_FOUND:
+      return 401;
+    case AuthExceptionCode.INTERNAL_SERVER_ERROR:
+    case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
+      return 500;
+    default: {
+      assertUnreachable(code);
+    }
+  }
+};
+
 export class AuthException extends CustomException<
   keyof typeof AuthExceptionCode
 > {
@@ -104,6 +148,7 @@ export class AuthException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getAuthExceptionUserFriendlyMessage(code),
+      statusCode: getAuthExceptionStatusCode(code),
     });
   }
 }

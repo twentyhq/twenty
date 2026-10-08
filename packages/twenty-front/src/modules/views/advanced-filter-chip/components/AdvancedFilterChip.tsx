@@ -50,7 +50,7 @@ export const AdvancedFilterChip = () => {
     });
 
   const handleRemoveClick = () => {
-    closeDropdown(ViewBarFilterDropdownIds.ADVANCED);
+    closeDropdown();
 
     const viewFilterGroupIds = currentRecordFilterGroups.map(
       (recordFilterGroup) => recordFilterGroup.id,

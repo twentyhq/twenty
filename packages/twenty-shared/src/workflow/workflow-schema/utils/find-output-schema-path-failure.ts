@@ -1,7 +1,7 @@
 import { isObject } from '@sniptt/guards';
 
 import { isDefined } from '@/utils';
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 export type OutputSchemaPathFailure = {
   validPrefix: string[];
@@ -19,15 +19,20 @@ export const findOutputSchemaPathFailure = ({
   let currentSchema: BaseOutputSchemaV2 = schema;
 
   for (let index = 0; index < propertyPath.length; index++) {
+    const segment = propertyPath[index];
+
+    if (!isDefined(segment)) {
+      return undefined;
+    }
+
     if (!isObject(currentSchema)) {
       return {
         validPrefix: propertyPath.slice(0, index),
-        failedSegment: propertyPath[index],
+        failedSegment: segment,
         availableKeys: [],
       };
     }
 
-    const segment = propertyPath[index];
     const field = currentSchema[segment];
 
     if (!isDefined(field)) {
@@ -39,12 +44,12 @@ export const findOutputSchemaPathFailure = ({
     }
 
     if (field.isLeaf) {
-      const isLastSegment = index === propertyPath.length - 1;
+      const nextSegment = propertyPath[index + 1];
 
-      if (!isLastSegment) {
+      if (isDefined(nextSegment)) {
         return {
           validPrefix: propertyPath.slice(0, index + 1),
-          failedSegment: propertyPath[index + 1],
+          failedSegment: nextSegment,
           availableKeys: [],
         };
       }

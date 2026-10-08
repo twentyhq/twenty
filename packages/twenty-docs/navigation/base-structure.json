@@ -121,11 +121,33 @@
               "label": "How-Tos",
               "pages": [
                 "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider",
                 "user-guide/calendar-emails/how-tos/limit-emails-imported",
                 "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
                 "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
                 "user-guide/calendar-emails/how-tos/can-i-book-meetings-from-twenty",
                 "user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "emailCampaigns",
+          "label": "Email Campaigns",
+          "icon": "paper-plane",
+          "pages": [
+            "user-guide/email-campaigns/overview",
+            {
+              "key": "emailCampaignsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/email-campaigns/how-tos/set-up-a-sending-domain",
+                "user-guide/email-campaigns/how-tos/email-campaign-best-practices",
+                "user-guide/email-campaigns/how-tos/send-your-first-campaign",
+                "user-guide/email-campaigns/how-tos/create-a-campaign-with-ai",
+                "user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics"
               ]
             }
           ]
@@ -320,7 +342,8 @@
               "label": "Reference",
               "pages": [
                 "user-guide/billing/capabilities/pricing-plans",
-                "user-guide/billing/capabilities/credits"
+                "user-guide/billing/capabilities/credits",
+                "user-guide/billing/capabilities/usage-limits"
               ]
             },
             {
@@ -427,7 +450,8 @@
                 "developers/extend/apps/data/objects",
                 "developers/extend/apps/data/extending-objects",
                 "developers/extend/apps/data/system-fields",
-                "developers/extend/apps/data/relations"
+                "developers/extend/apps/data/relations",
+                "developers/extend/apps/data/timeline-activity-types"
               ]
             },
             {
@@ -439,7 +463,10 @@
                 "developers/extend/apps/logic/key-value-store",
                 "developers/extend/apps/logic/background-jobs",
                 "developers/extend/apps/logic/skills-and-agents",
-                "developers/extend/apps/logic/connections"
+                "developers/extend/apps/logic/connections",
+                "developers/extend/apps/logic/messaging-channels",
+                "developers/extend/apps/logic/credits",
+                "developers/extend/apps/logic/good-practices"
               ]
             },
             {
@@ -462,14 +489,8 @@
                 "developers/extend/apps/operations/cli",
                 "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
+                "developers/extend/apps/operations/translations",
                 "developers/extend/apps/operations/publishing"
-              ]
-            },
-            {
-              "key": "appsTranslations",
-              "label": "Translations",
-              "pages": [
-                "developers/extend/apps/translations/overview"
               ]
             }
           ]
@@ -500,6 +521,194 @@
             "developers/contribute/capabilities/local-setup",
             "developers/contribute/commands",
             "developers/contribute/style-guide"
+          ]
+        },
+        {
+          "key": "uiLibrary",
+          "label": "UI Library",
+          "pages": [
+            {
+              "key": "uiGuides",
+              "label": "Guides",
+              "pages": [
+                "ui/getting-started",
+                "ui/theming",
+                "ui/tokens",
+                "ui/dark-mode",
+                "ui/ssr",
+                "ui/accessibility",
+                "ui/icons",
+                "ui/testing"
+              ]
+            },
+            {
+              "key": "uiPrimitives",
+              "label": "Primitives",
+              "pages": [
+                "ui/primitives/overview",
+                {
+                  "key": "uiAccessibility",
+                  "label": "Accessibility",
+                  "pages": ["ui/primitives/accessibility/visually-hidden"]
+                },
+                {
+                  "key": "uiDataDisplay",
+                  "label": "Data display",
+                  "pages": [
+                    "ui/primitives/data-display/avatar",
+                    "ui/primitives/data-display/chip",
+                    "ui/primitives/data-display/tag",
+                    "ui/primitives/data-display/status",
+                    "ui/primitives/data-display/color-sample",
+                    "ui/primitives/data-display/pill"
+                  ]
+                },
+                {
+                  "key": "uiFeedback",
+                  "label": "Feedback",
+                  "pages": [
+                    "ui/primitives/feedback/banner",
+                    "ui/primitives/feedback/loader",
+                    "ui/primitives/feedback/progress-bar",
+                    "ui/primitives/feedback/progress-ring",
+                    "ui/primitives/feedback/skeleton"
+                  ]
+                },
+                {
+                  "key": "uiForms",
+                  "label": "Forms",
+                  "pages": [
+                    "ui/primitives/input/button",
+                    "ui/primitives/input/button-group",
+                    "ui/primitives/input/field",
+                    "ui/primitives/input/input",
+                    "ui/primitives/input/input-group",
+                    "ui/primitives/input/number-stepper",
+                    "ui/primitives/input/textarea",
+                    "ui/primitives/input/checkbox",
+                    "ui/primitives/input/radio",
+                    "ui/primitives/input/radio-group",
+                    "ui/primitives/input/select",
+                    "ui/primitives/input/slider",
+                    "ui/primitives/input/switch",
+                    "ui/primitives/input/segmented-control"
+                  ]
+                },
+                {
+                  "key": "uiLayout",
+                  "label": "Layout",
+                  "pages": [
+                    "ui/primitives/layout/collapsible",
+                    "ui/primitives/layout/separator",
+                    "ui/primitives/layout/resize-handle",
+                    "ui/primitives/layout/direction-provider"
+                  ]
+                },
+                {
+                  "key": "uiNavigation",
+                  "label": "Navigation",
+                  "pages": [
+                    "ui/primitives/navigation/breadcrumb",
+                    "ui/primitives/navigation/list-item",
+                    "ui/primitives/navigation/tabs"
+                  ]
+                },
+                {
+                  "key": "uiSurfaces",
+                  "label": "Surfaces",
+                  "pages": [
+                    "ui/primitives/surfaces/alert-dialog",
+                    "ui/primitives/surfaces/card",
+                    "ui/primitives/surfaces/dialog",
+                    "ui/primitives/surfaces/menu",
+                    "ui/primitives/surfaces/popover",
+                    "ui/primitives/surfaces/tooltip"
+                  ]
+                },
+                {
+                  "key": "uiTypography",
+                  "label": "Typography",
+                  "pages": [
+                    "ui/primitives/typography/heading",
+                    "ui/primitives/typography/text",
+                    "ui/primitives/typography/shortcut",
+                    "ui/primitives/typography/overflowing-text-with-tooltip"
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "uiComponents",
+              "label": "Components",
+              "pages": [
+                "ui/components/overview",
+                {
+                  "key": "uiComponentsDataDisplay",
+                  "label": "Data display",
+                  "pages": [
+                    "ui/components/data-display/avatar-group",
+                    "ui/components/data-display/command-block",
+                    "ui/components/data-display/json-tree",
+                    "ui/components/data-display/metric-row",
+                    "ui/components/data-display/notification-counter",
+                    "ui/components/data-display/tinted-icon-tile"
+                  ]
+                },
+                {
+                  "key": "uiComponentsFeedback",
+                  "label": "Feedback",
+                  "pages": [
+                    "ui/components/feedback/callout",
+                    "ui/components/feedback/inline-banner",
+                    "ui/components/feedback/toast"
+                  ]
+                },
+                {
+                  "key": "uiComponentsInput",
+                  "label": "Input",
+                  "pages": [
+                    "ui/components/input/main-button",
+                    "ui/components/input/light-button",
+                    "ui/components/input/icon-button",
+                    "ui/components/input/light-icon-button",
+                    "ui/components/input/country-select",
+                    "ui/components/input/currency-picker",
+                    "ui/components/input/phone-country-picker",
+                    "ui/components/input/image-input",
+                    "ui/components/input/search-input"
+                  ]
+                },
+                {
+                  "key": "uiComponentsLayout",
+                  "label": "Layout",
+                  "pages": [
+                    "ui/components/layout/section",
+                    "ui/components/layout/overflowing-list",
+                    "ui/components/layout/animated-icon-crossfade"
+                  ]
+                },
+                {
+                  "key": "uiComponentsNavigation",
+                  "label": "Navigation",
+                  "pages": [
+                    "ui/components/navigation/dropdown",
+                    "ui/components/navigation/menu-items",
+                    "ui/components/navigation/menu-picker",
+                    "ui/components/navigation/tab-button"
+                  ]
+                },
+                {
+                  "key": "uiComponentsSettings",
+                  "label": "Settings",
+                  "pages": ["ui/components/settings/settings-row"]
+                },
+                {
+                  "key": "uiComponentsCodeEditor",
+                  "label": "Code editor",
+                  "pages": ["ui/components/code-editor/code-editor"]
+                }
+              ]
+            }
           ]
         }
       ]

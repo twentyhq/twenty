@@ -1,0 +1,7 @@
+export const CAMPAIGN_DELIVERY_STATE = {
+  QUEUED: 'QUEUED',
+  SENDING: 'SENDING',
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED',
+} as const;

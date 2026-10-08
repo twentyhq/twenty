@@ -1,21 +1,15 @@
+import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { SectionExample } from './section-example';
+import { TypographyCompositionExample } from './typography-composition-example';
+import { VisuallyHiddenExample } from './visually-hidden-example';
 import {
-  VisibilityHidden,
-  VisibilityHiddenInput,
-} from 'twenty-ui/accessibility';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
-import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  H3Title,
-  Label,
-  LinkifiedText,
-  SeparatorLineText,
-  StyledText,
-  StyledTextContent,
-  StyledTextWrapper,
-} from 'twenty-ui/typography';
+  Heading,
+  Text,
+  Shortcut,
+  formatShortcut,
+} from 'twenty-ui/primitives/typography';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
@@ -23,56 +17,52 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
+  { name: 'Typography composition', node: <TypographyCompositionExample /> },
   {
-    name: 'H1Title',
-    node: <H1Title title="Heading 1" fontColor={H1TitleFontColor.Primary} />,
+    name: 'Shortcut',
+    node: (
+      <>
+        <Shortcut shortcut={['Mod', 'K']} platform="mac" />
+        <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="next" />
+        <Text>
+          {formatShortcut({
+            shortcut: ['Mod', 'K'],
+            platform: 'other',
+          })}
+        </Text>
+      </>
+    ),
   },
   {
-    name: 'H2Title',
-    node: <H2Title title="Heading 2" />,
+    name: 'Heading',
+    node: (
+      <Heading level={1} size="lg">
+        Heading 1
+      </Heading>
+    ),
   },
   {
-    name: 'H3Title',
-    node: <H3Title title="Heading 3" />,
+    name: 'Section',
+    node: <SectionExample />,
   },
   {
-    name: 'Label',
-    node: <Label variant="default">Label</Label>,
+    name: 'HeadingLevel',
+    node: (
+      <Heading level={3} size="sm">
+        Heading 3
+      </Heading>
+    ),
   },
   {
-    name: 'LinkifiedText',
-    node: <LinkifiedText text="Visit https://twenty.com now" />,
-  },
-  {
-    name: 'SeparatorLineText',
-    node: <SeparatorLineText>or</SeparatorLineText>,
-  },
-  {
-    name: 'StyledText',
-    node: <StyledText text="Styled text" />,
-  },
-  {
-    name: 'StyledTextContent',
-    node: <StyledTextContent>Content</StyledTextContent>,
-  },
-  {
-    name: 'StyledTextWrapper',
-    node: <StyledTextWrapper>Wrapper</StyledTextWrapper>,
-  },
-  {
-    name: 'VisibilityHidden',
-    node: <VisibilityHidden>Screen-reader only</VisibilityHidden>,
-  },
-  {
-    name: 'VisibilityHiddenInput',
-    node: <VisibilityHiddenInput readOnly value="" />,
+    name: 'VisuallyHidden',
+    node: <VisuallyHiddenExample />,
   },
 ];
 
 const TypographyGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/typography + accessibility"
+      title="twenty-ui/primitives/typography + accessibility"
       entries={TYPOGRAPHY_ENTRIES}
     />
   </ThemeProvider>
@@ -82,6 +72,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000104',
   name: 'twenty-ui-typography-gallery',
   description:
-    'Renders every twenty-ui/typography and accessibility component in the sandbox',
+    'Renders every twenty-ui/primitives/typography and accessibility component in the sandbox',
   component: TypographyGallery,
 });

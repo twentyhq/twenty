@@ -1,0 +1,29 @@
+export const StoryEmbed = ({ storyId, title, height = 240 }) => (
+  <>
+    <Tabs>
+      <Tab title="Light">
+        <iframe
+          title={`${title} (light)`}
+          src={`https://storybook.twenty.com/iframe.html?id=${storyId}&viewMode=story&globals=colorScheme:light`}
+          width="100%"
+          height={height}
+          loading="lazy"
+          style={{ border: 0 }}
+        />
+      </Tab>
+      <Tab title="Dark">
+        <iframe
+          title={`${title} (dark)`}
+          src={`https://storybook.twenty.com/iframe.html?id=${storyId}&viewMode=story&globals=colorScheme:dark`}
+          width="100%"
+          height={height}
+          loading="lazy"
+          style={{ border: 0 }}
+        />
+      </Tab>
+    </Tabs>
+    <a href={`https://storybook.twenty.com/?path=/story/${storyId}`}>
+      Open in Storybook
+    </a>
+  </>
+);

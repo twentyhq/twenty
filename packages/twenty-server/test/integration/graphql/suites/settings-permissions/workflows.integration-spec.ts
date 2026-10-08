@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { WORKFLOW_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -25,7 +25,7 @@ describe('workflowsPermissions', () => {
       });
 
       const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
       expect(response.body.data).toStrictEqual({ createWorkflow: null });
       expect(response.body.errors).toBeDefined();
@@ -46,7 +46,7 @@ describe('workflowsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlApiRequest(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.createWorkflow).toBeDefined();
@@ -55,7 +55,6 @@ describe('workflowsPermissions', () => {
         'Test Workflow Admin',
       );
 
-      // Clean up - delete the created workflow
       const destroyWorkflowOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `
@@ -64,7 +63,7 @@ describe('workflowsPermissions', () => {
         recordId: response.body.data.createWorkflow.id,
       });
 
-      await makeGraphqlAPIRequest(destroyWorkflowOperation);
+      await makeGraphqlApiRequest(destroyWorkflowOperation);
     });
 
     it('should create a workflow when executed by api key', async () => {
@@ -78,7 +77,7 @@ describe('workflowsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+      const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.createWorkflow).toBeDefined();
@@ -87,7 +86,6 @@ describe('workflowsPermissions', () => {
         'Test Workflow API Key',
       );
 
-      // Clean up - delete the created workflow
       const destroyWorkflowOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `
@@ -96,7 +94,7 @@ describe('workflowsPermissions', () => {
         recordId: response.body.data.createWorkflow.id,
       });
 
-      await makeGraphqlAPIRequest(destroyWorkflowOperation);
+      await makeGraphqlApiRequest(destroyWorkflowOperation);
     });
   });
 
@@ -113,7 +111,7 @@ describe('workflowsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createWorkflowOperation);
+      await makeGraphqlApiRequest(createWorkflowOperation);
     });
 
     afterAll(async () => {
@@ -125,7 +123,7 @@ describe('workflowsPermissions', () => {
         recordId: workflowId,
       });
 
-      await makeGraphqlAPIRequest(destroyWorkflowOperation);
+      await makeGraphqlApiRequest(destroyWorkflowOperation);
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -139,7 +137,7 @@ describe('workflowsPermissions', () => {
       });
 
       const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
       expect(response.body.data).toStrictEqual({ updateWorkflow: null });
       expect(response.body.errors).toBeDefined();
@@ -159,7 +157,7 @@ describe('workflowsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlApiRequest(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.updateWorkflow).toBeDefined();
@@ -179,7 +177,7 @@ describe('workflowsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+      const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.updateWorkflow).toBeDefined();

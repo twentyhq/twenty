@@ -1,4 +1,5 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,8 +29,7 @@ export const moveWidgetToTabInDraft = (
 
   const destinationTab = draft.tabs.find((tab) => tab.id === destinationTabId);
 
-  // Widgets carry vertical-list positions, so moving one into a canvas/grid tab
-  // would reindex that tab's widgets and clobber their native placement.
+  // Widgets carry vertical-list positions, so moving one into a grid tab would reindex its widgets and clobber their placement.
   if (
     !isDefined(destinationTab) ||
     destinationTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST
@@ -42,6 +42,15 @@ export const moveWidgetToTabInDraft = (
   );
 
   if (!isDefined(widget)) {
+    return draft;
+  }
+
+  if (
+    !canVerticalListAcceptWidget({
+      destinationWidgets: destinationTab.widgets,
+      widget,
+    })
+  ) {
     return draft;
   }
 

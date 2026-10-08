@@ -11,8 +11,8 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,15 +38,7 @@ export const useCancelLayoutCustomization = () => {
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
           }),
-          {
-            id: persisted.id,
-            name: persisted.name,
-            type: persisted.type,
-            objectMetadataId: persisted.objectMetadataId,
-            tabs: persisted.tabs,
-            defaultTabToFocusOnMobileAndSidePanelId:
-              persisted.defaultTabToFocusOnMobileAndSidePanelId,
-          } satisfies DraftPageLayout,
+          toDraftPageLayout(persisted),
         );
 
         store.set(

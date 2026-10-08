@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -29,14 +30,23 @@ export const WorkflowRunVisualizerEffect = ({
   workflowRunId: string;
 }) => {
   const { getIcon } = useIcons();
+  const isCore = useIsWorkflowCoreEnabled();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
   const setWorkflowVisualizerWorkflowRunId = useSetAtomComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
-  const workflowVersionId = workflowRun?.workflowVersionId;
-  const workflowVersion = useWorkflowVersion(workflowVersionId);
+  const workflowVersionId = isCore
+    ? (workflowRun?.coreWorkflowVersionId ??
+      workflowRun?.workflowVersionId ??
+      undefined)
+    : (workflowRun?.workflowVersionId ?? undefined);
+  const workflowVersion = useWorkflowVersion(
+    isCore
+      ? (workflowRun?.coreWorkflowVersionId ?? undefined)
+      : workflowVersionId,
+  );
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
@@ -83,8 +93,12 @@ export const WorkflowRunVisualizerEffect = ({
       return;
     }
 
-    setWorkflowVisualizerWorkflowId(workflowRun.workflowId);
-  }, [setWorkflowVisualizerWorkflowId, workflowRun]);
+    setWorkflowVisualizerWorkflowId(
+      isCore
+        ? (workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined)
+        : (workflowRun.workflowId ?? undefined),
+    );
+  }, [isCore, setWorkflowVisualizerWorkflowId, workflowRun]);
 
   useEffect(() => {
     if (!isDefined(workflowVersionId)) {
@@ -235,14 +249,14 @@ export const WorkflowRunVisualizerEffect = ({
   useEffect(() => {
     handleWorkflowRunDiagramGeneration({
       workflowRunState: workflowRun?.state ?? undefined,
-      workflowVersionId: workflowRun?.workflowVersionId,
+      workflowVersionId,
       isInSidePanel,
     });
   }, [
     handleWorkflowRunDiagramGeneration,
     isInSidePanel,
     workflowRun?.state,
-    workflowRun?.workflowVersionId,
+    workflowVersionId,
   ]);
 
   useEffect(() => {

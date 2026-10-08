@@ -1,4 +1,5 @@
 import {
+  SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
@@ -29,7 +30,7 @@ const DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER =
   getSystemViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
-    viewKey: ViewKey.INDEX,
+    viewKey: SYSTEM_VIEW_KEYS.INDEX,
   });
 const DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   getSystemViewFieldUniversalIdentifier({
@@ -41,6 +42,16 @@ const DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
 const STANDARD_OBJECT_METADATA = {
   universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-0000000000bd';
+
+// An object adopted into another application: its INDEX view can be left
+// behind, still attributed to an engine application.
+const EXTERNAL_OBJECT_METADATA = {
+  universalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
 };
 
 // A custom object: its INDEX view was historically created with a random v4
@@ -184,6 +195,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       flatObjectMetadataMaps: buildByUniversalIdentifierMap([
         STANDARD_OBJECT_METADATA,
         CUSTOM_OBJECT_METADATA,
+        EXTERNAL_OBJECT_METADATA,
       ]),
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(fieldMetadatas),
     });
@@ -250,7 +262,7 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
       getSystemViewUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
-        viewKey: ViewKey.INDEX,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
       });
 
     mockWorkspaceCache({
@@ -322,6 +334,189 @@ describe('ReconcileIndexViewUniversalIdentifierCommand', () => {
         isSystemSideEffect: true,
       },
     );
+  });
+
+  it('demotes an INDEX view attributed to another application than its object', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'drifted-view-id',
+          universalIdentifier: 'drifted-view-uid',
+          key: ViewKey.INDEX,
+          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'drifted-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
+    expect(viewFieldUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it('strips the system flag when demoting a drifted view previously stamped as system-owned', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'stamped-drifted-view-id',
+          universalIdentifier: 'stamped-drifted-view-uid',
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+          objectMetadataUniversalIdentifier: EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'stamped-drifted-view-id', workspaceId: WORKSPACE_ID },
+      { key: null, isSystemSideEffect: false },
+    );
+  });
+
+  it('demotes a workspace-custom INDEX view on a standard object next to the standard INDEX view', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'standard-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+        }),
+        // A legacy caller-created view with key INDEX, attributed to the
+        // workspace-custom application but sitting on the standard object.
+        buildFlatView({
+          id: 'legacy-caller-view-id',
+          universalIdentifier: 'legacy-caller-view-uid',
+          key: ViewKey.INDEX,
+          applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'legacy-caller-view-id', workspaceId: WORKSPACE_ID },
+      { key: null },
+    );
+  });
+
+  it('skips an INDEX view whose derived identifier is held by a soft-deleted view', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'tombstone-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          deletedAt: '2024-01-01T00:00:00.000Z',
+        }),
+        buildFlatView({
+          id: 'active-view-id',
+          universalIdentifier: 'active-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    // The tombstone still reserves the identifier in the unique index: the
+    // active view keeps its identifier rather than crashing the workspace.
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
+  });
+
+  it('skips an INDEX view whose derived identifier is held by another active view', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'holder-view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+        }),
+        buildFlatView({
+          id: 'duplicate-view-id',
+          universalIdentifier: 'duplicate-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
+  });
+
+  it('re-owns only the first of two INDEX views deriving the same identifier when neither holds it', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'first-view-id',
+          universalIdentifier: 'first-view-uid',
+          key: ViewKey.INDEX,
+        }),
+        buildFlatView({
+          id: 'second-view-id',
+          universalIdentifier: 'second-view-uid',
+          key: ViewKey.INDEX,
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).toHaveBeenCalledTimes(1);
+    expect(viewUpdateMock).toHaveBeenCalledWith(
+      { id: 'first-view-id', workspaceId: WORKSPACE_ID },
+      {
+        universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+      },
+    );
+  });
+
+  it('skips a view field whose derived identifier is held by a soft-deleted view field', async () => {
+    mockWorkspaceCache({
+      views: [
+        buildFlatView({
+          id: 'view-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_UNIVERSAL_IDENTIFIER,
+          key: ViewKey.INDEX,
+          isSystemSideEffect: true,
+          viewFieldUniversalIdentifiers: [
+            DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+            'active-view-field-uid',
+          ],
+        }),
+      ],
+      viewFields: [
+        buildFlatViewField({
+          id: 'tombstone-view-field-id',
+          universalIdentifier: DERIVED_STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          deletedAt: '2024-01-01T00:00:00.000Z',
+        }),
+        buildFlatViewField({
+          id: 'active-view-field-id',
+          universalIdentifier: 'active-view-field-uid',
+        }),
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(viewUpdateMock).not.toHaveBeenCalled();
+    expect(viewFieldUpdateMock).not.toHaveBeenCalled();
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
   });
 
   it('re-owns only the active row of a soft-deleted + re-created view field pair', async () => {

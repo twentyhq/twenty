@@ -1,6 +1,6 @@
-import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { recordCalendarCardEditModePositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardEditModePositionComponentState';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
+import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -14,17 +14,26 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
-export const RecordCalendarCardCellHoveredPortalContent = () => {
+type RecordCalendarCardCellHoveredPortalContentProps = {
+  calendarDay: string;
+};
+
+export const RecordCalendarCardCellHoveredPortalContent = ({
+  calendarDay,
+}: RecordCalendarCardCellHoveredPortalContentProps) => {
   const { editModeContentOnly, isCentered } = useRecordInlineCellContext();
 
   const { isRecordFieldReadOnly, recordId, fieldDefinition } =
     useContext(FieldContext);
 
+  const cardInstanceIdPrefix =
+    getRecordCalendarCardInstanceIdPrefix(calendarDay);
+
   const { openInlineCell } = useInlineCell(
     getRecordFieldInputInstanceId({
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
-      prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
+      prefix: cardInstanceIdPrefix,
     }),
   );
 
@@ -47,7 +56,7 @@ export const RecordCalendarCardCellHoveredPortalContent = () => {
       openFieldInput({
         fieldDefinition,
         recordId,
-        prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
+        prefix: cardInstanceIdPrefix,
         onFileUploadClose: () => setRecordCalendarCardEditModePosition(null),
       });
     }

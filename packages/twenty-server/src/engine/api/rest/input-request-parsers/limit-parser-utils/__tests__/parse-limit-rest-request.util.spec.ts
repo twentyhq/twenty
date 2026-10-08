@@ -13,6 +13,13 @@ describe('parseLimitRestRequest', () => {
     expect(parseLimitRestRequest(request)).toEqual(10);
   });
 
+  it('supports caller-specific defaults and maximums', () => {
+    expect(parseLimitRestRequest({ query: {} } as any, 1000, 1000)).toBe(1000);
+    expect(
+      parseLimitRestRequest({ query: { limit: '1500' } } as any, 1000, 1000),
+    ).toBe(1000);
+  });
+
   it('should throw if not integer', () => {
     const request: any = { query: { limit: 'aaa' } };
 

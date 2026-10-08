@@ -2,18 +2,17 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
+import { usePerformViewGroupApiPersist } from '@/views/hooks/internal/usePerformViewGroupApiPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useAddRecordGroup = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { performViewGroupAPICreate } = usePerformViewGroupAPIPersist();
+  const { performViewGroupApiCreate } = usePerformViewGroupApiPersist();
   const { getViewFromState } = useGetViewFromState();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
@@ -37,10 +36,7 @@ export const useAddRecordGroup = () => {
 
     const view = getViewFromState(currentViewId);
 
-    if (
-      isUndefinedOrNull(view) ||
-      !isDefined(view.mainGroupByFieldMetadataId)
-    ) {
+    if (!isDefined(view) || !isDefined(view.mainGroupByFieldMetadataId)) {
       return;
     }
 
@@ -64,7 +60,7 @@ export const useAddRecordGroup = () => {
       position: maxPosition + 1,
     };
 
-    const result = await performViewGroupAPICreate({
+    const result = await performViewGroupApiCreate({
       inputs: [
         {
           id: newViewGroup.id,

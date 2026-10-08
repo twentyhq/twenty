@@ -1,6 +1,4 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
-import { type AppTokenSources } from '@/cli/utilities/auth/ensure-app-access-token-is-valid-or-refresh';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -14,6 +12,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { emptyDir, ensureDir } from '@/cli/utilities/file/fs-utils';
 import path from 'path';
@@ -24,6 +23,7 @@ export type DevModeOrchestratorOptions = {
   debounceMs?: number;
   verbose?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   interactive?: boolean;
   onExit?: (params: { code: number; message: string }) => void;
 };
@@ -33,6 +33,8 @@ export class DevModeOrchestrator {
   private debounceMs: number;
   private syncTimer: NodeJS.Timeout | null = null;
   private serverCheckInterval: NodeJS.Timeout | null = null;
+  private syncRequestedWhileRunning = false;
+  private isClosed = false;
 
   private apiService: ApiService;
   private clientService: ClientService;
@@ -74,13 +76,14 @@ export class DevModeOrchestrator {
     this.generateApiClientStep = new GenerateApiClientOrchestratorStep({
       ...stepDeps,
       clientService: this.clientService,
-      configService,
     });
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
       ...stepDeps,
       apiService,
       verbose: this.verbose,
       force: options.force ?? false,
+      inferDeletionFromMissingEntities:
+        options.inferDeletionFromMissingEntities ?? true,
       interactive: options.interactive ?? false,
       onExit: options.onExit,
     });
@@ -94,6 +97,8 @@ export class DevModeOrchestrator {
   }
 
   async start(): Promise<void> {
+    this.isClosed = false;
+
     const outputDir = path.join(this.state.appPath, OUTPUT_DIR);
 
     await ensureDir(outputDir);
@@ -121,8 +126,16 @@ export class DevModeOrchestrator {
   }
 
   async close(): Promise<void> {
+    this.isClosed = true;
+
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer);
+      this.syncTimer = null;
+    }
+
     if (this.serverCheckInterval) {
       clearInterval(this.serverCheckInterval);
+      this.serverCheckInterval = null;
     }
 
     await this.startWatchersStep.close();
@@ -152,6 +165,10 @@ export class DevModeOrchestrator {
   }
 
   private scheduleSync(): void {
+    if (this.isClosed) {
+      return;
+    }
+
     if (this.syncTimer) {
       clearTimeout(this.syncTimer);
     }
@@ -164,6 +181,7 @@ export class DevModeOrchestrator {
 
   private async performSync(): Promise<void> {
     if (this.state.pipeline.isSyncing) {
+      this.syncRequestedWhileRunning = true;
       return;
     }
 
@@ -180,6 +198,11 @@ export class DevModeOrchestrator {
       this.state.updateAllEntitiesStatus('error');
     } finally {
       this.state.updatePipeline({ isSyncing: false });
+
+      if (this.syncRequestedWhileRunning && !this.isClosed) {
+        this.syncRequestedWhileRunning = false;
+        this.scheduleSync();
+      }
     }
   }
 
@@ -229,29 +252,12 @@ export class DevModeOrchestrator {
     if (objectsOrFieldsChanged) {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
-        tokenSources: this.buildAppTokenSources(),
+        applicationUniversalIdentifier:
+          buildResult.manifest!.application.universalIdentifier,
       });
 
       this.skipTypecheck = false;
     }
-  }
-
-  private buildAppTokenSources(): AppTokenSources {
-    const credentials = this.registerAppStep.registrationCredentials;
-    const applicationId =
-      this.state.steps.resolveApplication.output.applicationId;
-
-    return {
-      credentials: credentials?.clientSecret
-        ? {
-            clientId: credentials.clientId,
-            clientSecret: credentials.clientSecret,
-          }
-        : undefined,
-      fetchTokenPair: applicationId
-        ? buildAppTokenPairFetcher(this.apiService, applicationId)
-        : undefined,
-    };
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {
@@ -263,9 +269,13 @@ export class DevModeOrchestrator {
     });
 
     if (!createResult.success || !createResult.data) {
+      const serverMessage = createResult.success
+        ? undefined
+        : getGraphQLErrorMessage(createResult.error);
+
       this.state.applyStepEvents([
         {
-          message: 'Failed to install development application',
+          message: serverMessage ?? 'Failed to install development application',
           status: 'error',
         },
         { message: JSON.stringify(createResult, null, 2), status: 'error' },

@@ -1,203 +1,80 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   StyledMarkdownContainer,
-  StyledParagraph,
   StyledSkeletonContainer,
-  StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
-import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
+import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBlockSplitCache';
+import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
-import { marked } from 'marked';
-import {
-  cloneElement,
-  isValidElement,
-  lazy,
-  memo,
-  Suspense,
-  useContext,
-  useMemo,
-} from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { memo, Suspense, useRef } from 'react';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-const processChildrenForChatReferences = (
-  children: React.ReactNode,
-): React.ReactNode => {
-  if (typeof children === 'string') {
-    return <TextWithChatReferences text={children} />;
-  }
-
-  if (Array.isArray(children)) {
-    return children.map((child, index) => (
-      <span key={index}>{processChildrenForChatReferences(child)}</span>
-    ));
-  }
-
-  if (isValidElement<{ children?: React.ReactNode }>(children)) {
-    const childProps = children.props;
-
-    if (isDefined(childProps.children)) {
-      return cloneElement(children, {
-        children: processChildrenForChatReferences(childProps.children),
-      });
-    }
-  }
-
-  return children;
-};
-
-// react-markdown uses each entry as the JSX element type, so rebuilding this map
-// per render would remount every node on every streamed chunk.
-const MARKDOWN_COMPONENTS = {
-  table: ({ children }: { children?: React.ReactNode }) => (
-    <StyledTableScrollContainer>
-      <table>{children}</table>
-    </StyledTableScrollContainer>
-  ),
-  p: ({ children }: { children?: React.ReactNode }) => (
-    <StyledParagraph>
-      {processChildrenForChatReferences(children)}
-    </StyledParagraph>
-  ),
-  td: ({ children }: { children?: React.ReactNode }) => (
-    <td>{processChildrenForChatReferences(children)}</td>
-  ),
-  th: ({ children }: { children?: React.ReactNode }) => (
-    <th>{processChildrenForChatReferences(children)}</th>
-  ),
-  li: ({ children }: { children?: React.ReactNode }) => (
-    <li>{processChildrenForChatReferences(children)}</li>
-  ),
-  h1: ({ children }: { children?: React.ReactNode }) => (
-    <h1>{processChildrenForChatReferences(children)}</h1>
-  ),
-  h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2>{processChildrenForChatReferences(children)}</h2>
-  ),
-  h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3>{processChildrenForChatReferences(children)}</h3>
-  ),
-  h4: ({ children }: { children?: React.ReactNode }) => (
-    <h4>{processChildrenForChatReferences(children)}</h4>
-  ),
-  h5: ({ children }: { children?: React.ReactNode }) => (
-    <h5>{processChildrenForChatReferences(children)}</h5>
-  ),
-  h6: ({ children }: { children?: React.ReactNode }) => (
-    <h6>{processChildrenForChatReferences(children)}</h6>
-  ),
-  a: ({
-    children,
-    href,
-    title,
-  }: {
-    children?: React.ReactNode;
-    href?: string;
-    title?: string;
-  }) => (
-    <a
-      className="markdown-link"
-      href={getSafeUrl(href)}
-      title={title}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {processChildrenForChatReferences(children)}
-    </a>
-  ),
-  code: ({
-    className,
-    children,
-  }: {
-    className?: string;
-    children?: React.ReactNode;
-  }) => <code className={className}>{children}</code>,
-  pre: ({ children }: { children?: React.ReactNode }) => (
-    <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
-  ),
-};
-
-const MarkdownRenderer = lazy(async () => {
-  const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
-    import('react-markdown'),
-    import('remark-gfm'),
-  ]);
-
-  const remarkPlugins = [remarkGfm];
-
-  return {
-    default: ({ children }: { children: string }) => (
-      <Markdown remarkPlugins={remarkPlugins} components={MARKDOWN_COMPONENTS}>
-        {children}
-      </Markdown>
-    ),
-  };
-});
-
-const LoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
+export const MarkdownLoadingSkeleton = () => {
   return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={theme.border.radius.sm}
-    >
-      <StyledSkeletonContainer>
-        <Skeleton
-          width="70%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-        />
-
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton
-          width="90%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-
-        <Skeleton
-          width="85%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-        <Skeleton
-          width="80%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
+    <StyledSkeletonContainer>
+      <SkeletonLine
+        borderRadius={themeCssVariables.border.radius.smRound}
+        width={200}
+        height={SKELETON_HEIGHT_SIZES.s}
+      />
+    </StyledSkeletonContainer>
   );
 };
 
+// Memoized per block so only the streaming tail re-parses references on each flush.
 const MemoizedMarkdownBlock = memo(
-  ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer>{blockText}</MarkdownRenderer>
+  ({ blockText, noImage }: { blockText: string; noImage?: boolean }) => (
+    <MarkdownRenderer noImage={noImage}>
+      {protectChatReferencesForMarkdown(blockText)}
+    </MarkdownRenderer>
   ),
-  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
 );
 
-export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const protectedText = useMemo(
-    () => protectChatReferencesForMarkdown(text),
-    [text],
-  );
+type LazyMarkdownContentProps = {
+  text: string;
+  noImage?: boolean;
+};
 
-  const markdownBlocks = useMemo(
-    () => marked.lexer(protectedText).map((token) => token.raw),
-    [protectedText],
-  );
+export const LazyMarkdownContent = ({
+  text,
+  noImage,
+}: LazyMarkdownContentProps) => {
+  // Not state: only caches the previous split so streaming appends skip settled blocks.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const blockSplitCacheRef = useRef(EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE);
+
+  const { blocks: markdownBlocks, cache } = getMarkdownBlocksIncrementally({
+    text,
+    cache: blockSplitCacheRef.current,
+  });
+
+  blockSplitCacheRef.current = cache;
 
   return (
     <StyledMarkdownContainer
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
-      <Suspense fallback={<LoadingSkeleton />}>
-        {markdownBlocks.map((blockText, blockIndex) => (
-          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
-        ))}
-      </Suspense>
+      {markdownBlocks.map((blockText, blockIndex) => (
+        <MemoizedMarkdownBlock
+          key={blockIndex}
+          blockText={blockText}
+          noImage={noImage}
+        />
+      ))}
     </StyledMarkdownContainer>
   );
 };
+
+type LazyMarkdownRendererProps = LazyMarkdownContentProps;
+
+export const LazyMarkdownRenderer = ({
+  text,
+  noImage,
+}: LazyMarkdownRendererProps) => (
+  <Suspense fallback={<MarkdownLoadingSkeleton />}>
+    <LazyMarkdownContent text={text} noImage={noImage} />
+  </Suspense>
+);

@@ -6,6 +6,7 @@ export interface ImapFlowError extends Error {
   executedCommand?: string;
   authenticationFailed?: boolean;
   response?: string;
+  mailboxMissing?: boolean;
   syscall?: string;
   errno?: number;
 }

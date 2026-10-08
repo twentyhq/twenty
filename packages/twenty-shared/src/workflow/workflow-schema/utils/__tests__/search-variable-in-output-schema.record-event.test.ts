@@ -1,5 +1,5 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { type RecordOutputSchemaV2 } from '../../types/output-schema.type';
+import { type RecordOutputSchemaV2 } from '../../types/OutputSchema';
 import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughRecordEventOutputSchema = ({
@@ -28,7 +28,6 @@ describe('searchVariableInOutputSchema - record event output schema', () => {
       label: 'Company',
     },
     fields: {
-      // Event-based fields with properties.after prefix
       'properties.after.name': {
         isLeaf: true,
         type: FieldMetadataType.TEXT,
@@ -93,7 +92,6 @@ describe('searchVariableInOutputSchema - record event output schema', () => {
           _outputSchemaType: 'RECORD',
         },
       },
-      // Event-based fields with properties.before prefix
       'properties.before.name': {
         isLeaf: true,
         type: FieldMetadataType.TEXT,

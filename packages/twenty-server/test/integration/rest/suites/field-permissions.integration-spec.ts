@@ -4,8 +4,8 @@ import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.con
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
@@ -19,7 +19,7 @@ describe('Restricted fields', () => {
   beforeAll(async () => {
     personJobTitle = generateRecordName(TEST_PERSON_1_ID);
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/companies',
       body: {
@@ -30,7 +30,7 @@ describe('Restricted fields', () => {
       },
     });
 
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'post',
       path: '/people',
       body: {
@@ -47,7 +47,6 @@ describe('Restricted fields', () => {
       },
     });
 
-    // Get object metadata IDs for Person and Company
     const getObjectMetadataOperation = {
       query: gql`
         query {
@@ -63,7 +62,7 @@ describe('Restricted fields', () => {
       `,
     };
 
-    const objectMetadataResponse = await makeMetadataAPIRequest(
+    const objectMetadataResponse = await makeMetadataApiRequest(
       getObjectMetadataOperation,
     );
     const objects = objectMetadataResponse.body.data.objects.edges;
@@ -72,7 +71,6 @@ describe('Restricted fields', () => {
       (obj: any) => obj.node.nameSingular === 'person',
     )?.node.id;
 
-    // Get field metadata ID for email field
     const getFieldMetadataOperation = {
       query: gql`
         query {
@@ -91,7 +89,7 @@ describe('Restricted fields', () => {
       `,
     };
 
-    const fieldMetadataResponse = await makeMetadataAPIRequest(
+    const fieldMetadataResponse = await makeMetadataApiRequest(
       getFieldMetadataOperation,
     );
     const fields = fieldMetadataResponse.body.data.fields.edges;
@@ -108,7 +106,6 @@ describe('Restricted fields', () => {
         field.node.object.nameSingular === 'person',
     ).node.id;
 
-    // Get member role ID
     const getRolesOperation = {
       query: gql`
         query {
@@ -120,13 +117,12 @@ describe('Restricted fields', () => {
       `,
     };
 
-    const rolesResponse = await makeMetadataAPIRequest(getRolesOperation);
+    const rolesResponse = await makeMetadataApiRequest(getRolesOperation);
 
     memberRoleId = rolesResponse.body.data.getRoles.find(
       (role: any) => role.label === 'Member',
     )?.id;
 
-    // Create field permission restricting read access to email field
     await upsertFieldPermissions({
       roleId: memberRoleId,
       fieldPermissions: [
@@ -141,7 +137,7 @@ describe('Restricted fields', () => {
   });
 
   it('should hide fields when user has restricted read permissions - findOne', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}`,
       bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -158,7 +154,6 @@ describe('Restricted fields', () => {
 
   describe('updateOne', () => {
     it('should hide fields in the response when user has restricted read permissions', async () => {
-      // Create field permission restricting update access to phones field
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -171,7 +166,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'patch',
         path: `/people/${TEST_PERSON_1_ID}`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -190,7 +185,6 @@ describe('Restricted fields', () => {
         });
     });
     it('should block update when user tries to update non-updatable field', async () => {
-      // Create field permission restricting update access to phones field
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -203,7 +197,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'patch',
         path: `/people/${TEST_PERSON_1_ID}`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -224,7 +218,6 @@ describe('Restricted fields', () => {
     });
 
     it('should allow update when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -237,7 +230,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'patch',
         path: `/people/${TEST_PERSON_1_ID}`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -268,7 +261,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -315,7 +308,7 @@ describe('Restricted fields', () => {
         },
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -364,7 +357,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -396,7 +389,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/batch/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -445,7 +438,7 @@ describe('Restricted fields', () => {
         },
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/batch/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -496,7 +489,7 @@ describe('Restricted fields', () => {
         ],
       });
 
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'post',
         path: `/batch/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,

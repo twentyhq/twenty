@@ -1,5 +1,4 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
-import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
@@ -9,7 +8,6 @@ import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandl
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
@@ -20,9 +18,8 @@ import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
   const store = useStore();
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
-  const tokenPair = useAtomStateValue(tokenPairState);
   const { resyncMetadataStore } = useResyncMetadataStore();
 
   const debouncedResyncMetadataStore = useDebouncedCallback(
@@ -57,17 +54,10 @@ export const SSEClientEffect = () => {
     useHandleSseClientConnectionRetry();
 
   useEffect(() => {
-    if (hasAccessTokenPair && !isDefined(sseClient) && isDefined(tokenPair)) {
+    if (isLogged && !isDefined(sseClient)) {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
-        headers: () => {
-          const currentTokenPair = store.get(tokenPairState.atom);
-          const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
-
-          return {
-            Authorization: token ? `Bearer ${token}` : '',
-          };
-        },
+        credentials: 'include',
         on: {
           connected: handleSSEClientConnected,
         },
@@ -80,11 +70,10 @@ export const SSEClientEffect = () => {
     }
   }, [
     handleSSEClientConnected,
-    hasAccessTokenPair,
+    isLogged,
     setSseClient,
     sseClient,
     store,
-    tokenPair,
     handleSseClientConnectionRetry,
   ]);
 

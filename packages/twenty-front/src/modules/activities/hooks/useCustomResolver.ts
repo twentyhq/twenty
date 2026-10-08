@@ -1,5 +1,6 @@
 import {
   type DocumentNode,
+  type ErrorLike,
   type OperationVariables,
   type TypedDocumentNode,
 } from '@apollo/client';
@@ -7,7 +8,6 @@ import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 
 type CustomResolverQueryResult<
@@ -22,15 +22,22 @@ export const useCustomResolver = <
   T extends {
     [key: string]: any;
   },
->(
+>({
+  query,
+  queryName,
+  objectName,
+  activityTargetableObject,
+  pageSize,
+}: {
   query:
     | DocumentNode
-    | TypedDocumentNode<CustomResolverQueryResult<T>, OperationVariables>,
-  queryName: string,
-  objectName: string,
-  activityTargetableObject: ActivityTargetableObject,
-  pageSize: number,
-): {
+    | TypedDocumentNode<CustomResolverQueryResult<T>, OperationVariables>;
+  queryName: string;
+  objectName: string;
+  activityTargetableObject: ActivityTargetableObject;
+  pageSize: number;
+}): {
+  error: ErrorLike | undefined;
   data: CustomResolverQueryResult<T> | undefined;
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
@@ -61,8 +68,6 @@ export const useCustomResolver = <
   });
 
   const firstQueryLoading = loading && !data;
-
-  useSnackBarOnQueryError(error);
 
   const fetchMoreRecords = async () => {
     if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
@@ -110,6 +115,7 @@ export const useCustomResolver = <
   };
 
   return {
+    error,
     data,
     firstQueryLoading,
     isFetchingMore,

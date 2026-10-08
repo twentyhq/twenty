@@ -55,6 +55,10 @@ const applyDiffToPath = (
   const pathLength = path.length;
   const lastPathElement = path[pathLength - 1];
 
+  if (!isDefined(lastPathElement)) {
+    throw new Error('Cannot apply diff at an empty path');
+  }
+
   const parentContainer = navigateToParent(obj, path);
 
   switch (type) {
@@ -171,7 +175,6 @@ const handleRemoval = (
   }
 };
 
-// Handles removal from arrays by marking for deletion and queuing cleanup
 const handleArrayRemoval = (
   rootObj: MutableData,
   fullPath: (string | number)[],
@@ -218,8 +221,8 @@ const filterRemoveSymbols = (array: ArrayType): void => {
     }
   }
 
-  for (let i = indicesToRemove.length - 1; i >= 0; i--) {
-    array.splice(indicesToRemove[i], 1);
+  for (const indexToRemove of indicesToRemove.reverse()) {
+    array.splice(indexToRemove, 1);
   }
 };
 

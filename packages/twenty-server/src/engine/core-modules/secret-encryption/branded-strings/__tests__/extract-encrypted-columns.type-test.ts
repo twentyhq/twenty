@@ -4,7 +4,7 @@ import { type EmptyObject } from 'twenty-shared/types';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-encryption/branded-strings/extract-encrypted-columns.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 type EncryptedConnectionParametersLike = {
   IMAP?: { host: string; password: EncryptedString };
@@ -25,7 +25,6 @@ class FakeRelatedEntity extends WorkspaceRelatedEntity {
 }
 
 type TestedRecord = {
-  // Non-EncryptedString fields - must NOT be extracted
   plainString: string;
   plainStringNullable: string | null;
   plainNumber: number;
@@ -41,7 +40,6 @@ type TestedRecord = {
   recordWithoutEncryption: { host: string; port: number };
   arrayOfPlaintextRecords: Array<{ host: string }>;
 
-  // Direct EncryptedString fields - MUST be extracted
   encryptedRequired: EncryptedString;
   encryptedNullable: EncryptedString | null;
   encryptedUndefinable: EncryptedString | undefined;
@@ -50,7 +48,6 @@ type TestedRecord = {
   encryptedUnionWithPrimitive: EncryptedString | string;
   encryptedUnionWithPlaintext: EncryptedString | PlaintextString;
 
-  // Nested EncryptedString — MUST be extracted (transitive structural)
   connectionParametersLike: EncryptedConnectionParametersLike;
   connectionParametersLikeNullable: EncryptedConnectionParametersLike | null;
   arrayOfRecordsWithEncrypted: Array<{ secret: EncryptedString }>;
@@ -87,15 +84,12 @@ type Assertions = [
     >
   >,
 
-  // Empty object returns never
   Expect<Equal<ExtractEncryptedColumns<EmptyObject>, never>>,
 
-  // Object with no EncryptedString fields returns never
   Expect<
     Equal<ExtractEncryptedColumns<{ a: string; b: number; c: '' }>, never>
   >,
 
-  // Object with only PlaintextString fields returns never (brands don't cross)
   Expect<
     Equal<
       ExtractEncryptedColumns<{

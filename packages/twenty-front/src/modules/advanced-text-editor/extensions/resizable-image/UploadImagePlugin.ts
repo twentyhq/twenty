@@ -1,80 +1,19 @@
 import { type Editor } from '@tiptap/core';
-import { type Node } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { type EditorView } from '@tiptap/pm/view';
+
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
+import { insertUploadingImage } from '@/advanced-text-editor/utils/insertUploadingImage';
 
 export type UploadImagePluginProps = {
   editor: Editor;
-  allowedMimeTypes?: string[];
-  onImageUpload?: (file: File) => Promise<string>;
+  allowedMimeTypes?: readonly string[];
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
 };
 
 export const UploadImagePlugin = (options: UploadImagePluginProps) => {
   const { editor, onImageUpload, allowedMimeTypes, onImageUploadError } =
     options;
-
-  const handleImageUpload = (view: EditorView, file: File, pos?: number) => {
-    const placeholderSrc = URL.createObjectURL(file);
-
-    const { tr, schema } = view.state;
-    const imageNode = schema.nodes.image.create({
-      src: placeholderSrc,
-      alt: file.name,
-    });
-
-    editor.extensionStorage.uploadImage.placeholderImages.add(placeholderSrc);
-
-    const resolvedPos =
-      pos !== undefined
-        ? view.state.doc.resolve(pos)
-        : view.state.selection.$head;
-
-    const transaction = tr.insert(resolvedPos.pos, imageNode);
-    view.dispatch(transaction);
-
-    onImageUpload?.(file)
-      .then((uploadedSrc) => {
-        const updateTr = view.state.tr;
-
-        const predicate = (node: Node) =>
-          node.type.name === 'image' && node.attrs.src === placeholderSrc;
-
-        view.state.doc.descendants((node, pos) => {
-          if (predicate(node)) {
-            updateTr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              src: uploadedSrc,
-            });
-            return false;
-          }
-        });
-
-        view.dispatch(updateTr);
-      })
-      .catch((error: Error) => {
-        const removeTr = view.state.tr;
-        const predicate = (node: Node) =>
-          node.type.name === 'image' && node.attrs.src === placeholderSrc;
-
-        view.state.doc.descendants((node, pos) => {
-          if (predicate(node)) {
-            removeTr.delete(pos, pos + node.nodeSize);
-            return false; // Stop traversal after finding the target
-          }
-        });
-
-        view.dispatch(removeTr);
-
-        onImageUploadError?.(error, file);
-      })
-      .finally(() => {
-        editor.extensionStorage.uploadImage.placeholderImages.delete(
-          placeholderSrc,
-        );
-        URL.revokeObjectURL(placeholderSrc);
-      });
-  };
 
   return new Plugin({
     key: new PluginKey('uploadImage'),
@@ -102,10 +41,18 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
         event.preventDefault();
         event.stopPropagation();
 
-        images.forEach((file) => handleImageUpload(view, file, pos.pos));
+        images.forEach((file) =>
+          insertUploadingImage({
+            editor,
+            file,
+            pos: pos.pos,
+            onImageUpload,
+            onImageUploadError,
+          }),
+        );
         return true;
       },
-      handlePaste: (view, event) => {
+      handlePaste: (_view, event) => {
         if (!onImageUpload || !event.clipboardData?.files?.length) {
           return false;
         }
@@ -120,7 +67,14 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
         event.preventDefault();
         event.stopPropagation();
 
-        images.forEach((file) => handleImageUpload(view, file));
+        images.forEach((file) =>
+          insertUploadingImage({
+            editor,
+            file,
+            onImageUpload,
+            onImageUploadError,
+          }),
+        );
         return true;
       },
     },

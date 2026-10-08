@@ -9,8 +9,8 @@ import { z } from 'zod';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray, isValidHostname } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -138,7 +138,7 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title={t`Add to blocklist`} type="submit" />
+        <Button type="submit">{t`Add to blocklist`}</Button>
       </StyledContainer>
     </form>
   );

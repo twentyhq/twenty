@@ -19,8 +19,8 @@ import {
   isSearchableFieldType,
 } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =

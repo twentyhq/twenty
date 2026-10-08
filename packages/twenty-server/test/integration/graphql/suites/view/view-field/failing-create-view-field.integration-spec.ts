@@ -6,7 +6,6 @@ import {
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
-import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
@@ -37,13 +36,6 @@ describe('View Field Resolver - Failing Create Operation', () => {
   afterEach(async () => {
     for (const viewFieldId of createdFlatViewFieldIds) {
       await deleteOneViewField({
-        input: {
-          id: viewFieldId,
-        },
-        expectToFail: false,
-      });
-
-      await destroyOneViewField({
         input: {
           id: viewFieldId,
         },

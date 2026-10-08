@@ -48,6 +48,42 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ id: '123', position: 1 });
   });
 
+  // The server mints cursors with Buffer.toString('base64url'), so pin the exact bytes.
+  it('should emit the same bytes the server would for the same payload', () => {
+    const record: ObjectRecord = {
+      __typename: 'ObjectRecord',
+      id: '81285b87-91e3-48ea-82ee-256b379f83d9',
+      position: 0,
+    };
+
+    expect(encodeCursor(record)).toBe(
+      Buffer.from(
+        JSON.stringify({ position: record.position, id: record.id }),
+        'utf-8',
+      ).toString('base64url'),
+    );
+    expect(encodeCursor(record)).toMatch(/^[A-Za-z0-9_-]+$/);
+  });
+
+  // Jest resolves 'buffer' to Node's builtin; the browser polyfill throws on 'base64url'.
+  it('should only use encodings the browser Buffer polyfill implements', async () => {
+    jest.resetModules();
+    jest.doMock('buffer', () => jest.requireActual('buffer/'));
+
+    const { encodeCursor: encodeCursorWithPolyfill } =
+      await import('@/apollo/utils/encodeCursor');
+    const record: ObjectRecord = {
+      __typename: 'ObjectRecord',
+      id: '123',
+      position: 1,
+    };
+
+    expect(encodeCursorWithPolyfill(record)).toBe(encodeCursor(record));
+
+    jest.dontMock('buffer');
+    jest.resetModules();
+  });
+
   it('should throw an error if record does not have an id', () => {
     const record = { position: 1 } as any;
 

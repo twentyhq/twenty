@@ -1,14 +1,13 @@
+import groupBy from 'lodash.groupby';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
-import {
-  MessageChannelSyncStage,
-  MessageChannelType,
-} from 'twenty-shared/types';
+import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -47,25 +46,28 @@ export class MessagingMessagesImportCronJob {
     MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const pendingMessageChannels = await this.messageChannelRepository.find(
-          {
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
-            },
+    const pendingMessageChannelsAcrossWorkspaces =
+      await this.messageChannelRepository.find({
+        where: {
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
+          workspace: {
+            activationStatus: WorkspaceActivationStatus.ACTIVE,
+            deletedAt: IsNull(),
           },
-        );
+        },
+      });
 
+    const pendingMessageChannelsByWorkspaceId = groupBy(
+      pendingMessageChannelsAcrossWorkspaces,
+      'workspaceId',
+    );
+
+    for (const [workspaceId, pendingMessageChannels] of Object.entries(
+      pendingMessageChannelsByWorkspaceId,
+    )) {
+      try {
         const messageChannelsToSchedule = pendingMessageChannels.filter(
           (messageChannel) =>
             !isThrottled(
@@ -80,7 +82,7 @@ export class MessagingMessagesImportCronJob {
 
         if (throttledCount > 0) {
           this.logger.log(
-            `Skipped ${throttledCount} throttled message channels for workspace ${activeWorkspace.id}`,
+            `Skipped ${throttledCount} throttled message channels for workspace ${workspaceId}`,
           );
         }
 
@@ -101,7 +103,7 @@ export class MessagingMessagesImportCronJob {
           })
           .where({
             id: In(messageChannelIdsToSchedule),
-            workspaceId: activeWorkspace.id,
+            workspaceId,
             isSyncEnabled: true,
             syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
           })
@@ -116,7 +118,7 @@ export class MessagingMessagesImportCronJob {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(
             MessagingMessagesImportJob.name,
             {
-              workspaceId: activeWorkspace.id,
+              workspaceId,
               messageChannelId,
             },
           );
@@ -127,13 +129,13 @@ export class MessagingMessagesImportCronJob {
           error.message.includes('messageChannel" does not exist')
         ) {
           const refetchedWorkspace = await this.workspaceRepository.findOneBy({
-            id: activeWorkspace.id,
+            id: workspaceId,
           });
 
           if (isDefined(refetchedWorkspace)) {
             this.exceptionHandlerService.captureExceptions([error], {
               workspace: {
-                id: activeWorkspace.id,
+                id: workspaceId,
               },
             });
             throw new Error(
@@ -143,7 +145,7 @@ export class MessagingMessagesImportCronJob {
         } else {
           this.exceptionHandlerService.captureExceptions([error], {
             workspace: {
-              id: activeWorkspace.id,
+              id: workspaceId,
             },
           });
         }

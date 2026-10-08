@@ -6,10 +6,14 @@ import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modul
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
+type FromViewEntityToFlatViewArgs = FromEntityToFlatEntityArgs<'view'> & {
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+};
+
 export const fromViewEntityToFlatView = (
-  args: FromEntityToFlatEntityArgs<'view'>,
+  args: FromViewEntityToFlatViewArgs,
 ): FlatView => {
-  const { entity: viewEntity, fieldMetadataIdToUniversalIdentifierMap } = args;
+  const { entity: viewEntity, fieldMetadataUniversalIdentifierById } = args;
 
   const viewScalarEntity = fromEntityToScalarEntity({
     metadataName: 'view',
@@ -25,9 +29,7 @@ export const fromViewEntityToFlatView = (
   const universalOverrides = isDefined(viewEntity.overrides)
     ? fromViewOverridesToUniversalOverrides({
         overrides: viewEntity.overrides,
-        fieldMetadataUniversalIdentifierById: Object.fromEntries(
-          fieldMetadataIdToUniversalIdentifierMap.entries(),
-        ),
+        fieldMetadataUniversalIdentifierById,
         shouldThrowOnMissingIdentifier: false,
       })
     : null;
@@ -61,6 +63,12 @@ export const fromViewEntityToFlatView = (
     viewSortIds: viewEntity.viewSorts?.map(({ id }) => id) ?? [],
     viewSortUniversalIdentifiers:
       viewEntity.viewSorts?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    navigationMenuItemIds:
+      viewEntity.navigationMenuItems?.map(({ id }) => id) ?? [],
+    navigationMenuItemUniversalIdentifiers:
+      viewEntity.navigationMenuItems?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
   };

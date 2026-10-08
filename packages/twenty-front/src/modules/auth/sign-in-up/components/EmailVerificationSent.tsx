@@ -2,18 +2,19 @@ import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
 import { useHandleResendEmailVerificationToken } from '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
-import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { t } from '@lingui/core/macro';
+import { MainButton } from 'twenty-ui/components/input';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -95,14 +96,14 @@ export const EmailVerificationSent = ({
     const gmailUrl = email
       ? `https://mail.google.com/mail/u/${email}/`
       : 'https://mail.google.com/';
-    window.open(gmailUrl, '_blank');
+    openUrlInNewTab(gmailUrl);
   };
 
   const handleOpenOutlook = () => {
     const outlookUrl = email
       ? `https://outlook.live.com/mail/${email}/`
       : 'https://outlook.live.com/';
-    window.open(outlookUrl, '_blank');
+    openUrlInNewTab(outlookUrl);
   };
 
   const handleChangeEmail = () => {
@@ -119,34 +120,32 @@ export const EmailVerificationSent = ({
   const mainButtons = isError ? (
     <>
       <MainButton
-        title={t`Try with another email`}
         onClick={handleChangeEmail}
-        variant="secondary"
         fullWidth
-      />
+        variant="outline"
+      >{t`Try with another email`}</MainButton>
       <MainButton
-        title={isLoading ? t`Sending...` : t`Resend email`}
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
-      />
+      >
+        {isLoading ? t`Sending...` : t`Resend email`}
+      </MainButton>
     </>
   ) : (
     <>
       <MainButton
-        title={t`Open Gmail`}
         onClick={handleOpenGmail}
-        Icon={IconGmail}
-        variant="secondary"
+        startIcon={<IconGmail />}
         fullWidth
-      />
+        variant="outline"
+      >{t`Open Gmail`}</MainButton>
       <MainButton
-        title={t`Open Outlook`}
         onClick={handleOpenOutlook}
-        Icon={IconMicrosoft}
-        variant="secondary"
+        startIcon={<IconMicrosoft />}
         fullWidth
-      />
+        variant="outline"
+      >{t`Open Outlook`}</MainButton>
     </>
   );
 

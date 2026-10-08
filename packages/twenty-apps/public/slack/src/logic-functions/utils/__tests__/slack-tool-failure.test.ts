@@ -1,3 +1,4 @@
+import { ErrorCode } from '@slack/web-api';
 import { describe, expect, it } from 'vitest';
 
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
@@ -24,5 +25,26 @@ describe('slackToolFailure', () => {
       message: 'Failed to post Slack message',
       error: 'Slack request failed',
     });
+  });
+
+  it('should surface the Retry-After so callers can defer delivery', () => {
+    const result = slackToolFailure(
+      'Failed to post Slack message',
+      Object.assign(new Error('A rate limit was exceeded'), {
+        code: ErrorCode.RateLimitedError,
+        retryAfter: 30,
+      }),
+    );
+
+    expect(result.retryAfterSeconds).toBe(30);
+  });
+
+  it('should leave the Retry-After unset for every other Slack error', () => {
+    const result = slackToolFailure(
+      'Failed to post Slack message',
+      new Error('channel_not_found'),
+    );
+
+    expect(result.retryAfterSeconds).toBeUndefined();
   });
 });

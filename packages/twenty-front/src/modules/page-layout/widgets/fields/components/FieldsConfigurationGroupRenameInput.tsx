@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Key } from 'ts-key-enum';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type FormEvent } from 'react';
 
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div`
+const StyledForm = styled.form`
   align-items: center;
   box-sizing: border-box;
   display: flex;
@@ -17,45 +17,34 @@ const StyledContainer = styled.div`
 `;
 
 type FieldsConfigurationGroupRenameInputProps = {
-  dropdownId: string;
   renameValue: string;
   onRenameValueChange: (value: string) => void;
   onSave: (newName: string) => void;
-  onCancel: () => void;
+  onClose: () => void;
 };
 
 export const FieldsConfigurationGroupRenameInput = ({
-  dropdownId,
   renameValue,
   onRenameValueChange,
   onSave,
-  onCancel,
+  onClose,
 }: FieldsConfigurationGroupRenameInputProps) => {
   const { t } = useLingui();
 
-  const handleSave = () => {
-    if (renameValue.trim().length > 0) {
-      onSave(renameValue.trim());
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedRenameValue = renameValue.trim();
+
+    if (isNonEmptyString(trimmedRenameValue)) {
+      onSave(trimmedRenameValue);
     }
-    onCancel();
+
+    onClose();
   };
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: handleSave,
-    focusId: dropdownId,
-    dependencies: [handleSave],
-  });
-
-  useHotkeysOnFocusedElement({
-    keys: [Key.Escape],
-    callback: onCancel,
-    focusId: dropdownId,
-    dependencies: [onCancel],
-  });
-
   return (
-    <StyledContainer>
+    <StyledForm onSubmit={handleSubmit}>
       <TextInput
         value={renameValue}
         onChange={onRenameValueChange}
@@ -63,14 +52,11 @@ export const FieldsConfigurationGroupRenameInput = ({
         fullWidth
         sizeVariant="sm"
         placeholder={t`Group name`}
+        aria-label={t`Group name`}
       />
-      <Button
-        variant="primary"
-        accent="blue"
-        size="small"
-        title={t`Done`}
-        onClick={handleSave}
-      />
-    </StyledContainer>
+      <Button type="submit" size="sm" variant="solid" color="accent">
+        {t`Done`}
+      </Button>
+    </StyledForm>
   );
 };

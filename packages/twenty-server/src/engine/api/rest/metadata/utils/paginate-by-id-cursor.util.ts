@@ -1,19 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
+import { type FindOptionsWhere } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type FindManyOptions,
-  type FindOptionsWhere,
-  LessThan,
-  MoreThan,
-  type Repository,
-} from 'typeorm';
 
-export type RestCursorPageInfo = {
-  hasNextPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
-};
+import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
+import { paginateMetadataQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export const paginateByIdCursor = async <
   T extends { id: string; workspaceId: string },
@@ -21,60 +14,39 @@ export const paginateByIdCursor = async <
   repository,
   workspaceId,
   where,
-  limit,
-  startingAfter,
-  endingBefore,
+  request,
 }: {
-  repository: Repository<T>;
+  repository: WorkspaceScopedRepository<T>;
   workspaceId: string;
   where?: FindOptionsWhere<T>;
-  limit: number;
-  startingAfter?: string;
-  endingBefore?: string;
+  request: AuthenticatedRequest;
 }): Promise<{
   items: T[];
   pageInfo: RestCursorPageInfo;
   totalCount: number;
 }> => {
-  if (isDefined(startingAfter) && isDefined(endingBefore)) {
-    throw new BadRequestException(
-      `'starting_after' and 'ending_before' cannot be used together.`,
-    );
+  const queryBuilder = repository.createScopedQueryBuilder(
+    workspaceId,
+    'metadata',
+  );
+
+  if (isDefined(where)) {
+    queryBuilder.andWhere(where);
   }
 
-  const isBackward = isDefined(endingBefore);
-
-  const idCondition = isBackward
-    ? { id: MoreThan(endingBefore) }
-    : isDefined(startingAfter)
-      ? { id: LessThan(startingAfter) }
-      : {};
-
-  const baseWhere = { ...where, workspaceId } as FindOptionsWhere<T>;
-
-  const [rows, totalCount] = await Promise.all([
-    repository.find({
-      where: { ...baseWhere, ...idCondition },
-      order: { id: isBackward ? 'ASC' : 'DESC' },
-      take: limit + 1,
-    } as FindManyOptions<T>),
-    repository.count({ where: baseWhere }),
+  const countQueryBuilder = queryBuilder.clone();
+  const [page, totalCount] = await Promise.all([
+    paginateMetadataQueryBuilder({
+      queryBuilder,
+      alias: 'metadata',
+      pagination: parseMetadataRestPagination(request),
+    }),
+    countQueryBuilder.getCount(),
   ]);
 
-  const hasMore = rows.length > limit;
-  const items = hasMore ? rows.slice(0, limit) : rows;
-
-  if (isBackward) {
-    items.reverse();
-  }
-
   return {
-    items,
-    pageInfo: {
-      hasNextPage: hasMore,
-      startCursor: items[0]?.id ?? null,
-      endCursor: items[items.length - 1]?.id ?? null,
-    },
+    items: page.items,
+    pageInfo: page.pageInfo,
     totalCount,
   };
 };

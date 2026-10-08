@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { CampaignSkippedRecipientsDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-skipped-recipients.dto';
+import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 
 @ObjectType()
 export class SendMessageCampaignOutputDTO {
@@ -10,6 +10,6 @@ export class SendMessageCampaignOutputDTO {
   @Field(() => Int)
   queuedCount: number;
 
-  @Field(() => CampaignSkippedRecipientsDTO)
-  skipped: CampaignSkippedRecipientsDTO;
+  @Field(() => CampaignAudiencePreviewDTO)
+  audience: CampaignAudiencePreviewDTO;
 }

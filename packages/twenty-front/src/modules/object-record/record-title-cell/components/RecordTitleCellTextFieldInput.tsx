@@ -1,6 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useContext, useRef } from 'react';
@@ -50,7 +50,6 @@ export const RecordTitleCellTextFieldInput = ({
   });
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    // Ensure draft value is set from field value if it's undefined or empty when focusing
     if (isDefined(draftValue)) {
       event.target.select();
     }

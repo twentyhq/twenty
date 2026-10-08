@@ -7,7 +7,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
-import { fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-delete-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
 import { fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-update-view-filter-group-input-to-flat-view-filter-group-to-update-or-throw.util';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
@@ -187,70 +186,10 @@ export class ViewFilterGroupService {
     deleteViewFilterGroupInput: DeleteViewFilterGroupInput;
     workspaceId: string;
   }): Promise<ViewFilterGroupDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFilterGroupMaps'],
-        },
-      );
-
-    const optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt =
-      fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow({
-        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
-        deleteViewFilterGroupInput,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            viewFilterGroup: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt,
-              ],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view filter group',
-      );
-    }
-
-    const {
-      flatViewFilterGroupMaps: recomputedExistingFlatViewFilterGroupMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFilterGroupMaps'],
-        },
-      );
-
-    return fromFlatViewFilterGroupToViewFilterGroupDto(
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
-      }),
-    );
+    return this.destroyOne({
+      destroyViewFilterGroupInput: deleteViewFilterGroupInput,
+      workspaceId,
+    });
   }
 
   async destroyOne({
@@ -325,7 +264,7 @@ export class ViewFilterGroupService {
       where: {
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: [
         'workspace',
         'view',
@@ -345,7 +284,7 @@ export class ViewFilterGroupService {
         viewId,
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: [
         'workspace',
         'view',

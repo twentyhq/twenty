@@ -5,10 +5,12 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldListContainer = styled.div`
   display: flex;
@@ -95,17 +97,19 @@ export const RecordTableSettingsFieldVisibility = ({
                   itemComponent={
                     <MenuItemDraggable
                       LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-                      iconButtons={[
-                        {
-                          Icon: IconEyeOff,
-                          onClick: () => {
+                      iconButtons={
+                        <LightIconButton
+                          aria-label={t`Hide field`}
+                          onClick={() => {
                             toggleRecordTableWidgetFieldVisibility(
                               fieldItem.viewField.id,
                               false,
                             );
-                          },
-                        },
-                      ]}
+                          }}
+                        >
+                          <IconEyeOff />
+                        </LightIconButton>
+                      }
                       text={fieldItem.fieldMetadataItem.label}
                       gripMode="always"
                     />
@@ -123,17 +127,19 @@ export const RecordTableSettingsFieldVisibility = ({
             <MenuItemDraggable
               key={fieldItem.viewField.id}
               LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-              iconButtons={[
-                {
-                  Icon: IconEye,
-                  onClick: () => {
+              iconButtons={
+                <LightIconButton
+                  aria-label={t`Show field`}
+                  onClick={() => {
                     toggleRecordTableWidgetFieldVisibility(
                       fieldItem.viewField.id,
                       true,
                     );
-                  },
-                },
-              ]}
+                  }}
+                >
+                  <IconEye />
+                </LightIconButton>
+              }
               text={fieldItem.fieldMetadataItem.label}
               accent="placeholder"
               isDragDisabled

@@ -16,6 +16,17 @@ describe('getDateFnsLocale', () => {
     expect(locale?.code).toBe('fr');
   });
 
+  // The switch defaults to en-US, so a wrong module path fails as silently as a missing case
+  it.each([
+    ['hy-AM', 'hy'],
+    ['sr-Latn', 'sr-Latn'],
+    ['uz-UZ', 'uz'],
+  ])('should load %s from date-fns', async (appLocale, dateFnsCode) => {
+    const locale = await getDateFnsLocale(appLocale);
+
+    expect(locale?.code).toBe(dateFnsCode);
+  });
+
   it('should fall back to en-US for an unknown locale', async () => {
     const locale = await getDateFnsLocale('zz-ZZ');
 

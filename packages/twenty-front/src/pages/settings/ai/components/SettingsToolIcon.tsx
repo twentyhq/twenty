@@ -1,21 +1,23 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import {
-  IconCode,
   IconEdit,
   IconPlus,
   IconSearch,
+  IconTool,
   IconTrash,
   useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
+import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsToolIconProps = {
   icon?: string | null;
@@ -25,13 +27,9 @@ type SettingsToolIconProps = {
   marketplaceApp?: MarketplaceAppInfo;
 };
 
-type ApplicationInfo = {
-  name: string;
-};
+type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name'>;
 
-type MarketplaceAppInfo = {
-  logo?: string | null;
-};
+type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, 'logoUrl'>;
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
   if (toolName.startsWith('create_')) return IconPlus;
@@ -92,16 +90,16 @@ export const SettingsToolIcon = ({
   marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
+  if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
     return (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logo)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        src={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );
@@ -110,15 +108,15 @@ export const SettingsToolIcon = ({
   if (isDefined(application)) {
     return (
       <Avatar
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );
   }
 
-  const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
+  const MainIcon = isDefined(icon) ? getIcon(icon) : IconTool;
   const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 
   const objectMetadata = isDefined(objectName)

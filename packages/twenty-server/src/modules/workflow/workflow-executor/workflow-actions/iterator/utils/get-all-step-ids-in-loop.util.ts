@@ -22,13 +22,14 @@ const traverseSteps = ({
     }
 
     visitedStepIds.add(stepId);
-    allStepIdsInLoop.add(stepId);
 
     const step = steps.find((s) => s.id === stepId);
 
     if (!step) {
       continue;
     }
+
+    allStepIdsInLoop.add(stepId);
 
     if (isWorkflowIteratorAction(step)) {
       const nestedIteratorInput = step.settings

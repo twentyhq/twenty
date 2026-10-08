@@ -1,92 +1,74 @@
 import { t } from '@lingui/core/macro';
-import { Document } from '@tiptap/extension-document';
-import { HardBreak } from '@tiptap/extension-hard-break';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Text } from '@tiptap/extension-text';
-import { Placeholder } from '@tiptap/extensions/placeholder';
-import { useEditor } from '@tiptap/react';
-import { useCallback, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useCallback } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
+import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
+import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchAgentChatEnsureThreadForDraftEvent';
-import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
-import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
-import { MentionTag } from '@/mention/extensions/MentionTag';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
+import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
+import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
+import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
-const textToTiptapContent = (text: string) => ({
-  type: 'doc',
-  content: [
-    {
-      type: 'paragraph',
-      content: text ? [{ type: 'text', text }] : [],
-    },
-  ],
-});
-
 export const useAiChatEditor = () => {
-  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
   const { searchMentionRecords } = useMentionSearch();
+  const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const { searchSkills } = useSkillSuggestionSearch();
+  const { uploadFiles } = useAiChatFileUpload();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
-  const initialContent = textToTiptapContent(initialDraft);
-
-  const extensions = useMemo(
-    () => [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: t`Ask, search or make anything...`,
-      }),
-      HardBreak.configure({
-        keepMarks: false,
-      }),
-      MentionTag,
-      MentionSuggestion,
-    ],
-    [],
-  );
-
-  const editor = useEditor({
-    content: initialContent,
-    extensions,
+  const editor = useAdvancedTextEditor({
+    profile: AI_CHAT_EDITOR_PROFILE,
+    placeholder: isAiChatInboxEnabled
+      ? t`Ask anything, @ a teammate or record, / a skill...`
+      : t`Ask anything, @ a record or / a skill...`,
+    readonly: false,
+    defaultValue: initialDraft,
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-          const suggestionState = MENTION_SUGGESTION_PLUGIN_KEY.getState(
-            view.state,
+          const isSuggestionMenuOpen = [
+            MENTION_SUGGESTION_PLUGIN_KEY,
+            SKILL_SUGGESTION_PLUGIN_KEY,
+          ].some(
+            (pluginKey) => pluginKey.getState(view.state)?.active === true,
           );
-          if (suggestionState?.active === true) {
+          if (isSuggestionMenuOpen) {
             return false;
           }
 
           event.preventDefault();
-          dispatchAgentChatSendMessageEvent();
+          dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
 
           const { state } = view;
           view.dispatch(state.tr.delete(0, state.doc.content.size));
@@ -94,16 +76,37 @@ export const useAiChatEditor = () => {
         }
         return false;
       },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+
+        if (
+          !isDefined(clipboardData) ||
+          clipboardData.types.includes('text/plain')
+        ) {
+          return false;
+        }
+
+        const pastedFiles = Array.from(clipboardData.files);
+
+        if (!isNonEmptyArray(pastedFiles)) {
+          return false;
+        }
+
+        uploadFiles(pastedFiles);
+        return true;
+      },
     },
-    onUpdate: ({ editor: currentEditor }) => {
+    onUpdate: (currentEditor) => {
       const text = turnIntoEmptyStringIfWhitespacesOnly(
         currentEditor.getText({ blockSeparator: '\n' }),
       );
-      setAgentChatInput(text);
-      setAgentChatDraftsByThreadId((prev) => ({ ...prev, [draftKey]: text }));
-      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
-        dispatchAgentChatEnsureThreadForDraftEvent();
-      }
+      const serializedDraft =
+        text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
+
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [draftKey]: serializedDraft,
+      }));
     },
     onFocus: () => {
       pushFocusItemToFocusStack({
@@ -120,11 +123,9 @@ export const useAiChatEditor = () => {
     onBlur: () => {
       removeFocusItemFromFocusStackById({ focusId: AI_CHAT_INPUT_ID });
     },
-    injectCSS: false,
   });
 
-  // Keep search function in sync via Tiptap extension storage,
-  // avoiding stale closures without useRef
+  // Extension storage avoids stale closures without a ref.
   if (isDefined(editor)) {
     const storage = editor.extensionStorage as unknown as Record<
       string,
@@ -132,14 +133,27 @@ export const useAiChatEditor = () => {
     >;
     const mentionStorage = storage['mention-suggestion'] as {
       searchMentionRecords: typeof searchMentionRecords;
+      searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
     mentionStorage.searchMentionRecords = searchMentionRecords;
+    mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
+      ? searchWorkspaceMembers
+      : () => [];
+
+    const skillStorage = storage['skill-suggestion'] as {
+      searchSkills: typeof searchSkills;
+    };
+    skillStorage.searchSkills = searchSkills;
   }
 
   const handleRestoreEditorContent = useCallback(
     (detail?: { content: string }) => {
       if (isDefined(detail?.content)) {
-        editor?.commands.setContent(textToTiptapContent(detail.content));
+        editor?.commands.setContent(
+          deserializeAdvancedTextEditorDocument({
+            serializedDocument: detail.content,
+          }),
+        );
       }
     },
     [editor],
@@ -151,7 +165,7 @@ export const useAiChatEditor = () => {
   });
 
   const handleSendAndClear = () => {
-    dispatchAgentChatSendMessageEvent();
+    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
     editor?.commands.clearContent();
   };
 

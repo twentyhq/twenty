@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -6,17 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 
-import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import {
-  LogicFunctionEntity,
-  LogicFunctionExecutionMode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { shouldReinstallLogicFunctionPrebuiltBundle } from 'src/engine/metadata-modules/logic-function/utils/should-reinstall-logic-function-prebuilt-bundle.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -32,11 +26,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'update',
   'logicFunction',
 ) {
-  constructor(
-    private readonly fileStorageService: FileStorageService,
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-  ) {
+  constructor(private readonly fileStorageService: FileStorageService) {
     super();
   }
 
@@ -98,13 +88,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       update as Parameters<typeof logicFunctionRepository.update>[1],
     );
 
-    await this.installPrebuiltBundleIfNeeded({
-      existingLogicFunction,
-      update,
-      applicationUniversalIdentifier,
-      context,
-    });
-
     if (builtPathChanged) {
       const deleteFileStart = performance.now();
 
@@ -121,73 +104,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         `[install-perf] update logicFunction fileStorageService.deleteFile took ${deleteFileMs.toFixed(1)}ms (fnId=${entityId})`,
         UpdateLogicFunctionActionHandlerService.name,
       );
-    }
-  }
-
-  private async installPrebuiltBundleIfNeeded({
-    existingLogicFunction,
-    update,
-    applicationUniversalIdentifier,
-    context,
-  }: {
-    existingLogicFunction: FlatLogicFunction;
-    update: FlatUpdateLogicFunctionAction['update'];
-    applicationUniversalIdentifier: string;
-    context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>;
-  }): Promise<void> {
-    const newLogicFunction: FlatLogicFunction = {
-      ...existingLogicFunction,
-      ...update,
-      executionMode:
-        update.executionMode ?? existingLogicFunction.executionMode,
-      isBuildUpToDate:
-        update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate,
-      checksum: update.checksum ?? existingLogicFunction.checksum,
-    };
-
-    if (
-      !shouldReinstallLogicFunctionPrebuiltBundle({
-        existingLogicFunction,
-        newLogicFunction,
-      })
-    ) {
-      return;
-    }
-
-    const becamePrebuilt =
-      existingLogicFunction.executionMode !==
-      LogicFunctionExecutionMode.PREBUILT;
-
-    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-
-    const installStart = Date.now();
-
-    try {
-      await driver.installPrebuiltBundle({
-        flatLogicFunction: {
-          ...newLogicFunction,
-          executionMode: LogicFunctionExecutionMode.PREBUILT,
-          isBuildUpToDate: true,
-        },
-        flatApplication: context.flatApplication,
-        applicationUniversalIdentifier,
-      });
-
-      this.logger.log(
-        `[lambda-timing] event=install_prebuilt fnId=${existingLogicFunction.id} ` +
-          `reason=${becamePrebuilt ? 'mode_flip' : 'checksum_change'} ` +
-          `install_duration_ms=${Date.now() - installStart}`,
-        UpdateLogicFunctionActionHandlerService.name,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to install prebuilt bundle for function ${existingLogicFunction.id} ` +
-          `after ${Date.now() - installStart}ms: ` +
-          `${error instanceof Error ? error.message : String(error)}`,
-        UpdateLogicFunctionActionHandlerService.name,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw error;
     }
   }
 }

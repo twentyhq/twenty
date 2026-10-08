@@ -5,19 +5,12 @@ import {
   type CurrentUser,
   currentUserState,
 } from '@/auth/states/currentUserState';
-import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
-const tokenPair = {
-  accessOrWorkspaceAgnosticToken: {
-    token: 'accessToken',
-    expiresAt: 'expiresAt',
-  },
-  refreshToken: { token: 'refreshToken', expiresAt: 'expiresAt' },
-};
 const currentUser = {
   id: '1',
   onboardingStatus: null,
@@ -31,12 +24,12 @@ const renderHooks = () => {
     () => {
       const onboardingStatus = useOnboardingStatus();
       const setCurrentUser = useSetAtomState(currentUserState);
-      const setTokenPair = useSetAtomState(tokenPairState);
+      const setIsCookieAuthActive = useSetAtomState(isCookieAuthActiveState);
 
       return {
         onboardingStatus,
         setCurrentUser,
-        setTokenPair,
+        setIsCookieAuthActive,
       };
     },
     {
@@ -55,10 +48,10 @@ describe('useOnboardingStatus', () => {
   Object.values(OnboardingStatus).forEach((onboardingStatus) => {
     it(`should return "${onboardingStatus}"`, async () => {
       const { result } = renderHooks();
-      const { setTokenPair, setCurrentUser } = result.current;
+      const { setIsCookieAuthActive, setCurrentUser } = result.current;
 
       act(() => {
-        setTokenPair(tokenPair);
+        setIsCookieAuthActive(true);
         setCurrentUser({
           ...currentUser,
           onboardingStatus,

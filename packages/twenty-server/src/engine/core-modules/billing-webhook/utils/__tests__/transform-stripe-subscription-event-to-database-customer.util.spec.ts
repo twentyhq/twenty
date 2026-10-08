@@ -54,7 +54,6 @@ describe('transformStripeSubscriptionEventToDatabaseCustomer', () => {
   it('should work with different subscription event types', () => {
     const mockData = createMockSubscriptionData('cus_123');
 
-    // Test with different event types (they should all transform the same way)
     ['updated', 'created', 'deleted'].forEach(() => {
       const result = transformStripeSubscriptionEventToDatabaseCustomer(
         mockWorkspaceId,

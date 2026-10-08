@@ -9,6 +9,9 @@ module.exports = {
     './src/modules/users/graphql/**/*.{ts,tsx}',
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
+    // answerToolCall is served by the core (/graphql) schema via @CoreResolver.
+    '!./src/modules/ai/graphql/mutations/answerToolCall.ts',
+    './src/modules/object-record/record-sharing/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
 
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
@@ -22,23 +25,31 @@ module.exports = {
     '!./src/modules/settings/legal/**/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
 
-    './src/modules/databases/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/validation-rules/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/**/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu-item/graphql/**/*.{ts,tsx}',
-    './src/modules/attachments/graphql/**/*.{ts,tsx}',
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
     './src/modules/front-components/graphql/**/*.{ts,tsx}',
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
+    './src/modules/activities/calendar/graphql/mutations/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/mutations/**/*.{ts,tsx}',
+    './src/modules/activities/timeline-activities/graphql/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/metadata-queries/**/*.{ts,tsx}',
 
     './src/modules/dashboards/graphql/**/*.{ts,tsx}',
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',
     './src/modules/marketplace/graphql/**/*.{ts,tsx}',
+    './src/modules/record-export/graphql/**/*.{ts,tsx}',
+    './src/modules/metadata-store/graphql/**/*.{ts,tsx}',
+    './src/modules/sse-db-event/graphql/**/*.{ts,tsx}',
+    './src/modules/geo-map/graphql-query/*.{ts,tsx}',
+
+    './src/pages/**/graphql/**/*.{ts,tsx}',
+
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',
@@ -49,6 +60,7 @@ module.exports = {
       plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
       config: {
         skipTypename: false,
+        useTypeImports: true,
         defaultScalarType: 'any',
         scalars: {
           DateTime: 'string',

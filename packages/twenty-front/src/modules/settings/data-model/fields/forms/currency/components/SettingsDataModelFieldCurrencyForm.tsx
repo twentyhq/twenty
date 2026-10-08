@@ -10,13 +10,13 @@ import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/val
 import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
@@ -90,6 +90,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => {
           const format = value?.format ?? fieldMetadataCurrencyFormat[0];
           const decimals = value?.decimals ?? DEFAULT_DECIMAL_VALUE;
+          const example = (1000).toFixed(decimals);
 
           return (
             <>
@@ -126,8 +127,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   Icon={IconDecimal}
                   title={t`Number of decimals`}
                   description={plural(decimals, {
-                    one: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimal`,
-                    other: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimals`,
+                    one: `E.g. ${example} for # decimal`,
+                    other: `E.g. ${example} for # decimals`,
                   })}
                   value={decimals}
                   onChange={(newDecimals: number) =>

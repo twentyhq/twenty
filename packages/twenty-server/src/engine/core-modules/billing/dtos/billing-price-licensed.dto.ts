@@ -21,4 +21,7 @@ export class BillingPriceLicensedDTO {
 
   @Field(() => Number, { nullable: true })
   creditAmount: number | null;
+
+  @Field(() => Boolean)
+  isSellable: boolean;
 }

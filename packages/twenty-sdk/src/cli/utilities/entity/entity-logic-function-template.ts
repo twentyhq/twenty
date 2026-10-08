@@ -45,6 +45,9 @@ export default defineLogicFunction({
     // Database event trigger example:
     // databaseEventTriggerSettings: {
     //   eventName: 'objectName.created',
+    //   // Optional: receive one call per batch of events instead of one per event,
+    //   // the handler payload then becomes { ...eventInfo, events: [...] }
+    //   batchMode: true,
     // },
 });
 `;

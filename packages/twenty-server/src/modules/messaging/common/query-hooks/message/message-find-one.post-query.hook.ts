@@ -45,10 +45,16 @@ export class MessageFindOnePostQueryHook implements WorkspacePostQueryHookInstan
       ? authContext.user.id
       : undefined;
 
+    // An application has no user behind it, so it would otherwise get redacted placeholders for its own messages
+    const applicationId = isApplicationAuthContext(authContext)
+      ? authContext.application.id
+      : undefined;
+
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
       payload,
       workspace.id,
       userId,
+      applicationId,
     );
   }
 }

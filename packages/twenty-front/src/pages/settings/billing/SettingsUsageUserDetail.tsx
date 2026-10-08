@@ -1,3 +1,4 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,14 +11,13 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components/layout';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledUserHeader = styled.div`
   align-items: center;
@@ -45,7 +45,6 @@ const StyledUserCredits = styled.span`
 export const SettingsUsageUserDetail = () => {
   const { t: tLingui } = useLingui();
   const { userWorkspaceId } = useParams<{ userWorkspaceId: string }>();
-  const { theme } = useContext(ThemeContext);
   const { formatUsageValue } = useUsageValueFormatter();
 
   const { analytics, isInitialLoading } = useUsageAnalyticsData({
@@ -91,21 +90,15 @@ export const SettingsUsageUserDetail = () => {
     return (
       <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
         <SettingsPageContainer>
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <StyledUserHeader>
-              <Skeleton width={40} height={40} borderRadius={8} />
-              <StyledUserInfo>
-                <Skeleton width={160} height={16} />
-                <Skeleton width={100} height={13} />
-              </StyledUserInfo>
-            </StyledUserHeader>
-            <UsageSectionSkeleton />
-            <UsageSectionSkeleton />
-          </SkeletonTheme>
+          <StyledUserHeader>
+            <SkeletonLine width={40} height={40} borderRadius={8} />
+            <StyledUserInfo>
+              <SkeletonLine width={160} height={16} />
+              <SkeletonLine width={100} height={13} />
+            </StyledUserInfo>
+          </StyledUserHeader>
+          <UsageSectionSkeleton />
+          <UsageSectionSkeleton />
         </SettingsPageContainer>
       </SettingsPageLayout>
     );
@@ -116,10 +109,10 @@ export const SettingsUsageUserDetail = () => {
       <SettingsPageContainer>
         <StyledUserHeader>
           <Avatar
-            type="rounded"
+            shape="circle"
             size="xl"
-            placeholder={displayName}
-            placeholderColorSeed={userWorkspaceId}
+            name={displayName}
+            colorSeed={userWorkspaceId}
           />
           <StyledUserInfo>
             <StyledUserName>{displayName}</StyledUserName>
@@ -130,14 +123,14 @@ export const SettingsUsageUserDetail = () => {
         </StyledUserHeader>
 
         {!hasAnyData && (
-          <Section>
+          <Section.Root>
             <SubscriptionInfoContainer>
               <SettingsBillingLabelValueItem
                 label={t`No usage data`}
                 value={t`No credit consumption recorded for this user.`}
               />
             </SubscriptionInfoContainer>
-          </Section>
+          </Section.Root>
         )}
 
         <UsageDailyChartSection

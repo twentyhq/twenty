@@ -20,9 +20,10 @@ import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layo
 
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 const DEFAULT_GRID_POSITION = {
+  layoutMode: PageLayoutTabLayoutMode.GRID as const,
   row: 0,
   column: 0,
   rowSpan: 1,
@@ -85,7 +86,7 @@ describe('Page layout widget update should fail', () => {
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.IFRAME,
           configuration: TEST_IFRAME_CONFIG,
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 

@@ -1,21 +1,24 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
+import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-// Single source of truth for which tabs render and which one is pinned, so
-// every consumer derives them from the same filtered tab set.
 export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
-  const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const widgetVisibilityContext = useWidgetVisibilityContext();
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -26,13 +29,11 @@ export const usePageLayoutRenderableTabs = () => {
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
-    isMobile,
-    isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
+    context: widgetVisibilityContext,
   });
 
-  // Edit mode keeps every tab visible (like getTabsWithVisibleWidgets) so a
-  // widget the object does not support can still be reached and removed.
+  // Edit mode keeps every tab visible so unsupported widgets can still be removed.
   const renderableTabs = isPageLayoutInEditMode
     ? tabsWithVisibleWidgets
     : getTabsRenderableForTargetObject({
@@ -45,6 +46,7 @@ export const usePageLayoutRenderableTabs = () => {
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,
+    isFirstTabPinned: getIsFirstTabPinned(currentPageLayout),
   });
 
   return {

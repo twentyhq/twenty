@@ -2,16 +2,26 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
+import {
   IsBoolean,
+  IsEnum,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { UPDATABLE_OBJECT_READABILITIES } from 'src/engine/metadata-modules/object-metadata/constants/updatable-object-readabilities.constant';
+import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
 
 @InputType()
 export class UpdateObjectPayload {
@@ -81,6 +91,27 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   isSearchable?: boolean;
+
+  @IsEnum(ObjectOpenRecordIn)
+  @IsOptional()
+  @Field(() => ObjectOpenRecordIn, { nullable: true })
+  openRecordIn?: ObjectOpenRecordIn;
+
+  @IsIn(UPDATABLE_OBJECT_READABILITIES)
+  @ValidateIf((_, value) => value !== undefined)
+  @Field(() => MetadataReadability, { nullable: true })
+  readability?: MetadataReadability;
+
+  @IsEnum(ObjectSharingReach)
+  @ValidateIf((_, value) => value !== undefined)
+  @Field(() => ObjectSharingReach, { nullable: true })
+  sharingReach?: ObjectSharingReach;
+
+  @Type(() => MetadataTranslationOverrideInput)
+  @ValidateNested({ each: true })
+  @IsOptional()
+  @Field(() => [MetadataTranslationOverrideInput], { nullable: true })
+  translations?: MetadataTranslationOverrideInput[];
 }
 
 @InputType()

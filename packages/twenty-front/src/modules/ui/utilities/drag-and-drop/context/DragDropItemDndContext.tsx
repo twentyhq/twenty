@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-type DragDropItemDndContextValue = {
+export type DragDropItemDndContextValue = {
   activeDropTargetIndex: number | null;
   activeDroppableId?: string | null;
 };

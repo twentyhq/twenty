@@ -1,0 +1,1 @@
+export const RECONCILE_CAMPAIGN_STATS_CRON_PATTERN = '15 * * * *';

@@ -14,6 +14,13 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -36,7 +43,9 @@ type HandlerEvent = Parameters<
   typeof scheduleRecallBotOnCallRecordingUpdateHandler
 >[0];
 
-const buildUpdateEvent = (overrides: Partial<HandlerEvent> = {}): HandlerEvent =>
+const buildUpdateEvent = (
+  overrides: Partial<HandlerEvent> = {},
+): HandlerEvent =>
   ({
     name: 'callRecording.updated',
     recordId: 'call-recording-1',
@@ -58,7 +67,9 @@ const buildUpdateEvent = (overrides: Partial<HandlerEvent> = {}): HandlerEvent =
     ...overrides,
   }) as HandlerEvent;
 
-const stubPendingCallRecordingQueries = () => {
+const stubPendingCallRecordingQueries = ({
+  externalBotId = null,
+}: { externalBotId?: string | null } = {}) => {
   queryMock.mockImplementation(async (query: any) => {
     if (query.callRecordings !== undefined) {
       return {
@@ -68,7 +79,7 @@ const stubPendingCallRecordingQueries = () => {
             status: 'SCHEDULED',
             recordingRequestStatus: 'REQUESTED',
             calendarEventId: 'calendar-event-1',
-            externalBotId: null,
+            externalBotId,
             botScheduleAttemptedAt: null,
           },
         ]),
@@ -110,9 +121,17 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     );
     queryMock.mockReset();
     mutationMock.mockReset();
-    mutationMock.mockImplementation(async (mutation: any) => ({
-      updateCallRecording: { id: mutation.updateCallRecording.__args.id },
-    }));
+    mutationMock.mockImplementation(async (mutation: any) =>
+      mutation.updateCallRecordings !== undefined
+        ? {
+            updateCallRecordings: [
+              { id: mutation.updateCallRecordings.__args.filter.id.eq },
+            ],
+          }
+        : {
+            updateCallRecording: { id: mutation.updateCallRecording.__args.id },
+          },
+    );
     fetchMock.mockReset();
     fetchMock.mockImplementation(async (requestUrl: string) => {
       if (requestUrl === RECALL_CREATE_BOT_URL) {
@@ -150,8 +169,41 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
   it('schedules a bot when an update clears the bot id of a requested recording', async () => {
     stubPendingCallRecordingQueries();
 
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      result: { status: 'scheduled' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      RECALL_CREATE_BOT_URL,
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('schedules a bot when the platform serializes the missing bot id as an empty string', async () => {
+    stubPendingCallRecordingQueries({ externalBotId: '' });
+
     const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
+      buildUpdateEvent({
+        properties: {
+          updatedFields: ['title', 'status', 'callRecorderFailureReason'],
+          before: {
+            id: 'call-recording-1',
+            status: 'FAILED',
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: '',
+          },
+          after: {
+            id: 'call-recording-1',
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: '',
+          },
+        },
+      } as unknown as HandlerEvent),
     );
 
     expect(result).toEqual({
@@ -163,6 +215,27 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       RECALL_CREATE_BOT_URL,
       expect.objectContaining({ method: 'POST' }),
     );
+  });
+
+  it('schedules a bot when a slim payload diff clears the bot id to an empty string', async () => {
+    stubPendingCallRecordingQueries({ externalBotId: '' });
+
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent({
+        properties: {
+          updatedFields: ['externalBotId'],
+          diff: {
+            externalBotId: { before: 'recall-bot-vanished', after: '' },
+          },
+        },
+      } as unknown as HandlerEvent),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      result: { status: 'scheduled' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('skips events that are not call recording updates', async () => {
@@ -229,7 +302,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('defers rows with an ambiguous prior attempt to the recovery cron instead of listing bots', async () => {
+  it('defers rows with an ambiguous prior attempt to the follow-up instead of listing bots', async () => {
     queryMock.mockImplementationOnce(async () => ({
       callRecordings: buildConnection([
         {
@@ -256,15 +329,15 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
-    );
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
       result: {
         status: 'deferred',
-        reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
+        reason:
+          'ambiguous prior attempt; the follow-up will look it up at Recall',
       },
     });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -313,9 +386,8 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
-    );
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',

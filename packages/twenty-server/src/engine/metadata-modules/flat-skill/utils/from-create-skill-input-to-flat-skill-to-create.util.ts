@@ -20,7 +20,7 @@ export const fromCreateSkillInputToUniversalFlatSkillToCreate = ({
       ['name', 'label', 'icon', 'description'],
     );
 
-  // Content is markdown - only trim, don't collapse whitespace (preserve newlines)
+  // markdown: trim only, inner whitespace is meaningful
   const content = createSkillInput.content.trim();
 
   const id = createSkillInput.id ?? v4();
@@ -34,6 +34,7 @@ export const fromCreateSkillInputToUniversalFlatSkillToCreate = ({
     description: description ?? null,
     content,
     isCustom: true,
+    isSystem: false,
     isActive: true,
     createdAt: now,
     updatedAt: now,

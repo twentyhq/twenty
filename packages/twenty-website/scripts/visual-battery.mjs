@@ -198,7 +198,7 @@ const VISUALS = {
   // the cursor turns nearby dashes blue and shifts the band (interactive).
   'partner-hero': {
     slotSelector: '[data-illustration="partner-hero"]',
-    path: '/partners',
+    path: '/partners/become',
     hueRangeDegrees: null,
     minCoverage: 0.02,
     animated: false,
@@ -208,7 +208,7 @@ const VISUALS = {
   // the hover light brightens the dashes near the cursor (interactive).
   'promo-mic': {
     slotSelector: '[data-illustration="promo-mic"]',
-    path: '/partners',
+    path: '/partners/become',
     hueRangeDegrees: null,
     minCoverage: 0.02,
     animated: false,
@@ -218,7 +218,7 @@ const VISUALS = {
   // the cursor shifts the band and adds a light (interactive).
   'partner-portrait': {
     slotSelector: '[data-illustration="partner-portrait"]',
-    path: '/partners',
+    path: '/partners/become',
     hueRangeDegrees: null,
     minCoverage: 0.02,
     animated: false,
@@ -228,7 +228,7 @@ const VISUALS = {
   // halftone with a slow breathe; desktop-only + aria-hidden.
   'partner-quote': {
     slotSelector: '[data-illustration="partner-quote"]',
-    path: '/partners',
+    path: '/partners/become',
     hueRangeDegrees: [200, 260],
     minCoverage: 0.01,
     animated: false,

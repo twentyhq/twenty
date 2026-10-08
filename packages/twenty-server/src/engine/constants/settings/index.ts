@@ -1,13 +1,15 @@
+import { MAX_REQUEST_BODY_SIZE } from 'src/engine/constants/max-request-body-size.constant';
+
 import { type Settings } from './interfaces/settings.interface';
 
 export const settings: Settings = {
   storage: {
-    maxFileSize: '10MB',
-    // Direct uploads (createFileUpload/completeFileUpload) stream to storage
-    // without transiting the server memory, so they get a much higher cap
-    // than multipart uploads.
+    maxMultipartFileSize: '5MB',
+    // Direct uploads stream to storage without transiting server memory
     maxDirectUploadFileSize: '1GB',
+    maxCorePictureFileSize: '10MB',
   },
+  maxRequestBodySize: MAX_REQUEST_BODY_SIZE,
   minLengthOfStringForDuplicateCheck: 3,
   maxVisibleViewFields: 30,
 };

@@ -5,5 +5,6 @@ export const PET_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   labelSingular: 'Pet',
   namePlural: 'pets',
   nameSingular: 'pet',
+  color: 'gray',
   icon: 'IconCat',
 };

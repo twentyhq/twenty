@@ -1,16 +1,17 @@
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
-import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
+import { useNavigationDrawerExpanded } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpanded';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type PageCardHeaderProps = {
   links?: BreadcrumbProps['links'];
@@ -33,8 +34,8 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   grid-template-columns: ${({ centerTitle }) =>
     centerTitle
       ? 'minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)'
-      : 'minmax(0, auto) minmax(0, 1fr)'};
-  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+      : 'minmax(0, auto) minmax(min-content, 1fr)'};
+  min-height: ${APP_HEADER_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
@@ -76,8 +77,19 @@ const StyledRight = styled.div<{ centerTitle?: boolean }>`
   grid-column: ${({ centerTitle }) => (centerTitle ? 3 : 2)};
   justify-content: flex-end;
   justify-self: end;
-  min-width: 0;
   width: 100%;
+`;
+
+const StyledSurfaceTitle = styled(StyledTitle)`
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledSurfaceActions = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const PageCardHeader = ({
@@ -92,9 +104,10 @@ export const PageCardHeader = ({
 }: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+  const workspaceSurface = useWorkspaceSurface();
+  const workspaceSurfaceHeaderPortal = useWorkspaceSurfaceHeaderPortal();
 
-  const hasTitleContent =
-    !isMobile && (isDefined(icon) || isDefined(title) || isDefined(tag));
+  const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
   const shouldCenterTitle = centerTitle && hasTitleContent;
 
   const titleContent = (
@@ -105,10 +118,43 @@ export const PageCardHeader = ({
     </>
   );
 
+  const surfaceTitleContent = isDefined(breadcrumb) ? (
+    breadcrumb
+  ) : hasTitleContent ? (
+    titleContent
+  ) : isDefined(links) ? (
+    <Breadcrumb links={links} />
+  ) : null;
+
+  if (workspaceSurface.type === 'side-panel') {
+    return (
+      <>
+        {isDefined(workspaceSurfaceHeaderPortal.title) &&
+          isDefined(surfaceTitleContent) &&
+          createPortal(
+            <StyledSurfaceTitle titleColor={titleColor}>
+              {surfaceTitleContent}
+            </StyledSurfaceTitle>,
+            workspaceSurfaceHeaderPortal.title,
+          )}
+        {isDefined(workspaceSurfaceHeaderPortal.actions) &&
+          isDefined(actionButton) &&
+          createPortal(
+            <StyledSurfaceActions
+              data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+            >
+              {actionButton}
+            </StyledSurfaceActions>,
+            workspaceSurfaceHeaderPortal.actions,
+          )}
+      </>
+    );
+  }
+
   return (
     <StyledHeader centerTitle={shouldCenterTitle}>
       <StyledLeft>
-        {!isNavigationDrawerExpanded && (
+        {!isMobile && !isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
         )}
         {isDefined(breadcrumb)

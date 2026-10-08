@@ -1,62 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Readable, Transform } from 'stream';
+import { Readable, Transform } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import bytes from 'bytes';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
+import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { type CompletedFileUpload } from 'src/engine/core-modules/file/file-upload/types/completed-file-upload.type';
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
+import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
+import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
-import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { readReadablePrefix } from 'src/utils/read-readable-prefix';
+import { withDeadline } from 'src/utils/with-deadline';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
   FileFolder.Workflow,
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
+  FileFolder.EmailImage,
+  FileFolder.AppTarball,
+  FileFolder.CorePicture,
+] as const;
+
+// These folders leave quarantine only through their dedicated, permission-gated completions, never the generic one.
+export const DEDICATED_COMPLETION_FILE_FOLDERS = [
+  FileFolder.AppTarball,
+  FileFolder.CorePicture,
 ] as const;
 
 @Injectable()
 export class FileUploadService {
+  private readonly logger = new Logger(FileUploadService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly applicationService: ApplicationService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly fileUploadTargetService: FileUploadTargetService,
+    private readonly fileUploadCompletionService: FileUploadCompletionService,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -90,19 +105,17 @@ export class FileUploadService {
       );
     }
 
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
+    assertValidDirectUploadSize({ size, fileFolder });
 
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
+    const { ext } = buildFileInfo(filename);
+
+    // Completion refuses SVGs this big; the declared extension is only a hint, the sniffed check at completion decides.
+    if (ext.toLowerCase() === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `declared size ${size} exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
       );
     }
 
-    const { ext } = buildFileInfo(filename);
     const mimeType = 'application/octet-stream';
 
     const fileId = v4();
@@ -131,59 +144,17 @@ export class FileUploadService {
       },
     });
 
-    const expiresInSeconds = this.twentyConfigService.get(
-      'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
-    );
-    const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
-
-    const presignedUploadUrl =
-      await this.fileStorageService.getPresignedUploadUrl({
-        fileFolder,
-        applicationUniversalIdentifier,
-        workspaceId,
-        resourcePath,
-        contentType: mimeType,
-        contentLength: size,
-        expiresInSeconds,
-      });
-
-    if (isDefined(presignedUploadUrl)) {
-      return {
-        fileId,
-        uploadUrl: presignedUploadUrl,
-        contentType: mimeType,
-        expiresAt,
-      };
-    }
-
-    // No presign support (local storage, or S3 without presign enabled):
-    // fall back to the token-authenticated streaming endpoint on the server.
-    const payload: FileUploadTokenJwtPayload = {
+    return this.fileUploadTargetService.buildUploadTarget({
       workspaceId,
       fileId,
-      sub: workspaceId,
-      type: JwtTokenTypeEnum.FILE_UPLOAD,
-    };
-
-    const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
-      expiresIn: expiresInSeconds,
+      fileFolder,
+      applicationUniversalIdentifier,
+      resourcePath,
+      contentType: mimeType,
+      size,
     });
-
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return {
-      fileId,
-      uploadUrl: `${serverUrl}/file-upload/${fileId}?token=${token}`,
-      // octet-stream keeps the request body away from the server's json/text
-      // body parsers; the real mime type is already on the file record.
-      contentType: 'application/octet-stream',
-      expiresAt,
-    };
   }
 
-  // Streams the request body straight to the storage driver, bounded by the
-  // size declared at createFileUpload time. Memory usage stays constant no
-  // matter how large the file is.
   async receiveFileStream({
     workspaceId,
     fileId,
@@ -240,14 +211,15 @@ export class FileUploadService {
           fileFolder,
           applicationUniversalIdentifier: application.universalIdentifier,
           workspaceId,
-          resourcePath,
+          resourcePath: buildPendingUploadResourcePath({
+            fileId,
+            resourcePath,
+          }),
           stream: sizeLimiter,
           mimeType: file.mimeType,
         }),
       ]);
     } catch (error) {
-      // The storage-side pipeline can lose the rejection race to the limiter:
-      // surface the size violation over the resulting stream teardown error.
       if (receivedBytes > declaredSize) {
         throw new FileUploadException(
           `Upload exceeds declared size of ${declaredSize} bytes`,
@@ -262,10 +234,6 @@ export class FileUploadService {
     }
 
     if (receivedBytes !== declaredSize) {
-      // The short object stays in storage but the record stays PENDING, so it
-      // can never be served or attached: the client retries against the same
-      // upload url (overwriting it), and the pending-file cleanup cron
-      // (follow-up PR) reaps whatever is abandoned.
       throw new FileUploadException(
         `Uploaded ${receivedBytes} bytes but ${declaredSize} were declared`,
         FileUploadExceptionCode.FILE_SIZE_MISMATCH,
@@ -276,20 +244,18 @@ export class FileUploadService {
     }
   }
 
-  // Verifies the bytes actually landed in storage with the declared size and
-  // flips the file to UPLOADED. Idempotent: confirming twice is a no-op.
   async completeFileUpload({
     workspaceId,
     fileId,
+    dedicatedFileFolder,
   }: {
     workspaceId: string;
     fileId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+    dedicatedFileFolder?: FileFolder;
+  }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
 
-    // Restrict to files created through createFileUpload so this mutation
-    // cannot be used to mint signed download urls for arbitrary files.
     if (
       !DIRECT_UPLOAD_FILE_FOLDERS.includes(
         fileFolder as (typeof DIRECT_UPLOAD_FILE_FOLDERS)[number],
@@ -304,10 +270,22 @@ export class FileUploadService {
       );
     }
 
+    if (
+      fileFolder !== dedicatedFileFolder &&
+      DEDICATED_COMPLETION_FILE_FOLDERS.includes(
+        fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File ${fileId} in folder ${fileFolder} is completed by its dedicated mutation`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
+        },
+      );
+    }
+
     if (file.status === FILE_STATUS.UPLOADED) {
-      // Idempotent retry of a confirm that already succeeded. Only files not
-      // yet attached to a record qualify: this cannot be used to mint signed
-      // urls for files that went through the legacy flow and got attached.
       if (!file.settings?.isTemporaryFile) {
         throw new FileUploadException(
           `File ${fileId} is not awaiting an upload confirmation`,
@@ -330,85 +308,40 @@ export class FileUploadService {
       file,
     });
 
-    const metadata = await this.fileStorageService.getFileMetadata({
-      fileFolder: fileFolder as FileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-      resourcePath,
-    });
-
-    if (!isDefined(metadata)) {
-      throw new FileUploadException(
-        `File ${fileId} has not been uploaded to storage yet`,
-        FileUploadExceptionCode.FILE_NOT_UPLOADED,
-        {
-          userFriendlyMessage: msg`The file has not been uploaded yet. Please upload it before confirming.`,
+    const completedFile = await withDeadline({
+      promise: this.fileUploadCompletionService.completeUploadedFile({
+        workspaceId,
+        file,
+        storageLocation: {
+          fileFolder: fileFolder as FileFolder,
+          applicationUniversalIdentifier: application.universalIdentifier,
+          workspaceId,
+          resourcePath,
         },
-      );
-    }
-
-    if (metadata.size !== Number(file.size)) {
-      throw new FileUploadException(
-        `File ${fileId} has ${metadata.size} bytes in storage but ${file.size} were declared`,
-        FileUploadExceptionCode.FILE_SIZE_MISMATCH,
-        {
-          userFriendlyMessage: msg`The uploaded file does not match the declared size. Please retry the upload.`,
-        },
-      );
-    }
-
-    const mimeType = await this.detectUploadedMimeTypeOrThrow({
-      fileFolder: fileFolder as FileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-      resourcePath,
-      filename: file.path,
+      }),
+      timeoutMs: COMPLETE_FILE_UPLOAD_DEADLINE_MS,
+      createTimeoutError: () =>
+        new FileUploadException(
+          `Completion of file ${fileId} exceeded ${COMPLETE_FILE_UPLOAD_DEADLINE_MS}ms waiting on storage`,
+          FileUploadExceptionCode.STORAGE_TIMEOUT,
+          {
+            userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
+          },
+        ),
+      onSettleAfterDeadline: (settlement) => {
+        this.logger.warn(
+          settlement.status === 'fulfilled'
+            ? `Completion of file ${fileId} succeeded after the deadline had been reported to the client`
+            : `Completion of file ${fileId} failed after the deadline had been reported to the client: ${settlement.error}`,
+        );
+      },
     });
-
-    await this.fileRepository.update(
-      workspaceId,
-      { id: fileId },
-      { status: FILE_STATUS.UPLOADED, mimeType },
-    );
 
     return this.toFileWithSignedUrl({
-      file: { ...file, status: FILE_STATUS.UPLOADED, mimeType },
+      file: { ...file, ...completedFile, status: FILE_STATUS.UPLOADED },
       fileFolder: fileFolder as FileFolder,
       workspaceId,
     });
-  }
-
-  private async detectUploadedMimeTypeOrThrow({
-    fileFolder,
-    applicationUniversalIdentifier,
-    workspaceId,
-    resourcePath,
-    filename,
-  }: {
-    fileFolder: FileFolder;
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-    resourcePath: string;
-    filename: string;
-  }): Promise<string> {
-    const stream = await this.fileStorageService.readFile({
-      fileFolder,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath,
-    });
-
-    const prefix = await readReadablePrefix(
-      stream,
-      FILE_CONTENT_SNIFF_BYTE_COUNT,
-    );
-
-    const { mimeType } = await extractFileInfoOrThrow({
-      file: prefix,
-      filename,
-    });
-
-    return mimeType;
   }
 
   private async resolveUploadLocation({
@@ -438,23 +371,27 @@ export class FileUploadService {
         );
       }
 
-      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-        select: ['applicationId', 'universalIdentifier'],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-          workspaceId,
+      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+        workspaceId,
+        {
+          select: ['applicationId', 'universalIdentifier'],
+          where: {
+            ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+            ...(fieldMetadataUniversalIdentifier
+              ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+              : {}),
+          },
         },
-      });
+      );
 
-      const application = await this.applicationRepository.findOneOrFail({
-        where: {
-          id: fieldMetadata.applicationId,
-          workspaceId,
+      const application = await this.applicationRepository.findOneOrFail(
+        workspaceId,
+        {
+          where: {
+            id: fieldMetadata.applicationId,
+          },
         },
-      });
+      );
 
       return {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -462,16 +399,36 @@ export class FileUploadService {
       };
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'workspaceCustomApplicationId'],
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
+    }
+
+    const workspaceCustomApplication = await this.applicationRepository.findOne(
+      workspaceId,
+      {
+        where: { id: workspace.workspaceCustomApplicationId },
+      },
+    );
+
+    if (!isDefined(workspaceCustomApplication)) {
+      throw new ApplicationException(
+        `Could not find workspace custom application ${workspace.workspaceCustomApplicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     return {
       applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplication.universalIdentifier,
       resourcePath: name,
     };
   }
@@ -513,12 +470,14 @@ export class FileUploadService {
   }> {
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: file.applicationId,
-        workspaceId,
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     return {
       application,
@@ -535,7 +494,7 @@ export class FileUploadService {
     file: FileEntity;
     fileFolder: FileFolder;
     workspaceId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<CompletedFileUpload> {
     return {
       ...file,
       url: await this.fileUrlService.signFileByIdUrl({

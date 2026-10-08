@@ -7,12 +7,10 @@ import { z } from 'zod';
 
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 type InlinedObjectFieldSummary = {
   id: string;
@@ -248,31 +246,24 @@ export class ObjectMetadataToolsFactory {
           isRemote?: boolean;
           isLabelSyncedWithName?: boolean;
         }) => {
-          try {
-            const { icon, ...createObjectInput } = parameters;
+          const { icon, ...createObjectInput } = parameters;
 
-            const flatObjectMetadata =
-              await this.objectMetadataService.createOneObject({
-                createObjectInput: {
-                  ...createObjectInput,
-                  icon: normalizeIconName(icon),
-                } as Parameters<
-                  typeof this.objectMetadataService.createOneObject
-                >[0]['createObjectInput'],
-                workspaceId,
-              });
+          const flatObjectMetadata =
+            await this.objectMetadataService.createOneObject({
+              createObjectInput: {
+                ...createObjectInput,
+                icon: normalizeIconName(icon),
+              } as Parameters<
+                typeof this.objectMetadataService.createOneObject
+              >[0]['createObjectInput'],
+              workspaceId,
+            });
 
-            return {
-              id: flatObjectMetadata.id,
-              nameSingular: flatObjectMetadata.nameSingular,
-              labelSingular: flatObjectMetadata.labelSingular,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: flatObjectMetadata.id,
+            nameSingular: flatObjectMetadata.nameSingular,
+            labelSingular: flatObjectMetadata.labelSingular,
+          };
         },
       },
       update_object_metadata: {
@@ -293,55 +284,41 @@ export class ObjectMetadataToolsFactory {
           imageIdentifierFieldMetadataId?: string;
           isLabelSyncedWithName?: boolean;
         }) => {
-          try {
-            const { id, icon, ...update } = parameters;
-            const normalizedIcon = normalizeIconName(icon);
+          const { id, icon, ...update } = parameters;
+          const normalizedIcon = normalizeIconName(icon);
 
-            const flatObjectMetadata =
-              await this.objectMetadataService.updateOneObject({
-                updateObjectInput: {
-                  id,
-                  update: {
-                    ...update,
-                    ...(isDefined(normalizedIcon)
-                      ? { icon: normalizedIcon }
-                      : {}),
-                  },
+          const flatObjectMetadata =
+            await this.objectMetadataService.updateOneObject({
+              updateObjectInput: {
+                id,
+                update: {
+                  ...update,
+                  ...(isDefined(normalizedIcon)
+                    ? { icon: normalizedIcon }
+                    : {}),
                 },
-                workspaceId,
-              });
+              },
+              workspaceId,
+            });
 
-            return {
-              id: flatObjectMetadata.id,
-              nameSingular: flatObjectMetadata.nameSingular,
-              labelSingular: flatObjectMetadata.labelSingular,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: flatObjectMetadata.id,
+            nameSingular: flatObjectMetadata.nameSingular,
+            labelSingular: flatObjectMetadata.labelSingular,
+          };
         },
       },
       delete_object_metadata: {
         description: 'Delete an object by ID. Also deletes associated fields.',
         inputSchema: DeleteObjectMetadataInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const flatObjectMetadata =
-              await this.objectMetadataService.deleteOneObject({
-                deleteObjectInput: { id: parameters.id },
-                workspaceId,
-              });
+          const flatObjectMetadata =
+            await this.objectMetadataService.deleteOneObject({
+              deleteObjectInput: { id: parameters.id },
+              workspaceId,
+            });
 
-            return { id: flatObjectMetadata.id, success: true };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return { id: flatObjectMetadata.id, success: true };
         },
       },
       create_many_object_metadata: {
@@ -361,33 +338,26 @@ export class ObjectMetadataToolsFactory {
             isLabelSyncedWithName?: boolean;
           }>;
         }) => {
-          try {
-            await Promise.all(
-              parameters.objects.map(async ({ icon, ...createObjectInput }) => {
-                await this.objectMetadataService.createOneObject({
-                  createObjectInput: {
-                    ...createObjectInput,
-                    icon: normalizeIconName(icon),
-                  } as Parameters<
-                    typeof this.objectMetadataService.createOneObject
-                  >[0]['createObjectInput'],
-                  workspaceId,
-                });
-              }),
-            );
+          await Promise.all(
+            parameters.objects.map(async ({ icon, ...createObjectInput }) => {
+              await this.objectMetadataService.createOneObject({
+                createObjectInput: {
+                  ...createObjectInput,
+                  icon: normalizeIconName(icon),
+                } as Parameters<
+                  typeof this.objectMetadataService.createOneObject
+                >[0]['createObjectInput'],
+                workspaceId,
+              });
+            }),
+          );
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
       update_many_object_metadata: {
         description:
-          'Update multiple objects at once. Batch version of update_object_metadata.',
+          'Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) or a labelIdentifierFieldMetadataId change cannot share a batch with another object: send each of those as its own call.',
         inputSchema: UpdateManyObjectMetadataInputSchema,
         execute: async (parameters: {
           objects: Array<{
@@ -405,33 +375,26 @@ export class ObjectMetadataToolsFactory {
             isLabelSyncedWithName?: boolean;
           }>;
         }) => {
-          try {
-            await Promise.all(
-              parameters.objects.map(async ({ id, icon, ...update }) => {
+          await this.objectMetadataService.updateManyObjects({
+            updateObjectInputs: parameters.objects.map(
+              ({ id, icon, ...update }) => {
                 const normalizedIcon = normalizeIconName(icon);
 
-                await this.objectMetadataService.updateOneObject({
-                  updateObjectInput: {
-                    id,
-                    update: {
-                      ...update,
-                      ...(isDefined(normalizedIcon)
-                        ? { icon: normalizedIcon }
-                        : {}),
-                    },
+                return {
+                  id,
+                  update: {
+                    ...update,
+                    ...(isDefined(normalizedIcon)
+                      ? { icon: normalizedIcon }
+                      : {}),
                   },
-                  workspaceId,
-                });
-              }),
-            );
+                };
+              },
+            ),
+            workspaceId,
+          });
 
-            return true;
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return true;
         },
       },
     };

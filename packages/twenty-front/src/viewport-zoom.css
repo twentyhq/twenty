@@ -1,0 +1,15 @@
+/* dnd-kit positions and sizes the feedback from visual-viewport pixel
+     measurements, so inside the zoomed root those inline values would be
+     multiplied a second time. The inverse zoom makes them render one to one,
+     and the child rule restores the interface scale for the dragged content
+     so it keeps matching the rest of the page. */
+
+[data-dnd-dragging='true'],
+[data-floating-ui-viewport] {
+  zoom: calc(1 / var(--t-zoom, 1));
+}
+
+[data-dnd-dragging='true'] > *,
+[data-floating-ui-viewport] > * {
+  zoom: var(--t-zoom, 1);
+}

@@ -1,24 +1,26 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
-import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
+import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
+import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
-import { useContext } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCalendar } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxShape } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTaskBody = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -86,17 +88,24 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
   const { completeTask } = useCompleteTask(task);
 
-  const baseComponentInstanceId = `task-row-targets-${task.id}`;
-  const componentInstanceId = useActivityTargetsComponentInstanceId(
-    baseComponentInstanceId,
-  );
+  const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  }).junctionField.name;
+
+  const instanceIdPrefix =
+    useActivityFieldComponentInstanceId('task-row-targets');
+  const componentInstanceId = getRecordFieldInputInstanceId({
+    recordId: task.id,
+    fieldName: junctionFieldName,
+    prefix: instanceIdPrefix,
+  });
 
   return (
     <ActivityRow
@@ -115,7 +124,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
         >
           <Checkbox
             checked={task.status === 'DONE'}
-            shape={CheckboxShape.Rounded}
+            shape={'round'}
             onCheckedChange={completeTask}
           />
         </StyledCheckboxContainer>
@@ -123,7 +132,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
-          <OverflowingTextWithTooltip text={body} />
+          <OverflowingTextWithTooltip
+            text={<LinkifiedText text={body} />}
+            tooltipContent={body}
+          />
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
@@ -140,24 +152,19 @@ export const TaskRow = ({ task }: { task: Task }) => {
             <FieldContextProvider
               objectNameSingular={CoreObjectNameSingular.Task}
               objectRecordId={task.id}
-              fieldMetadataName="taskTargets"
+              fieldMetadataName={junctionFieldName}
               fieldPosition={0}
+              showLabel={false}
+              maxWidth={200}
+              isDisplayModeFixHeight
             >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: task.id,
-                }}
-              >
-                <StopPropagationContainer>
-                  <ActivityTargetsInlineCell
-                    activityObjectNameSingular={CoreObjectNameSingular.Task}
-                    activityRecordId={task.id}
-                    showLabel={false}
-                    maxWidth={200}
-                    componentInstanceId={componentInstanceId}
-                  />
-                </StopPropagationContainer>
-              </RecordFieldsScopeContextProvider>
+              <StopPropagationContainer>
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{ instanceId: componentInstanceId }}
+                >
+                  <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+                </RecordFieldComponentInstanceContext.Provider>
+              </StopPropagationContainer>
             </FieldContextProvider>
           </StyledActivityTargetsContainer>
         }

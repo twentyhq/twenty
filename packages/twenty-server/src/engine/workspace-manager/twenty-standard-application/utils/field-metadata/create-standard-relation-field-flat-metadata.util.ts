@@ -5,6 +5,7 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
@@ -104,7 +105,10 @@ export const createStandardRelationFieldFlatMetadata = <
     isSystemSideEffect,
     isNullable,
     isUnique: false,
+    isSearchable: false,
+    isAuditLogged: true,
     isUIEditable,
+    writability: MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue,

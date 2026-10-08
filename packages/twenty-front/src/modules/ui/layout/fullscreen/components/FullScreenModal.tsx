@@ -1,19 +1,17 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { styled } from '@linaria/react';
 import { forwardRef } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFullScreenOverlay = styled.div`
   background: ${themeCssVariables.background.noisy};
   bottom: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh / var(--t-zoom, 1));
   left: 0;
   position: fixed;
   right: 0;

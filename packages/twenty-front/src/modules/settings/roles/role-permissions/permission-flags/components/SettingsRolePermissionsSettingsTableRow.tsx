@@ -1,3 +1,4 @@
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -5,9 +6,8 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { Checkbox } from 'twenty-ui/input';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 const StyledName = styled.span`
@@ -36,7 +36,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -96,7 +96,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   return (
     <TableRow
       key={permission.key}
-      gridAutoColumns="3fr 4fr 24px"
+      gridAutoColumns="3fr 2fr 4fr 24px"
       onClick={handleRowClick}
       cursor={isDisabled ? 'default' : 'pointer'}
     >
@@ -110,6 +110,9 @@ export const SettingsRolePermissionsSettingsTableRow = ({
         </StyledIconContainer>
         <StyledName>{permission.name}</StyledName>
       </TableCell>
+      <TableCell>
+        <SettingsItemTypeTag item={permission} />
+      </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]}>
         <StyledDescription>{permission.description}</StyledDescription>
       </TableCell>
@@ -119,9 +122,10 @@ export const SettingsRolePermissionsSettingsTableRow = ({
         onClick={(e) => e.stopPropagation()}
       >
         <Checkbox
+          aria-label={permission.name}
           checked={isChecked}
           disabled={isDisabled}
-          onChange={(event) => handleChange(event.target.checked)}
+          onCheckedChange={(isChecked) => handleChange(isChecked)}
         />
       </TableCell>
     </TableRow>

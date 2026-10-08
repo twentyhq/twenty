@@ -1,0 +1,57 @@
+import { UseFilters, UseGuards } from '@nestjs/common';
+import { Mutation } from '@nestjs/graphql';
+
+import { PermissionFlagType } from 'twenty-shared/constants';
+
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+)
+@MetadataResolver(() => ApplicationDTO)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
+export class ApplicationHealthResolver {
+  constructor(
+    private readonly applicationHealthCheckService: ApplicationHealthCheckService,
+  ) {}
+
+  @Mutation(() => ApplicationHealthCheckResultDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
+  async runApplicationHealthCheck(
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
+    applicationId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationHealthCheckResultDTO | null> {
+    return await this.applicationHealthCheckService.run({
+      applicationId,
+      workspaceId,
+    });
+  }
+}

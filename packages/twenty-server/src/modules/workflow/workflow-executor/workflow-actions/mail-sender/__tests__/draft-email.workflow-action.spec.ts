@@ -1,27 +1,22 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
-jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
-  () => ({
-    renderRichTextToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
-  }),
-);
-
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
-    retryOnFailure: { value: false },
+    retryOnFailure: { value: 0 },
     continueOnFailure: { value: false },
   },
   input: {},
@@ -44,7 +39,7 @@ describe('DraftEmailWorkflowAction', () => {
   let action: DraftEmailWorkflowAction;
   let mockDraftEmailTool: jest.Mocked<Pick<DraftEmailTool, 'execute'>>;
   let mockSetStepLog: jest.Mock;
-  let connectedAccountRepository: { findOne: jest.Mock };
+  let connectedAccountRepository: { find: jest.Mock };
   let userWorkspaceRepository: { findOne: jest.Mock };
   let workspaceMemberRepository: { findOne: jest.Mock };
 
@@ -58,7 +53,7 @@ describe('DraftEmailWorkflowAction', () => {
       }),
     };
     mockSetStepLog = jest.fn();
-    connectedAccountRepository = { findOne: jest.fn() };
+    connectedAccountRepository = { find: jest.fn() };
     userWorkspaceRepository = { findOne: jest.fn() };
     workspaceMemberRepository = { findOne: jest.fn() };
 
@@ -71,12 +66,18 @@ describe('DraftEmailWorkflowAction', () => {
           useValue: { setStepLog: mockSetStepLog },
         },
         {
-          provide: GlobalWorkspaceOrmManager,
+          provide: WorkflowExecutionContextService,
+          useValue: {
+            getExecutionContext: jest
+              .fn()
+              .mockResolvedValue({ authContext: { type: 'application' } }),
+          },
+        },
+        {
+          provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: jest.fn((callback) => callback()),
-            getRepository: jest
-              .fn()
-              .mockResolvedValue(workspaceMemberRepository),
+            getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
           },
         },
         {
@@ -137,7 +138,7 @@ describe('DraftEmailWorkflowAction', () => {
         stepLog: expect.objectContaining({
           details: expect.objectContaining({
             type: 'EMAIL',
-            mode: 'DRAFT',
+            mode: EmailOperation.DRAFT,
           }),
         }),
       }),
@@ -165,9 +166,13 @@ describe('DraftEmailWorkflowAction', () => {
       userWorkspaceRepository.findOne.mockResolvedValue({
         id: USER_WORKSPACE_ID,
       });
-      connectedAccountRepository.findOne.mockResolvedValue({
-        id: MEMBER_ACCOUNT_ID,
-      });
+      connectedAccountRepository.find.mockResolvedValue([
+        {
+          id: MEMBER_ACCOUNT_ID,
+          provider: ConnectedAccountProvider.GOOGLE,
+          connectionParameters: null,
+        },
+      ]);
 
       await executeWithSender(WORKSPACE_MEMBER_ID);
 
@@ -182,7 +187,7 @@ describe('DraftEmailWorkflowAction', () => {
 
       await executeWithSender(WORKSPACE_MEMBER_ID);
 
-      expect(connectedAccountRepository.findOne).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.find).not.toHaveBeenCalled();
       expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
         expect.objectContaining({ connectedAccountId: WORKSPACE_MEMBER_ID }),
         expect.any(Object),
@@ -194,10 +199,10 @@ describe('DraftEmailWorkflowAction', () => {
       userWorkspaceRepository.findOne.mockResolvedValue({
         id: USER_WORKSPACE_ID,
       });
-      connectedAccountRepository.findOne.mockResolvedValue(null);
+      connectedAccountRepository.find.mockResolvedValue([]);
 
       await expect(executeWithSender(WORKSPACE_MEMBER_ID)).rejects.toThrow(
-        `No connected account found for workspace member '${WORKSPACE_MEMBER_ID}'`,
+        `Workspace member '${WORKSPACE_MEMBER_ID}' has no connected account that can draft email`,
       );
       expect(mockDraftEmailTool.execute).not.toHaveBeenCalled();
     });

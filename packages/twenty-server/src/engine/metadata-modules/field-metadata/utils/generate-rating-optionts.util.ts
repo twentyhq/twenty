@@ -1,6 +1,5 @@
+import { type FieldMetadataDefaultOption } from 'twenty-shared/types';
 import { v4 as uuidV4 } from 'uuid';
-
-import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 const range = {
   start: 1,

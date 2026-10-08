@@ -1,9 +1,8 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeaderCell = styled.div<{
-  zIndex?: number;
   shouldDisplayBorderBottom: boolean;
   isResizing: boolean;
   isReadOnly: boolean;
@@ -45,8 +44,6 @@ const StyledHeaderCell = styled.div<{
   }
 
   user-select: none;
-
-  z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;
 
 export const RecordTableHeaderCellContainer = StyledHeaderCell;

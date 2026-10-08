@@ -1,0 +1,6 @@
+node_modules/
+.yarn/
+dist/
+release/
+.env
+*.log

@@ -6,11 +6,11 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import type { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export const validateOperatorForFieldTypeOrThrow = (
   operator: FilterOperator,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
   fieldName: string,
 ): void => {
   const allowedOperators = getOperatorsForFieldType(fieldMetadata.type);

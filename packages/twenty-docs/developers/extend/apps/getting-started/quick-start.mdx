@@ -119,6 +119,10 @@ yarn twenty apply  # show the plan, then apply it
 All modes need an authenticated remote. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) for more on `plan`.
 
 <Note>
+All three modes require your workspace to own the app's registration. The sync is refused when the `universalIdentifier` from your app config is registered to another workspace, or to no workspace yet — apps imported from the marketplace catalog start unowned and have to be claimed first. See [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
+</Note>
+
+<Note>
 `yarn twenty dev --once` and `yarn twenty dev --once --dry-run` are deprecated aliases for `yarn twenty apply` and `yarn twenty plan`.
 </Note>
 
@@ -127,6 +131,7 @@ All modes need an authenticated remote. See [Syncing & recovery](/developers/ext
 | Flag | Description |
 |------|-------------|
 | `--force` | Apply destructive changes (deletes) without confirmation. |
+| `--no-delete` | Keep entities that are missing from your source instead of deleting them. Also accepted by `plan` and `apply`. |
 | `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `1000`). |
 | `--verbose` / `--debug` | Show detailed build logs, sync requests, and error traces. |
 
@@ -144,6 +149,21 @@ Apps are composed of **entities** — each defined as a TypeScript file with a s
 | **Page layouts** | Custom record detail pages with tabs and widgets |
 
 Full reference: [Concepts](/developers/extend/apps/getting-started/concepts).
+
+## Build with AI agent skills
+
+Official Twenty [Agent Skills](https://skills.sh/) teach coding agents the full app workflow: scaffolding, entity development, sync and deploy operations, and marketplace publishing. They install into Claude Code, Codex, Cursor, Pi, and any other harness supported by the `skills` CLI, and work against any Twenty instance, including self-hosted custom domains and localhost.
+
+```bash filename="Terminal"
+# List the available skills
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --list
+
+# Install the scaffolding and development skills
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill create-app
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill develop-app
+```
+
+Each skill installs with its own reference docs. The `agent-skills` branch becomes available after the first successful publish from `main`; before that, follow the [local build instructions](https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills#local-development).
 
 ## Next steps
 

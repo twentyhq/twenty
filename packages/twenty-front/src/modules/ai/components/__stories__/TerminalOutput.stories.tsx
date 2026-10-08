@@ -3,12 +3,12 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof TerminalOutput> = {
   title: 'Modules/AI/TerminalOutput',
   component: TerminalOutput,
-  decorators: [SnackBarDecorator, ComponentDecorator],
+  decorators: [ToastDecorator, ComponentDecorator],
   parameters: {
     container: { width: 500 },
   },
@@ -50,14 +50,11 @@ export const WithStderr: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should show stdout by default
     expect(await canvas.findByText(/Starting process/)).toBeVisible();
 
-    // Click stderr tab to switch
     const stderrTab = await canvas.findByText('stderr');
     await userEvent.click(stderrTab);
 
-    // Should now show stderr content
     expect(await canvas.findByText(/Connection timeout/)).toBeVisible();
   },
 };

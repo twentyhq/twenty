@@ -7,6 +7,6 @@ exports[`View Field Group Resolver - Failing Delete Operation should fail to del
     "exceptionEventId": Any<String>,
     "userFriendlyMessage": "A view field group error occurred.",
   },
-  "message": "View field group to delete not found",
+  "message": "View field group to destroy not found",
 }
 `;

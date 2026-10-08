@@ -1,3 +1,4 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -19,10 +20,13 @@ const PAGE_LAYOUT_ID_1 = 'page-layout-1';
 const PAGE_LAYOUT_ID_2 = 'page-layout-2';
 
 const MOCK_PAGE_LAYOUT: PageLayout = {
+  applicationId: 'application-id-mock',
   __typename: 'PageLayout',
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
+  isSystemSideEffect: true,
   objectMetadataId: 'obj-1',
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
@@ -36,6 +40,7 @@ const MOCK_DRAFT_PAGE_LAYOUT = {
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   objectMetadataId: 'obj-1',
   tabs: [] as PageLayout['tabs'],
   defaultTabToFocusOnMobileAndSidePanelId: null,
@@ -48,6 +53,15 @@ const getWrapper =
   );
 
 describe('useIsLayoutCustomizationDirty', () => {
+  it('enables Save for an object color change without navigation changes', () => {
+    const store = createStore();
+    store.set(objectColorsDraftState.atom, { 'company-id': 'red' });
+    const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
+      wrapper: getWrapper(store),
+    });
+    expect(result.current.isDirty).toBe(true);
+  });
+
   it('should return not dirty when no layouts are touched and nav is clean', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
@@ -158,7 +172,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       status: 'up-to-date',
     });
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
-    // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
@@ -183,7 +196,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       PAGE_LAYOUT_ID_2,
     ]);
 
-    // First layout is clean
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
@@ -197,7 +209,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       MOCK_PAGE_LAYOUT,
     );
 
-    // Second layout is dirty
     const secondLayout: PageLayout = {
       ...MOCK_PAGE_LAYOUT,
       id: PAGE_LAYOUT_ID_2,

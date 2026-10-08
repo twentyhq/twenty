@@ -5,7 +5,10 @@ import { act } from 'react';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -29,6 +32,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('useCloseDropdown', () => {
   beforeEach(() => {
+    jotaiStore.set(activeDropdownFocusIdState.atom, null);
+    jotaiStore.set(previousDropdownFocusIdStackState.atom, []);
+    jotaiStore.set(focusStackState.atom, []);
     jotaiStore.set(
       isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
       false,
@@ -127,5 +133,58 @@ describe('useCloseDropdown', () => {
 
     expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
+  });
+
+  it('keeps the active dropdown focused when an earlier dropdown closes', () => {
+    const { result } = renderHook(
+      () => ({ ...useOpenDropdown(), ...useCloseDropdown() }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.openDropdown();
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: outsideDropdownId,
+      });
+    });
+
+    expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBe(
+      outsideDropdownId,
+    );
+    expect(jotaiStore.get(previousDropdownFocusIdStackState.atom)).toEqual([
+      dropdownId,
+    ]);
+
+    act(() => {
+      result.current.closeDropdown();
+    });
+
+    expect(
+      jotaiStore.get(
+        isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      ),
+    ).toBe(false);
+    expect(
+      jotaiStore.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: outsideDropdownId,
+        }),
+      ),
+    ).toBe(true);
+    expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBe(
+      outsideDropdownId,
+    );
+    expect(jotaiStore.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
+    expect(
+      jotaiStore.get(focusStackState.atom).map(({ focusId }) => focusId),
+    ).toEqual([outsideDropdownId]);
+
+    act(() => {
+      result.current.closeDropdown(outsideDropdownId);
+    });
+
+    expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBeNull();
+    expect(jotaiStore.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
+    expect(jotaiStore.get(focusStackState.atom)).toEqual([]);
   });
 });

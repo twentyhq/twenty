@@ -1,51 +1,28 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getSubFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportGetSubFieldOptions';
-import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+
+type MatchColumnSelectSubFieldSelectDropdownContentProps = {
+  fieldMetadataItem: FieldMetadataItem;
+  selectedValue: SelectOption | undefined;
+  onSubFieldSelect: (subFieldName: string) => void;
+  options: readonly Readonly<SpreadsheetImportFieldOption>[];
+};
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   fieldMetadataItem,
+  selectedValue,
   onSubFieldSelect,
   options,
-  onBack,
-}: {
-  fieldMetadataItem: FieldMetadataItem;
-  onSubFieldSelect: (subFieldNameSelected: string) => void;
-  options: readonly Readonly<SpreadsheetImportFieldOption>[];
-  onBack: () => void;
-}) => {
+}: MatchColumnSelectSubFieldSelectDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
-
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-
-    setSearchFilter(value);
-  };
-
-  const handleSubFieldSelect = (subFieldName: string) => {
-    onSubFieldSelect(subFieldName);
-  };
-
-  const handleSubMenuBack = () => {
-    setSearchFilter('');
-    onBack();
-  };
-
-  if (!hasNestedFields(fieldMetadataItem)) {
-    return <></>;
-  }
-
+  const { t } = useLingui();
   const subFieldOptions = getSubFieldOptions(
     fieldMetadataItem,
     options,
@@ -53,36 +30,35 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   );
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={handleSubMenuBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Back aria-label={t`${fieldMetadataItem.label}, back to fields`}>
+        {fieldMetadataItem.label}
+      </Dropdown.Back>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={handleFilterChange}
-        autoFocus
+        onValueChange={setSearchFilter}
+        placeholder={t`Search fields`}
+        aria-label={t`Search fields`}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
         {subFieldOptions.map(
           ({ value, shortLabelForNestedField, Icon, disabled }) => (
-            <MenuItem
+            <Dropdown.OptionItem
               key={value}
-              onClick={() => handleSubFieldSelect(value)}
-              LeftIcon={Icon}
-              text={shortLabelForNestedField}
+              onSelect={() => onSubFieldSelect(value)}
+              selected={selectedValue?.value === value}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               disabled={disabled}
-            />
+            >
+              {shortLabelForNestedField}
+            </Dropdown.OptionItem>
           ),
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+      {!isNonEmptyArray(subFieldOptions) && (
+        <Dropdown.Empty>{t`No fields found`}</Dropdown.Empty>
+      )}
+    </>
   );
 };

@@ -11,12 +11,13 @@ The `yarn twenty` CLI is your interface to everything app-related. Full command 
 | `dev` | Watch source files and live-sync changes | [Quick Start](/developers/extend/apps/getting-started/quick-start) |
 | `plan` | Preview metadata changes without applying them | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
 | `apply` | Apply metadata changes after showing the plan | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) |
+| `pull` | **Experimental.** Write the installed application back to local source files | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source) |
 | `dev:build` | Compile the app and generate the API client (`--tarball` to pack a `.tgz`) | [Publishing](/developers/extend/apps/operations/publishing) |
 | `dev:typecheck` | Run TypeScript type checking | [Testing](/developers/extend/apps/operations/testing) |
 | `dev:add` | Scaffold a new entity | [Scaffolding](/developers/extend/apps/getting-started/scaffolding) |
 | `dev:generate-client` | Regenerate the typed API client | this page |
 | `dev:function:exec` / `dev:function:logs` | Execute functions and stream their logs | this page |
-| `dev:translations-extract` | Extract translatable strings into `locales/` catalogs | [Translations](/developers/extend/apps/translations/overview) |
+| `dev:translations-extract` | Extract translatable strings into `locales/` catalogs | [Translations](/developers/extend/apps/operations/translations) |
 | `dev:catalog-sync` | Trigger a marketplace catalog sync | [Publishing](/developers/extend/apps/operations/publishing#how-marketplace-discovery-works) |
 | `app:publish` / `app:install` / `app:uninstall` | Release lifecycle | [Publishing](/developers/extend/apps/operations/publishing) and this page |
 | `docker:*` | Manage the local Twenty server container | [Local Server](/developers/extend/apps/getting-started/local-server) |
@@ -65,14 +66,14 @@ This is different from `yarn twenty docker:logs`, which shows the Docker contain
 
 ## Generating the typed client (`yarn twenty dev:generate-client`)
 
-Regenerate the typed API client (`twenty-client-sdk`) from the active remote's schema, without building or syncing an app. Use it to get a typed client in any project — like a backend service living in a separate repository — that talks to your Twenty instance:
+Regenerate the typed API client (`twenty-client-sdk`) for your app from the active remote. The client is scoped to the application declared in your manifest, so the command reads the build output: run `yarn twenty dev:build` (or `yarn twenty dev`) first.
 
 ```bash filename="Terminal"
-# In your project (no Twenty app definition required)
-yarn add twenty-sdk twenty-client-sdk
-
 # Connect to the Twenty instance to generate the client from
 yarn twenty remote:add
+
+# Build the app so the manifest exists
+yarn twenty dev:build
 
 # Generate the typed client into node_modules/twenty-client-sdk
 yarn twenty dev:generate-client
@@ -87,7 +88,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 Re-run the command whenever your data model changes to refresh the generated types.
 
 <Note>
-The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
+The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:build` then `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
 </Note>
 
 ## Uninstalling an app (`yarn twenty app:uninstall`)

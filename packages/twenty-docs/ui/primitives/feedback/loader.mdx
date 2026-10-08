@@ -1,0 +1,65 @@
+---
+title: Loader
+description: Display a compact animated loading indicator beside a status label.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LoaderReference from '/snippets/ui/generated/feedback/loader.mdx';
+
+`Loader` shows an animated dot inside a small bordered capsule. Use it while an operation is in progress and the percentage is unknown. For numeric progress, use [ProgressBar](/ui/primitives/feedback/progress-bar).
+
+<StoryEmbed
+  storyId="ui-feedback-loader--with-color-documentation"
+  title="Loader example"
+/>
+
+## Usage
+
+```tsx
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SaveFeedbackProps = { isSaving: boolean };
+
+export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
+  <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+    {isSaving && <Loader color="blue" aria-hidden="true" render={<span />} />}
+    {isSaving ? 'Saving changes' : 'Changes saved'}
+  </Text>
+);
+```
+
+Place visible status text beside the loader in a wrapper. The loader is a fixed-size visual indicator and does not accept children.
+
+The application owns loading state. Keep the status wrapper mounted so text updates can be announced. The loader assigns no label or live-region role by default. Use `aria-hidden="true"` when surrounding text or a button already supplies loading feedback.
+
+## Native composition and labeling
+
+Native props, `className`, `style`, and `ref` target the container div. `render` accepts an element or callback through Base UI composition. Styles override color defaults. `LoaderProps` is exported from the feedback family.
+
+For a standalone indicator, provide an explicit status role and accessible name. The animated dot remains decorative.
+
+```tsx
+import { Loader, type LoaderProps } from 'twenty-ui/primitives/feedback';
+
+const loadingProps: LoaderProps = {
+  role: 'status',
+  'aria-label': 'Loading results',
+  color: 'blue',
+};
+
+export const LoadingResults = () => (
+  <Loader {...loadingProps} render={<span />} />
+);
+```
+
+Use `aria-labelledby` instead when visible text names the status. Keep a live-region owner mounted when it needs to announce changing text. The application owns when feedback appears and what it says.
+
+## Color
+
+Pass a theme palette color to set both the border and dot. Without a color, the loader inherits a surrounding button color when available, otherwise it uses the tertiary text color. For a button action, prefer [Button's loading state](/ui/primitives/input/button#state-ownership), which keeps the feedback inside the control.
+
+## Props
+
+<LoaderReference />

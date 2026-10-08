@@ -40,7 +40,6 @@ describe('truncateStringToUtf8ByteBudget', () => {
   });
 
   it('reports originalBytes in UTF-8 bytes for non-ASCII content', () => {
-    // 1 × '日' = 3 UTF-8 bytes but only 1 UTF-16 code unit.
     const result = truncateStringToUtf8ByteBudget('日'.repeat(1_000), 30);
 
     expect(result.originalBytes).toBe(3_000);
@@ -48,8 +47,6 @@ describe('truncateStringToUtf8ByteBudget', () => {
   });
 
   it('truncates CJK content within budget rather than 3× over (regression)', () => {
-    // Pre-fix `slice(0, maxBytes)` would have emitted 32_000 chars =
-    // ~96_000 bytes. The byte-aware util must stay close to the cap.
     const cjk = '日'.repeat(40_000);
     const cap = 32_000;
 
@@ -59,8 +56,6 @@ describe('truncateStringToUtf8ByteBudget', () => {
       result.value.replace(TRUNCATION_SENTINEL, ''),
     );
 
-    // Allow at most a single U+FFFD substitution (3 UTF-8 bytes) when the
-    // byte boundary falls inside a multi-byte sequence.
     expect(truncatedPayloadBytes).toBeLessThanOrEqual(cap + 3);
     expect(truncatedPayloadBytes).toBeGreaterThan(cap - 3);
   });

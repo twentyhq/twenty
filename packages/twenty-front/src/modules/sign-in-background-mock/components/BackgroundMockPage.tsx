@@ -1,13 +1,15 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconBuildingSkyscraper,
   IconDotsVertical,
   IconLayoutSidebarRight,
   IconPlus,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { useTheme } from 'twenty-ui/theme';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';
@@ -24,31 +26,39 @@ const StyledTableContainer = styled.div`
 `;
 
 export const BackgroundMockPage = () => {
+  const theme = useTheme();
+
   return (
     <PageCardLayout
       header={
         <PageCardHeader
-          icon={<TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />}
+          icon={
+            <TintedIconTile
+              icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+              color="blue"
+            />
+          }
           title={t`Companies`}
           actionButton={
             <>
               <Button
-                Icon={IconPlus}
-                title={t`New Company`}
-                variant="primary"
-                accent="blue"
-                size="small"
-              />
+                startIcon={<IconPlus />}
+                size="sm"
+                variant="solid"
+                color="accent"
+              >{t`New Company`}</Button>
               <LightIconButton
-                Icon={IconDotsVertical}
-                accent="tertiary"
-                size="small"
-              />
+                emphasis="subtle"
+                size="sm"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
               <Button
-                Icon={IconLayoutSidebarRight}
-                variant="secondary"
-                accent="default"
-                size="small"
+                startIcon={<IconLayoutSidebarRight />}
+                aria-label={t`Open side panel`}
+                size="sm"
+                variant="outline"
               />
             </>
           }

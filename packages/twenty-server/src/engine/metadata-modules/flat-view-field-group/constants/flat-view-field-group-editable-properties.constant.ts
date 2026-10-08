@@ -4,5 +4,4 @@ export const FLAT_VIEW_FIELD_GROUP_EDITABLE_PROPERTIES = [
   'name',
   'position',
   'isVisible',
-  'deletedAt',
 ] as const satisfies MetadataEntityPropertyName<'viewFieldGroup'>[];

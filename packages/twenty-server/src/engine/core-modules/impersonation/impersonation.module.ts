@@ -8,31 +8,20 @@ import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impers
 import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/impersonation.resolver';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
   imports: [
     AuthModule,
     ImpersonationAuthorizationModule,
-    UserWorkspaceModule,
     PermissionsModule,
-    RoleModule,
-    UserRoleModule,
     EventLogEmitterModule,
-    TypeOrmModule.forFeature([
-      UserWorkspaceEntity,
-      WorkspaceEntity,
-      UserEntity,
-    ]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspaceDomainsModule,
     PermissionsModule,
+    UserSessionModule,
   ],
   providers: [ImpersonationService, ImpersonationResolver],
-  exports: [ImpersonationService],
 })
 export class ImpersonationModule {}

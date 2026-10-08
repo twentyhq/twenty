@@ -1,29 +1,32 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
-import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
-import { createGeometryTracker } from '@/host/utils/createGeometryTracker';
-import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
-import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
-import { FrontComponentGeometryTrackerEffect } from '@/remote/components/FrontComponentGeometryTrackerEffect';
-import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
-import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
-import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
+import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
+import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
+import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
+import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
+import { createHostFocusController } from '@/host/focus/utils/createHostFocusController';
+import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
+import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
+import { FrontComponentFocusTrackerEffect } from '@/host/effect-components/FrontComponentFocusTrackerEffect';
+import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
+import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
+import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
+import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
+import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
+import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
-import {
-  type RemoteReceiver,
-  RemoteRootRenderer,
-} from '@remote-dom/react/host';
+import { type RemoteReceiver } from '@remote-dom/react/host';
 import { type ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
-import { componentRegistry } from '../generated/host-component-registry';
-import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
-import { FrontComponentErrorBox } from './FrontComponentErrorBox';
+import { ThemeProvider } from 'twenty-ui/theme';
+import { FrontComponentWorkerEffect } from '@/host/effect-components/FrontComponentWorkerEffect';
+import { componentRegistry } from '@/host/generated/host-component-registry';
+import { createFallbackComponentRegistry } from '@/host/utils/createFallbackComponentRegistry';
+import { FrontComponentErrorBox } from '@/host/components/FrontComponentErrorBox';
 
 const fallbackComponentRegistry =
   createFallbackComponentRegistry(componentRegistry);
@@ -34,9 +37,12 @@ type FrontComponentRendererProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
+  storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  mediaSessionHost?: FrontComponentMediaSessionHost;
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
@@ -48,9 +54,12 @@ export const FrontComponentRenderer = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sharedDependenciesUrl,
   applicationVariables,
+  storageNamespace,
   executionContext,
   frontComponentHostCommunicationApi,
+  mediaSessionHost,
   onError,
   colorScheme,
   loadingFallback,
@@ -61,6 +70,10 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
+  const [hostFocusController] = useState(() =>
+    createHostFocusController({ geometryTracker }),
+  );
+  const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
@@ -73,8 +86,13 @@ export const FrontComponentRenderer = ({
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientUrls}
+          sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
+          storageNamespace={storageNamespace}
+          initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
+          hostFocusController={hostFocusController}
+          mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
           setError={setError}
@@ -102,6 +120,16 @@ export const FrontComponentRenderer = ({
               thread={thread}
               geometryTracker={geometryTracker}
             />
+            <FrontComponentFocusTrackerEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
+            />
+            {isDefined(mediaSessionHost) && (
+              <FrontComponentMediaSessionEffect
+                thread={thread}
+                mediaSessionHost={mediaSessionHost}
+              />
+            )}
             <FrontComponentUpdateContextEffect
               thread={thread}
               executionContext={executionContext}
@@ -127,10 +155,14 @@ export const FrontComponentRenderer = ({
               resetKeys={[componentUrl]}
               fallbackRender={() => null}
             >
-              <RemoteRootRenderer
-                receiver={receiver}
-                components={fallbackComponentRegistry}
-              />
+              <FrontComponentHostFocusControllerContext.Provider
+                value={hostFocusController}
+              >
+                <FrontComponentRemoteRootRenderer
+                  receiver={receiver}
+                  components={fallbackComponentRegistry}
+                />
+              </FrontComponentHostFocusControllerContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>
         )}

@@ -2,7 +2,7 @@ import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboar
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
-import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpWithSSO';
+import { SignInUpWithSso } from '@/auth/sign-in-up/components/internal/SignInUpWithSso';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -12,8 +12,9 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { ClickToActionLink } from 'twenty-ui/navigation';
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpWorkspaceScopeForm = () => {
@@ -50,13 +51,13 @@ export const SignInUpWorkspaceScopeForm = () => {
           <SignInUpWithMicrosoft action="join-workspace" />
         )}
 
-        {providers.sso.length > 0 && <SignInUpWithSSO />}
+        {providers.sso.length > 0 && <SignInUpWithSso />}
 
         {(providers.google ||
           providers.microsoft ||
           providers.sso.length > 0) &&
         providers.password ? (
-          <HorizontalSeparator />
+          <Separator style={{ marginBlock: themeCssVariables.spacing[3] }} />
         ) : null}
         {providers.password && (
           // oxlint-disable-next-line react/jsx-props-no-spreading
@@ -66,11 +67,12 @@ export const SignInUpWorkspaceScopeForm = () => {
         )}
       </StyledOnboardingContentContainer>
       {signInUpStep === SignInUpStep.Password && (
-        <ClickToActionLink
+        <Button
+          variant="link"
           onClick={handleResetPassword(form.getValues('email'))}
         >
           <Trans>Forgot your password?</Trans>
-        </ClickToActionLink>
+        </Button>
       )}
     </>
   );

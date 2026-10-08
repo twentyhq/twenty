@@ -1,15 +1,12 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { type SearchRecord } from '~/generated/graphql';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useState } from 'react';
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
@@ -22,11 +19,14 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
 }: SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
-  const { loading, searchRecords: workspaceMembers } =
-    useObjectRecordSearchRecords({
-      objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
-      searchInput: searchFilter,
-    });
+  const {
+    loading,
+    searchRecords: workspaceMembers,
+    error,
+  } = useObjectRecordSearchRecords({
+    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
+    searchInput: searchFilter,
+  });
 
   const filteredWorkspaceMembers =
     workspaceMembers?.filter(
@@ -39,27 +39,26 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
         !excludedWorkspaceMemberIds.includes(workspaceMember.recordId),
     ) ?? [];
 
-  const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
-  };
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      <DropdownMenuSearchInput
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <Dropdown.Search
         value={searchFilter}
-        onChange={handleSearchFilterChange}
+        onValueChange={setSearchFilter}
         placeholder={t`Search`}
+        aria-label={t`Search`}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
         <SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
           filteredWorkspaceMembers={filteredWorkspaceMembers as SearchRecord[]}
           onSelect={onSelect}
         />
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

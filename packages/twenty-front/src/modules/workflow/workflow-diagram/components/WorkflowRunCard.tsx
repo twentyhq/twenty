@@ -1,4 +1,4 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
@@ -7,9 +7,9 @@ import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/compone
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { Suspense, useContext, useId } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Suspense, useId } from 'react';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -20,18 +20,20 @@ const StyledLoadingSkeletonContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
   return (
     <StyledLoadingSkeletonContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={theme.border.radius.sm}
-      >
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
-      </SkeletonTheme>
+      <SkeletonLine
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
+      <SkeletonLine
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
+      <SkeletonLine
+        borderRadius={themeCssVariables.border.radius.smRound}
+        height={SKELETON_HEIGHT_SIZES.m}
+      />
     </StyledLoadingSkeletonContainer>
   );
 };

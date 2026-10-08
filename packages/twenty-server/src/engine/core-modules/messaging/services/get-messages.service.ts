@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
+import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
+import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
     private readonly timelineMessagingService: TimelineMessagingService,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
+    private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
   async getMessagesFromPersonIds(
@@ -19,6 +24,7 @@ export class GetMessagesService {
     workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+    targetFilter?: TargetFilter,
   ): Promise<TimelineThreadsWithTotalDTO> {
     const offset = (page - 1) * pageSize;
 
@@ -28,6 +34,7 @@ export class GetMessagesService {
         workspaceId,
         offset,
         pageSize,
+        targetFilter,
       );
 
     if (!messageThreads) {
@@ -79,8 +86,14 @@ export class GetMessagesService {
       objectNameSingular,
       recordId,
     });
+    const targetFilter =
+      await this.messageCalendarTargetReadinessService.resolveTargetFilter({
+        objectNameSingular,
+        recordId,
+        workspaceId,
+      });
 
-    if (personIds.length === 0) {
+    if (!isDefined(targetFilter) && personIds.length === 0) {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
@@ -94,6 +107,7 @@ export class GetMessagesService {
       workspaceId,
       page,
       pageSize,
+      targetFilter,
     );
   }
 }

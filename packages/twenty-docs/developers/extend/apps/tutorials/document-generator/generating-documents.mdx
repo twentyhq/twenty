@@ -188,8 +188,9 @@ can't encode. Rendering non-Latin scripts (Chinese, Arabic, Cyrillic) would mean
 embedding a Unicode font.
 </Note>
 
-Then upload it and store the reference on the record. `uploadFile` routes bytes
-to your app-owned files field; the returned `id` is what you save:
+Then upload it and store the reference on the record. `uploadFile` sends the
+bytes straight to file storage and attaches them to your app-owned files field;
+the returned `id` is what you save:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -199,12 +200,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {

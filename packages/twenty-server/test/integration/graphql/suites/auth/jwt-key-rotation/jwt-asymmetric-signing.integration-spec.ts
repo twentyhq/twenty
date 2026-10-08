@@ -9,11 +9,11 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
-import { renewApplicationToken } from 'test/integration/graphql/utils/renew-application-token.util';
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
@@ -278,16 +278,11 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
     expect(data?.findManyApplications).toBeDefined();
   });
 
-  it('signs new APPLICATION_ACCESS + APPLICATION_REFRESH tokens with ES256 + kid via generateApplicationToken', async () => {
-    const { data, errors } = await generateApplicationToken({
-      applicationId: seededApplicationId,
-      expectToFail: false,
-    });
-
-    expect(errors).toBeUndefined();
-
+  it('signs new APPLICATION_ACCESS + APPLICATION_REFRESH tokens with ES256 + kid', async () => {
     const { applicationAccessToken, applicationRefreshToken } =
-      data.generateApplicationToken;
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: seededApplicationId,
+      });
 
     const decodedAccess = decodeJwtCompleteOrThrow(
       applicationAccessToken.token,
@@ -311,23 +306,20 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
   });
 
   it('round-trips a new ES256 APPLICATION_REFRESH token through renewApplicationToken', async () => {
-    const { data } = await generateApplicationToken({
-      applicationId: seededApplicationId,
+    const { applicationRefreshToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: seededApplicationId,
+      });
+
+    const { data: renewedData } = await renewApplicationToken({
+      input: { applicationRefreshToken: applicationRefreshToken.token },
       expectToFail: false,
     });
 
-    const response = await renewApplicationToken({
-      applicationRefreshToken:
-        data.generateApplicationToken.applicationRefreshToken.token,
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
+    const renewed = renewedData.renewApplicationToken;
 
-    expect(response.body.errors).toBeUndefined();
-
-    const renewed = response.body.data?.renewApplicationToken;
-
-    expect(isNonEmptyString(renewed?.applicationAccessToken.token)).toBe(true);
-    expect(isNonEmptyString(renewed?.applicationRefreshToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed.applicationAccessToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed.applicationRefreshToken.token)).toBe(true);
 
     expect(
       decodeJwtCompleteOrThrow(renewed.applicationAccessToken.token).header.alg,

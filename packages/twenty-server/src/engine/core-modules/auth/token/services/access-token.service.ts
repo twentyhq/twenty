@@ -15,19 +15,22 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -41,9 +44,11 @@ export class AccessTokenService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly userSessionService: UserSessionService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   private async resolveTokenSubject(
@@ -76,34 +81,30 @@ export class AccessTokenService {
       const authContext = buildSystemAuthContext(workspaceId);
 
       workspaceMemberId =
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workspaceMemberRepository =
-              await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-                workspaceId,
-                'workspaceMember',
-                { shouldBypassPermissionChecks: true },
-              );
-
-            const workspaceMember = await workspaceMemberRepository.findOne({
-              where: { userId: user.id },
-            });
-
-            assertIsDefinedOrThrow(
-              workspaceMember,
-              new AuthException(
-                'User is not a member of the workspace',
-                AuthExceptionCode.FORBIDDEN_EXCEPTION,
-                {
-                  userFriendlyMessage: msg`User is not a member of the workspace.`,
-                },
-              ),
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workspaceMemberRepository =
+            this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
             );
 
-            return workspaceMember.id;
-          },
-          authContext,
-        );
+          const workspaceMember = await workspaceMemberRepository.findOne({
+            where: { userId: user.id },
+          });
+
+          assertIsDefinedOrThrow(
+            workspaceMember,
+            new AuthException(
+              'User is not a member of the workspace',
+              AuthExceptionCode.FORBIDDEN_EXCEPTION,
+              {
+                userFriendlyMessage: msg`User is not a member of the workspace.`,
+              },
+            ),
+          );
+
+          return workspaceMember.id;
+        }, authContext);
     }
 
     return { user, workspace, userWorkspace, workspaceMemberId };
@@ -181,7 +182,7 @@ export class AccessTokenService {
     return { token, expiresAt };
   }
 
-  async validateToken(token: string): Promise<AuthContext> {
+  async validateToken(token: string): Promise<RawAuthContext> {
     await this.jwtWrapperService.verifyJwtToken(token);
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
@@ -191,16 +192,47 @@ export class AccessTokenService {
     return context;
   }
 
-  async validateTokenByRequest(request: Request): Promise<AuthContext> {
+  async validateTokenByRequest(request: Request): Promise<RawAuthContext> {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
-    if (!token) {
-      throw new AuthException(
-        'Missing authentication token',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    if (token) {
+      if (isUserSessionToken(token)) {
+        // Session tokens are cookie-only: accepting them as Bearer reopens XSS exfiltration
+        throw new AuthException(
+          'Session tokens are only accepted from the session cookie',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      }
+
+      return this.validateToken(token);
     }
 
-    return this.validateToken(token);
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
+    if (sessionToken) {
+      return this.validateSessionToken(sessionToken);
+    }
+
+    throw new AuthException(
+      'Missing authentication token',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
+  }
+
+  private async validateSessionToken(
+    sessionToken: string,
+  ): Promise<RawAuthContext> {
+    const { payload, authenticatedAt } =
+      await this.userSessionService.resolveSession(sessionToken);
+
+    const context = await this.jwtStrategy.validate(payload);
+
+    return {
+      ...context,
+      workspaceMemberId:
+        context.workspaceMemberId ?? context.workspaceMember?.id,
+      authenticatedAt,
+    };
   }
 }

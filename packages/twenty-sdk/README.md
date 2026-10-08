@@ -14,6 +14,8 @@
 
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
+> The Twenty CLI is also available as its own package, [`twenty`](https://www.npmjs.com/package/twenty). Install it with `npm install -g twenty` to work with your workspaces from the terminal, and to create, build and sync apps with `twenty app init`, `twenty app apply` and `twenty app dev`. See its [README](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/README.md).
+
 ## Quick start
 
 The recommended way to start is with [create-twenty-app](https://www.npmjs.com/package/create-twenty-app):
@@ -34,6 +36,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 Guides in this repository:
 
+- [Programmatic application builds](./docs/build.md), local builds and typechecking for scripts and integrations
 - [Logic function inputs](./docs/logic-function-inputs.md) — input schema inference, record-typed inputs, and the id contract
 
 ## Manual installation

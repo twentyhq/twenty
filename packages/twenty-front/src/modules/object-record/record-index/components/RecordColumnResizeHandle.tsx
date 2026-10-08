@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type PointerEvent as ReactPointerEvent } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordColumnResizeHandle = styled.div<{
   isResizing: boolean;
@@ -43,6 +43,7 @@ export const RecordColumnResizeHandle = ({
     className="cursor-col-resize"
     role="separator"
     aria-orientation="vertical"
+    data-dnd-drag-disable
     isResizing={isResizing}
     position={position}
     onPointerDown={onPointerDown}

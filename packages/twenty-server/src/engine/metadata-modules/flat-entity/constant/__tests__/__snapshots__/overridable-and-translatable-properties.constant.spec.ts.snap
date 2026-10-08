@@ -15,11 +15,13 @@ exports[`registry-derived override property maps derives the overridable propert
     "engineComponentKey",
     "hotKeys",
     "pageLayoutId",
+    "isActive",
   ],
   "connectionProvider": [],
   "fieldMetadata": [
     "description",
     "icon",
+    "isActive",
     "label",
   ],
   "fieldPermission": [],
@@ -28,9 +30,11 @@ exports[`registry-derived override property maps derives the overridable propert
   "logicFunction": [],
   "navigationMenuItem": [],
   "objectMetadata": [
+    "openRecordIn",
     "color",
     "description",
     "icon",
+    "isActive",
     "labelPlural",
     "labelSingular",
     "imageIdentifierFieldMetadataId",
@@ -41,6 +45,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "title",
     "position",
     "icon",
+    "isActive",
   ],
   "pageLayoutWidget": [
     "title",
@@ -48,6 +53,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "pageLayoutTabId",
     "conditionalDisplay",
     "conditionalAvailabilityExpression",
+    "isActive",
   ],
   "permissionFlag": [],
   "role": [],
@@ -56,7 +62,14 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
+  "settingsMenuItem": [],
   "skill": [],
+  "timelineActivityType": [
+    "label",
+    "icon",
+    "isActive",
+  ],
+  "validationRule": [],
   "view": [
     "name",
     "type",
@@ -74,6 +87,8 @@ exports[`registry-derived override property maps derives the overridable propert
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",
     "kanbanColumnWidth",
+    "groupLoadLimit",
+    "isActive",
   ],
   "viewField": [
     "isVisible",
@@ -81,59 +96,62 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "aggregateOperation",
     "viewFieldGroupId",
+    "isActive",
   ],
   "viewFieldGroup": [
     "name",
     "position",
     "isVisible",
+    "isActive",
   ],
   "viewFilter": [],
   "viewFilterGroup": [],
   "viewGroup": [],
   "viewSort": [],
   "webhook": [],
+  "workflow": [],
+  "workflowVersion": [],
 }
 `;
 
 exports[`registry-derived override property maps derives the translatable properties for every metadata entity 1`] = `
 {
-  "agent": [],
-  "applicationVariable": [],
-  "commandMenuItem": [],
-  "connectionProvider": [],
+  "commandMenuItem": [
+    "label",
+    "shortLabel",
+  ],
   "fieldMetadata": [
+    "label",
     "description",
+  ],
+  "navigationMenuItem": [
+    "name",
+  ],
+  "objectMetadata": [
+    "labelSingular",
+    "labelPlural",
+    "description",
+  ],
+  "pageLayout": [
+    "name",
+  ],
+  "pageLayoutTab": [
+    "title",
+  ],
+  "pageLayoutWidget": [
+    "title",
+  ],
+  "settingsMenuItem": [
+    "title",
+  ],
+  "timelineActivityType": [
     "label",
   ],
-  "fieldPermission": [],
-  "frontComponent": [],
-  "index": [],
-  "logicFunction": [],
-  "navigationMenuItem": [],
-  "objectMetadata": [
-    "description",
-    "labelPlural",
-    "labelSingular",
+  "view": [
+    "name",
   ],
-  "objectPermission": [],
-  "pageLayout": [],
-  "pageLayoutTab": [],
-  "pageLayoutWidget": [],
-  "permissionFlag": [],
-  "role": [],
-  "rolePermissionFlag": [],
-  "roleTarget": [],
-  "rowLevelPermissionPredicate": [],
-  "rowLevelPermissionPredicateGroup": [],
-  "searchFieldMetadata": [],
-  "skill": [],
-  "view": [],
-  "viewField": [],
-  "viewFieldGroup": [],
-  "viewFilter": [],
-  "viewFilterGroup": [],
-  "viewGroup": [],
-  "viewSort": [],
-  "webhook": [],
+  "viewFieldGroup": [
+    "name",
+  ],
 }
 `;

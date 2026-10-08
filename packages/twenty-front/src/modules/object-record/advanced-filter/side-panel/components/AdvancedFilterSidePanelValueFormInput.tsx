@@ -245,8 +245,7 @@ export const AdvancedFilterSidePanelValueFormInput = ({
       defaultValue={recordFilter.value}
       onChange={handleChange}
       readonly={readonly}
-      // VariablePicker is not supported for date filters yet
-      VariablePicker={isFilterableByDateValue ? undefined : VariablePicker}
+      VariablePicker={VariablePicker}
       timeZone={timeZone}
     />
   );

@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
+msgstr "{actorName} frissítette {targetName} ({targetEmail}) szerveradminisztrátori hozzáférését."
+
+#. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
 msgstr "{senderName} (<0>{senderEmail}</0>) meghívta önt, hogy csatlakozzon egy <1>{workspaceName}</1> nevű munkaterülethez."
@@ -89,6 +94,11 @@ msgid "Enabled"
 msgstr "Engedélyezve"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Full admin panel access: {fullAdminStatus}"
+msgstr "Teljes körű hozzáférés az adminisztrációs panelhez: {fullAdminStatus}"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
 msgstr "Github"
@@ -123,6 +133,11 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendőd. Ha mégsem ez a megfelelő megoldás, egy kattintással lemondhatod addig, és nem számítunk fel díjat."
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "If you did not expect this change, review your server administrators immediately."
+msgstr "Ha nem számított erre a módosításra, azonnal ellenőrizze szerveradminisztrátorait."
+
+#. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Amennyiben Ön nem kezdeményezte ezt a változtatást, kérjük azonnal lépjen kapcsolatba a munkaterület tulajdonosával."
@@ -136,6 +151,11 @@ msgstr "Ha nem teszel semmit, szüneteltetjük a munkaterületedet, és az adata
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
 msgstr "Ha valamikor később újra szeretnél esélyt adni a Twenty‑nek, néhány perc alatt új, üres munkaterületet indíthatsz — örömmel látunk vissza."
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Impersonation: {impersonateStatus}"
+msgstr "Megszemélyesítés: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -207,26 +227,6 @@ msgstr "San Francisco / Párizs"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "A kiszolgáló‑adminisztrátori hozzáférés megváltozott"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

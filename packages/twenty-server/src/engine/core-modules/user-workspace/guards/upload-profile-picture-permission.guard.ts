@@ -39,8 +39,8 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     const userWorkspaceId = request.userWorkspaceId;
     const workspaceActivationStatus = request.workspace.activationStatus;
     const apiKeyId = request.apiKey?.id;
+    const applicationId = request.application?.id;
 
-    // Allow during workspace creation
     if (
       [
         WorkspaceActivationStatus.PENDING_CREATION,
@@ -50,26 +50,26 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
       return true;
     }
 
-    // Check if user has WORKSPACE_MEMBERS permission (can edit any profile picture)
     const hasWorkspaceMembersPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId,
+        applicationId,
       });
 
     if (hasWorkspaceMembersPermission) {
       return true;
     }
 
-    // Check if user has PROFILE_INFORMATION permission (can edit their own profile picture)
     const hasProfileInformationPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting: PermissionFlagType.PROFILE_INFORMATION,
         apiKeyId,
+        applicationId,
       });
 
     if (hasProfileInformationPermission) {

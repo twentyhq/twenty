@@ -1,0 +1,35 @@
+.heading {
+  font-family: inherit;
+  font-weight: var(--t-font-weight-semi-bold);
+  line-height: var(--t-text-line-height-md);
+  margin: 0;
+  overflow-wrap: anywhere;
+
+  &:where([data-size='xs']) {
+    font-size: var(--t-font-size-xs);
+  }
+
+  &:where([data-size='sm']) {
+    font-size: var(--t-font-size-sm);
+  }
+
+  &:where([data-size='md']) {
+    font-size: var(--t-font-size-md);
+  }
+
+  &:where([data-size='lg']) {
+    font-size: var(--t-font-size-lg);
+  }
+
+  &:where([data-color='primary']) {
+    color: var(--t-font-color-primary);
+  }
+
+  &:where([data-color='secondary']) {
+    color: var(--t-font-color-secondary);
+  }
+
+  &:where([data-color='tertiary']) {
+    color: var(--t-font-color-tertiary);
+  }
+}

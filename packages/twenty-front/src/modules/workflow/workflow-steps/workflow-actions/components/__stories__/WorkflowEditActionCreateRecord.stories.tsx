@@ -1,14 +1,15 @@
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
   title: 'Modules/Workflow/Actions/CreateRecord/EditAction',
@@ -30,7 +31,7 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -43,9 +44,9 @@ const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     WorkspaceDecorator,
   ],
 };

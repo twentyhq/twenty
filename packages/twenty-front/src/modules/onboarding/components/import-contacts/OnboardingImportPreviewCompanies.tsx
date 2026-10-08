@@ -3,16 +3,11 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const PREVIEW_ROW_HEIGHT = 32;
 
@@ -48,6 +43,20 @@ const StyledHeaderTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  padding-left: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledHeaderAction = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledCompanyCell = styled.div`
+  display: flex;
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const OnboardingImportPreviewCompanies = () => {
@@ -65,32 +74,36 @@ export const OnboardingImportPreviewCompanies = () => {
           />
           {t`Companies`}
         </StyledHeaderTitle>
-        <IconPlus
-          size={theme.icon.size.md}
-          color={themeCssVariables.font.color.tertiary}
-        />
+        <StyledHeaderAction>
+          <IconPlus
+            size={theme.icon.size.md}
+            color={themeCssVariables.font.color.tertiary}
+          />
+        </StyledHeaderAction>
       </StyledRow>
       {IMPORT_CONTACTS_PREVIEW_COMPANIES.map((company) => (
         <StyledRow key={company.id}>
           <Checkbox checked={false} hoverable />
-          <Chip
-            label={company.name}
-            size={ChipSize.Small}
-            variant={ChipVariant.Transparent}
-            accent={ChipAccent.TextPrimary}
-            clickable={false}
-            leftComponent={
-              <Avatar
-                type="squared"
-                size="md"
-                placeholder={company.name}
-                placeholderColorSeed={company.id}
-                avatarUrl={getAbsoluteImageUrl(
-                  getLogoUrlFromDomainName(company.domainName),
-                )}
-              />
-            }
-          />
+          <StyledCompanyCell>
+            <Chip
+              size="sm"
+              variant="soft"
+              color="primary"
+              startElement={
+                <Avatar
+                  shape="square"
+                  size="sm"
+                  name={company.name}
+                  colorSeed={company.id}
+                  src={getAbsoluteImageUrl(
+                    getLogoUrlFromDomainName(company.domainName),
+                  )}
+                />
+              }
+            >
+              {company.name}
+            </Chip>
+          </StyledCompanyCell>
         </StyledRow>
       ))}
     </StyledColumn>

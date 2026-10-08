@@ -1,9 +1,11 @@
+import { ApiPath } from 'twenty-shared/types';
+
 interface ApolloPlaygroundOptions {
-  path?: string;
+  path?: ApiPath;
 }
 
 export const renderApolloPlayground = ({
-  path = 'graphql',
+  path = ApiPath.GraphQL,
 }: ApolloPlaygroundOptions = {}) => {
   return `
     <!DOCTYPE html>

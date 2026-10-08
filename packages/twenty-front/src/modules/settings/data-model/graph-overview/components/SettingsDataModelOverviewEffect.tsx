@@ -3,8 +3,7 @@ import { useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelOverviewEffectProps = {
   setEdges: (edges: Edge[]) => void;
@@ -73,10 +72,7 @@ export const SettingsDataModelOverviewEffect = ({
                 targetObject: targetObj,
               },
             });
-            if (
-              !isUndefinedOrNull(sourceObj) &&
-              !isUndefinedOrNull(targetObj)
-            ) {
+            if (isDefined(sourceObj) && isDefined(targetObj)) {
               g.setEdge(sourceObj, targetObj);
             }
           }

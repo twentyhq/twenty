@@ -5,5 +5,4 @@ export type CreateObjectPermissionInput = {
   canUpdateObjectRecords?: boolean;
   canSoftDeleteObjectRecords?: boolean;
   canDestroyObjectRecords?: boolean;
-  universalIdentifier?: string;
 };

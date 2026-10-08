@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type gmail_v1, google } from 'googleapis';
+import { type gmail_v1, google, type people_v1 } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +13,7 @@ import { type SendMessageInput } from 'src/modules/messaging/message-outbound-ma
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -163,22 +164,18 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       auth: oAuth2Client,
     });
 
-    const { data: gmailData } = await gmailClient.users.getProfile({
-      userId: 'me',
+    const fromEmail = isNonEmptyString(sendMessageInput.fromHandle)
+      ? getConnectedAccountSendableHandleOrThrow({
+          connectedAccount,
+          requestedFromHandle: sendMessageInput.fromHandle,
+        })
+      : connectedAccount.handle;
+
+    const fromName = await this.getFromName({
+      gmailClient,
+      peopleClient,
+      fromEmail,
     });
-
-    const fromEmail = gmailData.emailAddress;
-
-    if (!isNonEmptyString(fromEmail)) {
-      throw new Error('Gmail profile did not return an email address');
-    }
-
-    const { data: peopleData } = await peopleClient.people.get({
-      resourceName: 'people/me',
-      personFields: 'names',
-    });
-
-    const fromName = peopleData?.names?.[0]?.displayName;
 
     const from = formatMessageFromHeader({
       fromEmail,
@@ -197,5 +194,34 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     const encodedMessage = Buffer.from(messageBuffer).toString('base64url');
 
     return { gmailClient, encodedMessage, messageBuffer };
+  }
+
+  private async getFromName({
+    gmailClient,
+    peopleClient,
+    fromEmail,
+  }: {
+    gmailClient: gmail_v1.Gmail;
+    peopleClient: people_v1.People;
+    fromEmail: string;
+  }): Promise<string | undefined> {
+    const { data: sendAsData } = await gmailClient.users.settings.sendAs.list({
+      userId: 'me',
+    });
+
+    const sendAsDisplayName = sendAsData.sendAs?.find(
+      (sendAs) => sendAs.sendAsEmail?.toLowerCase() === fromEmail.toLowerCase(),
+    )?.displayName;
+
+    if (isNonEmptyString(sendAsDisplayName)) {
+      return sendAsDisplayName;
+    }
+
+    const { data: peopleData } = await peopleClient.people.get({
+      resourceName: 'people/me',
+      personFields: 'names',
+    });
+
+    return peopleData?.names?.[0]?.displayName ?? undefined;
   }
 }

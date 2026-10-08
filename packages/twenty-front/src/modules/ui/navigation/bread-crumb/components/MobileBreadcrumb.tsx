@@ -1,16 +1,17 @@
-import { t } from '@lingui/core/macro';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { getBreadcrumbItems } from '@/ui/navigation/bread-crumb/utils/getBreadcrumbItems';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Breadcrumb as BreadcrumbPrimitive } from 'twenty-ui/primitives/navigation';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-export type MobileBreadcrumbProps = {
-  className?: string;
-  links: { children: string | ReactNode; href?: string }[];
-};
+type MobileBreadcrumbProps = BreadcrumbProps;
 
 const StyledWrapper = styled.nav`
   align-items: center;
@@ -25,18 +26,25 @@ const StyledWrapper = styled.nav`
 `;
 
 const StyledLinkContainer = styled.div`
+  min-width: 0;
+
   > a {
     color: inherit;
+    display: block;
     overflow: hidden;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &:focus-visible {
+      outline: 2px solid ${themeCssVariables.color.blue};
+      outline-offset: -2px;
+    }
   }
 `;
 
 const StyledText = styled.span`
   color: inherit;
-  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -46,32 +54,41 @@ export const MobileBreadcrumb = ({
   className,
   links,
 }: MobileBreadcrumbProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
 
   if (isSettingsPage && links.length <= 2) {
     return null;
   }
 
-  const previousLink = links[links.length - 2];
+  const previousLink = links.at(-2);
 
-  const text = isNonEmptyString(previousLink.children)
-    ? previousLink.children
-    : '';
+  if (!isDefined(previousLink)) {
+    return (
+      <BreadcrumbPrimitive
+        aria-label={t`Breadcrumb`}
+        className={className}
+        links={getBreadcrumbItems(links)}
+      />
+    );
+  }
+
+  const text = previousLink.children;
+  const title = isNonEmptyString(text) ? text : undefined;
 
   return (
-    <StyledWrapper className={className}>
-      {previousLink?.href ? (
+    <StyledWrapper aria-label={t`Breadcrumb`} className={className}>
+      {isNonEmptyString(previousLink.href) ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <IconChevronLeft size={theme.icon.size.md} aria-hidden />
           <StyledLinkContainer>
-            <Link title={text} to={previousLink.href}>
-              {t`Back to ${text}`}
+            <Link title={title} to={previousLink.href}>
+              <Trans>Back to {text}</Trans>
             </Link>
           </StyledLinkContainer>
         </>
       ) : (
-        <StyledText title={text}>{previousLink?.children}</StyledText>
+        <StyledText title={title}>{text}</StyledText>
       )}
     </StyledWrapper>
   );

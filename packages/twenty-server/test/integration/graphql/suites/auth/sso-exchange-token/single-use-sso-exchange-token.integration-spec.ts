@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 import { type DataSource } from 'typeorm';
-import { getAuthTokensFromSSOExchangeToken } from 'test/integration/graphql/utils/get-auth-tokens-from-sso-exchange-token.util';
+import { getAuthTokensFromSsoExchangeToken } from 'test/integration/graphql/utils/get-auth-tokens-from-sso-exchange-token.util';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
@@ -22,9 +22,9 @@ const expectUniformInvalidTokenError = (errors: { message: string }[]) => {
 describe('SSO exchange token redemption (integration)', () => {
   let dataSource: DataSource;
 
-  const seedSSOExchangeToken = async ({
+  const seedSsoExchangeToken = async ({
     expiresAt = new Date(Date.now() + 5 * 60 * 1000),
-    type = AppTokenType.SSOExchangeToken,
+    type = AppTokenType.SsoExchangeToken,
     revokedAt = null,
   }: {
     expiresAt?: Date;
@@ -51,7 +51,7 @@ describe('SSO exchange token redemption (integration)', () => {
 
   const countRemainingRows = async (
     plainToken: string,
-    type: AppTokenType = AppTokenType.SSOExchangeToken,
+    type: AppTokenType = AppTokenType.SsoExchangeToken,
   ): Promise<number> => {
     const rows = await dataSource.query(
       `SELECT 1 FROM core."appToken" WHERE "value" = $1 AND "type" = $2`,
@@ -66,9 +66,9 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should exchange a valid token for a token pair and consume it', async () => {
-    const plainToken = await seedSSOExchangeToken();
+    const plainToken = await seedSsoExchangeToken();
 
-    const { data } = await getAuthTokensFromSSOExchangeToken({
+    const { data } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: false,
     });
@@ -84,14 +84,14 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should reject a second redemption of the same token', async () => {
-    const plainToken = await seedSSOExchangeToken();
+    const plainToken = await seedSsoExchangeToken();
 
-    await getAuthTokensFromSSOExchangeToken({
+    await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: false,
     });
 
-    const { errors } = await getAuthTokensFromSSOExchangeToken({
+    const { errors } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: true,
     });
@@ -100,11 +100,11 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should reject an expired token', async () => {
-    const plainToken = await seedSSOExchangeToken({
+    const plainToken = await seedSsoExchangeToken({
       expiresAt: new Date(Date.now() - 1000),
     });
 
-    const { errors } = await getAuthTokensFromSSOExchangeToken({
+    const { errors } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: true,
     });
@@ -114,11 +114,11 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should reject a revoked token without consuming it', async () => {
-    const plainToken = await seedSSOExchangeToken({
+    const plainToken = await seedSsoExchangeToken({
       revokedAt: new Date(),
     });
 
-    const { errors } = await getAuthTokensFromSSOExchangeToken({
+    const { errors } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: true,
     });
@@ -128,11 +128,11 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should not redeem an app token of another type sharing the same value', async () => {
-    const plainToken = await seedSSOExchangeToken({
+    const plainToken = await seedSsoExchangeToken({
       type: AppTokenType.EmailVerificationToken,
     });
 
-    const { errors } = await getAuthTokensFromSSOExchangeToken({
+    const { errors } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: plainToken,
       expectToFail: true,
     });
@@ -144,7 +144,7 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should reject an unknown token', async () => {
-    const { errors } = await getAuthTokensFromSSOExchangeToken({
+    const { errors } = await getAuthTokensFromSsoExchangeToken({
       ssoExchangeToken: crypto.randomBytes(32).toString('hex'),
       expectToFail: true,
     });
@@ -153,11 +153,11 @@ describe('SSO exchange token redemption (integration)', () => {
   });
 
   it('should let exactly one of several concurrent redemptions succeed', async () => {
-    const plainToken = await seedSSOExchangeToken();
+    const plainToken = await seedSsoExchangeToken();
 
     const responses = await Promise.all(
       Array.from({ length: 5 }, () =>
-        getAuthTokensFromSSOExchangeToken({ ssoExchangeToken: plainToken }),
+        getAuthTokensFromSsoExchangeToken({ ssoExchangeToken: plainToken }),
       ),
     );
 

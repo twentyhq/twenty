@@ -23,6 +23,9 @@ import {
   CacheLockExceptionCode,
 } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import {
+  BUILD_LOCK_MAX_RETRIES,
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
@@ -103,9 +106,6 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const buildLockTtlMs = 120_000;
-    const buildLockRetryMs = 500;
-    const buildLockMaxRetries = 240;
     const lockKey = `lambda-build:${context.flatLogicFunction.id}`;
 
     try {
@@ -128,9 +128,9 @@ export class LambdaExecutorManagerService {
         },
         lockKey,
         {
-          ttl: buildLockTtlMs,
-          ms: buildLockRetryMs,
-          maxRetries: buildLockMaxRetries,
+          ttl: BUILD_LOCK_TTL_MS,
+          ms: BUILD_LOCK_RETRY_MS,
+          maxRetries: BUILD_LOCK_MAX_RETRIES,
         },
       );
     } catch (error) {
@@ -192,6 +192,13 @@ export class LambdaExecutorManagerService {
 
     await this.cacheLockService.withLock(
       async () => {
+        if (
+          (await this.getInstalledBundleChecksum(flatLogicFunction)) ===
+          checksum
+        ) {
+          return;
+        }
+
         const compiledCode =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
@@ -311,6 +318,14 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
+      if (
+        error instanceof LogicFunctionException &&
+        error.code ===
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED
+      ) {
+        throw error;
+      }
+
       this.logger.error(
         `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,

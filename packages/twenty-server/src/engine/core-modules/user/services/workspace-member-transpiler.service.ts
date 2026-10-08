@@ -16,7 +16,7 @@ import {
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
@@ -69,12 +69,15 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
       colorScheme,
+      uiScale,
+      openRecordIn,
       locale,
       timeFormat,
       timeZone,
       dateFormat,
       calendarStartDay,
       numberFormat,
+      userId,
     } = workspaceMemberEntity;
 
     const avatarUrl = await this.generateSignedAvatarUrl({
@@ -96,8 +99,11 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
       avatarUrl,
+      userId,
       userWorkspaceId: userWorkspace.id,
       colorScheme,
+      openRecordIn: openRecordIn as OpenRecordIn,
+      uiScale,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

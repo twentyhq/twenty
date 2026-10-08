@@ -12,12 +12,13 @@ export const fetchAllNodes = async <TNode>(
   fetchPage: (
     afterCursor: string | undefined,
   ) => Promise<ConnectionPage<TNode> | undefined>,
+  shouldStartPageRequest: () => boolean = () => true,
 ): Promise<TNode[]> => {
   const nodes: TNode[] = [];
   let hasNextPage = true;
   let afterCursor: string | undefined;
 
-  while (hasNextPage) {
+  while (hasNextPage && shouldStartPageRequest()) {
     const connection = await fetchPage(afterCursor);
 
     if (isUndefined(connection)) {

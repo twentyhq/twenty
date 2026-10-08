@@ -1,0 +1,36 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+
+const buildError = (extensions: Record<string, unknown>) =>
+  new CombinedGraphQLErrors({
+    data: null,
+    errors: [{ message: 'refused', extensions }],
+  });
+
+describe('isAiChatCreditsExhaustedError', () => {
+  it('covers both ways spent credits reach the client', () => {
+    expect(
+      isAiChatCreditsExhaustedError(
+        createAiChatCodedError('refused', AiChatErrorCode.CREDITS_EXHAUSTED),
+      ),
+    ).toBe(true);
+
+    expect(
+      isAiChatCreditsExhaustedError(
+        buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'allowance' }),
+      ),
+    ).toBe(true);
+  });
+
+  it('leaves a configured limit out of the credits banner', () => {
+    expect(
+      isAiChatCreditsExhaustedError(
+        buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'limit' }),
+      ),
+    ).toBe(false);
+    expect(isAiChatCreditsExhaustedError(new Error('boom'))).toBe(false);
+  });
+});

@@ -2,7 +2,7 @@ import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type ValidatableWorkflow,
   type WorkflowValidationIssueCode,
-} from '@/workflow/validation/types/workflow-validation.type';
+} from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '../build-workflow-graph.util';
 import { validateWorkflowGraph } from '../validate-workflow-graph.util';
 
@@ -100,6 +100,78 @@ describe('validateWorkflowGraph', () => {
     };
 
     expect(getCodes(workflow)).toContain('IF_ELSE_BRANCH_HAS_NO_NEXT_STEP');
+  });
+
+  it('should flag an if-else branch whose filterGroupId does not exist', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              stepFilterGroups: [{ id: 'real-group' }],
+              branches: [
+                { nextStepIds: ['end'], filterGroupId: 'ghost-group' },
+                { nextStepIds: ['end'] },
+              ],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).toContain('INVALID_STEP_PARAMS');
+  });
+
+  it('should not flag an if-else branch whose filterGroupId exists', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              stepFilterGroups: [{ id: 'real-group' }],
+              branches: [
+                { nextStepIds: ['end'], filterGroupId: 'real-group' },
+                { nextStepIds: ['end'] },
+              ],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(getCodes(workflow)).not.toContain('INVALID_STEP_PARAMS');
+  });
+
+  it('should not throw when an if-else step has a non-array stepFilterGroups', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['if'] },
+      steps: [
+        {
+          id: 'if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              stepFilterGroups: 'not-an-array',
+              branches: [
+                { nextStepIds: ['end'], filterGroupId: 'ghost-group' },
+                { nextStepIds: ['end'] },
+              ],
+            },
+          },
+        },
+        { id: 'end', type: 'CODE' },
+      ],
+    };
+
+    expect(() => getCodes(workflow)).not.toThrow();
   });
 
   it('should flag an iterator with items but no loop body', () => {

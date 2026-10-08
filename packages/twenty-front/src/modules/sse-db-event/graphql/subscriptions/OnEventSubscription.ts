@@ -32,6 +32,16 @@ export const ON_EVENT_SUBSCRIPTION = gql`
           diff
         }
       }
+      queueJobEvents {
+        jobId
+        state
+        attemptsMade
+        failedReason
+        progress
+        enqueuedAt
+        startedAt
+        finishedAt
+      }
     }
   }
 `;

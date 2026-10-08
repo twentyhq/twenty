@@ -1,4 +1,4 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { plural, t } from '@lingui/core/macro';
 
 type SettingsAdminDeleteJobsConfirmationModalProps = {
@@ -25,14 +25,14 @@ export const SettingsAdminDeleteJobsConfirmationModal = ({
   });
 
   return (
-    <ConfirmationModal
-      modalInstanceId={modalInstanceId}
+    <ConfirmationDialog
+      dialogId={modalInstanceId}
       title={title}
       subtitle={subtitle}
       onConfirmClick={onConfirm}
       onClose={onClose}
       confirmButtonText={t`Delete`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

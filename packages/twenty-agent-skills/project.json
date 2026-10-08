@@ -1,0 +1,99 @@
+{
+  "name": "twenty-agent-skills",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-agent-skills",
+  "projectType": "library",
+  "tags": ["scope:agent-skills"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/build.js"
+      },
+      "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/skills/**/*",
+        "{projectRoot}/templates/**/*"
+      ],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "validate": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/validate-source.js && node ./scripts/build.js && node ./scripts/validate-distribution.js"
+      },
+      "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/skills/**/*",
+        "{projectRoot}/templates/**/*",
+        "{projectRoot}/.gitignore",
+        "{workspaceRoot}/.agents/plugins/marketplace.json"
+      ],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node --test ./scripts/__tests__/*.spec.js"
+      },
+      "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/skills/**/*",
+        "{projectRoot}/templates/**/*",
+        "{projectRoot}/.gitignore",
+        "{workspaceRoot}/.agents/plugins/marketplace.json"
+      ]
+    },
+    "verify:install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/verify-install.js"
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+      },
+      "configurations": {
+        "ci": {},
+        "fix": {
+          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
+      }
+    },
+    "setup:mcp": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash ./scripts/setup-mcp.sh"
+      }
+    }
+  }
+}

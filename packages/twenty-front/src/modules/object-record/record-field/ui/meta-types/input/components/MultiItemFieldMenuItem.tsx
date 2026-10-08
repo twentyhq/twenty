@@ -1,11 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconBookmark,
   IconBookmarkPlus,
@@ -13,23 +9,22 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
-type MultiItemFieldMenuItemProps<T> = {
+type MultiItemFieldMenuItemProps<TValue> = {
   dropdownId: string;
-  value: T;
+  value: TValue;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  onCopy?: (value: T) => void;
+  onCopy?: (value: TValue) => void;
   onClick?: () => void;
-  DisplayComponent: React.ComponentType<{ value: T }>;
+  DisplayComponent: React.ComponentType<{ value: TValue }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
   showCopyButton?: boolean;
 };
 
-export const MultiItemFieldMenuItem = <T,>({
+export const MultiItemFieldMenuItem = <TValue,>({
   dropdownId,
   value,
   onEdit,
@@ -41,13 +36,8 @@ export const MultiItemFieldMenuItem = <T,>({
   showSetAsPrimaryButton,
   showCopyButton,
   onCopy,
-}: MultiItemFieldMenuItemProps<T>) => {
+}: MultiItemFieldMenuItemProps<TValue>) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { closeDropdown } = useCloseDropdown();
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
@@ -55,23 +45,11 @@ export const MultiItemFieldMenuItem = <T,>({
   };
 
   const handleDeleteClick = () => {
-    closeDropdown(dropdownId);
     setIsHovered(false);
     onDelete?.();
   };
 
-  const handleSetAsPrimaryClick = () => {
-    closeDropdown(dropdownId);
-    onSetAsPrimary?.();
-  };
-
-  const handleEditClick = () => {
-    closeDropdown(dropdownId);
-    onEdit?.();
-  };
-
   const handleCopyClick = () => {
-    closeDropdown(dropdownId);
     onCopy?.(value);
   };
 
@@ -81,39 +59,33 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
       text={<DisplayComponent value={value} />}
-      isIconDisplayedOnHoverOnly={!showPrimaryIcon && !isDropdownOpen}
+      isIconDisplayedOnHoverOnly={!showPrimaryIcon}
       RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            {showSetAsPrimaryButton && (
-              <MenuItem
-                LeftIcon={IconBookmarkPlus}
-                text={t`Set as Primary`}
-                onClick={handleSetAsPrimaryClick}
-              />
-            )}
-            <MenuItem
-              LeftIcon={IconPencil}
-              text={t`Edit`}
-              onClick={handleEditClick}
-            />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
-              onClick={handleDeleteClick}
-            />
-            {showCopyButton && (
-              <MenuItem
-                LeftIcon={IconCopy}
-                text={t`Copy`}
-                onClick={handleCopyClick}
-              />
-            )}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
+        <Dropdown.Section>
+          {showSetAsPrimaryButton && (
+            <Dropdown.ActionItem
+              startIcon={<IconBookmarkPlus />}
+              onClick={onSetAsPrimary}
+            >{t`Set as Primary`}</Dropdown.ActionItem>
+          )}
+          <Dropdown.ActionItem
+            startIcon={<IconPencil />}
+            onClick={onEdit}
+          >{t`Edit`}</Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={handleDeleteClick}
+          >{t`Delete`}</Dropdown.ActionItem>
+          {showCopyButton && (
+            <Dropdown.ActionItem
+              startIcon={<IconCopy />}
+              onClick={handleCopyClick}
+            >{t`Copy`}</Dropdown.ActionItem>
+          )}
+        </Dropdown.Section>
       }
     />
   );

@@ -13,7 +13,7 @@ export const useAvailableComponentInstanceId = <
 
   if (isNonEmptyString(instanceIdFromContext)) {
     return instanceIdFromContext;
-  } else {
-    return null;
   }
+
+  return null;
 };

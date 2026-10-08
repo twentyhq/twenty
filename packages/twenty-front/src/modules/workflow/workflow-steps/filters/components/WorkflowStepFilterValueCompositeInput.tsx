@@ -7,7 +7,7 @@ import {
   type FieldRelationToOneValue,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useContext } from 'react';
@@ -16,7 +16,7 @@ import {
   FieldActorSource,
   type StepFilter,
 } from 'twenty-shared/types';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
 const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(

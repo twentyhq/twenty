@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 
 export const SettingsAdminHealthStatusRightContainer = ({
@@ -10,10 +10,10 @@ export const SettingsAdminHealthStatusRightContainer = ({
   return (
     <>
       {status === AdminPanelHealthServiceStatus.OPERATIONAL && (
-        <Status color="green" text={t`Operational`} weight="medium" />
+        <Status color="green" weight="medium">{t`Operational`}</Status>
       )}
       {status === AdminPanelHealthServiceStatus.OUTAGE && (
-        <Status color="red" text={t`Outage`} weight="medium" />
+        <Status color="red" weight="medium">{t`Outage`}</Status>
       )}
     </>
   );

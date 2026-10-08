@@ -1,7 +1,5 @@
-import {
-  NavigationDrawerItem,
-  type NavigationDrawerItemProps,
-} from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
 
 type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
 
@@ -10,7 +8,6 @@ export const NavigationDrawerSubItem = ({
   label,
   secondaryLabel,
   Icon,
-  iconColor,
   to,
   onClick,
   active,
@@ -30,7 +27,6 @@ export const NavigationDrawerSubItem = ({
       indentationLevel={2}
       subItemState={subItemState}
       Icon={Icon}
-      iconColor={iconColor}
       to={to}
       onClick={onClick}
       active={active}

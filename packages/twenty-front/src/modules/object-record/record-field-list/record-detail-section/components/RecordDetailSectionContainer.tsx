@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordDetailSectionWrapper = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
@@ -70,7 +70,7 @@ export const RecordDetailSectionContainer = ({
   const [isHovered, setIsHovered] = useState(false);
   return (
     <StyledRecordDetailSectionWrapper>
-      <Section>
+      <Section.Root>
         <StyledHeader
           areRecordsAvailable={areRecordsAvailable}
           onMouseEnter={() => setIsHovered(true)}
@@ -90,7 +90,7 @@ export const RecordDetailSectionContainer = ({
             : rightAdornment}
         </StyledHeader>
         {children}
-      </Section>
+      </Section.Root>
     </StyledRecordDetailSectionWrapper>
   );
 };

@@ -2,14 +2,16 @@ import * as ical from 'node-ical';
 import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { extractAttendeesFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-attendees-from-event.util';
 import { extractOrganizerFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-organizer-from-event.util';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const parseICalEvents = (
   rawData: string,
   objectUrl: string,
 ): FetchedCalendarEvent[] => {
   try {
-    const events = Object.values(ical.parseICS(rawData))
+    const normalizedRawData = rawData.replace(/\r\n|\r|\n/g, '\r\n');
+
+    const events = Object.values(ical.parseICS(normalizedRawData))
       .filter(
         (calendarComponent): calendarComponent is ical.VEvent =>
           calendarComponent.type === 'VEVENT',

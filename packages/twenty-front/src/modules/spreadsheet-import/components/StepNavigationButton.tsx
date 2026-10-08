@@ -1,11 +1,11 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
-import { CircularProgressBar } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { ModalFooter } from 'twenty-ui/surfaces';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledFooterContainer = styled.div`
   > div {
@@ -34,25 +34,26 @@ export const StepNavigationButton = ({
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooterContainer>
-      <ModalFooter autoHeight>
-        {!isUndefinedOrNull(onBack) && (
+      <Dialog.Footer style={{ padding: 'var(--t-spacing-5)' }}>
+        {isDefined(onBack) && (
           <MainButton
-            Icon={isLoading ? CircularProgressBar : undefined}
-            title={backTitle}
+            startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onBack : undefined}
-            variant="secondary"
-          />
+            variant="outline"
+          >
+            {backTitle}
+          </MainButton>
         )}
-        {!isUndefinedOrNull(onContinue) && (
+        {isDefined(onContinue) && (
           <MainButton
-            Icon={isLoading ? CircularProgressBar : undefined}
-            title={continueTitle}
+            startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onContinue : undefined}
-            variant="primary"
             disabled={isContinueDisabled}
-          />
+          >
+            {continueTitle}
+          </MainButton>
         )}
-      </ModalFooter>
+      </Dialog.Footer>
     </StyledFooterContainer>
   );
 };

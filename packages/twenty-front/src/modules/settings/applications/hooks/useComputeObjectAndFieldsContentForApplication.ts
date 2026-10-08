@@ -6,11 +6,15 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { type ApplicationContentRow } from '@/settings/applications/types/ApplicationContentRow';
 
 type InstalledApplicationForObjectAndFields = Omit<
   Application,
-  'objects' | 'universalIdentifier' | 'frontComponents' | 'commandMenuItems'
+  | 'objects'
+  | 'universalIdentifier'
+  | 'frontComponents'
+  | 'commandMenuItems'
+  | 'settingsMenuItems'
 > & {
   objects: { id: string }[];
 };

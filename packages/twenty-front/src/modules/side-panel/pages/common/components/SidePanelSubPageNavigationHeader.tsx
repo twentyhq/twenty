@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -31,11 +31,12 @@ export const SidePanelSubPageNavigationHeader = ({
     <StyledContainer>
       <IconButton
         onClick={onBackClick}
-        Icon={IconChevronLeft}
-        variant="tertiary"
-        size="small"
-        ariaLabel="Go back"
-      />
+        variant="ghost"
+        size="sm"
+        aria-label="Go back"
+      >
+        <IconChevronLeft />
+      </IconButton>
       <StyledText>{title}</StyledText>
     </StyledContainer>
   );

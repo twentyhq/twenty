@@ -1,0 +1,199 @@
+import { useMutation } from '@apollo/client/react';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { type ThemeColor } from 'twenty-ui/theme';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceCreditGrantRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu';
+import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/CreditGrantTypeColors';
+import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
+import { REVOKE_WORKSPACE_CREDIT_GRANT } from '@/settings/admin-panel/graphql/mutations/revokeWorkspaceCreditGrant';
+import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
+import {
+  collapseCreditGrantChains,
+  type CollapsedCreditGrant,
+} from '@/settings/admin-panel/utils/collapseCreditGrantChains';
+import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+
+import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
+
+type CreditGrant = NonNullable<
+  WorkspaceBillingAdminPanelQuery['workspaceBillingAdminPanel']
+>['creditGrants'][number];
+
+type SettingsAdminWorkspaceCreditGrantsTableProps = {
+  workspaceId: string;
+  creditGrants: CreditGrant[];
+  onGrantCreditsClick: () => void;
+};
+
+// Each row is its own grid, so fr tracks would misalign rows; only the overflow-hidden reason flexes.
+const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '88px 140px 88px 108px 108px 1fr 36px';
+const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
+const EM_DASH = '—';
+
+const getStatus = (
+  creditGrant: CreditGrant,
+): { label: MessageDescriptor; color: ThemeColor } => {
+  if (isDefined(creditGrant.revokedAt)) {
+    return { label: msg`Revoked`, color: 'red' };
+  }
+
+  if (creditGrant.isActive) {
+    return { label: msg`Active`, color: 'green' };
+  }
+
+  return { label: msg`Expired`, color: 'gray' };
+};
+
+type CreditGrantRow = CollapsedCreditGrant<CreditGrant>;
+
+export const SettingsAdminWorkspaceCreditGrantsTable = ({
+  workspaceId,
+  creditGrants,
+  onGrantCreditsClick,
+}: SettingsAdminWorkspaceCreditGrantsTableProps) => {
+  const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
+  const { enqueueToast } = useToast();
+  const apolloAdminClient = useApolloAdminClient();
+  const { openDialog } = useDialog();
+
+  const [grantPendingRevocation, setGrantPendingRevocation] =
+    useState<CreditGrant | null>(null);
+
+  const creditGrantRows = collapseCreditGrantChains(creditGrants);
+  const [isRevoking, setIsRevoking] = useState(false);
+
+  const [revokeWorkspaceCreditGrant] = useMutation(
+    REVOKE_WORKSPACE_CREDIT_GRANT,
+    {
+      client: apolloAdminClient,
+      refetchQueries: [GET_WORKSPACE_BILLING_ADMIN_PANEL],
+    },
+  );
+
+  const formatCredits = (credits: number): string =>
+    formatNumber(credits, { decimals: 2 });
+
+  const handleRevokeClick = (creditGrant: CreditGrant) => {
+    setGrantPendingRevocation(creditGrant);
+    openDialog(REVOKE_CREDIT_GRANT_MODAL_ID);
+  };
+
+  const handleRevoke = async (creditGrantId: string) => {
+    // The refetch removing the row lands well after the mutation, so block a second revoke.
+    setIsRevoking(true);
+
+    try {
+      await revokeWorkspaceCreditGrant({
+        variables: { workspaceId, creditGrantId },
+      });
+
+      enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    } finally {
+      setIsRevoking(false);
+      setGrantPendingRevocation(null);
+    }
+  };
+
+  return (
+    <>
+      <SettingsTableListSection<CreditGrantRow>
+        title={t`Granted credits`}
+        description={t`Credits handed out on top of the plan allowance. They stay spendable until used up.`}
+        items={creditGrantRows}
+        columns={[
+          {
+            label: t`Amount`,
+            Cell: ({ item }) => <>{formatCredits(item.current.amount)}</>,
+          },
+          {
+            label: t`Type`,
+            Cell: ({ item }) => (
+              <Tag color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}>
+                {t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
+              </Tag>
+            ),
+          },
+          {
+            label: t`Status`,
+            Cell: ({ item }) => {
+              const status = getStatus(item.current);
+
+              return <Tag color={status.color}>{t(status.label)}</Tag>;
+            },
+          },
+          {
+            label: t`Granted`,
+            Cell: ({ item }) => <>{beautifyExactDate(item.origin.createdAt)}</>,
+          },
+          {
+            label: t`Expires`,
+            Cell: ({ item }) => (
+              <>
+                {isDefined(item.current.expiresAt)
+                  ? beautifyExactDate(item.current.expiresAt)
+                  : t`Never`}
+              </>
+            ),
+          },
+          {
+            label: t`Reason`,
+            overflow: 'hidden',
+            Cell: ({ item }) => (
+              <OverflowingTextWithTooltip
+                text={item.origin.reason ?? EM_DASH}
+              />
+            ),
+          },
+          {
+            label: '',
+            align: 'right',
+            Cell: ({ item }) =>
+              item.current.isActive ? (
+                <SettingsAdminWorkspaceCreditGrantRowDropdownMenu
+                  creditGrantId={item.current.id}
+                  onRevoke={() => handleRevokeClick(item.current)}
+                />
+              ) : null,
+          },
+        ]}
+        gridAutoColumns={CREDIT_GRANTS_GRID_AUTO_COLUMNS}
+        footerButtonLabel={t`Grant credits`}
+        onFooterButtonClick={onGrantCreditsClick}
+      />
+
+      <ConfirmationDialog
+        dialogId={REVOKE_CREDIT_GRANT_MODAL_ID}
+        title={t`Revoke credit grant`}
+        subtitle={
+          isDefined(grantPendingRevocation)
+            ? t`This takes ${formatCredits(grantPendingRevocation.amount)} credits back off this workspace straight away. Revoking cannot be undone.`
+            : ''
+        }
+        confirmButtonText={t`Revoke`}
+        loading={isRevoking}
+        onConfirmClick={() => {
+          if (isDefined(grantPendingRevocation)) {
+            handleRevoke(grantPendingRevocation.id);
+          }
+        }}
+        onClose={() => setGrantPendingRevocation(null)}
+      />
+    </>
+  );
+};

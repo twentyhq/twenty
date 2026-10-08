@@ -85,7 +85,10 @@ export const SidePanelWorkflowCreateStepContent = () => {
         ? steps.find((step) => step.id === parentStepId)
         : undefined;
 
-    if (parentStep?.type === 'IF_ELSE') {
+    if (
+      parentStep?.type === 'IF_ELSE' &&
+      connectionOptions?.connectedStepType !== 'IF_ELSE'
+    ) {
       await handleIfElseParentStep({
         parentStep,
         createdStepId: createdStep.id,
@@ -102,12 +105,12 @@ export const SidePanelWorkflowCreateStepContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInSidePanel(
-      workflowVisualizerWorkflowId,
-      createdStep.name,
-      getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
-      createdStep.id,
-    );
+    openWorkflowEditStepInSidePanel({
+      workflowId: workflowVisualizerWorkflowId,
+      title: createdStep.name,
+      icon: getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
+      stepId: createdStep.id,
+    });
   };
 
   return <SidePanelWorkflowSelectAction onActionSelected={handleCreateStep} />;

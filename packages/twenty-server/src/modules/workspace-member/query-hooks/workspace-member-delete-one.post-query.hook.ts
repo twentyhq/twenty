@@ -7,15 +7,21 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
+import { RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceQueryHook({
@@ -24,10 +30,15 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async execute(
@@ -47,24 +58,20 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOne({
-            where: {
-              id: targettedWorkspaceMemberId,
-            },
-            withDeleted: true,
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOne({
+          where: {
+            id: targettedWorkspaceMemberId,
+          },
+          withDeleted: true,
+        });
+      }, authContext);
 
     if (!isDefined(workspaceMember)) {
       throw new PermissionsException(
@@ -87,8 +94,39 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       );
     }
 
+    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
+      {
+        removedUserWorkspace: userWorkspace,
+        actingUserWorkspaceId:
+          'userWorkspaceId' in authContext
+            ? authContext.userWorkspaceId
+            : undefined,
+      },
+    );
+
+    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
+      {
+        removedUserWorkspace: userWorkspace,
+        removedWorkspaceMemberId: workspaceMember.id,
+        actingUserWorkspaceId:
+          'userWorkspaceId' in authContext
+            ? authContext.userWorkspaceId
+            : undefined,
+      },
+    );
+
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,
+      workspaceId: workspace.id,
+    });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'flatWorkspaceMemberMaps',
+    ]);
+
+    // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
+    await this.agentChatThreadRepository.delete(workspace.id, {
+      workspaceMemberId: workspaceMember.id,
     });
   }
 }

@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 
-import { getEnterprisePriceId, getStripeClient } from '@/platform/enterprise';
+import {
+  getEnterprisePriceId,
+  getStripeClient,
+  hasPriorSubscriptionForServer,
+  isSearchableMetadataValue,
+  normalizeServerId,
+  resolveTrialPeriodDays,
+  STRIPE_METADATA_KEY,
+} from '@/platform/enterprise';
+
+const DEFAULT_TRIAL_PERIOD_DAYS = 30;
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +31,7 @@ export async function POST(request: Request) {
       billingInterval?: unknown;
       seatCount?: unknown;
       successUrl?: unknown;
+      instanceMetadata?: { serverId?: unknown };
     };
 
     const billingInterval =
@@ -28,7 +39,7 @@ export async function POST(request: Request) {
     const priceId = getEnterprisePriceId(billingInterval);
     const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
     const defaultSuccessUrl = websiteUrl
-      ? `${websiteUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`
+      ? `${websiteUrl}/organization/activate?session_id={CHECKOUT_SESSION_ID}`
       : undefined;
     const successUrl =
       typeof body.successUrl === 'string' ? body.successUrl : defaultSuccessUrl;
@@ -48,6 +59,21 @@ export async function POST(request: Request) {
         ? body.seatCount
         : 1;
 
+    const serverId = normalizeServerId(body.instanceMetadata?.serverId);
+
+    const trialPeriodDays = resolveTrialPeriodDays({
+      defaultTrialPeriodDays: DEFAULT_TRIAL_PERIOD_DAYS,
+      hasPriorSubscription: await hasPriorSubscriptionForServer({
+        stripe,
+        serverId,
+      }),
+    });
+
+    const trialServerIdMetadata: Record<string, string> =
+      trialPeriodDays !== undefined && isSearchableMetadataValue(serverId)
+        ? { [STRIPE_METADATA_KEY.TRIAL_SERVER_ID]: serverId }
+        : {};
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [
@@ -58,9 +84,12 @@ export async function POST(request: Request) {
       ],
       success_url: successUrl,
       subscription_data: {
-        trial_period_days: 30,
+        ...(trialPeriodDays === undefined
+          ? {}
+          : { trial_period_days: trialPeriodDays }),
         metadata: {
           source: 'enterprise-self-hosted',
+          ...trialServerIdMetadata,
         },
       },
     });

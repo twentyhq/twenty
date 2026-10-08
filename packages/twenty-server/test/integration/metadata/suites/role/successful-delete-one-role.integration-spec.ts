@@ -1,10 +1,16 @@
+import { randomUUID } from 'crypto';
+
+import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
+import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
+import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
+import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 
 describe('Role deletion should succeed', () => {
   it('should successfully delete a custom editable role', async () => {
-    // Create a custom role that CAN be deleted
     const { data: createData, errors: createErrors } = await createOneRole({
       expectToFail: false,
       input: {
@@ -24,7 +30,6 @@ describe('Role deletion should succeed', () => {
 
     const customRoleId = createData.createOneRole.id;
 
-    // Delete the custom role
     const { data, errors } = await deleteOneRole({
       expectToFail: false,
       input: {
@@ -40,7 +45,6 @@ describe('Role deletion should succeed', () => {
   it('should delete a custom role and verify it can no longer be found', async () => {
     const testLabel = 'Role To Be Deleted And Verified';
 
-    // Create the role
     const { data: createData } = await createOneRole({
       expectToFail: false,
       input: {
@@ -56,13 +60,11 @@ describe('Role deletion should succeed', () => {
 
     const roleId = createData.createOneRole.id;
 
-    // Verify role exists before deletion
     const roleBefore = await findOneRoleByLabel({ label: testLabel });
 
     expect(roleBefore).toBeDefined();
     expect(roleBefore.id).toBe(roleId);
 
-    // Delete the role
     const { data, errors } = await deleteOneRole({
       expectToFail: false,
       input: {
@@ -73,9 +75,56 @@ describe('Role deletion should succeed', () => {
     expect(errors).toBeUndefined();
     expect(data.deleteOneRole).toBe(roleId);
 
-    // Verify role no longer exists after deletion
     await expect(findOneRoleByLabel({ label: testLabel })).rejects.toThrow(
       `Role with label "${testLabel}" not found`,
     );
+  });
+
+  it('should delete a custom role right after removing its assigned member', async () => {
+    const { data: workspaceData } = await currentUser({
+      gqlFields: 'currentWorkspace { isPublicInviteLinkEnabled }',
+    });
+    const initialIsPublicInviteLinkEnabled =
+      workspaceData.currentUser.currentWorkspace?.isPublicInviteLinkEnabled;
+
+    try {
+      const memberToken = await signUpInWorkspaceAndGetAccessToken(
+        `role-deletion-${randomUUID()}@example.com`,
+      );
+      const { data: memberData } = await currentUser({
+        token: memberToken,
+        gqlFields: 'workspaceMember { id }',
+      });
+      const workspaceMemberId = memberData.currentUser.workspaceMember.id;
+
+      const { data: createData } = await createOneRole({
+        input: {
+          label: `Removed member role ${randomUUID()}`,
+          canBeAssignedToUsers: true,
+        },
+      });
+      const roleId = createData.createOneRole.id;
+
+      await updateWorkspaceMemberRole({
+        input: { workspaceMemberId, roleId },
+      });
+
+      const { errors: removalErrors } = await deleteUserFromWorkspace({
+        input: { workspaceMemberIdToDelete: workspaceMemberId },
+      });
+
+      expect(removalErrors).toBeUndefined();
+
+      const { data, errors } = await deleteOneRole({
+        input: { idToDelete: roleId },
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.deleteOneRole).toBe(roleId);
+    } finally {
+      await updateWorkspace({
+        data: { isPublicInviteLinkEnabled: initialIsPublicInviteLinkEnabled },
+      });
+    }
   });
 });

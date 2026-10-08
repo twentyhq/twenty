@@ -54,8 +54,8 @@ export const useSettingsAdminTabs = () => {
     ...(!isBillingEnabled
       ? [
           {
-            id: SETTINGS_ADMIN_TABS.ENTERPRISE,
-            title: t`Enterprise`,
+            id: SETTINGS_ADMIN_TABS.ORGANIZATION,
+            title: t`Organization`,
             Icon: IconKey,
             disabled: !canAccessFullAdminPanel && !canImpersonate,
           },

@@ -124,9 +124,14 @@
     "twenty/no-state-useref": "error",
     "twenty/component-props-naming": "error",
     "twenty/no-navigate-prefer-link": "error",
+    "twenty/no-window-open": "error",
     "twenty/no-jotai-store-in-selector": "error",
     "twenty/no-direct-atom-family-in-selector": "error",
     "twenty/folder-structure": "error",
+    "twenty/no-icu-escaping-apostrophe": "error",
+    "twenty/no-miscased-acronym-in-identifier": "error",
+    "twenty/no-miscased-acronym-in-message": "error",
+    "twenty/types-folder-filename": ["error", { "convention": "PascalCase" }],
     "twenty/enforce-module-boundaries": [
       "error",
       {
@@ -140,6 +145,32 @@
     ]
   },
   "overrides": [
+    {
+      "files": [
+        "src/modules/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS.ts"
+      ],
+      "rules": {
+        "twenty/no-hardcoded-colors": "off"
+      }
+    },
+    {
+      "files": [
+        "src/modules/ui/input/components/NavigationButton.tsx",
+        "src/modules/ui/navigation/link/components/LinkChip/LinkChip.tsx"
+      ],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    },
+    {
+      "files": [
+        "src/utils/openUrlInNewTab.ts",
+        "src/modules/domain-manager/hooks/useRedirect.ts"
+      ],
+      "rules": {
+        "twenty/no-window-open": "off"
+      }
+    },
     {
       "files": ["**/constants/*.ts", "**/*.constants.ts"],
       "rules": {
