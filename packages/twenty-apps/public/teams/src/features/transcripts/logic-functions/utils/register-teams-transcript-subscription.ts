@@ -122,6 +122,10 @@ export const registerTeamsTranscriptSubscription = async ({
       apiUrl,
       connectedAccountId,
     }),
+  }).catch(async (error: unknown) => {
+    await kv.delete(connectionKvKey, { scope: 'SERVER' });
+
+    throw error;
   });
 
   try {
