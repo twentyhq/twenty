@@ -1,7 +1,7 @@
-import { QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -15,10 +15,10 @@ type PostedCallRow = {
 // A run without a spec was a workflow step waiting on the answer to a call it posted in a
 // conversation; such a step now waits with an ANSWER wake-up. A step whose call no longer waits
 // has nothing to move
-@RegisteredInstanceCommand('2.46.0', 1791417349093)
-export class MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand implements FastInstanceCommand {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    const postedCalls: PostedCallRow[] = await queryRunner.query(
+@RegisteredInstanceCommand('2.46.0', 1791417349093, { type: 'slow' })
+export class MovePostedCallWaitsToAnswerWakeUpsSlowInstanceCommand implements SlowInstanceCommand {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    const postedCalls: PostedCallRow[] = await dataSource.query(
       `SELECT "workspaceId", "threadId", caller -> 'ref' ->> 'workflowRunId' AS "workflowRunId",
          caller -> 'ref' ->> 'stepId' AS "stepId"
        FROM "core"."agentRun"
@@ -28,7 +28,7 @@ export class MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand implements Fa
     for (const { workspaceId, threadId, workflowRunId, stepId } of postedCalls) {
       const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
       const [{ hasChatHistory }]: [{ hasChatHistory: boolean }] =
-        await queryRunner.query(
+        await dataSource.query(
           `SELECT to_regclass($1) IS NOT NULL AND to_regclass($2) IS NOT NULL AS "hasChatHistory"`,
           [
             `${schemaName}."agentChatThread"`,
@@ -40,7 +40,7 @@ export class MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand implements Fa
         continue;
       }
 
-      await queryRunner.query(
+      await dataSource.query(
         `INSERT INTO "core"."pendingWakeUp" ("workspaceId", "ownerType", "ownerId", "ownerKey", "condition")
          SELECT $1::uuid, 'WORKFLOW_STEP', $3::uuid, $4::text,
            jsonb_build_object('type', 'ANSWER', 'threadId', thread.id, 'toolCallId', part."toolCallId")
@@ -54,9 +54,12 @@ export class MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand implements Fa
       );
     }
 
-    await queryRunner.query(
+    await dataSource.query(
       'DELETE FROM "core"."agentRun" WHERE "runSpec" IS NULL',
     );
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."agentRun" ALTER COLUMN "runSpec" SET NOT NULL',
     );

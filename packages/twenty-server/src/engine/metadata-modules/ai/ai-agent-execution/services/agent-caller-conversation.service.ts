@@ -171,19 +171,22 @@ export class AgentCallerConversationService {
     // one is reused so nothing runs twice, and one closed unanswered, such as by a run that ended and
     // was retried, is asked again in a new message
     for (let attempt = 0; attempt < MAX_ASK_ATTEMPTS; attempt++) {
-      const { threadId, isDismissed, awaitedToolCall: postedToolCall } =
-        await this.agentInboxService.sendMessage({
-          workspaceId,
-          sender,
-          input: {
-            ...message,
-            idempotencyKey:
-              attempt === 0
-                ? message.idempotencyKey
-                : `${message.idempotencyKey}:${attempt}`,
-          },
-          buildAwaitingToolCall,
-        });
+      const {
+        threadId,
+        isDismissed,
+        awaitedToolCall: postedToolCall,
+      } = await this.agentInboxService.sendMessage({
+        workspaceId,
+        sender,
+        input: {
+          ...message,
+          idempotencyKey:
+            attempt === 0
+              ? message.idempotencyKey
+              : `${message.idempotencyKey}:${attempt}`,
+        },
+        buildAwaitingToolCall,
+      });
 
       if (isDismissed) {
         return { status: 'DISMISSED', threadId };

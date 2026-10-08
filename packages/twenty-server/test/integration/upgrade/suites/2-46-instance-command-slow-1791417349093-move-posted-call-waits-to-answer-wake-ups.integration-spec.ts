@@ -1,7 +1,7 @@
-import { type QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791417349093-move-posted-call-waits-to-answer-wake-ups';
+import { MovePostedCallWaitsToAnswerWakeUpsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791417349093-move-posted-call-waits-to-answer-wake-ups';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -10,8 +10,8 @@ jest.useRealTimers();
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
-describe('2-46 fast instance command 1791417349093 - MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand (integration)', () => {
-  const command = new MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand();
+describe('2-46 slow instance command 1791417349093 - MovePostedCallWaitsToAnswerWakeUpsSlowInstanceCommand (integration)', () => {
+  const command = new MovePostedCallWaitsToAnswerWakeUpsSlowInstanceCommand();
   let queryRunner: QueryRunner;
 
   // the shape a workflow step that posted a call left before: a run without a spec on its conversation
@@ -65,6 +65,15 @@ describe('2-46 fast instance command 1791417349093 - MovePostedCallWaitsToAnswer
     return { threadId, toolCallId, workflowRunId };
   };
 
+  // the seeded rows are not committed, so the data migration reads them through the test's transaction
+  const upgrade = async () => {
+    await command.runDataMigration({
+      query: (query: string, parameters?: unknown[]) =>
+        queryRunner.query(query, parameters),
+    } as DataSource);
+    await command.up(queryRunner);
+  };
+
   const readAnswerWaits = (workflowRunId: string) =>
     queryRunner.query(
       `SELECT "ownerType", "ownerKey", condition FROM "core"."pendingWakeUp" WHERE "ownerId" = $1`,
@@ -87,7 +96,7 @@ describe('2-46 fast instance command 1791417349093 - MovePostedCallWaitsToAnswer
     const { threadId, toolCallId, workflowRunId } =
       await seedPostedCall('pending');
 
-    await command.up(queryRunner);
+    await upgrade();
 
     expect(await readAnswerWaits(workflowRunId)).toEqual([
       {
@@ -107,7 +116,7 @@ describe('2-46 fast instance command 1791417349093 - MovePostedCallWaitsToAnswer
   it('drops the run of a call that no longer waits, and requires a spec from then on', async () => {
     const { threadId, workflowRunId } = await seedPostedCall('approved');
 
-    await command.up(queryRunner);
+    await upgrade();
 
     expect(await readAnswerWaits(workflowRunId)).toEqual([]);
     await expect(
@@ -122,7 +131,7 @@ describe('2-46 fast instance command 1791417349093 - MovePostedCallWaitsToAnswer
   it('brings an ANSWER wake-up back to a run without a spec', async () => {
     const { threadId, workflowRunId } = await seedPostedCall('pending');
 
-    await command.up(queryRunner);
+    await upgrade();
     await command.down(queryRunner);
 
     expect(await readAnswerWaits(workflowRunId)).toEqual([]);
