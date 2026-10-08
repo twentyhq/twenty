@@ -2306,6 +2306,39 @@
         ]
       },
       {
+        "name": "Item",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: FieldItemState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the wrapped control should ignore user interaction.\nThe `disabled` prop on `<Field.Root>` takes precedence over this."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, FieldItemState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: FieldItemState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
         "name": "Label",
         "props": [
           {
@@ -10297,10 +10330,17 @@
     "props": [
       {
         "name": "action",
-        "type": "{ label: string; onClick: () => void; }",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional footer action with a label and onClick callback."
+        "description": "Optional footer node. Use Callout.Action for the standard action or supply custom controls."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
@@ -10310,53 +10350,186 @@
         "description": "Accessible name of the dismiss button. Defaults to `Close`."
       },
       {
+        "name": "color",
+        "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
+        "required": false,
+        "defaultValue": "status palette",
+        "description": "Palette override: gray, blue, green, orange, or red. Defaults to the status palette."
+      },
+      {
         "name": "description",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional supporting text. Empty strings are hidden."
+        "description": "Optional supporting content node. Empty slots are hidden."
       },
       {
         "name": "fullWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Fills the available container width."
+        "description": "Removes the default 512px maximum width."
       },
       {
-        "name": "Icon",
-        "type": "IconComponent",
+        "name": "icon",
+        "type": "ReactNode",
         "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component. Defaults to the help icon."
+        "defaultValue": "decorative help icon",
+        "description": "Leading icon node. Defaults to a decorative help icon. Pass null to omit it."
       },
       {
-        "name": "isClosable",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a close button that hides the callout until it is remounted."
-      },
-      {
-        "name": "onClose",
+        "name": "onDismiss",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called after the close button hides the callout."
+        "description": "Shows a dismiss button and notifies the caller once per activation. The caller owns visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CalloutState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or callback composition for the root. Receives status, variant, and color state."
+      },
+      {
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
+        "required": false,
+        "defaultValue": "info",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to info."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       },
       {
         "name": "title",
-        "type": "string",
+        "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Main message displayed beside the icon."
+        "description": "Main message node displayed beside the icon."
       },
       {
         "name": "variant",
-        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Semantic appearance: info, warning, error, neutral, or success."
+        "type": "\"soft\"",
+        "required": false,
+        "defaultValue": "soft",
+        "description": "Supported appearance: soft."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ButtonState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Semantic color of the button."
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed after the label."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Expands the button to fill its container width."
+          },
+          {
+            "name": "href",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Destination URL. Enables native link semantics instead of button semantics."
+          },
+          {
+            "name": "loading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a loading indicator and disables activation."
+          },
+          {
+            "name": "loadingPosition",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized text between sequence steps. Defaults to then."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content displayed before the label."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   },

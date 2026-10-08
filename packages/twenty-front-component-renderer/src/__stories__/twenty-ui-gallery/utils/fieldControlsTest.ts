@@ -12,6 +12,22 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
 
   const email = canvas.getByRole('textbox', { name: 'Email' });
   const notes = canvas.getByRole('textbox', { name: 'Notes' });
+  const important = canvas.getByRole('radio', { name: 'Important updates' });
+  const all = canvas.getByRole('radio', { name: 'All updates' });
+
+  expect(
+    canvas.getByRole('radiogroup', { name: 'Notifications' }),
+  ).toBeVisible();
+  expect(important).toHaveAccessibleDescription('Only urgent messages');
+  expect(all).toHaveAccessibleDescription('Every record change');
+  expect(canvas.getByRole('radio', { name: 'Daily digest' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  expect(important).toBeChecked();
+  await userEvent.click(canvas.getByText('All updates', { exact: true }));
+  await waitFor(() => expect(all).toBeChecked());
+  expect(important).not.toBeChecked();
 
   expect(email).toHaveAccessibleDescription('Use your work email');
   expect(
