@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
@@ -115,7 +116,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   return (
     <ActivityRow
-      label={task.title || t`Task title`}
+      label={isNonEmptyString(task.title) ? task.title : t`Task title`}
       onClick={() => {
         openRecordInSidePanel({
           recordId: task.id,
