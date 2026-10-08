@@ -19,6 +19,7 @@ import { useOpenRecordCreationFormSettingsInSidePanel } from '@/side-panel/hooks
 import { recordCreationFormAreHiddenFieldsShownComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormAreHiddenFieldsShownComponentState';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { sidePanelPageHasUnsavedChangesComponentState } from '@/side-panel/states/sidePanelPageHasUnsavedChangesComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
@@ -27,6 +28,7 @@ import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/c
 import { getValidationRuleViolationFieldMetadataIdsFromError } from '@/validation-rules/utils/getValidationRuleViolationFieldMetadataIdsFromError';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -123,6 +125,10 @@ const SidePanelRecordCreationForm = ({
     recordCreationFormAreHiddenFieldsShownComponentState,
   );
 
+  const setSidePanelPageHasUnsavedChanges = useSetAtomComponentState(
+    sidePanelPageHasUnsavedChangesComponentState,
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationRuleViolations, setValidationRuleViolations] = useState<
     DraftValidationRuleViolation[]
@@ -178,6 +184,7 @@ const SidePanelRecordCreationForm = ({
       ...(previousDraftRecord ?? initialDraftRecord),
       [gqlFieldName]: value,
     }));
+    setSidePanelPageHasUnsavedChanges(true);
 
     if (validationRuleViolations.length > 0) {
       setValidationRuleViolations(

@@ -35,6 +35,10 @@ jest.mock('@/side-panel/components/SidePanelExpandButton', () => ({
   SidePanelExpandButton: () => null,
 }));
 
+jest.mock('@/side-panel/components/SidePanelDiscardChangesDialog', () => ({
+  SidePanelDiscardChangesDialog: () => null,
+}));
+
 const mockCloseSidePanelMenu = jest.fn();
 
 let mockContextChips: SidePanelContextChipProps[] = [];

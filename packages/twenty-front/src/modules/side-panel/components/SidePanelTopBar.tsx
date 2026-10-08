@@ -1,5 +1,6 @@
 import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelCloseButton } from '@/side-panel/components/SidePanelCloseButton';
+import { SidePanelDiscardChangesDialog } from '@/side-panel/components/SidePanelDiscardChangesDialog';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarEscapeHotkeyEffect } from '@/side-panel/components/SidePanelTopBarEscapeHotkeyEffect';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
@@ -217,6 +218,7 @@ export const SidePanelTopBar = ({
         inputRef={inputRef}
         onEscape={handleSidePanelEscape}
       />
+      <SidePanelDiscardChangesDialog />
       <StyledContentContainer>
         <AnimatePresence>
           {shouldShowBackButton && (

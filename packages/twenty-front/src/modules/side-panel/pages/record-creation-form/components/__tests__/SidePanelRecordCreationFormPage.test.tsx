@@ -11,6 +11,7 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { sidePanelPageHasUnsavedChangesComponentState } from '@/side-panel/states/sidePanelPageHasUnsavedChangesComponentState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -279,6 +280,24 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByLabelText('Domain')).toBeInTheDocument();
     expect(screen.queryByLabelText('Internal note')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('marks the page as having unsaved changes once the user types', async () => {
+    const user = userEvent.setup();
+    const hasUnsavedChanges = () =>
+      jotaiStore.get(
+        sidePanelPageHasUnsavedChangesComponentState.atomFamily({
+          instanceId: REQUEST_ID,
+        }),
+      );
+
+    renderPage();
+
+    expect(hasUnsavedChanges()).toBe(false);
+
+    await user.type(screen.getByLabelText('Name'), 'A');
+
+    expect(hasUnsavedChanges()).toBe(true);
   });
 
   it('reveals the hidden fields the user can update on demand', async () => {
