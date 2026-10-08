@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
@@ -9,14 +9,12 @@ import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const CREATED_THREAD_ID = '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8d';
+const NEW_CHAT_THREAD_ID = '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8d';
 
 const useAiChatEditor = jest.fn();
 jest.mock('@/ai/hooks/useAiChatEditor', () => ({
@@ -34,15 +32,13 @@ jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
-const renderEditorSectionOnNewChat = () => {
+const renderEditorSection = (currentAiChatThread: string) => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
-      store.set(currentAiChatThreadState.atom, AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-      store.set(
-        agentChatDisplayedThreadState.atom,
-        AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-      );
+      store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
+      store.set(currentAiChatThreadState.atom, currentAiChatThread);
+      store.set(agentChatDisplayedThreadState.atom, currentAiChatThread);
     },
   });
 
@@ -67,16 +63,17 @@ describe('AiChatEditorSection', () => {
     editor.destroy();
   });
 
-  it('keeps the composer mounted when typing the first message creates the thread', () => {
-    renderEditorSectionOnNewChat();
-    const sendButton = screen.getByRole('button', { name: /send/i });
+  it('shows the composer on a new chat, which has no thread to load permissions for', () => {
+    renderEditorSection(NEW_CHAT_THREAD_ID);
 
-    act(() => {
-      jotaiStore.set(threadIdCreatedFromDraftState.atom, CREATED_THREAD_ID);
-      jotaiStore.set(currentAiChatThreadState.atom, CREATED_THREAD_ID);
-      jotaiStore.set(agentChatDisplayedThreadState.atom, CREATED_THREAD_ID);
-    });
+    expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument();
+  });
 
-    expect(sendButton).toBeInTheDocument();
+  it('waits for the permissions of an existing chat', () => {
+    renderEditorSection('20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8e');
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Loading conversation…',
+    );
   });
 });
