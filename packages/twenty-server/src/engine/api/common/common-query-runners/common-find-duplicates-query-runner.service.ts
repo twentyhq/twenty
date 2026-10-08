@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -16,6 +16,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindDuplicatesOutputItem } from 'src/engine/api/common/types/common-find-duplicates-output-item.type';
@@ -25,6 +26,7 @@ import {
   CommonQueryNames,
   FindDuplicatesQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
@@ -277,5 +279,33 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonExtendedInput<FindDuplicatesQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    const inputRecordCount = isNonEmptyArray(args.ids)
+      ? args.ids.length
+      : (args.data?.length ?? 0);
+
+    return (
+      inputRecordCount *
+      QUERY_MAX_RECORDS *
+      computeMaxFieldCountPerRecord({
+        selectedFieldsResult,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
+      })
+    );
   }
 }
