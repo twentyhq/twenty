@@ -1,19 +1,20 @@
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
-import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
-import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
-import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
+import { SettingsConsolidatedAccountsSection } from '@/settings/accounts/components/SettingsConsolidatedAccountsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
 
-  const { accounts: allAccounts, loading } = useMyConnectedAccounts();
+  const isConsolidationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CONNECTED_ACCOUNTS_CONSOLIDATION_ENABLED,
+  );
 
   return (
     <SettingsPageLayout
@@ -27,22 +28,13 @@ export const SettingsAccounts = () => {
       ]}
     >
       <SettingsPageContainer>
-        {loading ? (
-          <SettingsSectionSkeletonLoader />
-        ) : (
+        {isConsolidationEnabled ? (
           <>
-            <Section.Root>
-              <Section.Header
-                title={t`Connected accounts`}
-                description={t`Manage your internet accounts.`}
-              />
-              <SettingsAccountsConnectedAccountsListCard
-                accounts={allAccounts}
-              />
-            </Section.Root>
+            <SettingsConsolidatedAccountsSection />
             <SettingsAccountsBlocklistSection />
-            <SettingsAccountsSettingsSection />
           </>
+        ) : (
+          <SettingsAccountsLegacySections />
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>
