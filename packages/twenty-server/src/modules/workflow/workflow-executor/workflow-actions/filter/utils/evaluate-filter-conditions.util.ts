@@ -204,12 +204,20 @@ function evaluateTextAndArrayFilter(
   }
 }
 
+function parseRawJsonOperand(leftOperand: unknown): unknown {
+  if (!isString(leftOperand)) {
+    return leftOperand;
+  }
+
+  if (leftOperand.trim() === 'null') {
+    return null;
+  }
+
+  return parseJson<unknown>(leftOperand) ?? leftOperand;
+}
+
 function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
-  const jsonValue = isString(filter.leftOperand)
-    ? filter.leftOperand.trim() === 'null'
-      ? null
-      : (parseJson<unknown>(filter.leftOperand) ?? filter.leftOperand)
-    : filter.leftOperand;
+  const jsonValue = parseRawJsonOperand(filter.leftOperand);
   const isEmpty = !isDefined(jsonValue) || jsonValue === '';
 
   const containsSearchValue = () =>
