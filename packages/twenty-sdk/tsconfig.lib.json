@@ -22,6 +22,7 @@
     "**/__tests__/**",
     "**/__stories__/**",
     "**/*.stories.ts",
-    "**/*.stories.tsx"
+    "**/*.stories.tsx",
+    "src/cli/utilities/build/common/front-component-build/jsx-runtime/**"
   ]
 }
