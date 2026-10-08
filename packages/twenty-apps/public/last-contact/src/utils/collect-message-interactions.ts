@@ -10,6 +10,16 @@ import { type InteractionDirection } from 'src/utils/update-person-last-contact'
 
 const PAGE_SIZE = 200;
 
+// The sender decides the direction and team members decide who owns the
+// contact; the other recipients change nothing. Leaving them out keeps a batch
+// to about one page per 200 messages however many people each email copies.
+const SENDER_OR_TEAM_MEMBER_FILTER = {
+  or: [
+    { role: { eq: 'FROM' } },
+    { workspaceMemberId: { is: 'NOT_NULL' } },
+  ],
+};
+
 export type MessageInteraction = {
   receivedAt: string;
   workspaceMemberId: string | null;
@@ -21,10 +31,10 @@ type MessageParticipantNode = Participant & {
   message?: { receivedAt: string | null } | null;
 };
 
-export const collectMessageInteractions = async (
+const collectSenderAndTeamMemberParticipants = async (
   client: CoreApiClient,
   messageIds: string[],
-): Promise<Map<string, MessageInteraction>> => {
+): Promise<Map<string, MessageParticipantNode[]>> => {
   const participantsByMessageId = new Map<string, MessageParticipantNode[]>();
 
   for (const ids of chunk(messageIds, PAGE_SIZE)) {
@@ -35,7 +45,12 @@ export const collectMessageInteractions = async (
         client.query({
           messageParticipants: {
             __args: {
-              filter: { messageId: { in: ids } },
+              filter: {
+                and: [
+                  { messageId: { in: ids } },
+                  SENDER_OR_TEAM_MEMBER_FILTER,
+                ],
+              },
               first: PAGE_SIZE,
               after,
             },
@@ -74,6 +89,45 @@ export const collectMessageInteractions = async (
     } while (after);
   }
 
+  return participantsByMessageId;
+};
+
+const collectReceivedAtByMessageId = async (
+  client: CoreApiClient,
+  messageIds: string[],
+): Promise<Map<string, string>> => {
+  const receivedAtByMessageId = new Map<string, string>();
+
+  for (const ids of chunk(messageIds, PAGE_SIZE)) {
+    const { messages } = await executeWithRetry(() =>
+      client.query({
+        messages: {
+          __args: { filter: { id: { in: ids } }, first: PAGE_SIZE },
+          edges: { node: { id: true, receivedAt: true } },
+        },
+      }),
+    );
+
+    for (const edge of messages?.edges ?? []) {
+      const { id, receivedAt } = edge.node;
+
+      if (id && receivedAt) {
+        receivedAtByMessageId.set(id, receivedAt);
+      }
+    }
+  }
+
+  return receivedAtByMessageId;
+};
+
+export const collectMessageInteractions = async (
+  client: CoreApiClient,
+  messageIds: string[],
+): Promise<Map<string, MessageInteraction>> => {
+  const participantsByMessageId = await collectSenderAndTeamMemberParticipants(
+    client,
+    messageIds,
+  );
   const interactionByMessageId = new Map<string, MessageInteraction>();
 
   for (const [messageId, participants] of participantsByMessageId) {
@@ -93,6 +147,29 @@ export const collectMessageInteractions = async (
         role: 'FROM',
       }),
       direction: fromParticipant?.workspaceMemberId ? 'outbound' : 'inbound',
+    });
+  }
+
+  // Without a sender participant, an email still counts as an inbound contact
+  // with no team member, so only its date is missing.
+  const messageIdsWithoutSenderOrTeamMember = messageIds.filter(
+    (messageId) => !participantsByMessageId.has(messageId),
+  );
+
+  if (messageIdsWithoutSenderOrTeamMember.length === 0) {
+    return interactionByMessageId;
+  }
+
+  const receivedAtByMessageId = await collectReceivedAtByMessageId(
+    client,
+    messageIdsWithoutSenderOrTeamMember,
+  );
+
+  for (const [messageId, receivedAt] of receivedAtByMessageId) {
+    interactionByMessageId.set(messageId, {
+      receivedAt,
+      workspaceMemberId: null,
+      direction: 'inbound',
     });
   }
 
