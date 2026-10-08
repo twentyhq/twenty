@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { IconCalendarTime, IconCpu, IconTextSize } from 'twenty-ui/icon';
 
 import { CoreAgentModelCell } from '@/object-core/agents/components/CoreAgentModelCell';
 import { CoreAgentNameCell } from '@/object-core/agents/components/CoreAgentNameCell';
@@ -10,6 +11,7 @@ export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
   {
     fieldName: 'label',
     fieldLabel: msg`Name`,
+    FieldIcon: IconTextSize,
     fieldType: 'string',
     align: 'left',
     gridTrack: 'minmax(200px, 1fr)',
@@ -18,6 +20,7 @@ export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
   {
     fieldName: 'modelId',
     fieldLabel: msg`Model`,
+    FieldIcon: IconCpu,
     align: 'left',
     gridTrack: '200px',
     renderCell: (agent) => <CoreAgentModelCell modelId={agent.modelId} />,
@@ -25,6 +28,7 @@ export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
   {
     fieldName: 'updatedAt',
     fieldLabel: msg`Last update`,
+    FieldIcon: IconCalendarTime,
     fieldType: 'string',
     align: 'left',
     gridTrack: '150px',

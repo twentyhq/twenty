@@ -28,6 +28,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'logoUrl'
     | 'autoUpgrade'
     | 'canBeUninstalled'
+    | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
   >;
@@ -114,6 +115,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
             uninstallProgress={uninstallProgress}
+            disabledReason={
+              application.isUninstallBlockedByOtherWorkspaceInstallations
+                ? t`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`
+                : undefined
+            }
           />,
         ]
       : []),

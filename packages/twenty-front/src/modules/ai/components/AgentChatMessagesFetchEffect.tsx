@@ -1,11 +1,11 @@
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
@@ -31,12 +31,7 @@ export const AgentChatMessagesFetchEffect = () => {
   const store = useStore();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const isNewThread = useMemo(
-    () =>
-      currentAiChatThread === null ||
-      currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-    [currentAiChatThread],
-  );
+  const isNewThread = useIsOnNewAiChatSlot() || currentAiChatThread === null;
 
   const setAgentChatMessagesLoading = useSetAtomState(
     agentChatMessagesLoadingState,
@@ -152,7 +147,7 @@ export const AgentChatMessagesFetchEffect = () => {
     {
       variables: { threadId: currentAiChatThread ?? '' },
       fetchPolicy: 'network-only',
-      skip: !isDefined(currentAiChatThread) || isNewThread,
+      skip: isNewThread,
       onFirstLoad: handleFirstLoad,
       onDataLoaded: handleDataLoaded,
       onLoadingChange: handleLoadingChange,

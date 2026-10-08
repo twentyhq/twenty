@@ -16,6 +16,7 @@ export const mockedClientConfig: ClientConfig = {
     sso: [],
   },
   frontDomain: 'localhost',
+  serverUrl: 'http://localhost:3000',
   defaultSubdomain: 'app',
   analyticsEnabled: true,
   support: {

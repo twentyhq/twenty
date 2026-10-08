@@ -268,6 +268,7 @@ export interface Application {
     frontComponents: FrontComponent[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
+    isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']
     logicFunctions: LogicFunction[]
     logoFileId?: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -1026,6 +1027,7 @@ export interface ClientConfig {
     publicFeatureFlags: PublicFeatureFlag[]
     publicFunctionDomain?: Scalars['String']
     sentry: Sentry
+    serverUrl: Scalars['String']
     signInPrefilled: Scalars['Boolean']
     support: Support
     __typename: 'ClientConfig'
@@ -4178,6 +4180,7 @@ export interface ApplicationGenqlSelection{
     frontComponents?: FrontComponentGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
+    isUninstallBlockedByOtherWorkspaceInstallations?: boolean | number
     logicFunctions?: LogicFunctionGenqlSelection
     logoFileId?: boolean | number
     logoUrl?: boolean | number
@@ -4980,6 +4983,7 @@ export interface ClientConfigGenqlSelection{
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
     publicFunctionDomain?: boolean | number
     sentry?: SentryGenqlSelection
+    serverUrl?: boolean | number
     signInPrefilled?: boolean | number
     support?: SupportGenqlSelection
     __typename?: boolean | number
@@ -7322,7 +7326,7 @@ export interface SendEmailViaDomainOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendInboxMessageInput {idempotencyKey: Scalars['String'],text: Scalars['String'],threadKey: Scalars['String'],title: Scalars['String'],toolCall?: (Scalars['JSON'] | null),workspaceMemberId: Scalars['UUID']}
+export interface SendInboxMessageInput {idempotencyKey: Scalars['String'],text: Scalars['String'],threadKey: Scalars['String'],title: Scalars['String'],toolCall?: (Scalars['JSON'] | null),workspaceMemberIds: Scalars['UUID'][]}
 
 export interface SendInboxMessageResultGenqlSelection{
     threadId?: boolean | number
