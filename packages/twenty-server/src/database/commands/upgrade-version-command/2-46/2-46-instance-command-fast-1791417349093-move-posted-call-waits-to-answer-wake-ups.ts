@@ -70,11 +70,15 @@ export class MovePostedCallWaitsToAnswerWakeUpsFastInstanceCommand implements Fa
     // the previous shape finds a posted call's caller through a run without a spec and the mark on the call
     const answerWaits: (PostedCallRow & { toolCallId: string })[] =
       await queryRunner.query(
-        `DELETE FROM "core"."pendingWakeUp"
-         WHERE "ownerType" = 'WORKFLOW_STEP' AND "condition" ->> 'type' = 'ANSWER'
-         RETURNING "workspaceId", "condition" ->> 'threadId' AS "threadId",
-           "condition" ->> 'toolCallId' AS "toolCallId", "ownerId" AS "workflowRunId", "ownerKey" AS "stepId"`,
+        `SELECT "workspaceId", "condition" ->> 'threadId' AS "threadId",
+           "condition" ->> 'toolCallId' AS "toolCallId", "ownerId" AS "workflowRunId", "ownerKey" AS "stepId"
+         FROM "core"."pendingWakeUp"
+         WHERE "ownerType" = 'WORKFLOW_STEP' AND "condition" ->> 'type' = 'ANSWER'`,
       );
+
+    await queryRunner.query(
+      `DELETE FROM "core"."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "condition" ->> 'type' = 'ANSWER'`,
+    );
 
     for (const {
       workspaceId,

@@ -17,8 +17,8 @@ describe('2-46 fast instance command 1791411908603 - RenameAgentRunSuspensionToA
 
   const insertRun = (threadId: string, status: string) =>
     queryRunner.query(
-      `INSERT INTO "core"."agentRun" ("workspaceId", "threadId", caller, status)
-       VALUES ($1, $2, $3::jsonb, $4) RETURNING id`,
+      `INSERT INTO "core"."agentRun" ("workspaceId", "threadId", caller, "runSpec", status)
+       VALUES ($1, $2, $3::jsonb, '{}'::jsonb, $4) RETURNING id`,
       [SEED_APPLE_WORKSPACE_ID, threadId, CALLER, status],
     );
 
