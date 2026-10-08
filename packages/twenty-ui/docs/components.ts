@@ -1,3 +1,5 @@
+import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
+import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
@@ -74,6 +76,16 @@ import { POPOVER_PART_PROP_DESCRIPTIONS } from './popoverPartPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
+
+const CHECKBOX_PROP_DEFAULTS = {
+  size: 'sm',
+  variant: 'solid',
+  shape: 'square',
+  color: 'accent',
+  hoverable: 'true',
+};
+
+const SWITCH_PROP_DEFAULTS = { size: 'md' };
 
 export const DOCUMENTED_COMPONENTS = [
   {
@@ -335,6 +347,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Checkbox/Checkbox.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/checkbox',
+    parts: ['Root', 'Indicator'],
+    propDescriptions: CHECKBOX_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: CHECKBOX_PROP_DESCRIPTIONS },
+    propDefaults: CHECKBOX_PROP_DEFAULTS,
+    partPropDefaults: { Root: CHECKBOX_PROP_DEFAULTS },
   },
   {
     name: 'Radio',
@@ -387,6 +404,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Switch/Switch.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
+    parts: ['Root', 'Thumb'],
+    propDescriptions: SWITCH_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: SWITCH_PROP_DESCRIPTIONS },
+    propDefaults: SWITCH_PROP_DEFAULTS,
+    partPropDefaults: { Root: SWITCH_PROP_DEFAULTS },
   },
   {
     name: 'Breadcrumb',
