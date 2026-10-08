@@ -154,10 +154,10 @@ export const EnterprisePlanModal = () => {
 
   return (
     <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Get Organization`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
           style={{ padding: 0 }}
         >

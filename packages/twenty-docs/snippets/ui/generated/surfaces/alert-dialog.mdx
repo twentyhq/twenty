@@ -99,16 +99,80 @@
   returns a style object based on the component's state.
 </ParamField>
 
+### AlertDialog.Portal
+
+<ParamField body="Portal.className" type="string | ((state: DialogPortalState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Portal.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
+  Portal destination. Omission uses the theme container or Base UI default; explicit `null` defers mounting. A ref with a null current value uses the Base UI default destination.
+</ParamField>
+
+<ParamField body="Portal.keepMounted" type="boolean" default="false">
+  Keeps content mounted while the alert is closed.
+</ParamField>
+
+<ParamField body="Portal.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogPortalState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Portal.style" type="CSSProperties | ((state: DialogPortalState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### AlertDialog.Backdrop
+
+<ParamField body="Backdrop.className" type="string | ((state: DialogBackdropState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Backdrop.forceRender" type="boolean" default="false">
+  Whether the backdrop is forced to render even when nested.
+</ParamField>
+
+<ParamField body="Backdrop.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogBackdropState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Backdrop.style" type="CSSProperties | ((state: DialogBackdropState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### AlertDialog.Viewport
+
+<ParamField body="Viewport.className" type="string | ((state: DialogViewportState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Viewport.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogViewportState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Viewport.style" type="CSSProperties | ((state: DialogViewportState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
 ### AlertDialog.Popup
 
 <ParamField body="Popup.className" type="string | ((state: DialogPopupState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
-</ParamField>
-
-<ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
-  Element the dialog is portaled into. Defaults to the theme's portal
-  container.
 </ParamField>
 
 <ParamField body="Popup.finalFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((closeType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
@@ -133,10 +197,6 @@
     Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
 </ParamField>
 
-<ParamField body="Popup.keepMounted" type="boolean">
-  Keeps the dialog mounted in the DOM while it is closed.
-</ParamField>
-
 <ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, DialogPopupState&gt;">
   Allows you to replace the component's HTML element
   with a different tag, or compose it with another component.
@@ -145,7 +205,7 @@
 </ParamField>
 
 <ParamField body="Popup.size" type="&quot;fullscreen&quot; | &quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot;" default="md">
-  Width of the dialog, or `fullscreen` to fill the viewport.
+  Width of the alert, or `fullscreen` to fill the viewport.
 </ParamField>
 
 <ParamField body="Popup.style" type="CSSProperties | ((state: DialogPopupState) =&gt; CSSProperties | undefined)">

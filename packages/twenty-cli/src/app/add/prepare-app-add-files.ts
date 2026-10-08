@@ -16,7 +16,6 @@ import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/app/add/entity-logic-function-template';
 import { getObjectBaseFile } from '@/app/add/entity-object-template';
-import { promptForAppAddValue } from '@/app/add/prompt-for-app-add-value';
 import { kebabCase } from '@/app/pull/kebab-case';
 import {
   readBooleanOption,
@@ -24,6 +23,8 @@ import {
   readStringOption,
 } from '@/catalog/read-command-values';
 import { type CommandContext } from '@/catalog/types/command-context.type';
+import { confirmInTerminal } from '@/input/confirm-in-terminal';
+import { promptInTerminal } from '@/input/prompt-in-terminal';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
@@ -64,7 +65,7 @@ export const prepareAppAddFiles = async ({
       const choiceHint = choices ? ` (${choices.join(', ')})` : '';
       const defaultHint = isDefined(defaultValue) ? ` [${defaultValue}]` : '';
 
-      value = await promptForAppAddValue({
+      value = await promptInTerminal({
         question: `${label}${choiceHint}${defaultHint}: `,
         signal,
       });
@@ -162,6 +163,30 @@ export const prepareAppAddFiles = async ({
         defaultValue: convertToLabel(namePlural),
       });
 
+      const companions = {
+        createView: readBooleanOption(options, 'createView'),
+        createNavigationMenuItem: readBooleanOption(
+          options,
+          'createNavigationMenuItem',
+        ),
+        createPageLayout: readBooleanOption(options, 'createPageLayout'),
+      };
+
+      if (
+        interactive &&
+        !Object.values(companions).some((isSelected) => isSelected)
+      ) {
+        const shouldCreateCompanions = await confirmInTerminal({
+          question:
+            'Also create a view, navigation menu item, and record page layout for this object?',
+          signal,
+        });
+
+        companions.createView = shouldCreateCompanions;
+        companions.createNavigationMenuItem = shouldCreateCompanions;
+        companions.createPageLayout = shouldCreateCompanions;
+      }
+
       const objectUniversalIdentifier = randomUUID();
       const nameFieldUniversalIdentifier = randomUUID();
 
@@ -177,12 +202,7 @@ export const prepareAppAddFiles = async ({
         objectUniversalIdentifier,
         nameFieldUniversalIdentifier,
         applicationUniversalIdentifier,
-        createView: readBooleanOption(options, 'createView'),
-        createNavigationMenuItem: readBooleanOption(
-          options,
-          'createNavigationMenuItem',
-        ),
-        createPageLayout: readBooleanOption(options, 'createPageLayout'),
+        ...companions,
       });
       break;
     }

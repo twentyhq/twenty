@@ -128,10 +128,10 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       dismissible
       onClose={handleClose}
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Install ${appDisplayName} on your workspace`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >
