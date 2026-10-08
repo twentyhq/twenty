@@ -352,11 +352,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ? authContext.userWorkspaceId
       : null;
 
-    // a caller's run is also bounded by the agent's application, while the
-    // application's own run keeps the agent's role, as its agent triggers do
-    const roleRestrictionIds = isDefined(callerRoleId)
-      ? [callerRoleId, agentContext.application.defaultRoleId].filter(isDefined)
-      : [];
+    // a run never exceeds the agent's application, whoever calls it
+    const roleRestrictionIds = [
+      callerRoleId,
+      agentContext.application.defaultRoleId,
+    ].filter(isDefined);
 
     const additionalRoleRestrictionIds = isNonEmptyArray(roleRestrictionIds)
       ? roleRestrictionIds
