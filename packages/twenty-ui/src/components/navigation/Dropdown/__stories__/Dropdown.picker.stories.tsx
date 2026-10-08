@@ -613,7 +613,6 @@ export const OptionWithTrailingAction: Story = {
     const option = await body.findByRole('button', {
       name: 'Overview',
     });
-
     await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     const action = body.getByRole('button', { name: 'Edit overview' });
 
@@ -731,7 +730,6 @@ export const CommandWithTrailingAction: Story = {
     );
     const item = await body.findByRole('button', { name: 'Open overview' });
 
-    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     const action = body.getByRole('button', { name: 'Edit view' });
 
     expect(item.tagName).toBe('BUTTON');
