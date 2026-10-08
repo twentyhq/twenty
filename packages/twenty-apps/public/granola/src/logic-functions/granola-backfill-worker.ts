@@ -1,16 +1,19 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { GRANOLA_MAX_PAGE_SIZE } from 'src/constants/granola-api.constant';
+import { GRANOLA_UNAVAILABLE_RETRY_LIMIT } from 'src/constants/granola-history.constant';
 import {
   GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
   GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { type GranolaBackfillWorkerPayload } from 'src/logic-functions/types/granola-backfill-worker-payload.type';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
+import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
+import { enqueueGranolaRetryOrThrow } from 'src/logic-functions/utils/enqueue-granola-retry-or-throw.util';
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { getGranolaJobId } from 'src/logic-functions/utils/get-granola-job-id.util';
@@ -44,7 +47,7 @@ export const granolaBackfillWorkerHandler = async (
       page_size: GRANOLA_MAX_PAGE_SIZE,
     });
     const noteIds = await excludeDeletedGranolaNotesOrThrow({
-      coreApiClient: new CoreApiClient({ runAs: 'application' }),
+      coreApiClient: createApplicationCoreApiClient(),
       noteIds: page.notes.map((note) => note.id),
     });
     const schedule = await reserveGranolaNoteImportSlotsOrThrow(noteIds.length);
@@ -53,24 +56,24 @@ export const granolaBackfillWorkerHandler = async (
     );
 
     for (const [index, noteId] of noteIds.entries()) {
+      // Selection and run day let a later run retry a note whose job was skipped or failed for good, while overlapping imports still collapse
       const notePayload: GranolaBackfillNotePayload = {
         registrationId: payload.registrationId,
         folderId: payload.folderId,
         noteId,
+        updatedAt: updatedAtByNoteId.get(noteId),
+        runDay: payload.runDay,
       };
 
       await enqueueGranolaJobOrThrow({
         logicFunctionUniversalIdentifier:
           GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
         payload: notePayload,
-        // Selection and run day let a later run retry a note whose job was skipped or failed for good, while overlapping imports still collapse
         jobId: getGranolaJobId({
           prefix: 'granola-note',
           identity: {
             ...notePayload,
-            updatedAt: updatedAtByNoteId.get(noteId),
             selectedFolderIds: [...(registration?.folderIds ?? [])].sort(),
-            runDay: payload.runDay,
           },
         }),
         delayMs: schedule.noteDelays[index],
@@ -123,6 +126,21 @@ export const granolaBackfillWorkerHandler = async (
       hasMore: nextPage.kind === 'next',
     };
   } catch (error) {
+    if (
+      error instanceof GranolaUnavailableError &&
+      (payload.retryAttempt ?? 0) < GRANOLA_UNAVAILABLE_RETRY_LIMIT
+    ) {
+      await enqueueGranolaRetryOrThrow({
+        logicFunctionUniversalIdentifier:
+          GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+        prefix: 'granola-discovery',
+        payload,
+        delayMs: error.retryAfterMilliseconds,
+      });
+
+      return { success: true, deferred: true };
+    }
+
     rethrowKnownOrWrapGranolaError({
       operation: 'History discovery',
       error,
@@ -135,6 +153,6 @@ export default defineLogicFunction({
   name: 'granola-backfill-worker',
   description:
     'Discovers one page of Granola notes and schedules paced note imports.',
-  timeoutSeconds: 120,
+  timeoutSeconds: 300,
   handler: granolaBackfillWorkerHandler,
 });

@@ -7,6 +7,7 @@ import {
 } from 'src/constants/granola.constant';
 import { granolaWebhookHandler } from 'src/logic-functions/granola-webhook';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 
 const mocks = vi.hoisted(() => ({
@@ -110,6 +111,34 @@ describe('granolaWebhookHandler', () => {
               registrationId: 'reg-1',
               noteId: NOTE_ID,
               deferredWebhook: { eventId: 'evt-1', deferralCount: 0 },
+            },
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('accepts the delivery and schedules the note after Retry-After when Granola is rate limited', async () => {
+    mocks.syncNote.mockRejectedValue(
+      new GranolaUnavailableError({
+        status: 429,
+        retryAfterMilliseconds: 45_000,
+      }),
+    );
+
+    const result = await deliver('evt-1');
+
+    expect(result).toEqual({ success: true, deferred: true });
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        delayMs: 45_000,
+        jobs: [
+          expect.objectContaining({
+            payload: {
+              registrationId: 'reg-1',
+              noteId: NOTE_ID,
+              deferredWebhook: { eventId: 'evt-1', deferralCount: 0 },
+              retryAttempt: 1,
             },
           }),
         ],

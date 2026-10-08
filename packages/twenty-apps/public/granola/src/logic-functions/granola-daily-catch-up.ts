@@ -36,5 +36,4 @@ export default defineLogicFunction({
     'Imports Granola notes updated during the last two days to recover missed webhook deliveries.',
   timeoutSeconds: 120,
   handler: granolaDailyCatchUpHandler,
-  cronTriggerSettings: { pattern: '0 4 * * *' },
 });

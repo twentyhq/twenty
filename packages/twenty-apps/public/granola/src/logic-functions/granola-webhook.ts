@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { kv, RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
@@ -8,16 +7,23 @@ import {
   GRANOLA_PENDING_REGISTRATION_KEY,
   GRANOLA_WEBHOOK_REGISTRATION_KEY,
 } from 'src/constants/granola.constant';
-import { GRANOLA_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+  GRANOLA_WEBHOOK_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GRANOLA_WEBHOOK_PAYLOAD_SCHEMA } from 'src/logic-functions/types/granola-api.type';
+import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
 import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
+import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaDeferredWebhookNoteOrThrow } from 'src/logic-functions/utils/enqueue-granola-deferred-webhook-note-or-throw.util';
+import { enqueueGranolaRetryOrThrow } from 'src/logic-functions/utils/enqueue-granola-retry-or-throw.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { isGranolaFolderSelectionPending } from 'src/logic-functions/utils/is-granola-folder-selection-pending.util';
 import { parseJsonOrUndefined } from 'src/logic-functions/utils/parse-json-or-undefined.util';
@@ -94,10 +100,27 @@ export const granolaWebhookHandler = async ({
     return { success: true, deferred: true };
   }
   const result = await syncGranolaNoteToCallRecordingOrThrow({
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    coreApiClient: createApplicationCoreApiClient(),
     client: createGranolaClientOrThrow(),
     noteId: parsed.data.note_id,
-  }).catch((error: unknown) => {
+  }).catch(async (error: unknown) => {
+    if (error instanceof GranolaUnavailableError) {
+      const notePayload: GranolaBackfillNotePayload = {
+        registrationId: registration.registrationId,
+        noteId: parsed.data.note_id,
+        deferredWebhook: { eventId: parsed.data.event_id, deferralCount: 0 },
+      };
+
+      await enqueueGranolaRetryOrThrow({
+        logicFunctionUniversalIdentifier:
+          GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+        prefix: 'granola-webhook-note',
+        payload: notePayload,
+        delayMs: error.retryAfterMilliseconds,
+      });
+
+      return { deferred: true };
+    }
     if (
       error instanceof GranolaApiError ||
       error instanceof GranolaInvalidResponseError ||

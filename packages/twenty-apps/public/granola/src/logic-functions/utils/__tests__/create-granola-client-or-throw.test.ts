@@ -1,14 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 
 const API_KEY = 'grn_test_secret';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
 
 describe('createGranolaClientOrThrow', () => {
   it('sends authenticated list filters and opaque cursors without mangling them', async () => {
@@ -87,6 +92,51 @@ describe('createGranolaClientOrThrow', () => {
     await expect(
       createGranolaClientOrThrow({ apiKey: API_KEY }).listFolders(),
     ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
+  });
+
+  it.each([
+    { retryAfter: '120', expected: 120_000 },
+    { retryAfter: undefined, expected: 60_000 },
+    { retryAfter: 'soon', expected: 60_000 },
+    { retryAfter: '86400', expected: 300_000 },
+  ])(
+    'carries a bounded Retry-After of $retryAfter on HTTP 429',
+    async ({ retryAfter, expected }) => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn<typeof fetch>().mockResolvedValue(
+          new Response('slow down', {
+            status: 429,
+            headers: isDefined(retryAfter) ? { 'Retry-After': retryAfter } : {},
+          }),
+        ),
+      );
+      const promise = createGranolaClientOrThrow({
+        apiKey: API_KEY,
+      }).listNotes();
+
+      await expect(promise).rejects.toBeInstanceOf(GranolaUnavailableError);
+      await expect(promise).rejects.toMatchObject({
+        retryAfterMilliseconds: expected,
+      });
+    },
+  );
+
+  it('reads a Retry-After HTTP date', async () => {
+    vi.useFakeTimers({ now: new Date('2026-09-06T10:00:00Z') });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        new Response('unavailable', {
+          status: 503,
+          headers: { 'Retry-After': 'Sun, 06 Sep 2026 10:02:00 GMT' },
+        }),
+      ),
+    );
+
+    await expect(
+      createGranolaClientOrThrow({ apiKey: API_KEY }).listNotes(),
+    ).rejects.toMatchObject({ retryAfterMilliseconds: 120_000 });
   });
 
   it('makes network failure retryable without leaking the underlying error', async () => {

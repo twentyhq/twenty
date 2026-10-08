@@ -2,9 +2,12 @@ import { type EnqueueJobsInput } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GRANOLA_WEBHOOK_REGISTRATION_KEY } from 'src/constants/granola.constant';
+import { GRANOLA_UNAVAILABLE_RETRY_LIMIT } from 'src/constants/granola-history.constant';
+import { GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { granolaBackfillWorkerHandler } from 'src/logic-functions/granola-backfill-worker';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 
 const mocks = vi.hoisted(() => ({
@@ -147,5 +150,63 @@ describe('granolaBackfillWorkerHandler', () => {
 
     expect(after[0]).not.toBe(before[0]);
     expect(after[1]).not.toBe(before[1]);
+  });
+
+  describe('when Granola is rate limited', () => {
+    const workerPayload = {
+      registrationId: 'reg-1',
+      folderId: 'fol_aaaaaaaaaaaaaa',
+      cursor: 'cursor-3',
+      pageIndex: 3,
+      runDay: '2026-09-06',
+    };
+
+    beforeEach(() => {
+      mocks.listNotes.mockRejectedValue(
+        new GranolaUnavailableError({
+          status: 429,
+          retryAfterMilliseconds: 90_000,
+        }),
+      );
+    });
+
+    it('keeps the discovery chain alive by retrying the same page after Retry-After', async () => {
+      const result = await granolaBackfillWorkerHandler(workerPayload);
+
+      expect(result).toEqual({ success: true, deferred: true });
+      expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          logicFunctionUniversalIdentifier:
+            GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+          delayMs: 90_000,
+          jobs: [
+            expect.objectContaining({
+              payload: { ...workerPayload, retryAttempt: 1 },
+            }),
+          ],
+        }),
+      );
+    });
+
+    it('gives every retry its own job so the queue does not drop it', async () => {
+      await granolaBackfillWorkerHandler(workerPayload);
+      await granolaBackfillWorkerHandler({ ...workerPayload, retryAttempt: 1 });
+
+      const [firstRetryJobId, secondRetryJobId] =
+        mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs?.[0]?.jobId);
+
+      expect(firstRetryJobId).toBeDefined();
+      expect(secondRetryJobId).not.toBe(firstRetryJobId);
+    });
+
+    it('hands the failure back to the queue once the retry limit is reached', async () => {
+      await expect(
+        granolaBackfillWorkerHandler({
+          ...workerPayload,
+          retryAttempt: GRANOLA_UNAVAILABLE_RETRY_LIMIT,
+        }),
+      ).rejects.toBeInstanceOf(GranolaUnavailableError);
+      expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    });
   });
 });

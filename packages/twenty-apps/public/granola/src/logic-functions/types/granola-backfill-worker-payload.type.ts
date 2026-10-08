@@ -6,4 +6,5 @@ export type GranolaBackfillWorkerPayload = {
   cursor?: string;
   pageIndex: number;
   runDay: string;
+  retryAttempt?: number;
 };

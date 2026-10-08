@@ -3,8 +3,13 @@ import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import { z } from 'zod';
 
+import {
+  GRANOLA_RETRY_AFTER_FALLBACK_MILLISECONDS,
+  GRANOLA_RETRY_AFTER_MAX_MILLISECONDS,
+} from 'src/constants/granola-api.constant';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import {
   GRANOLA_FOLDER_SCHEMA,
   GRANOLA_NOTE_SCHEMA,
@@ -16,6 +21,7 @@ import {
   type GranolaUpdateWebhookEndpointParameters,
 } from 'src/logic-functions/types/granola-api.type';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
+import { parseRetryAfterHeaderMilliseconds } from 'src/logic-functions/utils/parse-retry-after-header-milliseconds.util';
 
 const GRANOLA_API_BASE_URL = 'https://public-api.granola.ai/v1';
 const GRANOLA_REQUEST_TIMEOUT_MILLISECONDS = 15_000;
@@ -73,9 +79,15 @@ export const createGranolaClientOrThrow = ({
     });
 
     if (response.status === 429 || response.status >= 500) {
-      throw new RetryableLogicFunctionError(
-        `Granola is temporarily unavailable (HTTP ${response.status}).`,
-      );
+      throw new GranolaUnavailableError({
+        status: response.status,
+        retryAfterMilliseconds: Math.min(
+          parseRetryAfterHeaderMilliseconds(
+            response.headers.get('retry-after'),
+          ) ?? GRANOLA_RETRY_AFTER_FALLBACK_MILLISECONDS,
+          GRANOLA_RETRY_AFTER_MAX_MILLISECONDS,
+        ),
+      });
     }
 
     if (!response.ok) {

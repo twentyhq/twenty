@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   type InputJsonSchema,
@@ -9,6 +8,7 @@ import { z } from 'zod';
 import { GRANOLA_NOTE_ID_PATTERN } from 'src/constants/granola-api.constant';
 import { GRANOLA_SYNC_NOTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GRANOLA_NOT_CONNECTED_ERROR_MESSAGE } from 'src/logic-functions/constants/granola-not-connected-error-message.constant';
+import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
@@ -41,7 +41,7 @@ export const granolaSyncNoteHandler = async (parameters: unknown) => {
   }
 
   const result = await syncGranolaNoteToCallRecordingOrThrow({
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    coreApiClient: createApplicationCoreApiClient(),
     client: createGranolaClientOrThrow(),
     noteId: parsed.data.noteId,
   });

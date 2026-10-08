@@ -2,12 +2,17 @@ import { type EnqueueJobsInput } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  GRANOLA_HISTORY_SCHEDULE_KEY,
   GRANOLA_PENDING_FOLDER_SELECTION_KEY,
   GRANOLA_WEBHOOK_REGISTRATION_KEY,
 } from 'src/constants/granola.constant';
-import { GRANOLA_WEBHOOK_DEFERRAL_LIMIT } from 'src/constants/granola-history.constant';
+import {
+  GRANOLA_UNAVAILABLE_RETRY_LIMIT,
+  GRANOLA_WEBHOOK_DEFERRAL_LIMIT,
+} from 'src/constants/granola-history.constant';
 import { granolaBackfillNoteHandler } from 'src/logic-functions/granola-backfill-note';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 
 const mocks = vi.hoisted(() => ({
@@ -122,5 +127,77 @@ describe('granolaBackfillNoteHandler for a deferred webhook note', () => {
 
     expect(result).toEqual({ success: true, skipped: true });
     expect(mocks.syncNote).not.toHaveBeenCalled();
+  });
+});
+
+describe('granolaBackfillNoteHandler when Granola is rate limited', () => {
+  const backfillPayload = {
+    registrationId: 'reg-1',
+    noteId: NOTE_ID,
+    updatedAt: '2026-09-05T11:00:00Z',
+    runDay: '2026-09-06',
+  };
+
+  beforeEach(() => {
+    mocks.store.clear();
+    vi.clearAllMocks();
+    process.env[GRANOLA_API_KEY_ENV_VAR_NAME] = API_KEY;
+    mocks.enqueueJobs.mockResolvedValue({ enqueued: true });
+    mocks.syncNote.mockRejectedValue(
+      new GranolaUnavailableError({
+        status: 429,
+        retryAfterMilliseconds: 120_000,
+      }),
+    );
+    storeRegistration([]);
+  });
+
+  it('schedules the note again after Retry-After instead of failing the job', async () => {
+    const result = await granolaBackfillNoteHandler(backfillPayload);
+
+    expect(result).toEqual({ success: true, deferred: true });
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        delayMs: 120_000,
+        jobs: [
+          expect.objectContaining({
+            payload: { ...backfillPayload, retryAttempt: 1 },
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('gives every retry its own job so the queue does not drop it', async () => {
+    await granolaBackfillNoteHandler(backfillPayload);
+    await granolaBackfillNoteHandler({ ...backfillPayload, retryAttempt: 1 });
+
+    const [firstRetryJobId, secondRetryJobId] =
+      mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs?.[0]?.jobId);
+
+    expect(firstRetryJobId).toBeDefined();
+    expect(secondRetryJobId).not.toBe(firstRetryJobId);
+  });
+
+  it('waits for the next free import slot when it is later than Retry-After', async () => {
+    mocks.store.set(GRANOLA_HISTORY_SCHEDULE_KEY, {
+      nextNoteAvailableAt: Date.now() + 600_000,
+    });
+
+    await granolaBackfillNoteHandler(backfillPayload);
+
+    expect(mocks.enqueueJobs.mock.calls[0][0].delayMs).toBeGreaterThanOrEqual(
+      599_000,
+    );
+  });
+
+  it('hands the failure back to the queue once the retry limit is reached', async () => {
+    await expect(
+      granolaBackfillNoteHandler({
+        ...backfillPayload,
+        retryAttempt: GRANOLA_UNAVAILABLE_RETRY_LIMIT,
+      }),
+    ).rejects.toBeInstanceOf(GranolaUnavailableError);
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 });

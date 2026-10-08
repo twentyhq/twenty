@@ -1,19 +1,25 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { GRANOLA_WEBHOOK_DEFERRAL_LIMIT } from 'src/constants/granola-history.constant';
+import {
+  GRANOLA_UNAVAILABLE_RETRY_LIMIT,
+  GRANOLA_WEBHOOK_DEFERRAL_LIMIT,
+} from 'src/constants/granola-history.constant';
 import { GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
+import { GranolaUnavailableError } from 'src/logic-functions/types/granola-unavailable-error';
 import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
+import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaDeferredWebhookNoteOrThrow } from 'src/logic-functions/utils/enqueue-granola-deferred-webhook-note-or-throw.util';
+import { enqueueGranolaRetryOrThrow } from 'src/logic-functions/utils/enqueue-granola-retry-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaFolderSelectionPending } from 'src/logic-functions/utils/is-granola-folder-selection-pending.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
+import { reserveGranolaNoteImportSlotsOrThrow } from 'src/logic-functions/utils/reserve-granola-note-import-slots-or-throw.util';
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
 
@@ -67,7 +73,7 @@ export const granolaBackfillNoteHandler = async (
       return { success: true, skipped: true };
     }
 
-    const coreApiClient = new CoreApiClient({ runAs: 'application' });
+    const coreApiClient = createApplicationCoreApiClient();
     const client = createGranolaClientOrThrow();
     try {
       const result = await syncGranolaNoteToCallRecordingOrThrow({
@@ -91,6 +97,26 @@ export const granolaBackfillNoteHandler = async (
         );
 
         return { success: true, importedNoteCount: 0 };
+      }
+
+      if (
+        error instanceof GranolaUnavailableError &&
+        (payload.retryAttempt ?? 0) < GRANOLA_UNAVAILABLE_RETRY_LIMIT
+      ) {
+        const schedule = await reserveGranolaNoteImportSlotsOrThrow(1);
+
+        await enqueueGranolaRetryOrThrow({
+          logicFunctionUniversalIdentifier:
+            GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+          prefix: 'granola-note',
+          payload,
+          delayMs: Math.max(
+            error.retryAfterMilliseconds,
+            schedule.noteDelays[0],
+          ),
+        });
+
+        return { success: true, deferred: true };
       }
 
       throw error;
