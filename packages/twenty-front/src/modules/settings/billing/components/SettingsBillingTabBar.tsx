@@ -59,6 +59,8 @@ export const SettingsBillingTabBar = () => {
               aria-current={isTabActive(path) ? 'page' : undefined}
               href={href}
               render={render}
+              nativeButton={false}
+              role="link"
             >
               {title}
             </TabButton>
