@@ -4,11 +4,10 @@ import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelPageHasUnsavedChangesComponentState } from '@/side-panel/states/sidePanelPageHasUnsavedChangesComponentState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 
 export const useHandleSidePanelEscape = () => {
@@ -31,21 +30,13 @@ export const useHandleSidePanelEscape = () => {
       return;
     }
 
-    const wouldLeavePageWithUnsavedChanges =
-      store.get(
-        sidePanelPageHasUnsavedChangesComponentState.atomFamily({
-          instanceId: sidePanelPageInstanceId,
-        }),
-      ) &&
-      !isNonEmptyArray(
-        store.get(
-          sidePanelSubPageStackComponentState.atomFamily({
-            instanceId: sidePanelPageInstanceId,
-          }),
-        ),
-      );
+    const hasUnsavedChanges = store.get(
+      sidePanelPageHasUnsavedChangesComponentState.atomFamily({
+        instanceId: sidePanelPageInstanceId,
+      }),
+    );
 
-    if (wouldLeavePageWithUnsavedChanges) {
+    if (hasUnsavedChanges) {
       openDialog(SIDE_PANEL_DISCARD_CHANGES_DIALOG_ID);
       return;
     }

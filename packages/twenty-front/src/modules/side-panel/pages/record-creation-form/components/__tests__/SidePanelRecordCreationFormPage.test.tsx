@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
@@ -253,6 +253,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 const renderPage = () =>
   render(<SidePanelRecordCreationFormPage />, { wrapper: Wrapper });
 
+const hasUnsavedChanges = () =>
+  jotaiStore.get(
+    sidePanelPageHasUnsavedChangesComponentState.atomFamily({
+      instanceId: REQUEST_ID,
+    }),
+  );
+
 describe('SidePanelRecordCreationFormPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -284,18 +291,36 @@ describe('SidePanelRecordCreationFormPage', () => {
 
   it('marks the page as having unsaved changes once the user types', async () => {
     const user = userEvent.setup();
-    const hasUnsavedChanges = () =>
-      jotaiStore.get(
-        sidePanelPageHasUnsavedChangesComponentState.atomFamily({
-          instanceId: REQUEST_ID,
-        }),
-      );
 
     renderPage();
 
     expect(hasUnsavedChanges()).toBe(false);
 
     await user.type(screen.getByLabelText('Name'), 'A');
+
+    expect(hasUnsavedChanges()).toBe(true);
+  });
+
+  it('stops reporting unsaved changes while the record is submitted, and again if the server refuses it', async () => {
+    const user = userEvent.setup();
+    let finishSubmission: (settlement: { error?: unknown }) => void = () => {};
+
+    settleRecordCreationDraft.mockReturnValue(
+      new Promise((resolve) => {
+        finishSubmission = resolve;
+      }),
+    );
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'A');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(hasUnsavedChanges()).toBe(false);
+
+    await act(async () => {
+      finishSubmission({ error: new Error('Network error') });
+    });
 
     expect(hasUnsavedChanges()).toBe(true);
   });

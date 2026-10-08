@@ -9,7 +9,7 @@ export const SidePanelDiscardChangesDialog = () => {
   return (
     <ConfirmationDialog
       dialogId={SIDE_PANEL_DISCARD_CHANGES_DIALOG_ID}
-      title={t`Discard changes?`}
+      title={t`Discard draft?`}
       subtitle={t`What you entered will be lost.`}
       onConfirmClick={goBackOneSubPageOrMainPage}
       confirmButtonText={t`Discard`}

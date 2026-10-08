@@ -234,6 +234,7 @@ const SidePanelRecordCreationForm = ({
     }
 
     setIsSubmitting(true);
+    setSidePanelPageHasUnsavedChanges(false);
     try {
       const { error } = await settleRecordCreationDraft({
         requestId,
@@ -243,6 +244,10 @@ const SidePanelRecordCreationForm = ({
           objectMetadataItems,
         }),
       });
+
+      if (isDefined(error)) {
+        setSidePanelPageHasUnsavedChanges(true);
+      }
 
       revealHiddenFieldsIfTargeted(
         getValidationRuleViolationFieldMetadataIdsFromError(error),
