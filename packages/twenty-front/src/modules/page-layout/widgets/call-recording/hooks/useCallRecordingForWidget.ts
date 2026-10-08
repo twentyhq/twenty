@@ -45,6 +45,7 @@ export const useCallRecordingForWidget = ({
 
   const isVideoRestricted = isFieldRestricted('video');
   const isAudioRestricted = isFieldRestricted('audio');
+  const isTranscriptRestricted = isFieldRestricted('transcript');
 
   // Requesting a field the role cannot read fails the whole query.
   const recordGqlFields = useMemo(
@@ -55,8 +56,11 @@ export const useCallRecordingForWidget = ({
             ...(!isVideoRestricted && { video: true }),
             ...(!isAudioRestricted && { audio: true }),
           }
-        : CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND[kind],
-    [kind, isVideoRestricted, isAudioRestricted],
+        : {
+            ...CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND.summary,
+            ...(!isTranscriptRestricted && { transcript: true }),
+          },
+    [kind, isVideoRestricted, isAudioRestricted, isTranscriptRestricted],
   );
 
   const {
