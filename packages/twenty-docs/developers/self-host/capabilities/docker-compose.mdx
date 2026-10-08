@@ -74,11 +74,15 @@ Follow these steps for a manual setup.
 
 4. **Set the Postgres Password**
 
-    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters. The password is inserted unencoded into the Postgres connection URL, so characters such as `@`, `/`, `#` or `%` break the connection string.
 
     ```ini
     PG_DATABASE_PASSWORD=my_strong_password
     ```
+
+<Note>
+Leave the variables you do not use commented out rather than blank. Docker Compose forwards a blank `VARIABLE=` line as an empty string, and the server treats an empty string as a configured value: an empty `SERVER_URL` fails validation at startup, and an empty `STORAGE_S3_NAME` with `STORAGE_TYPE=S_3` breaks every upload.
+</Note>
 
 ### Step 2: Obtain the Docker Compose File
 
