@@ -4724,11 +4724,32 @@
     "slug": "navigation/breadcrumb",
     "props": [
       {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible navigation name. Defaults to Breadcrumb; supply a localized name or use aria-labelledby."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class merged onto the root navigation element."
+      },
+      {
         "name": "links",
         "type": "BreadcrumbItem[]",
         "required": true,
         "defaultValue": null,
-        "description": "Ordered trail items. Each item accepts `children`, `href`, `render`, and `title`. The final item represents the current page."
+        "description": "Ordered trail items with native anchor attributes, event handlers, ref, children and element or callback render composition. Items with href default to anchors; other items default to text. The final item defaults to aria-current=\"page\". An explicit aria-current value is preserved, including false."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root nav, or the DOM element supplied through render."
       },
       {
         "name": "render",
@@ -4736,6 +4757,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Caller-supplied root element or renderer. Preserve the navigation landmark and forward the supplied props and ref."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root navigation element."
       }
     ]
   },
