@@ -28,7 +28,6 @@ type TestContext = {
   token: (globalContext: GlobalTestContext) => string;
   runAsWorkspaceMemberId?: string;
   roleTargetId: string;
-  isMember: boolean;
 };
 
 const callerRunTestCases: EachTestingContext<TestContext>[] = [
@@ -37,7 +36,6 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: () => APPLE_JONY_MEMBER_ACCESS_TOKEN,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      isMember: true,
     },
   },
   {
@@ -45,7 +43,6 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: (globalContext) => globalContext.janeApplicationToken,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      isMember: true,
     },
   },
   {
@@ -54,7 +51,6 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
       token: (globalContext) => globalContext.applicationToken,
       runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      isMember: true,
     },
   },
   {
@@ -62,7 +58,6 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: () => API_KEY_ACCESS_TOKEN,
       roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
-      isMember: false,
     },
   },
 ];
@@ -128,7 +123,7 @@ describe('Agent run tools should be limited to the caller role', () => {
   });
 
   it.each(eachTestingContextFilter(callerRunTestCases))(
-    'should restrict the agent role to the caller role when $title',
+    'should restrict the agent role to the caller and application roles when $title',
     async ({ context }) => {
       const { executionContext } = await captureAgentRunExecution({
         agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
@@ -138,7 +133,7 @@ describe('Agent run tools should be limited to the caller role', () => {
 
       expect(executionContext.additionalRoleRestrictionIds).toEqual([
         await findCallerRoleId(context.roleTargetId),
-        ...(context.isMember ? [globalTestContext.applicationRoleId] : []),
+        globalTestContext.applicationRoleId,
       ]);
     },
   );

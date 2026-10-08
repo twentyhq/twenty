@@ -352,13 +352,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ? authContext.userWorkspaceId
       : null;
 
-    // a member's run is also bounded by the application it acts through, as its sandbox calls are
-    const roleRestrictionIds = [
-      callerRoleId,
-      isDefined(memberUserWorkspaceId)
-        ? agentContext.application.defaultRoleId
-        : undefined,
-    ].filter(isDefined);
+    // a caller's run is also bounded by the agent's application, while the
+    // application's own run keeps the agent's role, as its agent triggers do
+    const roleRestrictionIds = isDefined(callerRoleId)
+      ? [callerRoleId, agentContext.application.defaultRoleId].filter(isDefined)
+      : [];
 
     const additionalRoleRestrictionIds = isNonEmptyArray(roleRestrictionIds)
       ? roleRestrictionIds
