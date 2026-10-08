@@ -74,7 +74,11 @@ Follow these steps for a manual setup.
 
 4. **Set the Postgres Password**
 
-    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters. The password is inserted unencoded into the Postgres connection URL, so characters such as `@`, `/`, `#` or `%` break the connection string.
+    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters. The password is inserted unencoded into the Postgres connection URL, so characters such as `@`, `/`, `#` or `%` break the connection string. Generate one with:
+
+    ```bash
+    openssl rand -hex 32
+    ```
 
     ```ini
     PG_DATABASE_PASSWORD=my_strong_password
