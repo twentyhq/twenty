@@ -15,13 +15,14 @@ const StyledRowContentContainer = styled.div`
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
     position: relative;
   }
+
+  > div:has(> .${CARD_ACTION_CLASS_NAME}:not(:disabled)):hover {
+    background: ${themeCssVariables.background.transparent.lighter};
+    cursor: pointer;
+  }
 `;
 
 const StyledRowAction = styled.button`
-  &:not(:disabled):hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-
   &:disabled {
     cursor: default;
     pointer-events: none;
