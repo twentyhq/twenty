@@ -58,33 +58,38 @@ const getRateLimitDelayMs = async (
   return response.status === 429 ? headerDelayMs : undefined;
 };
 
-export const fetchWithRateLimitRetry: typeof fetch = async (input, options) => {
+export const createFetchWithRateLimitRetry = (): typeof fetch => {
   let totalWaitMs = 0;
 
-  for (let attempt = 1; ; attempt += 1) {
-    const response = await fetch(input, options);
-    const retryAfterMs = await getRateLimitDelayMs(response);
+  return async (input, options) => {
+    for (let attempt = 1; ; attempt += 1) {
+      const response = await fetch(input, options);
+      const retryAfterMs = await getRateLimitDelayMs(response);
 
-    if (isUndefined(retryAfterMs) || options?.signal?.aborted) {
-      return response;
+      if (isUndefined(retryAfterMs) || options?.signal?.aborted) {
+        return response;
+      }
+
+      const delayMs =
+        Math.max(
+          Math.min(2_000 * 2 ** (attempt - 1), 30_000),
+          Math.min(retryAfterMs, MAX_RETRY_AFTER_MS),
+        ) +
+        Math.random() * 1_000;
+
+      await response.body?.cancel();
+
+      if (
+        attempt >= MAX_ATTEMPTS ||
+        totalWaitMs + delayMs > MAX_TOTAL_WAIT_MS
+      ) {
+        throw new RetryableLogicFunctionError(
+          '[fathom] Twenty API rate limit retry budget exhausted',
+        );
+      }
+
+      totalWaitMs += delayMs;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-
-    const delayMs =
-      Math.max(
-        Math.min(2_000 * 2 ** (attempt - 1), 30_000),
-        Math.min(retryAfterMs, MAX_RETRY_AFTER_MS),
-      ) +
-      Math.random() * 1_000;
-
-    await response.body?.cancel();
-
-    if (attempt >= MAX_ATTEMPTS || totalWaitMs + delayMs > MAX_TOTAL_WAIT_MS) {
-      throw new RetryableLogicFunctionError(
-        '[fathom] Twenty API rate limit retry budget exhausted',
-      );
-    }
-
-    totalWaitMs += delayMs;
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-  }
+  };
 };

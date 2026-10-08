@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 const mocks = vi.hoisted(() => ({
   coreApiClientConstructor: vi.fn(),
@@ -21,7 +20,7 @@ describe('createFathomCoreApiClient', () => {
 
     expect(mocks.coreApiClientConstructor).toHaveBeenCalledExactlyOnceWith({
       runAs: 'application',
-      fetch: fetchWithRateLimitRetry,
+      fetch: expect.any(Function),
     });
   });
 });

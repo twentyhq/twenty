@@ -1,6 +1,9 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
+import { createFetchWithRateLimitRetry } from 'src/logic-functions/utils/create-fetch-with-rate-limit-retry.util';
 
 export const createFathomCoreApiClient = (): CoreApiClient =>
-  new CoreApiClient({ runAs: 'application', fetch: fetchWithRateLimitRetry });
+  new CoreApiClient({
+    runAs: 'application',
+    fetch: createFetchWithRateLimitRetry(),
+  });

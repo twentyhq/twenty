@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
-import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
+import { createFetchWithRateLimitRetry } from 'src/logic-functions/utils/create-fetch-with-rate-limit-retry.util';
 
 const fetchMock = vi.fn<typeof fetch>();
+let fetchWithRateLimitRetry: typeof fetch;
 const OPTIONS = {
   method: 'POST',
   body: JSON.stringify({ query: 'mutation { cancel }' }),
@@ -18,6 +19,7 @@ beforeEach(() => {
   vi.spyOn(Math, 'random').mockReturnValue(0);
   fetchMock.mockReset();
   vi.stubGlobal('fetch', fetchMock);
+  fetchWithRateLimitRetry = createFetchWithRateLimitRetry();
 });
 
 afterEach(() => {
@@ -26,7 +28,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('fetchWithRateLimitRetry', () => {
+describe('createFetchWithRateLimitRetry', () => {
   it('waits for GraphQL retryAfterMs and retries only the throttled request', async () => {
     fetchMock
       .mockImplementationOnce(async () => rateLimitedResponse(15_000))
@@ -80,6 +82,32 @@ describe('fetchWithRateLimitRetry', () => {
     await vi.advanceTimersByTimeAsync(120_000);
     await assertion;
     expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('shares the wait budget across the requests of one run', async () => {
+    fetchMock
+      .mockImplementationOnce(async () => rateLimitedResponse(60_000))
+      .mockImplementationOnce(async () => Response.json({ data: {} }))
+      .mockImplementationOnce(async () => rateLimitedResponse(60_000))
+      .mockImplementationOnce(async () => Response.json({ data: {} }))
+      .mockImplementationOnce(async () => rateLimitedResponse(60_000));
+    const firstRequest = fetchWithRateLimitRetry(
+      'https://example.test/graphql',
+      OPTIONS,
+    );
+    await vi.advanceTimersByTimeAsync(60_000);
+    await firstRequest;
+    const secondRequest = fetchWithRateLimitRetry(
+      'https://example.test/graphql',
+      OPTIONS,
+    );
+    await vi.advanceTimersByTimeAsync(60_000);
+    await secondRequest;
+
+    await expect(
+      fetchWithRateLimitRetry('https://example.test/graphql', OPTIONS),
+    ).rejects.toBeInstanceOf(RetryableLogicFunctionError);
+    expect(fetchMock).toHaveBeenCalledTimes(5);
   });
 
   it('does not replay a partially successful mutation', async () => {

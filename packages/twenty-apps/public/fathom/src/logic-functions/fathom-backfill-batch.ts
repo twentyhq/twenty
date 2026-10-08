@@ -116,10 +116,7 @@ export const fathomBackfillBatchHandler = async (
     } catch (error) {
       const operation = `sync recording ${serializedMeeting.recordingId}`;
 
-      if (
-        !(error instanceof RetryableLogicFunctionError) &&
-        !(error instanceof TypeError)
-      ) {
+      if (!(error instanceof RetryableLogicFunctionError)) {
         throw buildRetryableFathomError({ operation, error });
       }
 
