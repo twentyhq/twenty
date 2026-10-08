@@ -139,8 +139,7 @@ installElementClickMethodPolyfill(HTMLElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 installFileInputActivationPolyfill({
   elementPrototype: HTMLElement.prototype,
-  inputElementPrototype:
-    HtmlInputElement.prototype as unknown as HTMLInputElement,
+  inputElementPrototype: HtmlInputElement.prototype,
   activation: workerFileInputActivation,
 });
 

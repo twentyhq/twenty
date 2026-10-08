@@ -32,9 +32,8 @@ export const wrapEventHandler =
         !nativeHostEventsWithForwardedFormControlState.has(nativeHostEvent),
     });
 
-    serializedEvent.fileInputActivationId = fileInputHost?.captureActivation(
-      nativeHostEvent as Event,
-    );
+    serializedEvent.fileInputActivationId =
+      fileInputHost?.captureActivation(nativeHostEvent);
 
     applyEventDispatchProperties({
       serializedEvent,

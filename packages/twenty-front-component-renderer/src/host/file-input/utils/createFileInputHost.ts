@@ -19,7 +19,9 @@ export const createFileInputHost = ({
 
   return {
     reset,
-    captureActivation: (event: Event): string | undefined => {
+    captureActivation: (
+      event: Partial<Pick<Event, 'type' | 'isTrusted' | 'target'>>,
+    ): string | undefined => {
       const isOwnedTarget = isDefined(
         geometryTracker.findRemoteElementIdContainingNode(event.target),
       );

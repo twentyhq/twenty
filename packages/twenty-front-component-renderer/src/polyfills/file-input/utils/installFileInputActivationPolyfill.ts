@@ -7,23 +7,25 @@ import { type createWorkerFileInputActivation } from '@/polyfills/file-input/uti
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { isElementDisabled } from '@/polyfills/selectors/utils/isElementDisabled';
 
+type FileInputElement = Element & SelectorElementLike & { type?: string };
+
 export const installFileInputActivationPolyfill = ({
   elementPrototype,
   inputElementPrototype,
   activation,
 }: {
-  elementPrototype: HTMLElement;
-  inputElementPrototype: HTMLInputElement;
+  elementPrototype: Pick<EventTarget, 'dispatchEvent'>;
+  inputElementPrototype: Pick<HTMLElement, 'click'>;
   activation: ReturnType<typeof createWorkerFileInputActivation>;
 }): void => {
   const dispatchEvent = elementPrototype.dispatchEvent;
   const click = inputElementPrototype.click;
-  const inputsWithClickInProgress = new WeakSet<HTMLInputElement>();
+  const inputsWithClickInProgress = new WeakSet<FileInputElement>();
 
   Object.defineProperty(elementPrototype, 'dispatchEvent', {
     configurable: true,
     writable: true,
-    value: function (this: HTMLElement, event: Event): boolean {
+    value: function (this: EventTarget, event: Event): boolean {
       return activation.dispatch({
         event,
         dispatch: () => dispatchEvent.call(this, event),
@@ -34,7 +36,7 @@ export const installFileInputActivationPolyfill = ({
   Object.defineProperty(inputElementPrototype, 'click', {
     configurable: true,
     writable: true,
-    value: function (this: HTMLInputElement & SelectorElementLike): void {
+    value: function (this: FileInputElement): void {
       if (this.type !== 'file') {
         click.call(this);
         return;

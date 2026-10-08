@@ -18,7 +18,7 @@ const createFixture = () => {
     type: 'click',
     isTrusted: true,
     target: button,
-  } as unknown as Event;
+  };
   return { host, input, button, click, trustedClick };
 };
 
@@ -44,14 +44,14 @@ describe('createFileInputHost', () => {
       host.captureActivation({
         ...trustedClick,
         target: document.body,
-      } as Event),
+      }),
     ).toBeUndefined();
     expect(
       host.captureActivation({
         type: 'keydown',
         isTrusted: true,
         target: button,
-      } as unknown as Event),
+      }),
     ).toBeUndefined();
     userActivation.isActive = false;
     expect(host.captureActivation(trustedClick)).toBeUndefined();
