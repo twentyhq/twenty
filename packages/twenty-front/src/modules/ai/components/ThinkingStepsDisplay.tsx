@@ -2,12 +2,14 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
+import { formatAgentChatWorkDuration } from '@/ai/utils/formatAgentChatWorkDuration';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
@@ -160,11 +162,13 @@ export const ThinkingStepsDisplay = ({
   isLastMessageStreaming,
   hasAssistantTextResponseStarted,
   isTrailingWhileStreaming = false,
+  workDurationMs,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted: boolean;
   isTrailingWhileStreaming?: boolean;
+  workDurationMs?: number | null;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -198,10 +202,12 @@ export const ThinkingStepsDisplay = ({
             <IconChevronRight size={14} />
           </StyledSummaryChevronContainer>
           <StyledSummaryText>
-            {plural(stepCount, {
-              one: '# step',
-              other: '# steps',
-            })}
+            {isDefined(workDurationMs)
+              ? t`Worked for ${formatAgentChatWorkDuration(workDurationMs)}`
+              : plural(stepCount, {
+                  one: '# step',
+                  other: '# steps',
+                })}
           </StyledSummaryText>
         </StyledSummaryButton>
       )}

@@ -14,6 +14,7 @@ import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/age
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -229,6 +230,10 @@ export const AiChatMessage = ({
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
       shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
+      workDurationMs={getAgentChatMessageWorkDurationMs({
+        metadata: agentChatMessage.metadata,
+        isStreaming: isLastMessageStreaming,
+      })}
     />
   );
 
