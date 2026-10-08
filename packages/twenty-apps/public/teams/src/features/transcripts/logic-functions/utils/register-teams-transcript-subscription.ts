@@ -55,9 +55,12 @@ const discardCreatedSubscription = async ({
   subscriptionKvKey: string;
   connectionKvKey: string;
 }): Promise<void> => {
-  await deleteTeamsTranscriptSubscription({ accessToken, subscriptionId });
-  await kv.delete(subscriptionKvKey);
-  await kv.delete(connectionKvKey, { scope: 'SERVER' });
+  try {
+    await deleteTeamsTranscriptSubscription({ accessToken, subscriptionId });
+  } finally {
+    await kv.delete(subscriptionKvKey);
+    await kv.delete(connectionKvKey, { scope: 'SERVER' });
+  }
 };
 
 const isTeamsConnectionListed = async (
