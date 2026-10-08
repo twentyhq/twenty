@@ -106,7 +106,7 @@ const SettingsNewObject = lazy(() =>
 );
 
 const SettingsNewImapSmtpCaldavConnection = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection').then(
+  import('~/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection').then(
     (module) => ({
       default: module.SettingsAccountsNewImapSmtpCaldavConnection,
     }),
@@ -114,7 +114,7 @@ const SettingsNewImapSmtpCaldavConnection = lazy(() =>
 );
 
 const SettingsEditImapSmtpCaldavConnection = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection').then(
+  import('~/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection').then(
     (module) => ({
       default: module.SettingsAccountsEditImapSmtpCaldavConnection,
     }),
@@ -122,7 +122,7 @@ const SettingsEditImapSmtpCaldavConnection = lazy(() =>
 );
 
 const SettingsNewEmailGroupChannel = lazy(() =>
-  import('@/settings/accounts/components/SettingsAccountsNewEmailGroupChannel').then(
+  import('~/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel').then(
     (module) => ({
       default: module.SettingsAccountsNewEmailGroupChannel,
     }),

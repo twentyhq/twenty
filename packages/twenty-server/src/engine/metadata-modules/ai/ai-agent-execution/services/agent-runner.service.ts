@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  ASK_QUESTION_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
-  type AgentRunSummary,
-} from 'twenty-shared/ai';
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -25,8 +21,6 @@ import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
@@ -136,8 +130,6 @@ export class AgentRunnerService {
             workspaceId,
             caller,
           }),
-          resolveCreatedBy: () =>
-            handler.resolveTurnAuthor({ workspaceId, caller }),
         },
         suspension,
       });
@@ -215,7 +207,7 @@ export class AgentRunnerService {
 
     const turnId = await this.tryRecording(
       `record the agent turn in thread ${threadId}`,
-      async () =>
+      () =>
         this.agentRunConversationService.openTurn({
           workspaceId,
           threadId,
@@ -223,7 +215,7 @@ export class AgentRunnerService {
           agentId,
           senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
           senderApplicationId: prompt?.senderApplicationId ?? null,
-          createdBy: await input.resolveCreatedBy(),
+          createdBy: executionContext.turnCreatedBy,
           messages: prompt?.messages ?? [],
         }),
     );
@@ -246,28 +238,12 @@ export class AgentRunnerService {
             AGENT_WAIT_PROMPT,
             ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
           ].join('\n\n'),
-          pausingTools: {
-            ...createAgentWaitTools(),
-            ...(spec.capabilities.canAskHumans
-              ? {
-                  [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                    isWorkspaceSetupThread: false,
-                  }),
-                  [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-                }
-              : {}),
-          },
-          canProposeToolCalls: spec.capabilities.canProposeToolCalls,
-          actorContext: executionContext.actorContext,
-          authContext: executionContext.authContext,
+          pausingTools: createAgentWaitTools(),
+          canAskHumans: spec.capabilities.canAskHumans,
           workspaceId,
-          userWorkspaceId: executionContext.userWorkspaceId,
-          runAsRoleId: executionContext.runAsRoleId,
-          additionalRoleRestrictionIds:
-            executionContext.additionalRoleRestrictionIds,
+          executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
           toolLoadingStrategy: spec.toolLoadingStrategy,
-          usageOperationType: executionContext.usageOperationType,
         }),
       );
     } catch (error) {

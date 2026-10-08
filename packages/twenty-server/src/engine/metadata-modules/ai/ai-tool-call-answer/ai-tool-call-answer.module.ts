@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
@@ -16,6 +17,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AiAgentExecutionModule,
     AiChatModule,
     AgentChatStreamStateModule,
+    AgentChatThreadLifecycleModule,
     PermissionsModule,
     ToolProviderModule,
   ],

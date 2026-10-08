@@ -10,7 +10,7 @@ const CREATED_BY = {
   name: 'New deals',
   workspaceMemberId: null,
   context: {},
-} as Awaited<ReturnType<AgentRunnerRunInput['resolveCreatedBy']>>;
+} as AgentRunnerRunInput['executionContext']['turnCreatedBy'];
 
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
@@ -58,7 +58,6 @@ const RUN_INPUT: AgentRunnerRunInput = {
     instructions: null,
     capabilities: {
       canAskHumans: false,
-      canProposeToolCalls: false,
     },
   },
   agent: null,
@@ -72,9 +71,9 @@ const RUN_INPUT: AgentRunnerRunInput = {
     userWorkspaceId: 'user-workspace-id',
     rolePermissionConfig: { intersectionOf: [] },
     conversationActor: { type: 'application', applicationId: 'app-id' },
+    turnCreatedBy: CREATED_BY,
     usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
   },
-  resolveCreatedBy: async () => CREATED_BY,
 };
 
 const buildService = (execution = buildExecution()) => {
@@ -160,7 +159,7 @@ describe('AgentRunnerService', () => {
           /^base prompt\n\n.*wait_for_event/,
         ),
         priorMessages: PRIOR_MESSAGES,
-        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        executionContext: RUN_INPUT.executionContext,
       }),
     );
     expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
@@ -170,6 +169,22 @@ describe('AgentRunnerService', () => {
       }),
     );
   });
+
+  it.each([true, false])(
+    'offers every human-input tool only to a run that can ask humans (%s)',
+    async (canAskHumans) => {
+      const { service, agentAsyncExecutorService } = buildService();
+
+      await service.run({
+        ...RUN_INPUT,
+        spec: { ...RUN_INPUT.spec, capabilities: { canAskHumans } },
+      });
+
+      expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+        expect.objectContaining({ canAskHumans }),
+      );
+    },
+  );
 
   it('locks a conversation it just created without reading it', async () => {
     const {
@@ -193,41 +208,23 @@ describe('AgentRunnerService', () => {
     );
   });
 
-  it.each([
-    [
-      'the turn author cannot be resolved',
-      { resolveCreatedBy: jest.fn().mockRejectedValue(new Error('gone')) },
-      {},
-    ],
-    [
-      'the turn cannot be opened',
-      {},
-      { openTurn: jest.fn().mockRejectedValue(new Error('db down')) },
-    ],
-  ])(
-    'still runs the agent when %s',
-    async (_, inputOverrides, conversationOverrides) => {
-      const {
-        service,
-        agentAsyncExecutorService,
-        agentRunConversationService,
-      } = buildService();
+  it('still runs the agent when the turn cannot be opened', async () => {
+    const { service, agentAsyncExecutorService, agentRunConversationService } =
+      buildService();
 
-      Object.assign(agentRunConversationService, conversationOverrides);
+    agentRunConversationService.openTurn.mockRejectedValue(
+      new Error('db down'),
+    );
 
-      const { outcome } = await service.run({
-        ...RUN_INPUT,
-        ...inputOverrides,
-      });
+    const { outcome } = await service.run(RUN_INPUT);
 
-      expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();
-      expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
-      expect(outcome).toEqual({
-        status: 'COMPLETED',
-        result: { answer: 'done' },
-      });
-    },
-  );
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalled();
+    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
+    expect(outcome).toEqual({
+      status: 'COMPLETED',
+      result: { answer: 'done' },
+    });
+  });
 
   it('fails the turn of a run that throws', async () => {
     const { service, agentAsyncExecutorService, agentRunConversationService } =

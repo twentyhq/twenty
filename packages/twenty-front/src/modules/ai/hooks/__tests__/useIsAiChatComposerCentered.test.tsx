@@ -4,11 +4,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
@@ -19,7 +18,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const INSTANCE_ID = 'aiChatComposerCenteredTest';
 const THREAD_ID = AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
 const renderForSurface = ({
@@ -29,13 +27,9 @@ const renderForSurface = ({
 } = {}) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
-      >
-        <AiChatSurfaceContext.Provider value={surface}>
-          {children}
-        </AiChatSurfaceContext.Provider>
-      </AgentChatComponentInstanceContext.Provider>
+      <AiChatSurfaceContext.Provider value={surface}>
+        {children}
+      </AiChatSurfaceContext.Provider>
     </JotaiProvider>
   );
 
@@ -84,10 +78,7 @@ describe('useIsAiChatComposerCentered', () => {
 
     act(() =>
       jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: INSTANCE_ID,
-          familyKey: { threadId: 'draft-thread' },
-        }),
+        agentChatMessagesFamilyState.atomFamily({ threadId: 'draft-thread' }),
         [{ id: 'message-1', role: 'user', parts: [] }],
       ),
     );
@@ -111,10 +102,7 @@ describe('useIsAiChatComposerCentered', () => {
 
   it('should not center the composer once the thread has messages', () => {
     jotaiStore.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: THREAD_ID },
-      }),
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [{ id: 'message-1', role: 'user', parts: [] }],
     );
 

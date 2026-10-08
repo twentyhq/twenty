@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -57,7 +58,9 @@ const renderEffect = (
 
   render(
     <JotaiProvider store={store}>
-      <AgentChatThreadParticipantOperationsEffect />
+      <MockedProvider>
+        <AgentChatThreadParticipantOperationsEffect />
+      </MockedProvider>
     </JotaiProvider>,
   );
 

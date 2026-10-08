@@ -18,6 +18,7 @@ import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-cha
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
+import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -44,6 +45,30 @@ const SNOOZE = parse(
 const buildFutureSnoozedUntil = () =>
   new Date(Date.now() + 30_000).toISOString();
 
+const ASSIGN = parse(
+  `mutation Assign($threadId: UUID!, $assigneeWorkspaceMemberId: UUID) { assignAgentChatThread(threadId: $threadId, assigneeWorkspaceMemberId: $assigneeWorkspaceMemberId) }`,
+);
+
+const assign = (
+  threadId: string,
+  assigneeWorkspaceMemberId: string | null,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeMetadataApiRequest(
+    { query: ASSIGN, variables: { threadId, assigneeWorkspaceMemberId } },
+    token,
+  );
+
+const readAssigneeId = async (threadId: string): Promise<string | null> => {
+  const [{ assigneeId }]: { assigneeId: string | null }[] =
+    await global.testDataSource.query(
+      `SELECT "assigneeId" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+
+  return assigneeId;
+};
+
 const ADD_PARTICIPANTS = parse(
   `mutation AddParticipants($threadId: UUID!, $workspaceMemberIds: [UUID!]!) { addAgentChatThreadParticipants(threadId: $threadId, workspaceMemberIds: $workspaceMemberIds) }`,
 );
@@ -66,6 +91,31 @@ type Participant = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
+};
+
+const OPEN_THREADS_SUMMARY = parse(
+  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread } }`,
+);
+
+type OpenThreadsSummary = {
+  openThreadCount: number;
+  needsInputThreadCount: number;
+  hasUnreadOpenThread: boolean;
+  hasUnreadMentionThread: boolean;
+  hasUnreadAssignedThread: boolean;
+};
+
+const findOpenThreadsSummary = async (
+  token: string = APPLE_JONY_MEMBER_ACCESS_TOKEN,
+): Promise<OpenThreadsSummary> => {
+  const response = await makeMetadataApiRequest(
+    { query: OPEN_THREADS_SUMMARY },
+    token,
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.agentChatOpenThreadsSummary;
 };
 
 const runThreadMutation = (
@@ -946,5 +996,218 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+  });
+
+  it('assigns a chat to a member who could not read it, who then finds it unread in their inbox', async () => {
+    const threadId = await createTestThread();
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await readAssigneeId(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+      lastReadAt: null,
+    });
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+  });
+
+  it('keeps a chat read for a member who assigns it to themselves', async () => {
+    const threadId = await createTestThread();
+
+    await runThreadMutation('archiveAgentChatThread', threadId);
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const participant = await findMyParticipant(threadId);
+
+    expect(participant).toMatchObject({ archivedAt: null, isSubscribed: true });
+    expect(participant!.lastReadAt).not.toBeNull();
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
+    ).toEqual([]);
+  });
+
+  it('keeps the former assignee following the chat once it is unassigned', async () => {
+    const threadId = await createTestThread();
+
+    await assign(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    const response = await assign(threadId, null);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await readAssigneeId(threadId)).toBeNull();
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true });
+  });
+
+  it('refuses to unsubscribe the assignee', async () => {
+    const threadId = await createTestThread();
+
+    await assign(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    const response = await runThreadMutation(
+      'unsubscribeFromAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('CONFLICT');
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true });
+  });
+
+  it('refuses to assign a chat for a member who can only read it', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(await readAssigneeId(threadId)).toBeNull();
+  });
+
+  it('refuses an assignee who cannot reply when the caller cannot share the chat', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithMember({
+      threadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      enabled: true,
+    });
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(await readAssigneeId(threadId)).toBeNull();
+  });
+
+  // Other tests' chats may stay open for the member, so counts are compared
+  // with what they were before
+  it('summarizes the open chats the member can read, from their own rows', async () => {
+    const before = await findOpenThreadsSummary();
+    const threadId = await createTestThread();
+
+    expect(await findOpenThreadsSummary()).toEqual(before);
+
+    await setShareWithJony(threadId, true);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
+      [threadId, randomUUID()],
+    );
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      needsInputThreadCount: before.needsInputThreadCount + 1,
+      hasUnreadOpenThread: true,
+    });
+
+    await runThreadMutation(
+      'markAgentChatThreadAsRead',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(await findOpenThreadsSummary()).toEqual(before);
+  });
+
+  it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
+    const mentionedThreadId = await createTestThread();
+    const assignedThreadId = await createTestThread();
+
+    await addParticipants(mentionedThreadId, [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    ]);
+    await assign(assignedThreadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      hasUnreadMentionThread: true,
+      hasUnreadAssignedThread: true,
+    });
+
+    const unsubscribed = await runThreadMutation(
+      'unsubscribeFromAgentChatThread',
+      mentionedThreadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(unsubscribed.body.errors).toBeUndefined();
+
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      assignedThreadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    const before = await findOpenThreadsSummary();
+
+    // Activity brings back a chat filed under done, but not one the member left
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = ANY($1)`,
+      [[mentionedThreadId, assignedThreadId]],
+    );
+
+    expect((await findOpenThreadsSummary()).openThreadCount).toBe(
+      before.openThreadCount + 1,
+    );
+  });
+
+  it('reads as empty in a workspace the inbox upgrade has not reached', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    jest
+      .spyOn(
+        getAppProviderByClassName<AgentChatSharingService>(
+          'AgentChatSharingService',
+        ),
+        'hasInboxState',
+      )
+      .mockResolvedValue(false);
+
+    expect(await findOpenThreadsSummary()).toEqual({
+      openThreadCount: 0,
+      needsInputThreadCount: 0,
+      hasUnreadOpenThread: false,
+      hasUnreadMentionThread: false,
+      hasUnreadAssignedThread: false,
+    });
   });
 });
