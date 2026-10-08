@@ -43,7 +43,6 @@ export const computeSubscriptionUpdateOptions = (
     case SubscriptionUpdateType.SEATS: {
       const currentSeats = context?.currentSeats ?? subscriptionUpdate.newSeats;
 
-      // Invoice-paying customers get prorations batched by the subscription's pending invoice item interval
       const shouldInvoiceImmediately =
         subscriptionUpdate.newSeats > currentSeats && !context?.isSendInvoice;
 
