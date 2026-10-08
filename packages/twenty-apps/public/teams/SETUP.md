@@ -52,9 +52,15 @@ three credentials before bot operations can run.
 Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 
-Connecting an account does not import transcripts or register webhooks. The
-transcript release flag and workspace setting remain off. Connecting an account
-does not enable them.
+The transcript release flag and workspace setting are off by default, and
+connecting an account does not enable them. With both on, connecting an account
+also creates a Microsoft Graph subscription to the transcripts of the meetings
+that account organizes. Graph delivers its notifications to
+`https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
+so the Twenty server must be reachable from the internet over HTTPS. A
+connection added while transcripts were off has no subscription: reconnect it
+after turning transcripts on. Disconnecting the account or uninstalling the app
+deletes the subscription.
 
 ## Test the transcript actions
 
