@@ -14,7 +14,6 @@ type CallRecordingStatusDisplayConfiguration = {
   subTitle: string;
 };
 
-// Summaries are generated from the transcript, so a terminal transcript marker means no summary will ever arrive.
 const getCompletedCallRecordingSummaryDisplayConfiguration = (
   transcript: WidgetCallRecordingCandidate['transcript'],
 ): CallRecordingStatusDisplayConfiguration => {
