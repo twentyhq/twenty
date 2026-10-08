@@ -40,7 +40,6 @@ export class CacheLockService {
       const token = await this.cacheStorageService.acquireLock(key, ttl);
 
       if (isDefined(token)) {
-        // A critical section that outlives the TTL would otherwise let a second caller in
         const leaseRenewal = setInterval(() => {
           void this.renewLease(key, token, ttl);
         }, ttl / 3);

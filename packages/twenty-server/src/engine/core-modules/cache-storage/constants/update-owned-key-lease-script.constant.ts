@@ -1,6 +1,5 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
-// Owner-checked so a caller whose lease expired cannot extend or delete a key someone else now holds
 export const UPDATE_OWNED_KEY_LEASE_SCRIPT: CacheScript = {
   name: 'update-owned-key-lease',
   source: `
