@@ -97,8 +97,6 @@ export const fathomWebhookHandler = async (
     callRecordingIds: [callRecordingId],
   });
 
-  // Recreating it would collide with the deleted record's id, and a failed
-  // delivery makes Fathom send it again forever.
   if (deletedCallRecordingIds.has(callRecordingId)) {
     return {
       success: true,

@@ -90,7 +90,6 @@ export const fathomSyncCallHandler = async (
       callRecordingIds: [callRecordingId],
     });
 
-    // Recreating it would collide with the deleted record's id.
     if (deletedCallRecordingIds.has(callRecordingId)) {
       return {
         success: true,
