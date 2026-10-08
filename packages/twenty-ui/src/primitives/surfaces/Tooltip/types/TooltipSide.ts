@@ -1,1 +1,3 @@
-export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
+import { type TooltipPositionerProps } from './TooltipPositionerProps';
+
+export type TooltipSide = NonNullable<TooltipPositionerProps['side']>;

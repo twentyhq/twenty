@@ -1,28 +1,21 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { getAiChatThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentAiChatThreadAccess = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const permissions = useAtomFamilySelectorValue(
     agentChatThreadPermissionsFamilySelector,
-    currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    currentAiChatThread ?? '',
   );
-  if (
-    !isDefined(currentAiChatThread) ||
-    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-  ) {
-    return 'writer';
-  }
-  if (!isDefined(permissions?.canUpdate)) {
-    return 'loading';
-  }
-  if (!permissions.canRead) {
-    return 'unavailable';
-  }
-  return permissions.canUpdate ? 'writer' : 'viewer';
+
+  // Before the chat list picks a chat, the composer writes to the new one
+  return getAiChatThreadAccess({
+    isOnNewAiChatSlot: isOnNewAiChatSlot || currentAiChatThread === null,
+    permissions,
+  });
 };

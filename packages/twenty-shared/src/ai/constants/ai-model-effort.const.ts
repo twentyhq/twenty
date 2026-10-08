@@ -1,6 +1,4 @@
-// Every effort level a supported provider accepts, in ascending order. A model
-// lists the subset it takes in the catalog, since the set differs per model even
-// within one provider.
+// Ascending; each model lists its own subset in the catalog since support differs even within a provider.
 export const AI_MODEL_EFFORTS = [
   'none',
   'minimal',

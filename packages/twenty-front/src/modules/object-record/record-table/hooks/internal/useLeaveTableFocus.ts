@@ -1,5 +1,5 @@
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
@@ -15,7 +15,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const { resetTableRowSelection } = useResetTableRowSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
 
   const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
@@ -44,7 +44,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   return () => {
     unfocusRecordTableCell();
 
-    resetTableRowSelection();
+    resetRecordSelection();
 
     unfocusRecordTableRow();
 

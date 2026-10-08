@@ -7,9 +7,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-// Composite properties that carry workspace defaults (currency codes, phone
-// country/calling codes): a stamped default would mask emptiness of the value
-// users actually fill in
+// A stamped workspace default would mask emptiness of the value users actually fill in
 const DEFAULT_BEARING_COMPOSITE_PROPERTIES: Partial<
   Record<FieldMetadataType, string[]>
 > = {
@@ -39,9 +37,6 @@ const getCompositeEmptinessColumnNames = (
     );
 };
 
-// Returns the physical columns whose emptiness determines whether the field is
-// empty, or null for types where emptiness is not meaningful (relations,
-// booleans, system-managed types)
 export const getEmptinessColumnNamesForField = (
   flatFieldMetadata: Pick<FlatFieldMetadata, 'name' | 'type'>,
 ): string[] | null => {

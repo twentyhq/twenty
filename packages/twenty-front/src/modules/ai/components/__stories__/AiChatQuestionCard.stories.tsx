@@ -5,7 +5,6 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
@@ -20,47 +19,42 @@ const StyledContainer = styled.div`
   padding: 24px;
 `;
 
-const INSTANCE_ID = 'agentChatQuestionCardStory';
-
-const singleQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
-  toolCallId: 'call-1',
-  questions: [
+const EMAIL_TYPE_QUESTION = {
+  header: 'Email type',
+  question: 'What type of emails would you like to send?',
+  options: [
     {
-      header: 'Email type',
-      question: 'What type of emails would you like to send?',
-      options: [
-        {
-          label: 'A welcome email',
-          description: 'A short, friendly note to introduce yourself.',
-          isRecommended: true,
-        },
-        { label: 'A presentation of Twenty' },
-        { label: 'An offer for a potential partnership' },
-      ],
+      label: 'A welcome email',
+      description: 'A short, friendly note to introduce yourself.',
+      isRecommended: true,
     },
+    { label: 'A presentation of Twenty' },
+    { label: 'An offer for a potential partnership' },
   ],
 };
 
+const singleQuestion: AgentChatPendingQuestion = {
+  toolCallId: 'call-1',
+  kind: 'question',
+  question: EMAIL_TYPE_QUESTION,
+};
+
+const TONE_QUESTION = {
+  header: 'Tone',
+  question: 'Which tone should the email use?',
+  options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
+};
+
+// calls asked before ask_question took one question at a time
 const multipleQuestions: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
   toolCallId: 'call-2',
-  questions: [
-    singleQuestion.questions[0],
-    {
-      header: 'Tone',
-      question: 'Which tone should the email use?',
-      options: [
-        { label: 'Friendly', isRecommended: true },
-        { label: 'Formal' },
-      ],
-    },
-  ],
+  kind: 'questions',
+  questions: [EMAIL_TYPE_QUESTION, TONE_QUESTION],
 };
 
 const longQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
   toolCallId: 'call-3',
+  kind: 'questions',
   questions: [
     {
       header: 'Improvement',
@@ -73,25 +67,23 @@ const longQuestion: AgentChatPendingQuestion = {
         { label: 'Fewer steps' },
       ],
     },
-    multipleQuestions.questions[1],
+    TONE_QUESTION,
   ],
 };
 
 const multiSelectQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
   toolCallId: 'call-4',
-  questions: [
-    {
-      header: 'Channels',
-      question: 'Which channels should the outreach campaign use?',
-      allowMultiSelect: true,
-      options: [
-        { label: 'Email', isRecommended: true },
-        { label: 'LinkedIn' },
-        { label: 'Phone' },
-      ],
-    },
-  ],
+  kind: 'question',
+  question: {
+    header: 'Channels',
+    question: 'Which channels should the outreach campaign use?',
+    allowMultiSelect: true,
+    options: [
+      { label: 'Email', isRecommended: true },
+      { label: 'LinkedIn' },
+      { label: 'Phone' },
+    ],
+  },
 };
 
 const StoreSeeder = ({ children }: { children: ReactNode }) => {
@@ -110,15 +102,11 @@ const meta: Meta<typeof AiChatQuestionCard> = {
   component: AiChatQuestionCard,
   decorators: [
     (Story) => (
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
-      >
-        <StoreSeeder>
-          <StyledContainer>
-            <Story />
-          </StyledContainer>
-        </StoreSeeder>
-      </AgentChatComponentInstanceContext.Provider>
+      <StoreSeeder>
+        <StyledContainer>
+          <Story />
+        </StyledContainer>
+      </StoreSeeder>
     ),
     ToastDecorator,
     ComponentDecorator,

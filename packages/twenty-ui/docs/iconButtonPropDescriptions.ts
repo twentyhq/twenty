@@ -10,5 +10,8 @@ export const ICON_BUTTON_PROP_DESCRIPTIONS = {
   tooltipPlace: 'Preferred placement of the tooltip relative to the button.',
   tooltipDelay: 'Delay before showing the tooltip.',
   tooltipOffset: 'Distance in pixels between the button and the tooltip.',
-  'aria-label': 'Required accessible name describing the action.',
+  'aria-label':
+    'Accessible name describing the action. Required unless `aria-labelledby` supplies the name.',
+  'aria-labelledby':
+    'ID of the element supplying the accessible name. Can be used instead of `aria-label`.',
 } satisfies Partial<Record<keyof IconButtonProps, string>>;

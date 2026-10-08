@@ -48,15 +48,6 @@
   Shows a chevron indicating that the item opens a submenu.
 </ParamField>
 
-<ParamField body="hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.
-</ParamField>
-
 <ParamField body="indicator" type="&quot;check&quot; | &quot;checkbox&quot; | &quot;none&quot;" default="none">
   Selection indicator: a check icon after the content or a checkbox before
   it.
@@ -72,6 +63,15 @@
 <ParamField body="selected" type="boolean" default="false">
   Whether the item is selected. Shows the check or checkbox indicator when
   `indicator` is set.
+</ParamField>
+
+<ParamField body="shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.
 </ParamField>
 
 <ParamField body="startIcon" type="ReactNode">

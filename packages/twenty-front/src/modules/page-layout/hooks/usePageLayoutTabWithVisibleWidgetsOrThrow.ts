@@ -3,7 +3,6 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
-import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,8 +17,6 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
 
   const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
-  // Memoized because consumers feed this widget array to dnd-kit and to
-  // memoized callbacks, which a fresh array on every render would defeat.
   const tabWithVisibleWidgets = useMemo(() => {
     if (!isDefined(tab)) {
       return undefined;
@@ -28,12 +25,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
     const widgets = isPageLayoutInEditMode
-      ? activeWidgets.filter((widget) =>
-          isWidgetEnabledByFeatureFlags({
-            widget,
-            featureFlags: widgetVisibilityContext.featureFlags,
-          }),
-        )
+      ? activeWidgets
       : filterVisibleWidgets({
           widgets: activeWidgets,
           context: widgetVisibilityContext,

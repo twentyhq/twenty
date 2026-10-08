@@ -15,7 +15,7 @@ import {
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {
   PageDecorator,
@@ -117,7 +117,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Import your contacts');
-    await canvas.findByText('Earn +2');
+    expect(await canvas.findAllByText('+2')).toHaveLength(2);
   },
 };
 
@@ -130,7 +130,7 @@ export const InvitedUser: Story = {
     await canvas.findByText('Import your contacts');
     await canvas.findByRole('button', { name: 'Continue with Google' });
     await canvas.findByRole('button', { name: 'Continue with Microsoft' });
-    expect(canvas.queryByText('Earn +2')).not.toBeInTheDocument();
+    expect(canvas.queryByText('+2')).not.toBeInTheDocument();
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
       OnboardingStatus.SYNC_EMAIL,
     );

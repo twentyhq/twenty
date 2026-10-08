@@ -6,7 +6,10 @@ import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkf
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type GetJsonNodeHighlighting, JsonTree } from 'twenty-ui/components';
+import {
+  type GetJsonNodeHighlighting,
+  JsonTree,
+} from 'twenty-ui/components/data-display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {

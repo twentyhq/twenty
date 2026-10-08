@@ -1,5 +1,5 @@
 import type { PartialBlock } from '@blocknote/core';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getFirstNonEmptyLineOfRichText = (
   blocks: PartialBlock[] | null,
@@ -8,7 +8,7 @@ export const getFirstNonEmptyLineOfRichText = (
     return '';
   }
   for (const block of blocks) {
-    if (!isUndefinedOrNull(block.content)) {
+    if (isDefined(block.content)) {
       const contentArray = Array.isArray(block.content)
         ? (block.content as Array<{ text: string } | { link: string }>)
         : [block.content as { text: string } | { link: string } | string];

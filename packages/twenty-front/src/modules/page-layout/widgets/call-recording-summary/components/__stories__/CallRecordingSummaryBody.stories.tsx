@@ -163,9 +163,7 @@ export const Loading: Story = {
   },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
-      expect(
-        canvasElement.querySelector('.react-loading-skeleton'),
-      ).toBeVisible();
+      expect(canvasElement.querySelector('[data-skeleton]')).toBeVisible();
     });
   },
 };

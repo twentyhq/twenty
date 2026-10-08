@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
@@ -10,8 +10,7 @@ export const useDetachChatThreadFromRecord = () => {
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
   });
 
-  // Takes every link between the conversation and the record: a custom leg
-  // carries no unique index, so there can be more than one.
+  // A custom leg has no unique index, so there can be several links.
   const detachChatThreadFromRecord = async (linkIds: string[]) => {
     try {
       await deleteLinks({ recordIdsToDelete: linkIds });

@@ -19,13 +19,11 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import {
-  Dropdown,
-  SearchInput,
-  Section,
-  SettingsRow,
-  useToast,
-} from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -210,7 +208,7 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={setSearchQuery}
+          onValueChange={setSearchQuery}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-admin-apps-filter-dropdown"

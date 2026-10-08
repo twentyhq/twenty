@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Section } from 'twenty-ui/components';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
-import { Button } from 'twenty-ui/primitives/input';
-import { Heading, Text } from 'twenty-ui/primitives/typography';
+import { SectionExample } from './section-example';
+import { TypographyCompositionExample } from './typography-composition-example';
+import { VisuallyHiddenExample } from './visually-hidden-example';
+import {
+  Heading,
+  Text,
+  Shortcut,
+  formatShortcut,
+} from 'twenty-ui/primitives/typography';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -11,26 +16,23 @@ import {
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
 
-const SectionExample = () => {
-  const [activations, setActivations] = useState(0);
-
-  return (
-    <Section.Root>
-      <Section.Header
-        title="Workspace preferences"
-        description="Manage the settings for your workspace."
-        adornment={
-          <Button onClick={() => setActivations((count) => count + 1)}>
-            Edit workspace
-          </Button>
-        }
-      />
-      <Text aria-label="Workspace edits">{activations}</Text>
-    </Section.Root>
-  );
-};
-
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
+  { name: 'Typography composition', node: <TypographyCompositionExample /> },
+  {
+    name: 'Shortcut',
+    node: (
+      <>
+        <Shortcut shortcut={['Mod', 'K']} platform="mac" />
+        <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="next" />
+        <Text>
+          {formatShortcut({
+            shortcut: ['Mod', 'K'],
+            platform: 'other',
+          })}
+        </Text>
+      </>
+    ),
+  },
   {
     name: 'Heading',
     node: (
@@ -52,8 +54,8 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'VisibilityHidden',
-    node: <VisibilityHidden>Screen-reader only</VisibilityHidden>,
+    name: 'VisuallyHidden',
+    node: <VisuallyHiddenExample />,
   },
 ];
 

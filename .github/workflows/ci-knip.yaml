@@ -22,10 +22,13 @@ jobs:
     with:
       files: |
         knip.json
+        nx.json
         package.json
         yarn.lock
         packages/twenty-front/**
+        packages/twenty-front-component-renderer/**
         packages/twenty-server/**
+        packages/twenty-shared/**
         packages/twenty-ui/**
   knip:
     needs: changed-files-check
@@ -46,5 +49,5 @@ jobs:
     needs: [changed-files-check, knip]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

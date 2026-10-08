@@ -1,21 +1,23 @@
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 /* @license Enterprise */
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -26,6 +28,9 @@ import { type RecordShareStorageService } from 'src/engine/core-modules/record-s
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 describe('recordShare object', () => {
   let recordShareStorageService: RecordShareStorageService;
@@ -63,11 +68,6 @@ describe('recordShare object', () => {
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -155,8 +155,6 @@ describe('recordShare object', () => {
   });
 
   it('keeps the grants of a deleted thread until a new thread reuses its id', async () => {
-    const chatService =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const metadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
     ).findOneOrFail({
@@ -171,13 +169,21 @@ describe('recordShare object', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       threadId: randomUUID(),
     };
+    const { token: timAccessToken } =
+      await getAppProviderByClassName<AccessTokenService>(
+        'AccessTokenService',
+      ).generateAccessToken({
+        userId: USER_DATA_SEED_IDS.TIM,
+        workspaceId: args.workspaceId,
+        authProvider: AuthProviderEnum.Password,
+      });
     const readGrants = () =>
       recordShareStorageService.findByRecordIds({
         workspaceId: args.workspaceId,
         objectMetadataId: metadata.id,
         recordIds: [args.threadId],
       });
-    await chatService.createThread({
+    await getAgentChatThreadService().createThread({
       ...args,
       id: args.threadId,
       title: 'Deleted thread grants test',
@@ -193,11 +199,16 @@ describe('recordShare object', () => {
       },
     });
     try {
-      await chatService.hardDeleteThread(args);
-      await expect(chatService.findWritableThread(args)).resolves.toBeNull();
+      await destroyAgentChatThread({
+        threadId: args.threadId,
+        token: timAccessToken,
+      });
+      await expect(
+        getAgentChatThreadService().findWritableThread(args),
+      ).resolves.toBeNull();
       await expect(readGrants()).resolves.toHaveLength(2);
 
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...args,
         id: args.threadId,
         title: 'Thread reusing a deleted id',
@@ -207,8 +218,11 @@ describe('recordShare object', () => {
         RecordShareRowCause.OWNER,
       ]);
     } finally {
-      if (await chatService.findWritableThread(args)) {
-        await chatService.hardDeleteThread(args);
+      if (await getAgentChatThreadService().findWritableThread(args)) {
+        await destroyAgentChatThread({
+          threadId: args.threadId,
+          token: timAccessToken,
+        });
       }
       await recordShareStorageService.deleteByRecordIds({
         workspaceId: args.workspaceId,
@@ -218,27 +232,18 @@ describe('recordShare object', () => {
     }
   });
 
-  it.each([false, true])(
-    'refuses reads through the GraphQL API even for an admin when record sharing is %s',
-    async (isRecordSharingEnabled) => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-        value: isRecordSharingEnabled,
-        expectToFail: false,
-      });
+  it('refuses reads through the GraphQL API even for an admin', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'recordShare',
+        objectMetadataPluralName: 'recordShares',
+        gqlFields: 'id',
+      }),
+    );
 
-      const response = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'recordShare',
-          objectMetadataPluralName: 'recordShares',
-          gqlFields: 'id',
-        }),
-      );
-
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not readable');
-    },
-  );
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not readable');
+  });
 
   it('refuses creation through the GraphQL API even for an admin', async () => {
     const response = await makeGraphqlApiRequest(

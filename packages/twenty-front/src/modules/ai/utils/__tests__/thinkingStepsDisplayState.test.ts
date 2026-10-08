@@ -4,7 +4,7 @@ import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent'
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 const createReasoningPart = ({
   state = 'done',

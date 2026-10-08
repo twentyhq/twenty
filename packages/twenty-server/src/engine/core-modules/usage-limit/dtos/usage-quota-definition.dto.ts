@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { UsageLimitOperationDefinitionDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit-operation-definition.dto';
+import { UsageQuotaOperatorOnlyScopeDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-quota-operator-only-scope.dto';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 @ObjectType('UsageQuotaDefinition')
@@ -14,12 +14,12 @@ export class UsageQuotaDefinitionDTO {
   @Field(() => String)
   limitKind: LimitKind;
 
-  @Field(() => [UsageOperationType])
-  allowedOperationTypes: UsageOperationType[];
+  @Field(() => [UsageLimitOperationDefinitionDTO])
+  allowedOperations: UsageLimitOperationDefinitionDTO[];
 
   @Field(() => [String])
   allowedSpenderTypes: SpenderType[];
 
-  @Field(() => [String])
-  allowedMeters: UsageMeter[];
+  @Field(() => [UsageQuotaOperatorOnlyScopeDTO])
+  operatorOnlyScopes: UsageQuotaOperatorOnlyScopeDTO[];
 }

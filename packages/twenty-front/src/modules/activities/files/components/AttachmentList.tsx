@@ -23,7 +23,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
@@ -179,10 +179,10 @@ export const AttachmentList = ({
           onClose={handleClosePreview}
           renderInDocumentBody
         >
-          {({ container, backdrop, viewportProps, onKeyDown }) => (
+          {({ onKeyDown }) => (
             <Dialog.Popup
               aria-label={previewedAttachment.name}
-              {...{ container, backdrop, viewportProps, onKeyDown }}
+              onKeyDown={onKeyDown}
               size="lg"
               style={{
                 padding: 'var(--t-spacing-2)',

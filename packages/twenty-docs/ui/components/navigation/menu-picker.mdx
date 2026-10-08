@@ -1,0 +1,34 @@
+---
+title: MenuPicker
+description: A compact icon button with selected styling and an optional tooltip.
+---
+
+import MenuPickerReference from '/snippets/ui/generated/components/navigation/menu-picker.mdx';
+
+`MenuPicker` renders a native button. Your application owns `selected` and the action. `selected` also controls `aria-pressed`.
+
+```tsx
+import { useState } from 'react';
+import { MenuPicker } from 'twenty-ui/components/navigation';
+import { IconLayoutKanban } from 'twenty-ui/icon';
+
+export const BoardToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <MenuPicker
+      id="board-toggle"
+      icon={IconLayoutKanban}
+      label="Board view"
+      selected={selected}
+      onClick={() => setSelected(!selected)}
+    />
+  );
+};
+```
+
+Keep `label` even with `showLabel={false}` because it supplies the accessible name. `tooltipContent` adds a supplementary explanation. `disabled` prevents activation. Place the button outside a form unless its default native submission behavior is appropriate.
+
+## Props
+
+<MenuPickerReference />

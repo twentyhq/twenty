@@ -1,28 +1,40 @@
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { useUpdateDroppedRecordOnBoard } from '@/object-record/record-drag/hooks/useUpdateDroppedRecordOnBoard';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
+import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
+import { computeDroppedRecordPositions } from '@/object-record/record-drag/utils/computeDroppedRecordPositions';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useDebouncedCallback } from 'use-debounce';
 
 export const useProcessBoardCardDrop = () => {
   const store = useStore();
   const { selectFieldMetadataItem } = useContext(RecordBoardContext);
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const { openDialog } = useDialog();
+  const { updateDroppedRecordOnBoard } = useUpdateDroppedRecordOnBoard();
 
-  const recordIndexRecordIdsByGroupCallbackFamilyState =
+  const recordIdsByGroupCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
-
-  const { updateDroppedRecordOnBoard } = useUpdateDroppedRecordOnBoard();
-
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
+    draggedRecordIdsComponentState,
+  );
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
+    currentRecordSortsComponentState,
+  );
   const isRecordBoardDropProcessingCallbackState =
     useAtomComponentStateCallbackState(
       isRecordBoardDropProcessingComponentState,
@@ -39,48 +51,70 @@ export const useProcessBoardCardDrop = () => {
   );
 
   const processBoardCardDrop = useCallback(
-    (
-      droppableId: string,
-      draggableId: string,
-      targetIndex: number,
-      selectedRecordIds: string[],
-      options?: { shouldUpdatePosition?: boolean },
-    ) => {
-      if (!isDefined(selectFieldMetadataItem)) return;
+    ({
+      draggedRecordId,
+      sourceDroppableId,
+      destinationDroppableId,
+      destinationIndex,
+    }: RecordDragDropResult) => {
+      if (!isDefined(selectFieldMetadataItem)) {
+        return;
+      }
 
-      const shouldUpdatePosition = options?.shouldUpdatePosition ?? true;
+      const hasRecordSorts =
+        store.get(currentRecordSortsCallbackState).length > 0;
 
-      processGroupDrop({
-        droppableId,
-        draggableId,
-        targetIndex,
-        store,
-        selectedRecordIds,
-        recordIdsByGroupFamilyState:
-          recordIndexRecordIdsByGroupCallbackFamilyState,
-        onUpdateRecord: ({ recordId, position }, targetRecordGroupValue) => {
+      // A sorted board can still move a card to another column, only not
+      // reorder it within one
+      if (hasRecordSorts && sourceDroppableId === destinationDroppableId) {
+        openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
+        return;
+      }
+
+      const destinationRecordGroup = store.get(
+        recordGroupDefinitionFamilyState.atomFamily(destinationDroppableId),
+      );
+
+      if (!isDefined(destinationRecordGroup)) {
+        throw new Error('Record group is not defined');
+      }
+
+      store.set(isRecordBoardDropProcessingCallbackState, true);
+
+      try {
+        const updatedRecords = computeDroppedRecordPositions({
+          destinationRecordIds: store.get(
+            recordIdsByGroupCallbackState(destinationDroppableId),
+          ),
+          destinationIndex,
+          draggedRecordId,
+          draggedRecordIds: store.get(draggedRecordIdsCallbackState),
+          store,
+        });
+
+        for (const { id, position } of updatedRecords) {
           updateDroppedRecordOnBoard(
-            {
-              recordId,
-              position: shouldUpdatePosition ? position : undefined,
-            },
-            targetRecordGroupValue,
+            { recordId: id, position: hasRecordSorts ? undefined : position },
+            destinationRecordGroup.value,
           );
-        },
-      });
-
-      debouncedUpdateDropProcessing(false);
+        }
+      } finally {
+        debouncedUpdateDropProcessing(false);
+      }
     },
     [
       store,
       selectFieldMetadataItem,
-      recordIndexRecordIdsByGroupCallbackFamilyState,
+      recordIndexId,
+      openDialog,
       updateDroppedRecordOnBoard,
       debouncedUpdateDropProcessing,
+      recordIdsByGroupCallbackState,
+      draggedRecordIdsCallbackState,
+      currentRecordSortsCallbackState,
+      isRecordBoardDropProcessingCallbackState,
     ],
   );
 
-  return {
-    processBoardCardDrop,
-  };
+  return { processBoardCardDrop };
 };

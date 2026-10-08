@@ -12,7 +12,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock, SearchInput, Section } from 'twenty-ui/components';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -27,6 +29,7 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -97,18 +100,17 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
-        <CommandBlock commands={createCommands} button={createCopyButton} />
+        <CommandBlock commands={createCommands} actions={createCopyButton} />
         <StyledButtonContainer>
           <Button
             startIcon={<IconArrowUpRight />}
             size="sm"
             onClick={() =>
-              window.open(
+              openUrlInNewTab(
                 getDocumentationUrl({
                   locale: currentWorkspaceMember?.locale,
                   path: '/developers/extend/apps/getting-started',
                 }),
-                '_blank',
               )
             }
             variant="outline"
@@ -128,7 +130,7 @@ export const SettingsApplicationsDeveloperTab = () => {
             <SearchInput
               placeholder={t`Search an application`}
               value={myAppsSearchTerm}
-              onChange={setMyAppsSearchTerm}
+              onValueChange={setMyAppsSearchTerm}
             />
           </StyledSearchInputContainer>
           <Table>

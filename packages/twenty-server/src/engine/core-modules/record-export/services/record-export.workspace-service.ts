@@ -68,7 +68,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 
 export type RecordExportQueryContext = {
@@ -77,16 +77,17 @@ export type RecordExportQueryContext = {
   selectedFields: CommonSelectedFields;
 };
 
-const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheKeyName[] = [
-  'rolesPermissions',
-  'userWorkspaceRoleMap',
-  'flatRoleMaps',
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-  'flatWorkspaceMemberMaps',
-  'flatObjectMetadataMaps',
-  'flatFieldMetadataMaps',
-];
+const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
+  [
+    'rolesPermissions',
+    'userWorkspaceRoleMap',
+    'flatRoleMaps',
+    'flatRowLevelPermissionPredicateMaps',
+    'flatRowLevelPermissionPredicateGroupMaps',
+    'flatWorkspaceMemberMaps',
+    'flatObjectMetadataMaps',
+    'flatFieldMetadataMaps',
+  ];
 
 const recordExportProgressSchema = z.object({
   processedRecordCount: z.number().int().nonnegative(),

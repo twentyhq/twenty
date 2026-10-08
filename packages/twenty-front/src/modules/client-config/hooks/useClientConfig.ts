@@ -214,6 +214,7 @@ export const useClientConfig = (): UseClientConfigResult => {
           defaultSubdomain: clientConfig?.defaultSubdomain,
           frontDomain: clientConfig?.frontDomain,
           publicFunctionDomain: clientConfig?.publicFunctionDomain,
+          serverUrl: clientConfig?.serverUrl,
         });
         setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
         setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);

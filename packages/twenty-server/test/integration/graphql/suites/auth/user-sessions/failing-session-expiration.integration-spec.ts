@@ -15,8 +15,7 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-// Sessions created here are never resolved before the row is tampered with,
-// so the read-through cache holds no entry and the checks hit the database.
+// Never resolved before tampering, so the read-through cache is empty and checks hit the database.
 describe('failing session expiration (integration)', () => {
   const signInAndTamper = async (
     tamper: Partial<Pick<UserSessionEntity, 'expiresAt' | 'lastActiveAt'>>,
@@ -62,8 +61,7 @@ describe('failing session expiration (integration)', () => {
   });
 
   it('should reject a session past the idle timeout and clear the cookie', async () => {
-    // 31 days idle exceeds the 30d SESSION_IDLE_TIMEOUT while the absolute
-    // 180d lifetime is still far in the future.
+    // Past the 30d SESSION_IDLE_TIMEOUT but well within the 180d absolute lifetime.
     const sessionCookieHeader = await signInAndTamper({
       lastActiveAt: new Date(Date.now() - 31 * ONE_DAY_MS),
     });

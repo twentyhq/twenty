@@ -6,8 +6,8 @@ import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchem
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type ColorScheme } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 type BaseThemeProviderProps = {
   children: JSX.Element | JSX.Element[];

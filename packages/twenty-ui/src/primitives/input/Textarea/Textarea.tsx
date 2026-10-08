@@ -6,18 +6,19 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { TextareaControl } from './internal/TextareaControl';
 import { formatInlineBlockSize } from './internal/formatInlineBlockSize';
 import { mergeRefs } from './internal/mergeRefs';
+import { observeTextareaWidth } from './internal/observeTextareaWidth';
 import { resizeTextareaToContent } from './internal/resizeTextareaToContent';
 import styles from './Textarea.module.scss';
 import { type TextareaProps } from './types/TextareaProps';
-
-const TEXTAREA_RENDER_ELEMENT = <textarea />;
 
 export const Textarea = ({
   size = 'md',
@@ -26,35 +27,63 @@ export const Textarea = ({
   className,
   style,
   ref,
-  render = TEXTAREA_RENDER_ELEMENT,
+  render,
   onChange,
   value,
   rows,
   ...props
 }: TextareaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  // Base UI re-forks a merged ref whenever its identity changes, which would detach and reattach it on every render.
-  const mergedRef = useMemo(() => mergeRefs(ref, textareaRef), [ref]);
+  const [textarea, setTextarea] = useState<HTMLTextAreaElement | null>(null);
+  const mergedRef = useMemo(() => mergeRefs(ref, setTextarea), [ref]);
   const isControlled = isDefined(value);
   const consumerBlockSize = style?.blockSize;
+  const wasAutoResize = useRef(false);
 
   useLayoutEffect(() => {
-    const textarea = textareaRef.current;
-
     if (!isDefined(textarea)) {
       return;
     }
 
-    if (!autoResize) {
-      textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
+    const shouldRestoreBlockSize = wasAutoResize.current;
+    wasAutoResize.current = autoResize;
+
+    if (autoResize) {
+      resizeTextareaToContent(textarea);
       return;
     }
 
-    resizeTextareaToContent(textarea);
-  }, [autoResize, value, maxRows, rows, consumerBlockSize]);
+    if (shouldRestoreBlockSize) {
+      textarea.style.blockSize = formatInlineBlockSize(consumerBlockSize);
+    }
+  }, [textarea, autoResize, value, maxRows, rows, size, consumerBlockSize]);
+
+  useLayoutEffect(() => {
+    if (!autoResize || !isDefined(textarea)) {
+      return;
+    }
+
+    let isActive = true;
+    const handleReset = (event: Event) => {
+      requestAnimationFrame(() => {
+        if (isActive && !event.defaultPrevented) {
+          resizeTextareaToContent(textarea);
+        }
+      });
+    };
+
+    const form = textarea.form;
+    const stopObservingWidth = observeTextareaWidth(textarea);
+
+    form?.addEventListener('reset', handleReset);
+
+    return () => {
+      isActive = false;
+      form?.removeEventListener('reset', handleReset);
+      stopObservingWidth?.();
+    };
+  }, [textarea, autoResize, props.form]);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    // A controlled parent may reject the edit, so the layout effect measures the committed value instead.
     if (autoResize && !isControlled) {
       resizeTextareaToContent(event.currentTarget);
     }
@@ -66,18 +95,43 @@ export const Textarea = ({
     ? ({ ...style, '--tw-textarea-max-rows': maxRows } as CSSProperties)
     : style;
 
-  // Base UI types its control for <input> but only reads currentTarget.value, so rendering a textarea through it is safe.
-  const primitiveProps = {
-    ...props,
-    rows,
-    onChange: handleChange,
-  } as unknown as InputPrimitive.Props;
+  const {
+    'aria-describedby': ariaDescribedBy,
+    id,
+    name,
+    disabled,
+    autoFocus,
+    defaultValue,
+    onValueChange,
+    ...nativeProps
+  } = props;
+
+  const controlProps = {
+    'aria-describedby': ariaDescribedBy,
+    id,
+    name,
+    disabled,
+    autoFocus,
+    defaultValue,
+    onValueChange,
+  };
 
   return (
     <InputPrimitive
-      {...primitiveProps}
-      ref={mergedRef}
-      render={render}
+      {...controlProps}
+      render={(elementProps, state) => (
+        <TextareaControl
+          controlProps={elementProps}
+          nativeProps={{
+            ...nativeProps,
+            rows,
+            onChange: handleChange,
+            ref: mergedRef,
+          }}
+          state={state}
+          render={render}
+        />
+      )}
       value={value}
       className={mergeClassNames(
         clsx(styles.textarea, styles[size]),

@@ -2,8 +2,10 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'no-runtime-import-from-upgrade-command';
 
-const UPGRADE_COMMAND_IMPORT_PREFIX =
-  'src/database/commands/upgrade-version-command/';
+const UPGRADE_COMMAND_IMPORT_PREFIXES = [
+  'src/database/commands/upgrade-version-command/',
+  'src/database/commands/agent-history/',
+];
 
 const ALLOWED_IMPORT_REGEX = /-upgrade-command-name\.constants?$/;
 
@@ -20,7 +22,7 @@ const isExemptFile = (filename: string): boolean =>
   EXEMPT_FILE_REGEXES.some((regex) => regex.test(filename));
 
 const isForbiddenImportSource = (source: string): boolean =>
-  source.startsWith(UPGRADE_COMMAND_IMPORT_PREFIX) &&
+  UPGRADE_COMMAND_IMPORT_PREFIXES.some((prefix) => source.startsWith(prefix)) &&
   !ALLOWED_IMPORT_REGEX.test(source);
 
 export const rule = defineRule({
@@ -28,12 +30,12 @@ export const rule = defineRule({
     type: 'problem',
     docs: {
       description:
-        'Forbid runtime code from importing upgrade command code, which is frozen once released',
+        'Forbid runtime code from importing upgrade command or agent-history migration code, which is frozen once released',
     },
     schema: [],
     messages: {
       noRuntimeImportFromUpgradeCommand:
-        "Runtime code must not import '{{ source }}'. Keep migration-only logic, constants and legacy formats in the version folder, and move shared primitives out of it instead.",
+        "Runtime code must not import '{{ source }}'. Keep migration-only logic, constants and legacy formats with the migration code, and move shared primitives out of it instead.",
     },
   },
   create: (context) => {

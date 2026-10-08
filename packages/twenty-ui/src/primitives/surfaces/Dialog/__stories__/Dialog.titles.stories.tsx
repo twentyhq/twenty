@@ -14,17 +14,22 @@ const meta: Meta<typeof Dialog.Title> = {
   args: { children: 'Grant credits' },
   render: (args) => (
     <Dialog.Root defaultOpen>
-      <Dialog.Popup>
-        <Dialog.Header>
-          <Dialog.Title {...args} />
-          <Dialog.Description>
-            Add credits to this workspace.
-          </Dialog.Description>
-        </Dialog.Header>
-        <Dialog.Footer>
-          <Dialog.Close render={<Button>Close</Button>} />
-        </Dialog.Footer>
-      </Dialog.Popup>
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title {...args} />
+              <Dialog.Description>
+                Add credits to this workspace.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button>Close</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
     </Dialog.Root>
   ),
 };
@@ -43,7 +48,7 @@ export const TitleTypography: Story = {
 
     expect(title).toHaveAttribute('data-size', 'lg');
     expect(title).toHaveAttribute('data-color', 'primary');
-    expect(titleStyle.marginBlockEnd).toBe('16px');
+    expect(titleStyle.marginBlockEnd).toBe('0px');
     expect(titleStyle.textAlign).toBe('center');
     expect(dialog).toHaveAttribute('aria-labelledby', title.id);
   },

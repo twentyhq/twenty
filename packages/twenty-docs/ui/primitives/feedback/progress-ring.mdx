@@ -1,0 +1,51 @@
+---
+title: ProgressRing
+description: Show a known progress value in a compact circular indicator.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+`ProgressRing` shows a controlled percentage with accessible progressbar semantics. It can display a preformatted value beside the ring.
+
+<StoryEmbed
+  storyId="ui-feedback-progressring-progressring--default"
+  title="Progress ring example"
+  height={140}
+/>
+
+## Usage
+
+Supply a value from 0 to 100 and an accessible name. Use `aria-valuetext` when a formatted value explains progress more clearly than a percentage.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={60}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+Use `aria-labelledby` to associate the ring with an existing visible label. The optional children display a value; they do not provide the ring's accessible name.
+
+## Controlled progress
+
+The application calculates `value` and formats the displayed text. The ring does not fetch data, advance progress, or calculate quotas. Values outside 0 to 100 are bounded to that range, including infinite values. `NaN` renders as zero. Displayed children stay unchanged.
+
+Use [Loader](/ui/primitives/feedback/loader) for indeterminate loading, [ProgressBar](/ui/primitives/feedback/progress-bar) for horizontal progress, or [MetricRow](/ui/components/data-display/metric-row) for a label and aligned value.
+
+## Appearance and motion
+
+`size="md"` renders a 16px ring; `size="sm"` renders a 14px ring. Both use a 2px stroke and fill clockwise from the top. `barColor` accepts CSS colors, including theme variables.
+
+Value changes animate for 300ms. The transition is disabled when the user prefers reduced motion. Native attributes, `className`, `style`, and `ref` target the outer progress element. `render` can replace that element while retaining the progress semantics.
+
+## Props
+
+<ProgressRingReference />

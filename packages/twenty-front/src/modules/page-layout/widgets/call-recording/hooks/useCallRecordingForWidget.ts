@@ -46,8 +46,7 @@ export const useCallRecordingForWidget = ({
   const isVideoRestricted = isFieldRestricted('video');
   const isAudioRestricted = isFieldRestricted('audio');
 
-  // The transcript widget plays media, but requesting a field the role
-  // cannot read fails the whole query.
+  // Requesting a field the role cannot read fails the whole query.
   const recordGqlFields = useMemo(
     () =>
       kind === 'transcript'
