@@ -191,6 +191,6 @@ export default defineLogicFunction({
   name: 'teams-transcripts-webhook',
   description:
     'Checks Microsoft Graph transcript notifications against the subscription stored for the connection, imports new transcripts into Call Recordings, and renews the subscription when Graph asks for reauthorization.',
-  timeoutSeconds: 300,
+  timeoutSeconds: 900,
   handler: teamsTranscriptsWebhookHandler,
 });
