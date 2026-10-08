@@ -1,9 +1,9 @@
+import { useDebouncedSetAndPersistViewName } from '@/object-record/object-options-dropdown/hooks/useDebouncedSetAndPersistViewName';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
@@ -11,11 +11,9 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
@@ -51,7 +49,7 @@ const StyledMainText = styled.div`
 `;
 
 type ObjectOptionsDropdownMenuViewNameProps = {
-  currentView: View;
+  currentView: Pick<View, 'name' | 'icon' | 'key'>;
 };
 
 export const ObjectOptionsDropdownMenuViewName = ({
@@ -65,38 +63,21 @@ export const ObjectOptionsDropdownMenuViewName = ({
     viewPickerIsDirtyComponentState,
   );
 
-  const { setAndPersistViewName, setAndPersistViewIcon } =
-    useUpdateObjectViewOptions();
+  const { setAndPersistViewIcon } = useUpdateObjectViewOptions();
 
   const [viewName, setViewName] = useState(currentView?.name);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const { dropdownId } = useObjectOptionsDropdown();
+  const { debouncedSetAndPersistViewName } = useDebouncedSetAndPersistViewName({
+    focusId: dropdownId,
+  });
 
   const handleIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
-    setAndPersistViewIcon(iconKey, currentView);
+    setAndPersistViewIcon(iconKey);
   };
-
-  const handleViewNameChange = useDebouncedCallback((value: string) => {
-    setAndPersistViewName(value, currentView);
-  }, 500);
-
-  // Enter only commits the pending rename: the view picker state is empty
-  // here because the view picker is closed while this menu is open
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: () => {
-      handleViewNameChange.flush();
-    },
-    focusId: dropdownId,
-    dependencies: [handleViewNameChange],
-  });
-
-  // Closing the dropdown unmounts this input, and use-debounce drops a
-  // pending call on unmount
-  useEffect(() => () => handleViewNameChange.flush(), [handleViewNameChange]);
 
   useEffect(() => {
     setViewPickerSelectedIcon(currentView.icon);
@@ -134,7 +115,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
               value={viewName}
               onChange={(value) => {
                 setViewName(value);
-                handleViewNameChange(value);
+                debouncedSetAndPersistViewName(value);
               }}
               autoGrow={false}
               sizeVariant="sm"
