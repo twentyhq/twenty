@@ -6,8 +6,7 @@ export const BUTTON_GROUP_PROP_DESCRIPTIONS = {
   framed:
     'Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group.',
   variant:
-    'Shared surface treatment that overrides the variant of buttons in the group.',
-  color:
-    'Shared semantic color that overrides the color of buttons in the group.',
-  size: 'Shared button height that overrides the size of buttons in the group.',
+    'Default surface treatment for children without an explicit variant.',
+  color: 'Default semantic color for children without an explicit color.',
+  size: 'Default button height for children without an explicit size.',
 } satisfies Partial<Record<keyof ButtonGroupProps, string>>;

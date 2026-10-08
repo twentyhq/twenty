@@ -10,4 +10,5 @@ export const CREDIT_GRANT_TYPE_COLORS: Record<
   [BillingCreditGrantType.SALES]: 'purple',
   [BillingCreditGrantType.ONBOARDING_REWARD]: 'blue',
   [BillingCreditGrantType.ROLLOVER]: 'green',
+  [BillingCreditGrantType.PURCHASE]: 'turquoise',
 };

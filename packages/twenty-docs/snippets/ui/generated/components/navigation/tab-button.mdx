@@ -33,11 +33,19 @@
 </ParamField>
 
 <ParamField body="href" type="string">
-  Destination URL. Enables native link semantics instead of button semantics.
+  Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract.
+</ParamField>
+
+<ParamField body="nativeButton" type="boolean" default="true">
+  Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
-  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
+  Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role="link"` for a custom navigation anchor. Router integration belongs to the caller.
+</ParamField>
+
+<ParamField body="role" type="AriaRole">
+  Role of the root element. Use `link` for custom navigation renderers.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="sm">

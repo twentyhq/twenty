@@ -652,6 +652,8 @@
       "IconWorld": "icon/components/TablerIcons",
       "IconWorldWww": "icon/components/TablerIcons",
       "IconX": "icon/components/TablerIcons",
+      "IconZzz": "icon/components/TablerIcons",
+      "IconZzzOff": "icon/components/TablerIcons",
       "IllustrationIconArray": "icon/components/IllustrationIconArray",
       "IllustrationIconCalendarEvent": "icon/components/IllustrationIconCalendarEvent",
       "IllustrationIconCalendarTime": "icon/components/IllustrationIconCalendarTime",

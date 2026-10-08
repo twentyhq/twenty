@@ -4,7 +4,7 @@ import { printTypescriptValue } from '@/app/pull/print-typescript-value';
 import {
   FieldMetadataType,
   type RelationOnDeleteAction,
-  type RelationType,
+  RelationType,
 } from 'twenty-shared/types';
 
 export const getFieldBaseFile = ({
@@ -40,6 +40,11 @@ export const getFieldBaseFile = ({
     const onDeleteSetting = hasOnDelete
       ? `, onDelete: OnDeleteAction.${data.onDelete}`
       : '';
+    // The manifest build rejects a MANY_TO_ONE relation without a join column.
+    const joinColumnNameSetting =
+      data.relationType === RelationType.MANY_TO_ONE
+        ? `, joinColumnName: '${data.name}Id'`
+        : '';
     const morphIdLine =
       data.type === FieldMetadataType.MORPH_RELATION
         ? `\n  morphId: '${randomUUID()}',`
@@ -55,7 +60,7 @@ export default defineField({
   objectUniversalIdentifier: ${printTypescriptValue({ value: data.objectUniversalIdentifier })},
   relationTargetObjectMetadataUniversalIdentifier: ${printTypescriptValue({ value: data.relationTargetObjectMetadataUniversalIdentifier })},
   relationTargetFieldMetadataUniversalIdentifier: ${printTypescriptValue({ value: data.relationTargetFieldMetadataUniversalIdentifier })},
-  universalSettings: { relationType: RelationType.${data.relationType}${onDeleteSetting} },${morphIdLine}${descriptionLine}
+  universalSettings: { relationType: RelationType.${data.relationType}${onDeleteSetting}${joinColumnNameSetting} },${morphIdLine}${descriptionLine}
 });
 `;
   }

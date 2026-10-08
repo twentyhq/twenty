@@ -20,9 +20,9 @@ scenarios. Shared types live in `types/` and shared constants in `constants/`;
 known-failure scenarios that assert sandbox errors declare the patterns they
 require.
 `createGalleryRenderTest` checks the exact set of expected failed components.
-`createOverlayOpenTest` checks that a trigger opens its overlay and pins the
-popup content as absent from the page. `createDropdownOpenTest` applies it to
-the Dropdown-based popups.
+`createOverlayOpenTest` checks that a trigger opens its overlay and waits for
+visible popup content. `createDropdownOpenTest` applies it to the Dropdown-based
+popups.
 `expectSandboxErrors` requires each listed known error and rejects any other
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
@@ -46,6 +46,7 @@ effect within the interaction timeout.
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-menu`                 | Menu                                                                                                                                    |
 | `twenty-ui-select`               | Select                                                                                                                                  |
+| `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                         |
 | `twenty-ui-dropdown`             | Dropdown                                                                                                                                |
 | `twenty-ui-toast`                | Toast                                                                                                                                   |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
@@ -97,6 +98,12 @@ decoded image hidden and the fallback visible. The fixture pins that failure
 and checks recovery when returning to the default preload mode. These boundary
 assertions do not establish responsive-source or retained-image acceptance.
 
+Body portals render in a host layer outside widget scroll frames, clipped to
+200px around the component, and the worker's `window.visualViewport` reports
+that area so Floating UI popups flip and size themselves to fit it. The portal
+fixture covers callbacks, removal, menu placement, interface zoom, and an
+oversized portal that stays clipped while a host control remains usable.
+
 The Autocomplete fixture uses the public inline list interface to isolate input
 behavior from popup support. Its Empty section runs Base UI's live-region marker
 through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
@@ -119,12 +126,12 @@ must change the corresponding story to assert successful behavior; do not keep
 or broaden an obsolete expectation. No stories are skipped or marked as
 expected-to-fail by the runner.
 
-| Component                                                                                                           | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ImageInput                                                                                                          | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
-| Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                |
-| Slider                                                                                                              | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
-| Responsive hooks                                                                                                    | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ImageInput                                                                                            | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx).                                                                                                                                                         |
+| Popover, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
+| Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
+| Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
@@ -176,7 +183,7 @@ component never reach the worker, so dismissal on a press elsewhere on the page
 is not covered.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
-navigation, and overlay content, dismissal, and focus restoration. The fixtures
+navigation, dismissal, and focus restoration across overlay components. The fixtures
 already include the controlled state, compound parts, and callback output for
 those checks. Passing display, ListItem, and Toast stories verify rendering/CSS
 or interaction behavior directly.

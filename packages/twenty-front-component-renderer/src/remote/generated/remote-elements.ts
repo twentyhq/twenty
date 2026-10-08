@@ -391,8 +391,14 @@ export const HtmlBlockquoteElement = createRemoteElement<
 
 export type HtmlAProperties = HtmlCommonProperties & {
   href?: string;
+  hrefLang?: string;
+  media?: string;
+  type?: string;
   target?: string;
   rel?: string;
+  download?: string;
+  ping?: string;
+  referrerPolicy?: string;
 };
 
 export const HtmlAElement = createRemoteElement<
@@ -404,8 +410,14 @@ export const HtmlAElement = createRemoteElement<
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
     href: { type: String },
+    hrefLang: { type: String },
+    media: { type: String },
+    type: { type: String },
     target: { type: String },
     rel: { type: String },
+    download: { type: String },
+    ping: { type: String },
+    referrerPolicy: { type: String },
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
