@@ -115,6 +115,15 @@ export const Narrow: Story = {
     ),
   },
   parameters: { container: { width: 320 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvasElement.querySelector('svg')).toHaveStyle({
+      width: '16px',
+      height: '16px',
+    });
+    await expect(canvas.getByText(NO_AI_MODELS_MESSAGE)).toBeVisible();
+  },
 };
 
 export const Embedded: Story = {
