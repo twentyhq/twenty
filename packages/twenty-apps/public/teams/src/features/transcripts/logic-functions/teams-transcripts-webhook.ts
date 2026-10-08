@@ -58,7 +58,7 @@ const isRetryableRejection = (
   settledResult.status === 'rejected' &&
   settledResult.reason instanceof RetryableLogicFunctionError;
 
-const importTeamsTranscriptFromResource = async ({
+const importTeamsTranscriptFromResourceOrThrow = async ({
   connectedAccountId,
   resource,
 }: {
@@ -142,7 +142,10 @@ export const teamsTranscriptsWebhookHandler = async (
         })
       : undefined,
     ...transcriptResources.map((resource) =>
-      importTeamsTranscriptFromResource({ connectedAccountId, resource }),
+      importTeamsTranscriptFromResourceOrThrow({
+        connectedAccountId,
+        resource,
+      }),
     ),
   ]);
   const transcriptImportOutcomes = transcriptImports.map(
