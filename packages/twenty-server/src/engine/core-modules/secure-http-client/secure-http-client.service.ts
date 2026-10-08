@@ -126,9 +126,11 @@ export class SecureHttpClientService {
   }
 
   createSsrfSafeFetch(): typeof globalThis.fetch {
-    return buildAxiosFetch(this.getHttpClient(), (config, _input, init) =>
-      init?.redirect === 'manual' ? { ...config, maxRedirects: 0 } : config,
-    ) as typeof globalThis.fetch;
+    if (!this.isSafeModeEnabled(this.getAllowedInternalHosts())) {
+      return globalThis.fetch;
+    }
+
+    return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
   }
 
   // For libraries that only accept an agent (openid-client); undefined means no restriction.

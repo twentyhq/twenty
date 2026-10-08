@@ -30,7 +30,7 @@ import {
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { settings } from 'src/engine/constants/settings';
+import { MAX_REQUEST_BODY_SIZE } from 'src/engine/constants/max-request-body-size.constant';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -373,7 +373,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
     const httpClient = this.secureHttpClientService.getHttpClient({
       timeout: RESOLUTION_TIMEOUT_MS,
-      maxContentLength: bytes(settings.maxRequestBodySize) ?? undefined,
+      maxContentLength: bytes(MAX_REQUEST_BODY_SIZE) ?? undefined,
     });
 
     try {
