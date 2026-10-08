@@ -2508,21 +2508,28 @@
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Callback fired when the `value` changes. Use when controlled."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
       },
       {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Composes the native input with a custom element or render callback. Forward the supplied props and ref to an input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual size of the input. Inside an `InputGroup`, the group's size applies."
+        "description": "Visual size. Explicit input size takes precedence over the InputGroup default, then md applies. Group layout still sets the surrounding height."
       },
       {
         "name": "style",
@@ -2553,18 +2560,25 @@
         "description": "Content rendered after the input, such as a suffix or a button."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the layout element, a div by default."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Customizes the layout element. Forward its props, children and ref. Native control props belong on the child input."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual size of the group and its input."
+        "description": "Visual size of the layout and default size for inputs that omit size. Defaults to md."
       },
       {
         "name": "startElement",
@@ -2739,7 +2753,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Grows the textarea with its content instead of showing a scrollbar."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -2753,21 +2767,28 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of rows the textarea grows to when `autoResize` is set.\nLonger content scrolls."
+        "description": "Caps automatic height growth. Content beyond this row limit scrolls."
       },
       {
         "name": "onValueChange",
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the new value when the textarea value changes."
+        "description": "Receives the next string value and Base UI details, including the native event, reason and cancellation methods."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLTextAreaElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native textarea element."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, InputState>",
         "required": false,
-        "defaultValue": "<textarea />",
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "defaultValue": null,
+        "description": "Composes the native textarea with a custom element or callback receiving textarea props and Field state. Forward the supplied props and ref to a textarea."
       },
       {
         "name": "size",
