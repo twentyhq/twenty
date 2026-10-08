@@ -138,12 +138,14 @@ describe('Agent run tools should be limited to the caller role', () => {
     },
   );
 
-  it('should keep the agent role alone when the application runs its own agent', async () => {
+  it('should restrict the agent role to the application role when the application runs its own agent', async () => {
     const { executionContext } = await captureAgentRunExecution({
       agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
       token: globalTestContext.applicationToken,
     });
 
-    expect(executionContext.additionalRoleRestrictionIds).toBeUndefined();
+    expect(executionContext.additionalRoleRestrictionIds).toEqual([
+      globalTestContext.applicationRoleId,
+    ]);
   });
 });
