@@ -60,6 +60,41 @@ export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
     ).toHaveTextContent('1'),
   );
 
+  const section = canvas.getByRole('region', { name: 'Workspace settings' });
+  await waitFor(() =>
+    expect(section).toHaveAttribute('data-ref-tag', 'HTML-SECTION'),
+  );
+  const header = canvas.getByTitle('Workspace header');
+  await waitFor(() =>
+    expect(header).toHaveAttribute('data-ref-tag', 'HTML-HEADER'),
+  );
+  await expect(
+    canvas.getByRole('heading', { name: 'Truncated description', level: 4 }),
+  ).toHaveAttribute('data-size', 'lg');
+  const description = canvas.getByText(/^Manage workspace preferences,/);
+  await expect(description).not.toHaveAttribute('tabindex');
+  await expect(getComputedStyle(description).webkitLineClamp).toBe('2');
+  await expect(description.scrollHeight).toBeGreaterThan(
+    description.clientHeight,
+  );
+  const fullDescription = canvas.getByText(/First line of full details/);
+  await expect(fullDescription.textContent).toBe(
+    'First line of full details\nSecond line of full details',
+  );
+  await expect(getComputedStyle(fullDescription).whiteSpace).toBe('pre-wrap');
+  await expect(fullDescription).not.toHaveAttribute('tabindex');
+  await expect(getComputedStyle(fullDescription).webkitLineClamp).toBe('none');
+  await expect(
+    canvas.getByRole('link', { name: 'Workspace documentation' }),
+  ).toHaveAttribute('href', '#workspace');
+  const focusableDescription = canvas.getByText('Focusable workspace details');
+  await expect(focusableDescription).toHaveAttribute('tabindex', '0');
+  focusableDescription.focus();
+  await expect(focusableDescription).toHaveFocus();
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Description focuses')).toHaveTextContent('1'),
+  );
+
   const button = canvas.getByRole('button', { name: 'Edit workspace' });
   await userEvent.click(button);
   await waitFor(() =>

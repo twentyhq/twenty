@@ -41,6 +41,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
 import channelSetupCoverDark from '~/pages/settings/communications/assets/channel-setup-cover-dark.png';
 import channelSetupCoverLight from '~/pages/settings/communications/assets/channel-setup-cover-light.png';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
@@ -192,12 +193,11 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                     size="sm"
                     endIcon={<IconArrowUpRight />}
                     onClick={() =>
-                      window.open(
+                      openUrlInNewTab(
                         getDocumentationUrl({
                           locale: currentWorkspaceMember?.locale,
                           path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
                         }),
-                        '_blank',
                       )
                     }
                   >{t`Read documentation`}</Button>

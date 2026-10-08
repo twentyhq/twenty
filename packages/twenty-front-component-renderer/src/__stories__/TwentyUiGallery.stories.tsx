@@ -63,7 +63,7 @@ import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRan
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
-import { colorSampleTest } from '@/__stories__/twenty-ui-gallery/utils/colorSampleTest';
+import { commandBlockTest } from '@/__stories__/twenty-ui-gallery/utils/commandBlockTest';
 import { calloutTest } from '@/__stories__/twenty-ui-gallery/utils/calloutTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
@@ -81,12 +81,12 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: colorSampleTest,
+  play: commandBlockTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: colorSampleTest,
+  play: commandBlockTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
