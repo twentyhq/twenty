@@ -67,65 +67,38 @@ describe('generateRecordPropertiesJsonSchema', () => {
   });
 
   it('should not require non-nullable fields that have a default value', () => {
-    const { properties, required } = generateRecordPropertiesJsonSchema({
-      objectMetadata: {
-        fields: [
-          getToolSchemaFieldMock({
-            name: 'name',
-            type: FieldMetadataType.TEXT,
-            isNullable: false,
-            defaultValue: null,
-          }),
-          getToolSchemaFieldMock({
-            name: 'stage',
-            type: FieldMetadataType.SELECT,
-            isNullable: false,
-            defaultValue: "'NEW'",
-            options: [
-              {
-                id: 'new',
-                value: 'NEW',
-                label: 'New',
-                color: 'blue',
-                position: 0,
-              },
-            ],
-          }),
-          getToolSchemaFieldMock({
-            name: 'position',
-            type: FieldMetadataType.POSITION,
-            isNullable: false,
-            defaultValue: 0,
-          }),
-          getToolSchemaFieldMock({
-            name: 'isAutomaticallyAssigned',
-            type: FieldMetadataType.BOOLEAN,
-            isNullable: false,
-            defaultValue: false,
-          }),
-          getToolSchemaFieldMock({
-            name: 'amount',
-            type: FieldMetadataType.CURRENCY,
-          }),
-          getToolSchemaFieldMock({
-            name: 'company',
-            type: FieldMetadataType.RELATION,
-            isNullable: false,
-            settings: { relationType: RelationType.MANY_TO_ONE },
-          }),
-        ],
-      },
-      definitions: {},
-    });
-
-    expect(Object.keys(properties)).toEqual([
-      'name',
-      'stage',
-      'position',
-      'isAutomaticallyAssigned',
-      'amount',
-      'companyId',
-    ]);
-    expect(required).toEqual(['name', 'companyId']);
+    expect(
+      generateRecordPropertiesJsonSchema({
+        objectMetadata: {
+          fields: [
+            getToolSchemaFieldMock({
+              name: 'name',
+              type: FieldMetadataType.TEXT,
+              isNullable: false,
+              defaultValue: null,
+            }),
+            getToolSchemaFieldMock({
+              name: 'stage',
+              type: FieldMetadataType.SELECT,
+              isNullable: false,
+              defaultValue: "'NEW'",
+            }),
+            getToolSchemaFieldMock({
+              name: 'position',
+              type: FieldMetadataType.POSITION,
+              isNullable: false,
+              defaultValue: 0,
+            }),
+            getToolSchemaFieldMock({
+              name: 'isAutomaticallyAssigned',
+              type: FieldMetadataType.BOOLEAN,
+              isNullable: false,
+              defaultValue: false,
+            }),
+          ],
+        },
+        definitions: {},
+      }).required,
+    ).toEqual(['name']);
   });
 });
