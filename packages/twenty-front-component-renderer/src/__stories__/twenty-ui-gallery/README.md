@@ -30,7 +30,7 @@ effect within the interaction timeout.
 | `twenty-ui-display-helpers`      | Text                                                                                                                                |
 | `twenty-ui-avatar-controls`      | Avatar (fallback, pointer/keyboard activation and disabled state)                                                                   |
 | `twenty-ui-avatar-image`         | Avatar (decoded images, broken-source fallback, replacement and unmount/remount)                                                    |
-| `twenty-ui-image-input`          | ImageInput                                                                                                                          |
+| `twenty-ui-image-input`          | ImageInput (native chooser, readable files, preview URLs, reset and ownership cleanup)                                              |
 | `twenty-ui-list-item`            | ListItem                                                                                                                            |
 | `twenty-ui-settings-row`         | SettingsRow                                                                                                                         |
 | `twenty-ui-tabs`                 | Tabs                                                                                                                                |
@@ -76,6 +76,30 @@ through a narrow worker TreeWalker that supports SHOW_TEXT, nextNode and
 currentNode without callback filters; document Selection and DOM Range are
 outside this scope.
 
+## ImageInput file selection
+
+`ImageInputFileSelection.stories.tsx` mounts two independent SDK-built renderers.
+The native Chromium tests wait for a browser `filechooser` event after trusted
+pointer, Enter and Space activation on both selection buttons. A synchronous
+worker `input.click()` can consume its renderer's single-use activation while
+the browser still has transient user activation, within one second of the host
+click. Synthetic events and delayed calls do not grant activation.
+
+Selected files cross the existing event transport as native `File` objects,
+including metadata, `text()` and `arrayBuffer()` contents. The input resets after
+selection so the same file can be selected again. The tests cover disabled and
+uploading controls, empty chooser results, callback replacement, renderer
+isolation and teardown. Empty results are supplied through Playwright's
+intercepted chooser; operating-system dialog dismissal and other browser engines
+are not covered by these tests.
+
+A worker-created object URL assigned to `img.src` carries its `Blob` to the host.
+Each mounted image owns a host URL and revokes it on source replacement,
+explicit worker URL revocation or unmount. Applications still revoke their
+worker URLs and own validation, upload, progress and cancellation. Other object
+URL consumers are outside this adapter's scope. The public callback remains
+`onUpload`; its API rename is separate.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -88,7 +112,6 @@ expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/input/image-input.mdx). |
 | Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
@@ -166,3 +189,14 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```
+
+For native chooser coverage, serve Storybook on port 6008 after the same prebuild,
+then run from `packages/twenty-front-component-renderer`:
+
+```sh
+node --import tsx --test scripts/front-component-stories/__tests__/image-input.browser.test.ts
+```
+
+Set `STORYBOOK_URL` to use another running Storybook URL. These tests use
+Playwright's trusted browser input and chooser interception; `userEvent.upload`
+in the gallery story covers selection handling only.

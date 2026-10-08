@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { ImageInput } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
@@ -18,6 +18,42 @@ const ImageInputExample = () => {
   const [removals, setRemovals] = useState(0);
   const [aborts, setAborts] = useState(0);
   const [selectedFile, setSelectedFile] = useState('none');
+  const [fileContents, setFileContents] = useState('none');
+  const [isCallbackConnected, setIsCallbackConnected] = useState(true);
+
+  useEffect(
+    () => () => {
+      if (src?.startsWith('blob:')) {
+        URL.revokeObjectURL(src);
+      }
+    },
+    [src],
+  );
+
+  const selectFile = async (file: File) => {
+    setUploads((count) => count + 1);
+    setSelectedFile(`${file.name}; ${file.type}; ${file.size} bytes`);
+    try {
+      const [text, buffer] = await Promise.all([
+        file.text(),
+        file.arrayBuffer(),
+      ]);
+      setFileContents(
+        JSON.stringify({
+          isFile: file instanceof File,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          lastModified: file.lastModified,
+          text,
+          bytes: Array.from(new Uint8Array(buffer)),
+        }),
+      );
+      setSrc(URL.createObjectURL(file));
+    } catch (error) {
+      setFileContents(String(error));
+    }
+  };
 
   return (
     <TwentyUiGalleryCard title="ImageInput">
@@ -32,10 +68,7 @@ const ImageInputExample = () => {
         uploadLabel="Choose profile image"
         removeLabel="Remove profile image"
         abortLabel="Cancel profile upload"
-        onUpload={(file) => {
-          setUploads((count) => count + 1);
-          setSelectedFile(`${file.name}; ${file.type}; ${file.size} bytes`);
-        }}
+        onUpload={isCallbackConnected ? selectFile : undefined}
         onRemove={() => {
           setRemovals((count) => count + 1);
           setSrc(undefined);
@@ -61,6 +94,12 @@ const ImageInputExample = () => {
       <Button onClick={() => setDisabled((value) => !value)}>
         {disabled ? 'Enable image input' : 'Disable image input'}
       </Button>
+      <Button onClick={() => setIsCallbackConnected((value) => !value)}>
+        {isCallbackConnected
+          ? 'Disconnect file callback'
+          : 'Connect file callback'}
+      </Button>
+      <output aria-label="File contents">{fileContents}</output>
       <output aria-label="Image actions">
         Uploads: {uploads}; Removals: {removals}; Aborts: {aborts}
       </output>

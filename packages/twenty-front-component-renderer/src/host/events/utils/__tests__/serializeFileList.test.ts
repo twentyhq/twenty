@@ -26,6 +26,22 @@ describe('serializeFileList', () => {
     expect(result).toEqual([validFile]);
   });
 
+  it('should preserve native files for structured-clone transport', () => {
+    const file = new File(['image'], 'profile.png', {
+      type: 'image/png',
+      lastModified: 1700000000000,
+    });
+    expect(serializeFileList([file])).toEqual([
+      {
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+      },
+    ]);
+  });
+
   it('should skip entries missing required fields', () => {
     const result = serializeFileList({
       length: 2,

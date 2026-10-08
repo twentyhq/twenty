@@ -1058,7 +1058,7 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 
 ### Other gaps
 
-- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
+- **FileReader.** Use a selected file's `text()` or `arrayBuffer()` methods to read its contents, or pass the `File` to the `uploadFile` host function. `FileReader` is not available.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

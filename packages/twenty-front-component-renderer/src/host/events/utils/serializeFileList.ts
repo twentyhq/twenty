@@ -29,6 +29,7 @@ export const serializeFileList = (
       continue;
     }
     serialized.push({
+      ...(file instanceof File && { file }),
       name: fileRecord.name,
       size: fileRecord.size,
       type: fileRecord.type,

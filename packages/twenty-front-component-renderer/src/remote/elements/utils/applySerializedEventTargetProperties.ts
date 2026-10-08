@@ -16,7 +16,11 @@ export const applySerializedEventTargetProperties = ({
 }): void => {
   for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
     if (key in eventData) {
-      Reflect.set(element, key, eventData[key]);
+      const value =
+        key === 'files'
+          ? eventData.files?.map((fileData) => fileData.file ?? fileData)
+          : eventData[key];
+      Reflect.set(element, key, value);
     }
   }
 

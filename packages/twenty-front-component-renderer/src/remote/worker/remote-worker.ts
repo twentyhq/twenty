@@ -3,6 +3,7 @@ import '@remote-dom/react/polyfill';
 
 import {
   HtmlInputElement,
+  HtmlImgElement,
   HtmlTextareaElement,
 } from '../generated/remote-elements';
 
@@ -62,9 +63,17 @@ import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErr
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
+import { workerFileInputActivation } from '@/polyfills/file-input/states/workerFileInputActivation';
+import { installImageObjectUrlPolyfill } from '@/polyfills/file-input/utils/installImageObjectUrlPolyfill';
+import { installFileInputActivationPolyfill } from '@/polyfills/file-input/utils/installFileInputActivationPolyfill';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
+
+installImageObjectUrlPolyfill({
+  urlConstructor: URL,
+  imageElementPrototype: HtmlImgElement.prototype,
+});
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
@@ -128,6 +137,12 @@ installActiveElementDetachmentHook({
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
+installFileInputActivationPolyfill({
+  elementPrototype: HTMLElement.prototype,
+  inputElementPrototype:
+    HtmlInputElement.prototype as unknown as HTMLInputElement,
+  activation: workerFileInputActivation,
+});
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 

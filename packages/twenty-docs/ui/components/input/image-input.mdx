@@ -35,7 +35,7 @@ export const WorkspaceImage = ({
 
 The preview and Upload button open the same native file picker. `onUpload` receives the selected `File`. Canceling or returning an empty selection leaves the current image unchanged. The file input clears after selection so the same file can be selected again.
 
-Native file selection and usable `File` contents are not supported in the current front-component sandbox. React and Preact renderer coverage includes previews, action callbacks, and state. Use an ordinary React host for the complete native selection flow.
+Front components support native selection and readable `File` contents. The SDK-built React and Preact flows are verified in Chromium with pointer, Enter and Space activation. File selection requires a trusted user interaction while browser activation remains active. Worker-created object URLs assigned to an image `src` support previews; revoke these URLs when replacing the image or unmounting your component.
 
 The `accept` prop defaults to `image/*` and filters the file picker. Validate allowed formats, dimensions, and size in your application. This callback-driven selector does not retain a file for native form submission. Its action buttons use `type="button"`, so they do not submit a surrounding form.
 

@@ -1,4 +1,6 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
+import { FrontComponentFileInputHostContext } from '@/host/file-input/contexts/FrontComponentFileInputHostContext';
+import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
@@ -72,6 +74,9 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
+  const [fileInputHost] = useState(() =>
+    createFileInputHost({ geometryTracker }),
+  );
   const [hostFocusController] = useState(() =>
     createHostFocusController({ geometryTracker }),
   );
@@ -93,6 +98,7 @@ export const FrontComponentRenderer = ({
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
+          fileInputHost={fileInputHost}
           hostFocusController={hostFocusController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
@@ -160,10 +166,14 @@ export const FrontComponentRenderer = ({
               <FrontComponentHostFocusControllerContext.Provider
                 value={hostFocusController}
               >
-                <RemoteRootRenderer
-                  receiver={receiver}
-                  components={fallbackComponentRegistry}
-                />
+                <FrontComponentFileInputHostContext.Provider
+                  value={fileInputHost}
+                >
+                  <RemoteRootRenderer
+                    receiver={receiver}
+                    components={fallbackComponentRegistry}
+                  />
+                </FrontComponentFileInputHostContext.Provider>
               </FrontComponentHostFocusControllerContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>

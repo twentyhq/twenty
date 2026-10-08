@@ -6,6 +6,7 @@ import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreserv
 import { useHtmlHostElementProps } from '@/host/elements/hooks/useHtmlHostElementProps';
 import { createCaretPreservingElement } from '@/host/caret/utils/createCaretPreservingElement';
 import { createPlainHostElement } from '@/host/elements/utils/createPlainHostElement';
+import { HostImageElement } from '@/host/file-input/components/HostImageElement';
 import { isFileInputType } from '@/host/elements/utils/isFileInputType';
 import { isTextLikeInputType } from '@/utils/isTextLikeInputType';
 
@@ -30,6 +31,10 @@ const CARET_PRESERVING_TAGS = new Set(['input', 'textarea']);
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
+  if (htmlTag === 'img') {
+    return HostImageElement;
+  }
+
   const isVoid = VOID_ELEMENTS.has(htmlTag);
 
   if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
