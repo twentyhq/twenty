@@ -180,6 +180,16 @@ const expectInputReset = async (renderer: Locator) => {
     input,
     { timeout: 3000 },
   );
+  for (const worker of renderer.page().workers()) {
+    assert.equal(
+      await worker.evaluate(
+        () =>
+          document.querySelector<HTMLInputElement>('input[type="file"]')?.files
+            ?.length ?? 0,
+      ),
+      0,
+    );
+  }
 };
 
 const expectNoChooser = async ({

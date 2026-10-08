@@ -86,8 +86,9 @@ the browser still has transient user activation, within one second of the host
 click. Synthetic events and delayed calls do not grant activation.
 
 Selected files cross the existing event transport as native `File` objects,
-including metadata, `text()` and `arrayBuffer()` contents. The input resets after
-selection so the same file can be selected again. The tests cover disabled and
+including metadata, `text()` and `arrayBuffer()` contents. Reset clears both the
+native selection and the worker input's File references without invalidating a
+File retained by the callback, so the same file can be selected again. The tests cover disabled and
 uploading controls, empty chooser results, callback replacement, renderer
 isolation and teardown. Empty results are supplied through Playwright's
 intercepted chooser; operating-system dialog dismissal and other browser engines
