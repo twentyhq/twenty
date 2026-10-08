@@ -6,7 +6,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import {
   buildFrontComponentStorageNamespace,
   clearFrontComponentStorage,
@@ -44,6 +44,7 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -152,6 +153,9 @@ export const useFrontComponentExecutionContext = ({
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { navigateSidePanel } = useNavigateSidePanel();
+  const pageLayoutSidePanelTarget = useContext(
+    PageLayoutSidePanelTargetContext,
+  );
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
@@ -392,17 +396,26 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (isPageLayoutSidePanelPage(params.page)) {
-        throw new CustomError(
-          `${params.page} edits the page layout it was opened from and cannot be opened by a front component`,
-          'FRONT_COMPONENT_PAGE_LAYOUT_SIDE_PANEL_PAGE_UNSUPPORTED',
-        );
-      }
+        if (!isDefined(pageLayoutSidePanelTarget)) {
+          throw new CustomError(
+            `${params.page} edits a page layout and can only be opened by a front component rendered in one`,
+            'FRONT_COMPONENT_PAGE_LAYOUT_SIDE_PANEL_PAGE_UNSUPPORTED',
+          );
+        }
 
-      navigateSidePanel({
-        page: params.page,
-        pageTitle: params.pageTitle,
-        pageIcon: getIcon(params.pageIcon),
-      });
+        navigateSidePanel({
+          page: params.page,
+          pageTitle: params.pageTitle,
+          pageIcon: getIcon(params.pageIcon),
+          pageLayoutSidePanelTarget,
+        });
+      } else {
+        navigateSidePanel({
+          page: params.page,
+          pageTitle: params.pageTitle,
+          pageIcon: getIcon(params.pageIcon),
+        });
+      }
 
       if (params.shouldResetSearchState === true) {
         setSidePanelSearch('');

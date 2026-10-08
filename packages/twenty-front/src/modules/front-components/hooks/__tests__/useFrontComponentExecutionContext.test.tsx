@@ -8,6 +8,7 @@ import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -612,7 +613,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     });
 
-    it('rejects page layout pages because they need the layout they edit', async () => {
+    it('rejects page layout pages outside of a page layout', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
@@ -624,10 +625,56 @@ describe('useFrontComponentExecutionContext', () => {
           pageIcon: 'IconChartPie',
         }),
       ).rejects.toThrow(
-        'dashboard-chart-settings edits the page layout it was opened from and cannot be opened by a front component',
+        'dashboard-chart-settings edits a page layout and can only be opened by a front component rendered in one',
       );
 
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('opens page layout pages for the page layout the front component is rendered in', async () => {
+      const pageLayoutSidePanelTarget = {
+        pageLayoutId: 'page-layout-id',
+        targetRecordIdentifier: {
+          id: 'dashboard-record-id',
+          targetObjectNameSingular: 'dashboard',
+        },
+      };
+
+      const { result } = renderHook(
+        () =>
+          useFrontComponentExecutionContext({
+            colorScheme: 'light',
+            applicationId: APPLICATION_ID,
+            frontComponentId: FRONT_COMPONENT_ID,
+          }),
+        {
+          wrapper: ({ children }) => (
+            <PageLayoutSidePanelTargetContext.Provider
+              value={pageLayoutSidePanelTarget}
+            >
+              {I18nProvider({ i18n, children })}
+            </PageLayoutSidePanelTargetContext.Provider>
+          ),
+        },
+      );
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.DashboardChartSettings,
+            pageTitle: 'Chart',
+            pageIcon: 'IconChartPie',
+          },
+        );
+      });
+
+      expect(mockNavigateSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockNavigateSidePanel).toHaveBeenCalledWith({
+        page: SidePanelPages.DashboardChartSettings,
+        pageTitle: 'Chart',
+        pageIcon: 'icon-IconChartPie',
+        pageLayoutSidePanelTarget,
+      });
     });
 
     it('maps legacy Copilot calls to AskAI', async () => {
