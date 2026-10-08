@@ -48,6 +48,9 @@ export const granolaBackfillWorkerHandler = async (
       noteIds: page.notes.map((note) => note.id),
     });
     const schedule = await reserveGranolaNoteImportSlotsOrThrow(noteIds.length);
+    const updatedAtByNoteId = new Map(
+      page.notes.map((note) => [note.id, note.updated_at]),
+    );
 
     for (const [index, noteId] of noteIds.entries()) {
       const notePayload: GranolaBackfillNotePayload = {
@@ -60,12 +63,13 @@ export const granolaBackfillWorkerHandler = async (
         logicFunctionUniversalIdentifier:
           GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
         payload: notePayload,
+        // The run day lets a note whose job failed for good be retried by a later run, while same-day imports still collapse
         jobId: getGranolaJobId({
           prefix: 'granola-note',
           identity: {
             ...notePayload,
-            createdAfter: payload.createdAfter,
-            updatedAfter: payload.updatedAfter,
+            updatedAt: updatedAtByNoteId.get(noteId),
+            runDay: payload.runDay,
           },
         }),
         delayMs: schedule.noteDelays[index],
