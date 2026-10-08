@@ -59,6 +59,16 @@ export type AgentChatEvent = {
   threadId: Scalars['String']['output'];
 };
 
+export enum AgentChatInboxAction {
+  ARCHIVE = 'ARCHIVE',
+  MOVE_TO_INBOX = 'MOVE_TO_INBOX',
+  READ = 'READ',
+  SNOOZE = 'SNOOZE',
+  SUBSCRIBE = 'SUBSCRIBE',
+  UNREAD = 'UNREAD',
+  UNSUBSCRIBE = 'UNSUBSCRIBE'
+}
+
 export type AgentChatOpenThreadsSummary = {
   __typename?: 'AgentChatOpenThreadsSummary';
   hasUnreadAssignedThread: Scalars['Boolean']['output'];
@@ -3103,7 +3113,6 @@ export type Mutation = {
   activateWorkspace: Workspace;
   addAgentChatThreadParticipants: Array<Scalars['UUID']['output']>;
   addQueryToEventStream: Scalars['Boolean']['output'];
-  archiveAgentChatThread: AgentChatThreadParticipant;
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3250,9 +3259,6 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
-  markAgentChatThreadAsRead: AgentChatThreadParticipant;
-  markAgentChatThreadAsUnread: AgentChatThreadParticipant;
-  moveAgentChatThreadToInbox: AgentChatThreadParticipant;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -3295,12 +3301,10 @@ export type Mutation = {
   signUpInNewWorkspace: SignUp;
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
-  snoozeAgentChatThread: AgentChatThreadParticipant;
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
   stopImpersonation: StopImpersonation;
-  subscribeToAgentChatThread: AgentChatThreadParticipant;
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
@@ -3310,7 +3314,7 @@ export type Mutation = {
   triggerInstallApplicationJob: TriggerInstallApplicationJobResult;
   triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult;
   uninstallApplication: Scalars['Boolean']['output'];
-  unsubscribeFromAgentChatThread: AgentChatThreadParticipant;
+  updateAgentChatThreadInboxState: Array<AgentChatThreadParticipant>;
   updateApiKey?: Maybe<ApiKey>;
   updateAppMessageChannel: MessageChannel;
   updateApplication: Application;
@@ -3403,11 +3407,6 @@ export type MutationAddAgentChatThreadParticipantsArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
-};
-
-
-export type MutationArchiveAgentChatThreadArgs = {
-  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -4112,21 +4111,6 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
-export type MutationMarkAgentChatThreadAsReadArgs = {
-  threadId: Scalars['UUID']['input'];
-};
-
-
-export type MutationMarkAgentChatThreadAsUnreadArgs = {
-  threadId: Scalars['UUID']['input'];
-};
-
-
-export type MutationMoveAgentChatThreadToInboxArgs = {
-  threadId: Scalars['UUID']['input'];
-};
-
-
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
@@ -4352,12 +4336,6 @@ export type MutationSkipSyncEmailOnboardingStepArgs = {
 };
 
 
-export type MutationSnoozeAgentChatThreadArgs = {
-  snoozedUntil: Scalars['DateTime']['input'];
-  threadId: Scalars['UUID']['input'];
-};
-
-
 export type MutationStartChannelSyncArgs = {
   connectedAccountId: Scalars['UUID']['input'];
 };
@@ -4370,11 +4348,6 @@ export type MutationStartWorkspaceSetupChatArgs = {
 
 
 export type MutationStopAgentChatStreamArgs = {
-  threadId: Scalars['UUID']['input'];
-};
-
-
-export type MutationSubscribeToAgentChatThreadArgs = {
   threadId: Scalars['UUID']['input'];
 };
 
@@ -4415,8 +4388,10 @@ export type MutationUninstallApplicationArgs = {
 };
 
 
-export type MutationUnsubscribeFromAgentChatThreadArgs = {
-  threadId: Scalars['UUID']['input'];
+export type MutationUpdateAgentChatThreadInboxStateArgs = {
+  action: AgentChatInboxAction;
+  snoozedUntil?: InputMaybe<Scalars['DateTime']['input']>;
+  threadIds: Array<Scalars['UUID']['input']>;
 };
 
 
@@ -8162,13 +8137,6 @@ export type ActivateSkillMutationVariables = Exact<{
 
 export type ActivateSkillMutation = { __typename?: 'Mutation', activateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isSystem: boolean, isActive: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type ArchiveAgentChatThreadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-}>;
-
-
-export type ArchiveAgentChatThreadMutation = { __typename?: 'Mutation', archiveAgentChatThread: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
 export type AssignAgentChatThreadMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];
   assigneeWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8232,27 +8200,6 @@ export type DeleteSkillMutationVariables = Exact<{
 
 export type DeleteSkillMutation = { __typename?: 'Mutation', deleteSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isSystem: boolean, isActive: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type MarkAgentChatThreadAsReadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-}>;
-
-
-export type MarkAgentChatThreadAsReadMutation = { __typename?: 'Mutation', markAgentChatThreadAsRead: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
-export type MarkAgentChatThreadAsUnreadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-}>;
-
-
-export type MarkAgentChatThreadAsUnreadMutation = { __typename?: 'Mutation', markAgentChatThreadAsUnread: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
-export type MoveAgentChatThreadToInboxMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-}>;
-
-
-export type MoveAgentChatThreadToInboxMutation = { __typename?: 'Mutation', moveAgentChatThreadToInbox: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
 export type RetryChatMessageMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];
   modelId?: InputMaybe<Scalars['String']['input']>;
@@ -8274,14 +8221,6 @@ export type SendChatMessageMutationVariables = Exact<{
 
 export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId?: string | null, queued: boolean, streamId?: string | null, mentionedParticipantWorkspaceMemberIds?: Array<string> | null } };
 
-export type SnoozeAgentChatThreadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-  snoozedUntil: Scalars['DateTime']['input'];
-}>;
-
-
-export type SnoozeAgentChatThreadMutation = { __typename?: 'Mutation', snoozeAgentChatThread: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
 export type StopAgentChatStreamMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];
 }>;
@@ -8289,19 +8228,14 @@ export type StopAgentChatStreamMutationVariables = Exact<{
 
 export type StopAgentChatStreamMutation = { __typename?: 'Mutation', stopAgentChatStream: boolean };
 
-export type SubscribeToAgentChatThreadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
+export type UpdateAgentChatThreadInboxStateMutationVariables = Exact<{
+  threadIds: Array<Scalars['UUID']['input']> | Scalars['UUID']['input'];
+  action: AgentChatInboxAction;
+  snoozedUntil?: InputMaybe<Scalars['DateTime']['input']>;
 }>;
 
 
-export type SubscribeToAgentChatThreadMutation = { __typename?: 'Mutation', subscribeToAgentChatThread: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
-
-export type UnsubscribeFromAgentChatThreadMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-}>;
-
-
-export type UnsubscribeFromAgentChatThreadMutation = { __typename?: 'Mutation', unsubscribeFromAgentChatThread: { __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string } };
+export type UpdateAgentChatThreadInboxStateMutation = { __typename?: 'Mutation', updateAgentChatThreadInboxState: Array<{ __typename?: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null, isSubscribed: boolean, lastMentionedAt?: string | null, updatedAt: string }> };
 
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
@@ -10865,7 +10799,6 @@ export const ResetTimelineActivityTypeDocument = {"kind":"Document","definitions
 export const UpdateTimelineActivityTypeIsActiveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTimelineActivityTypeIsActive"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTimelineActivityTypeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTimelineActivityType"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<UpdateTimelineActivityTypeIsActiveMutation, UpdateTimelineActivityTypeIsActiveMutationVariables>;
 export const FindManyTimelineActivityTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyTimelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"emit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"on"}},{"kind":"Field","name":{"kind":"Name","value":"objectUniversalIdentifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"frontComponentUniversalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<FindManyTimelineActivityTypesQuery, FindManyTimelineActivityTypesQueryVariables>;
 export const ActivateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ActivateSkillMutation, ActivateSkillMutationVariables>;
-export const ArchiveAgentChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ArchiveAgentChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"archiveAgentChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ArchiveAgentChatThreadMutation, ArchiveAgentChatThreadMutationVariables>;
 export const AssignAgentChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignAgentChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assigneeWorkspaceMemberId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignAgentChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"assigneeWorkspaceMemberId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assigneeWorkspaceMemberId"}}}]}]}}]} as unknown as DocumentNode<AssignAgentChatThreadMutation, AssignAgentChatThreadMutationVariables>;
 export const AssignRoleToAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
 export const CreateChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateChatThread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createChatThread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateChatThreadMutation, CreateChatThreadMutationVariables>;
@@ -10875,15 +10808,10 @@ export const DeactivateSkillDocument = {"kind":"Document","definitions":[{"kind"
 export const DeleteOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"triggers"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
 export const DeleteQueuedChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteQueuedChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteQueuedChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}}]}]}}]} as unknown as DocumentNode<DeleteQueuedChatMessageMutation, DeleteQueuedChatMessageMutationVariables>;
 export const DeleteSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteSkillMutation, DeleteSkillMutationVariables>;
-export const MarkAgentChatThreadAsReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAgentChatThreadAsRead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markAgentChatThreadAsRead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MarkAgentChatThreadAsReadMutation, MarkAgentChatThreadAsReadMutationVariables>;
-export const MarkAgentChatThreadAsUnreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAgentChatThreadAsUnread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markAgentChatThreadAsUnread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MarkAgentChatThreadAsUnreadMutation, MarkAgentChatThreadAsUnreadMutationVariables>;
-export const MoveAgentChatThreadToInboxDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MoveAgentChatThreadToInbox"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"moveAgentChatThreadToInbox"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MoveAgentChatThreadToInboxMutation, MoveAgentChatThreadToInboxMutationVariables>;
 export const RetryChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"queued"}},{"kind":"Field","name":{"kind":"Name","value":"streamId"}}]}}]}}]} as unknown as DocumentNode<RetryChatMessageMutation, RetryChatMessageMutationVariables>;
 export const SendChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"text"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"browsingContext"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileAttachmentInput"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mentionedWorkspaceMemberIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"text"},"value":{"kind":"Variable","name":{"kind":"Name","value":"text"}}},{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}},{"kind":"Argument","name":{"kind":"Name","value":"browsingContext"},"value":{"kind":"Variable","name":{"kind":"Name","value":"browsingContext"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"fileAttachments"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}}},{"kind":"Argument","name":{"kind":"Name","value":"mentionedWorkspaceMemberIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mentionedWorkspaceMemberIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"queued"}},{"kind":"Field","name":{"kind":"Name","value":"streamId"}},{"kind":"Field","name":{"kind":"Name","value":"mentionedParticipantWorkspaceMemberIds"}}]}}]}}]} as unknown as DocumentNode<SendChatMessageMutation, SendChatMessageMutationVariables>;
-export const SnoozeAgentChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SnoozeAgentChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"snoozedUntil"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"snoozeAgentChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"snoozedUntil"},"value":{"kind":"Variable","name":{"kind":"Name","value":"snoozedUntil"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<SnoozeAgentChatThreadMutation, SnoozeAgentChatThreadMutationVariables>;
 export const StopAgentChatStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StopAgentChatStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stopAgentChatStream"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}]}]}}]} as unknown as DocumentNode<StopAgentChatStreamMutation, StopAgentChatStreamMutationVariables>;
-export const SubscribeToAgentChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SubscribeToAgentChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subscribeToAgentChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<SubscribeToAgentChatThreadMutation, SubscribeToAgentChatThreadMutationVariables>;
-export const UnsubscribeFromAgentChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnsubscribeFromAgentChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unsubscribeFromAgentChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UnsubscribeFromAgentChatThreadMutation, UnsubscribeFromAgentChatThreadMutationVariables>;
+export const UpdateAgentChatThreadInboxStateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAgentChatThreadInboxState"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"action"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatInboxAction"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"snoozedUntil"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAgentChatThreadInboxState"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"action"},"value":{"kind":"Variable","name":{"kind":"Name","value":"action"}}},{"kind":"Argument","name":{"kind":"Name","value":"snoozedUntil"},"value":{"kind":"Variable","name":{"kind":"Name","value":"snoozedUntil"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}},{"kind":"Field","name":{"kind":"Name","value":"isSubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"lastMentionedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateAgentChatThreadInboxStateMutation, UpdateAgentChatThreadInboxStateMutationVariables>;
 export const UpdateOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAgentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"triggers"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
 export const UpdateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateSkillInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateSkillMutation, UpdateSkillMutationVariables>;
 export const FindManyAgentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyAgents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyAgents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"triggers"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindManyAgentsQuery, FindManyAgentsQueryVariables>;
