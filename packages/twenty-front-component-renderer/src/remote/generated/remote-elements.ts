@@ -393,6 +393,9 @@ export type HtmlAProperties = HtmlCommonProperties & {
   href?: string;
   target?: string;
   rel?: string;
+  download?: string;
+  hrefLang?: string;
+  referrerPolicy?: string;
 };
 
 export const HtmlAElement = createRemoteElement<
@@ -406,6 +409,9 @@ export const HtmlAElement = createRemoteElement<
     href: { type: String },
     target: { type: String },
     rel: { type: String },
+    download: { type: String },
+    hrefLang: { type: String },
+    referrerPolicy: { type: String },
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
