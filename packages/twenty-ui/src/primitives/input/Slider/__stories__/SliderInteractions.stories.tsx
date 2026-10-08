@@ -1,14 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { clearAllMocks, expect, fn, userEvent, within } from 'storybook/test';
 
 import { Field } from '@ui/primitives/input/Field/Field';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Slider } from '../Slider';
 import { type SliderRootProps } from '../types/SliderRootProps';
 
-const SliderExample = (props: SliderRootProps) => (
+const SliderExample = (props: SliderRootProps<number>) => (
   <Slider.Root {...props}>
     <Slider.Control data-testid="slider-control">
       <Slider.Track>
@@ -19,7 +20,7 @@ const SliderExample = (props: SliderRootProps) => (
   </Slider.Root>
 );
 
-const ControlledSliderExample = (props: SliderRootProps) => {
+const ControlledSliderExample = (props: SliderRootProps<number>) => {
   const [value, setValue] = useState(40);
 
   return (
@@ -48,6 +49,47 @@ const FormSliderExample = () => {
       <SliderExample name="volume" defaultValue={40} />
       <button type="submit">Save volume</button>
       <p>Saved volume: {submittedValue}</p>
+    </form>
+  );
+};
+
+const ControlledRangeExample = (props: SliderRootProps<readonly number[]>) => {
+  const [value, setValue] = useState<readonly number[]>([25, 75]);
+  const [savedRange, setSavedRange] = useState('');
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        setSavedRange(
+          new FormData(event.currentTarget).getAll('price').join(', '),
+        );
+      }}
+    >
+      <Slider.Root
+        {...props}
+        name="price"
+        value={value}
+        onValueChange={(nextValue, details) => {
+          setValue(nextValue);
+          props.onValueChange?.(nextValue, details);
+        }}
+      >
+        <Slider.Label>Price range</Slider.Label>
+        <Slider.Value />
+        <Slider.Control>
+          <Slider.Track>
+            <Slider.Indicator />
+            <Slider.Thumb index={0} aria-label="Minimum price" />
+            <Slider.Thumb index={1} aria-label="Maximum price" />
+          </Slider.Track>
+        </Slider.Control>
+      </Slider.Root>
+      <Button type="button" onClick={() => setValue([10, 90])}>
+        Reset prices
+      </Button>
+      <Button type="submit">Save prices</Button>
+      <output>Saved prices: {savedRange}</output>
     </form>
   );
 };
@@ -251,3 +293,52 @@ export const FunctionProps: Story = {
     await expect(root).toHaveAttribute('data-volume', '41');
   },
 };
+
+export const ControlledRange: StoryObj<typeof Slider.Root<readonly number[]>> =
+  {
+    decorators: [ComponentDecorator],
+    args: {
+      onValueChange: fn(),
+      onValueCommitted: fn(),
+      thumbAlignment: 'center',
+      color: 'success',
+    },
+    render: (args) => <ControlledRangeExample {...args} />,
+    play: async ({ canvasElement, args }) => {
+      const canvas = within(canvasElement);
+      const minimum = canvas.getByRole('slider', { name: 'Minimum price' });
+      const maximum = canvas.getByRole('slider', { name: 'Maximum price' });
+
+      clearAllMocks();
+      minimum.focus();
+      await userEvent.keyboard('{ArrowRight}');
+      await expect(minimum).toHaveValue('26');
+      await expect(maximum).toHaveValue('75');
+      await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+      await expect(args.onValueChange).toHaveBeenCalledWith(
+        [26, 75],
+        expect.objectContaining({
+          activeThumbIndex: 0,
+          reason: 'keyboard',
+          event: expect.objectContaining({ type: 'keydown' }),
+        }),
+      );
+      await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
+      await expect(args.onValueCommitted).toHaveBeenCalledWith(
+        [26, 75],
+        expect.objectContaining({
+          reason: 'keyboard',
+          event: expect.objectContaining({ type: 'keydown' }),
+        }),
+      );
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Save prices' }),
+      );
+      await expect(canvas.getByText('Saved prices: 26, 75')).toBeVisible();
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Reset prices' }),
+      );
+      await expect(minimum).toHaveValue('10');
+      await expect(maximum).toHaveValue('90');
+    },
+  };
