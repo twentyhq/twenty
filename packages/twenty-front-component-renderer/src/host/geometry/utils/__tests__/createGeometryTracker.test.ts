@@ -67,6 +67,33 @@ describe('createGeometryTracker', () => {
     expect(portalLayer.style.height).toBe('calc(220px / var(--t-zoom, 1))');
   });
 
+  it('should hide the portal layer while the root container is not interactive', () => {
+    const { tracker } = createArmedTracker();
+    const root = geometryGlobals.createStubNode({
+      x: 20,
+      y: 30,
+      width: 320,
+      height: 180,
+    });
+    root.node.getClientRects = () =>
+      [root.node.getBoundingClientRect()] as unknown as DOMRectList;
+    const portalLayer = document.createElement('div');
+    tracker.setRoot(root.node);
+    tracker.setPortalLayer(portalLayer);
+
+    expect(portalLayer.style.display).toBe('');
+
+    root.node.style.pointerEvents = 'none';
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.display).toBe('none');
+
+    root.node.style.pointerEvents = '';
+    geometryGlobals.flushAnimationFrame();
+
+    expect(portalLayer.style.display).toBe('');
+  });
+
   it('should find the remote element id of a node through its nearest registered ancestor', () => {
     const tracker = createGeometryTracker();
     const tabList = document.createElement('div');

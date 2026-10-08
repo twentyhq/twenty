@@ -3,10 +3,15 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { waitForAnimationFrames } from '@/__stories__/shared/test-utils/waitForAnimationFrames';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
+import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
 
 const MAXIMUM_MENU_TRIGGER_GAP = 16;
+
+const waitForGeometryTrackerToIdle = () =>
+  waitForAnimationFrames(GEOMETRY_IDLE_FRAME_THRESHOLD * 2);
 
 const expectPortalActionAtOwnerBottom = ({
   portalAction,
@@ -20,6 +25,31 @@ const expectPortalActionAtOwnerBottom = ({
     0,
   );
   expectElementToReceivePointer(portalAction);
+};
+
+const expectPortalActionHiddenWhileScrollFrameStyleIsNone = async ({
+  scrollFrame,
+  propertyName,
+  portalAction,
+  ownerRoot,
+}: {
+  scrollFrame: HTMLElement;
+  propertyName: 'display' | 'pointer-events';
+  portalAction: Element;
+  ownerRoot: Element;
+}) => {
+  await waitForGeometryTrackerToIdle();
+
+  try {
+    scrollFrame.style.setProperty(propertyName, 'none');
+    await waitFor(() => expect(portalAction).not.toBeVisible());
+  } finally {
+    scrollFrame.style.removeProperty(propertyName);
+  }
+
+  await waitFor(() =>
+    expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
+  );
 };
 
 const expectMenuAttachedToTriggerWithinPortalArea = ({
@@ -90,6 +120,22 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() =>
     expectPortalActionAtOwnerBottom({ portalAction, ownerRoot }),
   );
+
+  const scrollFrame = canvas.getByRole('region', {
+    name: 'Widget scroll frame',
+  });
+  await expectPortalActionHiddenWhileScrollFrameStyleIsNone({
+    scrollFrame,
+    propertyName: 'display',
+    portalAction,
+    ownerRoot,
+  });
+  await expectPortalActionHiddenWhileScrollFrameStyleIsNone({
+    scrollFrame,
+    propertyName: 'pointer-events',
+    portalAction,
+    ownerRoot,
+  });
 
   await userEvent.click(portalAction);
   await waitFor(() =>

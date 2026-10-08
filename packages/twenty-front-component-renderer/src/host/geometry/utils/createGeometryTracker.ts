@@ -58,7 +58,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     const viewport = readViewportGeometry();
 
     if (isDefined(portalLayer)) {
-      updateFrontComponentPortalLayer({ portalLayer, viewport });
+      updateFrontComponentPortalLayer({ portalLayer, rootContainer, viewport });
     }
 
     const rootContainerOrigin = {
@@ -245,13 +245,16 @@ export const createGeometryTracker = (): GeometryTracker => {
     portalLayer = element;
 
     if (!isDefined(element)) {
+      wakeSources.detachPortalLayerSources();
       return;
     }
 
     updateFrontComponentPortalLayer({
       portalLayer: element,
+      rootContainer,
       viewport: readViewportGeometry(),
     });
+    wakeSources.attachPortalLayerSources();
     wake();
   };
 
