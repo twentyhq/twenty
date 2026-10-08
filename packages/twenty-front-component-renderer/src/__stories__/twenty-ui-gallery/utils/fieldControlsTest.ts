@@ -2,6 +2,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { expectAssertionToKeepFailing } from '@/__stories__/twenty-ui-gallery/utils/expectAssertionToKeepFailing';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
@@ -30,6 +31,9 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
   expect(important).not.toBeChecked();
 
   expect(email).toHaveAccessibleDescription('Use your work email');
+  expect(notes).toHaveAccessibleDescription(
+    'Additional guidance Team context Notes need review',
+  );
   expect(
     canvas.getByRole('textbox', { name: 'Required name' }),
   ).toHaveAttribute('aria-invalid', 'true');
@@ -52,6 +56,24 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
     expect(canvas.getByTestId('reported-values')).toHaveTextContent(
       'Email: alice; Notes: Follow up',
     ),
+  );
+  expect(canvas.getByTestId('native-target')).toHaveTextContent('TEXTAREA');
+  expect(canvas.getByTestId('control-values')).toHaveTextContent(
+    'alice/Follow up',
+  );
+  expect(notes.tagName).toBe('TEXTAREA');
+  expect(notes).toHaveAttribute('data-filled');
+  const editedHeight = notes.clientHeight;
+  await userEvent.click(canvas.getByRole('button', { name: 'Apply notes' }));
+  await waitFor(() => expect(notes).toHaveValue('First\nSecond\nThird'));
+  await expectAssertionToKeepFailing(() =>
+    expect(notes.clientHeight).toBeGreaterThan(editedHeight),
+  );
+  const multilineHeight = notes.clientHeight;
+  await userEvent.click(canvas.getByRole('button', { name: 'Clear notes' }));
+  await waitFor(() => expect(notes).toHaveValue(''));
+  await expectAssertionToKeepFailing(() =>
+    expect(notes.clientHeight).toBeLessThan(multilineHeight),
   );
   expect(errorHandler).not.toHaveBeenCalled();
 };

@@ -255,7 +255,7 @@ export const WorkflowEditActionEmailBase = ({
           {isDefined(missingScopes) && (
             <>
               <Callout
-                variant={'error'}
+                status={'error'}
                 title={t`Missing email draft permission.`}
                 description={
                   hasConnectedAccountsPermission
@@ -263,9 +263,12 @@ export const WorkflowEditActionEmailBase = ({
                     : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
                 }
                 action={
-                  hasConnectedAccountsPermission
-                    ? { label: t`Reauthorize`, onClick: handleReauthorize }
-                    : undefined
+                  hasConnectedAccountsPermission ? (
+                    <Callout.Action
+                      type="button"
+                      onClick={handleReauthorize}
+                    >{t`Reauthorize`}</Callout.Action>
+                  ) : undefined
                 }
               />
             </>

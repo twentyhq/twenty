@@ -1,4 +1,7 @@
 import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
+import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
+import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -44,7 +47,9 @@ import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
+import { ALERT_DIALOG_PART_PROP_DESCRIPTIONS } from './alertDialogPartPropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
+import { DIALOG_PORTAL_PROP_DESCRIPTIONS } from './dialogPortalPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
 import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
@@ -66,6 +71,7 @@ import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 import { DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './directionProviderPropDescriptions';
+import { POPOVER_PART_PROP_DESCRIPTIONS } from './popoverPartPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
@@ -287,12 +293,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Input/Input.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input',
+    propDescriptions: INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'InputGroup',
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+    propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
     name: 'NumberStepper',
@@ -306,6 +314,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Textarea/Textarea.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/textarea',
+    propDescriptions: TEXTAREA_PROP_DESCRIPTIONS,
   },
   {
     name: 'Checkbox',
@@ -438,9 +447,49 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
     partPropDescriptions: {
+      Root: {
+        children:
+          'Parts or a render function receiving the active trigger payload. Root renders no DOM node.',
+        handle: 'Connects detached triggers and imperative dialog actions.',
+        onOpenChange:
+          'Receives the requested state and Base UI event details, including reason, event, trigger and cancel().',
+      },
+      Trigger: {
+        ref: 'Ref to the trigger button, or the element supplied through render.',
+      },
+      Portal: DIALOG_PORTAL_PROP_DESCRIPTIONS,
+      Backdrop: {
+        ref: 'Ref to the backdrop div, or the element supplied through render.',
+        forceRender: 'Renders the backdrop even when this dialog is nested.',
+      },
+      Viewport: {
+        ref: 'Ref to the viewport div, or the element supplied through render.',
+        children:
+          'Popup and any other content within the positioning viewport.',
+      },
       Popup: DIALOG_POPUP_PROP_DESCRIPTIONS,
       Title: DIALOG_TITLE_PROP_DESCRIPTIONS,
+      Description: {
+        ref: 'Ref to the description paragraph, or the element supplied through render.',
+      },
+      Close: {
+        ref: 'Ref to the close button, or the element supplied through render.',
+      },
     },
   },
   {
@@ -448,6 +497,22 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/AlertDialog/AlertDialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/alert-dialog',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Backdrop',
+      'Viewport',
+      'Popup',
+      'Title',
+      'Description',
+      'Close',
+      'Header',
+      'Body',
+      'Footer',
+    ],
+    partPropDescriptions: ALERT_DIALOG_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Popup: { size: 'md' } },
   },
   {
     name: 'Menu',
@@ -479,6 +544,21 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+    parts: [
+      'Root',
+      'Trigger',
+      'Portal',
+      'Positioner',
+      'Popup',
+      'Arrow',
+      'Backdrop',
+      'Title',
+      'Description',
+      'Close',
+      'Viewport',
+    ],
+    partPropDescriptions: POPOVER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: { Positioner: { sideOffset: '8' } },
   },
   {
     name: 'Tooltip',
@@ -684,10 +764,21 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Callout',
+    nativeProps: 'div',
     source: 'components/feedback/Callout/Callout.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      closeLabel: 'Close',
+      color: 'status palette',
+      fullWidth: 'false',
+      icon: 'decorative help icon',
+      status: 'info',
+      variant: 'soft',
+    },
   },
   {
     name: 'InlineBanner',

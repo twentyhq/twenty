@@ -273,12 +273,13 @@ describe('Send chat message workflow step', () => {
               workspaceId: SEED_APPLE_WORKSPACE_ID,
               sender,
               message: {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
                 threadKey: workflowRunId,
                 idempotencyKey: stepId,
                 title: 'Headcount check',
                 text: 'Raise the headcount to 25?',
               },
+              fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
               awaitedToolCall: {
                 ...toolCall,
                 caller: {

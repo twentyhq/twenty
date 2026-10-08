@@ -3,6 +3,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useId } from 'react';
 
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { Heading } from '@ui/primitives/typography/Heading/Heading';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -14,11 +15,12 @@ import styles from '../SectionHeader.module.scss';
 export const SectionHeader = ({
   title,
   description,
-  adornment,
+  actions,
   level = 2,
   size = 'md',
   color = 'primary',
   descriptionLineClamp = 5,
+  isDescriptionFocusable = false,
   render,
   ref,
   className,
@@ -28,6 +30,14 @@ export const SectionHeader = ({
   const hasDescription = isString(description)
     ? isNonEmptyString(description)
     : isDefined(description) && description !== false;
+
+  const shouldTruncateDescription =
+    isString(description) && descriptionLineClamp !== false;
+  const descriptionContent = isString(description) ? (
+    <Text style={{ whiteSpace: 'pre-wrap' }}>{description}</Text>
+  ) : (
+    description
+  );
 
   return useRender({
     render,
@@ -47,21 +57,21 @@ export const SectionHeader = ({
             >
               {title}
             </Heading>
-            {isDefined(adornment) && (
-              <div className={styles.adornment}>{adornment}</div>
+            {isDefined(actions) && (
+              <div className={styles.actions}>{actions}</div>
             )}
           </div>
           {hasDescription && (
             <div id={descriptionId} className={styles.description}>
-              {isString(description) ? (
+              {shouldTruncateDescription ? (
                 <OverflowingTextWithTooltip
                   text={description}
                   lineClamp={descriptionLineClamp}
                   isTooltipMultiline
-                  isFocusable
+                  isFocusable={isDescriptionFocusable}
                 />
               ) : (
-                description
+                descriptionContent
               )}
             </div>
           )}
