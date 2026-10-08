@@ -3,10 +3,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  ASK_QUESTION_TOOL_NAME,
-  ASK_QUESTIONS_TOOL_NAME,
-} from 'twenty-shared/ai';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
@@ -14,6 +10,7 @@ import { type PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
+import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -142,7 +139,7 @@ export class AdminPanelGlobalChatThreadsService {
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role <> 'system') AS "messageCount",
               ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
+                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = ANY($3::text[]) AND part."toolOutput"->'result'->>'status' NOT IN ('pending', 'skipped')))::int AS "userReplyCount"
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
             LEFT JOIN ${escapeIdentifier(getWorkspaceSchemaName(workspaceIds[0]))}."workspaceMember" member ON member.id = thread."workspaceMemberId"
@@ -158,7 +155,7 @@ export class AdminPanelGlobalChatThreadsService {
               parameters.push(
                 workspaceIds,
                 WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-                [ASK_QUESTION_TOOL_NAME, ASK_QUESTIONS_TOOL_NAME],
+                [...PAUSING_TOOLS.keys()],
                 search ? `%${search}%` : null,
                 args.scope === AdminChatThreadScope.ONBOARDING,
                 args.hasErrorOnly,

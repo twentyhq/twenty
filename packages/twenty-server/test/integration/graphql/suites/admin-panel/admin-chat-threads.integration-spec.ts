@@ -110,6 +110,7 @@ describe('Admin panel global chat threads (integration)', () => {
   let regularThreadId: string;
   let answeredQuestionThreadId: string;
   let pendingQuestionThreadId: string;
+  let approvedProposalThreadId: string;
   const seededThreadIds: string[] = [];
   const seededMessageIds: string[] = [];
   const seededPartIds: string[] = [];
@@ -430,6 +431,32 @@ describe('Admin panel global chat threads (integration)', () => {
       },
       state: 'output-available',
     });
+
+    approvedProposalThreadId = await insertThread({
+      id: randomUUID(),
+      title: 'integration-approved-proposal-thread',
+    });
+
+    const approvedProposalMessageId = await insertMessage({
+      threadId: approvedProposalThreadId,
+      role: 'assistant',
+      createdAt: '2026-01-01T00:08:00Z',
+    });
+
+    await insertPart({
+      messageId: approvedProposalMessageId,
+      orderIndex: 0,
+      type: 'tool-propose_tool_call',
+      toolName: 'propose_tool_call',
+      toolCallId: 'call-approved-proposal',
+      toolInput: { toolName: 'send_email', arguments: {} },
+      toolOutput: {
+        success: true,
+        message: 'The user approved the tool call.',
+        result: { status: 'approved' },
+      },
+      state: 'output-available',
+    });
   });
 
   afterAll(async () => {
@@ -601,6 +628,18 @@ describe('Admin panel global chat threads (integration)', () => {
       expect(result.threads[0]).toMatchObject({
         id: answeredQuestionThreadId,
         messageCount: 1,
+        userReplyCount: 1,
+      });
+    });
+
+    it('counts an approved tool call as a user reply', async () => {
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: approvedProposalThreadId,
+      });
+
+      expect(result.threads[0]).toMatchObject({
+        id: approvedProposalThreadId,
         userReplyCount: 1,
       });
     });
