@@ -6,11 +6,10 @@ import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetad
 // A column without a fieldType is not sortable and renders a plain header
 export type CoreObjectTableColumn<TItem> = Pick<
   TableFieldMetadata<TItem>,
-  'align'
+  'align' | 'FieldIcon'
 > & {
   fieldName: keyof TItem & string;
   fieldLabel: MessageDescriptor;
-  FieldIcon: NonNullable<TableFieldMetadata<TItem>['FieldIcon']>;
   fieldType?: TableFieldMetadata<TItem>['fieldType'];
   gridTrack: string;
   renderCell: (item: TItem) => ReactNode;

@@ -27,7 +27,7 @@ type PageCardHeaderProps = {
 const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   column-gap: ${themeCssVariables.spacing[2]};
   display: grid;
