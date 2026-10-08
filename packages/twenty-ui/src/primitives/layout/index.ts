@@ -7,13 +7,19 @@
  *                              |___/
  */
 
-export { AnimatedExpandableContainer } from './AnimatedExpandableContainer/AnimatedExpandableContainer';
-export type { AnimationDimension } from './AnimatedExpandableContainer/types/AnimationDimension';
-export type { AnimationDurationObject } from './AnimatedExpandableContainer/types/AnimationDurationObject';
-export type { AnimationDurations } from './AnimatedExpandableContainer/types/AnimationDurations';
-export type { AnimationMode } from './AnimatedExpandableContainer/types/AnimationMode';
-export type { AnimationSize } from './AnimatedExpandableContainer/types/AnimationSize';
-export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
+export { Collapsible } from './Collapsible/Collapsible';
+export type { AnimationDimension } from './Collapsible/types/AnimationDimension';
+export type { CollapsiblePanelProps } from './Collapsible/types/CollapsiblePanelProps';
+export type { CollapsiblePanelState } from './Collapsible/types/CollapsiblePanelState';
+export type { CollapsibleRootChangeEventDetails } from './Collapsible/types/CollapsibleRootChangeEventDetails';
+export type { CollapsibleRootChangeEventReason } from './Collapsible/types/CollapsibleRootChangeEventReason';
+export type { CollapsibleRootProps } from './Collapsible/types/CollapsibleRootProps';
+export type { CollapsibleRootState } from './Collapsible/types/CollapsibleRootState';
+export type { CollapsibleTriggerProps } from './Collapsible/types/CollapsibleTriggerProps';
+export type { CollapsibleTriggerState } from './Collapsible/types/CollapsibleTriggerState';
+export { DirectionProvider } from './DirectionProvider/DirectionProvider';
+export type { DirectionProviderProps } from './DirectionProvider/types/DirectionProviderProps';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
 export type { ResizeHandleProps } from './ResizeHandle/types/ResizeHandleProps';
-export { TextDirectionProvider } from './TextDirectionProvider/TextDirectionProvider';
+export { Separator } from './Separator/Separator';
+export type { SeparatorProps } from './Separator/types/SeparatorProps';

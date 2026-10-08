@@ -3,7 +3,7 @@ import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/Advan
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 const StyledContainer = styled.div`
   display: contents;
@@ -39,20 +39,22 @@ export const AdvancedSettingsWrapper = ({
 
   return (
     <StyledContainer>
-      <AnimatedExpandableContainer
-        isExpanded={isAdvancedModeEnabled}
-        dimension={animationDimension}
-        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-        mode="scroll-height"
-        containAnimation={false}
-      >
-        <AdvancedSettingsContentWrapperWithDot
-          hideDot={hideDot}
-          dotPosition={dotPosition}
+      <Collapsible.Root open={isAdvancedModeEnabled}>
+        <Collapsible.Panel
+          dimension={animationDimension}
+          style={{
+            transitionDuration: `${ADVANCED_SETTINGS_ANIMATION_DURATION.size}s, ${ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}s`,
+          }}
+          containAnimation={false}
         >
-          <StyledContent>{children}</StyledContent>
-        </AdvancedSettingsContentWrapperWithDot>
-      </AnimatedExpandableContainer>
+          <AdvancedSettingsContentWrapperWithDot
+            hideDot={hideDot}
+            dotPosition={dotPosition}
+          >
+            <StyledContent>{children}</StyledContent>
+          </AdvancedSettingsContentWrapperWithDot>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </StyledContainer>
   );
 };

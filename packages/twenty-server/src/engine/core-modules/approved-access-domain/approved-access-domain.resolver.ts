@@ -18,13 +18,23 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
 @UsePipes(ResolverValidationPipe)
@@ -41,6 +51,19 @@ export class ApprovedAccessDomainResolver {
   ) {}
 
   @Mutation(() => ApprovedAccessDomainDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createApprovedAccessDomain(
     @Args('input') { domain, email }: CreateApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -72,6 +95,19 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deleteApprovedAccessDomain(
     @Args('input') { id }: DeleteApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -85,6 +121,19 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => ApprovedAccessDomainDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async validateApprovedAccessDomain(
     @Args('input')
     {

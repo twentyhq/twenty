@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User application variable values should fail should refuse a key the application does not declare 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_VARIABLE_NOT_FOUND",
+    "userFriendlyMessage": "Application variable not found.",
+  },
+  "message": "Application variable with key UNDECLARED_VARIABLE not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`User application variable values should fail should refuse an application that is not installed 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
+  },
+  "message": "Application 8f7c1e0a-4b2d-4c3e-9a1f-0d2e3c4b5a69 not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`User application variable values should fail should refuse an application token writing a member value of its own application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`User application variable values should fail should refuse to list every member value from a session 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires an APPLICATION_ACCESS token.",
+}
+`;
+
+exports[`User application variable values should fail should refuse to set a member value on a workspace variable 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_APPLICATION_VARIABLE_INPUT",
+    "userFriendlyMessage": "Invalid application variable input.",
+  },
+  "message": "Application variable with key RECORD_ALL_MEETINGS is not a user variable",
+  "name": "UserInputError",
+}
+`;

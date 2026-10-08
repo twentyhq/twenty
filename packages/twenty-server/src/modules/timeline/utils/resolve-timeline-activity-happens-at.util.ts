@@ -41,10 +41,7 @@ export const parseLinkedTimelineActivityHappensAt = (
   value: unknown,
 ): Date | undefined => parseTimestamp(value);
 
-// Synced records carry their own moment in time: an email happened when it was
-// received and a calendar event when it starts, not when a sync or a late
-// participant match wrote the row. The timeline activity type declares which
-// source field holds that moment; the rule resolves it to a field name.
+// Synced records anchor at their own moment (email received, event start), not when a sync wrote the row
 export const resolveLinkedTimelineActivityHappensAt = ({
   event,
   ruleAction,

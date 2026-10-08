@@ -14,7 +14,8 @@ import { LightButton } from '../LightButton';
 import { type LightButtonProps } from '../types/LightButtonProps';
 
 const meta: Meta<typeof LightButton> = {
-  title: 'UI/Components/LightButton',
+  id: 'ui-components-lightbutton',
+  title: 'UI/Components/Input/LightButton',
   component: LightButton,
   args: { children: 'Add filter' },
 };
@@ -122,7 +123,7 @@ export const Catalog: CatalogStory<Story, typeof LightButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'emphasis',

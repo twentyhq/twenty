@@ -79,8 +79,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     return null;
   }
 
-  // Deleting a tab only deactivates it in the draft, and the placement actions
-  // have to line up with the tabs the layout actually renders.
+  // Deleted tabs are only deactivated in the draft, so placement must follow the active ones
   const tabsSorted = sortTabsByPosition(
     pageLayoutDraft.tabs.filter((draftTab) => draftTab.isActive),
   );

@@ -14,7 +14,7 @@ const ResponsiveHooks = () => {
     <>
       <Text>Mobile layout: {String(isMobile)}</Text>
       <Text>Touch input: {String(isTouchDevice)}</Text>
-      <Button hotkeys={['S']} onClick={() => setActivations(activations + 1)}>
+      <Button shortcut={['S']} onClick={() => setActivations(activations + 1)}>
         Save record
       </Button>
       <Button onClick={() => setActivations(activations + 1)}>
@@ -28,6 +28,6 @@ const ResponsiveHooks = () => {
 export default defineFrontComponent({
   universalIdentifier: 'f1cdb7cb-79db-421c-bfb6-9f7c20f03ad1',
   name: 'twenty-ui-responsive-hooks',
-  description: 'Responsive hooks without a sandbox media-query bridge',
+  description: 'Responsive hooks evaluated against the widget box',
   component: ResponsiveHooks,
 });

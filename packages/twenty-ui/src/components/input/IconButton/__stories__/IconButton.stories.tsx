@@ -16,7 +16,8 @@ import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
 
 const meta: Meta<typeof IconButton> = {
-  title: 'UI/Components/IconButton',
+  id: 'ui-components-iconbutton',
+  title: 'UI/Components/Input/IconButton',
   component: IconButton,
   args: { children: <IconSearch />, 'aria-label': 'Search' },
 };
@@ -206,8 +207,8 @@ export const Tooltip: Story = {
 };
 
 export const TooltipDocumentation: Story = {
-  ...Tooltip,
-  play: undefined,
+  decorators: Tooltip.decorators,
+  args: Tooltip.args,
 };
 
 export const TooltipDisabled: Story = {
@@ -310,7 +311,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'color',

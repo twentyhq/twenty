@@ -1,9 +1,10 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
 import { type DataSource } from 'typeorm';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { v5 } from 'uuid';
@@ -100,8 +101,9 @@ type ThreadsResult = {
 
 describe('Admin panel global chat threads (integration)', () => {
   let dataSource: DataSource;
-  let storage: AgentHistoryStorageService;
+  let storage: AgentHistoryUpgradeStorageService;
   let userWorkspaceId: string;
+  let workspaceMemberId: string;
   let userEmail: string;
   let kickoffThreadId: string;
   let deterministicThreadId: string;
@@ -119,15 +121,9 @@ describe('Admin panel global chat threads (integration)', () => {
     onConflict = '',
   ): Promise<void> => {
     await storage.run(SEED_APPLE_WORKSPACE_ID, async (context) => {
-      const scopedColumns = [...columns];
-      const scopedValues = [...values];
-      if (context.storage === 'core') {
-        scopedColumns.push('workspaceId');
-        scopedValues.push(SEED_APPLE_WORKSPACE_ID);
-      }
       await context.manager.query(
-        `INSERT INTO ${context.table(name)} (${scopedColumns.map(escapeIdentifier).join(', ')}) VALUES (${scopedValues.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
-        scopedValues,
+        `INSERT INTO ${context.table(name)} (${columns.map(escapeIdentifier).join(', ')}) VALUES (${values.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
+        values,
       );
     });
   };
@@ -135,23 +131,34 @@ describe('Admin panel global chat threads (integration)', () => {
   const insertThread = async ({
     id,
     title,
-    lastStreamError,
+    hasFailedTurn = false,
   }: {
     id: string;
     title: string;
-    lastStreamError?: object;
+    hasFailedTurn?: boolean;
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      ['id', 'userWorkspaceId', 'title', 'lastStreamError'],
-      [
-        id,
-        userWorkspaceId,
-        title,
-        lastStreamError ? JSON.stringify(lastStreamError) : null,
-      ],
-      'ON CONFLICT (id) DO UPDATE SET "lastStreamError" = EXCLUDED."lastStreamError"',
+      ['id', 'workspaceMemberId', 'userWorkspaceId', 'title'],
+      [id, workspaceMemberId, userWorkspaceId, title],
+      'ON CONFLICT (id) DO NOTHING',
     );
+
+    if (hasFailedTurn) {
+      await insertHistory(
+        'agentTurn',
+        ['id', 'threadId', 'status', 'error'],
+        [
+          randomUUID(),
+          id,
+          'failed',
+          JSON.stringify({
+            code: 'STREAM_EXECUTION_FAILED',
+            message: 'stream failed',
+          }),
+        ],
+      );
+    }
 
     seededThreadIds.push(id);
 
@@ -165,7 +172,7 @@ describe('Admin panel global chat threads (integration)', () => {
     createdAt,
   }: {
     threadId: string;
-    role: 'user' | 'assistant';
+    role: 'system' | 'user' | 'assistant';
     isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
@@ -257,14 +264,15 @@ describe('Admin panel global chat threads (integration)', () => {
 
   beforeAll(async () => {
     dataSource = global.testDataSource;
-    storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+    storage = getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
+      'AgentHistoryUpgradeStorageService',
     );
 
     const [firstUserWorkspace] = await dataSource.query(
-      `SELECT "userWorkspace".id, "user".email
+      `SELECT "userWorkspace".id, "user".email, "workspaceMember".id AS "workspaceMemberId"
        FROM core."userWorkspace" "userWorkspace"
        JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+       JOIN "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workspaceMember" "workspaceMember" ON "workspaceMember"."userId" = "user".id AND "workspaceMember"."deletedAt" IS NULL
        WHERE "userWorkspace"."workspaceId" = $1
          AND "userWorkspace"."deletedAt" IS NULL
        ORDER BY "userWorkspace"."createdAt" ASC
@@ -273,21 +281,21 @@ describe('Admin panel global chat threads (integration)', () => {
     );
 
     userWorkspaceId = firstUserWorkspace.id;
+    workspaceMemberId = firstUserWorkspace.workspaceMemberId;
     userEmail = firstUserWorkspace.email;
 
     kickoffThreadId = await insertThread({
       id: randomUUID(),
       title: 'integration-onboarding-kickoff-thread',
     });
-    const hiddenKickoffMessageId = await insertMessage({
+    const kickoffContextMessageId = await insertMessage({
       threadId: kickoffThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:00:00Z',
     });
 
     await insertPart({
-      messageId: hiddenKickoffMessageId,
+      messageId: kickoffContextMessageId,
       orderIndex: 0,
       type: 'text',
       textContent: 'kickoff prompt with company context',
@@ -332,7 +340,7 @@ describe('Admin panel global chat threads (integration)', () => {
     regularThreadId = await insertThread({
       id: randomUUID(),
       title: 'integration-regular-thread',
-      lastStreamError: { message: 'stream failed' },
+      hasFailedTurn: true,
     });
     const regularAssistantMessageId = await insertMessage({
       threadId: regularThreadId,
@@ -375,17 +383,17 @@ describe('Admin panel global chat threads (integration)', () => {
     await insertPart({
       messageId: answeredQuestionMessageId,
       orderIndex: 0,
-      type: 'tool-ask_questions',
-      toolName: 'ask_questions',
-      toolCallId: 'call-answered-questions',
-      toolInput: { questions: questionItems },
+      type: 'tool-ask_question',
+      toolName: 'ask_question',
+      toolCallId: 'call-answered-question',
+      toolInput: questionItems[0],
       toolOutput: {
         success: true,
-        message: 'User answered the questions.',
+        message: 'User answered the question.',
         result: {
-          questions: questionItems,
+          question: questionItems[0],
           status: 'answered',
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+          answer: { selectedOptionIndices: [0] },
         },
       },
       state: 'output-available',
@@ -486,6 +494,59 @@ describe('Admin panel global chat threads (integration)', () => {
         userReplyCount: 0,
         userEmail,
       });
+    });
+
+    it('reports a soft deleted thread with its deletion date', async () => {
+      const deletedThreadId = await insertThread({
+        id: randomUUID(),
+        title: 'integration-soft-deleted-thread',
+      });
+
+      await storage.run(SEED_APPLE_WORKSPACE_ID, (context) =>
+        context.manager.query(
+          `UPDATE ${context.table('agentChatThread')} SET "deletedAt" = $2 WHERE id = $1`,
+          [deletedThreadId, '2026-01-02T00:00:00.000Z'],
+        ),
+      );
+
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: deletedThreadId,
+      });
+
+      expect(result.threads).toEqual([
+        expect.objectContaining({
+          id: deletedThreadId,
+          deletedAt: '2026-01-02T00:00:00.000Z',
+        }),
+      ]);
+    });
+
+    // Workflow-run conversations belong to no member; a null owner must not fail the whole list on a non-null field.
+    it('lists a thread without an owner', async () => {
+      const ownerlessThreadId = randomUUID();
+
+      await insertHistory(
+        'agentChatThread',
+        ['id', 'userWorkspaceId', 'title'],
+        [ownerlessThreadId, null, 'Workflow run conversation'],
+        'ON CONFLICT (id) DO NOTHING',
+      );
+      seededThreadIds.push(ownerlessThreadId);
+
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: ownerlessThreadId,
+      });
+
+      expect(result.threads).toEqual([
+        expect.objectContaining({
+          id: ownerlessThreadId,
+          userWorkspaceId: null,
+          userEmail: null,
+          isOnboardingThread: false,
+        }),
+      ]);
     });
 
     it('counts only visible messages and user replies', async () => {
@@ -645,7 +706,7 @@ describe('Admin panel global chat threads (integration)', () => {
   });
 
   describe('getAdminChatThreadMessages', () => {
-    it('returns the hidden kickoff first with enriched ordered parts', async () => {
+    it('returns the kickoff context first with enriched ordered parts', async () => {
       const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
         variables: { threadId: kickoffThreadId },
@@ -658,8 +719,8 @@ describe('Admin panel global chat threads (integration)', () => {
       expect(result.thread.messageCount).toBe(2);
       expect(result.messages).toHaveLength(3);
       expect(result.messages[0]).toMatchObject({
-        role: 'USER',
-        isHidden: true,
+        role: 'SYSTEM',
+        isHidden: false,
       });
       expect(result.messages[0].parts[0].textContent).toBe(
         'kickoff prompt with company context',

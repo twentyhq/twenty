@@ -7,9 +7,7 @@ import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils
 
 type IsBlockedIp = ReturnType<typeof getIsBlockedIp>;
 
-// Checks whether a hostname is a blocked IP literal.
-// Returns false for domain names — those are validated after DNS
-// resolution in the socket 'lookup' event handler.
+// Domain names are validated after DNS resolution, in the socket 'lookup' handler.
 const isHostnameBlockedIp = (
   hostname: string,
   isBlockedIp: IsBlockedIp,
@@ -27,14 +25,12 @@ const validateHost = (host: string | undefined, isBlockedIp: IsBlockedIp) => {
   }
 };
 
-// Validates a resolved IP and destroys the socket if it's blocked.
-// Fails closed: if the IP cannot be parsed, the socket is destroyed.
+// Fails closed: an unparseable IP destroys the socket.
 const attachLookupValidation = (
   duplex: Duplex,
   isBlockedIp: IsBlockedIp,
 ): Socket => {
-  // createConnection returns a net.Socket at runtime; the Duplex
-  // return type in @types/node is overly broad.
+  // @types/node types this as Duplex, but it is a net.Socket at runtime.
   const socket = duplex as Socket;
 
   socket.on('lookup', (error: Error | null, address: string) => {
@@ -62,10 +58,7 @@ const attachLookupValidation = (
   return socket;
 };
 
-// Agents that block connections to private IPs. Validation happens at
-// the connection level (createConnection + socket 'lookup' event),
-// which means every connection is checked — including those created
-// by automatic redirect following.
+// Validated per connection, so connections opened by redirect following are checked too.
 class SsrfSafeHttpAgent extends http.Agent {
   constructor(private readonly allowedInternalHosts: string[]) {
     super();

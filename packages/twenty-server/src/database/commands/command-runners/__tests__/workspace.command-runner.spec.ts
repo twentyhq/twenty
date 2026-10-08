@@ -41,6 +41,7 @@ describe('WorkspaceCommandRunner failure reporting', () => {
       runWithReport({
         success: [{ workspaceId: 'successful-workspace' }],
         fail: [],
+        skipped: [],
         interrupted: false,
       }),
     ).resolves.toBeUndefined();
@@ -63,6 +64,7 @@ describe('WorkspaceCommandRunner failure reporting', () => {
             },
           ],
           interrupted,
+          skipped: [],
         }),
       ).rejects.toThrow('Command failed for 2 workspace(s)');
       if (interrupted) {
@@ -75,7 +77,7 @@ describe('WorkspaceCommandRunner failure reporting', () => {
 
   it('preserves graceful interruption when no workspace failed', async () => {
     await expect(
-      runWithReport({ success: [], fail: [], interrupted: true }),
+      runWithReport({ success: [], fail: [], skipped: [], interrupted: true }),
     ).resolves.toBeUndefined();
   });
 });

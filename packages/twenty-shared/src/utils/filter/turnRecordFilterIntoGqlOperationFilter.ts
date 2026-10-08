@@ -52,6 +52,7 @@ import {
   resolveRelativeDateFilterStringified,
   type RecordFilter,
 } from '@/utils';
+import { convertCurrencyAmountToCurrencyMicros } from '@/utils/currency/convertCurrencyAmountToCurrencyMicros';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import {
   actorSourceFilterValueSchema,
@@ -79,11 +80,6 @@ const parseNumericFilterValue = (value: string): number => {
 
   return parsed.success ? parsed.data : parseFloat(value);
 };
-
-// Stored amountMicros are integers (the front end rounds on save), while
-// amount * 1e6 is not for many decimal amounts (2.01 -> 2009999.9999999998).
-const parseCurrencyAmountFilterValueToAmountMicros = (value: string): number =>
-  Math.round(parseNumericFilterValue(value) * 1000000);
 
 const parseActorSourceFilterValue = (value: string): string[] => {
   const parsed = actorSourceFilterValueSchema.safeParse(value);
@@ -687,11 +683,9 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         case RecordFilterOperand.IS_NOT:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                eq: parseNumericFilterValue(recordFilter.value),
-              } as FloatFilter,
-            },
+            [fieldMetadataItem.name]: {
+              neq: parseNumericFilterValue(recordFilter.value),
+            } as FloatFilter,
           };
         default:
           throw new Error(
@@ -811,8 +805,8 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  gte: parseCurrencyAmountFilterValueToAmountMicros(
-                    recordFilter.value,
+                  gte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
                   ),
                 },
               } as CurrencyFilter,
@@ -821,8 +815,8 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  lte: parseCurrencyAmountFilterValueToAmountMicros(
-                    recordFilter.value,
+                  lte: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
                   ),
                 },
               } as CurrencyFilter,
@@ -831,23 +825,21 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  eq: parseCurrencyAmountFilterValueToAmountMicros(
-                    recordFilter.value,
+                  eq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
                   ),
                 },
               } as CurrencyFilter,
             };
           case RecordFilterOperand.IS_NOT:
             return {
-              not: {
-                [fieldMetadataItem.name]: {
-                  amountMicros: {
-                    eq: parseCurrencyAmountFilterValueToAmountMicros(
-                      recordFilter.value,
-                    ),
-                  },
-                } as CurrencyFilter,
-              },
+              [fieldMetadataItem.name]: {
+                amountMicros: {
+                  neq: convertCurrencyAmountToCurrencyMicros(
+                    parseNumericFilterValue(recordFilter.value),
+                  ),
+                },
+              } as CurrencyFilter,
             };
           default:
             throw new Error(

@@ -4,7 +4,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
@@ -36,12 +36,14 @@ export const FormTextFieldInput = ({
   VariablePicker,
 }: FormTextFieldInputProps) => {
   const instanceId = useId();
+  const labelId = `${instanceId}-label`;
 
   const editor = useTextVariableEditor({
     placeholder: placeholder ?? t`Enter text`,
     multiline,
     readonly,
     defaultValue,
+    ariaLabelledBy: label ? labelId : undefined,
     onUpdate: (editor) => {
       const jsonContent = editor.getJSON();
       const parsedContent = parseEditorContent(jsonContent);
@@ -57,7 +59,7 @@ export const FormTextFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    editor.chain().focus().insertVariableTag(variableName).run();
   };
 
   if (!isDefined(editor)) {
@@ -66,7 +68,7 @@ export const FormTextFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <Field.Label>{label}</Field.Label> : null}
+      {label ? <Field.Label id={labelId}>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer multiline={multiline}>
         <FormFieldInputInnerContainer

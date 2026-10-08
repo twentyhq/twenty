@@ -3,7 +3,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -105,10 +105,10 @@ export const SettingsApplicationScreenshotLightbox = ({
       onClose={onClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={displayName}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
           style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >

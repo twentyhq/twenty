@@ -2,12 +2,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
+import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
@@ -26,20 +26,13 @@ const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
 }));
-const key = { instanceId: 'sharing-test', familyKey: { threadId: 'thread' } };
-const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily(key);
-const fetchedAtom =
-  agentChatFetchedMessagesComponentFamilyState.atomFamily(key);
-const queuedAtom = agentChatQueuedMessagesComponentFamilyState.atomFamily(key);
-const errorAtom = agentChatErrorComponentFamilyState.atomFamily(key);
+const key = { threadId: 'thread' };
+const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
+const fetchedAtom = agentChatFetchedMessagesFamilyState.atomFamily(key);
+const queuedAtom = agentChatQueuedMessagesFamilyState.atomFamily(key);
+const errorAtom = agentChatErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: key.instanceId }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 const denial = [
   { message: 'Thread not found', extensions: { code: 'NOT_FOUND' } },
@@ -115,6 +108,33 @@ describe('Shared conversation access revocation', () => {
       expect(disconnect).toHaveBeenCalledTimes(1);
     },
   );
+
+  it('refetches the conversation when one of its tool calls is resolved', () => {
+    const refetchListener = jest.fn();
+    window.addEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+    act(() =>
+      subscribe.mock.calls[0][1].next({
+        data: {
+          onAgentChatEvent: {
+            threadId: 'thread',
+            event: { type: 'tool-call-resolved', toolCallId: 'call-1' },
+          },
+        },
+      }),
+    );
+    expect(refetchListener).toHaveBeenCalledTimes(1);
+    unmount();
+    window.removeEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+  });
 
   it('clears content and disconnects when the AI permission guard denies access', () => {
     renderHook(() => useAgentChatSubscription('thread'), { wrapper: Wrapper });

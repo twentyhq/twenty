@@ -1,20 +1,18 @@
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
+import { type OnboardingRewardAction } from '@/onboarding/types/OnboardingRewardAction';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingImportPreview } from '@/onboarding/components/import-contacts/OnboardingImportPreview';
 import { OnboardingTrustBadges } from '@/onboarding/components/import-contacts/OnboardingTrustBadges';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[8]};
@@ -49,23 +47,18 @@ const StyledButtons = styled.div`
 `;
 
 type ImportContactsProps = {
-  creditsReward?: number;
-  onContinueWithGoogle?: () => void;
-  onContinueWithMicrosoft?: () => void;
+  providerActions: OnboardingRewardAction[];
   onSkip?: () => void;
 };
 
 export const ImportContacts = ({
-  creditsReward,
-  onContinueWithGoogle,
-  onContinueWithMicrosoft,
+  providerActions,
   onSkip,
 }: ImportContactsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
-    <StyledOnboardingStep>
+    <StyledOnboardingStep data-testid="onboarding-sync-emails-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Import your contacts`}</StyledOnboardingStepTitle>
@@ -75,39 +68,28 @@ export const ImportContacts = ({
             {t`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`}
           </StyledSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsReward) && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag amount={creditsReward} />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <StyledMiddle>
           <OnboardingTrustBadges />
           <OnboardingImportPreview />
         </StyledMiddle>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           <StyledButtons>
-            {isDefined(onContinueWithMicrosoft) && (
-              <MainButton
-                fullWidth
-                onClick={onContinueWithMicrosoft}
-                startIcon={<IconMicrosoft size={theme.icon.size.md} />}
-              >{t`Continue with Microsoft`}</MainButton>
-            )}
-            {isDefined(onContinueWithGoogle) && (
-              <MainButton
-                fullWidth
-                onClick={onContinueWithGoogle}
-                startIcon={<IconGoogle size={theme.icon.size.md} />}
-              >{t`Continue with Google`}</MainButton>
-            )}
+            {providerActions.map((providerAction) => (
+              <OnboardingRewardMainButton
+                key={providerAction.label}
+                label={providerAction.label}
+                Icon={providerAction.Icon}
+                creditsReward={providerAction.creditsReward}
+                isRewardPerItem={providerAction.isRewardPerItem}
+                onClick={providerAction.onClick}
+              />
+            ))}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}
         </StyledFooter>

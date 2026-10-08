@@ -5,11 +5,8 @@ import { CreateWorkflowActionHandlerService } from 'src/engine/workspace-manager
 import { DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
 import { UpdateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/update-workflow-action-handler.service';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -107,20 +104,24 @@ import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/works
 import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
 import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
 import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
+import { CreateValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/create-validation-rule-action-handler.service';
+import { DeleteValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/delete-validation-rule-action-handler.service';
+import { UpdateValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/update-validation-rule-action-handler.service';
 import { CreateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/create-search-field-metadata-action-handler.service';
 import { DeleteSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/delete-search-field-metadata-action-handler.service';
 import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/update-search-field-metadata-action-handler.service';
 
 import { BuildIndexDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/build-index-deferred-action-handler.service';
 import { DeleteLogicFunctionResourcesDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-logic-function-resources-deferred-action-handler.service';
+import { DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-workflow-runs-deferred-action-handler.workspace-service';
 import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/validate-foreign-key-deferred-action-handler.service';
+import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity]),
     WorkspaceSchemaManagerModule,
-    SecretEncryptionModule,
     MetricsModule,
+    WorkflowDeletionModule,
   ],
   providers: [
     CreateWorkflowActionHandlerService,
@@ -256,6 +257,9 @@ import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/works
     CreateSettingsMenuItemActionHandlerService,
     UpdateSettingsMenuItemActionHandlerService,
     DeleteSettingsMenuItemActionHandlerService,
+    CreateValidationRuleActionHandlerService,
+    UpdateValidationRuleActionHandlerService,
+    DeleteValidationRuleActionHandlerService,
 
     CreateSearchFieldMetadataActionHandlerService,
     UpdateSearchFieldMetadataActionHandlerService,
@@ -264,6 +268,7 @@ import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/works
     BuildIndexDeferredActionHandlerService,
     ValidateForeignKeyDeferredActionHandlerService,
     DeleteLogicFunctionResourcesDeferredActionHandlerService,
+    DeleteWorkflowRunsDeferredActionHandlerWorkspaceService,
   ],
   exports: [UpdateLogicFunctionActionHandlerService],
 })

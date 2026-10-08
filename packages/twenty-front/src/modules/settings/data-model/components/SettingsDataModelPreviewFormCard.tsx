@@ -12,6 +12,7 @@ type SettingsDataModelPreviewFormCardProps = {
   preview: ReactNode;
   form?: ReactNode;
   disabled?: boolean;
+  isPreviewTitleVisible?: boolean;
 };
 
 const StyledPreviewContainerWrapper = styled.div`
@@ -30,13 +31,16 @@ export const SettingsDataModelPreviewFormCard = ({
   className,
   preview,
   form,
+  isPreviewTitleVisible = true,
 }: SettingsDataModelPreviewFormCardProps) => (
   <Card.Root className={className} fullWidth rounded>
     <StyledPreviewContainerWrapper>
       <Card.Content divider={isDefined(form)}>
-        <StyledFormCardTitle>
-          <Trans>Preview</Trans>
-        </StyledFormCardTitle>
+        {isPreviewTitleVisible && (
+          <StyledFormCardTitle>
+            <Trans>Preview</Trans>
+          </StyledFormCardTitle>
+        )}
         {preview}
       </Card.Content>
     </StyledPreviewContainerWrapper>

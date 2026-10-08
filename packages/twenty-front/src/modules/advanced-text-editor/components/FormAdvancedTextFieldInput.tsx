@@ -7,16 +7,17 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconMaximize } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -30,8 +31,7 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
-  /* Document editors stretch to their available height; field editors keep
-     their intrinsic height so they compose naturally inside forms. */
+  /* Field editors keep their intrinsic height inside forms; document editors stretch. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
@@ -138,6 +138,10 @@ export const FormAdvancedTextFieldInput = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: instanceId,
+    isEnabled: true,
+  });
 
   const editor = useAdvancedTextEditor({
     profile,
@@ -196,7 +200,7 @@ export const FormAdvancedTextFieldInput = ({
         ? focusedHtmlEditor
         : editor;
 
-    variableTargetEditor.commands.insertVariableTag(variableName);
+    variableTargetEditor.chain().focus().insertVariableTag(variableName).run();
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [

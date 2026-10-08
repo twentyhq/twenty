@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -7,6 +8,7 @@ import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
+import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
 
 const TYPEAHEAD_RESET_DELAY = 500;
@@ -20,6 +22,7 @@ export const useDropdownKeyboardNavigation = ({
   isSubmenu: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
   return (event: KeyboardEvent<HTMLDivElement>) => {
@@ -40,12 +43,27 @@ export const useDropdownKeyboardNavigation = ({
     const isEditable = target.matches(
       'input,textarea,select,[contenteditable="true"]',
     );
-    const isRightToLeft = getComputedStyle(content).direction === 'rtl';
+    const isRightToLeft = direction === 'rtl';
     const backwardKey = isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
+    const isSubmenuBackwardKey =
+      isSubmenu && !isEditable && event.key === backwardKey;
+    const backwardGridItem =
+      isSubmenuBackwardKey && type !== 'panel'
+        ? getNextDropdownGridItem({
+            key: event.key,
+            items: getDropdownItems(content),
+            currentItem: target,
+            search: null,
+            isRightToLeft,
+          })
+        : undefined;
+    const canMoveBackwardInGrid =
+      isDefined(backwardGridItem) && backwardGridItem !== target;
 
     const shouldCloseSubmenu =
       isSubmenu &&
-      (event.key === 'Escape' || (!isEditable && event.key === backwardKey));
+      (event.key === 'Escape' ||
+        (isSubmenuBackwardKey && !canMoveBackwardInGrid));
 
     if (shouldCloseSubmenu) {
       event.preventDefault();
@@ -88,6 +106,7 @@ export const useDropdownKeyboardNavigation = ({
       currentIndex,
       search,
       isSearch,
+      isRightToLeft,
     });
 
     if (isDefined(nextItem)) {

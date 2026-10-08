@@ -760,6 +760,12 @@ msgstr "Nie znaleziono agenta."
 msgid "Agent step execution failed."
 msgstr "Wykonanie kroku agenta nie powiodło się."
 
+#. js-lingui-id: DLyw5k
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent step of the workflow run that held this conversation"
+msgstr ""
+
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -832,6 +838,18 @@ msgstr "Zagregowane / filtrowane zdarzenie do wyświetlenia na osi czasu"
 msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
 msgstr "AI"
+
+#. js-lingui-id: t/7WbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat messages sent by the workspace member"
+msgstr "Wiadomości czatu AI wysłane przez członka przestrzeni roboczej"
+
+#. js-lingui-id: NHpbHJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat threads owned by the workspace member"
+msgstr "Wątki czatu AI przypisane do członka przestrzeni roboczej"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2331,6 +2349,12 @@ msgstr "Wartość filtra wykresu jest nieprawidłowa dla tego operandu"
 msgid "Chat message not found."
 msgstr "Nie znaleziono wiadomości na czacie."
 
+#. js-lingui-id: wATfZo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat messages"
+msgstr "Wiadomości czatu"
+
 #. js-lingui-id: /VxChJ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread not found."
@@ -2340,6 +2364,12 @@ msgstr "Nie znaleziono wątku na czacie."
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread title cannot be empty."
 msgstr "Tytuł wątku czatu nie może być pusty."
+
+#. js-lingui-id: lZ6AwB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat threads"
+msgstr "Wątki czatu"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -2875,6 +2905,18 @@ msgstr "Rozmiar konwersacji"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Rozmiar konwersacji"
+
+#. js-lingui-id: qsiOwY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversations"
+msgstr ""
+
+#. js-lingui-id: z+qran
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conversations held by the run's agent steps"
+msgstr ""
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -6962,6 +7004,18 @@ msgstr "Nie znaleziono funkcji logicznej."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Funkcja logiczna o tym samym uniwersalnym identyfikatorze już istnieje"
 
+#. js-lingui-id: 07Jk6f
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Make Private"
+msgstr "Ustaw jako prywatne"
+
+#. js-lingui-id: OT90yl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Make Workflow Private"
+msgstr "Ustaw przepływ pracy jako prywatny"
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10301,6 +10355,12 @@ msgctxt "commandMenuItem.label"
 msgid "Send Test Email"
 msgstr "Wyślij wiadomość testową"
 
+#. js-lingui-id: fZP2UR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sender"
+msgstr "Nadawca"
+
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10489,6 +10549,18 @@ msgstr "Tytuł pozycji menu ustawień \"{updatedTitle}\" jest zastrzeżony"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Tytuł pozycji menu ustawień jest wymagany"
+
+#. js-lingui-id: mPgP26
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Share with Workspace"
+msgstr "Udostępnij w przestrzeni roboczej"
+
+#. js-lingui-id: tVHa8m
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Share Workflow with Workspace"
+msgstr "Udostępnij przepływ pracy w przestrzeni roboczej"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -12058,6 +12130,11 @@ msgstr "Tego podłączonego konta nie można użyć do tej akcji."
 msgid "This connection is not allowed."
 msgstr "To połączenie nie jest dozwolone."
 
+#. js-lingui-id: 4GicxZ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This conversation belongs to a workflow run and can only be read."
+msgstr ""
+
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation is too long for the model. Start a new thread to continue."
@@ -12190,6 +12267,11 @@ msgstr "Ta ścieżka pliku jest zbyt długa, aby go przesłać."
 msgid "This file upload has already been finalized."
 msgstr "To przesyłanie pliku zostało już sfinalizowane."
 
+#. js-lingui-id: Ee9ncG
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "This form is no longer awaiting a submission"
+msgstr "Ten formularz nie oczekuje już na przesłanie"
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -12224,6 +12306,16 @@ msgstr "Nie można zapisać tego limitu."
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit changed while you were editing it. Reload and try again."
 msgstr "Ten limit zmienił się podczas jego edytowania. Odśwież i spróbuj ponownie."
+
+#. js-lingui-id: ReKpPg
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log filter is not valid."
+msgstr "Ten filtr dziennika jest nieprawidłowy."
+
+#. js-lingui-id: BuvBj9
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "This log table is not valid."
+msgstr "Ta tabela dziennika jest nieprawidłowa."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13061,6 +13153,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Zaktualizowane pole nie jest ani relacją typu morph, ani zwykłą relacją."
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Nie można uzyskać dostępu do historii AI. Spróbuj ponownie."
@@ -14229,6 +14322,12 @@ msgstr "Pozycja rekordu przepływu pracy"
 msgid "Workflow root step not found."
 msgstr "Nie znaleziono kroku głównego przepływu pracy."
 
+#. js-lingui-id: U1tpnT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Workflow Run"
+msgstr ""
+
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -14299,6 +14398,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workflow run status"
 msgstr "Status wykonania przepływu pracy"
 
+#. js-lingui-id: jwF6Mg
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workflow run whose agent step held this conversation"
+msgstr ""
+
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -14316,6 +14421,12 @@ msgstr "Wykonania przepływu pracy powiązane z wersją."
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the workflow."
 msgstr "Wykonania przepływu pracy powiązane z przepływem pracy."
+
+#. js-lingui-id: 0madNH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Workflow Step ID"
+msgstr ""
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14581,6 +14692,7 @@ msgid "Workspace Member"
 msgstr "Członek Przestrzeni Roboczej"
 
 #. js-lingui-id: tz4ASG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -14639,6 +14751,18 @@ msgstr "Nie znaleziono członka przestrzeni roboczej."
 msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Stanowisko członka przestrzeni roboczej"
+
+#. js-lingui-id: 8GSlT/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who owns the thread"
+msgstr "Członek przestrzeni roboczej będący właścicielem wątku"
+
+#. js-lingui-id: Ws6spT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who sent this message"
+msgstr "Członek przestrzeni roboczej, który wysłał tę wiadomość"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14771,6 +14895,11 @@ msgstr "Najpierw rok"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Yes"
 msgstr "Tak"
+
+#. js-lingui-id: 3N5PgZ
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "You are not allowed to access this function."
+msgstr ""
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts

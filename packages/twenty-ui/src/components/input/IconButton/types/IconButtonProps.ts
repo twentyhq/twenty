@@ -12,10 +12,10 @@ export type IconButtonProps = Omit<
   | 'children'
   | 'startIcon'
   | 'endIcon'
-  | 'hotkeys'
+  | 'shortcut'
+  | 'shortcutJoinLabel'
   | 'fullWidth'
-  | 'soon'
-  | 'soonLabel'
+  | 'loadingPosition'
 > & {
   size?: IconButtonSize;
   shape?: 'square' | 'round';

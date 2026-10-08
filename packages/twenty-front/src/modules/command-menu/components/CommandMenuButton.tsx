@@ -8,7 +8,7 @@ import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 
 export type CommandMenuButtonProps = {
   command: {
@@ -19,6 +19,7 @@ export type CommandMenuButtonProps = {
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
+  hotKey?: string;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
@@ -30,6 +31,7 @@ export type CommandMenuButtonProps = {
 
 export const CommandMenuButton = ({
   command,
+  hotKey,
   onClick,
   to,
   disabled = false,
@@ -62,7 +64,7 @@ export const CommandMenuButton = ({
       sideOffset={5}
       disabled={!hasHotKeys && isDefined(resolvedShortLabel)}
     >
-      <div>
+      <div data-command-menu-item-id={command.key}>
         {resolvedShortLabel !== undefined ? (
           <NavigationButton
             startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
@@ -74,6 +76,7 @@ export const CommandMenuButton = ({
             aria-label={command.label}
             variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
             color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+            shortcut={isDefined(hotKey) ? [hotKey] : undefined}
           >
             {resolvedShortLabel}
           </NavigationButton>

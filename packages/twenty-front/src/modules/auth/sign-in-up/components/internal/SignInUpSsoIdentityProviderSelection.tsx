@@ -7,9 +7,9 @@ import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/gue
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { MainButton } from 'twenty-ui/components/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SignInUpSeparator } from './SignInUpSeparator';
 
 export const SignInUpSsoIdentityProviderSelection = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
@@ -34,7 +34,7 @@ export const SignInUpSsoIdentityProviderSelection = () => {
                 >
                   {identityProvider.name}
                 </MainButton>
-                <HorizontalSeparator visible={false} />
+                <SignInUpSeparator />
               </React.Fragment>
             );
           })}

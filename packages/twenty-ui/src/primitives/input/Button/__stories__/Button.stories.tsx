@@ -2,7 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { IconArrowRight, IconPlus } from '@ui/icon';
+import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
+import { Pill } from '@ui/primitives/data-display';
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -46,9 +48,28 @@ export const Disabled: Story = {
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
+export const LinkAction: Story = {
+  ...Keyboard,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { ...Keyboard.args, variant: 'link', children: 'Log out' },
+};
 export const Soon: Story = {
   ...Disabled,
-  args: { soon: true, soonLabel: 'Coming soon', onClick: fn() },
+  render: ({ children, ...args }) => (
+    <Button {...args}>
+      <Text
+        render={<span />}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--t-spacing-1)',
+        }}
+      >
+        {children}
+        <Pill label="Coming soon" />
+      </Text>
+    </Button>
+  ),
 };
 
 const LoadingExample = () => {
@@ -74,6 +95,7 @@ export const Loading: Story = {
     const button = canvas.getByRole('button', { name: 'Create record' });
     const width = button.getBoundingClientRect().width;
     await userEvent.click(button);
+    await expect(canvas.getByText('Create record')).not.toBeVisible();
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toBeDisabled();
     await expect(button.getBoundingClientRect().width).toBe(width);
@@ -83,13 +105,35 @@ export const Loading: Story = {
     await expect(button).toBeEnabled();
   },
 };
+export const LoadingAtEnd: Story = {
+  ...Default,
+  args: {
+    children: 'Installing (42%)',
+    startIcon: <IconDownload />,
+    loading: true,
+    loadingPosition: 'end',
+  },
+};
+export const LoadingAtEndInteraction: Story = {
+  ...LoadingAtEnd,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Installing (42%)' });
+    await expect(canvas.getByText('Installing (42%)')).toBeVisible();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+  },
+};
 export const NativeForm: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { onClick: fn() },
   render: (args) => (
     <form aria-label="Profile" onSubmit={(event) => event.preventDefault()}>
       <input aria-label="Name" defaultValue="Ada" />
-      <Button {...args}>Default button</Button>
+      <Button {...args} variant="link">
+        Default button
+      </Button>
       <Button type="reset">Reset</Button>
       <Button type="submit">Submit</Button>
     </form>
@@ -115,7 +159,9 @@ export const NativeForm: Story = {
 };
 export const LinkButton: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
+    variant: 'link',
     href: '#button-destination',
     target: '_blank',
     rel: 'noreferrer',
@@ -129,7 +175,12 @@ export const LinkButton: Story = {
 };
 export const DisabledLink: Story = {
   ...Default,
-  args: { href: '#disabled-destination', disabled: true, onClick: fn() },
+  args: {
+    variant: 'link',
+    href: '#disabled-destination',
+    disabled: true,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const link = within(canvasElement).getByRole('link');
     await expect(link).toHaveAttribute('aria-disabled', 'true');
@@ -151,7 +202,7 @@ export const Icons: Story = {
   args: {
     startIcon: <IconPlus />,
     endIcon: <IconArrowRight />,
-    hotkeys: ['⌘', '⏎'],
+    shortcut: ['Mod', 'Enter'],
   },
 };
 export const Truncation: Story = {
@@ -171,6 +222,7 @@ export const Truncation: Story = {
 const CATALOG_STATES: Record<string, Partial<ButtonProps>> = {
   default: {},
   small: { size: 'sm' },
+  shortcut: { shortcut: ['H'] },
   disabled: { disabled: true },
   loading: { loading: true },
 };
@@ -184,7 +236,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'color',
@@ -193,7 +245,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
         },
         {
           name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost'],
+          values: ['solid', 'outline', 'soft', 'ghost', 'link'],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],

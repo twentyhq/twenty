@@ -1,3 +1,4 @@
+import { AppNavigatorProvider } from '@/app/components/AppNavigatorProvider';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
@@ -11,11 +12,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
-import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -29,7 +30,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ToastProvider } from 'twenty-ui/components';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -170,16 +171,17 @@ export const PageDecorator: Decorator<{
   additionalRoutes?: string[];
   searchParams?: RouteParams;
 }> = (Story, { args }) => {
+  const router = createRouter({
+    Story,
+    args,
+    initialEntries: [
+      computeLocation(args.routePath, args.routeParams, args.searchParams),
+    ],
+  });
+
   return (
-    <RouterProvider
-      useTransitions={false}
-      router={createRouter({
-        Story,
-        args,
-        initialEntries: [
-          computeLocation(args.routePath, args.routeParams, args.searchParams),
-        ],
-      })}
-    />
+    <AppNavigatorProvider router={router}>
+      <RouterProvider useTransitions={false} router={router} />
+    </AppNavigatorProvider>
   );
 };

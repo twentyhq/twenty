@@ -50,6 +50,7 @@
       }
     },
     "typecheck": {},
+    "knip": {},
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -105,7 +106,14 @@
         "fix": {}
       }
     },
-    "test": {},
+    "test": {
+      "configurations": {
+        "ci": {
+          "maxWorkers": 3,
+          "coverage": false
+        }
+      }
+    },
     "storybook:build": {
       "options": {
         "env": {

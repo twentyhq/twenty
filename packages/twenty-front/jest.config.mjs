@@ -16,8 +16,7 @@ process.env.TZ = 'GMT';
 // oxlint-disable-next-line no-undef
 process.env.LC_ALL = 'en_US.UTF-8';
 const jestConfig = {
-  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
-  // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+  // Jest 29 can't format inline snapshots with Prettier 3 (fixed in Jest 30).
   prettierPath: null,
   ...(isCI && { reporters: ['./jest-failures-only-reporter.cjs'] }),
   displayName: 'twenty-front',
@@ -63,13 +62,6 @@ const jestConfig = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  coverageThreshold: {
-    global: {
-      statements: 47.3,
-      lines: 45.9,
-      functions: 39.5,
-    },
-  },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',

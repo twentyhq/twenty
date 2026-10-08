@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
@@ -53,29 +52,6 @@ export class AgentService {
       });
   }
 
-  async findOneAgentByName({
-    name,
-    workspaceId,
-  }: {
-    workspaceId: string;
-    name: string;
-  }): Promise<AgentEntity> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { name },
-    });
-
-    if (!agent) {
-      const identifier = `name "${name}"`;
-
-      throw new AiException(
-        `Agent with ${identifier} not found`,
-        AiExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-
-    return agent;
-  }
-
   async findOneAgentById({
     id,
     workspaceId,
@@ -104,7 +80,7 @@ export class AgentService {
   }
 
   async createOneAgent(
-    input: CreateAgentInput & { isCustom: boolean },
+    { isSystem = false, ...input }: CreateAgentInput & { isSystem?: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
     const { flatApplicationMaps, flatRoleMaps } =
@@ -130,6 +106,7 @@ export class AgentService {
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
         createAgentInput: input,
+        isSystem,
         workspaceId,
         flatApplication: resolvedFlatApplication,
         flatRoleMaps,
@@ -369,26 +346,5 @@ export class AgentService {
       ...agent,
       roleId: flatRoleTargetByAgentIdMaps[agent.id]?.roleId ?? null,
     }));
-  }
-
-  async searchAgents(
-    query: string,
-    workspaceId: string,
-    options: { limit: number } = { limit: 2 },
-  ): Promise<AgentEntity[]> {
-    const queryLower = query.toLowerCase();
-
-    return this.agentRepository.find(workspaceId, {
-      where: [
-        { deletedAt: IsNull(), name: ILike(`%${queryLower}%`) },
-        {
-          deletedAt: IsNull(),
-          description: ILike(`%${queryLower}%`),
-        },
-        { deletedAt: IsNull(), label: ILike(`%${queryLower}%`) },
-      ],
-      take: options.limit,
-      order: { name: 'ASC' },
-    });
   }
 }

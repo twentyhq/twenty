@@ -2,7 +2,6 @@ import { createReactBlockSpec } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useRef } from 'react';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
@@ -60,7 +59,7 @@ export const FileBlock = createReactBlockSpec(
       const inputFileRef = useRef<HTMLInputElement>(null);
 
       const handleUploadAttachment = async (file: File) => {
-        if (isUndefinedOrNull(file)) {
+        if (!isDefined(file)) {
           return '';
         }
         const fileUrl = await editor.uploadFile?.(file);

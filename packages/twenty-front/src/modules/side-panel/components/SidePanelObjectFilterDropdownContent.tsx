@@ -6,9 +6,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { Dropdown, SettingsRow, TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconCube } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -28,6 +30,7 @@ export const SidePanelObjectFilterDropdownContent = ({
   onSelectObject,
 }: SidePanelObjectFilterDropdownContentProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const [filterSearch, setFilterSearch] = useState('');
   const [sidePanelShowHiddenObjects, setSidePanelShowHiddenObjects] =
     useAtomState(sidePanelShowHiddenObjectsState);
@@ -72,7 +75,9 @@ export const SidePanelObjectFilterDropdownContent = ({
           <Dropdown.OptionItem
             onSelect={() => onSelectObject(null)}
             selected={selectedObjectNameSingular === null}
-            startIcon={<TintedIconTile Icon={IconCube} />}
+            startIcon={
+              <TintedIconTile icon={<IconCube size={theme.icon.size.md} />} />
+            }
           >
             {allObjectsLabel}
           </Dropdown.OptionItem>

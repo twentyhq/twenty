@@ -1,17 +1,22 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
+import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { PrefetchBookCallStepEffect } from '@/onboarding/effect-components/PrefetchBookCallStepEffect';
 import { PrefetchPlanRequiredStepEffect } from '@/onboarding/effect-components/PrefetchPlanRequiredStepEffect';
 import { useGoBackToPreviousOnboardingStep } from '@/onboarding/hooks/useGoBackToPreviousOnboardingStep';
-import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { lazy, Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
+const OnboardingConstructionSite = lazy(() =>
+  import('@/onboarding/components/OnboardingConstructionSite/OnboardingConstructionSite').then(
+    (module) => ({ default: module.OnboardingConstructionSite }),
+  ),
+);
+
 export const OnboardingStepLayout = () => {
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const freeCreditsTotal = useOnboardingFreeCreditsTotal();
   const currentUser = useAtomStateValue(currentUserState);
   const {
     goBackToPreviousOnboardingStep,
@@ -32,7 +37,14 @@ export const OnboardingStepLayout = () => {
           : undefined
       }
       isBackDisabled={isGoingBackToPreviousOnboardingStep}
-      freeCredits={isDefined(onboardingConfig) ? freeCreditsTotal : undefined}
+      headerRightComponent={<OnboardingHeaderFreeCredits />}
+      backgroundComponent={
+        <ErrorBoundary fallbackRender={() => null}>
+          <Suspense fallback={null}>
+            <OnboardingConstructionSite />
+          </Suspense>
+        </ErrorBoundary>
+      }
     >
       <PrefetchBookCallStepEffect />
       <PrefetchPlanRequiredStepEffect />

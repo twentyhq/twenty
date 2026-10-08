@@ -30,7 +30,7 @@ import { buildCampaignSendButtonTitle } from '@/side-panel/pages/send-campaign/u
 import { Select } from '@/ui/input/components/Select';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -204,6 +204,11 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               {excludedReasons.length > 0 && (
                 <StyledHint>
                   {t`${formatNumber(audiencePreview.totalMembers)} in the list, skipping ${excludedReasons.join(', ')}`}
+                </StyledHint>
+              )}
+              {audiencePreview.trackingRefused > 0 && (
+                <StyledHint>
+                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their clicks are not recorded`}
                 </StyledHint>
               )}
               {isScheduling && (

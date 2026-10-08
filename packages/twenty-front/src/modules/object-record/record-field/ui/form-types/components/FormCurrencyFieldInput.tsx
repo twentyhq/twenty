@@ -4,9 +4,9 @@ import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/f
 import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type FormFieldCurrencyInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldCurrencyInputSettings';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';

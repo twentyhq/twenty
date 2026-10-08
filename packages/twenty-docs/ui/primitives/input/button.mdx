@@ -18,7 +18,7 @@ Both share Button's native props, refs, state, and rendering behavior.
 
 `Button` triggers an action and does not manage a selected value, so it has no controlled or uncontrolled selection mode. Its native `value` prop supplies form data, not selection state.
 
-Your application owns `loading`, `disabled`, and `soon`, which default to `false`. Clicking a button does not change these props or automatically show loading while an asynchronous handler runs. Pass the current application state explicitly.
+Your application owns `loading` and `disabled`, which default to `false`. Clicking a button does not change these props or automatically show loading while an asynchronous handler runs. Pass the current application state explicitly.
 
 ```tsx
 import { useState } from 'react';
@@ -69,9 +69,43 @@ export const CreateRecord = () => (
 );
 ```
 
-Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `shortcut` displays keyboard hints on larger screens; bind the shortcuts in your application.
 
-`disabled`, `loading`, and `soon` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner. Customize the upcoming-feature label with `soonLabel`.
+`link` uses compact text with no border or filled background. It follows its content height at either size, with a smaller font and narrower padding. Its neutral color uses stronger text on hover. The appearance does not determine semantics: use `onClick` for actions and `href` for navigation.
+
+`disabled` and `loading` prevent activation. Loading keeps the label accessible and communicates a busy state. By default, `loadingPosition="center"` hides the content while preserving its layout space and centers the spinner. Set `loadingPosition` to `start` or `end` to keep children and the opposite icon visible while replacing the corresponding icon with the spinner.
+
+Your application owns progress formatting and the translated label. Pass the complete status phrase as children, for example `Installing (42%)`.
+
+<StoryEmbed storyId="ui-input-button-button--loading-at-end" height={220} />
+
+## Upcoming features
+
+Your application owns feature availability and its label. Compose a disabled button with `Pill` as children so the label remains part of the button's accessible name. Supply localized text from your application.
+
+```tsx
+import { Pill } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const UpcomingAction = () => (
+  <Button disabled>
+    <Text
+      render={<span />}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--t-spacing-1)',
+      }}
+    >
+      Upcoming action
+      <Pill label="Coming soon" />
+    </Text>
+  </Button>
+);
+```
+
+This composition also works with `MainButton` and `LightButton`. It replaces the removed `soon` and `soonLabel` props.
 
 ## Animated icons
 
@@ -81,7 +115,7 @@ Compose `Button` with `AnimatedIconCrossfade` to change its icon when applicatio
 import { useState } from 'react';
 import { IconPencil, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { AnimatedIconCrossfade } from 'twenty-ui/components';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
 
 export const EditActions = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -94,8 +128,8 @@ export const EditActions = () => {
       startIcon={
         <AnimatedIconCrossfade
           isActive={isEditing}
-          ActiveIcon={IconX}
-          InactiveIcon={IconPencil}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
         />
       }
     >
@@ -109,7 +143,7 @@ When an icon is itself an action, use `IconButton` or `LightIconButton` and anim
 
 <StoryEmbed
   title="Button with an animated icon"
-  storyId="ui-input-button-button--animated-icon-documentation"
+  storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"
   height={120}
 />
 
@@ -119,7 +153,12 @@ When an icon is itself an action, use `IconButton` or `LightIconButton` and anim
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DocumentationLink = () => (
-  <Button href="https://twenty.com" target="_blank" rel="noreferrer">
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+  >
     Read documentation
   </Button>
 );
@@ -129,6 +168,24 @@ export const DocumentationLink = () => (
 
 Buttons default to `type="button"`. Set `type="submit"` or `type="reset"` explicitly for forms. Native props, event handlers, refs, and Base UI's `render` prop pass through to the root.
 
+## Migration from ClickToActionLink
+
+Import `Button` from `twenty-ui/primitives/input` and replace `ClickToActionLink` with `Button variant="link"`. Keep `href`, `target`, and `rel` for navigation. Actions without `href` now render a native button with keyboard activation. Native attributes, events, and refs pass through to the root.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
+
 ## Props
 
 <ButtonReference />
+
+Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.

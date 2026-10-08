@@ -42,44 +42,6 @@ export type CodeExecutionData = {
 };
 
 export type DataMessagePart = {
-  'routing-status': {
-    text: string;
-    state: string;
-    debug?: {
-      routingTimeMs?: number;
-      contextBuildTimeMs?: number;
-      agentExecutionStartTimeMs?: number;
-      agentExecutionTimeMs?: number;
-      toolGenerationTimeMs?: number;
-      agentContextBuildTimeMs?: number;
-      aiRequestPrepTimeMs?: number;
-      selectedAgentId?: string;
-      selectedAgentLabel?: string;
-      availableAgents?: Array<{ id: string; label: string }>;
-      agentModel?: string;
-      context?: string;
-      contextRecordCount?: number;
-      contextSizeBytes?: number;
-      toolCallCount?: number;
-      toolCount?: number;
-      routingPromptTokens?: number;
-      routingCompletionTokens?: number;
-      routingTotalTokens?: number;
-      agentPromptTokens?: number;
-      agentCompletionTokens?: number;
-      agentTotalTokens?: number;
-      routingCostInCredits?: number;
-      agentCostInCredits?: number;
-      totalCostInCredits?: number;
-      planReasoning?: string;
-      totalSteps?: number;
-      steps?: Array<{
-        stepNumber: number;
-        agent: string;
-        task: string;
-      }>;
-    };
-  };
   'code-execution': CodeExecutionData;
   'thread-title': { title: string };
   compaction: Record<string, never>;

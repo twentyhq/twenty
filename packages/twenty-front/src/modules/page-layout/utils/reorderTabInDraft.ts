@@ -7,10 +7,7 @@ type ReorderTabInDraftParams = {
   beforeTabId: string | null;
 };
 
-// Repositions a tab relative to another one; beforeTabId null appends it after
-// the last active tab. Operating on ids instead of list indices keeps tabs not
-// rendered in the tab list (the pinned first tab) in place without index
-// arithmetic.
+// A null beforeTabId appends after the last active tab; ids keep unlisted tabs (the pinned one) in place.
 export const reorderTabInDraft = (
   draft: DraftPageLayout,
   { tabId, beforeTabId }: ReorderTabInDraftParams,

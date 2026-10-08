@@ -21,7 +21,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-jest.mock('~/hooks/usePageChangeEffectNavigateLocation', () => ({
+jest.mock('@/app/hooks/usePageChangeEffectNavigateLocation', () => ({
   usePageChangeEffectNavigateLocation: () => undefined,
 }));
 
@@ -42,9 +42,7 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
 ];
 
-// Restoring opens the panel, which is what the sync effect writes the param
-// from. Writing before that lands would clear the param being restored, so
-// this records every value the url took rather than only where it settled.
+// Writing before the panel opens would clear the param being restored, so record every value the url took
 const useRecordedSearchValues = (recorded: string[]) => {
   const { search } = useLocation();
 

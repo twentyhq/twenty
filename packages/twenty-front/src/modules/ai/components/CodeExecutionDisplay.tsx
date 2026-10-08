@@ -2,7 +2,7 @@ import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import {
   IconChevronDown,
@@ -13,7 +13,7 @@ import {
   IconFile,
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -248,23 +248,22 @@ export const CodeExecutionDisplay = ({
             )}
           </StyledHeaderRight>
         </StyledSectionHeader>
-        <AnimatedExpandableContainer
-          isExpanded={isCodeExpanded}
-          mode="fit-content"
-        >
-          <StyledCodeEditorContainer>
-            <CodeEditor
-              value={code}
-              language="python"
-              height="300px"
-              options={{
-                readOnly: true,
-                domReadOnly: true,
-                minimap: { enabled: false },
-              }}
-            />
-          </StyledCodeEditorContainer>
-        </AnimatedExpandableContainer>
+        <Collapsible.Root open={isCodeExpanded}>
+          <Collapsible.Panel>
+            <StyledCodeEditorContainer>
+              <CodeEditor
+                value={code}
+                language="python"
+                height="300px"
+                options={{
+                  readOnly: true,
+                  domReadOnly: true,
+                  minimap: { enabled: false },
+                }}
+              />
+            </StyledCodeEditorContainer>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       </StyledSection>
 
       {(hasOutput || isRunning) && (
@@ -279,16 +278,15 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isOutputExpanded}
-            mode="fit-content"
-          >
-            <TerminalOutput
-              stdout={stdout}
-              stderr={stderr}
-              isRunning={isRunning}
-            />
-          </AnimatedExpandableContainer>
+          <Collapsible.Root open={isOutputExpanded}>
+            <Collapsible.Panel>
+              <TerminalOutput
+                stdout={stdout}
+                stderr={stderr}
+                isRunning={isRunning}
+              />
+            </Collapsible.Panel>
+          </Collapsible.Root>
         </StyledSection>
       )}
 
@@ -307,46 +305,48 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isFilesExpanded}
-            mode="fit-content"
-          >
-            <StyledFilesGrid>
-              {files.map((file) => {
-                const filename = file.filename;
+          <Collapsible.Root open={isFilesExpanded}>
+            <Collapsible.Panel>
+              <StyledFilesGrid>
+                {files.map((file) => {
+                  const filename = file.filename;
 
-                return (
-                  <StyledFileCard key={file.fileId}>
-                    <StyledFilePreview>
-                      {isPreviewableMimeType(file.mimeType) ? (
-                        <StyledPreviewImage
-                          src={file.url}
-                          alt={filename}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <IconFile size={48} color={theme.font.color.tertiary} />
-                      )}
-                    </StyledFilePreview>
-                    <StyledFileInfo>
-                      <StyledFileName title={filename}>
-                        {filename}
-                      </StyledFileName>
-                      <StyledDownloadLink
-                        href={file.url}
-                        download={filename}
-                        title={t`Download ${filename}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <IconDownload size={theme.icon.size.sm} />
-                      </StyledDownloadLink>
-                    </StyledFileInfo>
-                  </StyledFileCard>
-                );
-              })}
-            </StyledFilesGrid>
-          </AnimatedExpandableContainer>
+                  return (
+                    <StyledFileCard key={file.fileId}>
+                      <StyledFilePreview>
+                        {isPreviewableMimeType(file.mimeType) ? (
+                          <StyledPreviewImage
+                            src={file.url}
+                            alt={filename}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <IconFile
+                            size={48}
+                            color={theme.font.color.tertiary}
+                          />
+                        )}
+                      </StyledFilePreview>
+                      <StyledFileInfo>
+                        <StyledFileName title={filename}>
+                          {filename}
+                        </StyledFileName>
+                        <StyledDownloadLink
+                          href={file.url}
+                          download={filename}
+                          title={t`Download ${filename}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconDownload size={theme.icon.size.sm} />
+                        </StyledDownloadLink>
+                      </StyledFileInfo>
+                    </StyledFileCard>
+                  );
+                })}
+              </StyledFilesGrid>
+            </Collapsible.Panel>
+          </Collapsible.Root>
         </StyledSection>
       )}
     </StyledContainer>

@@ -24,7 +24,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
@@ -44,7 +44,19 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => PageLayoutDTO)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UsePipes(ResolverValidationPipe)
 export class PageLayoutResolver {
   constructor(
@@ -73,9 +85,7 @@ export class PageLayoutResolver {
     return resolveEffectiveEntityProperty({
       metadataName: 'pageLayout',
       baseValue: pageLayout.name,
-      // pageLayout is not an overridable entity: a workspace renaming a layout
-      // edits the row itself, so there is no standard value left to translate
-      // and no override to arbitrate against.
+      // pageLayout is not overridable: a rename edits the row itself
       overrides: undefined,
       property: 'name',
       i18nContext,

@@ -9,8 +9,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
-import { capitalize } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useMergeManyRecordsMutation = ({
   objectNameSingular,
@@ -34,7 +33,7 @@ export const useMergeManyRecordsMutation = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  if (isUndefinedOrNull(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     return { mergeManyRecordsMutation: EMPTY_MUTATION };
   }
 
