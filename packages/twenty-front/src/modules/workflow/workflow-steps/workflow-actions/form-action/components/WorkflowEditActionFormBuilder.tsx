@@ -36,6 +36,7 @@ import {
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -280,10 +281,8 @@ export const WorkflowEditActionFormBuilder = ({
                 <Callout.Action
                   type="button"
                   onClick={() =>
-                    window.open(
+                    openUrlInNewTab(
                       'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
-                      '_blank',
-                      'noopener,noreferrer',
                     )
                   }
                 >{t`Learn more`}</Callout.Action>
