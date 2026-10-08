@@ -2,6 +2,7 @@ import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -15,7 +16,6 @@ import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
-import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
@@ -32,14 +32,17 @@ import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflo
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
 
-type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
+const workflowStepCallerRefSchema = z.object({
+  workflowRunId: z.string(),
+  stepId: z.string(),
+});
 
 // A pending step waits either on a CALLBACK, as the caller of an agent run the engine continued,
 // or on a TIME, EVENT or ANSWER, as the owner of a wake-up keyed by its run and step. Both resume the run
 @Injectable()
 export class WorkflowWaitingStepWorkspaceService
   implements
-    AgentRunCallerHandler<WorkflowStepCaller>,
+    AgentRunCallerHandler,
     PendingWakeUpOwnerHandler<null>,
     OnModuleInit
 {
@@ -66,8 +69,9 @@ export class WorkflowWaitingStepWorkspaceService
   async buildExecutionContext({
     workspaceId,
     caller,
-  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunExecutionContext> {
-    const runInfo = { workflowRunId: caller.ref.workflowRunId, workspaceId };
+  }: AgentRunCallerInput): Promise<AgentRunExecutionContext> {
+    const { workflowRunId } = workflowStepCallerRefSchema.parse(caller.ref);
+    const runInfo = { workflowRunId, workspaceId };
 
     return buildWorkflowAgentRunExecutionContext({
       executionContext:
@@ -81,10 +85,11 @@ export class WorkflowWaitingStepWorkspaceService
   // A pending step with an error waits on a retry, not on what it handed its work to
   async getWaitingState({
     workspaceId,
-    caller: {
-      ref: { workflowRunId, stepId },
-    },
-  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<OwnerWaitingState> {
+    caller,
+  }: AgentRunCallerInput): Promise<OwnerWaitingState> {
+    const { workflowRunId, stepId } = workflowStepCallerRefSchema.parse(
+      caller.ref,
+    );
     const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
       workflowRunId,
       workspaceId,
@@ -108,15 +113,17 @@ export class WorkflowWaitingStepWorkspaceService
   // retried or continues on failure like any failed step
   async onOutcome({
     workspaceId,
-    caller: {
-      ref: { workflowRunId, stepId },
-    },
+    caller,
     threadId,
     outcome,
     summary,
   }: Parameters<
-    NonNullable<AgentRunCallerHandler<WorkflowStepCaller>['onOutcome']>
+    NonNullable<AgentRunCallerHandler['onOutcome']>
   >[0]): Promise<void> {
+    const { workflowRunId, stepId } = workflowStepCallerRefSchema.parse(
+      caller.ref,
+    );
+
     if (isDefined(summary)) {
       await this.workflowRunStepLogService.setAiAgentStepLog({
         workflowRunId,

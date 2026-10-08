@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
-import { isValidUuid } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/AgentChatEnsureThreadForDraftEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { useEnsureAgentChatThreadExistsForDraft } from '@/ai/hooks/useEnsureAgentChatThreadExistsForDraft';
-import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChatThreadIdForSend';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
@@ -13,7 +10,6 @@ import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agen
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -21,24 +17,11 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 
 export const AgentChatStreamSubscriptionEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
 
-  const { ensureThreadExistsForDraft } =
-    useEnsureAgentChatThreadExistsForDraft();
-  const { ensureThreadIdForSend } = useEnsureAgentChatThreadIdForSend();
+  useAgentChat();
 
-  useListenToBrowserEvent({
-    eventName: AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME,
-    onBrowserEvent: ensureThreadExistsForDraft,
-  });
-
-  useAgentChat(ensureThreadIdForSend);
-
-  const subscriptionThreadId =
-    currentAiChatThread !== null && isValidUuid(currentAiChatThread)
-      ? currentAiChatThread
-      : null;
-
-  useAgentChatSubscription(subscriptionThreadId);
+  useAgentChatSubscription(isOnNewAiChatSlot ? null : currentAiChatThread);
 
   const agentChatFetchedMessages = useAtomFamilyStateValue(
     agentChatFetchedMessagesFamilyState,

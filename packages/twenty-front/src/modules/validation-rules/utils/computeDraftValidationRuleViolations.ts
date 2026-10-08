@@ -1,15 +1,17 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import {
   fieldMetadataDefaultValueFunctionName,
+  FieldMetadataType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
   isDefined,
+  isPlainObject,
 } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -27,6 +29,41 @@ const isServerFilledField = (
 ): boolean =>
   fieldMetadataItem.isSystem ||
   FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
+
+const IS_DRAFT_VALUE_COMPLETED_BY_SERVER_BY_FIELD_TYPE: Partial<
+  Record<FieldMetadataType, (draftValue: unknown) => boolean>
+> = {
+  [FieldMetadataType.RICH_TEXT]: (draftValue) =>
+    isPlainObject(draftValue) &&
+    isNonEmptyString(draftValue.blocknote) &&
+    !isNonEmptyString(draftValue.markdown),
+};
+
+const computeFieldNamesResolvedByServer = ({
+  draftRecord,
+  fields,
+  fieldMetadataItems,
+}: {
+  draftRecord: Record<string, unknown>;
+  fields: ValidationRuleFieldDescriptor[];
+  fieldMetadataItems: DraftFieldMetadataItem[];
+}): string[] => [
+  ...fieldMetadataItems
+    .filter(
+      (fieldMetadataItem) =>
+        isServerFilledField(fieldMetadataItem) &&
+        !(fieldMetadataItem.name in draftRecord),
+    )
+    .map((fieldMetadataItem) => fieldMetadataItem.name),
+  ...fields
+    .filter(
+      (field) =>
+        IS_DRAFT_VALUE_COMPLETED_BY_SERVER_BY_FIELD_TYPE[field.type]?.(
+          draftRecord[field.name],
+        ) === true,
+    )
+    .map((field) => field.name),
+];
 
 const withStaticDefaultValues = ({
   draftRecord,
@@ -58,12 +95,12 @@ const canEvaluateOnDraft = ({
   expression,
   fields,
   draftRecord,
-  serverFilledFieldNames,
+  fieldNamesResolvedByServer,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
   draftRecord: Record<string, unknown>;
-  serverFilledFieldNames: string[];
+  fieldNamesResolvedByServer: string[];
 }): boolean => {
   const compilationResult = compileValidationRuleExpression({
     expression,
@@ -85,12 +122,11 @@ const canEvaluateOnDraft = ({
       return typeof relatedRecord === 'object' && isDefined(relatedRecord);
     });
 
-  const isEveryServerFilledFieldInDraft = bindingPaths
+  const isNoReferencedFieldResolvedByServer = bindingPaths
     .map((bindingPath) => bindingPath.split('.')[0])
-    .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
-    .every((fieldName) => fieldName in draftRecord);
+    .every((fieldName) => !fieldNamesResolvedByServer.includes(fieldName));
 
-  return isEveryReferencedRelationLoaded && isEveryServerFilledFieldInDraft;
+  return isEveryReferencedRelationLoaded && isNoReferencedFieldResolvedByServer;
 };
 
 const withRelationPresenceFromJoinColumns = ({
@@ -136,9 +172,11 @@ export const computeDraftValidationRuleViolations = ({
     fieldMetadataItems,
   });
 
-  const serverFilledFieldNames = fieldMetadataItems
-    .filter(isServerFilledField)
-    .map((fieldMetadataItem) => fieldMetadataItem.name);
+  const fieldNamesResolvedByServer = computeFieldNamesResolvedByServer({
+    draftRecord: draftRecordWithDefaultValues,
+    fields,
+    fieldMetadataItems,
+  });
 
   return validationRules
     .filter((validationRule) => validationRule.isActive)
@@ -147,7 +185,7 @@ export const computeDraftValidationRuleViolations = ({
         expression: validationRule.expression,
         fields,
         draftRecord: draftRecordWithDefaultValues,
-        serverFilledFieldNames,
+        fieldNamesResolvedByServer,
       }),
     )
     .filter(
