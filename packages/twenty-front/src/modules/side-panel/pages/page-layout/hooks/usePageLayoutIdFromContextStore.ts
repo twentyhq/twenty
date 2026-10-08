@@ -4,6 +4,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
+import { getPageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/utils/getPageLayoutSidePanelTarget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -20,24 +21,22 @@ export const usePageLayoutIdFromContextStore = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
-    throw new Error('Object metadata ID is not defined');
+  const pageLayoutSidePanelTarget = getPageLayoutSidePanelTarget({
+    contextStoreCurrentObjectMetadataItemId,
+    contextStoreTargetedRecordsRule,
+  });
+
+  if (!isDefined(pageLayoutSidePanelTarget)) {
+    throw new Error(
+      'Page layout side panel requires one selected record of a known object',
+    );
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataItemId,
+    objectId: pageLayoutSidePanelTarget.objectMetadataItemId,
   });
 
-  if (
-    !(
-      contextStoreTargetedRecordsRule.mode === 'selection' &&
-      contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
-    )
-  ) {
-    throw new Error('Only one record should be selected');
-  }
-
-  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
+  const { recordId } = pageLayoutSidePanelTarget;
 
   const isDashboardContext =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
