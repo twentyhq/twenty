@@ -76,6 +76,7 @@ it('asks for confirmation before restoring records', async () => {
       expect.objectContaining({ title: 'Restore Person' }),
     ),
   );
+  expect(mockOpenConfirmationModal).toHaveBeenCalledTimes(1);
   expect(mockRestoreManyRecords).not.toHaveBeenCalled();
 });
 
@@ -92,5 +93,6 @@ it('restores a chat right away without asking for confirmation', async () => {
       idsToRestore: ['record-1'],
     }),
   );
+  expect(mockRestoreManyRecords).toHaveBeenCalledTimes(1);
   expect(mockOpenConfirmationModal).not.toHaveBeenCalled();
 });
