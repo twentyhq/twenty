@@ -191,9 +191,11 @@ export const WorkflowEditActionCreateCalendarEvent = ({
         />
         <FormSelectFieldInput
           label={t`Time zone`}
+          hint={t`UTC is used when no time zone is selected`}
           defaultValue={formData.timeZone}
           options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
           onChange={(value) => handleFieldChange('timeZone', value ?? '')}
+          isNullable
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
