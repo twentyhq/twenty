@@ -194,6 +194,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           defaultValue={formData.timeZone}
           options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
           onChange={(value) => handleFieldChange('timeZone', value ?? '')}
+          isNullable
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />

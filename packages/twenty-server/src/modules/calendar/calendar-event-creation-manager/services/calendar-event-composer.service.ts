@@ -97,7 +97,10 @@ export class CalendarEventComposerService {
       return { error: datesError };
     }
 
-    const timeZone = params.timeZone ?? 'UTC';
+    // The workflow node stores an empty string when no time zone is picked
+    const timeZone = isNonEmptyString(params.timeZone)
+      ? params.timeZone
+      : 'UTC';
 
     if (!isValidTimeZone(timeZone)) {
       return { error: `timeZone '${timeZone}' is not a valid IANA time zone` };

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
@@ -356,6 +357,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.CREATE_CALENDAR_EVENT: {
+        // The front sends the user's resolved time zone, which the server
+        // cannot know when the workspace member follows the system setting
+        const defaultTimeZone = (
+          defaultSettings?.input as { timeZone?: unknown } | undefined
+        )?.timeZone;
+
         return {
           builtStep: {
             ...baseStep,
@@ -371,7 +378,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 startsAt: '',
                 endsAt: '',
                 isFullDay: false,
-                timeZone: '',
+                timeZone: isNonEmptyString(defaultTimeZone)
+                  ? defaultTimeZone
+                  : '',
                 attendees: '',
                 sendInvitations: false,
                 addConferencing: false,
