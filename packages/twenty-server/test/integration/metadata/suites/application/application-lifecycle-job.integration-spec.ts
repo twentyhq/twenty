@@ -261,4 +261,52 @@ describe('Application lifecycle jobs', () => {
 
     await waitForAllJobsToFinish();
   }, 60000);
+
+  it('refuses an upgrade while the install is in progress', async () => {
+    await workspaceQueue.pause();
+
+    try {
+      const installResponse = await makeMetadataApiRequest({
+        query: TRIGGER_INSTALL_APPLICATION_JOB,
+        variables: { input: { universalIdentifier: appId } },
+      });
+
+      expect(installResponse.body.errors).toBeUndefined();
+
+      const upgradeResponse = await triggerUpgradeApplicationJob();
+
+      expect(upgradeResponse.body.errors).toHaveLength(1);
+      expect(upgradeResponse.body.errors[0].message).toBe(
+        `Cannot upgrade application ${appId} while its install is in progress`,
+      );
+    } finally {
+      await workspaceQueue.resume();
+    }
+
+    await waitForAllJobsToFinish();
+  }, 60000);
+
+  it('refuses an install while the upgrade is in progress', async () => {
+    await workspaceQueue.pause();
+
+    try {
+      const upgradeResponse = await triggerUpgradeApplicationJob();
+
+      expect(upgradeResponse.body.errors).toBeUndefined();
+
+      const installResponse = await makeMetadataApiRequest({
+        query: TRIGGER_INSTALL_APPLICATION_JOB,
+        variables: { input: { universalIdentifier: appId } },
+      });
+
+      expect(installResponse.body.errors).toHaveLength(1);
+      expect(installResponse.body.errors[0].message).toBe(
+        `Cannot install application ${appId} while its upgrade is in progress`,
+      );
+    } finally {
+      await workspaceQueue.resume();
+    }
+
+    await waitForAllJobsToFinish();
+  }, 60000);
 });

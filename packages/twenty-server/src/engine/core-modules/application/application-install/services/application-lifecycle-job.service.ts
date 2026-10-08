@@ -43,9 +43,9 @@ const CONFLICTING_OPERATIONS: Record<
   ApplicationLifecycleOperation,
   ApplicationLifecycleOperation[]
 > = {
-  install: ['uninstall'],
+  install: ['uninstall', 'upgrade'],
   uninstall: ['install', 'upgrade'],
-  upgrade: ['uninstall'],
+  upgrade: ['uninstall', 'install'],
 };
 
 const getConflictingOperationUserFriendlyMessage = ({
@@ -55,15 +55,19 @@ const getConflictingOperationUserFriendlyMessage = ({
   operation: ApplicationLifecycleOperation;
   conflictingOperation: ApplicationLifecycleOperation;
 }) => {
-  switch (conflictingOperation) {
+  switch (operation) {
     case 'install':
-      return msg`This application is being installed. Please wait for it to finish before uninstalling it.`;
-    case 'upgrade':
-      return msg`This application is being upgraded. Please wait for it to finish before uninstalling it.`;
-    case 'uninstall':
-      return operation === 'upgrade'
-        ? msg`This application is being uninstalled. Please wait for it to finish before upgrading it.`
+      return conflictingOperation === 'upgrade'
+        ? msg`This application is being upgraded. Please wait for it to finish before installing it.`
         : msg`This application is being uninstalled. Please wait for it to finish before installing it again.`;
+    case 'uninstall':
+      return conflictingOperation === 'upgrade'
+        ? msg`This application is being upgraded. Please wait for it to finish before uninstalling it.`
+        : msg`This application is being installed. Please wait for it to finish before uninstalling it.`;
+    case 'upgrade':
+      return conflictingOperation === 'install'
+        ? msg`This application is being installed. Please wait for it to finish before upgrading it.`
+        : msg`This application is being uninstalled. Please wait for it to finish before upgrading it.`;
   }
 };
 
