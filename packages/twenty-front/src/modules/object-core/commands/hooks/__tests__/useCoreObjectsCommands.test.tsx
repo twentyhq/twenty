@@ -32,8 +32,6 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
     objectMetadataItem: {
       id: '20202020-9e2b-4f2b-8f47-61b41565859a',
-      labelSingular: 'Workflow',
-      labelPlural: 'Workflows',
     },
   }),
 }));
