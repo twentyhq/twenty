@@ -1,162 +1,85 @@
 import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { type AgentRunConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-conversation.type';
 import {
-  type AgentMessageEntity,
-  AgentMessageRole,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 
-// Each execution of an agent step gets its own conversation, so a loop
-// iteration or a retry never reads or continues another one's messages. The
-// conversation has no owner: it belongs to the run and is readable by whoever
-// can read the run.
+// A step's conversation goes to the step's recipient or else the workflow's creator
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly agentCallerConversationService: AgentCallerConversationService,
+    private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
-  async recordExecution({
-    workspaceId,
-    workflowRunId,
+  async openConversation({
+    runInfo,
     stepId,
     title,
-    agentId,
-    prompt,
-    initiatorUserWorkspaceId,
-    executionResult,
+    recipientWorkspaceMemberId,
+    threadKey,
   }: {
-    workspaceId: string;
-    workflowRunId: string;
+    runInfo: WorkflowRunInfo;
     stepId: string;
     title: string;
-    agentId: string | null;
-    prompt: string;
-    initiatorUserWorkspaceId: string | null;
-    // Absent when the agent failed before replying; the prompt is still
-    // recorded so the run shows what the agent was asked.
-    executionResult?: Pick<AgentExecutionResult, 'steps'>;
-  }): Promise<string | null> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+    recipientWorkspaceMemberId: string | null;
+    threadKey: string;
+  }): Promise<AgentRunConversation> {
+    const { workspaceId, workflowRunId } = runInfo;
+    const sender =
+      await this.workflowRunInboxSenderService.findRunSenderOrThrow(runInfo);
 
-    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
-      return null;
-    }
+    // a workflow without a member creator, such as one an application installs, keeps a
+    // conversation no inbox receives
+    const fallbackRecipientWorkspaceMemberId = isDefined(
+      recipientWorkspaceMemberId,
+    )
+      ? null
+      : await this.workflowRunRecordShareService.findCreatorWorkspaceMemberId({
+          workspaceId,
+          coreWorkflowId: sender.workflowId,
+        });
 
-    const threadId = randomUUID();
-
-    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId", "workflowStepId")
-         VALUES ($1, $2, $3, $4)`,
-        [threadId, title, workflowRunId, stepId],
-      ),
-    );
-
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
-      threadId,
-      agentId,
-    });
-    const turnId = turnInsertResult.identifiers[0].id as string;
-
-    await this.insertMessage({
-      workspaceId,
-      threadId,
-      turnId,
-      role: AgentMessageRole.USER,
-      agentId: null,
-      senderUserWorkspaceId: initiatorUserWorkspaceId,
-      parts: [{ type: 'text', text: prompt }],
-    });
-
-    const replyParts = mapAiStepsToUiMessageParts(executionResult?.steps ?? []);
-
-    if (replyParts.length > 0) {
-      await this.insertMessage({
+    const openedConversation =
+      await this.agentCallerConversationService.openConversation({
         workspaceId,
-        threadId,
-        turnId,
-        role: AgentMessageRole.ASSISTANT,
-        agentId,
-        senderUserWorkspaceId: null,
-        parts: replyParts,
+        sender,
+        title,
+        threadKey,
+        fallbackThreadKey: `${threadKey}:${workflowRunId}:${stepId}`,
+        recipientWorkspaceMemberId,
+        fallbackRecipientWorkspaceMemberId,
       });
-    }
 
-    await this.workflowRunWorkspaceService.setStepThreadId({
-      stepId,
-      threadId,
-      workflowRunId,
-      workspaceId,
-    });
-
-    return threadId;
-  }
-
-  private async insertMessage({
-    workspaceId,
-    threadId,
-    turnId,
-    role,
-    agentId,
-    senderUserWorkspaceId,
-    parts,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    role: AgentMessageRole;
-    agentId: string | null;
-    senderUserWorkspaceId: string | null;
-    parts: ExtendedUIMessagePart[];
-  }): Promise<void> {
-    const messageId = randomUUID();
-
-    await this.messageRepository.insert(workspaceId, {
-      id: messageId,
-      threadId,
-      turnId,
-      role,
-      agentId,
-      processedAt: new Date(),
-      ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
-    });
-
-    const dbParts = mapUIMessagePartsToDBParts(parts, messageId, workspaceId);
-
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+    if (openedConversation.status === 'DELETED') {
+      throw new WorkflowStepExecutorException(
+        'The recipient deleted this conversation',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
+
+    return openedConversation;
+  }
+
+  async findTurnCreatedBy(runInfo: WorkflowRunInfo): Promise<ActorMetadata> {
+    const sender =
+      await this.workflowRunInboxSenderService.findRunSenderOrThrow(runInfo);
+
+    return {
+      source: FieldActorSource.WORKFLOW,
+      name: sender.workflowName,
+      workspaceMemberId: null,
+      context: {},
+    };
   }
 }

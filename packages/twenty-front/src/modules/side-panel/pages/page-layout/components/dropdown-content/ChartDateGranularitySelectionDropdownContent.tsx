@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
@@ -74,7 +74,7 @@ const isChartConfiguration = (
 export const ChartDateGranularitySelectionDropdownContent = ({
   axis,
 }: ChartDateGranularitySelectionDropdownContentProps) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;

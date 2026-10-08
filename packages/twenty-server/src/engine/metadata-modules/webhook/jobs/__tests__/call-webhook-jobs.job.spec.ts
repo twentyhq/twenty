@@ -61,6 +61,8 @@ describe('webhook mandatory visibility', () => {
     ]) {
       getOrRecompute.mockResolvedValue({
         flatObjectMetadataMaps,
+        flatFieldMetadataMapsOrm: maps,
+        featureFlagsMap: {},
         flatWebhookMaps: {
           ...maps,
           byUniversalIdentifier: {

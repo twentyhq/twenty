@@ -1,7 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { IconPlus, IconSearch } from '@ui/icon';
+import { IconPlus, IconSearch, IconTrash } from '@ui/icon';
+import { Text } from '@ui/primitives/typography';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
 import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
@@ -16,7 +17,8 @@ import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
 
 const meta: Meta<typeof IconButton> = {
-  title: 'UI/Components/IconButton',
+  id: 'ui-components-iconbutton',
+  title: 'UI/Components/Input/IconButton',
   component: IconButton,
   args: { children: <IconSearch />, 'aria-label': 'Search' },
 };
@@ -206,8 +208,8 @@ export const Tooltip: Story = {
 };
 
 export const TooltipDocumentation: Story = {
-  ...Tooltip,
-  play: undefined,
+  decorators: Tooltip.decorators,
+  args: Tooltip.args,
 };
 
 export const TooltipDisabled: Story = {
@@ -238,6 +240,8 @@ export const TooltipLink: Story = {
   args: {
     ...Tooltip.args,
     href: '#search',
+    nativeButton: false,
+    role: 'link',
     render: (props) => (
       <a {...props} data-custom-render>
         {props.children}
@@ -383,4 +387,98 @@ export const Round: Story = {
     await expect(disabled).toBeDisabled();
     await expect(getComputedStyle(disabled).opacity).toBe('1');
   },
+};
+
+export const LabelledBy: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <Text render={<span />} id="search-records-label">
+        Search records
+      </Text>
+      <IconButton
+        aria-labelledby="search-records-label"
+        tooltip="Find a record"
+        tooltipDelay={0}
+      >
+        <IconSearch />
+      </IconButton>
+    </>
+  ),
+};
+
+export const LabelledByInteraction: Story = {
+  ...LabelledBy,
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search records',
+    });
+
+    await expect(button).not.toHaveAttribute('aria-label');
+    button.focus();
+    await expect(button).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Find a record');
+    await expect(button).toHaveAccessibleName('Search records');
+  },
+};
+
+export const GroupedOverrides: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <ButtonGroup
+      aria-label="Record appearance"
+      variant="solid"
+      color="accent"
+      size="sm"
+    >
+      <IconButton
+        variant="outline"
+        color="neutral"
+        size="xs"
+        aria-label="Search records"
+        tooltip="Search records"
+      >
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create record" tooltip="Create record">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+};
+
+export const GroupedOverridesInteraction: Story = {
+  ...GroupedOverrides,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const searchButton = canvas.getByRole('button', { name: 'Search records' });
+    const createButton = canvas.getByRole('button', { name: 'Create record' });
+
+    await expect(searchButton).toHaveAttribute('data-variant', 'outline');
+    await expect(searchButton).toHaveAttribute('data-color', 'neutral');
+    await expect(searchButton).toHaveAttribute('data-icon-size', 'xs');
+    await expect(searchButton.getBoundingClientRect().width).toBe(20);
+    await expect(searchButton.getBoundingClientRect().height).toBe(20);
+    await expect(createButton).toHaveAttribute('data-variant', 'solid');
+    await expect(createButton).toHaveAttribute('data-color', 'accent');
+    await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(createButton.getBoundingClientRect().width).toBe(24);
+    await expect(createButton.getBoundingClientRect().height).toBe(24);
+  },
+};
+
+export const FramedGroupDocumentation: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <ButtonGroup framed attached={false} aria-label="Record actions">
+      <IconButton size="xs" aria-label="Add" variant="ghost">
+        <IconPlus />
+      </IconButton>
+      <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+        <IconTrash />
+      </IconButton>
+    </ButtonGroup>
+  ),
 };

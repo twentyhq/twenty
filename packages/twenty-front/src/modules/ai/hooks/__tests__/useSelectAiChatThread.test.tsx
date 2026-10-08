@@ -1,13 +1,11 @@
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
@@ -28,7 +26,7 @@ describe('useSelectAiChatThread', () => {
     resetJotaiStore();
   });
 
-  it.each([AGENT_CHAT_NEW_THREAD_DRAFT_KEY, 'other-thread'])(
+  it.each(['new-chat-thread', 'other-thread'])(
     'leaves onboarding when selecting %s',
     (threadId) => {
       jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
@@ -62,8 +60,10 @@ describe('useSelectAiChatThread', () => {
     );
   });
   it('restores usage from an archived thread and preserves it on reselection', () => {
-    const thread = {
+    const thread: AgentChatThreadRecord = {
+      __typename: 'AgentChatThread',
       id: 'archived-thread',
+      title: null,
       deletedAt: '2026-09-01',
       createdAt: '2026-08-01',
       updatedAt: '2026-09-01',
@@ -72,17 +72,12 @@ describe('useSelectAiChatThread', () => {
       totalInputTokens: 250,
       totalOutputTokens: 30,
       totalCacheReadTokens: 80,
-      totalInputCredits: 0.125,
-      totalOutputCredits: 0.05,
-    } satisfies AgentChatThread;
-    const metadataAtom = metadataStoreState.atomFamily('agentChatThreads');
-    jotaiStore.set(metadataAtom, {
-      ...jotaiStore.get(metadataAtom),
-      current: [thread],
-    });
-    const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
-      instanceId: AGENT_CHAT_INSTANCE_ID,
-      familyKey: { threadId: thread.id },
+      totalInputCredits: 125000,
+      totalOutputCredits: 50000,
+    };
+    setAgentChatThreadList(jotaiStore, [thread]);
+    const usageAtom = agentChatUsageFamilyState.atomFamily({
+      threadId: thread.id,
     });
     const { result } = renderHook(() => useSelectAiChatThread(), {
       wrapper: Wrapper,

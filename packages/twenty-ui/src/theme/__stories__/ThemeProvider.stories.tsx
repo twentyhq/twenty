@@ -299,18 +299,30 @@ const NestedThemes = () => {
           </Button>
           <Popover.Root>
             <Popover.Trigger render={<Button>Open scoped portal</Button>} />
-            <Popover.Popup>
-              <Popover.Title>Scoped portal</Popover.Title>
-              <ThemeReadout />
-              <Popover.Close render={<Button>Close scoped portal</Button>} />
-            </Popover.Popup>
+            <Popover.Portal>
+              <Popover.Positioner>
+                <Popover.Popup>
+                  <Popover.Title>Scoped portal</Popover.Title>
+                  <ThemeReadout />
+                  <Popover.Close
+                    render={<Button>Close scoped portal</Button>}
+                  />
+                </Popover.Popup>
+              </Popover.Positioner>
+            </Popover.Portal>
           </Popover.Root>
           <Popover.Root>
             <Popover.Trigger render={<Button>Open explicit portal</Button>} />
-            <Popover.Popup container={container}>
-              <Popover.Title>Explicit portal</Popover.Title>
-              <Popover.Close render={<Button>Close explicit portal</Button>} />
-            </Popover.Popup>
+            <Popover.Portal container={container}>
+              <Popover.Positioner>
+                <Popover.Popup>
+                  <Popover.Title>Explicit portal</Popover.Title>
+                  <Popover.Close
+                    render={<Button>Close explicit portal</Button>}
+                  />
+                </Popover.Popup>
+              </Popover.Positioner>
+            </Popover.Portal>
           </Popover.Root>
         </div>
       </ThemeProvider>
@@ -377,5 +389,6 @@ export const NestedScopesAndPortals: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Close explicit portal' }),
     );
+    await waitFor(() => expect(explicitPortal).not.toBeInTheDocument());
   },
 };

@@ -5,6 +5,18 @@ import { checkStoryEmbeds } from '../check-story-embeds.mjs';
 const storyIds = new Set(['ui-input-input--default']);
 
 describe('checkStoryEmbeds', () => {
+  it('rejects interaction stories embedded in documentation', () => {
+    expect(
+      checkStoryEmbeds({
+        content: '<StoryEmbed storyId="ui-input-input--default" />',
+        storyIds,
+        storiesWithPlayFunctions: new Set(['ui-input-input--default']),
+      }),
+    ).toEqual([
+      'Line 1: Storybook story "ui-input-input--default" has a play function. Documentation stories must be presentational.',
+    ]);
+  });
+
   it('accepts an existing story inside a nested preview', () => {
     expect(
       checkStoryEmbeds({

@@ -1,9 +1,7 @@
 import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
 
 describe('parseWorkspaceIdFromAwsSesResourceArn', () => {
-  // Tenant ARNs have an AWS-assigned opaque id segment after the tenant name
-  // that must be discarded; configuration-set and identity ARNs do not. A
-  // single helper has to handle both shapes consistently.
+  // Tenant ARNs carry an opaque AWS id segment after the tenant name that must be discarded
   it.each([
     {
       label: 'tenant ARN (drops the AWS-assigned tenant-id segment)',
@@ -29,10 +27,7 @@ describe('parseWorkspaceIdFromAwsSesResourceArn', () => {
     ).toBe('20202020-cb1b-4e35-b50f-2bbd09c3b1ee');
   });
 
-  // The prefix-check is the only guard preventing cross-tenant updates from
-  // foreign SES resources hitting the same SNS topic; an empty workspaceId
-  // (resource named exactly "twenty-workspace-") would otherwise produce a
-  // catastrophic empty WHERE clause downstream.
+  // The prefix check alone stops foreign SES resources; an empty workspaceId would yield an empty WHERE downstream
   it.each([
     {
       label: 'foreign prefix',

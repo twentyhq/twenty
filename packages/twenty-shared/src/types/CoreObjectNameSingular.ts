@@ -1,6 +1,9 @@
 export enum CoreObjectNameSingular {
   Activity = 'activity',
   ActivityTarget = 'activityTarget',
+  AgentChatThread = 'agentChatThread',
+  AgentChatThreadParticipant = 'agentChatThreadParticipant',
+  AgentChatThreadTarget = 'agentChatThreadTarget',
   ApiKey = 'apiKey',
   Attachment = 'attachment',
   Blocklist = 'blocklist',

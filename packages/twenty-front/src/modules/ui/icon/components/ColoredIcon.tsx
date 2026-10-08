@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { getIconTileColorShades } from 'twenty-ui/components';
+import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 

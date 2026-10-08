@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useId } from 'react';
 
@@ -17,7 +18,8 @@ export const DropdownSubmenuTrigger = ({
   endIcon,
   description,
   descriptionPlacement,
-  hotkeys,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu = true,
   children,
   render,
@@ -30,12 +32,22 @@ export const DropdownSubmenuTrigger = ({
   ref,
   ...props
 }: DropdownSubmenuTriggerProps) => {
-  const { type, parentType, open, setOpen, setFocusOnOpen, registerTrigger } =
-    useDropdownContext();
+  const direction = useDirection();
+  const {
+    type,
+    rootType,
+    parentType,
+    open,
+    setOpen,
+    setFocusOnOpen,
+    registerTrigger,
+  } = useDropdownContext();
+  const triggerType = open ? type : rootType;
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({
     id: itemId,
+    disabled,
     isSubmenuTrigger: true,
   });
   const registerTriggerElement =
@@ -51,7 +63,7 @@ export const DropdownSubmenuTrigger = ({
       nativeButton={nativeButton}
       openOnHover={openOnHover}
       role={parentType === 'menu' ? 'menuitem' : undefined}
-      aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
+      aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -65,8 +77,7 @@ export const DropdownSubmenuTrigger = ({
           return;
         }
 
-        const isRightToLeft =
-          getComputedStyle(event.currentTarget).direction === 'rtl';
+        const isRightToLeft = direction === 'rtl';
         const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
 
         if (event.key === forwardKey) {
@@ -96,7 +107,8 @@ export const DropdownSubmenuTrigger = ({
           endIcon={endIcon}
           description={description}
           descriptionPlacement={descriptionPlacement}
-          hotkeys={hotkeys}
+          shortcut={shortcut}
+          shortcutJoinLabel={shortcutJoinLabel}
           hasSubmenu={hasSubmenu}
         >
           {children}

@@ -32,7 +32,7 @@ export type DatabaseEventTriggerSettings = {
 
 export type HttpRouteTriggerSettings = {
   path: string;
-  httpMethod: HTTPMethod | `${HTTPMethod}`;
+  httpMethod: HTTPMethod;
   isAuthRequired: boolean;
   forwardedRequestHeaders?: string[];
 };

@@ -42,8 +42,7 @@ type TimelineActivityRoutingPlan = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
-// A routing plan holds that workspace's whole flat field metadata maps, so an
-// unbounded map grows with the number of workspaces a worker ever routes for.
+// Each plan holds a workspace's whole flat field metadata maps, so the cache must be bounded
 const MAX_CACHED_WORKSPACES = 128;
 
 @Injectable()
@@ -242,8 +241,7 @@ export class TimelineActivityRoutingPlanService {
                   })?.name,
               )
               .filter(isDefined) ?? null,
-          // A field from another object would make the write path read a value
-          // that is not the source record's own moment, so it is dropped here.
+          // A field from another object is not the source record's own moment
           happensAtFieldName:
             isDefined(happensAtFlatFieldMetadata) &&
             happensAtFlatFieldMetadata.objectMetadataId ===

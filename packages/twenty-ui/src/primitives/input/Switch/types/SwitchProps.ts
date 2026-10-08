@@ -1,8 +1,3 @@
-import { type Switch as SwitchPrimitive } from '@base-ui/react/switch';
+import { type SwitchRootProps } from './SwitchRootProps';
 
-import { type SwitchSize } from './SwitchSize';
-
-export type SwitchProps = SwitchPrimitive.Root.Props & {
-  /** Visual size of the switch. */
-  size?: SwitchSize;
-};
+export type SwitchProps = SwitchRootProps;

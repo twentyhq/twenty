@@ -1,7 +1,10 @@
 import '@remote-dom/core/polyfill';
 import '@remote-dom/react/polyfill';
 
-import '../generated/remote-elements';
+import {
+  HtmlInputElement,
+  HtmlTextareaElement,
+} from '../generated/remote-elements';
 
 import { ThreadMessagePort } from '@quilted/threads';
 
@@ -10,19 +13,42 @@ import { isDefined } from 'twenty-shared/utils';
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
+import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
+import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
+import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
+import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
+import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
+import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
+import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
+import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/installCompareDocumentPositionPolyfill';
+import { installDocumentActiveElementPolyfill } from '@/polyfills/dom/utils/installDocumentActiveElementPolyfill';
+import { findElementByRemoteId } from '@/polyfills/dom/utils/findElementByRemoteId';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installElementDatasetPolyfill } from '@/polyfills/dom/utils/installElementDatasetPolyfill';
+import { installElementClickMethodPolyfill } from '@/polyfills/dom/utils/installElementClickMethodPolyfill';
+import { installFocusAndBlurMethodsPolyfill } from '@/polyfills/dom/utils/installFocusAndBlurMethodsPolyfill';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
+import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
+import { installInputClickActivationPolyfill } from '@/polyfills/dom/utils/installInputClickActivationPolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
+import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
+import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
+import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
+import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
+import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
@@ -46,6 +72,14 @@ patchRemoteElementAttributes();
 installAriaBooleanPropertyAccessors();
 installErrorEventBridge();
 
+installTextTreeWalkerPolyfill({ globalScope: toGlobalScopeRecord(globalThis) });
+installInputSelectionPolyfill({
+  elementPrototypes: [
+    HtmlInputElement.prototype,
+    HtmlTextareaElement.prototype,
+  ],
+  selectionStore: workerInputSelectionStore,
+});
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
@@ -54,7 +88,14 @@ installClassAttributeAccessors({
   remoteElementPrototypes: resolveRemoteElementPrototypes(),
 });
 installLocalStyleOnBaseElements(Element.prototype);
+installElementDatasetPolyfill(Element.prototype);
 
+installNodeContainsPolyfill(Node.prototype);
+installCompareDocumentPositionPolyfill({
+  nodeConstructor: Node,
+  nodePrototype: Node.prototype,
+});
+installGetRootNodePolyfill(Node.prototype);
 installSelectorMethodsPolyfill({
   elementPrototype: Element.prototype,
   querySelectorTargets: [
@@ -62,8 +103,32 @@ installSelectorMethodsPolyfill({
     DocumentFragment.prototype,
     document,
   ],
-  resolveActiveElement: () => null,
+  resolveActiveElement: () => workerActiveElementStore.getActiveElement(),
+  resolveFocusVisibleElement: () =>
+    workerActiveElementStore.getFocusVisibleElement(),
 });
+installFocusAndBlurMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  activeElementStore: workerActiveElementStore,
+  forwardFocusMethod: workerFocusTransport.forwardFocusMethod,
+});
+installDocumentActiveElementPolyfill({
+  documentTarget: document,
+  activeElementStore: workerActiveElementStore,
+});
+installActiveElementDetachmentHook({
+  hooks: resolvePolyfillHooks(
+    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+  ),
+  activeElementStore: workerActiveElementStore,
+  onRemoveSubtree: (node) => {
+    workerFocusTransport.blurFocusedElementWithinSubtree(node);
+    workerInputSelectionStore.scheduleDetachedElementSweep();
+  },
+});
+installHostEventRetargetingPolyfill(HTMLElement.prototype);
+installElementClickMethodPolyfill(HTMLElement.prototype);
+installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 
@@ -82,7 +147,21 @@ installWindowGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installVisualViewportPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
 installWindowAliasesPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+});
+
+installMatchMediaPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  environmentSource: mediaQueryEnvironmentSource,
+});
+
+installEventConstructorPolyfills({
   globalScope: toGlobalScopeRecord(globalThis),
 });
 
@@ -93,8 +172,7 @@ installStorageBridge({
 
 installClipboardPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
-  // Resolved lazily: the host communication api is populated after worker
-  // boot, so the polyfill must not capture the function at install time.
+  // Resolved lazily: the host communication api is populated after worker boot.
   copyToClipboard: (text) => {
     const copyToClipboardFunction =
       frontComponentHostCommunicationApi.copyToClipboard;
@@ -117,6 +195,22 @@ exposeGlobals({
 });
 
 let hostThread: FrontComponentHostThread | null = null;
+
+installImageLoadingPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  loadImage: (request) => {
+    if (!isDefined(hostThread)) {
+      return Promise.reject(
+        new Error('Image loading transport is not connected'),
+      );
+    }
+
+    return hostThread.imports.loadImage(request);
+  },
+  cancelImage: async (requestId) => {
+    await hostThread?.imports.cancelImage(requestId);
+  },
+});
 
 const workerExports: WorkerExports = {
   render: async (connection, renderContext) => {
@@ -152,6 +246,14 @@ const workerExports: WorkerExports = {
   },
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
+  },
+  pushFocusUpdate: async ({ remoteElementId, isFocusVisible }) => {
+    workerActiveElementStore.setActiveElement({
+      element: isDefined(remoteElementId)
+        ? findElementByRemoteId({ rootNode: document.body, remoteElementId })
+        : null,
+      isFocusVisible,
+    });
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

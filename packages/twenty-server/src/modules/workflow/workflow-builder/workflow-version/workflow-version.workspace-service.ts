@@ -6,6 +6,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update.input';
+import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -18,10 +19,7 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';

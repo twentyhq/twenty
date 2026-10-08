@@ -1,5 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTextCard';
+import { FieldRichTextCard } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextCard';
 import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`

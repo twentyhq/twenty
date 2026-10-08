@@ -7,10 +7,15 @@ export const getMentionTagContent = ({
   objectNameSingular,
   label,
   imageUrl,
+  isConversationTarget = false,
+  shouldAddAsParticipant = false,
 }: Pick<
   SearchRecord,
   'recordId' | 'objectNameSingular' | 'label' | 'imageUrl'
->): JSONContent[] => [
+> & {
+  isConversationTarget?: boolean;
+  shouldAddAsParticipant?: boolean;
+}): JSONContent[] => [
   {
     type: 'mentionTag',
     attrs: {
@@ -18,6 +23,8 @@ export const getMentionTagContent = ({
       objectNameSingular,
       label,
       imageUrl: imageUrl ?? '',
+      isConversationTarget,
+      shouldAddAsParticipant,
     },
   },
   { type: 'text', text: ' ' },

@@ -15,6 +15,7 @@ const StyledNote = styled.div`
 
 const StyledNoteText = styled.span`
   line-height: 1.4;
+  margin-block: calc((${PRIVACY_NOTE_ICON_SIZE}px - 1.4em) / 2);
 `;
 
 export const OnboardingImportPrivacyNote = () => {

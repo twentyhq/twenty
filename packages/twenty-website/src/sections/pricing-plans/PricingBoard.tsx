@@ -11,9 +11,7 @@ import { PLANS_DATA, type PlansBillingPeriod } from './plans-data';
 import { SelfHostToggle } from './SelfHostToggle';
 import { usePricingState } from '@/pricing-state';
 
-// The interactive island below the intro: the switcher and the cards.
-// It sits 32px under the intro (the hero's intro-to-CTA gap); the cards
-// hang 68px under the switcher (the hero's CTA-to-mockup measure).
+// Spacing echoes the hero: 32px intro-to-CTA, 68px CTA-to-mockup.
 const Board = styled.div`
   align-items: center;
   display: flex;
@@ -45,8 +43,7 @@ const BillingToggleSlot = styled.div`
 
   ${mediaUp('md')} {
     grid-column: 2;
-    /* Nudged right of dead-centre so it does not read as left of the
-       Selfhosting control that sits on the row's right. */
+    /* Nudged right so it does not read as left of the Selfhosting control. */
     transform: translateX(${spacing(3)});
   }
 `;

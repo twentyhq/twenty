@@ -9,7 +9,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { LightIconButton } from '../LightIconButton';
 
 const meta: Meta<typeof ButtonGroup> = {
-  title: 'UI/Input/Button/ButtonGroup',
+  title: 'UI/Components/Input/LightIconButton/Groups',
   component: ButtonGroup,
   tags: ['!autodocs'],
 };
@@ -65,8 +65,8 @@ export const Framed: Story = {
   },
 };
 export const FramedDocumentation: Story = {
-  ...Framed,
-  play: undefined,
+  decorators: Framed.decorators,
+  render: Framed.render,
 };
 
 export const FramedDark: Story = {

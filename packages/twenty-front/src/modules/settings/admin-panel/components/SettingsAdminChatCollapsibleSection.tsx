@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAdminChatCollapsibleSectionProps = {
@@ -40,23 +40,20 @@ export const SettingsAdminChatCollapsibleSection = ({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <StyledContainer>
-      <StyledToggleButton
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<StyledToggleButton />}>
         {label}
         {isExpanded ? (
           <IconChevronUp size={14} />
         ) : (
           <IconChevronDown size={14} />
         )}
-      </StyledToggleButton>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        {children}
-      </AnimatedExpandableContainer>
-    </StyledContainer>
+      </Collapsible.Trigger>
+      <Collapsible.Panel>{children}</Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

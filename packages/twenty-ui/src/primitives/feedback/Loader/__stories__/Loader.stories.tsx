@@ -1,9 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor } from 'storybook/test';
-
-import { ComponentDecorator } from '@ui/testing';
+import { type CSSProperties } from 'react';
+import { expect } from 'storybook/test';
 
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
+import { Text } from '@ui/primitives/typography';
+import { ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof Loader> = {
   title: 'UI/Feedback/Loader',
@@ -18,79 +19,101 @@ type Story = StoryObj<typeof Loader>;
 export const WithColor: Story = {
   args: {
     color: 'red',
+    role: 'status',
+    'aria-label': 'Loading results',
   },
-  play: async ({ canvasElement }) => {
-    await waitFor(() => {
-      const element = canvasElement.querySelector(':first-child');
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('status', { name: 'Loading results' }),
+    ).toBeVisible();
+  },
+};
 
-      expect(element).toBeVisible();
+export const WithColorDocumentation: Story = {
+  render: () => (
+    <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+      <Loader
+        color="blue"
+        aria-hidden="true"
+        render={<span />}
+        data-testid="decorative-loader"
+      />
+      <Text>Saving changes</Text>
+    </Text>
+  ),
+};
 
-      return element;
-    });
+export const WithStatusText: Story = {
+  ...WithColorDocumentation,
+  play: async ({ canvas }) => {
+    const status = canvas.getByRole('status');
+    const label = canvas.getByText('Saving changes');
+    const loader = canvas.getByTestId('decorative-loader');
+
+    await expect(status).toHaveTextContent('Saving changes');
+    await expect(label).toBeVisible();
+    await expect(loader).toHaveStyle({ width: '24px', height: '12px' });
+    await expect(label.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      loader.getBoundingClientRect().right,
+    );
   },
 };
 
 export const WithDefaultCssVariable: Story = {
   decorators: [
     (Story) => (
-      // @ts-expect-error: Custom CSS variable for demonstration purposes
-      <div style={{ '--tw-button-color': 'blue' }}>
+      <Text
+        render={<div />}
+        style={{ '--tw-button-color': 'blue' } as CSSProperties}
+      >
         <Story />
-      </div>
+      </Text>
     ),
   ],
-  play: async ({ canvasElement }) => {
-    await waitFor(() => {
-      const element = canvasElement.querySelector(':first-child');
-
-      expect(element).toBeVisible();
-
-      return element;
+  args: { role: 'status', 'aria-label': 'Loading results' },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('status', { name: 'Loading results' }),
+    ).toHaveStyle({
+      borderColor: 'rgb(0, 0, 255)',
     });
   },
 };
 
 export const WithDefaultColor: Story = {
-  play: async ({ canvasElement }) => {
-    await waitFor(() => {
-      const element = canvasElement.querySelector(':first-child');
-
-      expect(element).toBeVisible();
-
-      return element;
-    });
-  },
+  args: { 'aria-hidden': true },
 };
 
 export const WithDifferentColors: Story = {
   render: () => (
-    <div id="container" style={{ display: 'flex', gap: '16px' }}>
-      <Loader color="red" />
-      <Loader color="blue" />
-      <Loader color="yellow" />
-      <Loader color="green" />
-    </div>
+    <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+      <Loader color="red" aria-hidden="true" />
+      <Loader color="blue" aria-hidden="true" />
+      <Loader color="yellow" aria-hidden="true" />
+      <Loader color="green" aria-hidden="true" />
+    </Text>
   ),
-  play: async ({ canvasElement }) => {
-    const loaders = await waitFor(() => {
-      const elements = canvasElement.querySelectorAll('#container > *');
+};
 
-      expect(elements).toHaveLength(4);
+export const Composition: Story = {
+  args: {
+    role: 'status',
+    'aria-labelledby': 'loader-label',
+    render: (props) => <span {...props} />,
+    className: 'custom-loader',
+    style: { borderColor: '#123456' },
+  },
+  render: (args) => (
+    <Text render={<div />} style={{ display: 'flex', gap: 8 }}>
+      <Loader {...args} />
+      <Text id="loader-label">Loading results</Text>
+    </Text>
+  ),
+  play: async ({ canvas }) => {
+    const loader = canvas.getByRole('status', { name: 'Loading results' });
 
-      return elements;
-    });
-
-    expect(loaders[0]).toHaveStyle({
-      borderColor: expect.stringContaining('red'),
-    });
-    expect(loaders[1]).toHaveStyle({
-      borderColor: expect.stringContaining('blue'),
-    });
-    expect(loaders[2]).toHaveStyle({
-      borderColor: expect.stringContaining('yellow'),
-    });
-    expect(loaders[3]).toHaveStyle({
-      borderColor: expect.stringContaining('green'),
-    });
+    await expect(loader.tagName).toBe('SPAN');
+    await expect(loader).toHaveClass('custom-loader');
+    await expect(loader).toHaveStyle({ borderColor: 'rgb(18, 52, 86)' });
   },
 };

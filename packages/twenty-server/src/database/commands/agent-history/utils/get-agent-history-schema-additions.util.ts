@@ -1,26 +1,14 @@
-import {
-  STANDARD_OBJECT_FIELDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 type AgentHistorySchemaMaps = Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
-
-// agentChatThreadTarget is provisioned by its own command, which owns both legs
-// of its relation to agentChatThread: `thread` on the target and
-// `recordTargets` on the thread. This migration does not create that object, so
-// emitting either leg here would fail validation.
-const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
-  STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
-  STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
-]);
 
 export const getAgentHistorySchemaAdditions = ({
   existing,
@@ -30,7 +18,7 @@ export const getAgentHistorySchemaAdditions = ({
   standard: AgentHistorySchemaMaps;
 }) => {
   const objectIdentifiers = new Set<string>(
-    AGENT_HISTORY_TABLES.map(
+    ACTIVE_AGENT_HISTORY_TABLES.map(
       ({ name }) => STANDARD_OBJECTS[name].universalIdentifier,
     ),
   );
@@ -44,8 +32,7 @@ export const getAgentHistorySchemaAdditions = ({
       ((current.readability === MetadataReadability.SYSTEM &&
         current.writability === MetadataWritability.SYSTEM) ||
         (identifier === STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
-          // INHERITED once threads can belong to a workflow run; a thread
-          // without one still reads only through its own grants.
+          // INHERITED once threads can belong to a workflow run; a thread without one reads through its own grants
           (current.readability === MetadataReadability.PRIVATE ||
             current.readability === MetadataReadability.INHERITED) &&
           current.writability === MetadataWritability.OPEN));
@@ -74,16 +61,22 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  // Preparation can run before history is copied and ownership is backfilled.
-  // Keep newly provisioned legacy objects protected until the sharing upgrade.
+  // Preparation can run before history is copied and ownership backfilled, so stay protected until the sharing upgrade
   const protectedObjects: typeof objects = objects.map((object) => ({
     ...object,
     readability: MetadataReadability.SYSTEM,
     writability: MetadataWritability.SYSTEM,
   }));
-  // Relations from other standard objects into history objects (e.g. the
-  // attachment morph target) must be provisioned with the history objects,
-  // otherwise only the history-side half of the relation gets created.
+  // Objects added later (e.g. agentChatThreadTarget) get both relation legs from their own command; a leg emitted
+  // here before that object exists would have no other side and fail validation
+  const existsOnceProvisioned = (objectUniversalIdentifier: string) =>
+    objectIdentifiers.has(objectUniversalIdentifier) ||
+    isDefined(
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        objectUniversalIdentifier
+      ],
+    );
+  // Relations into history objects (e.g. the attachment morph target) must be provisioned with them, or only one half exists
   const historyFields = Object.values(
     standard.flatFieldMetadataMaps.byUniversalIdentifier,
   )
@@ -95,9 +88,11 @@ export const getAgentHistorySchemaAdditions = ({
             objectIdentifiers.has(
               field.relationTargetObjectMetadataUniversalIdentifier,
             ))) &&
-        !FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE.has(
-          field.universalIdentifier,
-        ),
+        existsOnceProvisioned(field.objectMetadataUniversalIdentifier) &&
+        (!isDefined(field.relationTargetObjectMetadataUniversalIdentifier) ||
+          existsOnceProvisioned(
+            field.relationTargetObjectMetadataUniversalIdentifier,
+          )),
     );
   const fields = historyFields.filter(
     (field) =>
@@ -126,8 +121,7 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  // Inverse fields on other objects keep their standard definition so every
-  // provisioning path creates them identically.
+  // Inverse fields keep their standard definition so every provisioning path creates them identically
   const protectedFields: typeof fields = fields.map((field) =>
     objectIdentifiers.has(field.objectMetadataUniversalIdentifier)
       ? { ...field, writability: MetadataWritability.SYSTEM }

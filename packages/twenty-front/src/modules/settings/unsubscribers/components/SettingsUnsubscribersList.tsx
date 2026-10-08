@@ -14,7 +14,7 @@ import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constan
 import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessageSuppressions';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
-import { SearchInput } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
@@ -139,7 +139,7 @@ export const SettingsUnsubscribersList = () => {
               <SearchInput
                 placeholder={t`Search by email address`}
                 value={searchText}
-                onChange={handleSearchChange}
+                onValueChange={handleSearchChange}
               />
             </StyledSearch>
             <SettingsUnsubscribersFilterDropdown

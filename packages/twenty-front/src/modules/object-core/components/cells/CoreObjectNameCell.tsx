@@ -1,21 +1,22 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { TintedIconTile } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
+import { Avatar, type AvatarShape } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;
 `;
 
-const StyledIconContainer = styled.span`
+const StyledAvatarContainer = styled.span`
   align-items: center;
   display: flex;
   flex-shrink: 0;
@@ -23,22 +24,36 @@ const StyledIconContainer = styled.span`
 
 type CoreObjectNameCellProps = {
   name: string | null | undefined;
-  Icon: IconComponent;
-  iconColor?: ThemeColor;
+  avatarColorSeed: string;
+  avatarShape: AvatarShape;
+  Icon?: IconComponent;
 };
 
 export const CoreObjectNameCell = ({
   name,
+  avatarColorSeed,
+  avatarShape,
   Icon,
-  iconColor,
 }: CoreObjectNameCellProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   return (
     <StyledContainer>
-      <StyledIconContainer>
-        <TintedIconTile Icon={Icon} color={iconColor} size={16} />
-      </StyledIconContainer>
+      <StyledAvatarContainer>
+        {isDefined(Icon) ? (
+          <span aria-hidden>
+            <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          </span>
+        ) : (
+          <Avatar
+            name={name ?? undefined}
+            colorSeed={avatarColorSeed}
+            size="sm"
+            shape={avatarShape}
+          />
+        )}
+      </StyledAvatarContainer>
       <OverflowingTextWithTooltip
         text={isNonEmptyString(name) ? name : t`Untitled`}
       />

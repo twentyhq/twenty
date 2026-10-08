@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type AuthorizeActionButtonsProps = {

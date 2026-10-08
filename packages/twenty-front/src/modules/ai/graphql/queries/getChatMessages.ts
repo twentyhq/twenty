@@ -10,6 +10,7 @@ export const GET_CHAT_MESSAGES = gql`
       role
       status
       createdAt
+      processedAt
       parts {
         id
         messageId
@@ -24,7 +25,6 @@ export const GET_CHAT_MESSAGES = gql`
         state
         providerExecuted
         errorMessage
-        errorDetails
         sourceUrlSourceId
         sourceUrlUrl
         sourceUrlTitle

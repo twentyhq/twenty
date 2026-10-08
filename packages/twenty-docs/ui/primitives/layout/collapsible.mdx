@@ -1,0 +1,64 @@
+---
+title: Collapsible
+description: Compose an accessible trigger and animated panel with controlled or uncontrolled expansion.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
+
+`Collapsible` exposes Base UI's Root, Trigger, and Panel contracts. Root owns expansion state, Trigger supplies keyboard activation and the panel relationship, and Panel owns animation and content lifetime.
+
+## Anatomy
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
+
+<StoryEmbed
+  storyId="ui-layout-collapsible--documentation"
+  title="Collapsible example"
+/>
+
+## Usage
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text>Match each CSV column to a record field before importing.</Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
+```
+
+Use `defaultOpen` for uncontrolled expansion. Use `open` and `onOpenChange` when the application owns the state. The callback receives the requested boolean and Base UI event details, including `reason`, `event`, and `cancel()`. Canceling a change preserves the current state. An externally controlled panel can omit Trigger when its state comes from another control or application condition.
+
+Triggers inherit Root's `disabled` state and can override it with their own `disabled` prop. The native trigger supports Enter and Space and supplies `aria-expanded` and `aria-controls` automatically. Give each trigger a meaningful accessible name.
+
+## Native customization
+
+Root and Panel render a `div`; Trigger renders a `button`. Each part accepts native attributes, handlers, `className`, `style`, refs, and Base UI `render` composition. Class and style callbacks receive the part's state. Forward all supplied props and the ref from custom render components. Set `nativeButton={false}` when Trigger renders a non-button element.
+
+Public types include `CollapsibleRootProps`, `CollapsibleTriggerProps`, `CollapsiblePanelProps`, the three part state types, and `CollapsibleRootChangeEventDetails` and `CollapsibleRootChangeEventReason`.
+
+## Animation and content lifetime
+
+Panel defaults to `dimension="height"`. Use `dimension="width"` for horizontal expansion and constrain the content's width when needed. `containAnimation` defaults to `true`, clips overflow, and lays content out in a column. Set it to `false` when content needs to overflow during the transition.
+
+Panel's `duration` chooses a theme preset (`instant`, `fast`, `normal`, or `slow`). For independent timings, use native `style={{ transitionDuration: '0.4s, 0.2s' }}`. The first duration controls size and the second controls opacity. Reduced-motion preferences disable the transitions, including custom timings.
+
+Panel unmounts after closing by default. Use `keepMounted` to preserve local content state while hiding the closed panel. `hiddenUntilFound` lets browser page search reveal closed content and takes precedence over `keepMounted`.
+
+## Props
+
+<CollapsibleReference />

@@ -14,10 +14,21 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @MetadataResolver(() => ApplicationDTO)
@@ -28,10 +39,11 @@ export class ApplicationHealthResolver {
   ) {}
 
   @Mutation(() => ApplicationHealthCheckResultDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async runApplicationHealthCheck(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,
