@@ -332,7 +332,13 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<string | null> {
+  async acquireLock({
+    key,
+    ttl = 1000,
+  }: {
+    key: string;
+    ttl?: number;
+  }): Promise<string | null> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
@@ -348,7 +354,15 @@ export class CacheStorageService {
     return result === 'OK' ? token : null;
   }
 
-  async extendLock(key: string, token: string, ttl: number): Promise<boolean> {
+  async extendLock({
+    key,
+    token,
+    ttl,
+  }: {
+    key: string;
+    token: string;
+    ttl: number;
+  }): Promise<boolean> {
     const extended = await this.runScript<number>({
       script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
       keys: [key],
@@ -358,7 +372,13 @@ export class CacheStorageService {
     return extended === 1;
   }
 
-  async releaseLock(key: string, token: string): Promise<void> {
+  async releaseLock({
+    key,
+    token,
+  }: {
+    key: string;
+    token: string;
+  }): Promise<void> {
     await this.runScript<number>({
       script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
       keys: [key],

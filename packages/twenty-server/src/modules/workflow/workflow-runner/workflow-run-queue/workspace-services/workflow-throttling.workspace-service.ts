@@ -105,22 +105,28 @@ export class WorkflowThrottlingWorkspaceService {
     }, authContext);
   }
 
-  async acquireWorkflowEnqueueLock(
-    workspaceId: string,
+  async acquireWorkflowEnqueueLock({
+    workspaceId,
     ttlMs = 60_000,
-  ): Promise<string | null> {
+  }: {
+    workspaceId: string;
+    ttlMs?: number;
+  }): Promise<string | null> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    return this.cacheStorage.acquireLock(key, ttlMs);
+    return this.cacheStorage.acquireLock({ key, ttl: ttlMs });
   }
 
-  async releaseWorkflowEnqueueLock(
-    workspaceId: string,
-    lockToken: string,
-  ): Promise<void> {
+  async releaseWorkflowEnqueueLock({
+    workspaceId,
+    lockToken,
+  }: {
+    workspaceId: string;
+    lockToken: string;
+  }): Promise<void> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    await this.cacheStorage.releaseLock(key, lockToken);
+    await this.cacheStorage.releaseLock({ key, token: lockToken });
   }
 
   private async setWorkflowRunNotStartedCount(

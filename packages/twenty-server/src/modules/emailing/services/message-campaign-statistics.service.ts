@@ -48,10 +48,10 @@ export class MessageCampaignStatisticsService {
   }): Promise<void> {
     const lockKey = `campaign-stats-refresh:${workspaceId}:${campaignId}`;
 
-    const lockToken = await this.cacheStorageService.acquireLock(
-      lockKey,
-      REFRESH_LOCK_TTL_MS,
-    );
+    const lockToken = await this.cacheStorageService.acquireLock({
+      key: lockKey,
+      ttl: REFRESH_LOCK_TTL_MS,
+    });
 
     if (!isDefined(lockToken)) {
       return;
@@ -67,7 +67,10 @@ export class MessageCampaignStatisticsService {
         },
       )
       .catch(async (error) => {
-        await this.cacheStorageService.releaseLock(lockKey, lockToken);
+        await this.cacheStorageService.releaseLock({
+          key: lockKey,
+          token: lockToken,
+        });
 
         throw error;
       });

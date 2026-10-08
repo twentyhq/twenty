@@ -43,10 +43,10 @@ export class CronTriggerDeduplicationService {
 
     const dedupKey = `${keyPrefix}:${lastTriggerTimestamp}`;
 
-    const lockToken = await this.cacheStorageService.acquireLock(
-      dedupKey,
-      CRON_DISPATCH_DEDUP_TTL_MS,
-    );
+    const lockToken = await this.cacheStorageService.acquireLock({
+      key: dedupKey,
+      ttl: CRON_DISPATCH_DEDUP_TTL_MS,
+    });
 
     return isDefined(lockToken);
   }

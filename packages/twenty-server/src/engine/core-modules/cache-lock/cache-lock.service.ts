@@ -37,11 +37,11 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const token = await this.cacheStorageService.acquireLock(key, ttl);
+      const token = await this.cacheStorageService.acquireLock({ key, ttl });
 
       if (isDefined(token)) {
         const leaseRenewal = setInterval(() => {
-          void this.renewLease(key, token, ttl);
+          void this.renewLease({ key, token, ttl });
         }, ttl / 3);
 
         try {
@@ -50,7 +50,7 @@ export class CacheLockService {
           clearInterval(leaseRenewal);
 
           try {
-            await this.cacheStorageService.releaseLock(key, token);
+            await this.cacheStorageService.releaseLock({ key, token });
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,
@@ -68,13 +68,21 @@ export class CacheLockService {
     );
   }
 
-  private async renewLease(key: string, token: string, ttl: number) {
+  private async renewLease({
+    key,
+    token,
+    ttl,
+  }: {
+    key: string;
+    token: string;
+    ttl: number;
+  }) {
     try {
-      const extended = await this.cacheStorageService.extendLock(
+      const extended = await this.cacheStorageService.extendLock({
         key,
         token,
         ttl,
-      );
+      });
 
       if (!extended) {
         this.logger.warn(`Lost lock for key "${key}" before it was released`);

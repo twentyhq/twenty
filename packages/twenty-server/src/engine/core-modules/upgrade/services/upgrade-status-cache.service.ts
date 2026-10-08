@@ -82,11 +82,17 @@ export class UpgradeStatusCacheService {
   }
 
   async tryAcquireRefreshLock(): Promise<string | null> {
-    return this.cacheStorage.acquireLock(REFRESH_LOCK_KEY, REFRESH_LOCK_TTL_MS);
+    return this.cacheStorage.acquireLock({
+      key: REFRESH_LOCK_KEY,
+      ttl: REFRESH_LOCK_TTL_MS,
+    });
   }
 
   async releaseRefreshLock(refreshLockToken: string): Promise<void> {
-    await this.cacheStorage.releaseLock(REFRESH_LOCK_KEY, refreshLockToken);
+    await this.cacheStorage.releaseLock({
+      key: REFRESH_LOCK_KEY,
+      token: refreshLockToken,
+    });
   }
 
   async invalidate(): Promise<void> {
