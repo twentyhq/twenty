@@ -36,13 +36,13 @@ msgstr "—"
 #. js-lingui-id: Terfvz
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid ", assigned to {assigneeName}"
-msgstr ""
+msgstr ", toegewezen aan {assigneeName}"
 
 #. js-lingui-id: /c8CZ4
 #: src/modules/ai/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
-msgstr ""
+msgstr ", ongelezen"
 
 #. js-lingui-id: ypz2+E
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -180,13 +180,13 @@ msgstr "{0, plural, one {{years} jaar} other {{years} jaar}}"
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
-msgstr ""
+msgstr "{0, plural, one {# chat geselecteerd} other {# chats geselecteerd}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
-msgstr ""
+msgstr "{0, plural, one {# chat} other {# chats}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -210,7 +210,7 @@ msgstr "{0, plural, one {# Object} other {# Objecten}}"
 #. placeholder {0}: agentChatQueuedMessages.length
 #: src/modules/ai/components/AiChatQueuedMessages.tsx
 msgid "{0, plural, one {# Queued} other {# Queued}}"
-msgstr ""
+msgstr "{0, plural, one {# In wachtrij} other {# In wachtrij}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -236,7 +236,7 @@ msgstr "{0, plural, one {Campagne geannuleerd, {1} wachtende e-mail gestopt} oth
 #. placeholder {0}: onboardingConfig.importContactsCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credit} other {Connect your mailbox to earn {formattedImportContactsCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, one {Koppel je mailbox om {formattedImportContactsCreditsReward} gratis credit te verdienen} other {Koppel je mailbox om {formattedImportContactsCreditsReward} gratis credits te verdienen}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
@@ -248,7 +248,7 @@ msgstr "{0, plural, one {credit/periode} other {credits/periode}}"
 #. placeholder {0}: onboardingConfig.inviteTeamCreditsRewardPerUser
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
-msgstr ""
+msgstr "{0, plural, one {Verdien {formattedInviteTeamCreditsRewardPerUser} gratis credit per teamgenoot die lid wordt} other {Verdien {formattedInviteTeamCreditsRewardPerUser} gratis credits per teamgenoot die lid wordt}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -260,13 +260,13 @@ msgstr ""
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Send invite} other {Send # invites}}"
-msgstr ""
+msgstr "{0, plural, one {Uitnodiging verzenden} other {# uitnodigingen verzenden}}"
 
 #. js-lingui-id: 4jHYiZ
 #. placeholder {0}: onboardingConfig.upgradeCreditsReward
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{0, plural, one {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credit} other {Upgrade your trial to earn {formattedUpgradeCreditsReward} free credits}}"
-msgstr ""
+msgstr "{0, plural, one {Upgrade je proefperiode om {formattedUpgradeCreditsReward} gratis credit te verdienen} other {Upgrade je proefperiode om {formattedUpgradeCreditsReward} gratis credits te verdienen}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -278,7 +278,7 @@ msgstr "{0, plural, one {U heeft geen toestemming om toegang te krijgen tot het 
 #. placeholder {0}: onboardingInviteTeamValidEmails.length
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't sent yet}}"
-msgstr ""
+msgstr "{0, plural, one {Je uitnodiging is nog niet verzonden} other {Je # uitnodigingen zijn nog niet verzonden}}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -346,7 +346,7 @@ msgstr "{0} van {1}"
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} opted out of email tracking, their clicks are not recorded"
-msgstr ""
+msgstr "{0} heeft e-mailtracking uitgeschakeld, hun klikken worden niet geregistreerd"
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -401,7 +401,7 @@ msgstr "{0} gebruikt"
 #. placeholder {1}: item.spenderName
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "{0} used by {1}"
-msgstr ""
+msgstr "{0} gebruikt door {1}"
 
 #. js-lingui-id: izNf/z
 #. placeholder {0}: view.name
@@ -435,7 +435,7 @@ msgstr "{0} werkruimteleden"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
-msgstr ""
+msgstr "{0}, terug naar velden"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -503,7 +503,7 @@ msgstr "{browser} op {operatingSystem}"
 #. js-lingui-id: p8aaxP
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} other {{formattedCallRecordingHours} hours}}"
-msgstr ""
+msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} uur} other {{formattedCallRecordingHours} uur}}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -528,12 +528,12 @@ msgstr "{count, plural, one {Bijv. {example} voor # decimaal} other {Bijv. {exam
 #. js-lingui-id: JhJ5ks
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit each} other {{label}, earn {formattedCreditsReward} free credits each}}"
-msgstr ""
+msgstr "{creditsReward, plural, one {{label}, verdien elk {formattedCreditsReward} gratis credit} other {{label}, verdien elk {formattedCreditsReward} gratis credits}}"
 
 #. js-lingui-id: r05RaJ
 #: src/modules/onboarding/utils/getOnboardingCreditsRewardAriaLabel.ts
 msgid "{creditsReward, plural, one {{label}, earn {formattedCreditsReward} free credit} other {{label}, earn {formattedCreditsReward} free credits}}"
-msgstr ""
+msgstr "{creditsReward, plural, one {{label}, verdien {formattedCreditsReward} gratis credit} other {{label}, verdien {formattedCreditsReward} gratis credits}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -543,7 +543,7 @@ msgstr "{currentCreditAmountDisplay} credits "
 #. js-lingui-id: Btf16S
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{currentStepCredits, plural, one {gratis credit} other {gratis credits}}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -564,7 +564,7 @@ msgstr "{deletedCount, plural, one {Succesvol {deletedCount} taak verwijderd} ot
 #. js-lingui-id: toR3wC
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{formattedEarnedCredits} credits}}"
-msgstr ""
+msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{formattedEarnedCredits} credits}}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -600,7 +600,7 @@ msgstr "{formattedCreatedRecordsProgress} van {formattedRecordsToImportCount} re
 #. js-lingui-id: EjjpWm
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
-msgstr ""
+msgstr "{formattedPercentage}% gebruikt, {formattedConversationSize} van {formattedContextWindow} tokens"
 
 #. js-lingui-id: iokIra
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -610,7 +610,7 @@ msgstr "{formattedType} van {objectLabel}"
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
-msgstr ""
+msgstr "{goalCredits, plural, one {gratis credit} other {gratis credits}}"
 
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -645,17 +645,17 @@ msgstr "{hours, plural, one {{hours} uur} other {{hours} uren}}"
 #. js-lingui-id: /oqig9
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h"
-msgstr ""
+msgstr "{hours}u"
 
 #. js-lingui-id: i3Frvq
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{hours}h {minutes}m"
-msgstr ""
+msgstr "{hours}u {minutes}m"
 
 #. js-lingui-id: +RLs0P
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{importContactsCallRecordingHours, plural, one {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hour of call recording.} other {{formattedImportContactsAiActions} AI actions, {formattedImportContactsEnrichments} enrichments or {formattedImportContactsCallRecordingHours} hours of call recording.}}"
-msgstr ""
+msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContactsAiActions} AI-acties, {formattedImportContactsEnrichments} verrijkingen of {formattedImportContactsCallRecordingHours} uur gespreksopname.} other {{formattedImportContactsAiActions} AI-acties, {formattedImportContactsEnrichments} verrijkingen of {formattedImportContactsCallRecordingHours} uur gespreksopname.}}"
 
 #. js-lingui-id: m+qcrh
 #. placeholder {0}: formatNumber(installCount)
@@ -697,7 +697,7 @@ msgstr "{label} (Automatisch)"
 #. js-lingui-id: Qoi5Dj
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "{label} (default)"
-msgstr ""
+msgstr "{label} (standaard)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -712,12 +712,12 @@ msgstr "{label}-lijst"
 #. js-lingui-id: q8vaHD
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionsListItem.tsx
 msgid "{label}, {statusLabel}"
-msgstr ""
+msgstr "{label}, {statusLabel}"
 
 #. js-lingui-id: hr3CkB
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "{label}, unread"
-msgstr ""
+msgstr "{label}, ongelezen"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -737,12 +737,12 @@ msgstr "{minutes, plural, one {# minuut} other {# minuten}}"
 #. js-lingui-id: ZOtn9F
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m"
-msgstr ""
+msgstr "{minutes}m"
 
 #. js-lingui-id: a5xsc/
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{minutes}m {seconds}s"
-msgstr ""
+msgstr "{minutes}m {seconds}s"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -753,12 +753,12 @@ msgstr "{morphRelationCount} objecten"
 #. js-lingui-id: 430IKF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
-msgstr ""
+msgstr "{newlyEarnedCredits, plural, one {Je hebt {formattedNewlyEarnedCredits} gratis credit verdiend} other {Je hebt {formattedNewlyEarnedCredits} gratis credits verdiend}}"
 
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
-msgstr ""
+msgstr "{notAddedLabels} konden niet aan deze chat worden toegevoegd omdat ze hierin niet kunnen reageren."
 
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
@@ -773,12 +773,12 @@ msgstr "{numberOfSelectedItems} werkruimteleden"
 #. js-lingui-id: dKtfA2
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} wordt als deelnemer toegevoegd en krijgt toegang tot deze chat"
 
 #. js-lingui-id: MDJKup
 #: src/modules/ai/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
-msgstr ""
+msgstr "{participantLabels} worden als deelnemers toegevoegd en krijgen toegang tot deze chat"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -841,7 +841,7 @@ msgstr "{roleTargetName} zal worden toegewezen aan de rol \"{newRoleName}\"."
 #. js-lingui-id: Mkqwbv
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr ""
+msgstr "{runCount, plural, one {# uitvoering} other {# uitvoeringen}}"
 
 #. js-lingui-id: UsskHt
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -881,7 +881,7 @@ msgstr "{selectedOptionCount} opties"
 #. js-lingui-id: tz1jJj
 #: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
-msgstr ""
+msgstr "{senderLabel}: {text}"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -906,7 +906,7 @@ msgstr "{stepNumber}. Kalender"
 #. js-lingui-id: C1Cp3d
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
-msgstr ""
+msgstr "{storedToolName} (niet beschikbaar voor jou)"
 
 #. js-lingui-id: bI/mcH
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -921,12 +921,12 @@ msgstr "{totalFieldsCount, plural, one {# zichtbaar veld} other {# zichtbare vel
 #. js-lingui-id: sQlMlH
 #: src/utils/format/formatRoundedDuration.ts
 msgid "{totalSeconds}s"
-msgstr ""
+msgstr "{totalSeconds}s"
 
 #. js-lingui-id: zLrD5y
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "{typeLabel} field"
-msgstr ""
+msgstr "{typeLabel}-veld"
 
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
@@ -1032,7 +1032,7 @@ msgstr "+{estimatedInstallCount} installaties"
 #. js-lingui-id: 918EaY
 #: src/modules/onboarding/components/OnboardingCreditsRewardChip.tsx
 msgid "+{formattedCreditsReward} each"
-msgstr ""
+msgstr "+{formattedCreditsReward} elk"
 
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
@@ -1077,7 +1077,7 @@ msgstr "0 */1 * * *"
 #. js-lingui-id: gPLARo
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "1 credit is enough for one of these on average"
-msgstr ""
+msgstr "1 credit is gemiddeld genoeg voor een van deze"
 
 #. js-lingui-id: 4pzLrc
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -1206,12 +1206,12 @@ msgstr "Er bestaat al een concept voor deze workflow. Weet u zeker dat u het wil
 #. js-lingui-id: HL3pvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
-msgstr ""
+msgstr "Er wordt een formulier geopend voor de persoon die de workflow start en dit wordt direct ingevuld. Met deze trigger wordt het alleen in de workflowuitvoering weergegeven. Gebruik in plaats daarvan een stap Naar Inbox verzenden om iemand in diens inbox om een antwoord of goedkeuring te vragen."
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
-msgstr ""
+msgstr "Een nieuwe bij elke uitvoering van de stap"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -1226,12 +1226,12 @@ msgstr "Een betaling voor je abonnement is mislukt. Je premiumfuncties blijven a
 #. js-lingui-id: Aiok04
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "A record can be shared with anyone, even people whose role cannot access this object. They get that record only, to view or edit."
-msgstr ""
+msgstr "Een record kan met iedereen worden gedeeld, zelfs met mensen van wie de rol geen toegang heeft tot dit object. Ze krijgen alleen toegang tot dat record, om het te bekijken of te bewerken."
 
 #. js-lingui-id: Yfxf0I
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows."
-msgstr ""
+msgstr "Een record wordt alleen opgeslagen als elke actieve regel waar is. Regels worden bij elke schrijfbewerking uitgevoerd: formulieren, API, imports en workflows."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1246,7 +1246,7 @@ msgstr "Er moet een rol worden geselecteerd voor de API-sleutel"
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A summary could not be generated because no transcript is available."
-msgstr ""
+msgstr "Er kon geen samenvatting worden gegenereerd omdat er geen transcript beschikbaar is."
 
 #. js-lingui-id: 4tQSH0
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1261,7 +1261,7 @@ msgstr "Een verificatie-e-mail is verzonden naar"
 #. js-lingui-id: DSFl3F
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "A won opportunity needs an amount"
-msgstr ""
+msgstr "Een gewonnen opportunity heeft een bedrag nodig"
 
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -1344,7 +1344,7 @@ msgstr "Toegangssleutel-ID"
 #. js-lingui-id: 6hdTJw
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
-msgstr ""
+msgstr "Toegang tot {objectLabelPlural} wordt ingesteld via rollen, niet per record."
 
 #. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
@@ -1425,7 +1425,7 @@ msgstr "Actie"
 #. js-lingui-id: 3B7Xla
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Action arguments"
-msgstr ""
+msgstr "Actieargumenten"
 
 #. js-lingui-id: j6ogTf
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -1435,7 +1435,7 @@ msgstr "Actie bij klikken"
 #. js-lingui-id: muKPyT
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Action to approve"
-msgstr ""
+msgstr "Goed te keuren actie"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
@@ -1540,7 +1540,7 @@ msgstr "Toevoegen"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "Voeg \"{optionName}\" toe aan opties"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1593,7 +1593,7 @@ msgstr "Voeg eerst een persoon met een e-mailadres toe aan dit bedrijf."
 #. js-lingui-id: YFSF0K
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add a recipient to {label}"
-msgstr ""
+msgstr "Ontvanger toevoegen aan {label}"
 
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
@@ -1626,12 +1626,12 @@ msgstr "Voeg een videoconferentielink toe"
 #. js-lingui-id: 9ZokcY
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a Workflow"
-msgstr ""
+msgstr "Een workflow toevoegen"
 
 #. js-lingui-id: OHMMfc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox."
-msgstr ""
+msgstr "Voeg een workflowstap toe die een bericht en optioneel een goed te keuren actie naar de inbox van een lid verzendt."
 
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -1645,7 +1645,7 @@ msgstr "Account toevoegen"
 #. js-lingui-id: haRzHN
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add an Agent"
-msgstr ""
+msgstr "Een agent toevoegen"
 
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
@@ -1686,7 +1686,7 @@ msgstr "BCC toevoegen"
 #. js-lingui-id: 4gCq8e
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Add block"
-msgstr ""
+msgstr "Blok toevoegen"
 
 #. js-lingui-id: We0vOO
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -1707,7 +1707,7 @@ msgstr "CC toevoegen"
 #. js-lingui-id: AgvHni
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
 msgid "Add column"
-msgstr ""
+msgstr "Kolom toevoegen"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -1761,7 +1761,7 @@ msgstr "E-mailkanaal toevoegen"
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
-msgstr ""
+msgstr "Feedback toevoegen"
 
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
@@ -1942,12 +1942,12 @@ msgstr "Vraag toevoegen"
 #. js-lingui-id: sJqK1O
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Add recipient"
-msgstr ""
+msgstr "Ontvanger toevoegen"
 
 #. js-lingui-id: pCK4rY
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add record trigger"
-msgstr ""
+msgstr "Recordtrigger toevoegen"
 
 #. js-lingui-id: AmiJYR
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownOneToMany.tsx
@@ -1987,7 +1987,7 @@ msgstr "Regelgroep toevoegen"
 #. js-lingui-id: pM+R6K
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Add schedule"
-msgstr ""
+msgstr "Schema toevoegen"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2006,7 +2006,7 @@ msgstr "SSO-identiteitsprovider toevoegen"
 #. js-lingui-id: 3RqxtX
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "Add teammates"
-msgstr ""
+msgstr "Teamgenoten toevoegen"
 
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -2121,12 +2121,12 @@ msgstr "Voeg uw eerste {objectLabel} toe"
 #. js-lingui-id: dakTu+
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Add your first Agent"
-msgstr ""
+msgstr "Je eerste agent toevoegen"
 
 #. js-lingui-id: fcbR/4
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first Workflow"
-msgstr ""
+msgstr "Je eerste workflow toevoegen"
 
 #. js-lingui-id: vLO+NG
 #: src/modules/settings/hooks/useGetAddedRelativeDateDescription.ts
@@ -2334,7 +2334,7 @@ msgstr "Agenten"
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 msgid "Aggregate"
-msgstr ""
+msgstr "Aggregaat"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -2368,7 +2368,7 @@ msgstr "AI & automatiseringen"
 #. js-lingui-id: VOc0Pn
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "AI actions"
-msgstr ""
+msgstr "AI-acties"
 
 #. js-lingui-id: HbXHSp
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -2383,7 +2383,7 @@ msgstr "AI-chat"
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
-msgstr ""
+msgstr "AI-chatinbox"
 
 #. js-lingui-id: /YYegB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2549,7 +2549,7 @@ msgstr "Alles ({relationRecordsCount})"
 #. js-lingui-id: cF7bEt
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "All actions"
-msgstr ""
+msgstr "Alle acties"
 
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
@@ -2612,7 +2612,7 @@ msgstr "Alle groepen"
 #. js-lingui-id: 2o5c3R
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
 msgid "All it takes is their email."
-msgstr ""
+msgstr "Alleen hun e-mailadres is nodig."
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -2720,7 +2720,7 @@ msgstr "Al uw aangepaste objecten"
 #. js-lingui-id: Ub/mf+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow applications to install workflows and start new workflow runs."
-msgstr ""
+msgstr "Sta toepassingen toe om workflows te installeren en nieuwe workflowuitvoeringen te starten."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2990,7 +2990,7 @@ msgstr "Elk veld"
 #. js-lingui-id: V38wzw
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker.tsx
 msgid "Anyone in the workspace"
-msgstr ""
+msgstr "Iedereen in de werkruimte"
 
 #. js-lingui-id: mA+AZz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3215,7 +3215,7 @@ msgstr "applicatievariabele"
 #. js-lingui-id: M/Fsre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Application workflows"
-msgstr ""
+msgstr "Toepassingsworkflows"
 
 #. js-lingui-id: fL7WXr
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -3255,7 +3255,7 @@ msgstr "Toepassen"
 #. js-lingui-id: d+6U9x
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Apply record sharing visibility rules when accessing records."
-msgstr ""
+msgstr "Pas zichtbaarheidsregels voor het delen van records toe bij het openen van records."
 
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -3265,12 +3265,12 @@ msgstr "Toepassen{progressText}"
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Approve"
-msgstr ""
+msgstr "Goedkeuren"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
-msgstr ""
+msgstr "Goedgekeurd"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -3280,7 +3280,7 @@ msgstr "Goedgekeurd toegangsdomein gevalideerd"
 #. js-lingui-id: nfUdWT
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
-msgstr ""
+msgstr "Goedgekeurd, maar mislukt"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -3390,13 +3390,13 @@ msgstr "Weet je het zeker? Je huidige informatie wordt niet opgeslagen."
 #. js-lingui-id: OgB1k4
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 msgid "Arguments"
-msgstr ""
+msgstr "Argumenten"
 
 #. js-lingui-id: qUFEtj
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
-msgstr ""
+msgstr "Argumenten moeten een geldig JSON-object zijn."
 
 #. js-lingui-id: AkeObK
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -3433,14 +3433,14 @@ msgstr "Vragen en zoeken"
 #. js-lingui-id: 5nEvjb
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the Sync Account permission to connect a calendar account."
-msgstr ""
+msgstr "Vraag een werkruimtebeheerder om de machtiging Account synchroniseren om een agenda-account te koppelen."
 
 #. js-lingui-id: 0b3325
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the Sync Account permission to reconnect this account."
-msgstr ""
+msgstr "Vraag een werkruimtebeheerder om de machtiging Account synchroniseren om dit account opnieuw te koppelen."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3464,12 +3464,12 @@ msgstr "Vraag alles, @ een record of / een vaardigheid..."
 #. js-lingui-id: OF5WZ/
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a teammate or record, / a skill..."
-msgstr ""
+msgstr "Stel alles, @ een teamgenoot of record, / een vaardigheid..."
 
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Ask for human input"
-msgstr ""
+msgstr "Vraag om menselijke invoer"
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3479,7 +3479,7 @@ msgstr "Vragen stellen..."
 #. js-lingui-id: kaEPzR
 #: src/modules/side-panel/hooks/useOpenAssignAiChatInSidePanel.ts
 msgid "Assign"
-msgstr ""
+msgstr "Toewijzen"
 
 #. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -3524,7 +3524,7 @@ msgstr ""
 #. js-lingui-id: lXGdbb
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
-msgstr ""
+msgstr "Toegewezen"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -3539,7 +3539,7 @@ msgstr "Toegewezen aan"
 #. js-lingui-id: ArzUbT
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 msgid "Assigned to {assigneeName}"
-msgstr ""
+msgstr "Toegewezen aan {assigneeName}"
 
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3549,7 +3549,7 @@ msgstr "Toegewezen aan gebruikers die zich aanmelden via een uitnodigingslink, e
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "Toegewezene"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3644,22 +3644,22 @@ msgstr "Bestanden toevoegen"
 #. js-lingui-id: 4xOjp/
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to a record"
-msgstr ""
+msgstr "Dit gesprek aan een record gekoppeld"
 
 #. js-lingui-id: DCyq1H
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attached this conversation to the {objectLabel}"
-msgstr ""
+msgstr "Dit gesprek aan de {objectLabel} gekoppeld"
 
 #. js-lingui-id: e9I63P
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to a record"
-msgstr ""
+msgstr "Dit gesprek aan een record koppelen"
 
 #. js-lingui-id: 0/s5dI
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Attaching this conversation to the {objectLabel}"
-msgstr ""
+msgstr "Dit gesprek aan de {objectLabel} koppelen"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -3845,7 +3845,7 @@ msgstr "Beschikbare applicatiedetails"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -3883,7 +3883,7 @@ msgstr "Terug naar inhoud"
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
-msgstr ""
+msgstr "Terug naar inbox"
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4049,7 +4049,7 @@ msgstr "blok"
 #. js-lingui-id: 32TndD
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
-msgstr ""
+msgstr "Geblokkeerd"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -4121,12 +4121,12 @@ msgstr "Onbestelbaar"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "Broodkruimel"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Breakdown"
-msgstr ""
+msgstr "Uitsplitsing"
 
 #. js-lingui-id: 1hGdwj
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -4260,7 +4260,7 @@ msgstr "SSO omzeilen"
 #. js-lingui-id: RmEeKl
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "bytes"
-msgstr ""
+msgstr "bytes"
 
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -4419,7 +4419,7 @@ msgstr "Gespreksrecorder"
 #. js-lingui-id: wYLT8I
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Call recording"
-msgstr ""
+msgstr "Gespreksopname"
 
 #. js-lingui-id: 9e+AU2
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4484,7 +4484,7 @@ msgstr "Planning van campagne geannuleerd en terug in je concepten"
 #. js-lingui-id: n3fZtA
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Can only view: their role can't edit {objectLabelPlural}"
-msgstr ""
+msgstr "Kan alleen bekijken: hun rol kan {objectLabelPlural} niet bewerken"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4541,7 +4541,7 @@ msgstr "Kredietbundelwijziging annuleren?"
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Cancel field selection"
-msgstr ""
+msgstr "Veldselectie annuleren"
 
 #. js-lingui-id: dV4HC5
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
@@ -4601,7 +4601,7 @@ msgstr "Geannuleerd op"
 #. js-lingui-id: vv7kpg
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Cancelled"
-msgstr ""
+msgstr "Geannuleerd"
 
 #. js-lingui-id: y4uH7j
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -4797,7 +4797,7 @@ msgstr "Chatgesprek"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Chat details"
-msgstr ""
+msgstr "Chatdetails"
 
 #. js-lingui-id: tDlhkF
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -4812,7 +4812,7 @@ msgstr "Chatsessies"
 #. js-lingui-id: VGw5+N
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Chat stopped: no more available credits."
-msgstr ""
+msgstr "Chat gestopt: geen credits meer beschikbaar."
 
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4866,7 +4866,7 @@ msgstr "Controleer je inbox om je nieuwe e-mailadres te bevestigen."
 #. js-lingui-id: w+pzSf
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Checked only when the record this rule belongs to is saved. Editing the related record does not check it again."
-msgstr ""
+msgstr "Alleen gecontroleerd wanneer het record waartoe deze regel behoort wordt opgeslagen. Het bewerken van het gerelateerde record controleert dit niet opnieuw."
 
 #. js-lingui-id: SxwQE8
 #: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
@@ -4939,7 +4939,7 @@ msgstr "Kies mappen om te synchroniseren"
 #: src/modules/side-panel/components/SidePanelPageLayoutInfo.tsx
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Choose icon"
-msgstr ""
+msgstr "Pictogram kiezen"
 
 #. js-lingui-id: SJ1Aum
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
@@ -5082,7 +5082,7 @@ msgstr "Filters wissen"
 #. js-lingui-id: FBIuPX
 #: src/modules/ai/components/AiChatInboxSelectionPane.tsx
 msgid "Clear selection"
-msgstr ""
+msgstr "Selectie wissen"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -5109,7 +5109,7 @@ msgstr "Klik hier"
 #. js-lingui-id: 80Rsvc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run."
-msgstr ""
+msgstr "Klik hieronder op \"Veld toevoegen\" om de eerste invoer aan je formulier toe te voegen. Het formulier verschijnt voor de persoon die de workflow handmatig start. Voor workflows met andere triggers wordt het ingevuld vanuit de workflowuitvoering."
 
 #. js-lingui-id: q2R9+z
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -5160,7 +5160,7 @@ msgstr "ClickHouse niet geconfigureerd"
 #. js-lingui-id: GhPnTR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Clicks only"
-msgstr ""
+msgstr "Alleen klikken"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5305,7 +5305,7 @@ msgstr "Code-interpreter"
 #. placeholder {0}: beautifyExactDateTime(pendingRecoveryCodeExpiresAt)
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Code pending until {0}"
-msgstr ""
+msgstr "Code in behandeling tot {0}"
 
 #. js-lingui-id: FXSsRm
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -5355,7 +5355,7 @@ msgstr "Map inklappen"
 #. js-lingui-id: q4bqvN
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Collapse hidden fields"
-msgstr ""
+msgstr "Verborgen velden inklappen"
 
 #. js-lingui-id: mkMLq4
 #: src/modules/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation.ts
@@ -5386,7 +5386,7 @@ msgstr "kolomgegevens zijn niet compatibel met Multi-Select. Vereist formaat is 
 #. js-lingui-id: DNkveC
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 msgid "Column options"
-msgstr ""
+msgstr "Kolomopties"
 
 #. js-lingui-id: /xTbaM
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5430,7 +5430,7 @@ msgstr "Opdrachtmenu"
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Command menu | {0}"
-msgstr ""
+msgstr "Opdrachtmenu | {0}"
 
 #. js-lingui-id: Ngoldv
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -5544,7 +5544,7 @@ msgstr "Voltooide taken behouden voor {completedDuration}, mislukte taken behoud
 #. js-lingui-id: HBEnT7
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Complexity"
-msgstr ""
+msgstr "Complexiteit"
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5565,7 +5565,7 @@ msgstr "Berekend op"
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Condition"
-msgstr ""
+msgstr "Voorwaarde"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -5668,7 +5668,7 @@ msgstr "Configureer IMAP-instellingen om uw e-mails te ontvangen en te synchroni
 #. js-lingui-id: uUDe3+
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Configure rule"
-msgstr ""
+msgstr "Regel configureren"
 
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5887,7 +5887,7 @@ msgstr "Verbinding succesvol bijgewerkt"
 #. js-lingui-id: 3/kWN3
 #: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
 msgid "Connection to the assistant was lost. Reload to see the response."
-msgstr ""
+msgstr "De verbinding met de assistent is verbroken. Laad opnieuw om het antwoord te zien."
 
 #. js-lingui-id: JdGr7p
 #: src/modules/side-panel/pages/page-layout/components/ChartLimitInfoBanner.tsx
@@ -5946,12 +5946,12 @@ msgstr "Context en gebruik"
 #. js-lingui-id: uEf5Og
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
-msgstr ""
+msgstr "Context en gebruik, {formattedPercentage}% van het contextvenster gebruikt"
 
 #. js-lingui-id: 4NJlEz
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
-msgstr ""
+msgstr "Context en gebruik, contextvenster niet beschikbaar"
 
 #. js-lingui-id: LXIm4m
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -6030,12 +6030,12 @@ msgstr "Gesprek"
 #. js-lingui-id: Ljx9HM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation key"
-msgstr ""
+msgstr "Gesprekssleutel"
 
 #. js-lingui-id: 5RinAt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Conversation title"
-msgstr ""
+msgstr "Gesprekstitel"
 
 #. js-lingui-id: EnJuK0
 #: src/modules/ai/components/MobileHomeAiChatSection.tsx
@@ -6046,17 +6046,17 @@ msgstr "Gesprekken"
 #. js-lingui-id: 5dVEtZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Conversations linked to this record will appear here."
-msgstr ""
+msgstr "Gesprekken die aan dit record zijn gekoppeld, verschijnen hier."
 
 #. js-lingui-id: SXWEJM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Conversations tab"
-msgstr ""
+msgstr "Tabblad Gesprekken"
 
 #. js-lingui-id: LMvWS1
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Conversations you can open will appear here."
-msgstr ""
+msgstr "Gesprekken die je kunt openen, verschijnen hier."
 
 #. js-lingui-id: HRGl1X
 #: src/modules/settings/members/components/MemberNameFields.tsx
@@ -6253,17 +6253,17 @@ msgstr "Kosten per miljoen tokens voor gecachede invoer (USD)"
 #. js-lingui-id: lvWtM4
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to a record"
-msgstr ""
+msgstr "Kon dit gesprek niet aan een record koppelen"
 
 #. js-lingui-id: 3KqAq7
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not attach this conversation to the {objectLabel}"
-msgstr ""
+msgstr "Kon dit gesprek niet aan de {objectLabel} koppelen"
 
 #. js-lingui-id: E/YqmF
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
-msgstr ""
+msgstr "Kon niet worden voorgesteld"
 
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -6299,7 +6299,7 @@ msgstr "Kon geen mediatoegang verlenen. Probeer het opnieuw."
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
-msgstr ""
+msgstr "Kon uitvoeringen niet laden"
 
 #. js-lingui-id: Tr0DHk
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
@@ -6438,7 +6438,7 @@ msgstr "Tel op basis van"
 #. js-lingui-id: EEqRLn
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Count clicks by routing campaign links through Twenty before the original page."
-msgstr ""
+msgstr "Tel klikken door campagnelinks via Twenty om te leiden voordat de oorspronkelijke pagina wordt geopend."
 
 #. js-lingui-id: vQJINq
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -6513,7 +6513,7 @@ msgstr "{objectLabelSingular} maken"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Create a few {0} to preview this rule on real records."
-msgstr ""
+msgstr "Maak enkele {0} om deze regel op echte records te bekijken."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -6565,7 +6565,7 @@ msgstr "Maak een workflow en kom terug om de versies te bekijken"
 #. js-lingui-id: vmGNGB
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a Workflow to automate your work."
-msgstr ""
+msgstr "Maak een workflow om je werk te automatiseren."
 
 #. js-lingui-id: Hn5erC
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
@@ -6575,7 +6575,7 @@ msgstr "Werkruimte aanmaken"
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create an Agent to automate your work."
-msgstr ""
+msgstr "Maak een agent om je werk te automatiseren."
 
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6752,7 +6752,7 @@ msgstr "Gemaakt op {0}"
 #. js-lingui-id: esG9lm
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
-msgstr ""
+msgstr "Gemaakt of bijgewerkt"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -6861,12 +6861,12 @@ msgstr "Credits worden toegevoegd boven op de planbundel en worden pas besteed w
 #. js-lingui-id: U9hjv1
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when they accept your invite."
-msgstr ""
+msgstr "Credits worden toegevoegd wanneer zij je uitnodiging accepteren."
 
 #. js-lingui-id: ZSN5aF
 #: src/modules/onboarding/hooks/useOnboardingFreeCreditsTooltipContent.ts
 msgid "Credits are added when your trial starts."
-msgstr ""
+msgstr "Credits worden toegevoegd wanneer je proefperiode begint."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6913,7 +6913,7 @@ msgstr "Cron"
 #. js-lingui-id: 0KivXX
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Cron pattern"
-msgstr ""
+msgstr "Cron-patroon"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -6965,7 +6965,7 @@ msgstr "Valutacode"
 #. js-lingui-id: oXgwB7
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency: {currencyCode}"
-msgstr ""
+msgstr "Valuta: {currencyCode}"
 
 #. js-lingui-id: Hp1l6f
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -7008,7 +7008,7 @@ msgstr "Huidige werkruimte lid niet gevonden."
 #. js-lingui-id: dUDTUc
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
-msgstr ""
+msgstr "Momenteel:"
 
 #. js-lingui-id: mO0Peh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -7163,7 +7163,7 @@ msgstr "Klant"
 #. js-lingui-id: lfE233
 #: src/modules/validation-rules/components/SettingsValidationRuleNameForm.tsx
 msgid "Customer deals need an amount"
-msgstr ""
+msgstr "Klantdeals hebben een bedrag nodig"
 
 #. js-lingui-id: AdXh0n
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -7449,7 +7449,7 @@ msgstr "Dag"
 #. js-lingui-id: 5w8B/7
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage.tsx
 msgid "Day & Time"
-msgstr ""
+msgstr "Dag en tijd"
 
 #. js-lingui-id: ahA8fy
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -7600,7 +7600,7 @@ msgstr "Standaardweergave"
 #. js-lingui-id: iDTUBO
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
-msgstr ""
+msgstr "Standaard ingesteld op de stapnaam"
 
 #. js-lingui-id: 6b8WDd
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7711,7 +7711,7 @@ msgstr "Veld {fieldLabel} verwijderen?"
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete {numberOfCoreWorkflows} workflows?"
-msgstr ""
+msgstr "{numberOfCoreWorkflows} workflows verwijderen?"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -7891,7 +7891,7 @@ msgstr "Deze rol verwijderen en een nieuwe rol toewijzen aan de leden"
 #. js-lingui-id: G3jMHs
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Delete this rule?"
-msgstr ""
+msgstr "Deze regel verwijderen?"
 
 #. js-lingui-id: UvEQr6
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -7937,7 +7937,7 @@ msgstr "Widget verwijderen"
 #. js-lingui-id: UA2IpC
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow"
-msgstr ""
+msgstr "Verwijder workflow"
 
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -7947,12 +7947,12 @@ msgstr "Workflow verwijderen"
 #. js-lingui-id: JQPF/x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow?"
-msgstr ""
+msgstr "Verwijder workflow?"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "Verwijder workflows"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -8081,7 +8081,7 @@ msgstr "Beschrijving die door de applicatie is opgegeven"
 #. js-lingui-id: f8fH8W
 #: src/modules/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel.ts
 msgid "Design"
-msgstr ""
+msgstr "Ontwerp"
 
 #. js-lingui-id: BBqGS9
 #: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
@@ -8209,7 +8209,7 @@ msgstr "Richting"
 #. js-lingui-id: cO9+2L
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
-msgstr ""
+msgstr "Uitschakelen"
 
 #. js-lingui-id: XDeNvP
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8219,7 +8219,7 @@ msgstr "Impersonatie uitschakelen"
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable the rule to stop checking records against it."
-msgstr ""
+msgstr "Schakel de regel uit om te stoppen met het controleren van records hierop."
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
@@ -8425,7 +8425,7 @@ msgstr "Voltooid"
 #. js-lingui-id: y+f/uY
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
-msgstr ""
+msgstr "Voltooid {doneTime}"
 
 #. js-lingui-id: Wm78zZ
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -8528,7 +8528,7 @@ msgstr "Sleep en zet hier neer"
 #. js-lingui-id: T/PLYo
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 msgid "Drag to move, click for options"
-msgstr ""
+msgstr "Sleep om te verplaatsen, klik voor opties"
 
 #. js-lingui-id: VIbDgE
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
@@ -8675,7 +8675,7 @@ msgstr "Vroegste datum"
 #. js-lingui-id: tmDUtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "Earn {formattedCurrentStepCredits}"
-msgstr ""
+msgstr "Verdien {formattedCurrentStepCredits}"
 
 #. js-lingui-id: +hvIFU
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -8784,7 +8784,7 @@ msgstr "Koppeling bewerken"
 #. js-lingui-id: WLw62E
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
-msgstr ""
+msgstr "Gekoppelde records bewerken"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -8834,7 +8834,7 @@ msgstr "Relatie bewerken"
 #. js-lingui-id: 0doodQ
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Edit rule"
-msgstr ""
+msgstr "Regel bewerken"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -8933,7 +8933,7 @@ msgstr "E-mailadres"
 #. js-lingui-id: M08Fhf
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr ""
+msgstr "E-mailadressen die zich hebben afgemeld voor campagne-e-mails, een onderwerp of kliktracking"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -9017,7 +9017,7 @@ msgstr "Stuur de deelnemers een uitnodiging per e-mail"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Email tracking"
-msgstr ""
+msgstr "E-mailtracking"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -9168,7 +9168,7 @@ msgstr "Leeg tabblad"
 #. js-lingui-id: PaQ3df
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Enable"
-msgstr ""
+msgstr "Inschakelen"
 
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -9272,12 +9272,12 @@ msgstr "Profiteer van een gratis proefperiode van 30 dagen"
 #. js-lingui-id: zPfy+F
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enough for one of these on average"
-msgstr ""
+msgstr "Gemiddeld genoeg voor een van deze"
 
 #. js-lingui-id: oWbT1n
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Enrichments"
-msgstr ""
+msgstr "Verrijkingen"
 
 #. js-lingui-id: T/N+2Z
 #: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
@@ -9289,7 +9289,7 @@ msgstr "Voer een JSON-object in"
 #. js-lingui-id: zXhNUj
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter a JSON value"
-msgstr ""
+msgstr "Voer een JSON-waarde in"
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -9484,7 +9484,7 @@ msgstr ""
 #. js-lingui-id: 4E8Rhf
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter the arguments as a JSON object"
-msgstr ""
+msgstr "Voer de argumenten in als een JSON-object"
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9499,12 +9499,12 @@ msgstr "Voer de informatie in om de verbinding in te stellen"
 #. js-lingui-id: 9qdYw8
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Enter the message to post"
-msgstr ""
+msgstr "Voer het te plaatsen bericht in"
 
 #. js-lingui-id: lZC0Js
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr ""
+msgstr "Voer de herstelcode in die een werkruimtebeheerder je heeft gegeven. Je huidige authenticator voor deze werkruimte wordt verwijderd."
 
 #. js-lingui-id: 3EF9HN
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
@@ -9519,7 +9519,7 @@ msgstr "Voer het subdomein van de werkruimte in waarnaar je deze app wilt overdr
 #. js-lingui-id: JS1v0D
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Enter valid JSON."
-msgstr ""
+msgstr "Voer geldige JSON in."
 
 #. js-lingui-id: pubQie
 #: src/modules/object-core/workflows/components/CoreWorkflowFilterValueInput.tsx
@@ -9857,7 +9857,7 @@ msgstr "Iedereen"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "Everyone with access to {objectLabelPlural}"
-msgstr ""
+msgstr "Iedereen met toegang tot {objectLabelPlural}"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -10181,7 +10181,7 @@ msgstr "Claimen van eigendom mislukt."
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 #: src/modules/object-core/agents/hooks/useCreateCoreAgent.ts
 msgid "Failed to create agent"
-msgstr ""
+msgstr "Agent maken mislukt"
 
 #. js-lingui-id: kzaVCK
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -10202,7 +10202,7 @@ msgstr "Aanmaken van limiet mislukt."
 #. js-lingui-id: jrwIEQ
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "Failed to create the rule."
-msgstr ""
+msgstr "Regel maken mislukt."
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -10238,7 +10238,7 @@ msgstr "Verwijderen van limiet mislukt."
 #. js-lingui-id: P52MKW
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to delete the rule."
-msgstr ""
+msgstr "Regel verwijderen mislukt."
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -10286,7 +10286,7 @@ msgstr "Voltooien van logo-upload mislukt"
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
-msgstr ""
+msgstr "Herstelcode genereren mislukt."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -10429,7 +10429,7 @@ msgstr "Kon de ondertekeningssleutel niet intrekken. Probeer het later opnieuw."
 #. js-lingui-id: Px/B6S
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
-msgstr ""
+msgstr "Herstelcode intrekken mislukt."
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -10542,7 +10542,7 @@ msgstr "Bijwerken van limiet mislukt."
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Failed to update the rule."
-msgstr ""
+msgstr "Regel bijwerken mislukt."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -10644,7 +10644,7 @@ msgstr "Functies actief tot"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "Feedback"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10733,7 +10733,7 @@ msgstr "Velden"
 #. js-lingui-id: K0tSFR
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Fields (optional)"
-msgstr ""
+msgstr "Velden (optioneel)"
 
 #. js-lingui-id: oy3EF7
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
@@ -10780,7 +10780,7 @@ msgstr "Bij te werken velden"
 #. js-lingui-id: Dgd3Oe
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Fields used in the condition show their values here."
-msgstr ""
+msgstr "Velden die in de voorwaarde worden gebruikt, tonen hier hun waarden."
 
 #. js-lingui-id: 9k2rvq
 #: src/modules/views/types/ViewType.ts
@@ -10849,12 +10849,12 @@ msgstr "Bestandsupload mislukt ({0})."
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "bestanden"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "Bestanden"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -10905,7 +10905,7 @@ msgstr "Limieten filteren"
 #. js-lingui-id: iSXrBT
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "Filter opt-outs"
-msgstr ""
+msgstr "Afmeldingen filteren"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -10968,7 +10968,7 @@ msgstr "Voltooi het bewerken van de lay-out om AI te openen"
 #. js-lingui-id: KstqNM
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Inbox"
-msgstr ""
+msgstr "Voltooi het bewerken van de lay-out om Inbox te openen"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
@@ -11082,7 +11082,7 @@ msgstr "Mappen"
 #. js-lingui-id: Ovfdx1
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Follow the guide for your email provider."
-msgstr ""
+msgstr "Volg de handleiding voor je e-mailprovider."
 
 #. js-lingui-id: I7Exsw
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -11092,7 +11092,7 @@ msgstr "Volg ons op X"
 #. js-lingui-id: y6sq5j
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Following"
-msgstr ""
+msgstr "Volgend"
 
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
@@ -11143,12 +11143,12 @@ msgstr "Formuliergegevens"
 #. js-lingui-id: oiy48l
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
-msgstr ""
+msgstr "Formulier overgeslagen"
 
 #. js-lingui-id: 6vS9Zq
 #: src/modules/ai/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
-msgstr ""
+msgstr "Formulier ingediend"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -11179,7 +11179,7 @@ msgstr "Voormalig lid"
 #. js-lingui-id: r8HLKr
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
-msgstr ""
+msgstr "Formulieren zijn bedoeld voor handmatige triggers"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -11215,12 +11215,12 @@ msgstr "Vierde"
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Free credits"
-msgstr ""
+msgstr "Gratis credits"
 
 #. js-lingui-id: sCMpw5
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "Free credits earned"
-msgstr ""
+msgstr "Gratis credits verdiend"
 
 #. js-lingui-id: nLC6tu
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -11420,17 +11420,17 @@ msgstr "Genereren"
 #. js-lingui-id: GmwkF+
 #: src/modules/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode.tsx
 msgid "Generate 2FA recovery code"
-msgstr ""
+msgstr "2FA-herstelcode genereren"
 
 #. js-lingui-id: iFV2P6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
-msgstr ""
+msgstr "Een herstelcode genereren"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
-msgstr ""
+msgstr "Code genereren"
 
 #. js-lingui-id: /Sq+WF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -11451,7 +11451,7 @@ msgstr "Functie-uitvoer genereren"
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Generate recovery code"
-msgstr ""
+msgstr "Herstelcode genereren"
 
 #. js-lingui-id: wu9eMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -11499,7 +11499,7 @@ msgstr "Haal het meeste uit je werkruimte door je team uit te nodigen."
 #. js-lingui-id: 7SwUXR
 #: src/modules/object-record/record-sharing/utils/getRecordShareRoleAccessNote.ts
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
-msgstr ""
+msgstr "Krijgt alleen dit record: hun rol heeft geen toegang tot {objectLabelPlural}"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -11885,7 +11885,7 @@ msgstr "Verbergen"
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Hide {0}"
-msgstr ""
+msgstr "{0} verbergen"
 
 #. js-lingui-id: MuEcPp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -11902,7 +11902,7 @@ msgstr "Lege groepen verbergen"
 #. js-lingui-id: zoo33+
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Hide empty optional arguments"
-msgstr ""
+msgstr "Lege optionele argumenten verbergen"
 
 #. js-lingui-id: K+AYNB
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -12040,7 +12040,7 @@ msgstr "Hoe records, pagina's en navigatie worden weergegeven"
 #. js-lingui-id: tdbxbk
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "How this rule appears in settings."
-msgstr ""
+msgstr "Hoe deze regel in instellingen wordt weergegeven."
 
 #. js-lingui-id: e60vNl
 #: src/pages/onboarding/CreateProfile.tsx
@@ -12174,7 +12174,7 @@ msgstr "Icoon en naam"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "Pictogrammen"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12368,7 +12368,7 @@ msgstr "Importeer alle e-mails"
 #. js-lingui-id: RQkDtT
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Import contacts"
-msgstr ""
+msgstr "Contactpersonen importeren"
 
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -12447,7 +12447,7 @@ msgstr "Opties voor inactieve vaardigheid"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "Inbox"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -12539,7 +12539,7 @@ msgstr "Informatie"
 #. js-lingui-id: 0PXONM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Initial object views"
-msgstr ""
+msgstr "Initiële objectweergaven"
 
 #. js-lingui-id: XP/nZ1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -12601,17 +12601,17 @@ msgstr "Actie invoegen"
 #. js-lingui-id: CoIXZj
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdown.tsx
 msgid "Insert variable"
-msgstr ""
+msgstr "Variabele invoegen"
 
 #. js-lingui-id: 0sUvZZ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a {trialDuration}-day <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "Voer je facturatiegegevens in om een <0>gratis</0> proefperiode van {trialDuration} dagen en meer AI-credits te krijgen"
 
 #. js-lingui-id: wNiyuI
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Insert your billing details to get a <0>free</0> trial and more AI credits"
-msgstr ""
+msgstr "Voer je facturatiegegevens in om een <0>gratis</0> proefperiode en meer AI-credits te krijgen"
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -12680,7 +12680,7 @@ msgstr "Geïnstalleerde apps"
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Installing {displayedInstallProgress}"
-msgstr ""
+msgstr "Installeren {displayedInstallProgress}"
 
 #. js-lingui-id: kc9VIS
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -12844,7 +12844,7 @@ msgstr "Ongeldig getal"
 #. js-lingui-id: Mwwd+k
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired recovery code."
-msgstr ""
+msgstr "Ongeldige of verlopen herstelcode."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -13054,7 +13054,7 @@ msgstr "items"
 #. js-lingui-id: BzfzPK
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Items"
-msgstr ""
+msgstr "Items"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -13185,7 +13185,7 @@ msgstr "Blijf de volgende nodes uitvoeren, zelfs als deze mislukt"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Keep tracking my clicks"
-msgstr ""
+msgstr "Mijn klikken blijven bijhouden"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -13220,7 +13220,7 @@ msgstr "Sneltoetsen"
 #. js-lingui-id: nhxAdQ
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
 msgid "Keyword"
-msgstr ""
+msgstr "Trefwoord"
 
 #. js-lingui-id: h6S9Yz
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -13454,7 +13454,7 @@ msgstr "Laatst bijgewerkt"
 #. js-lingui-id: p9uaTd
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Later today"
-msgstr ""
+msgstr "Later vandaag"
 
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13634,7 +13634,7 @@ msgstr "Kleiner dan of gelijk aan"
 #. js-lingui-id: EKKBiO
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let admins add conditions a record must meet to be saved, checked on every write."
-msgstr ""
+msgstr "Sta beheerders toe om voorwaarden toe te voegen waaraan een record moet voldoen om te worden opgeslagen; gecontroleerd bij elke schrijfbewerking."
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -13644,17 +13644,17 @@ msgstr "Laat elk lid zelf beslissen"
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
-msgstr ""
+msgstr "Sta mensen toe om individuele records te beperken en te delen."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Let this member sign in again if they lost their authenticator app"
-msgstr ""
+msgstr "Sta dit lid toe opnieuw in te loggen als het de authenticator-app heeft verloren"
 
 #. js-lingui-id: RIWS8s
 #: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
-msgstr ""
+msgstr "Laten we het instellen op basis van hoe je werkt."
 
 #. js-lingui-id: vhRvfF
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -13832,7 +13832,7 @@ msgstr "Koppelingslabel"
 #. js-lingui-id: 8uujEK
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Link to a record"
-msgstr ""
+msgstr "Koppelen aan een record"
 
 #. js-lingui-id: roAe2K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -13848,7 +13848,7 @@ msgstr "heeft een {objectLabel} gekoppeld"
 #. js-lingui-id: tjNkJN
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Linked to"
-msgstr ""
+msgstr "Gekoppeld aan"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -14200,7 +14200,7 @@ msgstr "lus"
 #. js-lingui-id: B3teiJ
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a recovery code"
-msgstr ""
+msgstr "Authenticator verloren? Gebruik een herstelcode"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14383,7 +14383,7 @@ msgstr "Markeer deze app als beoordeeld en goedgekeurd"
 #. js-lingui-id: OybNQG
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Marked as done {eventTime}"
-msgstr ""
+msgstr "Gemarkeerd als voltooid {eventTime}"
 
 #. js-lingui-id: Zt5PUS
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -14404,7 +14404,7 @@ msgstr "Koppel {0} ({unmatchedCount} niet gekoppeld)"
 #. js-lingui-id: vzXvB4
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown.tsx
 msgid "Match {entry}"
-msgstr ""
+msgstr "Overeenkomst met {entry}"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -14525,7 +14525,7 @@ msgstr "Ik (Gebruikers-ID)"
 #. js-lingui-id: HVaz6o
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Measure engagement on the campaigns this workspace sends"
-msgstr ""
+msgstr "Meet de betrokkenheid bij de campagnes die deze werkruimte verstuurt"
 
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -14594,7 +14594,7 @@ msgstr "Leden en genodigden"
 #. js-lingui-id: /bZzdR
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Mentions"
-msgstr ""
+msgstr "Vermeldingen"
 
 #. js-lingui-id: hFJP7z
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -14705,7 +14705,7 @@ msgstr "Microsoft"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "min"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -15015,7 +15015,7 @@ msgstr "Naar prullenbak verplaatst"
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
-msgstr ""
+msgstr "ms"
 
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -15050,7 +15050,7 @@ msgstr "moet een array zijn van geldige e-mails"
 #. js-lingui-id: PS4GGg
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Must be true to save. A write that makes it false is rejected."
-msgstr ""
+msgstr "Moet waar zijn om op te slaan. Een schrijfbewerking die dit onwaar maakt, wordt geweigerd."
 
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -15140,7 +15140,7 @@ msgstr "Noem en beschrijf je functie"
 #. js-lingui-id: Ei0iwZ
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Name and description"
-msgstr ""
+msgstr "Naam en beschrijving"
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -15172,7 +15172,7 @@ msgstr "Navigatie"
 #. js-lingui-id: kBNHN1
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 msgid "Navigation history"
-msgstr ""
+msgstr "Navigatiegeschiedenis"
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15203,7 +15203,7 @@ msgstr "Vereist een selectieveld"
 #: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Needs input"
-msgstr ""
+msgstr "Invoer nodig"
 
 #. js-lingui-id: wW3b68
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -15400,7 +15400,7 @@ msgstr "Nieuwe rolloverlimiet"
 #. js-lingui-id: yBF5J5
 #: src/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule.tsx
 msgid "New rule"
-msgstr ""
+msgstr "Nieuwe regel"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -15467,7 +15467,7 @@ msgstr ""
 #. js-lingui-id: wxiEkK
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New Workflow"
-msgstr ""
+msgstr "Nieuwe workflow"
 
 #. js-lingui-id: horr45
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -15495,7 +15495,7 @@ msgstr "Volgende afschrijving {totalRenewDate}. Het factuurbedrag kan variëren 
 #. js-lingui-id: vBiulE
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
-msgstr ""
+msgstr "Volgende chat"
 
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -15515,12 +15515,12 @@ msgstr "Volgende vraag"
 #. js-lingui-id: vpyN3x
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Next record"
-msgstr ""
+msgstr "Volgend record"
 
 #. js-lingui-id: +VXdSO
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Next request"
-msgstr ""
+msgstr "Volgende aanvraag"
 
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -15536,7 +15536,7 @@ msgstr "Volgende stap"
 #. js-lingui-id: IT903p
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
 msgid "Next week"
-msgstr ""
+msgstr "Volgende week"
 
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -15661,7 +15661,7 @@ msgstr "Geen apps gevonden"
 #. js-lingui-id: 3bvkPk
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
-msgstr ""
+msgstr "Geen toegewezene"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
@@ -15868,7 +15868,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
-msgstr ""
+msgstr "Geen velden gevonden"
 
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -17097,7 +17097,7 @@ msgstr "Open Claude met de naam van de Twenty-connector en MCP-URL vooraf ingevu
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
 msgid "Open conversation"
-msgstr ""
+msgstr "Gesprek openen"
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17286,7 +17286,7 @@ msgstr "Opties"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "of"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -18871,7 +18871,7 @@ msgstr "Recordniveau"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "Record:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18902,7 +18902,7 @@ msgstr "Opname gepland"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "records"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -19128,7 +19128,7 @@ msgstr "{0} navigatiemenu-items verwijderen?"
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "{address} verwijderen"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19965,7 +19965,7 @@ msgstr ""
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "Wordt uitgevoerd"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19997,7 +19997,7 @@ msgstr "uitvoeringen"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "Uitvoeringen"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -20007,7 +20007,7 @@ msgstr ""
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "Runtime"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -23979,7 +23979,7 @@ msgstr "Tokenverbruik"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "tokens"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx

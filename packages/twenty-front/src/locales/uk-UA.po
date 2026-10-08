@@ -1540,7 +1540,7 @@ msgstr "Додати"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "Додати \"{optionName}\" до параметрів"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -3549,7 +3549,7 @@ msgstr "Призначається користувачам, які приєдн
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "Виконавець"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3845,7 +3845,7 @@ msgstr "Доступні відомості про застосунок"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "Аватар"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -7937,7 +7937,7 @@ msgstr "Видалити віджет"
 #. js-lingui-id: UA2IpC
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow"
-msgstr ""
+msgstr "Видалити workflow"
 
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -7947,12 +7947,12 @@ msgstr "Видалити робочий процес"
 #. js-lingui-id: JQPF/x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow?"
-msgstr ""
+msgstr "Видалити workflow?"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "Видалити workflows "
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -10644,7 +10644,7 @@ msgstr "Функції активні до"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "Відгуки"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10849,12 +10849,12 @@ msgstr "Не вдалося завантажити файл ({0})."
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "файли"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "Файли"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -12174,7 +12174,7 @@ msgstr "Іконка та назва"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "Іконки"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12447,7 +12447,7 @@ msgstr "Параметри неактивної навички"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "Вхідні"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -14705,7 +14705,7 @@ msgstr "Microsoft"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "мінімум"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -17097,7 +17097,7 @@ msgstr "Відкрийте Claude з наперед заповненою наз�
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
 msgid "Open conversation"
-msgstr ""
+msgstr "Відкрити розмову"
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17286,7 +17286,7 @@ msgstr "Опції"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "або"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -18871,7 +18871,7 @@ msgstr "Рівень запису"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "Запис:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18902,7 +18902,7 @@ msgstr "Запис заплановано"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "записи"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -19128,7 +19128,7 @@ msgstr "Видалити {0} пункти навігаційного меню?"
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "Вилучити {address}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19965,7 +19965,7 @@ msgstr ""
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "Виконується"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19997,7 +19997,7 @@ msgstr "запуски"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "Запуски"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -20007,7 +20007,7 @@ msgstr ""
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "Середовище виконання"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -23979,7 +23979,7 @@ msgstr "Використання токенів"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "токени"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx

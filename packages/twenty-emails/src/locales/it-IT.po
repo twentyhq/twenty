@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} ha generato un codice di recupero che ti consente di accedere a {workspaceDisplayName} senza l'app di autenticazione."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Un avviso prima che la tua prova termini"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "È stato usato un codice di recupero per accedere a {workspaceDisplayName}. Il tuo autenticatore per questo spazio di lavoro è stato rimosso e le altre tue sessioni sono state disconnesse."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Ciao {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Se non sei stato tu, contatta l'amministratore del tuo spazio di lavoro e modifica la password."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Se Twenty funziona per te, sei a posto — non devi fare nulla. Se invec
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Se non hai richiesto questa operazione, contatta l'amministratore del tuo spazio di lavoro e modifica la password."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx

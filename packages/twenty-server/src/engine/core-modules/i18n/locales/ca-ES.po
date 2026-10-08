@@ -1198,13 +1198,13 @@ msgstr "L'actualització de l'aplicació ha fallat."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "La clau de la variable d'aplicació {key} està reservada"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "La clau de la variable d'aplicació {keyUpdate} està reservada"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -2499,7 +2499,7 @@ msgstr "El valor del filtre del gràfic no és vàlid per a aquest operand"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat"
-msgstr ""
+msgstr "Xat"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2551,7 +2551,7 @@ msgstr "Xats"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
-msgstr ""
+msgstr "Xats"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3079,13 +3079,13 @@ msgstr "Mida de la conversa"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "Converses"
 
 #. js-lingui-id: Hl4lJ2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Conversations"
-msgstr ""
+msgstr "Converses"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3257,7 +3257,7 @@ msgstr "Creat el"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created by"
-msgstr ""
+msgstr "Creat per"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3832,7 +3832,7 @@ msgstr "{objectLabelPlural} eliminats"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted at"
-msgstr ""
+msgstr "Eliminat el"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -4018,7 +4018,7 @@ msgstr "Dominis"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Done"
-msgstr ""
+msgstr "Fet"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -4329,7 +4329,7 @@ msgstr "Data de Finalització"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Ended At"
-msgstr ""
+msgstr "Finalitzat a"
 
 #. js-lingui-id: BECIbc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -4400,13 +4400,13 @@ msgstr "Error"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #. js-lingui-id: AmBiAv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -7028,7 +7028,7 @@ msgstr "Idioma"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last activity"
-msgstr ""
+msgstr "Última activitat"
 
 #. js-lingui-id: 6BLB1j
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -7040,7 +7040,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last message"
-msgstr ""
+msgstr "Últim missatge"
 
 #. js-lingui-id: XIwvdi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7408,7 +7408,7 @@ msgstr "Mar7"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Mark as done"
-msgstr ""
+msgstr "Marcar com a fet"
 
 #. js-lingui-id: lL9UM0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7964,13 +7964,13 @@ msgstr "Falten camps obligatoris: almenys una restricció única s'ha d'emplenar
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Model ID"
-msgstr ""
+msgstr "ID del model"
 
 #. js-lingui-id: yrTsg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Model ID"
-msgstr ""
+msgstr "ID del model"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -8162,13 +8162,13 @@ msgstr "Nou"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "New chat"
-msgstr ""
+msgstr "Nou xat"
 
 #. js-lingui-id: xKvfAx
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New chat"
-msgstr ""
+msgstr "Nou xat"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -11060,7 +11060,7 @@ msgstr "El títol de l'element del menú de configuració és obligatori"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share"
-msgstr ""
+msgstr "Compartir"
 
 #. js-lingui-id: yBQtdU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11437,7 +11437,7 @@ msgstr "Inici de la setmana"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Started At"
-msgstr ""
+msgstr "Iniciat a"
 
 #. js-lingui-id: tCbiO2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -11561,13 +11561,13 @@ msgstr "Assumpte"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Subscribe"
-msgstr ""
+msgstr "Subscriu-te"
 
 #. js-lingui-id: YXzEKE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Subscribe"
-msgstr ""
+msgstr "Subscriu-te"
 
 #. js-lingui-id: lnqIRm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -13929,13 +13929,13 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Donar-se de baixa"
 
 #. js-lingui-id: TkPhSO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Donar-se de baixa"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -15733,7 +15733,7 @@ msgstr "Sí"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "No teniu permís per accedir a aquesta funció."
 
 #. js-lingui-id: OkhBdX
 #: src/engine/metadata-modules/ai/ai.exception.ts

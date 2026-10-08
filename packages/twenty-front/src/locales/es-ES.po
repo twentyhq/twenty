@@ -1540,7 +1540,7 @@ msgstr "Añadir"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "Agregar \"{optionName}\" a las opciones"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -2334,7 +2334,7 @@ msgstr "Agentes"
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 msgid "Aggregate"
-msgstr ""
+msgstr "Agregar"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -3549,7 +3549,7 @@ msgstr "Asignado a los usuarios que se unen mediante un enlace de invitación, u
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "Asignado"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3845,7 +3845,7 @@ msgstr "Detalles de la aplicación disponible"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4121,7 +4121,7 @@ msgstr "Rebote"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "Migaja de pan"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -5565,7 +5565,7 @@ msgstr "Calculado el"
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Condition"
-msgstr ""
+msgstr "Condición"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7952,7 +7952,7 @@ msgstr ""
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "Eliminar workflows"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -10644,7 +10644,7 @@ msgstr "Funciones activas hasta"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "Retroalimentación"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10849,12 +10849,12 @@ msgstr "Error al cargar el archivo ({0})."
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "archivos"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "Archivos"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -12174,7 +12174,7 @@ msgstr "Icono y Nombre"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "Iconos"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12447,7 +12447,7 @@ msgstr "Opciones de habilidad inactiva"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "Bandeja de entrada"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -14705,7 +14705,7 @@ msgstr "Microsoft"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "mín"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -15868,7 +15868,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
-msgstr ""
+msgstr "No se encontraron campos"
 
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -17097,7 +17097,7 @@ msgstr "Abre Claude con el nombre del conector de Twenty y la URL MCP rellenados
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
 msgid "Open conversation"
-msgstr ""
+msgstr "Abrir conversación"
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17286,7 +17286,7 @@ msgstr "Opciones"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "o"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -18871,7 +18871,7 @@ msgstr "Nivel de registro"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "Registro:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18902,7 +18902,7 @@ msgstr "Grabación programada"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "registros"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -19128,7 +19128,7 @@ msgstr "¿Eliminar {0} elementos del menú de navegación?"
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "Eliminar {address}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19427,12 +19427,12 @@ msgstr "Solicitud fallida"
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
-msgstr ""
+msgstr "solicitudes"
 
 #. js-lingui-id: PWfg7v
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Requests"
-msgstr ""
+msgstr "Solicitudes"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -19965,7 +19965,7 @@ msgstr ""
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "En ejecución"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19997,7 +19997,7 @@ msgstr "ejecuciones"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "Ejecuciones"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -20007,7 +20007,7 @@ msgstr ""
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "Tiempo de ejecución"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -22239,12 +22239,12 @@ msgstr "Opciones de filtro del paso"
 #. js-lingui-id: 7Ilx5M
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "steps"
-msgstr ""
+msgstr "pasos"
 
 #. js-lingui-id: A9onc2
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Steps"
-msgstr ""
+msgstr "Pasos"
 
 #. js-lingui-id: btg91h
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -23979,7 +23979,7 @@ msgstr "Uso de tokens"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "tokens"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx

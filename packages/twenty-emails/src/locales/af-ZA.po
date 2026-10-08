@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} het 'n herstelkode gegenereer waarmee jy by {workspaceDisplayName} kan aanmeld sonder jou verifikasieprogram."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "’n Waarskuwing voordat jou proeflopie eindig"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "'n Herstelkode is gebruik om by {workspaceDisplayName} aan te meld. Jou verifikasieprogram vir hierdie werkruimte is verwyder en jou ander sessies daar is afgemeld."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Hallo {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "As dit nie jy was nie, kontak jou werkruimte-administrateur en verander jou wagwoord."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "As Twenty vir jou werk, is jy reg — daar is niks om te doen nie. As di
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "As jy nie hiervoor gevra het nie, kontak jou werkruimte-administrateur en verander jou wagwoord."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx

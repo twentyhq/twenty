@@ -1540,7 +1540,7 @@ msgstr "추가"
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
-msgstr ""
+msgstr "\"{optionName}\"을 옵션에 추가하기"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -2334,7 +2334,7 @@ msgstr "에이전트들"
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
 msgid "Aggregate"
-msgstr ""
+msgstr "집계"
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -3549,7 +3549,7 @@ msgstr "초대 링크, 승인된 도메인 또는 SSO를 통해 가입한 사용
 #. js-lingui-id: ojKCLU
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
-msgstr ""
+msgstr "담당자"
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -3845,7 +3845,7 @@ msgstr "사용 가능한 응용 프로그램 세부정보"
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 msgid "Avatar"
-msgstr ""
+msgstr "아바타"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4121,7 +4121,7 @@ msgstr "반송됨"
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "Breadcrumb"
 
 #. js-lingui-id: 8mzNUs
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -5565,7 +5565,7 @@ msgstr "계산 시각"
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 msgid "Condition"
-msgstr ""
+msgstr "조건"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7937,7 +7937,7 @@ msgstr "위젯 삭제"
 #. js-lingui-id: UA2IpC
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow"
-msgstr ""
+msgstr "워크플로 삭제"
 
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -7947,12 +7947,12 @@ msgstr "워크플로 삭제"
 #. js-lingui-id: JQPF/x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflow?"
-msgstr ""
+msgstr "워크플로 삭제?"
 
 #. js-lingui-id: ABwG9x
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "Delete workflows"
-msgstr ""
+msgstr "워크플로 삭제"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
@@ -10644,7 +10644,7 @@ msgstr "기능 활성 유지 기한"
 #. js-lingui-id: YirHq7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Feedback"
-msgstr ""
+msgstr "피드백"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10849,12 +10849,12 @@ msgstr "파일 업로드에 실패했습니다 ({0})."
 #. js-lingui-id: 49BbAW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "files"
-msgstr ""
+msgstr "파일"
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Files"
-msgstr ""
+msgstr "파일"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -12174,7 +12174,7 @@ msgstr "아이콘 및 이름"
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
-msgstr ""
+msgstr "아이콘"
 
 #. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12447,7 +12447,7 @@ msgstr "비활성 스킬 옵션"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Inbox"
-msgstr ""
+msgstr "받은 편지함"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -14705,7 +14705,7 @@ msgstr "마이크로소프트"
 #. js-lingui-id: lWkKSO
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "min"
-msgstr ""
+msgstr "최소"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -15868,7 +15868,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
-msgstr ""
+msgstr "필드를 찾을 수 없습니다"
 
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -17097,7 +17097,7 @@ msgstr "Twenty 커넥터 이름과 MCP URL이 미리 채워진 상태로 Claude�
 #. js-lingui-id: uIKeEf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepAiAgentConversationButton.tsx
 msgid "Open conversation"
-msgstr ""
+msgstr "대화 열기"
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17286,7 +17286,7 @@ msgstr "옵션"
 #. js-lingui-id: BzEFor
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "or"
-msgstr ""
+msgstr "또는"
 
 #. js-lingui-id: ZAVklK
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -18871,7 +18871,7 @@ msgstr "레코드 수준"
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
 msgid "Record:"
-msgstr ""
+msgstr "기록:"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -18902,7 +18902,7 @@ msgstr "녹음 예약됨"
 #. js-lingui-id: ECgtG5
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "records"
-msgstr ""
+msgstr "기록"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/ai/components/AiChatAddMenu.tsx
@@ -19128,7 +19128,7 @@ msgstr "{0}개의 내비게이션 메뉴 항목을 제거하시겠습니까?"
 #. js-lingui-id: Q7qiJ+
 #: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 msgid "Remove {address}"
-msgstr ""
+msgstr "{address} 제거"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19427,12 +19427,12 @@ msgstr "요청 실패"
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
-msgstr ""
+msgstr "요청"
 
 #. js-lingui-id: PWfg7v
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Requests"
-msgstr ""
+msgstr "요청"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -19965,7 +19965,7 @@ msgstr ""
 #. js-lingui-id: RiQMUh
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
 msgid "Running"
-msgstr ""
+msgstr "실행 중"
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19997,7 +19997,7 @@ msgstr "실행"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
-msgstr ""
+msgstr "실행"
 
 #. js-lingui-id: RASTzS
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -20007,7 +20007,7 @@ msgstr ""
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Runtime"
-msgstr ""
+msgstr "런타임"
 
 #. js-lingui-id: nji0/X
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -22239,12 +22239,12 @@ msgstr "단계 필터 옵션"
 #. js-lingui-id: 7Ilx5M
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "steps"
-msgstr ""
+msgstr "단계"
 
 #. js-lingui-id: A9onc2
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Steps"
-msgstr ""
+msgstr "단계"
 
 #. js-lingui-id: btg91h
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -23977,7 +23977,7 @@ msgstr "토큰 사용량"
 #. js-lingui-id: WOr+hW
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "tokens"
-msgstr ""
+msgstr "토큰"
 
 #. js-lingui-id: 6RDwJM
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx

@@ -1198,13 +1198,13 @@ msgstr "فشلت ترقية التطبيق."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "مفتاح متغير التطبيق {key} محجوز"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "مفتاح متغير التطبيق {keyUpdate} محجوز"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -1739,7 +1739,7 @@ msgstr "يجب أن يكون المتن كائنًا للأداة \"{widgetTitle
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
-msgstr "ازدهار"
+msgstr "Boom"
 
 #. js-lingui-id: 5Xcd0y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -2008,7 +2008,7 @@ msgstr "هدف حدث التقويم"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr "حدث هدف حدث التقويم"
+msgstr "حدث التقويم"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -2499,7 +2499,7 @@ msgstr "قيمة عامل التصفية للمخطط غير صالحة لهذا
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat"
-msgstr ""
+msgstr "الدردشة"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2551,7 +2551,7 @@ msgstr "الدردشات"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
-msgstr ""
+msgstr "الدردشات"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3009,7 +3009,7 @@ msgstr "شركة جهة الاتصال"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's Emails"
-msgstr "رسائل جهة الاتصال الإلكترونية"
+msgstr "عناوين البريد الإلكتروني لجهة الاتصال"
 
 #. js-lingui-id: eX6v+/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -3079,13 +3079,13 @@ msgstr "حجم المحادثة"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "المحادثات"
 
 #. js-lingui-id: Hl4lJ2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Conversations"
-msgstr ""
+msgstr "المحادثات"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3257,7 +3257,7 @@ msgstr "تاريخ الإنشاء"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created by"
-msgstr ""
+msgstr "تم الإنشاء بواسطة"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3832,7 +3832,7 @@ msgstr "تم حذف {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted at"
-msgstr ""
+msgstr "تم الحذف في"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3948,7 +3948,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Destroy"
-msgstr "تدمير"
+msgstr "حذف نهائي"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -4018,7 +4018,7 @@ msgstr "النطاقات"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Done"
-msgstr ""
+msgstr "تم"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -4329,7 +4329,7 @@ msgstr "تاريخ الانتهاء"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Ended At"
-msgstr ""
+msgstr "انتهى في"
 
 #. js-lingui-id: BECIbc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -4400,13 +4400,13 @@ msgstr "خطأ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #. js-lingui-id: AmBiAv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -4782,7 +4782,7 @@ msgstr "لم يتم العثور على الحقل المعلن عنه كمعر�
 #. js-lingui-id: 75hHpn
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
-msgstr "الحقل المعرف كمعرف الملصق غير موجود"
+msgstr "لم يتم العثور على الحقل المُعلن كمعرّف للتسمية"
 
 #. js-lingui-id: qelyBB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -5091,13 +5091,13 @@ msgstr "فئة الملف"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File Filename"
-msgstr "اسم ملف الملف"
+msgstr "اسم الملف"
 
 #. js-lingui-id: K7OlYw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File Filename"
-msgstr "اسم ملف الملف"
+msgstr "اسم الملف"
 
 #. js-lingui-id: vgJ2Zz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -5284,7 +5284,7 @@ msgstr "المكوّن الأمامي \"{updatedFrontComponentUniversalIdentifie
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Front component is not ready."
-msgstr "مكوّن Front غير جاهز."
+msgstr "مكوّن الواجهة غير جاهز."
 
 #. js-lingui-id: A7aUMa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -6176,7 +6176,7 @@ msgstr "عامل تصفية غير صالح: يلزم وجود معامل واح
 #. js-lingui-id: gdJXPD
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: filter value must be an object"
-msgstr "مرشح غير صالح: يجب أن تكون قيمة المرشح عنصرًا"
+msgstr "مرشح غير صالح: يجب أن تكون قيمة المرشح كائنًا"
 
 #. js-lingui-id: rpkTUe
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -6352,7 +6352,7 @@ msgstr "مفتاح علم الإذن غير صالح."
 #. js-lingui-id: OqxwMi
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Invalid permission flag permission type."
-msgstr "نوع إذن علم الإذن غير صالح."
+msgstr "نوع علامة الإذن غير صالح."
 
 #. js-lingui-id: mMHHVP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -6404,7 +6404,7 @@ msgstr "رمز التحديث غير صالح."
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
-msgstr "تحميل إنشاء العلاقة غير صالح"
+msgstr "بيانات إنشاء العلاقة غير صالحة"
 
 #. js-lingui-id: iWv3nK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -6999,7 +6999,7 @@ msgstr "يجب أن يكون حقل عرض معرف التسمية مرئيًا"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Label is required"
-msgstr "العنوان مطلوب"
+msgstr "التسمية مطلوبة"
 
 #. js-lingui-id: 6bWuI/
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -7010,7 +7010,7 @@ msgstr "التسمية مطلوبة."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
-msgstr "العنوان لا يجب أن يكون فارغًا"
+msgstr "يجب ألا تكون التسمية فارغة"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -7028,7 +7028,7 @@ msgstr "اللغة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last activity"
-msgstr ""
+msgstr "آخر نشاط"
 
 #. js-lingui-id: 6BLB1j
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -7040,7 +7040,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last message"
-msgstr ""
+msgstr "آخر رسالة"
 
 #. js-lingui-id: XIwvdi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7408,7 +7408,7 @@ msgstr "مارس"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Mark as done"
-msgstr ""
+msgstr "وضع علامة كمنجز"
 
 #. js-lingui-id: lL9UM0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7458,7 +7458,7 @@ msgstr "الحد الأقصى لعدد السجلات المتداخلة الم�
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "الحد الأقصى لعدد السجلات المراد تحديثها هو {QUERY_MAX_RECORDS}."
+msgstr "الحد الأقصى لعدد السجلات المراد إدراجها أو تحديثها هو {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: b85bAt
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
@@ -7608,7 +7608,7 @@ msgstr "ارتباط رسالة بقناة الرسائل"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Channel Message Association Message Folder"
-msgstr "مجلد ارتباط رسالة بقناة الرسائل"
+msgstr "ارتباط رسالة قناة الرسائل بمجلد الرسائل"
 
 #. js-lingui-id: lKiUxC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
@@ -7772,7 +7772,7 @@ msgstr "عمليات كتم الرسائل"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Message Synced with a Message Channel"
-msgstr "الرسالة مزامنة مع قناة الرسائل"
+msgstr "رسالة متزامنة مع قناة رسائل"
 
 #. js-lingui-id: JZIhQu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
@@ -7822,7 +7822,7 @@ msgstr "هدف خيط الرسائل"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr "خيط هدف خيط الرسائل"
+msgstr "سلسلة الرسائل المستهدفة"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -7864,13 +7864,13 @@ msgstr "خيوط الرسائل المرتبطة بالفرصة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "MessageCampaign"
-msgstr "MessageCampaign"
+msgstr "حملة الرسائل"
 
 #. js-lingui-id: j5w8z0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "MessageList"
-msgstr "MessageList"
+msgstr "قائمة الرسائل"
 
 #. js-lingui-id: bDTY0A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7964,13 +7964,13 @@ msgstr "الحقول المطلوبة مفقودة: يجب ملء قيد فري�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Model ID"
-msgstr ""
+msgstr "معرّف النموذج"
 
 #. js-lingui-id: yrTsg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Model ID"
-msgstr ""
+msgstr "معرّف النموذج"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -8162,13 +8162,13 @@ msgstr "جديد"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "New chat"
-msgstr ""
+msgstr "دردشة جديدة"
 
 #. js-lingui-id: xKvfAx
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New chat"
-msgstr ""
+msgstr "دردشة جديدة"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -8423,7 +8423,7 @@ msgstr "الملاحظات المرتبطة بالفرصة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget note"
-msgstr "هدف الملاحظة الخاص بالملاحظة"
+msgstr "الملاحظة المرتبطة"
 
 #. js-lingui-id: tcYYlR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -8437,7 +8437,7 @@ msgstr "موضع سجل هدف الملاحظة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget target"
-msgstr "هدف هدف الملاحظة"
+msgstr "هدف الملاحظة"
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -8519,7 +8519,7 @@ msgstr "يحتوي الكائن بالفعل على طريقة عرض بالمف
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
-msgstr "التسمية الطويلة جدًا"
+msgstr "تسمية الكائن طويلة جدًا"
 
 #. js-lingui-id: nmhjwk
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -8930,7 +8930,7 @@ msgstr "التسمية التوضيحية مطلوبة"
 #. js-lingui-id: dFudyC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label must be a string of at least one character"
-msgstr "يجب أن يكون تسمية الخيار عبارة عن نص يحتوي على حرف واحد على الأقل"
+msgstr "يجب أن تكون تسمية الخيار نصًا من حرف واحد على الأقل"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -9428,7 +9428,7 @@ msgstr "معرّف الشخص"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Person record Position"
-msgstr "موقع السجل الشخصي"
+msgstr "موضع سجل الشخص"
 
 #. js-lingui-id: JrteyL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -9561,7 +9561,7 @@ msgstr "نقطة الاتصال"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Position"
-msgstr "الموقع"
+msgstr "الترتيب"
 
 #. js-lingui-id: c7uZDh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -10062,7 +10062,7 @@ msgstr "إعداد العلاقة غير صالح."
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
-msgstr "تحميل إنشاء العلاقة مطلوب"
+msgstr "بيانات إنشاء العلاقة مطلوبة"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10220,7 +10220,7 @@ msgstr "أعادت دالة منطق المُحِلّ نتيجة غير صالح
 #. js-lingui-id: uAJ5BF
 #: src/engine/core-modules/file-storage/utils/validate-safe-relative-path.util.ts
 msgid "Resource path contains null bytes"
-msgstr "مسار المورد يتضمن قيمًا فارغة"
+msgstr "مسار المورد يحتوي على بايتات null"
 
 #. js-lingui-id: PxO731
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -11060,7 +11060,7 @@ msgstr "عنوان عنصر قائمة الإعدادات مطلوب"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share"
-msgstr ""
+msgstr "شارك"
 
 #. js-lingui-id: yBQtdU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11437,7 +11437,7 @@ msgstr "بداية الأسبوع"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Started At"
-msgstr ""
+msgstr "بدأ في"
 
 #. js-lingui-id: tCbiO2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -11561,13 +11561,13 @@ msgstr "الموضوع"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Subscribe"
-msgstr ""
+msgstr "اشترك"
 
 #. js-lingui-id: YXzEKE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Subscribe"
-msgstr ""
+msgstr "اشترك"
 
 #. js-lingui-id: lnqIRm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -11892,13 +11892,13 @@ msgstr "موضع سجل هدف المهمة"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "TaskTarget target"
-msgstr "هدف هدف المهمة"
+msgstr "هدف المهمة"
 
 #. js-lingui-id: dYZHjd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "TaskTarget task"
-msgstr "مهمة TaskTarget"
+msgstr "المهمة المرتبطة"
 
 #. js-lingui-id: nuuwhl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -13929,13 +13929,13 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "إلغاء الاشتراك"
 
 #. js-lingui-id: TkPhSO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "إلغاء الاشتراك"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14120,7 +14120,7 @@ msgstr "الاسم المحدث غير متزامن مع التسمية"
 #. js-lingui-id: waPPpZ
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Upsert"
-msgstr "Upsert"
+msgstr "إدراج أو تحديث"
 
 #. js-lingui-id: CfAilE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -14368,7 +14368,7 @@ msgstr "القيمة \"{stringifiedValue}\" لا تُرجِع أي سجل للم
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr "يجب أن يكون القيمة بالأحرف الكبيرة وأن تتبع التنسيق \"{sanitizedValue}\""
+msgstr "يجب أن تكون القيمة بأحرف كبيرة وتتبع تنسيق snake_case \"{sanitizedValue}\""
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -14725,7 +14725,7 @@ msgstr "لم يتم العثور على العرض المراد تدميره"
 #. js-lingui-id: 3+GbNY
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
-msgstr "المنظر المطلوب تحديثه غير موجود"
+msgstr "العرض المطلوب تحديثه غير موجود"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -14735,7 +14735,7 @@ msgstr "عرض بنفس المعرّف العالمي موجود بالفعل"
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr "أيّدجزويذغايبضرورتلإنشاءمجالعرض."
+msgstr "ViewId مطلوب لإنشاء حقل عرض."
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -15391,7 +15391,7 @@ msgstr "سير عمل محفز سير العمل التلقائي"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "WorkflowRun"
-msgstr "WorkflowRun"
+msgstr "تشغيل سير العمل"
 
 #. js-lingui-id: zSsbOe
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
@@ -15415,7 +15415,7 @@ msgstr "نسخة سير العمل"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "WorkflowVersion workflow"
-msgstr "نسخة سير العمل لسير العمل"
+msgstr "سير العمل التابع لإصدار سير العمل"
 
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -15659,7 +15659,7 @@ msgstr ""
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجالعرض."
+msgstr "WorkspaceId مطلوب لإنشاء حقل عرض."
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -15733,7 +15733,7 @@ msgstr "نعم"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "غير مسموح لك بالوصول إلى هذه الوظيفة."
 
 #. js-lingui-id: OkhBdX
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15891,7 +15891,7 @@ msgstr "ليس لديك إذن لانتحال صفة المستخدمين في �
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
-msgstr "لا تملك إذن تقمص الشخصيات. يُرجى الاتصال بمسؤول مساحة العمل للوصول."
+msgstr "لا تملك إذن انتحال صفة المستخدمين. يُرجى التواصل مع مسؤول مساحة العمل للحصول على الوصول."
 
 #. js-lingui-id: wFDl+C
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

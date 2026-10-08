@@ -1198,13 +1198,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "Ключ переменной приложения {key} зарезервирован"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "Ключ переменной приложения {keyUpdate} зарезервирован"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -2499,7 +2499,7 @@ msgstr "Значение фильтра диаграммы недопустим�
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat"
-msgstr ""
+msgstr "Чат"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2551,7 +2551,7 @@ msgstr "Чаты"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
-msgstr ""
+msgstr "Чаты"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3079,13 +3079,13 @@ msgstr "Размер диалога"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "Диалоги"
 
 #. js-lingui-id: Hl4lJ2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Conversations"
-msgstr ""
+msgstr "Диалоги"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3257,7 +3257,7 @@ msgstr "Время создания"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created by"
-msgstr ""
+msgstr "Создано"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3832,7 +3832,7 @@ msgstr "Удалено {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted at"
-msgstr ""
+msgstr "Удалено в"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -4018,7 +4018,7 @@ msgstr "Домены"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Done"
-msgstr ""
+msgstr "Готово"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -4329,7 +4329,7 @@ msgstr "Дата окончания"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Ended At"
-msgstr ""
+msgstr "Окончание"
 
 #. js-lingui-id: BECIbc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -4400,13 +4400,13 @@ msgstr "Ошибка"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #. js-lingui-id: AmBiAv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -7028,7 +7028,7 @@ msgstr "Язык"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last activity"
-msgstr ""
+msgstr "Последняя активность"
 
 #. js-lingui-id: 6BLB1j
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -7040,7 +7040,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last message"
-msgstr ""
+msgstr "Последнее сообщение"
 
 #. js-lingui-id: XIwvdi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7964,13 +7964,13 @@ msgstr "Отсутствуют обязательные поля: для \"{conn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Model ID"
-msgstr ""
+msgstr "Идентификатор модели"
 
 #. js-lingui-id: yrTsg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Model ID"
-msgstr ""
+msgstr "Идентификатор модели"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -8162,13 +8162,13 @@ msgstr "Новый"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "New chat"
-msgstr ""
+msgstr "Новый чат"
 
 #. js-lingui-id: xKvfAx
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New chat"
-msgstr ""
+msgstr "Новый чат"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -11060,7 +11060,7 @@ msgstr "Требуется название пункта меню настрое
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share"
-msgstr ""
+msgstr "Поделиться"
 
 #. js-lingui-id: yBQtdU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11437,7 +11437,7 @@ msgstr "Начало недели"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Started At"
-msgstr ""
+msgstr "Начало"
 
 #. js-lingui-id: tCbiO2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -11561,13 +11561,13 @@ msgstr "Тема"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Subscribe"
-msgstr ""
+msgstr "Подписаться"
 
 #. js-lingui-id: YXzEKE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Subscribe"
-msgstr ""
+msgstr "Подписаться"
 
 #. js-lingui-id: lnqIRm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -13929,13 +13929,13 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Отписаться"
 
 #. js-lingui-id: TkPhSO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Отписаться"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -15733,7 +15733,7 @@ msgstr "Да"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "У вас нет прав для доступа к этой функции."
 
 #. js-lingui-id: OkhBdX
 #: src/engine/metadata-modules/ai/ai.exception.ts

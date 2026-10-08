@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} згенерував(-ла) код відновлення, який дає змогу ввійти до {workspaceDisplayName} без застосунку для автентифікації."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Невелике попередження перед завершенн�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Код відновлення було використано для входу до {workspaceDisplayName}. Ваш засіб автентифікації для цього робочого простору було видалено, а інші ваші сеанси в ньому завершено."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Привіт, {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Якщо це були не ви, зверніться до адміністратора вашого робочого простору та змініть пароль."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Якщо Twenty вам підходить, усе вже налашто�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Якщо ви не надсилали цей запит, зверніться до адміністратора вашого робочого простору та змініть пароль."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx

@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} hat einen Wiederherstellungscode erstellt, mit dem Sie sich ohne Ihre Authentifizierungs-App bei {workspaceDisplayName} anmelden können."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Ein Hinweis, bevor Ihre Testphase endet"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Ein Wiederherstellungscode wurde verwendet, um sich bei {workspaceDisplayName} anzumelden. Ihre Authentifizierung für diesen Workspace wurde entfernt und Ihre anderen Sitzungen dort wurden abgemeldet."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Hallo {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Wenn Sie das nicht waren, wenden Sie sich an den Workspace-Administrator und ändern Sie Ihr Passwort."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Wenn Twenty für Sie funktioniert, ist alles vorbereitet – Sie müssen
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Wenn Sie dies nicht angefordert haben, wenden Sie sich an den Workspace-Administrator und ändern Sie Ihr Passwort."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx

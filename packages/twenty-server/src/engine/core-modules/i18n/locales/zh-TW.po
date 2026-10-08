@@ -1198,13 +1198,13 @@ msgstr "應用程式升級失敗。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {key} is reserved"
-msgstr ""
+msgstr "應用程式變數鍵 {key} 為保留鍵"
 
 #. js-lingui-id: wJwhrT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key {keyUpdate} is reserved"
-msgstr ""
+msgstr "應用程式變數鍵 {keyUpdate} 為保留鍵"
 
 #. js-lingui-id: 5MJQ4s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -2499,7 +2499,7 @@ msgstr "此運算元的圖表篩選值無效"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat"
-msgstr ""
+msgstr "聊天"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2551,7 +2551,7 @@ msgstr "聊天"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
-msgstr ""
+msgstr "聊天"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3079,13 +3079,13 @@ msgstr "對話大小"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Conversations"
-msgstr ""
+msgstr "對話"
 
 #. js-lingui-id: Hl4lJ2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Conversations"
-msgstr ""
+msgstr "對話"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -3257,7 +3257,7 @@ msgstr "建立時間"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created by"
-msgstr ""
+msgstr "創建者"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3832,7 +3832,7 @@ msgstr "已刪除 {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted at"
-msgstr ""
+msgstr "刪除於"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -4018,7 +4018,7 @@ msgstr "域名"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Done"
-msgstr ""
+msgstr "完成"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -4329,7 +4329,7 @@ msgstr "結束日期"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Ended At"
-msgstr ""
+msgstr "結束時間"
 
 #. js-lingui-id: BECIbc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -4400,13 +4400,13 @@ msgstr "錯誤"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error"
-msgstr ""
+msgstr "錯誤"
 
 #. js-lingui-id: AmBiAv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error"
-msgstr ""
+msgstr "錯誤"
 
 #. js-lingui-id: rG9Fzz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -7028,7 +7028,7 @@ msgstr "語言"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last activity"
-msgstr ""
+msgstr "最近活動"
 
 #. js-lingui-id: 6BLB1j
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -7040,7 +7040,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last message"
-msgstr ""
+msgstr "最後一則訊息"
 
 #. js-lingui-id: XIwvdi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -7408,7 +7408,7 @@ msgstr "三月"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Mark as done"
-msgstr ""
+msgstr "標記為完成"
 
 #. js-lingui-id: lL9UM0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7964,13 +7964,13 @@ msgstr "缺少必要欄位：必須至少完整填入一個唯一約束條件，
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Model ID"
-msgstr ""
+msgstr "模型 ID"
 
 #. js-lingui-id: yrTsg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Model ID"
-msgstr ""
+msgstr "模型 ID"
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -8162,13 +8162,13 @@ msgstr "新"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "New chat"
-msgstr ""
+msgstr "新聊天"
 
 #. js-lingui-id: xKvfAx
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New chat"
-msgstr ""
+msgstr "新聊天"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -11060,7 +11060,7 @@ msgstr "必須提供設定選單項目標題"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Share"
-msgstr ""
+msgstr "分享"
 
 #. js-lingui-id: yBQtdU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11437,7 +11437,7 @@ msgstr "星期的開始"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Started At"
-msgstr ""
+msgstr "開始於"
 
 #. js-lingui-id: tCbiO2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -11561,13 +11561,13 @@ msgstr "主題"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Subscribe"
-msgstr ""
+msgstr "訂閱"
 
 #. js-lingui-id: YXzEKE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Subscribe"
-msgstr ""
+msgstr "訂閱"
 
 #. js-lingui-id: lnqIRm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -13929,13 +13929,13 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "取消訂閱"
 
 #. js-lingui-id: TkPhSO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Unsubscribe"
-msgstr ""
+msgstr "取消訂閱"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -15733,7 +15733,7 @@ msgstr "是"
 #. js-lingui-id: 3N5PgZ
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "You are not allowed to access this function."
-msgstr ""
+msgstr "您無權存取此功能。"
 
 #. js-lingui-id: OkhBdX
 #: src/engine/metadata-modules/ai/ai.exception.ts
