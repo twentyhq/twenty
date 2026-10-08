@@ -197,20 +197,14 @@ export class AgentChatThreadParticipantService {
       }
     };
 
-    const participants = await this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds },
+    return this.write(
+      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
       INBOX_ACTION_QUERIES[action],
       action === AgentChatInboxAction.ARCHIVE || isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
         ? assertIsNotAssignee
         : undefined,
     );
-
-    if (participants.length !== uniqueThreadIds.length) {
-      throwAgentChatThreadNotFound();
-    }
-
-    return participants;
   }
 
   // A mention brings the chat back unread for the mentioned member, who the
@@ -603,7 +597,11 @@ export class AgentChatThreadParticipantService {
       workspaceId,
       workspaceMemberId,
       threadIds,
-    }: Omit<AgentChatThreadAccessArgs, 'threadId'> & { threadIds: string[] },
+      isEveryRowRequired = false,
+    }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+      threadIds: string[];
+      isEveryRowRequired?: boolean;
+    },
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
     writeThread?: WriteThreadStep,
@@ -652,6 +650,8 @@ export class AgentChatThreadParticipantService {
 
           if (isDefined(after)) {
             writes.push({ before, after });
+          } else if (isEveryRowRequired) {
+            throwAgentChatThreadNotFound();
           }
         }
 

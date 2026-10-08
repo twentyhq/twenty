@@ -66,6 +66,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
           ...optimisticVisit,
         });
       }
+      const optimisticVisitState = store.get(agentChatThreadVisitState.atom);
 
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
         if (!isDefined(participants)) {
@@ -110,12 +111,9 @@ export const useUpdateAgentChatThreadInboxState = () => {
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
+        // A visit to another chat since then is kept
         store.set(agentChatThreadVisitState.atom, (visit) =>
-          isDefined(optimisticVisit) &&
-          isDefined(visit) &&
-          threadIds.includes(visit.threadId)
-            ? previousVisit
-            : visit,
+          visit === optimisticVisitState ? previousVisit : visit,
         );
 
         // A newer row may have arrived since, and is kept

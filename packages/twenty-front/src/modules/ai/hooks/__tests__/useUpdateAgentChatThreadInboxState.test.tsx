@@ -222,4 +222,34 @@ describe('useUpdateAgentChatThreadInboxState', () => {
 
     expect(store.get(agentChatThreadVisitState.atom)).toEqual(visit);
   });
+
+  it('keeps a visit to another chat opened while the refused request was pending', async () => {
+    const { result, store } = renderUpdateInboxState();
+    const otherVisit = {
+      threadId: OTHER_THREAD_ID,
+      isUnread: true,
+      lastReadAt: null,
+      isKeptUnread: false,
+    };
+
+    mutate.mockImplementation(async () => {
+      store.set(agentChatThreadVisitState.atom, otherVisit);
+      throw new Error('Network error');
+    });
+    store.set(agentChatThreadVisitState.atom, {
+      threadId: THREAD_ID,
+      isUnread: false,
+      lastReadAt: LAST_ACTIVITY_AT,
+      isKeptUnread: false,
+    });
+
+    await act(async () => {
+      await result.current.updateAgentChatThreadInboxState({
+        threadIds: [THREAD_ID, OTHER_THREAD_ID],
+        action: AgentChatInboxAction.UNREAD,
+      });
+    });
+
+    expect(store.get(agentChatThreadVisitState.atom)).toEqual(otherVisit);
+  });
 });
