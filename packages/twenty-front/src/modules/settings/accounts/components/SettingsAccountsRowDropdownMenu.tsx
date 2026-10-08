@@ -11,6 +11,8 @@ import {
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -54,6 +56,9 @@ export const SettingsAccountsRowDropdownMenu = ({
     DISCONNECT_CONNECTED_ACCOUNT,
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
+  const isConsolidationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CONNECTED_ACCOUNTS_CONSOLIDATION_ENABLED,
+  );
 
   const hasPendingConfiguration =
     account.messageChannels.some(
@@ -121,18 +126,24 @@ export const SettingsAccountsRowDropdownMenu = ({
                 }
               >{t`Connection settings`}</Dropdown.ActionItem>
             )}
-            <Dropdown.ActionItem
-              startIcon={<IconMail />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
-              }
-            >{t`Emails settings`}</Dropdown.ActionItem>
-            <Dropdown.ActionItem
-              startIcon={<IconCalendarEvent />}
-              render={
-                <Link to={getSettingsPath(SettingsPath.AccountsCalendars)} />
-              }
-            >{t`Calendar settings`}</Dropdown.ActionItem>
+            {!isConsolidationEnabled && (
+              <>
+                <Dropdown.ActionItem
+                  startIcon={<IconMail />}
+                  render={
+                    <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
+                  }
+                >{t`Emails settings`}</Dropdown.ActionItem>
+                <Dropdown.ActionItem
+                  startIcon={<IconCalendarEvent />}
+                  render={
+                    <Link
+                      to={getSettingsPath(SettingsPath.AccountsCalendars)}
+                    />
+                  }
+                >{t`Calendar settings`}</Dropdown.ActionItem>
+              </>
+            )}
             {isEligibleForProviderReconnect && (
               <Dropdown.ActionItem
                 startIcon={<IconRefresh />}

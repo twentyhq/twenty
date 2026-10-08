@@ -1,7 +1,8 @@
-import { type ConsolidatedConnectedAccount } from '@/settings/accounts/types/ConsolidatedConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 
-export type ConnectedAccountGroup = {
+export type ConnectedAccountGroup<TConnectedAccount = ConnectedAccount> = {
   id: string;
   handle: string;
-  accounts: ConsolidatedConnectedAccount[];
+  nativeAccount?: TConnectedAccount;
+  appAccounts: TConnectedAccount[];
 };
