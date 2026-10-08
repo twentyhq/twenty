@@ -31,8 +31,6 @@ export const putFathomMediaBodyToUploadTarget = async ({
   const mediaDownloadReadable = Readable.from(
     readMediaDownloadBody({ reader: mediaDownloadReader }),
   );
-  // A pending read only settles once the reader is cancelled, so a stalled
-  // download has to be cancelled before waiting for the pipeline to unwind.
   const cancelMediaDownload = async () => {
     await mediaDownloadReader.cancel().catch((error: unknown) => {
       console.warn(

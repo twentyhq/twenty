@@ -75,7 +75,6 @@ export const fathomReconcileMediaImportsHandler = async (payload: unknown) => {
         coreApiClient,
         connectedAccountId: disconnectedAccountId,
       });
-      // Settled rows leave the cleanup query, so only consecutive stalled passes wait and count towards the bound
       const isStalled = result.updatedRecordingCount === 0;
       const stalledPassCount = isStalled
         ? (payloadParseResult.data.disconnectedCleanupStalledPassCount ?? 0) + 1

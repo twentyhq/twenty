@@ -21,8 +21,6 @@ export const openFathomMediaDownload = async ({
   fileName: string;
   downloadFile: Pick<RecordingDownloadFile, 'url'>;
 }): Promise<OpenFathomMediaDownloadResult> => {
-  // The timeout only bounds the wait for headers: the body is streamed into the
-  // upload, whose own timeout cancels the download when it gives up.
   const headersAbortController = new AbortController();
   const headersTimeout = setTimeout(
     () =>

@@ -57,8 +57,6 @@ export const fathomBackfillWorkerHandler = async (
     createdAfter,
     cursor: payload.cursor,
   }).catch((error: unknown) => {
-    // Only a RetryableLogicFunctionError makes the platform retry, and a lost
-    // page would end the history import for good.
     if (isTransientFathomError(error)) {
       throw buildRetryableFathomError({
         operation: `list meetings for connected account ${payload.connectedAccountId}`,
