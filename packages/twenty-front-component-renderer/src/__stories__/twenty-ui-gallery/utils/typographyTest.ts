@@ -6,6 +6,23 @@ import { galleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/gallery
 export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
   await galleryRenderTest(context);
   const canvas = within(context.canvasElement);
+  const paragraph = canvas.getByTitle('Clamped paragraph');
+  expect(paragraph.tagName).toBe('P');
+  expect(getComputedStyle(paragraph).webkitLineClamp).toBe('2');
+  expect(paragraph.scrollHeight).toBeGreaterThan(paragraph.clientHeight);
+  const plainUrl = canvas.getByLabelText('Plain URL');
+  expect(plainUrl.querySelector('a')).toBeNull();
+  const link = canvas.getByRole('link', { name: 'Typography documentation' });
+  expect(link).toHaveAttribute('data-ref-target', 'typography-link');
+  expect(link.tagName).toBe('A');
+  expect(link.scrollWidth).toBeGreaterThan(link.clientWidth);
+  await userEvent.tab();
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Typography link focuses')).toHaveTextContent(
+      '1',
+    ),
+  );
+  expect(link).toHaveFocus();
 
   await expect(
     canvas.getByRole('heading', { level: 1, name: 'Heading 1' }),

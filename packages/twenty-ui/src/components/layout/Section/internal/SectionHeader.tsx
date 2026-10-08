@@ -66,7 +66,7 @@ export const SectionHeader = ({
               {shouldTruncateDescription ? (
                 <OverflowingTextWithTooltip
                   text={description}
-                  displayedMaxRows={descriptionLineClamp}
+                  lineClamp={descriptionLineClamp}
                   isTooltipMultiline
                   isFocusable={descriptionFocusable}
                 />

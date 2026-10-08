@@ -1,6 +1,7 @@
 import 'twenty-ui/style.css';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { SectionExample } from './section-example';
+import { TypographyCompositionExample } from './typography-composition-example';
 import { VisuallyHiddenExample } from './visually-hidden-example';
 import {
   Heading,
@@ -16,6 +17,7 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
+  { name: 'Typography composition', node: <TypographyCompositionExample /> },
   {
     name: 'Shortcut',
     node: (

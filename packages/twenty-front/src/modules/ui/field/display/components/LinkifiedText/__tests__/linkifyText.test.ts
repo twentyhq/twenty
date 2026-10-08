@@ -1,4 +1,4 @@
-import { linkifyText } from '../linkifyText';
+import { linkifyText } from '@/ui/field/display/components/LinkifiedText/linkifyText';
 
 describe('linkifyText', () => {
   it('splits text around a URL into text and link segments', () => {

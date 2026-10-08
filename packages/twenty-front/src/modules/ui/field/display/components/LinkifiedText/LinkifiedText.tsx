@@ -1,9 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
+import { styled } from '@linaria/react';
+import { getSafeUrl } from 'twenty-shared/utils';
 import { linkifyText } from './linkifyText';
 
-import styles from './LinkifiedText.module.scss';
+const StyledLink = styled.a`
+  color: var(--t-color-blue);
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration-color: var(--t-color-blue);
+  }
+`;
 
 type LinkifiedTextProps = {
   text: string;
@@ -18,16 +26,15 @@ export const LinkifiedText = ({ text }: LinkifiedTextProps) => {
     <>
       {linkifyText(text).map((part, index) =>
         part.type === 'link' ? (
-          <a
+          <StyledLink
             key={index}
-            className={styles.link}
             href={getSafeUrl(part.content)}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             {part.content}
-          </a>
+          </StyledLink>
         ) : (
           part.content
         ),

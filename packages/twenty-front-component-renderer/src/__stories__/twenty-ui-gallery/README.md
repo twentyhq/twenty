@@ -6,6 +6,8 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
+Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure

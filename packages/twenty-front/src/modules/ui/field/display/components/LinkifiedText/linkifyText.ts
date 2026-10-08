@@ -10,8 +10,7 @@ export const linkifyText = (text: string): LinkifyMatch[] => {
   let lastIndex = 0;
 
   for (const match of text.matchAll(URL_REGEX)) {
-    const url = match[0];
-    const index = match.index;
+    const { 0: url, index } = match;
 
     if (index > lastIndex) {
       parts.push({ type: 'text', content: text.slice(lastIndex, index) });

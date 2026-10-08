@@ -779,6 +779,9 @@ export default {
             "id": [
                 482
             ],
+            "isUninstallBlockedByOtherWorkspaceInstallations": [
+                4
+            ],
             "logicFunctions": [
                 299
             ],
