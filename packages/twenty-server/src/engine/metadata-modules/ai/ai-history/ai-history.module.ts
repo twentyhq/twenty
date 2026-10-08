@@ -1,6 +1,8 @@
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { Module } from '@nestjs/common';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { AgentChatFileDownloadService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-file-download.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
@@ -23,8 +25,9 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 }));
 
 @Module({
-  imports: [FileUrlModule, WorkspaceCacheModule],
+  imports: [FileModule, FileUrlModule, WorkspaceCacheModule],
   providers: [
+    AgentChatFileDownloadService,
     AgentHistoryWorkspaceStorageService,
     AgentHistoryTransactionService,
     AgentConversationReaderService,
@@ -34,6 +37,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
     ...REPOSITORY_PROVIDERS,
   ],
   exports: [
+    AgentChatFileDownloadService,
     AgentHistoryWorkspaceStorageService,
     AgentConversationReaderService,
     AgentConversationWriterService,

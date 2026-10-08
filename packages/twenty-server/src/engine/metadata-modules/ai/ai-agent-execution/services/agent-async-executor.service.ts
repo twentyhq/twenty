@@ -81,6 +81,7 @@ import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-a
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { AgentChatFileDownloadService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-file-download.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -142,6 +143,7 @@ export class AgentAsyncExecutorService {
     private readonly aiAgentRoleService: AiAgentRoleService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly agentChatFileDownloadService: AgentChatFileDownloadService,
   ) {}
 
   private resolveUserIdentity(authContext?: WorkspaceAuthContext): {
@@ -526,6 +528,8 @@ export class AgentAsyncExecutorService {
           endsOnPausingToolCall({ steps: step.steps, offeredToolNames }) ||
           hasNoMoreAvailableCredits,
         providerOptions,
+        experimental_download:
+          this.agentChatFileDownloadService.buildDownload(workspaceId),
         ...buildAiTelemetry({
           functionId: 'agent-execution',
           workspaceId,

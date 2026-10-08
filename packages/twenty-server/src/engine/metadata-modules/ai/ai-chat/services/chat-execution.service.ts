@@ -71,6 +71,7 @@ import {
 import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import { AgentChatFileDownloadService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-file-download.service';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
@@ -154,6 +155,7 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly agentChatFileDownloadService: AgentChatFileDownloadService,
   ) {}
 
   async streamChat({
@@ -543,6 +545,9 @@ export class ChatExecutionService {
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
+      experimental_download: this.agentChatFileDownloadService.buildDownload(
+        workspace.id,
+      ),
       stopWhen: (step) =>
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
