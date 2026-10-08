@@ -20,12 +20,15 @@ const OPEN_ARGS = {
 
 const buildService = ({ isCreated = true } = {}) => {
   const agentInboxService = {
-    openThread: jest.fn().mockImplementation(({ workspaceMemberId }) =>
-      Promise.resolve({
-        thread: { id: `thread-for-${workspaceMemberId ?? 'nobody'}` },
-        isCreated,
-      }),
-    ),
+    openThread: jest
+      .fn()
+      .mockImplementation(
+        ({ workspaceMemberIds }: { workspaceMemberIds: string[] }) =>
+          Promise.resolve({
+            thread: { id: `thread-for-${workspaceMemberIds[0] ?? 'nobody'}` },
+            isCreated,
+          }),
+      ),
   };
   const agentRunSuspensionService = {
     isConversationWaiting: jest.fn().mockResolvedValue(false),
@@ -61,7 +64,7 @@ describe('AgentCallerConversationService', () => {
       expect(agentInboxService.openThread).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         sender: SENDER,
-        workspaceMemberId: 'recipient-id',
+        workspaceMemberIds: ['recipient-id'],
         threadKey: 'run-id:step-id',
         title: 'Draft the quote',
         isArchivedOnCreate: true,
@@ -113,7 +116,7 @@ describe('AgentCallerConversationService', () => {
     it('fails when the recipient cannot have the conversation', async () => {
       const { service, agentInboxService } = buildService();
 
-      agentInboxService.openThread.mockRejectedValueOnce(
+      agentInboxService.openThread.mockRejectedValue(
         new AiException(
           'Thread owner is no longer a workspace member',
           AiExceptionCode.THREAD_NOT_FOUND,
@@ -126,6 +129,24 @@ describe('AgentCallerConversationService', () => {
           recipientWorkspaceMemberId: 'recipient-id',
         }),
       ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+    });
+
+    it('starts its own conversation when the recipient cannot join the one its key names', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.openThread.mockRejectedValueOnce(
+        new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+      );
+
+      await expect(
+        service.openConversation({
+          ...OPEN_ARGS,
+          recipientWorkspaceMemberId: 'recipient-id',
+        }),
+      ).resolves.toMatchObject({ threadId: 'thread-for-recipient-id' });
+      expect(agentInboxService.openThread).toHaveBeenLastCalledWith(
+        expect.objectContaining({ threadKey: 'run-id:step-id:run-id:step-id' }),
+      );
     });
 
     it('starts its own conversation when the recipient deleted the one its key names', async () => {

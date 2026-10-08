@@ -273,7 +273,7 @@ describe('Send chat message workflow step', () => {
               workspaceId: SEED_APPLE_WORKSPACE_ID,
               sender,
               message: {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
                 threadKey: workflowRunId,
                 idempotencyKey: stepId,
                 title: 'Headcount check',

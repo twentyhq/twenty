@@ -80,7 +80,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       workspaceId: runInfo.workspaceId,
       sender,
       message: {
-        workspaceMemberId,
+        workspaceMemberIds: [workspaceMemberId],
         threadKey,
         // a conversation shared by key holds every run's messages, so each run keys its own
         idempotencyKey:

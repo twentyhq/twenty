@@ -89,7 +89,7 @@ describe('SendChatMessageWorkflowAction', () => {
         workflowName: 'New deals',
       },
       message: {
-        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        workspaceMemberIds: [WORKSPACE_MEMBER_ID],
         threadKey: WORKFLOW_RUN_ID,
         idempotencyKey: 'step-1',
         title: 'New deal: Acme',

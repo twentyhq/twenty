@@ -4244,7 +4244,7 @@ input SendInboxMessageInput {
   threadKey: String!
   title: String!
   toolCall: JSON
-  workspaceMemberId: UUID!
+  workspaceMemberIds: [UUID!]!
 }
 
 type SendInboxMessageResult {
