@@ -18,7 +18,7 @@ vi.mock(
   () => ({ findWorkspaceMemberIdByEmail: findWorkspaceMemberIdByEmailMock }),
 );
 
-const CLIENT = {} as never;
+const CLIENT = { query: vi.fn() };
 
 const resolve = () =>
   resolveTeamsSenderWorkspaceMemberId({

@@ -7,7 +7,7 @@ export const findWorkspaceMemberIdByEmail = async ({
   client,
   email,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   email: string;
 }): Promise<string | undefined> => {
   const queryResult = await client.query({

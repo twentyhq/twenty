@@ -16,7 +16,7 @@ describe('findWorkspaceMemberIdByEmail', () => {
 
     expect(
       await findWorkspaceMemberIdByEmail({
-        client: client as never,
+        client,
         email: 'Jane_Doe@acme.com',
       }),
     ).toBe('workspace-member-id');
@@ -33,7 +33,7 @@ describe('findWorkspaceMemberIdByEmail', () => {
   it('should not pick a member when the email matches more than one', async () => {
     expect(
       await findWorkspaceMemberIdByEmail({
-        client: buildClient(['first-member-id', 'second-member-id']) as never,
+        client: buildClient(['first-member-id', 'second-member-id']),
         email: 'jane@acme.com',
       }),
     ).toBeUndefined();

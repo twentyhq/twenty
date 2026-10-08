@@ -11,7 +11,7 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   teamsUserId,
   accessToken,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   serviceUrl: string;
   conversationId: string;
   teamsUserId: string;
