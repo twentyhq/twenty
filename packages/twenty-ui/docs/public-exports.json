@@ -45,6 +45,7 @@
     },
     "types": {
       "AvatarGroupProps": "components/data-display/AvatarGroup/types/AvatarGroupProps",
+      "CommandBlockProps": "components/data-display/CommandBlock/types/CommandBlockProps",
       "GetJsonNodeHighlighting": "components/data-display/JsonTree/types/GetJsonNodeHighlighting",
       "IconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonNodeHighlighting": "components/data-display/JsonTree/types/JsonNodeHighlighting",

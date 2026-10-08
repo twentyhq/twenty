@@ -369,7 +369,7 @@ export const SettingsAdminNewAiModel = () => {
                   ? t`Select a known model or add a custom one`
                   : t`The model identifier used by the provider API`
               }
-              adornment={
+              actions={
                 <OrganizationAdornment
                   tooltipContent={customAiProviderTooltipContent}
                 />

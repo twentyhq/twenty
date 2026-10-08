@@ -80,7 +80,7 @@ export const UsageByUserTableSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${title.replace(/\s+/g, '-').toLowerCase()}-period`}
             value={period}
