@@ -115,8 +115,11 @@ export class CallWebhookJob {
         {
           headers,
           timeout: 5_000,
+          responseType: 'stream',
         },
       );
+
+      response.data.destroy();
 
       const success = response.status >= 200 && response.status < 300;
 
@@ -135,6 +138,8 @@ export class CallWebhookJob {
         },
       };
     } catch (err) {
+      err.response?.data?.destroy();
+
       const isSSRFBlocked =
         err instanceof Error &&
         err.message.includes('internal IP address') &&
