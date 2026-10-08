@@ -20,12 +20,15 @@ import {
 import { createStandardInputStub } from '@/__tests__/utils/create-standard-input-stub';
 import { promptForAppAddValue } from '@/app/add/prompt-for-app-add-value';
 import { readAppIdentity } from '@/app/read-app-identity';
+import { confirmInTerminal } from '@/input/confirm-in-terminal';
 import { CliError } from '@/output/cli-error';
 
 vi.mock('@/app/read-app-identity', () => ({ readAppIdentity: vi.fn() }));
 vi.mock('@/app/add/prompt-for-app-add-value', () => ({
   promptForAppAddValue: vi.fn(),
 }));
+
+vi.mock('@/input/confirm-in-terminal', () => ({ confirmInTerminal: vi.fn() }));
 
 const OBJECT_IDENTIFIER = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
@@ -59,6 +62,7 @@ describe('app add', () => {
       diagnostics: [],
     });
     vi.mocked(promptForAppAddValue).mockReset();
+    vi.mocked(confirmInTerminal).mockReset().mockResolvedValue(false);
   });
 
   afterEach(async () => {
@@ -437,6 +441,145 @@ describe('app add', () => {
       'Created src/logic-functions/send-invoice.ts',
     );
     expect(promptForAppAddValue).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([false, true])(
+    'offers all companions before writing, accepted=%s',
+    async (accepted) => {
+      vi.stubEnv('CI', 'false');
+      vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+        createStandardInputStub({ isTerminal: true }),
+      );
+      vi.mocked(confirmInTerminal).mockImplementation(async () => {
+        expect(await readdir(appPath)).toEqual(['package.json']);
+        return accepted;
+      });
+
+      const result = await run([
+        'object',
+        '--name',
+        'invoice',
+        '--name-plural',
+        'invoices',
+        '--label',
+        'Invoice',
+        '--label-plural',
+        'Invoices',
+      ]);
+
+      expect(result.exitCode, result.stderr).toBe(0);
+      expect(confirmInTerminal).toHaveBeenCalledExactlyOnceWith({
+        question:
+          'Also create a view, navigation menu item, and record page layout for this object?',
+        signal: expect.any(AbortSignal),
+      });
+      expect(result.stdout).toContain('Created src/objects/invoice.ts');
+      expect(result.stdout.includes('Created src/views/all-invoice.ts')).toBe(
+        accepted,
+      );
+      expect(
+        result.stdout.includes('Created src/navigation-menu-items/invoice.ts'),
+      ).toBe(accepted);
+      expect(
+        result.stdout.includes(
+          'Created src/page-layouts/invoice-record-page-layout.ts',
+        ),
+      ).toBe(accepted);
+      expect(await readdir(join(appPath, 'src'))).toEqual(
+        accepted
+          ? ['navigation-menu-items', 'objects', 'page-layouts', 'views']
+          : ['objects'],
+      );
+    },
+  );
+
+  it.each([
+    '--create-view',
+    '--create-navigation-menu-item',
+    '--create-page-layout',
+  ])('honors %s without asking about other companions', async (flag) => {
+    vi.stubEnv('CI', 'false');
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ isTerminal: true }),
+    );
+    const result = await run([
+      'object',
+      '--name',
+      'invoice',
+      '--name-plural',
+      'invoices',
+      '--label',
+      'Invoice',
+      '--label-plural',
+      'Invoices',
+      flag,
+    ]);
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(confirmInTerminal).not.toHaveBeenCalled();
+    expect(result.stdout.includes('Created src/views/all-invoice.ts')).toBe(
+      flag === '--create-view',
+    );
+    expect(
+      result.stdout.includes('Created src/navigation-menu-items/invoice.ts'),
+    ).toBe(flag === '--create-navigation-menu-item');
+    expect(
+      result.stdout.includes(
+        'Created src/page-layouts/invoice-record-page-layout.ts',
+      ),
+    ).toBe(flag === '--create-page-layout');
+  });
+
+  it.each([
+    { flags: ['--no-input'], isTerminal: true, continuousIntegration: 'false' },
+    { flags: ['--json'], isTerminal: true, continuousIntegration: 'false' },
+    { flags: [], isTerminal: false, continuousIntegration: 'false' },
+    { flags: [], isTerminal: true, continuousIntegration: 'true' },
+  ])(
+    'creates only the object without prompting in noninteractive mode %j',
+    async ({ flags, isTerminal, continuousIntegration }) => {
+      vi.stubEnv('CI', continuousIntegration);
+      vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+        createStandardInputStub({ isTerminal }),
+      );
+      const result = await run([
+        'object',
+        '--name',
+        'invoice',
+        '--name-plural',
+        'invoices',
+        ...flags,
+      ]);
+
+      expect(result.exitCode, result.stderr).toBe(0);
+      expect(confirmInTerminal).not.toHaveBeenCalled();
+      expect(promptForAppAddValue).not.toHaveBeenCalled();
+      expect(await readdir(join(appPath, 'src'))).toEqual(['objects']);
+    },
+  );
+
+  it('leaves all files untouched when the companion prompt is cancelled', async () => {
+    vi.stubEnv('CI', 'false');
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ isTerminal: true }),
+    );
+    vi.mocked(confirmInTerminal).mockRejectedValue(
+      new CliError({ code: 'CANCELLED', message: 'Cancelled.', exitCode: 130 }),
+    );
+    const result = await run([
+      'object',
+      '--name',
+      'invoice',
+      '--name-plural',
+      'invoices',
+      '--label',
+      'Invoice',
+      '--label-plural',
+      'Invoices',
+    ]);
+
+    expect(result.exitCode).toBe(130);
+    expect(await readdir(appPath)).toEqual(['package.json']);
   });
 
   it('does not prompt with --no-input', async () => {

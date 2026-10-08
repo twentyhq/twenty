@@ -23,6 +23,10 @@ the same helper as app init.
   create the fields view used by their Fields widget. The list view and fields
   view reuse the object's name field. Fields views also include the SDK's
   generated audit fields, resolved using the application's universal identifier.
+  With no creation flags, human interactive mode offers all three together,
+  defaulting to No. Explicit creation flags bypass that question. Noninteractive
+  modes never ask and create only explicitly selected companions. All prompts
+  complete before any files are written, including on cancellation.
 - Node's `randomUUID` creates version 4 identifiers. The CLI TypeScript printer
   escapes authored strings, including quotes, backslashes and line breaks.
 - App discovery, SDK compatibility and application identity reuse the CLI's

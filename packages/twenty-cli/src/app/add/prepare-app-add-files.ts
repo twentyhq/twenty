@@ -24,6 +24,7 @@ import {
   readStringOption,
 } from '@/catalog/read-command-values';
 import { type CommandContext } from '@/catalog/types/command-context.type';
+import { confirmInTerminal } from '@/input/confirm-in-terminal';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
@@ -162,6 +163,27 @@ export const prepareAppAddFiles = async ({
         defaultValue: convertToLabel(namePlural),
       });
 
+      const companions = {
+        createView: readBooleanOption(options, 'createView'),
+        createNavigationMenuItem: readBooleanOption(
+          options,
+          'createNavigationMenuItem',
+        ),
+        createPageLayout: readBooleanOption(options, 'createPageLayout'),
+      };
+
+      if (interactive && !Object.values(companions).some(Boolean)) {
+        const createCompanions = await confirmInTerminal({
+          question:
+            'Also create a view, navigation menu item, and record page layout for this object?',
+          signal,
+        });
+
+        companions.createView = createCompanions;
+        companions.createNavigationMenuItem = createCompanions;
+        companions.createPageLayout = createCompanions;
+      }
+
       const objectUniversalIdentifier = randomUUID();
       const nameFieldUniversalIdentifier = randomUUID();
 
@@ -177,12 +199,7 @@ export const prepareAppAddFiles = async ({
         objectUniversalIdentifier,
         nameFieldUniversalIdentifier,
         applicationUniversalIdentifier,
-        createView: readBooleanOption(options, 'createView'),
-        createNavigationMenuItem: readBooleanOption(
-          options,
-          'createNavigationMenuItem',
-        ),
-        createPageLayout: readBooleanOption(options, 'createPageLayout'),
+        ...companions,
       });
       break;
     }
