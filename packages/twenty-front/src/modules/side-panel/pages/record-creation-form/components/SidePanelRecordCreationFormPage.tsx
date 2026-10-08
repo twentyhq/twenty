@@ -14,6 +14,8 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useOpenRecordCreationFormSettingsInSidePanel } from '@/side-panel/hooks/useOpenRecordCreationFormSettingsInSidePanel';
 import { recordCreationFormAreHiddenFieldsShownComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormAreHiddenFieldsShownComponentState';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
@@ -30,6 +32,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
@@ -129,6 +132,11 @@ const SidePanelRecordCreationForm = ({
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
+
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+
+  const { openRecordCreationFormSettingsInSidePanel } =
+    useOpenRecordCreationFormSettingsInSidePanel();
 
   const { recordFormFields } = useRecordFormFields({ objectMetadataItem });
   const objectPermissions = useObjectPermissionsForObject(
@@ -311,6 +319,19 @@ const SidePanelRecordCreationForm = ({
       )}
       <SidePanelFooter
         actions={[
+          ...(hasLayoutsPermission
+            ? [
+                <Button
+                  key="edit-form"
+                  size="sm"
+                  onClick={() =>
+                    openRecordCreationFormSettingsInSidePanel(
+                      objectMetadataItem,
+                    )
+                  }
+                >{t`Edit`}</Button>,
+              ]
+            : []),
           <Button
             key="create-record"
             startIcon={<IconPlus />}

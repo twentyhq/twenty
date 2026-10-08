@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
+import { Raw } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -41,15 +42,17 @@ export class PendingWakeUpService {
     workspaceId,
     owner,
     condition,
+    payload = null,
   }: {
     workspaceId: string;
     owner: PendingWakeUpOwner;
     condition: PendingWakeUpCondition;
+    payload?: object | null;
   }): Promise<void> {
     const resumeAt =
       condition.type === 'TIME'
         ? new Date(condition.resumeAt)
-        : isDefined(condition.expiresAt)
+        : condition.type === 'EVENT' && isDefined(condition.expiresAt)
           ? new Date(condition.expiresAt)
           : null;
 
@@ -65,6 +68,7 @@ export class PendingWakeUpService {
         ownerId: owner.id,
         ownerKey: owner.key,
         condition,
+        payload,
         eventName: condition.type === 'EVENT' ? condition.eventName : null,
         resumeAt,
       },
@@ -89,13 +93,14 @@ export class PendingWakeUpService {
   async scheduleResolution({
     wakeUp,
     event,
+    answer,
     attempt,
     recordReadAttempt,
     delayMs = 0,
     deduplicationId,
   }: Pick<
     ResumePendingWakeUpJobData,
-    'event' | 'attempt' | 'recordReadAttempt'
+    'event' | 'answer' | 'attempt' | 'recordReadAttempt'
   > & {
     wakeUp: ScheduledWakeUp;
     delayMs?: number;
@@ -107,6 +112,7 @@ export class PendingWakeUpService {
         workspaceId: wakeUp.workspaceId,
         wakeUpId: wakeUp.id,
         event,
+        answer,
         attempt,
         recordReadAttempt,
       },
@@ -161,6 +167,30 @@ export class PendingWakeUpService {
     });
   }
 
+  // the wake-up an answer to the call goes to: one waiting on that call, or one waiting on all the conversation's calls
+  async findAnswerWakeUp({
+    workspaceId,
+    threadId,
+    toolCallId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    toolCallId: string;
+  }): Promise<PendingWakeUpEntity | null> {
+    return this.pendingWakeUpRepository.findOne(workspaceId, {
+      where: {
+        condition: Raw(
+          (alias) =>
+            `${alias} @> :condition::jsonb AND COALESCE(${alias} ->> 'toolCallId', :toolCallId) = :toolCallId`,
+          {
+            condition: JSON.stringify({ type: 'ANSWER', threadId }),
+            toolCallId,
+          },
+        ),
+      },
+    });
+  }
+
   // without a key, every wake-up the owner holds
   async cancel({
     workspaceId,
@@ -168,8 +198,8 @@ export class PendingWakeUpService {
   }: {
     workspaceId: string;
     owner: Omit<PendingWakeUpOwner, 'key'> & { key?: string };
-  }): Promise<void> {
-    await this.pendingWakeUpRepository.delete(workspaceId, {
+  }): Promise<PendingWakeUpEntity[]> {
+    return this.pendingWakeUpRepository.deleteAndReturn(workspaceId, {
       ownerType: type,
       ownerId: id,
       ...(isDefined(key) ? { ownerKey: key } : {}),
