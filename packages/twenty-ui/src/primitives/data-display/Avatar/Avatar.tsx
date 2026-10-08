@@ -27,7 +27,10 @@ const AvatarAssembly = ({
     isDefined(fallbackAttributes.role) ||
     isDefined(fallbackAttributes['aria-label']) ||
     isDefined(fallbackAttributes['aria-labelledby']);
-  const isFallbackDecorative = !hasImageLabel && !hasFallbackSemantics;
+  const isFallbackDecorative =
+    !hasImageLabel &&
+    !hasFallbackSemantics &&
+    !isDefined(fallbackAttributes.render);
 
   return (
     <AvatarRoot

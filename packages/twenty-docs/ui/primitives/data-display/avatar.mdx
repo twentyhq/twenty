@@ -27,7 +27,7 @@ When the image is absent or fails to load, the fallback shows the first letter o
 
 For an image or initial avatar, the image alternative text and fallback label default to `name`. Set `imageProps.alt` to supply a different label. When a visible name already provides the same information, pass `imageProps={{ alt: '' }}` to make both the image and default fallback decorative.
 
-`imageProps` accepts the complete image contract, including `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, native events, refs, and `render`. Its `src` overrides the shorthand `src`. `fallbackProps` accepts the complete fallback contract, including `delay`, children, labeling, refs, and `render`.
+`imageProps` accepts the complete image contract, including `srcSet`, `sizes`, `crossOrigin`, `referrerPolicy`, native events, refs, and `render`. Its `src` overrides the shorthand `src`. `fallbackProps` accepts the complete fallback contract, including `delay`, children, labeling, refs, and `render`. A custom fallback `render` owns its accessibility semantics; set `aria-hidden` explicitly when it is decorative.
 
 ```tsx
 import { Avatar } from 'twenty-ui/primitives/data-display';

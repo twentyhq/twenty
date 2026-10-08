@@ -206,6 +206,75 @@ describe('Avatar composition', () => {
     );
   });
 
+  it.each(['aria-label', 'aria-labelledby'] as const)(
+    'preserves fallback semantics supplied through render with %s',
+    (labelAttribute) => {
+      const fallbackRef = createRef<HTMLSpanElement>();
+      const fallbackLabel =
+        labelAttribute === 'aria-label'
+          ? 'Portrait unavailable'
+          : 'portrait-fallback-label';
+      const fallbackRender = (
+        <span role="img" {...{ [labelAttribute]: fallbackLabel }} />
+      );
+      render(
+        <ThemeProvider colorScheme="light">
+          <span id="portrait-fallback-label">Portrait unavailable</span>
+          <Avatar
+            fallbackProps={{
+              render: fallbackRender,
+              ref: fallbackRef,
+              children: 'NA',
+            }}
+          />
+        </ThemeProvider>,
+      );
+
+      const fallback = screen.getByRole('img', {
+        name: 'Portrait unavailable',
+      });
+
+      expect(fallback).toHaveTextContent('NA');
+      expect(fallback).not.toHaveAttribute('aria-hidden');
+      expect(fallbackRef.current).toBe(fallback);
+    },
+  );
+
+  it('lets a fallback render function own its semantics and preserves explicit hiding', () => {
+    const { rerender } = render(
+      <ThemeProvider colorScheme="light">
+        <Avatar
+          fallbackProps={{
+            render: (props) => (
+              <span {...props} role="img" aria-label="Portrait unavailable" />
+            ),
+            children: 'NA',
+          }}
+        />
+      </ThemeProvider>,
+    );
+
+    expect(
+      screen.getByRole('img', { name: 'Portrait unavailable' }),
+    ).toHaveTextContent('NA');
+
+    rerender(
+      <ThemeProvider colorScheme="light">
+        <Avatar
+          fallbackProps={{
+            render: (
+              <span role="img" aria-label="Portrait unavailable" aria-hidden />
+            ),
+            children: 'NA',
+          }}
+        />
+      </ThemeProvider>,
+    );
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByText('NA')).toHaveAttribute('aria-hidden', 'true');
+  });
+
   it('uses the image label for its fallback and lets callers make it decorative', () => {
     const { rerender } = render(
       <ThemeProvider colorScheme="light">
