@@ -18,6 +18,15 @@ describe('getFathomRequeueDelay', () => {
     ).toBe(90_000);
   });
 
+  it('waits at least five seconds when Retry-After is zero', () => {
+    expect(
+      getFathomRequeueDelay({
+        error: buildFathomRateLimitError('0'),
+        now: NOW,
+      }),
+    ).toBe(5_000);
+  });
+
   it('caps a Retry-After delay at five minutes', () => {
     expect(
       getFathomRequeueDelay({
