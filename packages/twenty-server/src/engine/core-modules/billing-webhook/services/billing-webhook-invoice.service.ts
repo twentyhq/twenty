@@ -8,7 +8,6 @@ import { type Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
 import { getCustomerIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-customer-id-from-invoice.util';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
@@ -28,7 +27,6 @@ import { ResourceCreditService } from 'src/engine/core-modules/billing/services/
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
-import { parseCreditTopUpInvoiceMetadata } from 'src/engine/core-modules/billing/utils/parse-credit-top-up-invoice-metadata.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -53,7 +51,6 @@ export class BillingWebhookInvoiceService {
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async processStripeEvent(
@@ -228,79 +225,18 @@ export class BillingWebhookInvoiceService {
   }
 
   private async processCreditTopUpInvoicePaid(invoice: Stripe.Invoice) {
-    const stripeCustomerId = getCustomerIdFromInvoice(invoice);
-    const { workspaceId, creditAmountMicro } = parseCreditTopUpInvoiceMetadata(
-      invoice.metadata,
-    );
-
-    if (!isDefined(workspaceId)) {
-      return this.skipUngrantableCreditTopUpInvoice(
+    const workspaceId =
+      await this.billingCreditOneTimeTopUpService.grantPurchasedCreditsForPaidInvoice(
         invoice,
-        'its metadata names no workspace',
       );
+
+    if (isDefined(workspaceId)) {
+      void this.eventLogEmitterService
+        .createContext({ workspaceId })
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+          amountPaid: invoice.amount_paid,
+        });
     }
-
-    if (!isDefined(creditAmountMicro)) {
-      return this.skipUngrantableCreditTopUpInvoice(
-        invoice,
-        `its metadata has no positive credit amount (${invoice.metadata?.creditAmountMicro})`,
-      );
-    }
-
-    if (!isDefined(stripeCustomerId)) {
-      return this.skipUngrantableCreditTopUpInvoice(
-        invoice,
-        'it has no customer',
-      );
-    }
-
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { stripeCustomerId },
-    });
-
-    if (!isDefined(billingCustomer)) {
-      return this.skipUngrantableCreditTopUpInvoice(
-        invoice,
-        `customer ${stripeCustomerId} matches no billing customer`,
-      );
-    }
-
-    if (billingCustomer.workspaceId !== workspaceId) {
-      return this.skipUngrantableCreditTopUpInvoice(
-        invoice,
-        `its metadata names workspace ${workspaceId}, but customer ${stripeCustomerId} belongs to ${billingCustomer.workspaceId}`,
-      );
-    }
-
-    await this.billingCreditOneTimeTopUpService.grantPurchasedCredits({
-      workspaceId,
-      creditAmountMicro,
-      stripeInvoiceId: invoice.id,
-      stripeInvoiceNumber: invoice.number,
-    });
-
-    void this.eventLogEmitterService
-      .createContext({ workspaceId })
-      .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
-        amountPaid: invoice.amount_paid,
-      });
-
-    return { stripeInvoiceId: invoice.id };
-  }
-
-  private skipUngrantableCreditTopUpInvoice(
-    invoice: Stripe.Invoice,
-    reason: string,
-  ) {
-    const message = `Paid credit top-up invoice ${invoice.id} granted nothing: ${reason}`;
-
-    this.logger.error(message);
-    this.exceptionHandlerService.captureExceptions([
-      new BillingException(
-        message,
-        BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED,
-      ),
-    ]);
 
     return { stripeInvoiceId: invoice.id };
   }
