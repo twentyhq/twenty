@@ -90,6 +90,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
         title: isNonEmptyString(title) ? title : step.name,
         text,
       },
+      fallbackThreadKey: `${threadKey}:${runInfo.workflowRunId}:${currentStepId}`,
       awaitedToolCall: isDefined(toolCall)
         ? {
             ...toolCall,

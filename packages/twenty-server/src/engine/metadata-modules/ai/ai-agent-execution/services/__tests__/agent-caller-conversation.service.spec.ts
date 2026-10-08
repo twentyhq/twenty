@@ -29,6 +29,15 @@ const buildService = ({ isCreated = true } = {}) => {
             isCreated,
           }),
       ),
+    sendMessage: jest
+      .fn()
+      .mockImplementation(({ input }: { input: { threadKey: string } }) =>
+        Promise.resolve({
+          threadId: `thread-under-${input.threadKey}`,
+          toolCallId: 'tool-call-id',
+          isDismissed: false,
+        }),
+      ),
   };
   const agentRunSuspensionService = {
     isConversationWaiting: jest.fn().mockResolvedValue(false),
@@ -226,6 +235,56 @@ describe('AgentCallerConversationService', () => {
           recipientWorkspaceMemberId: 'recipient-id',
         }),
       ).resolves.toEqual({ status: 'DELETED' });
+    });
+  });
+
+  describe('sendMessage', () => {
+    const SEND_ARGS = {
+      workspaceId: 'workspace-id',
+      sender: SENDER,
+      message: {
+        workspaceMemberIds: ['recipient-id'],
+        threadKey: 'key:deal',
+        idempotencyKey: 'run-id:step-id',
+        title: 'New deal',
+        text: 'Acme signed',
+      },
+      fallbackThreadKey: 'key:deal:run-id:step-id',
+    };
+
+    it('sends the message in the conversation its key names', async () => {
+      const { service } = buildService();
+
+      await expect(service.sendMessage(SEND_ARGS)).resolves.toEqual({
+        status: 'DELIVERED',
+        threadId: 'thread-under-key:deal',
+      });
+    });
+
+    it('sends the message in its own conversation when the recipient cannot join the one its key names', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.sendMessage.mockRejectedValueOnce(
+        new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+      );
+
+      await expect(service.sendMessage(SEND_ARGS)).resolves.toEqual({
+        status: 'DELIVERED',
+        threadId: 'thread-under-key:deal:run-id:step-id',
+      });
+    });
+
+    it('fails when the recipient cannot have the conversation', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.sendMessage.mockRejectedValue(
+        new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+      );
+
+      await expect(service.sendMessage(SEND_ARGS)).rejects.toMatchObject({
+        code: AiExceptionCode.THREAD_NOT_FOUND,
+      });
+      expect(agentInboxService.sendMessage).toHaveBeenCalledTimes(2);
     });
   });
 });

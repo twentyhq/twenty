@@ -279,6 +279,7 @@ describe('Send chat message workflow step', () => {
                 title: 'Headcount check',
                 text: 'Raise the headcount to 25?',
               },
+              fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
               awaitedToolCall: {
                 ...toolCall,
                 caller: {

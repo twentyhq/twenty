@@ -140,11 +140,14 @@ export class AgentCallerConversationService {
     workspaceId,
     sender,
     message,
+    fallbackThreadKey,
     awaitedToolCall,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     message: Omit<SendInboxMessageInput, 'toolCall'>;
+    // where the message goes when its recipient cannot join the conversation its key names
+    fallbackThreadKey: string;
     awaitedToolCall?: AgentCallerAwaitedToolCall;
   }): Promise<
     | { status: 'DELIVERED'; threadId: string }
@@ -155,12 +158,29 @@ export class AgentCallerConversationService {
     // a message sent before already holds the answer
     | { status: 'ANSWERED'; threadId: string; answer: ProposedToolCallAnswer }
   > {
+    // as in openConversation, a recipient who cannot join the keyed conversation, such as one no inbox
+    // receives, is given the fallback one, which fails in turn for a recipient who cannot have one at all
+    const sendInboxMessage = (
+      args: Pick<
+        Parameters<AgentInboxService['sendMessage']>[0],
+        'input' | 'buildAwaitingToolCall'
+      >,
+    ) =>
+      this.agentInboxService
+        .sendMessage({ workspaceId, sender, ...args })
+        .catch((error: unknown) =>
+          isThreadNotFoundError(error)
+            ? this.agentInboxService.sendMessage({
+                workspaceId,
+                sender,
+                ...args,
+                input: { ...args.input, threadKey: fallbackThreadKey },
+              })
+            : Promise.reject(error),
+        );
+
     if (!isDefined(awaitedToolCall)) {
-      const { threadId } = await this.agentInboxService.sendMessage({
-        workspaceId,
-        sender,
-        input: message,
-      });
+      const { threadId } = await sendInboxMessage({ input: message });
 
       return { status: 'DELIVERED', threadId };
     }
@@ -181,9 +201,7 @@ export class AgentCallerConversationService {
     // was retried, is asked again in a new message
     for (let attempt = 0; attempt < MAX_ASK_ATTEMPTS; attempt++) {
       const { threadId, toolCallId, isDismissed, awaitedToolOutput } =
-        await this.agentInboxService.sendMessage({
-          workspaceId,
-          sender,
+        await sendInboxMessage({
           input: {
             ...message,
             idempotencyKey:
