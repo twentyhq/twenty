@@ -59,6 +59,12 @@ export class AgentChatThreadService {
           participant: undefined,
         };
 
+    // A thread with no member is an agent's own conversation: announcing it
+    // would start any agent triggered by every created record, this one included
+    if (!isDefined(workspaceMemberId)) {
+      return thread;
+    }
+
     // Sent first, so the new thread never shows as unread to its owner
     await this.recordEventService.emit({
       workspaceId: args.workspaceId,
