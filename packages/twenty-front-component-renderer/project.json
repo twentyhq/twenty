@@ -148,6 +148,14 @@
         "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
       }
     },
+    "storybook:test:file-selection": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node --import tsx --test scripts/front-component-stories/__tests__/image-input.browser.test.ts"
+      }
+    },
     "storybook:coverage": {}
   }
 }

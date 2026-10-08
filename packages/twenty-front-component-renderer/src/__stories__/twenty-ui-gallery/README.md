@@ -192,11 +192,14 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.sto
 ```
 
 For native chooser coverage, serve Storybook on port 6008 after the same prebuild,
-then run from `packages/twenty-front-component-renderer`:
+then run from the repository root:
 
 ```sh
-node --import tsx --test scripts/front-component-stories/__tests__/image-input.browser.test.ts
+npx nx run twenty-front-component-renderer:storybook:test:file-selection
 ```
+
+The existing renderer Storybook CI job runs this uncached target against its
+served static build after the gallery checks.
 
 Set `STORYBOOK_URL` to use another running Storybook URL. These tests use
 Playwright's trusted browser input and chooser interception; `userEvent.upload`
