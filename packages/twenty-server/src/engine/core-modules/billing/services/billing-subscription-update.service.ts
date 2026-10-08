@@ -22,7 +22,6 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -41,6 +40,7 @@ import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/bil
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/billing/utils/is-resource-credit-price-for-subscription.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
@@ -421,10 +421,7 @@ export class BillingSubscriptionUpdateService {
       currency: newPrice.currency,
     };
 
-    if (
-      subscription.collectionMethod ===
-      BillingSubscriptionCollectionMethod.SEND_INVOICE
-    ) {
+    if (isSendInvoiceSubscription(subscription)) {
       await this.stripeInvoiceService.createPendingUpgradeInvoiceItem(
         upgradeInvoiceItem,
       );
@@ -528,9 +525,7 @@ export class BillingSubscriptionUpdateService {
       {
         currentSeats: currentPrices.seats,
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
-        isSendInvoice:
-          subscription.collectionMethod ===
-          BillingSubscriptionCollectionMethod.SEND_INVOICE,
+        isSendInvoice: isSendInvoiceSubscription(subscription),
       },
     );
 
