@@ -27,13 +27,6 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
   useHasPermissionFlag: () => mockHasPermission(),
 }));
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({
-    objectMetadataItem: {
-      id: '20202020-9e2b-4f2b-8f47-61b41565859a',
-    },
-  }),
-}));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
