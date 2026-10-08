@@ -57,7 +57,7 @@ export const SectionExample = () => {
       />
       <Section.Header
         title="Full description"
-        description="First line of full details\nSecond line of full details"
+        description={'First line of full details\nSecond line of full details'}
         descriptionLineClamp={false}
         descriptionFocusable
       />

@@ -78,6 +78,10 @@ export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
     description.clientHeight,
   );
   const fullDescription = canvas.getByText(/First line of full details/);
+  await expect(fullDescription.textContent).toBe(
+    'First line of full details\nSecond line of full details',
+  );
+  await expect(getComputedStyle(fullDescription).whiteSpace).toBe('pre-wrap');
   await expect(fullDescription).not.toHaveAttribute('tabindex');
   await expect(getComputedStyle(fullDescription).webkitLineClamp).toBe('none');
   await expect(
