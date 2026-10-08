@@ -7,6 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const NAMESPACE_VALUES = Object.values(
   CacheStorageNamespace,
@@ -20,7 +21,10 @@ const NAMESPACE_VALUES = Object.values(
 export class FlushCacheCommand extends CommandRunner {
   private readonly logger = new Logger(FlushCacheCommand.name);
 
-  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {
     super();
   }
 
@@ -44,6 +48,7 @@ export class FlushCacheCommand extends CommandRunner {
         const cacheStorage = new CacheStorageService(
           this.cacheManager,
           namespace,
+          this.twentyConfigService.get('REDIS_CACHE_PREFIX'),
         );
 
         await cacheStorage.flushByPattern(pattern);
@@ -92,7 +97,7 @@ export class FlushCacheCommand extends CommandRunner {
   @Option({
     flags: '-p, --pattern <pattern>',
     description:
-      'Pattern within the namespace (default *). Keys matched are <namespace>:<pattern>.',
+      'Pattern within the namespace (default *). REDIS_CACHE_PREFIX is applied automatically.',
   })
   parsePattern(val: string): string {
     return val;

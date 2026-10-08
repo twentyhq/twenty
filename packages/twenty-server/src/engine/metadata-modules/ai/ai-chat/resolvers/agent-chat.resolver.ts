@@ -178,6 +178,12 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    await this.threadService.createThreadIfMissing({
+      threadId,
+      workspaceMemberId,
+      workspaceId: workspace.id,
+    });
+
     const sentMessage = await this.sendChatMessageToThread({
       threadId,
       text,

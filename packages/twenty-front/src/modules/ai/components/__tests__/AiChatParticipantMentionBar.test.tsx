@@ -11,10 +11,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
@@ -27,11 +24,12 @@ jest.mock('@tiptap/react', () => ({
 }));
 
 const GRACE_ID = '20202020-0000-4000-8000-000000000021';
+const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const renderBar = (editor: Editor) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     onInitializeJotaiStore: (store) => {
-      store.set(currentAiChatThreadState.atom, AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+      store.set(currentAiChatThreadState.atom, THREAD_ID);
     },
   });
 
@@ -52,8 +50,7 @@ describe('AiChatParticipantMentionBar', () => {
       extensions: [Document, Paragraph, Text, MentionTag],
       onUpdate: ({ editor: updatedEditor }) => {
         jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
-          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
-            serializeAdvancedTextEditorDocument(updatedEditor),
+          [THREAD_ID]: serializeAdvancedTextEditorDocument(updatedEditor),
         });
       },
     });

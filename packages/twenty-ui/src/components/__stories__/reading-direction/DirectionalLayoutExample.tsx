@@ -33,7 +33,7 @@ export const DirectionalLayoutExample = ({
       >
         <Text>{direction.toUpperCase()}</Text>
         <Callout
-          variant="info"
+          status="info"
           title="Account details"
           description="Review the information before continuing."
         />

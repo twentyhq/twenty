@@ -4,8 +4,6 @@ import { clsx } from 'clsx';
 import { IconInfoCircle } from '@ui/icon/components/TablerIcons';
 import { Banner } from '@ui/primitives/feedback/Banner/Banner';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-
-import { themeCssVariables } from '@ui/theme';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 
 import styles from '../InlineBanner.module.scss';
@@ -16,9 +14,7 @@ export const InlineBannerComponent = ({
   layout = 'standard',
   variant = 'soft',
   embedded = false,
-  icon = (
-    <IconInfoCircle size={themeCssVariables.icon.size.md} aria-hidden="true" />
-  ),
+  icon = <IconInfoCircle aria-hidden="true" />,
   className,
   ...props
 }: InlineBannerProps) => {

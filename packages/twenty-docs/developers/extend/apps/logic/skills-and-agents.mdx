@@ -264,17 +264,17 @@ name a member at all.
 </Warning>
 
 </Accordion>
-<Accordion title="sendInboxMessage" description="Start or continue a conversation in a member's chats">
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in members' chats">
 
-`sendInboxMessage()` posts a message from your app in a workspace member's
-chats. It can end on a tool call the member answers from the chat, after which
+`sendInboxMessage()` posts a message from your app in the chats of one or more
+workspace members. It can end on a tool call the member answers from the chat, after which
 the conversation continues with Twenty's assistant.
 
 ```ts src/logic-functions/notify-first-recording.ts
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
 const { threadId } = await sendInboxMessage({
-  workspaceMemberId,
+  workspaceMemberIds: [workspaceMemberId],
   threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
   title: 'Your first call recording is ready',
@@ -291,9 +291,13 @@ const { threadId } = await sendInboxMessage({
 ```
 
 Key points:
-- `threadKey` picks the conversation for this app and member. A new key starts
-  a conversation titled `title`; a key you used before adds the message to that
-  conversation.
+- `workspaceMemberIds` lists the members who receive the conversation, at least
+  one. The first member of a new conversation owns it, and the others follow it
+  as participants. A later send under the same key that lists new members adds
+  them; members it leaves out keep the conversation.
+- `threadKey` picks the conversation for this app, shared by every member it is
+  sent to. A new key starts a conversation titled `title`; a key you used before
+  adds the message to that conversation.
 - `idempotencyKey` identifies the message within the conversation. Sending
   again with the same keys writes nothing new, so retries and concurrent runs
   never duplicate a message.
@@ -314,8 +318,12 @@ Key points:
 - Only one call the member answers can wait in a conversation at a time:
   sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
   messages and app tool calls are still accepted.
-- A conversation the member deleted is not recreated, and nothing is added to it.
-- The member must have the `AI` permission, and your app's
+- Only the member who owns a conversation can delete it, and a deleted
+  conversation is gone for every member: it is not recreated, and nothing is
+  added to it. The other members can unsubscribe to take it out of their own
+  inbox.
+- Every member must have the `AI` permission, and the call fails without
+  writing the message when one of them cannot have the conversation. Your app's
   [default role](/developers/extend/apps/config/roles) must grant
   `SystemPermissionFlag.AI`.
 
