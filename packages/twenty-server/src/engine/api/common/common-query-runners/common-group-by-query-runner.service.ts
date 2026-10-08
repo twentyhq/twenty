@@ -480,15 +480,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    const availableAggregations =
-      this.groupByArgProcessor.getAvailableAggregations({
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      });
-
-    const aggregateCount = Object.keys(args.selectedFields).filter(
-      (selectedFieldName) =>
-        isDefined(availableAggregations[selectedFieldName]),
+    const aggregateCount = Object.keys(selectedFieldsResult.aggregate).filter(
+      (aggregateName) =>
+        !isDefined(selectedFieldsResult.relations[aggregateName]),
     ).length;
 
     const recordFieldCount = args.includeRecords
