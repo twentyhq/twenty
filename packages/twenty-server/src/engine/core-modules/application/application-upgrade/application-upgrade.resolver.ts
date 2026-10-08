@@ -7,8 +7,8 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
-import { TriggerUpgradeApplicationJobInput } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application-job.input';
-import { TriggerUpgradeApplicationJobResultDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application-job-result.dto';
+import { TriggerUpgradeApplicationInput } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application.input';
+import { TriggerUpgradeApplicationResultDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/trigger-upgrade-application-result.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -68,21 +68,21 @@ export class ApplicationUpgradeResolver {
     });
   }
 
-  @Mutation(() => TriggerUpgradeApplicationJobResultDTO)
+  @Mutation(() => TriggerUpgradeApplicationResultDTO)
   @UseGuards(
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
     ApplicationTargetGuard,
   )
-  async triggerUpgradeApplicationJob(
-    @ApplicationTargetArg<TriggerUpgradeApplicationJobInput>('input', {
+  async triggerUpgradeApplication(
+    @ApplicationTargetArg<TriggerUpgradeApplicationInput>('input', {
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: false,
     })
-    { universalIdentifier, targetVersion }: TriggerUpgradeApplicationJobInput,
+    { universalIdentifier, targetVersion }: TriggerUpgradeApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<TriggerUpgradeApplicationJobResultDTO> {
-    return this.applicationLifecycleJobService.triggerUpgradeApplicationJob({
+  ): Promise<TriggerUpgradeApplicationResultDTO> {
+    return this.applicationLifecycleJobService.triggerUpgradeApplication({
       universalIdentifier,
       targetVersion,
       workspaceId: workspace.id,

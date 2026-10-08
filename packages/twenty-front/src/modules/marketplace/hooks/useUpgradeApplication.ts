@@ -10,7 +10,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import {
   FindUpgradeApplicationJobStatusDocument,
   JobState,
-  TriggerUpgradeApplicationJobDocument,
+  TriggerUpgradeApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 type UseUpgradeApplicationArgs = {
@@ -23,8 +23,8 @@ export const useUpgradeApplication = ({
   onCompleted,
 }: UseUpgradeApplicationArgs = {}) => {
   const { enqueueToast } = useToast();
-  const [triggerUpgradeApplicationJob, { loading: isTriggeringUpgrade }] =
-    useMutation(TriggerUpgradeApplicationJobDocument);
+  const [triggerUpgradeApplication, { loading: isTriggeringUpgrade }] =
+    useMutation(TriggerUpgradeApplicationDocument);
 
   const { data: jobStatusData } = useQuery(
     FindUpgradeApplicationJobStatusDocument,
@@ -79,11 +79,11 @@ export const useUpgradeApplication = ({
     }
 
     try {
-      const { data } = await triggerUpgradeApplicationJob({
+      const { data } = await triggerUpgradeApplication({
         variables: { input: { universalIdentifier, targetVersion } },
       });
 
-      const jobId = data?.triggerUpgradeApplicationJob.jobId;
+      const jobId = data?.triggerUpgradeApplication.jobId;
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });

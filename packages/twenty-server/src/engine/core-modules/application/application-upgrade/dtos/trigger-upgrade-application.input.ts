@@ -2,8 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsString } from 'class-validator';
 
-@InputType('TriggerUpgradeApplicationJobInput')
-export class TriggerUpgradeApplicationJobInput {
+@InputType('TriggerUpgradeApplicationInput')
+export class TriggerUpgradeApplicationInput {
   @IsString()
   @IsNotEmpty()
   @Field()

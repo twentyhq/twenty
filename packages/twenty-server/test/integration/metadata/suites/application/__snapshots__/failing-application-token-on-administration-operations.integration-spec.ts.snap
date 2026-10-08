@@ -390,7 +390,7 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerInstallApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerInstallApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -400,7 +400,7 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerUninstallApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerUninstallApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -410,7 +410,7 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerUpgradeApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerUpgradeApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -980,7 +980,7 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerInstallApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerInstallApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -990,7 +990,7 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerUninstallApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerUninstallApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -1000,7 +1000,7 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerUpgradeApplicationJob 1`] = `
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerUpgradeApplication 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

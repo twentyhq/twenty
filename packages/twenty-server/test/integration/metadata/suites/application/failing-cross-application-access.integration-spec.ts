@@ -17,9 +17,9 @@ import { installApplication } from 'test/integration/metadata/suites/application
 import { installMarketplaceApp } from 'test/integration/metadata/suites/application/utils/install-marketplace-app.util';
 import { runApplicationHealthCheck } from 'test/integration/metadata/suites/application/utils/run-application-health-check.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { triggerInstallApplicationJob } from 'test/integration/metadata/suites/application/utils/trigger-install-application-job.util';
-import { triggerUninstallApplicationJob } from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application-job.util';
-import { triggerUpgradeApplicationJob } from 'test/integration/metadata/suites/application/utils/trigger-upgrade-application-job.util';
+import { triggerInstallApplication } from 'test/integration/metadata/suites/application/utils/trigger-install-application.util';
+import { triggerUninstallApplication } from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application.util';
+import { triggerUpgradeApplication } from 'test/integration/metadata/suites/application/utils/trigger-upgrade-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { updateApplication } from 'test/integration/metadata/suites/application/utils/update-application.util';
 import { upgradeApplication } from 'test/integration/metadata/suites/application/utils/upgrade-application.util';
@@ -372,10 +372,10 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
       },
     },
     {
-      title: 'triggerInstallApplicationJob',
+      title: 'triggerInstallApplication',
       context: {
         requestOtherApplication: ({ otherApplication, token }) =>
-          triggerInstallApplicationJob({
+          triggerInstallApplication({
             input: {
               universalIdentifier: otherApplication.universalIdentifier,
             },
@@ -396,10 +396,10 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
       },
     },
     {
-      title: 'triggerUninstallApplicationJob',
+      title: 'triggerUninstallApplication',
       context: {
         requestOtherApplication: ({ otherApplication, token }) =>
-          triggerUninstallApplicationJob({
+          triggerUninstallApplication({
             input: {
               universalIdentifier: otherApplication.universalIdentifier,
             },
@@ -409,10 +409,10 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
       },
     },
     {
-      title: 'triggerUpgradeApplicationJob',
+      title: 'triggerUpgradeApplication',
       context: {
         requestOtherApplication: ({ otherApplication, token }) =>
-          triggerUpgradeApplicationJob({
+          triggerUpgradeApplication({
             input: {
               universalIdentifier: otherApplication.universalIdentifier,
               targetVersion: '1.0.0',

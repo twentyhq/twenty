@@ -81,7 +81,7 @@ export class ApplicationLifecycleJobService {
     private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
-  async triggerInstallApplicationJob({
+  async triggerInstallApplication({
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
@@ -99,7 +99,7 @@ export class ApplicationLifecycleJobService {
     });
   }
 
-  async triggerUninstallApplicationJob({
+  async triggerUninstallApplication({
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
@@ -122,7 +122,7 @@ export class ApplicationLifecycleJobService {
     });
   }
 
-  async triggerUpgradeApplicationJob({
+  async triggerUpgradeApplication({
     universalIdentifier,
     targetVersion,
     workspaceId,

@@ -103,14 +103,14 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { universalIdentifier: applicationUniversalIdentifier },
   }),
-  triggerInstallApplicationJob: ({
+  triggerInstallApplication: ({
     applicationUniversalIdentifier,
   }: CallingApplication) => ({
     query: gql`
-      mutation TriggerInstallApplicationJob(
-        $input: TriggerInstallApplicationJobInput!
+      mutation TriggerInstallApplication(
+        $input: TriggerInstallApplicationInput!
       ) {
-        triggerInstallApplicationJob(input: $input) {
+        triggerInstallApplication(input: $input) {
           __typename
         }
       }
@@ -119,14 +119,14 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       input: { universalIdentifier: applicationUniversalIdentifier },
     },
   }),
-  triggerUninstallApplicationJob: ({
+  triggerUninstallApplication: ({
     applicationUniversalIdentifier,
   }: CallingApplication) => ({
     query: gql`
-      mutation TriggerUninstallApplicationJob(
-        $input: TriggerUninstallApplicationJobInput!
+      mutation TriggerUninstallApplication(
+        $input: TriggerUninstallApplicationInput!
       ) {
-        triggerUninstallApplicationJob(input: $input) {
+        triggerUninstallApplication(input: $input) {
           __typename
         }
       }
@@ -135,14 +135,14 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       input: { universalIdentifier: applicationUniversalIdentifier },
     },
   }),
-  triggerUpgradeApplicationJob: ({
+  triggerUpgradeApplication: ({
     applicationUniversalIdentifier,
   }: CallingApplication) => ({
     query: gql`
-      mutation TriggerUpgradeApplicationJob(
-        $input: TriggerUpgradeApplicationJobInput!
+      mutation TriggerUpgradeApplication(
+        $input: TriggerUpgradeApplicationInput!
       ) {
-        triggerUpgradeApplicationJob(input: $input) {
+        triggerUpgradeApplication(input: $input) {
           __typename
         }
       }

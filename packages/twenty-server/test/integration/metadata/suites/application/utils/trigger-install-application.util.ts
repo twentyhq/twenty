@@ -1,22 +1,22 @@
 import {
-  type TriggerUninstallApplicationJobFactoryInput,
-  triggerUninstallApplicationJobQueryFactory,
-} from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application-job-query-factory.util';
+  type TriggerInstallApplicationFactoryInput,
+  triggerInstallApplicationQueryFactory,
+} from 'test/integration/metadata/suites/application/utils/trigger-install-application-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-export const triggerUninstallApplicationJob = async ({
+export const triggerInstallApplication = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<TriggerUninstallApplicationJobFactoryInput>): CommonResponseBody<{
-  triggerUninstallApplicationJob: { jobId: string };
+}: PerformMetadataQueryParams<TriggerInstallApplicationFactoryInput>): CommonResponseBody<{
+  triggerInstallApplication: { jobId: string };
 }> => {
-  const graphqlOperation = triggerUninstallApplicationJobQueryFactory({
+  const graphqlOperation = triggerInstallApplicationQueryFactory({
     input,
     gqlFields,
   });
@@ -27,7 +27,7 @@ export const triggerUninstallApplicationJob = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
-        'Triggering the application uninstall job should have failed but did not',
+        'Triggering the application install job should have failed but did not',
     });
   }
 
@@ -35,7 +35,7 @@ export const triggerUninstallApplicationJob = async ({
     warnIfErrorButNotExpectedToFail({
       response,
       errorMessage:
-        'Triggering the application uninstall job has failed but should not',
+        'Triggering the application install job has failed but should not',
     });
   }
 
