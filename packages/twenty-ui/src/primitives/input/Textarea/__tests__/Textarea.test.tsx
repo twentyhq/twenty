@@ -91,6 +91,26 @@ describe('Textarea native integration', () => {
     );
   });
 
+  it('combines caller descriptions with Field descriptions and errors', () => {
+    render(
+      <>
+        <p id="notes-help">Additional guidance</p>
+        <Field.Root invalid>
+          <Field.Label>Notes</Field.Label>
+          <Textarea aria-describedby="notes-help" />
+          <Field.Description>Team context</Field.Description>
+          <Field.Error match>Notes need review</Field.Error>
+        </Field.Root>
+      </>,
+    );
+
+    expect(
+      screen.getByRole('textbox', { name: 'Notes' }),
+    ).toHaveAccessibleDescription(
+      'Additional guidance Team context Notes need review',
+    );
+  });
+
   it('retains native textarea form and Field behavior', async () => {
     const user = userEvent.setup();
     const ref = createRef<HTMLTextAreaElement>();

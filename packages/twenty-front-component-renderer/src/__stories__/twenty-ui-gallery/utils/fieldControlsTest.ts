@@ -31,6 +31,9 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
   expect(important).not.toBeChecked();
 
   expect(email).toHaveAccessibleDescription('Use your work email');
+  expect(notes).toHaveAccessibleDescription(
+    'Additional guidance Team context Notes need review',
+  );
   expect(
     canvas.getByRole('textbox', { name: 'Required name' }),
   ).toHaveAttribute('aria-invalid', 'true');

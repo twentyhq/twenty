@@ -96,6 +96,7 @@ export const Textarea = ({
     : style;
 
   const {
+    'aria-describedby': ariaDescribedBy,
     id,
     name,
     disabled,
@@ -106,6 +107,7 @@ export const Textarea = ({
   } = props;
 
   const controlProps = {
+    'aria-describedby': ariaDescribedBy,
     id,
     name,
     disabled,

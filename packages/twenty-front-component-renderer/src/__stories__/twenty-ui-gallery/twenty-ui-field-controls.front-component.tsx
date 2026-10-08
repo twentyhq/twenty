@@ -64,10 +64,12 @@ const FieldControls = () => {
         <Field.Control defaultValue="" />
         <Field.Error match>Name is required</Field.Error>
       </Field.Root>
-      <Field.Root>
+      <Field.Root invalid>
         <Field.Label>Notes</Field.Label>
+        <p id="notes-help">Additional guidance</p>
         <Textarea
           ref={textareaRef}
+          aria-describedby="notes-help"
           value={notes}
           onValueChange={setNotes}
           onChange={(event) => setNativeTarget(event.currentTarget.tagName)}
@@ -81,6 +83,8 @@ const FieldControls = () => {
             })
           }
         />
+        <Field.Description>Team context</Field.Description>
+        <Field.Error match>Notes need review</Field.Error>
       </Field.Root>
       <Field.Root invalid>
         <Field.Label>Reference</Field.Label>
