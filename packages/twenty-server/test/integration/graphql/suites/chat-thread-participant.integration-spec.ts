@@ -661,7 +661,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
     expect(owner).toMatchObject({ archivedAt: null, snoozedUntil: null });
     expect(new Date(owner!.lastReadAt!).getTime()).toBe(
-      lastActivityAt!.getTime(),
+      new Date(lastActivityAt!).getTime(),
     );
 
     // The other member archived before this activity, so it is back in their
@@ -672,7 +672,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(new Date(member!.archivedAt!).getTime()).toBeLessThan(
-      lastActivityAt!.getTime(),
+      new Date(lastActivityAt!).getTime(),
     );
     expect(member!.lastReadAt).toBeNull();
   });

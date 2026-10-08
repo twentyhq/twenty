@@ -24,13 +24,6 @@ const buildUniqueViolation = () =>
 const buildService = () => {
   const threadRepository = {
     findOne: jest.fn().mockResolvedValue(null),
-    findOneOrFail: jest
-      .fn()
-      .mockImplementation(
-        (_workspaceId: string, { where }: { where: { id: string } }) =>
-          Promise.resolve({ id: where.id, workspaceMemberId: null }),
-      ),
-    insert: jest.fn().mockResolvedValue(undefined),
   };
   const threadService = {
     createThread: jest
@@ -92,7 +85,7 @@ describe('AgentInboxService.openThread', () => {
   });
 
   it('keeps a conversation with no member out of every inbox', async () => {
-    const { service, threadRepository, threadService } = buildService();
+    const { service, threadService } = buildService();
 
     const { thread, isCreated } = await service.openThread({
       ...OPEN_ARGS,
@@ -100,11 +93,9 @@ describe('AgentInboxService.openThread', () => {
     });
 
     expect(isCreated).toBe(true);
-    expect(threadService.createThread).not.toHaveBeenCalled();
-    expect(threadRepository.insert).toHaveBeenCalledWith('workspace-id', {
-      id: thread.id,
-      title: 'Draft the quote',
-    });
+    expect(threadService.createThread).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceMemberId: null, id: thread.id }),
+    );
     expect(thread.id).not.toBe(
       buildInboxThreadId({
         senderKey: 'workflow:workflow-id',

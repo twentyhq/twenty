@@ -130,13 +130,18 @@ export class AgentRunConversationService {
       select: ['id'],
     });
 
+    if (!isDefined(existingThread)) {
+      await this.threadService.createThread({
+        workspaceId,
+        workspaceMemberId: null,
+        id: threadId,
+        title,
+      });
+    }
+
     return this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
-        if (!isDefined(existingThread)) {
-          await scope.insert('agentChatThread', { id: threadId, title });
-        }
-
         const turnId = await this.conversationWriterService.insertTurn({
           workspaceId,
           threadId,

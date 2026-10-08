@@ -1,5 +1,3 @@
-import { IsNull } from 'typeorm';
-
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -9,17 +7,29 @@ const QUESTION = {
   options: [{ label: 'Pro' }, { label: 'Team' }],
 };
 
-const buildService = ({ claimAffected = 1 } = {}) => {
+const THREAD_BEFORE = {
+  id: 'thread-id',
+  pendingQuestionMessageId: 'question-message-id',
+};
+const THREAD_AFTER = { id: 'thread-id', pendingQuestionMessageId: null };
+
+const buildService = ({ isClaimed = true } = {}) => {
   const steps: string[] = [];
-  const threadRepository = {
-    update: jest.fn(async () => {
+  const clearQuestion = jest
+    .fn()
+    .mockResolvedValueOnce([THREAD_BEFORE])
+    .mockImplementationOnce(async () => {
       steps.push('clear question');
 
-      return { affected: claimAffected };
-    }),
+      return isClaimed ? [THREAD_AFTER] : [];
+    });
+  const threadRepository = {
+    query: jest.fn(async (_workspaceId, run) =>
+      run({ table: (name: string) => name, manager: { query: clearQuestion } }),
+    ),
   };
-  const threadRecordEventService = {
-    emitPendingQuestionCleared: jest.fn(async () => {
+  const recordEventService = {
+    emit: jest.fn(async () => {
       steps.push('emit');
     }),
   };
@@ -49,7 +59,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     threadRepository as never,
     {} as never,
     {} as never,
-    threadRecordEventService as never,
+    recordEventService as never,
     turnRecorderService as never,
     messagePartRepository as never,
   );
@@ -57,9 +67,9 @@ const buildService = ({ claimAffected = 1 } = {}) => {
   return {
     service,
     steps,
-    threadRepository,
+    clearQuestion,
     writePart,
-    threadRecordEventService,
+    recordEventService,
     turnRecorderService,
   };
 };
@@ -98,53 +108,39 @@ describe('AgentChatThreadLifecycleService closePendingQuestion', () => {
   });
 
   it('tells open chat lists last, once the calls and the turn are closed', async () => {
-    const { service, steps, threadRecordEventService } = buildService();
+    const { service, steps, recordEventService } = buildService();
 
     await service.closePendingQuestion(closeArguments);
 
     expect(steps).toEqual(['clear question', 'close part', 'end turn', 'emit']);
-    expect(
-      threadRecordEventService.emitPendingQuestionCleared,
-    ).toHaveBeenCalledWith({
+    expect(recordEventService.emit).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
-      threadId: 'thread-id',
-      messageId: 'question-message-id',
+      objectName: 'agentChatThread',
+      before: THREAD_BEFORE,
+      after: THREAD_AFTER,
     });
   });
 
   it('only claims the question while no stream, or the stream given, holds the thread', async () => {
-    const { service, threadRepository } = buildService();
+    const { service, clearQuestion } = buildService();
 
-    await service.closePendingQuestion(closeArguments);
     await service.closePendingQuestion({
       ...closeArguments,
       activeStreamId: 'stream-id',
     });
 
-    expect(threadRepository.update.mock.calls).toEqual([
-      [
-        'workspace-id',
-        {
-          id: 'thread-id',
-          pendingQuestionMessageId: 'question-message-id',
-          activeStreamId: IsNull(),
-        },
-        { pendingQuestionMessageId: null },
-      ],
-      [
-        'workspace-id',
-        {
-          id: 'thread-id',
-          pendingQuestionMessageId: 'question-message-id',
-          activeStreamId: 'stream-id',
-        },
-        { pendingQuestionMessageId: null },
-      ],
+    const [, [clearQuery, clearParameters]] = clearQuestion.mock.calls;
+
+    expect(clearQuery).toContain('"activeStreamId" IS NOT DISTINCT FROM $3');
+    expect(clearParameters).toEqual([
+      'thread-id',
+      'question-message-id',
+      'stream-id',
     ]);
   });
 
   it('leaves the calls as they are when another caller already closed the question', async () => {
-    const { service, steps } = buildService({ claimAffected: 0 });
+    const { service, steps } = buildService({ isClaimed: false });
 
     await service.closePendingQuestion(closeArguments);
 

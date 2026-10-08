@@ -6,7 +6,6 @@ import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolv
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
 const WORKSPACE_ID = 'workspace';
@@ -51,10 +50,7 @@ const buildResolver = () => {
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
   };
-  const recordEvents = {
-    emitThreadCreated: jest.fn(),
-    emitThreadUpdated: jest.fn(),
-  };
+  const recordEvents = { emit: jest.fn() };
   const threadService = new AgentChatThreadService(
     threadRepository as never,
     sharing as never,
@@ -134,30 +130,8 @@ const buildResolver = () => {
 };
 
 describe('Shared conversation API boundaries', () => {
-  it('does not announce a restore when the transaction rolls back', async () => {
-    const context = buildResolver();
-    context.threadRepository.findOne.mockResolvedValue({
-      id: THREAD_ID,
-      workspaceMemberId: 'owner',
-      workspaceId: WORKSPACE_ID,
-      deletedAt: '2026-09-01T00:00:00.000Z',
-    });
-    context.sharing.restoreThreadWithAccess.mockRejectedValue(
-      new Error('restore failed'),
-    );
-    await expect(
-      context.chatService.restoreThread({
-        threadId: THREAD_ID,
-        workspaceMemberId: 'owner',
-        workspaceId: WORKSPACE_ID,
-      }),
-    ).rejects.toThrow('restore failed');
-    expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
-  });
-
   it('restores a soft deleted conversation before sending to it', async () => {
-    const { resolver, sharing, streaming, recordEvents, threadRepository } =
-      buildResolver();
+    const { resolver, sharing, streaming, threadRepository } = buildResolver();
     const deletedThread = {
       id: THREAD_ID,
       workspaceMemberId: 'owner',
@@ -187,12 +161,6 @@ describe('Shared conversation API boundaries', () => {
       workspaceMemberId: 'member',
       workspaceId: WORKSPACE_ID,
     });
-    expect(recordEvents.emitThreadUpdated).toHaveBeenCalledWith(
-      expect.objectContaining({
-        threadBefore: deletedThread,
-        action: DatabaseEventAction.RESTORED,
-      }),
-    );
     expect(streaming.streamAgentChat).toHaveBeenCalled();
   });
 
@@ -206,7 +174,7 @@ describe('Shared conversation API boundaries', () => {
     ).resolves.toMatchObject({ chunks: [] });
   });
 
-  it.each(['send', 'restore', 'deleteQueued'] as const)(
+  it.each(['send', 'deleteQueued'] as const)(
     'rejects %s from a viewer without mutating or executing',
     async (operation) => {
       const context = buildResolver();
@@ -225,12 +193,6 @@ describe('Shared conversation API boundaries', () => {
             'member',
             workspace,
           ),
-        restore: () =>
-          context.chatService.restoreThread({
-            threadId: THREAD_ID,
-            workspaceMemberId: VIEWER_ID,
-            workspaceId: WORKSPACE_ID,
-          }),
         deleteQueued: () =>
           resolver.deleteQueuedChatMessage('queued', VIEWER_ID, workspace),
       };
@@ -247,7 +209,7 @@ describe('Shared conversation API boundaries', () => {
       }
       expect(context.threadRepository.update).not.toHaveBeenCalled();
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
-      expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
+      expect(context.recordEvents.emit).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();
       expect(context.events.publish).not.toHaveBeenCalled();

@@ -17,12 +17,14 @@ export const buildReleaseStreamClaimQuery = ({
     ? `WITH released AS (
      UPDATE ${table('agentChatThread')} SET "activeStreamId" = NULL, "updatedAt" = now()
      WHERE id = $1 AND "activeStreamId" = $2
-     RETURNING id
+     RETURNING *
    ), ended AS (
      UPDATE ${table('agentTurn')} SET "status" = $3, "error" = $4::jsonb, "endedAt" = now(), "updatedAt" = now()
      WHERE $3::text IS NOT NULL AND "threadId" IN (SELECT id FROM released) AND "status" = '${AgentTurnStatus.RUNNING}'
      RETURNING id
-   ) SELECT id FROM released`
-    : `UPDATE ${table('agentChatThread')} SET "activeStreamId" = NULL, "updatedAt" = now()
+   ) SELECT * FROM released`
+    : `WITH released AS (
+     UPDATE ${table('agentChatThread')} SET "activeStreamId" = NULL, "updatedAt" = now()
      WHERE id = $1 AND "activeStreamId" = $2
-     RETURNING id`;
+     RETURNING *
+   ) SELECT * FROM released`;

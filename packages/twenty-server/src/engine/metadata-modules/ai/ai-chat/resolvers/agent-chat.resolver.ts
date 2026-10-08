@@ -231,7 +231,7 @@ export class AgentChatResolver {
     });
 
     if (isDefined(thread.deletedAt)) {
-      await this.agentChatService.restoreThread({
+      await this.sharingService.restoreThreadWithAccess({
         threadId,
         workspaceMemberId,
         workspaceId: workspace.id,

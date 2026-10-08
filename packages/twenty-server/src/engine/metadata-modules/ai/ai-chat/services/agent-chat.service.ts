@@ -29,12 +29,11 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class AgentChatService {
@@ -51,7 +50,7 @@ export class AgentChatService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly sharingService: AgentChatSharingService,
-    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly recordEventService: AgentChatRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
     private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
@@ -562,7 +561,7 @@ export class AgentChatService {
     const hasAgentTurnRunFields =
       await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
 
-    const isPendingQuestionCleared = await this.messagePartRepository.query(
+    const clearedThread = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         await manager.query(
@@ -571,20 +570,28 @@ export class AgentChatService {
         );
 
         if (!isLastAnswer) {
-          return false;
+          return undefined;
         }
 
-        const clearedThreads = await manager.query<{ id: string }[]>(
+        const [threadBefore] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
+          `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 AND "pendingQuestionMessageId" = $2 FOR UPDATE`,
+          [threadId, messageId],
+        );
+        const [threadAfter] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
           `WITH cleared AS (
              UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
              WHERE id = $1 AND "pendingQuestionMessageId" = $2
-             RETURNING id
-           ) SELECT id FROM cleared`,
+             RETURNING *
+           ) SELECT * FROM cleared`,
           [threadId, messageId],
         );
 
-        if (clearedThreads.length === 0) {
-          return false;
+        if (!isDefined(threadAfter)) {
+          return undefined;
         }
 
         if (hasAgentTurnRunFields) {
@@ -594,69 +601,15 @@ export class AgentChatService {
           ]);
         }
 
-        return true;
+        return { threadBefore, threadAfter };
       },
     );
 
-    if (isPendingQuestionCleared) {
-      await this.threadRecordEventService.emitPendingQuestionCleared({
-        workspaceId,
-        threadId,
-        messageId,
-      });
-    }
-  }
-
-  async restoreThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<AgentChatThreadWorkspaceEntity> {
-    // Access-checked writes return raw rows; record events carry ORM records
-    const threadBefore = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-    const thread = await this.sharingService.restoreThreadWithAccess({
-      threadId,
-      workspaceMemberId,
+    await this.recordEventService.emit({
       workspaceId,
-    });
-
-    if (isDefined(threadBefore)) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-        action: DatabaseEventAction.RESTORED,
-      });
-    }
-
-    return thread;
-  }
-
-  async notifyThreadUsageUpdated({
-    threadBefore,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadBefore: AgentChatThreadWorkspaceEntity;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const threadId = threadBefore.id;
-    const thread = await this.threadService.getWritableThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadBefore,
-      threadAfter: thread,
+      objectName: 'agentChatThread',
+      before: clearedThread?.threadBefore,
+      after: clearedThread?.threadAfter,
     });
   }
 
@@ -685,15 +638,35 @@ export class AgentChatService {
       userWorkspaceId,
     );
 
-    await this.threadRepository.update(
+    const { threadBefore, threadAfter } = await this.threadRepository.query(
       workspaceId,
-      { id: threadId },
-      { title },
+      async ({ manager, table }) => {
+        const [threadBefore] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
+          `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+          [threadId],
+        );
+        const [threadAfter] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
+          `WITH titled AS (
+             UPDATE ${table('agentChatThread')} SET title = $2, "updatedAt" = now()
+             WHERE id = $1
+             RETURNING *
+           ) SELECT * FROM titled`,
+          [threadId, title],
+        );
+
+        return { threadBefore, threadAfter };
+      },
     );
 
-    await this.threadRecordEventService.emitThreadUpdated({
+    await this.recordEventService.emit({
       workspaceId,
-      threadBefore: thread,
+      objectName: 'agentChatThread',
+      before: threadBefore,
+      after: threadAfter,
     });
 
     return title;

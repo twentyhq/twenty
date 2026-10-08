@@ -31,6 +31,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -548,8 +549,9 @@ describe('Conversation sharing through the authenticated API', () => {
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
-    const chatService =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
+    const sharingService = getAppProviderByClassName<AgentChatSharingService>(
+      'AgentChatSharingService',
+    );
     const command = new EnableCommonRecordSharingCommand(
       {} as never,
       cache,
@@ -603,8 +605,8 @@ describe('Conversation sharing through the authenticated API', () => {
       );
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
       const restoredTwice = await Promise.all([
-        chatService.restoreThread(owner),
-        chatService.restoreThread(owner),
+        sharingService.restoreThreadWithAccess(owner),
+        sharingService.restoreThreadWithAccess(owner),
       ]);
       for (const restored of restoredTwice) {
         expect(restored.deletedAt).toBeNull();

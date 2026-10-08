@@ -17,6 +17,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
@@ -57,6 +58,7 @@ export class WorkspaceSetupChatService {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly threadService: AgentChatThreadService,
+    private readonly sharingService: AgentChatSharingService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -116,7 +118,7 @@ export class WorkspaceSetupChatService {
 
     if (isDefined(thread)) {
       if (isDefined(thread.deletedAt)) {
-        thread = await this.agentChatService.restoreThread({
+        thread = await this.sharingService.restoreThreadWithAccess({
           threadId,
           workspaceMemberId,
           workspaceId: workspace.id,

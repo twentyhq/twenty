@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
-import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class AgentChatThreadLifecycleService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly recordEventService: AgentChatRecordEventService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
@@ -103,19 +103,12 @@ export class AgentChatThreadLifecycleService {
       streamId: thread.activeStreamId,
     });
 
-    const isReleased = await this.turnRecorderService.releaseStreamClaim({
+    await this.turnRecorderService.releaseStreamClaim({
       workspaceId,
       threadId: thread.id,
       streamId: thread.activeStreamId,
       endRunningTurn: { status: AgentTurnStatus.CANCELLED },
     });
-
-    if (isReleased) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore: thread,
-      });
-    }
   }
 
   // Clearing the marker is the claim, so only one caller closes the calls, and only while the
@@ -134,17 +127,32 @@ export class AgentChatThreadLifecycleService {
     activeStreamId: string | null;
     turnStatus: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
-    const { affected } = await this.threadRepository.update(
+    const { threadBefore, threadAfter } = await this.threadRepository.query(
       workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: messageId,
-        activeStreamId: activeStreamId ?? IsNull(),
+      async ({ manager, table }) => {
+        const [threadBefore] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
+          `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+          [threadId],
+        );
+        const [threadAfter] = await manager.query<
+          AgentChatThreadWorkspaceEntity[]
+        >(
+          `WITH cleared AS (
+             UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
+             WHERE id = $1 AND "pendingQuestionMessageId" = $2
+               AND "activeStreamId" IS NOT DISTINCT FROM $3
+             RETURNING *
+           ) SELECT * FROM cleared`,
+          [threadId, messageId, activeStreamId],
+        );
+
+        return { threadBefore, threadAfter };
       },
-      { pendingQuestionMessageId: null },
     );
 
-    if (!affected) {
+    if (!isDefined(threadAfter)) {
       return;
     }
 
@@ -160,10 +168,11 @@ export class AgentChatThreadLifecycleService {
       status: turnStatus,
     });
 
-    await this.threadRecordEventService.emitPendingQuestionCleared({
+    await this.recordEventService.emit({
       workspaceId,
-      threadId,
-      messageId,
+      objectName: 'agentChatThread',
+      before: threadBefore,
+      after: threadAfter,
     });
   }
 }

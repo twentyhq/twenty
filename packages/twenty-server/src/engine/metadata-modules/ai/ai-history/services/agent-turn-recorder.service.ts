@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
 
 import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -46,6 +48,7 @@ export class AgentTurnRecorderService {
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly upgradeFenceService: AgentHistoryUpgradeFenceService,
+    private readonly recordEventService: AgentChatRecordEventService,
   ) {}
 
   // Without the 2.46 run fields a turn records nothing, so only the stream
@@ -343,14 +346,18 @@ export class AgentTurnRecorderService {
       status: AgentTurnStatus.CANCELLED | AgentTurnStatus.FAILED;
       error?: StreamErrorPayload | null;
     };
-  }): Promise<boolean> {
+  }): Promise<void> {
     const hasAgentTurnRunFields =
       await this.upgradeFenceService.hasUpgradedAgentHistory(workspaceId);
 
-    return this.turnRepository.query(
+    const { threadBefore, threadAfter } = await this.turnRepository.query(
       workspaceId,
       async ({ manager, table }) => {
-        const releasedThreads = await manager.query<{ id: string }[]>(
+        const [threadBefore] = await manager.query<ObjectLiteral[]>(
+          `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+          [threadId],
+        );
+        const [threadAfter] = await manager.query<ObjectLiteral[]>(
           buildReleaseStreamClaimQuery({ table, hasAgentTurnRunFields }),
           hasAgentTurnRunFields
             ? [
@@ -364,9 +371,16 @@ export class AgentTurnRecorderService {
             : [threadId, streamId],
         );
 
-        return releasedThreads.length > 0;
+        return { threadBefore, threadAfter };
       },
     );
+
+    await this.recordEventService.emit({
+      workspaceId,
+      objectName: 'agentChatThread',
+      before: threadBefore,
+      after: threadAfter,
+    });
   }
 
   async findLatestTurn({

@@ -201,7 +201,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
     };
     const chatRecordEvents = {
-      emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
+      emit: jest.fn().mockResolvedValue(undefined),
     };
     const chatThreadService = new AgentChatThreadService(
       threads as never,
@@ -1066,6 +1066,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         );
         const options = {
           repository: threads,
+          recordEventService: { emit: jest.fn() },
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
           recordedActivity: null,

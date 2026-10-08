@@ -14,6 +14,7 @@ const buildService = () => {
   const service = new AgentTurnRecorderService(
     {} as never,
     { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
+    {} as never,
   );
   const recordUsage = jest
     .spyOn(service, 'recordUsage')

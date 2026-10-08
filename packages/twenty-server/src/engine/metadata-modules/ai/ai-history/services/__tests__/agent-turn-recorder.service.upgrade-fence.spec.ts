@@ -20,6 +20,7 @@ const buildService = ({
         .fn()
         .mockResolvedValue(hasUpgradedAgentHistory),
     } as never,
+    { emit: jest.fn() } as never,
   );
 
   return { service, query, turnRepository };
@@ -36,14 +37,13 @@ describe('AgentTurnRecorderService before the 2.46 commands reach a workspace', 
       hasUpgradedAgentHistory: false,
     });
 
-    const isReleased = await service.releaseStreamClaim({
+    await service.releaseStreamClaim({
       workspaceId,
       threadId: 'thread-id',
       streamId: 'stream-id',
       endRunningTurn: { status: AgentTurnStatus.FAILED },
     });
 
-    expect(isReleased).toBe(true);
     expect(getStatements(query)).not.toContain('"status"');
     expect(query).toHaveBeenCalledWith(expect.any(String), [
       'thread-id',

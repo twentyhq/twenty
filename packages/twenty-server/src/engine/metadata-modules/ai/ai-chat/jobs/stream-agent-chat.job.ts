@@ -4,6 +4,7 @@ import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/util
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -110,6 +111,7 @@ export class StreamAgentChatJob {
     private readonly actorService: AgentChatActorService,
     private readonly sharingService: AgentChatSharingService,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly recordEventService: AgentChatRecordEventService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -510,8 +512,6 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    workspaceMemberId:
-                      authorization.authContext.workspaceMemberId,
                     usageTotals,
                     modelConfig,
                     turnModelId,
@@ -686,7 +686,6 @@ export class StreamAgentChatJob {
     outOfCredits,
     threadId,
     workspaceId,
-    workspaceMemberId,
     usageTotals,
     modelConfig,
     turnModelId,
@@ -700,7 +699,6 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    workspaceMemberId: string;
     usageTotals: StreamUsageTotals;
     modelConfig: AiModelConfig;
     turnModelId: string;
@@ -760,11 +758,11 @@ export class StreamAgentChatJob {
       return outcome;
     }
 
-    const threadBeforeUsage = await this.threadRepository.findOne(workspaceId, {
+    const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
     });
 
-    if (!threadBeforeUsage || threadBeforeUsage.deletedAt) {
+    if (!thread || thread.deletedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 
@@ -778,6 +776,7 @@ export class StreamAgentChatJob {
 
     const totalsUpdate = await updateAgentChatThreadUsage({
       repository: this.threadRepository,
+      recordEventService: this.recordEventService,
       workspaceId,
       threadId,
       streamId,
@@ -821,12 +820,6 @@ export class StreamAgentChatJob {
       streamId,
       outcome,
       turnModelId,
-    });
-
-    await this.agentChatService.notifyThreadUsageUpdated({
-      threadBefore: threadBeforeUsage,
-      workspaceMemberId,
-      workspaceId,
     });
 
     return outcome;

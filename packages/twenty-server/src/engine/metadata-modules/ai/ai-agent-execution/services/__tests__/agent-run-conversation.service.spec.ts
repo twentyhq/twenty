@@ -32,6 +32,7 @@ const buildService = () => {
   };
   const threadService = {
     recordThreadActivity: jest.fn().mockResolvedValue(undefined),
+    createThread: jest.fn().mockResolvedValue({ id: 'thread-id' }),
   };
 
   return {
@@ -58,7 +59,8 @@ const closeTurn = (service: AgentRunConversationService) =>
 
 describe('AgentRunConversationService', () => {
   it('stores handed-over replies as assistant messages with no sender', async () => {
-    const { service, conversationWriterService } = buildService();
+    const { service, conversationWriterService, threadService } =
+      buildService();
 
     await service.openTurn({
       workspaceId: 'workspace-id',
@@ -80,6 +82,12 @@ describe('AgentRunConversationService', () => {
       ],
     });
 
+    expect(threadService.createThread).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: null,
+      id: 'thread-id',
+      title: 'Helper',
+    });
     expect(conversationWriterService.insertMessage).toHaveBeenCalledTimes(3);
     expect(
       conversationWriterService.insertMessage.mock.calls.map(([message]) => ({

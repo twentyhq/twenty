@@ -6,7 +6,6 @@ import { type EntityManager } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
 import { type AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
@@ -14,16 +13,15 @@ import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
 import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
-import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -79,7 +77,7 @@ export class AgentChatThreadParticipantService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
-    private readonly participantEventService: AgentChatThreadParticipantEventService,
+    private readonly recordEventService: AgentChatRecordEventService,
     @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly delayedJobsQueueService: MessageQueueService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -300,28 +298,6 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  // For the row written along with a new thread
-  async emitParticipantCreated(args: AgentChatThreadAccessArgs): Promise<void> {
-    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
-      return;
-    }
-
-    const participant = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager }) => this.findOne({ manager, ...args }),
-    );
-
-    if (!isDefined(participant)) {
-      return;
-    }
-
-    await this.participantEventService.emitParticipantWritten({
-      workspaceId: args.workspaceId,
-      before: null,
-      after: participant,
-    });
-  }
-
   async moveToInbox(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
@@ -348,84 +324,107 @@ export class AgentChatThreadParticipantService {
     text,
   }: AgentChatThreadAccessArgs & {
     text: string;
-  }): Promise<AgentChatThreadActivity> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return (
-        (await touchAgentChatThread({
-          repository: this.threadRepository,
-          workspaceId,
-          threadId,
-        })) ?? throwAgentChatThreadNotFound()
-      );
-    }
-
-    const participantTable = getAgentChatThreadParticipantTable(workspaceId);
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const participantObjectMetadataId =
       await this.sharingService.findParticipantObjectMetadataId(workspaceId);
 
-    const { rows, before, after } = await this.threadRepository.query(
-      workspaceId,
-      async ({ manager, table }) => {
-        const before = await this.findOne({
-          manager,
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-          lock: true,
-        });
+    if (!isDefined(participantObjectMetadataId)) {
+      const { threadBefore, threadAfter } = await touchAgentChatThread({
+        repository: this.threadRepository,
+        workspaceId,
+        threadId,
+        recordedActivity: null,
+      });
 
-        const rows = await manager.query<AgentChatThreadActivity[]>(
-          `WITH thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "updatedAt" = now(),
-               ${buildAgentChatThreadActivitySetClause({ textParameter: '$3', senderWorkspaceMemberIdParameter: '$2::uuid' })},
-               "writerWorkspaceMemberIds" = CASE
-                 WHEN $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}')) THEN "writerWorkspaceMemberIds"
-                 ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
-               END
-             WHERE id = $1
-             RETURNING id, ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS}
-           ), participant AS (
-             INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-             SELECT thread.id, $2, thread."lastActivityAt" FROM thread
-             ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-               "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
-               "archivedAt" = NULL,
-               "snoozedUntil" = NULL,
-               "isSubscribed" = true,
-               "updatedAt" = now()
-             RETURNING id, "workspaceMemberId"
-           ), owner_share AS (
-             ${buildAgentChatThreadParticipantOwnerShareInsert({ workspaceId, participantSource: 'participant', objectMetadataIdParameter: '$4' })}
-           )
-           SELECT ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS} FROM thread`,
-          [threadId, workspaceMemberId, text, participantObjectMetadataId],
-        );
+      await this.recordEventService.emit({
+        workspaceId,
+        objectName: 'agentChatThread',
+        before: threadBefore,
+        after: threadAfter,
+      });
 
-        const after = await this.findOne({
-          manager,
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-        });
+      return threadAfter ?? throwAgentChatThreadNotFound();
+    }
 
-        return { rows, before, after };
-      },
-    );
+    const participantTable = getAgentChatThreadParticipantTable(workspaceId);
 
-    if (rows.length !== 1) {
+    const { threadBefore, threadAfter, before, after } =
+      await this.threadRepository.query(
+        workspaceId,
+        async ({ manager, table }) => {
+          const before = await this.findOne({
+            manager,
+            workspaceId,
+            workspaceMemberId,
+            threadId,
+            lock: true,
+          });
+          const [threadBefore] = await manager.query<
+            AgentChatThreadWorkspaceEntity[]
+          >(
+            `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+            [threadId],
+          );
+
+          const [threadAfter] = await manager.query<
+            AgentChatThreadWorkspaceEntity[]
+          >(
+            `WITH thread AS (
+               UPDATE ${table('agentChatThread')}
+               SET "updatedAt" = now(),
+                 ${buildAgentChatThreadActivitySetClause({ textParameter: '$3', senderWorkspaceMemberIdParameter: '$2::uuid' })},
+                 "writerWorkspaceMemberIds" = CASE
+                   WHEN $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}')) THEN "writerWorkspaceMemberIds"
+                   ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
+                 END
+               WHERE id = $1
+               RETURNING *
+             ), participant AS (
+               INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
+               SELECT thread.id, $2, thread."lastActivityAt" FROM thread
+               ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+                 "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
+                 "archivedAt" = NULL,
+                 "snoozedUntil" = NULL,
+                 "isSubscribed" = true,
+                 "updatedAt" = now()
+               RETURNING id, "workspaceMemberId"
+             ), owner_share AS (
+               ${buildAgentChatThreadParticipantOwnerShareInsert({ workspaceId, participantSource: 'participant', objectMetadataIdParameter: '$4' })}
+             )
+             SELECT * FROM thread`,
+            [threadId, workspaceMemberId, text, participantObjectMetadataId],
+          );
+
+          const after = await this.findOne({
+            manager,
+            workspaceId,
+            workspaceMemberId,
+            threadId,
+          });
+
+          return { threadBefore, threadAfter, before, after };
+        },
+      );
+
+    if (!isDefined(threadAfter)) {
       return throwAgentChatThreadNotFound();
     }
 
-    if (isDefined(after)) {
-      await this.participantEventService.emitParticipantWritten({
-        workspaceId,
-        before,
-        after,
-      });
-    }
+    await this.recordEventService.emit({
+      workspaceId,
+      objectName: 'agentChatThreadParticipant',
+      before,
+      after: after ?? undefined,
+    });
+    await this.recordEventService.emit({
+      workspaceId,
+      objectName: 'agentChatThread',
+      before: threadBefore,
+      after: threadAfter,
+    });
 
-    return rows[0];
+    return threadAfter;
   }
 
   // Over every chat the member can open, the way the inbox lists them; a chat
@@ -672,16 +671,13 @@ export class AgentChatThreadParticipantService {
       },
     );
 
-    if (!isDefined(after)) {
-      return null;
-    }
-
-    await this.participantEventService.emitParticipantWritten({
+    await this.recordEventService.emit({
       workspaceId,
+      objectName: 'agentChatThreadParticipant',
       before,
       after,
     });
 
-    return after;
+    return after ?? null;
   }
 }

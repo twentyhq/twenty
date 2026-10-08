@@ -247,8 +247,8 @@ describe('StreamAgentChatJob', () => {
         ? jest.fn().mockRejectedValue(assistantPersistRejection)
         : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
-      notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
     };
+    const recordEventService = { emit: jest.fn().mockResolvedValue(undefined) };
     const threadService = {
       recordThreadActivity: jest.fn().mockResolvedValue(undefined),
     };
@@ -362,6 +362,7 @@ describe('StreamAgentChatJob', () => {
       actorService as never,
       sharingService as never,
       turnRecorderService as never,
+      recordEventService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -379,6 +380,7 @@ describe('StreamAgentChatJob', () => {
       threadRepository,
       threadUsageQuery,
       agentChatService,
+      recordEventService,
       threadService,
       eventPublisherService,
       agentChatStreamingService,
@@ -556,9 +558,8 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('gates the thread totals on still owning the stream so a prior completion is not double-counted', async () => {
-    const { job, agentChatService, threadRepository } = buildJob({
-      totalsUpdateAffected: 0,
-    });
+    const { job, agentChatService, recordEventService, threadRepository } =
+      buildJob({ totalsUpdateAffected: 0 });
 
     await job.handle(jobData);
 
@@ -569,7 +570,9 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       expect.any(Function),
     );
-    expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
+    expect(recordEventService.emit).toHaveBeenCalledWith(
+      expect.objectContaining({ after: undefined }),
+    );
   });
 
   it('prices each step on its own, so steps under the long-context threshold never reach its rate together', async () => {
@@ -638,12 +641,16 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('applies thread totals when the claim is still held even if the message already exists from a checkpoint', async () => {
-    const { job, agentChatService } = buildJob({ totalsUpdateAffected: 1 });
+    const { job, agentChatService, recordEventService } = buildJob({
+      totalsUpdateAffected: 1,
+    });
 
     await job.handle(jobData);
 
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalled();
-    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
+    expect(recordEventService.emit).toHaveBeenCalledWith(
+      expect.objectContaining({ after: { id: 'thread-id' } }),
+    );
   });
 
   it('never publishes the opaque error chunk to subscribers', async () => {
@@ -869,7 +876,7 @@ describe('StreamAgentChatJob', () => {
     const {
       job,
       publishedEvents,
-      agentChatService,
+      recordEventService,
       agentChatStreamingService,
       cancelCallbacks,
     } = buildJob({
@@ -888,7 +895,9 @@ describe('StreamAgentChatJob', () => {
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
-    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
+    expect(recordEventService.emit).toHaveBeenCalledWith(
+      expect.objectContaining({ after: { id: 'thread-id' } }),
+    );
   });
   it('labels turn-started with the resolved model, not the auto-select id', async () => {
     const { job, aiModelRegistryService, turnCounts } = buildJob();
@@ -949,7 +958,9 @@ describe('StreamAgentChatJob', () => {
   });
 
   const pendingQuestionMessageIdOf = (threadUsageQuery: jest.Mock) =>
-    (threadUsageQuery.mock.calls[0] as unknown as [string, unknown[]])[1][4];
+    (threadUsageQuery.mock.calls as unknown as [string, unknown[]][]).find(
+      ([sql]) => sql.includes('"contextWindowTokens"'),
+    )?.[1][4];
 
   it('marks the conversation as waiting on the message that paused, in the totals write, and leaves the queue waiting', async () => {
     const { job, threadUsageQuery, agentChatStreamingService } = buildJob({

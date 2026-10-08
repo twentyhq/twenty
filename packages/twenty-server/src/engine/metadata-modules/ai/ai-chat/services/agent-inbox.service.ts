@@ -207,15 +207,13 @@ export class AgentInboxService {
     }
 
     try {
-      const thread = isDefined(workspaceMemberId)
-        ? await this.threadService.createThread({
-            workspaceId,
-            workspaceMemberId,
-            id: threadId,
-            title,
-            isArchived: isArchivedOnCreate,
-          })
-        : await this.createUnaddressedThread({ workspaceId, threadId, title });
+      const thread = await this.threadService.createThread({
+        workspaceId,
+        workspaceMemberId,
+        id: threadId,
+        title,
+        isArchived: isArchivedOnCreate,
+      });
 
       return { thread, isCreated: true };
     } catch (error) {
@@ -299,22 +297,6 @@ export class AgentInboxService {
     threadId: string;
   }) {
     return this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-  }
-
-  private async createUnaddressedThread({
-    workspaceId,
-    threadId,
-    title,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    title: string;
-  }): Promise<AgentChatThreadWorkspaceEntity> {
-    await this.threadRepository.insert(workspaceId, { id: threadId, title });
-
-    return this.threadRepository.findOneOrFail(workspaceId, {
       where: { id: threadId },
     });
   }

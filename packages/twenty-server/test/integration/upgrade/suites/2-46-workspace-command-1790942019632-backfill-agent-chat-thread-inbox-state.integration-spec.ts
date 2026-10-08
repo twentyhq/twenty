@@ -59,7 +59,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   const createdBeforeUpgradeThreadId = randomUUID();
   let beforeUpgrade: {
     createdThreadLastActivityAt: string | null;
-    recordedLastActivityAt: Date | null;
+    recordedLastActivityAt: string | null;
   };
   const threadIds = [
     createdBeforeUpgradeThreadId,

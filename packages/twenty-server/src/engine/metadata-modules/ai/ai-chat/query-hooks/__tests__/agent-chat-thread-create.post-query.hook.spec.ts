@@ -64,7 +64,41 @@ const buildStorage = (threads: Thread[]) => {
         return [thread];
       }
 
+      if (sql.startsWith('SELECT * FROM "agentChatThread"')) {
+        const [threadIds] = parameters as [string[]];
+
+        return threads
+          .filter(
+            (thread) =>
+              threadIds.includes(thread.id) &&
+              thread.workspaceMemberId === null,
+          )
+          .map((thread) => ({ ...thread }));
+      }
+
+      if (sql.includes('SET "workspaceMemberId" = $2')) {
+        const [threadIds, workspaceMemberId] = parameters as [string[], string];
+        const assignedThreads = threads.filter(
+          (thread) =>
+            threadIds.includes(thread.id) && thread.workspaceMemberId === null,
+        );
+
+        for (const thread of assignedThreads) {
+          thread.workspaceMemberId = workspaceMemberId;
+        }
+
+        return assignedThreads.map((thread) => ({ ...thread }));
+      }
+
       if (sql.includes('"agentChatThreadParticipant"')) {
+        if (sql.startsWith('SELECT')) {
+          const [threadIds] = parameters as [string[]];
+
+          return participants.filter(({ threadId }) =>
+            threadIds.includes(threadId),
+          );
+        }
+
         return setUpInboxState(sql, parameters);
       }
 
@@ -77,40 +111,6 @@ const buildStorage = (threads: Thread[]) => {
   };
 
   const threadRepository = {
-    find: jest.fn(
-      async (
-        _workspaceId: string,
-        {
-          where,
-        }: { where: { id: { value: string[] }; workspaceMemberId?: unknown } },
-      ) =>
-        threads
-          .filter(
-            (thread) =>
-              where.id.value.includes(thread.id) &&
-              (!('workspaceMemberId' in where) ||
-                thread.workspaceMemberId === null),
-          )
-          .map((thread) => ({ ...thread })),
-    ),
-    update: jest.fn(
-      async (
-        _workspaceId: string,
-        { id }: { id: { value: string[] } },
-        { workspaceMemberId }: { workspaceMemberId: string },
-      ) => {
-        const assignedThreads = threads.filter(
-          (thread) =>
-            id.value.includes(thread.id) && thread.workspaceMemberId === null,
-        );
-
-        for (const thread of assignedThreads) {
-          thread.workspaceMemberId = workspaceMemberId;
-        }
-
-        return { generatedMaps: assignedThreads.map(({ id }) => ({ id })) };
-      },
-    ),
     query: jest.fn(
       async (
         _workspaceId: string,
@@ -149,6 +149,7 @@ const buildContext = ({
     {} as never,
     workspaceOrmManager as never,
     {} as never,
+    {} as never,
   );
 
   jest
@@ -169,24 +170,24 @@ const buildContext = ({
     )
     .mockResolvedValue({ id: 'thread-object-metadata-id' });
 
-  const participantService = {
-    emitParticipantCreated: jest.fn(async ({ threadId }) => {
-      events.push(`participant created ${threadId}`);
-    }),
-  };
   const recordEventService = {
-    emitThreadCreated: jest.fn(async ({ threadId }) => {
-      events.push(`thread created ${threadId}`);
-    }),
-    emitThreadUpdated: jest.fn(async ({ threadBefore }) => {
-      events.push(`thread updated ${threadBefore.id}`);
+    emit: jest.fn(async ({ objectName, before, after }) => {
+      if (!after) {
+        return;
+      }
+
+      if (objectName === 'agentChatThreadParticipant') {
+        events.push(`participant created ${after.threadId}`);
+      } else {
+        events.push(`thread ${before ? 'updated' : 'created'} ${after.id}`);
+      }
     }),
   };
   const threadService = new AgentChatThreadService(
     storage.threadRepository as never,
     sharingService,
     recordEventService as never,
-    participantService as never,
+    {} as never,
   );
 
   return {
@@ -285,7 +286,7 @@ describe('agentChatThread record API creation', () => {
       { id: 'new-thread' },
     ]);
 
-    expect(context.manager.query).not.toHaveBeenCalled();
+    expect(context.participants).toEqual([]);
     expect(context.threads[0]).toEqual({
       id: 'new-thread',
       workspaceMemberId: CREATOR_ID,

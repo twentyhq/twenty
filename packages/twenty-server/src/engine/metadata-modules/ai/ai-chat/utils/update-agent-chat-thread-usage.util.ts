@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -12,6 +13,7 @@ type ThreadUsageUpdate = {
 
 export const updateAgentChatThreadUsage = async ({
   repository,
+  recordEventService,
   workspaceId,
   threadId,
   streamId,
@@ -19,16 +21,27 @@ export const updateAgentChatThreadUsage = async ({
   recordedActivity,
 }: {
   repository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
+  recordEventService: Pick<AgentChatRecordEventService, 'emit'>;
   workspaceId: string;
   threadId: string;
   streamId: string;
   usage: ThreadUsageUpdate;
   // Null before the 2.46 upgrade adds the activity columns
   recordedActivity: { lastMessageText: string | null } | null;
-}): Promise<{ affected: number }> =>
-  repository.query(workspaceId, async ({ manager, table }) => {
-    const rows = await manager.query<{ id: string }[]>(
-      `
+}): Promise<{ affected: number }> => {
+  const { threadBefore, threadAfter } = await repository.query(
+    workspaceId,
+    async ({ manager, table }) => {
+      const [threadBefore] = await manager.query<
+        AgentChatThreadWorkspaceEntity[]
+      >(
+        `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 AND "activeStreamId" = $2 FOR UPDATE`,
+        [threadId, streamId],
+      );
+      const [threadAfter] = await manager.query<
+        AgentChatThreadWorkspaceEntity[]
+      >(
+        `
     WITH updated AS (
       UPDATE ${table('agentChatThread')} SET
         "contextWindowTokens" = $3, "conversationSize" = $4,
@@ -39,18 +52,30 @@ export const updateAgentChatThreadUsage = async ({
             : ''
         } "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
-      RETURNING id
-    ) SELECT id FROM updated`,
-      [
-        threadId,
-        streamId,
-        usage.contextWindowTokens,
-        usage.conversationSize,
-        usage.pendingQuestionMessageId,
-        ...(isDefined(recordedActivity)
-          ? [recordedActivity.lastMessageText]
-          : []),
-      ],
-    );
-    return { affected: rows.length };
+      RETURNING *
+    ) SELECT * FROM updated`,
+        [
+          threadId,
+          streamId,
+          usage.contextWindowTokens,
+          usage.conversationSize,
+          usage.pendingQuestionMessageId,
+          ...(isDefined(recordedActivity)
+            ? [recordedActivity.lastMessageText]
+            : []),
+        ],
+      );
+
+      return { threadBefore, threadAfter };
+    },
+  );
+
+  await recordEventService.emit({
+    workspaceId,
+    objectName: 'agentChatThread',
+    before: threadBefore,
+    after: threadAfter,
   });
+
+  return { affected: isDefined(threadAfter) ? 1 : 0 };
+};

@@ -1,6 +1,7 @@
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { Module } from '@nestjs/common';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { AgentChatRecordEventService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-record-event.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentHistoryUpgradeFenceService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-upgrade-fence.service';
@@ -25,6 +26,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 @Module({
   imports: [FileUrlModule, WorkspaceCacheModule],
   providers: [
+    AgentChatRecordEventService,
     AgentHistoryWorkspaceStorageService,
     AgentHistoryTransactionService,
     AgentConversationReaderService,
@@ -34,6 +36,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
     ...REPOSITORY_PROVIDERS,
   ],
   exports: [
+    AgentChatRecordEventService,
     AgentHistoryWorkspaceStorageService,
     AgentConversationReaderService,
     AgentConversationWriterService,
