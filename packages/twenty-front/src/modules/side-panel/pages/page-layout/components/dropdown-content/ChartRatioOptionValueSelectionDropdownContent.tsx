@@ -1,6 +1,6 @@
 import { ChartRatioOptionBooleanSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionBooleanSelectableListItem';
 import { ChartRatioOptionSelectSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionSelectSelectableListItem';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -35,7 +35,7 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(

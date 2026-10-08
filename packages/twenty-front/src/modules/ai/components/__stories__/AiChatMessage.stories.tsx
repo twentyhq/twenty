@@ -232,6 +232,8 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   ],
   metadata: {
     createdAt: new Date().toISOString(),
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:01:23.000Z',
   },
 };
 
@@ -367,7 +369,7 @@ export const ThinkingStepsDoneExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {
-      name: /2 steps/i,
+      name: /worked for 1m 23s/i,
     });
 
     await userEvent.click(summaryButton);

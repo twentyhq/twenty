@@ -1,4 +1,3 @@
-import { themeCssVariables } from 'twenty-ui/theme';
 import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
@@ -360,12 +359,7 @@ export const SettingsApplicationDetails = () => {
           {isApplicationStopped && (
             <InlineBanner
               status="warning"
-              icon={
-                <IconAlertTriangle
-                  size={themeCssVariables.icon.size.md}
-                  aria-hidden="true"
-                />
-              }
+              icon={<IconAlertTriangle aria-hidden="true" />}
             >{t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}</InlineBanner>
           )}
           {renderActiveTabContent()}

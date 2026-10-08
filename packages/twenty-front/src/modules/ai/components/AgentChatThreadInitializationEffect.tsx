@@ -1,17 +1,16 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
-import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -84,7 +83,7 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
+    if (isDefined(currentAiChatThread)) {
       const selectedThread = store.get(
         agentChatThreadRecordFamilySelector.selectorFamily(currentAiChatThread),
       );
@@ -114,8 +113,7 @@ export const AgentChatThreadInitializationEffect = () => {
         getAgentChatUsageFromThread(firstThread),
       );
     } else {
-      store.set(hasTriggeredCreateForDraftState.atom, false);
-      setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+      setCurrentAiChatThread(store.get(newAiChatThreadIdState.atom));
     }
   }, [
     agentChatVisibleThreads,

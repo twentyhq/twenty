@@ -144,6 +144,31 @@ export const getAvailableAggregationsFromObjectFields = (
             aggregateOperation: AggregateOperations.SUM,
           };
           break;
+        case FieldMetadataType.RATING:
+          acc[`min${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Minimum rating contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AggregateOperations.MIN,
+          };
+
+          acc[`max${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Maximum rating contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AggregateOperations.MAX,
+          };
+
+          acc[`avg${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Average rating contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AggregateOperations.AVG,
+          };
+          break;
         case FieldMetadataType.CURRENCY:
           acc[`min${capitalize(field.name)}AmountMicros`] = {
             type: GraphQLFloat,

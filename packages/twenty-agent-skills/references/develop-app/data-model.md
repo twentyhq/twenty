@@ -93,6 +93,24 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
+### Relations
+
+A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `yarn twenty dev:add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
+
+```ts
+// src/fields/company-on-contract.ts
+universalSettings: {
+  relationType: RelationType.MANY_TO_ONE,
+  onDelete: OnDeleteAction.SET_NULL,
+  joinColumnName: 'companyId',
+},
+
+// src/fields/contracts-on-company.ts
+universalSettings: { relationType: RelationType.ONE_TO_MANY },
+```
+
+Export each field's identifier as a named constant and import it from the other file, so the two sides reference each other without a circular import.
+
 ## Roles And Permissions
 
 Roles should match operational responsibility, not implementation convenience.

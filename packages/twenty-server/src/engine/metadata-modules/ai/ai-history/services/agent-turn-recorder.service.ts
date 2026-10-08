@@ -188,14 +188,14 @@ export class AgentTurnRecorderService {
     threadId,
     turnId,
     execution,
-    isAwaitingAnswer = false,
+    isWaiting = false,
     error,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
     execution: RecordableAgentExecution;
-    isAwaitingAnswer?: boolean;
+    isWaiting?: boolean;
     error?: StreamErrorPayload;
   }): Promise<void> {
     if (isDefined(execution.turnUsage)) {
@@ -224,7 +224,7 @@ export class AgentTurnRecorderService {
       ...(isDefined(failureError)
         ? { status: AgentTurnStatus.FAILED, error: failureError }
         : {
-            status: isAwaitingAnswer
+            status: isWaiting
               ? AgentTurnStatus.WAITING_FOR_INPUT
               : AgentTurnStatus.COMPLETED,
           }),

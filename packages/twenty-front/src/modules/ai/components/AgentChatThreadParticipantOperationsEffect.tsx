@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
@@ -96,37 +95,13 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             operation.type === 'update-one'
               ? [operation.result.updateInput]
               : operation.result.updateInputs;
-          const participantsById = new Map(
-            [
-              ...Object.values(
-                store.get(agentChatThreadStreamedParticipantsState.atom),
-              ),
-              ...Object.values(
-                store.get(agentChatThreadParticipantsState.atom) ?? {},
-              ),
-            ].map((participant) => [participant.id, participant]),
+
+          applyParticipants(
+            updateInputs
+              .map(({ updatedRecord }) => updatedRecord)
+              .filter(isDefined)
+              .map(getAgentChatThreadParticipantFromRecord),
           );
-          const updatedParticipants = updateInputs.map(
-            ({ recordId, updatedFields }) => {
-              const participant = participantsById.get(recordId);
-
-              return isDefined(participant)
-                ? { ...participant, ...Object.assign({}, ...updatedFields) }
-                : undefined;
-            },
-          );
-
-          // Updates only carry what changed, so a row not loaded yet comes
-          // whole with its thread, and a page on its way is read again in
-          // case it holds an older copy
-          if (!updatedParticipants.every(isDefined)) {
-            store.set(
-              agentChatThreadRecordUpdateCountState.atom,
-              (updateCount) => updateCount + 1,
-            );
-          }
-
-          applyParticipants(updatedParticipants.filter(isDefined));
           return;
         }
       }

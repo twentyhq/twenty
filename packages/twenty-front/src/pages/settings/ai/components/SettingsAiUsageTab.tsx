@@ -40,7 +40,7 @@ export const SettingsAiUsageTab = () => {
         <Section.Header
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
-          adornment={<OrganizationAdornment />}
+          actions={<OrganizationAdornment />}
         />
         <SettingsEnterpriseFeatureGateCard
           title={t`Organization feature`}

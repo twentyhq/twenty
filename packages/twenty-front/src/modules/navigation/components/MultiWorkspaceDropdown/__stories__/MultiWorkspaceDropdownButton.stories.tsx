@@ -71,6 +71,7 @@ const meta: Meta<typeof MultiWorkspaceDropdownButton> = {
       frontDomain: 'example.com',
       defaultSubdomain: 'app',
       publicFunctionDomain: undefined,
+      serverUrl: 'https://api.example.com',
     });
     jotaiStore.set(availableWorkspacesState.atom, {
       availableWorkspacesForSignIn: AVAILABLE_WORKSPACES,
@@ -241,5 +242,33 @@ export const MobileBoundary: Story = {
         window.innerWidth - 16,
       );
     });
+  },
+};
+
+const HIDDEN_WORKSPACE_LABEL_STORY: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Twenty' });
+
+    await expect(
+      within(trigger).getByRole('img', { name: 'Twenty' }),
+    ).toBeVisible();
+    await userEvent.click(trigger);
+    await expect(
+      await canvas.findByRole('menu', { name: 'Twenty' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const HiddenWorkspaceLabel: Story = {
+  ...HIDDEN_WORKSPACE_LABEL_STORY,
+  args: { shouldHideLabel: true },
+};
+
+export const CollapsedWorkspaceLabel: Story = {
+  ...HIDDEN_WORKSPACE_LABEL_STORY,
+  beforeEach: () => {
+    jotaiStore.set(isNavigationDrawerExpandedState.atom, false);
   },
 };

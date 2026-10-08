@@ -274,6 +274,8 @@ export const SettingsAdminNewAiProvider = () => {
               action={
                 <InlineBanner.Action
                   href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  nativeButton={false}
+                  role="link"
                   render={
                     <Link
                       to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
@@ -290,7 +292,7 @@ export const SettingsAdminNewAiProvider = () => {
             <Section.Header
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
-              adornment={
+              actions={
                 <OrganizationAdornment
                   tooltipContent={customAiProviderTooltipContent}
                 />

@@ -122,10 +122,7 @@ export const RecordInlineCellContainer = () => {
                   label={label}
                   description={fieldDefinition?.metadata?.description}
                   fallback={
-                    <OverflowingTextWithTooltip
-                      text={label}
-                      displayedMaxRows={1}
-                    />
+                    <OverflowingTextWithTooltip text={label} lineClamp={1} />
                   }
                 />
               </StyledLabelContainer>

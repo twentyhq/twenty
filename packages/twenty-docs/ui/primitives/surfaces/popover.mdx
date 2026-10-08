@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
 
-Use `Popover` for contextual information or lightweight controls. `Popup` includes positioning and a portal, so you can compose content directly inside it.
+Use `Popover` for contextual information or lightweight controls. Compose its portal, positioning wrapper and popup separately. Use [Dropdown](/ui/components/navigation/dropdown) for menus, pickers and panels with higher-level navigation.
 
 <StoryEmbed
   storyId="ui-surfaces-popover--documentation"
@@ -22,22 +22,32 @@ Keep the trigger and popup inside `Popover.Root`. The popup can contain text, fo
 ```text
 Popover.Root
 ├── Popover.Trigger
-└── Popover.Popup
-    ├── Popover.Title
-    ├── Popover.Description
-    └── Popover.Close
+└── Popover.Portal
+    ├── Popover.Backdrop (optional)
+    └── Popover.Positioner
+        └── Popover.Popup
+            ├── Popover.Arrow (optional)
+            └── Popover.Viewport (optional)
+                ├── Popover.Title
+                ├── Popover.Description
+                └── Popover.Close
 ```
 
-| Part          | Requirement                             | Purpose                                                               |
-| ------------- | --------------------------------------- | --------------------------------------------------------------------- |
-| `Root`        | Required                                | Coordinates open state and interactions.                              |
-| `Trigger`     | Required for a trigger-anchored popover | Opens or closes the popup and supplies its anchor.                    |
-| `Popup`       | Required                                | Renders positioned content with focus management.                     |
-| `Title`       | Recommended                             | Supplies a visible popup name. An accessible name is always required. |
-| `Description` | Optional                                | Associates explanatory text with the popup.                           |
-| `Close`       | Optional                                | Provides an explicit close action within the popup.                   |
+| Part          | Purpose and native target                                                         |
+| ------------- | --------------------------------------------------------------------------------- |
+| `Root`        | Owns state, triggers and interactions. Renders no DOM element.                    |
+| `Trigger`     | Opens the popup and supplies its default anchor. Targets a button.                |
+| `Portal`      | Chooses the destination. Native props, handlers, `render` and ref target its div. |
+| `Positioner`  | Owns anchors, alignment, offsets and collision handling. Targets its div.         |
+| `Popup`       | Renders content and manages focus. Targets its div.                               |
+| `Arrow`       | Optional styled arrow inside Popup. Targets its div.                              |
+| `Backdrop`    | Optional upstream backdrop inside Portal. Targets its div.                        |
+| `Viewport`    | Optional transition container for changing content. Targets its div.              |
+| `Title`       | Supplies a visible accessible name. Targets an h2.                                |
+| `Description` | Associates explanatory text. Targets a paragraph.                                 |
+| `Close`       | Requests closing. Targets a button.                                               |
 
-`Popup` includes the portal and positioner. Set `arrow` on `Popup` to add its built-in arrow. All parts share their root's context even though the popup renders in a portal; the tree describes component nesting, not the final DOM placement.
+All rendered parts support the installed Base UI native attributes, handlers, refs and element/function `render` composition. Custom components must forward the supplied props and ref. Every part has a public `Popover<Part>Props` and `Popover<Part>State` type. `PopoverRootProps` and `PopoverTriggerProps` preserve payload generics. `PopoverHandle`, `PopoverRootActions`, `PopoverRootChangeEventDetails` and `PopoverRootChangeEventReason` are also exported from `twenty-ui/primitives/surfaces`.
 
 ## Uncontrolled state
 
@@ -49,13 +59,18 @@ import { Popover } from 'twenty-ui/primitives/surfaces';
 export const ImportHelp = () => (
   <Popover.Root defaultOpen={false}>
     <Popover.Trigger>Import help</Popover.Trigger>
-    <Popover.Popup arrow>
-      <Popover.Title>Import a CSV file</Popover.Title>
-      <Popover.Description>
-        Use a header row to identify your columns.
-      </Popover.Description>
-      <Popover.Close>Got it</Popover.Close>
-    </Popover.Popup>
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Arrow />
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close>Got it</Popover.Close>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
   </Popover.Root>
 );
 ```
@@ -76,13 +91,18 @@ export const ImportHelp = () => {
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger>Import help</Popover.Trigger>
-      <Popover.Popup arrow>
-        <Popover.Title>Import a CSV file</Popover.Title>
-        <Popover.Description>
-          Use a header row to identify your columns.
-        </Popover.Description>
-        <Popover.Close>Got it</Popover.Close>
-      </Popover.Popup>
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup>
+            <Popover.Arrow />
+            <Popover.Title>Import a CSV file</Popover.Title>
+            <Popover.Description>
+              Use a header row to identify your columns.
+            </Popover.Description>
+            <Popover.Close>Got it</Popover.Close>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
   );
 };
@@ -101,13 +121,18 @@ import { Popover } from 'twenty-ui/primitives/surfaces';
 export const ImportHelp = () => (
   <Popover.Root>
     <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
-    <Popover.Popup arrow>
-      <Popover.Title>Import a CSV file</Popover.Title>
-      <Popover.Description>
-        Use a header row to identify your columns.
-      </Popover.Description>
-      <Popover.Close render={<Button>Got it</Button>} />
-    </Popover.Popup>
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Arrow />
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
   </Popover.Root>
 );
 ```
@@ -116,9 +141,96 @@ export const ImportHelp = () => (
 
 ## Placement and focus
 
-`Popup` defaults to `side="bottom"`, `align="center"`, and `sideOffset={8}`. Set `arrow` to show an arrow. Set `container` to override the theme's portal container; see [theming](/ui/theming).
+`Positioner` defaults to `side="bottom"`, `align="center"` and `sideOffset={8}`. It accepts the full installed Base UI contract, including element/ref/function/virtual anchors, functional offsets, `positionMethod`, `collisionBoundary`, `collisionPadding`, `collisionAvoidance`, `arrowPadding`, `sticky` and `disableAnchorTracking`. DirectionProvider controls logical positioning and supplies the DOM direction. An explicit `dir` can override the native attribute; use the provider to change logical side placement.
 
-Escape closes the popup and focus returns to the trigger. Outside interaction dismisses it by default. Use the focus props on `Popup` when its content needs a specific initial or return focus target.
+```tsx
+import { useRef } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const AnchoredHelp = () => {
+  const anchor = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={anchor}>
+      <Popover.Root>
+        <Popover.Trigger>Help</Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner
+            anchor={anchor}
+            side="inline-end"
+            align="start"
+            sideOffset={({ anchor }) => anchor.width / 2}
+            collisionBoundary="clipping-ancestors"
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            collisionPadding={8}
+            positionMethod="fixed"
+          >
+            <Popover.Popup aria-label="Help">
+              <Popover.Arrow />
+              Contextual help
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
+  );
+};
+```
+
+Escape closes the popup and restores focus to its trigger. Outside interaction dismisses it by default. `Popup.initialFocus` and `Popup.finalFocus` accept the upstream focus targets and callbacks. `Root.modal` retains Base UI's nonmodal default, modal and trap-focus modes for standalone usage.
+
+## Portal destinations and theme
+
+Set `container` and `keepMounted` on `Portal`:
+
+| Container                  | Resolution                                                                                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Omitted or `undefined`     | Uses the nearest scoped ThemeProvider container. Without one, Base UI uses its parent portal or document body.                                                |
+| `null`                     | Waits without rendering portal content until the container changes. It does not fall back to the theme or body.                                               |
+| Element, ShadowRoot or ref | Passes the supplied target unchanged to Base UI. An unresolved ref retains Base UI's parent-portal/body fallback; use explicit null when waiting is required. |
+
+The default scoped destination preserves its CSS tokens and color scheme. An explicit destination inherits CSS from its actual DOM scope. Put it inside the intended theme scope, or supply the theme styles there. ShadowRoot targets need the library's CSS and theme styles in that shadow tree. React theme context and provided text direction remain available across portals. This API does not expand the renderer's permitted portal destinations.
+
+## Detached triggers and payloads
+
+`Popover.createHandle<TPayload>()` connects detached triggers to a root and exposes `open(triggerId)`, `close()` and `isOpen`. `Popover.Handle` is the installed upstream handle constructor. Root's render function receives the active payload. Call imperative actions from event handlers or effects.
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const OwnerHelp = () => {
+  const [handle] = useState(() => Popover.createHandle<{ name: string }>());
+
+  return (
+    <>
+      <Popover.Trigger handle={handle} id="owner" payload={{ name: 'Alice' }}>
+        Owner
+      </Popover.Trigger>
+      <Popover.Root handle={handle}>
+        {({ payload }) => (
+          <Popover.Portal>
+            <Popover.Positioner>
+              <Popover.Popup aria-label="Account owner">
+                {payload?.name}
+                <Popover.Close>Close</Popover.Close>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        )}
+      </Popover.Root>
+    </>
+  );
+};
+```
+
+`onOpenChange` preserves `reason`, `event`, `trigger`, `cancel()` and `preventUnmountOnClose()`. Controlled roots retain `triggerId`; uncontrolled roots retain `defaultTriggerId`. `actionsRef` exposes the upstream close/unmount actions.
+
+## Migration
+
+Move `container` and `keepMounted` from Popup to Portal. Move placement, anchor and collision props to Positioner. Replace `Popup.arrow` with an explicit `Popover.Arrow` child. Popup's native props, handlers, focus props and ref continue to target the content element. Dropdown.Content keeps its existing convenient assembly.
+
+Inside front components, use nonmodal composition within the existing scoped portal policy. Native browser popovers/dialogs and direct app-owned modality are prohibited; use the SDK host dialog API for dialogs. Renderer portal, geometry, scrolling and dismissal capability work remains separate from this primitive API.
 
 ## Props
 
