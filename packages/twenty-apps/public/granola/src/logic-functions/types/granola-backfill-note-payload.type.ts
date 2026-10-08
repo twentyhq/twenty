@@ -6,7 +6,7 @@ export type GranolaBackfillNotePayload = {
   noteId: string;
   updatedAt?: string;
   selectedFolderIds?: string[];
-  runDay?: string;
+  runHour?: string;
   deferredWebhook?: GranolaDeferredWebhook;
   retryAttempt?: number;
 };

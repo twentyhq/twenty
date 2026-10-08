@@ -25,7 +25,7 @@ export const enqueueGranolaBackfillOrThrow = async ({
   }
 
   const selectedFolders = folderIds ?? registration.folderIds;
-  const runDay = new Date().toISOString().slice(0, 10);
+  const runHour = new Date().toISOString().slice(0, 13);
   const discoveryFolders =
     selectedFolders.length > 0 ? [...new Set(selectedFolders)] : [undefined];
 
@@ -36,7 +36,7 @@ export const enqueueGranolaBackfillOrThrow = async ({
       updatedAfter,
       folderId,
       pageIndex: 0,
-      runDay,
+      runHour,
     };
 
     await enqueueGranolaJobOrThrow({

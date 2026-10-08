@@ -135,7 +135,7 @@ describe('granolaBackfillNoteHandler when Granola is rate limited', () => {
     registrationId: 'reg-1',
     noteId: NOTE_ID,
     updatedAt: '2026-09-05T11:00:00Z',
-    runDay: '2026-09-06',
+    runHour: '2026-09-06T10',
   };
 
   beforeEach(() => {

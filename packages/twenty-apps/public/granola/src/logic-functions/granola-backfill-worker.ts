@@ -62,7 +62,7 @@ export const granolaBackfillWorkerHandler = async (
         noteId,
         updatedAt: updatedAtByNoteId.get(noteId),
         selectedFolderIds: [...(registration?.folderIds ?? [])].sort(),
-        runDay: payload.runDay,
+        runHour: payload.runHour,
       };
 
       await enqueueGranolaJobOrThrow({
