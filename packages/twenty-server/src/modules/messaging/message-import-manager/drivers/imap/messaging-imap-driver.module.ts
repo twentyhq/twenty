@@ -7,6 +7,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
+import { ImapFindExpungedMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-expunged-messages.service';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
@@ -31,6 +32,7 @@ import { ImapSyncService } from 'src/modules/messaging/message-import-manager/dr
     ImapSyncService,
     ImapMessageParserService,
     ImapFindDraftsFolderService,
+    ImapFindExpungedMessagesService,
     ImapFindSentFolderService,
   ],
   exports: [

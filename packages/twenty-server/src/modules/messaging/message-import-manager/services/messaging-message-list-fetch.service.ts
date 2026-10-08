@@ -196,17 +196,6 @@ export class MessagingMessageListFetchService {
             }
           }
 
-          for (const messageList of messageLists) {
-            const { nextSyncCursor, folderId } = messageList;
-
-            await this.messagingCursorService.updateCursor(
-              freshMessageChannel,
-              nextSyncCursor,
-              workspaceId,
-              folderId,
-            );
-          }
-
           const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
             ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
                 freshMessageChannel,
@@ -246,6 +235,17 @@ export class MessagingMessageListFetchService {
                 },
               );
             }
+          }
+
+          for (const messageList of messageLists) {
+            const { nextSyncCursor, folderId } = messageList;
+
+            await this.messagingCursorService.updateCursor(
+              freshMessageChannel,
+              nextSyncCursor,
+              workspaceId,
+              folderId,
+            );
           }
 
           this.logger.log(

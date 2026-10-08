@@ -5,6 +5,7 @@ export type MailboxState = {
   uidValidity: number;
   uidNext: number;
   maxUid: number;
+  messageCount: number;
   highestModSeq?: bigint;
 };
 
@@ -49,6 +50,7 @@ export const resolveMailboxState = async (
     uidValidity: Number(mailbox.uidValidity ?? 0),
     uidNext,
     maxUid: Math.max(0, uidNext - 1),
+    messageCount: mailbox.exists,
     highestModSeq: mailbox.highestModseq,
   };
 };
