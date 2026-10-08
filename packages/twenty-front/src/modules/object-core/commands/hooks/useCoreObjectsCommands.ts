@@ -5,9 +5,18 @@ import {
   CoreObjectNameSingular,
   FeatureFlagKey,
 } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
+import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
+import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -22,6 +31,22 @@ export const useCoreObjectsCommands = () => {
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
+
+  const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
+  const { objectMetadataItem: workflowObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+    });
+
+  const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
+  );
+
+  const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
 
   const isOnCoreWorkflowsIndex =
     isWorkflowCoreIndexPageEnabled &&
@@ -41,13 +66,46 @@ export const useCoreObjectsCommands = () => {
     !isInPreviewMode &&
     matchesSidePanelSearch(coreWorkflowFiltersCommandLabel);
 
+  const coreWorkflowsDeleteCommandLabel =
+    selectedCoreWorkflowIds.length === 1
+      ? t`Delete Workflow`
+      : t`Delete Workflows`;
+
+  const shouldDisplayCoreWorkflowsDeleteCommand =
+    isOnCoreWorkflowsIndex &&
+    !isInPreviewMode &&
+    isNonEmptyArray(selectedCoreWorkflowIds) &&
+    canManageWorkflows &&
+    matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
+
   const coreObjectCommandIds = shouldDisplayCoreWorkflowFiltersCommand
     ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
     : [];
 
+  const coreSelectionCommandIds = shouldDisplayCoreWorkflowsDeleteCommand
+    ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
+    : [];
+
+  const coreSelectionSectionContext =
+    isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
+      ? {
+          label: getSelectedRecordsCountLabel({
+            objectMetadataItem: {
+              labelSingular: t`Workflow`,
+              labelPlural: t`Workflows`,
+            },
+            numberOfSelectedRecords: selectedCoreWorkflowIds.length,
+          }),
+        }
+      : undefined;
+
   return {
     coreObjectCommandIds,
+    coreSelectionCommandIds,
+    coreSelectionSectionContext,
     coreWorkflowFiltersCommandLabel,
     shouldDisplayCoreWorkflowFiltersCommand,
+    coreWorkflowsDeleteCommandLabel,
+    shouldDisplayCoreWorkflowsDeleteCommand,
   };
 };

@@ -5,13 +5,16 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { DELETE_CORE_WORKFLOWS } from '@/object-core/workflows/graphql/mutations/deleteCoreWorkflows';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import {
   EMPTY_CORE_WORKFLOWS_SELECTION,
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
+import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -28,8 +31,13 @@ export const useDeleteSelectedCoreWorkflows = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
+  const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
   const setCoreWorkflowsSelection = useSetAtomState(
     coreWorkflowsSelectionState,
+  );
+
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
   );
 
   const { removeNavigationMenuItemsByTargetRecordIds } =
@@ -42,7 +50,14 @@ export const useDeleteSelectedCoreWorkflows = () => {
     DeleteCoreWorkflowsMutationVariables
   >(DELETE_CORE_WORKFLOWS, { client: apolloCoreClient });
 
-  const deleteSelectedCoreWorkflows = async (coreWorkflowIds: string[]) => {
+  const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
+
+  const deleteSelectedCoreWorkflows = async (
+    coreWorkflowIds = selectedCoreWorkflowIds,
+  ) => {
     if (!isNonEmptyArray(coreWorkflowIds)) {
       return false;
     }
@@ -97,5 +112,5 @@ export const useDeleteSelectedCoreWorkflows = () => {
     return true;
   };
 
-  return { deleteSelectedCoreWorkflows };
+  return { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds };
 };

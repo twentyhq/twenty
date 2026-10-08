@@ -23,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import {
+  ContextStorePageType,
   CoreObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
@@ -67,6 +68,9 @@ export const CommandMenuContextProviderContent = ({
     isCore &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
       CoreObjectNameSingular.Workflow;
+  const isCoreWorkflowIndex =
+    isCoreWorkflow &&
+    commandMenuContextApi.pageType === ContextStorePageType.Index;
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const {
     hasGlobalRecordCreationCommandTemplate,
@@ -104,6 +108,11 @@ export const CommandMenuContextProviderContent = ({
       : commandMenuItems;
 
     const contextCommandMenuItems = commandMenuItemsToDisplay
+      .filter(
+        (item) =>
+          !isCoreWorkflowIndex ||
+          item.engineComponentKey !== EngineComponentKey.DELETE_RECORDS,
+      )
       .filter(
         (item) =>
           !isCoreWorkflow ||
@@ -160,6 +169,7 @@ export const CommandMenuContextProviderContent = ({
     effectivePageLayoutId,
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
+    isCoreWorkflowIndex,
   ]);
 
   return (

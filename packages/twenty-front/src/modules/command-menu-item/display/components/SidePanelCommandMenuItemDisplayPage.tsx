@@ -64,7 +64,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
-  const { coreObjectCommandIds } = useCoreObjectsCommands();
+  const {
+    coreObjectCommandIds,
+    coreSelectionCommandIds,
+    coreSelectionSectionContext,
+  } = useCoreObjectsCommands();
 
   const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
   const currentViewSectionContext =
@@ -140,7 +144,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const getSectionContext = (section: CommandMenuItemSection) => {
     switch (section) {
       case 'SELECTION':
-        return selectionSectionContext;
+        return coreSelectionSectionContext ?? selectionSectionContext;
       case 'CURRENT_VIEW':
         return currentViewSectionContext;
       case 'THIS_OBJECT':
@@ -163,13 +167,18 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       ];
     }
 
+    if (section === 'SELECTION') {
+      return coreSelectionCommandIds;
+    }
+
     return getSectionAppActions(section).map((item) => item.id);
   };
 
   const hasNoMatchingItems =
     !matchingItems.length &&
     appActions.length === 0 &&
-    coreObjectCommandIds.length === 0;
+    coreObjectCommandIds.length === 0 &&
+    coreSelectionCommandIds.length === 0;
 
   const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
 
@@ -218,7 +227,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
             {sectionCommandMenuItems.map((item) => (
               <CommandMenuItemRenderer item={item} key={item.id} />
             ))}
-            {section === 'THIS_OBJECT' && <CoreObjectsCommands />}
+            {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
+              <CoreObjectsCommands section={section} />
+            )}
             {getSectionAppActions(section).map((item) => {
               const handleClick = () => {
                 item.onClick();

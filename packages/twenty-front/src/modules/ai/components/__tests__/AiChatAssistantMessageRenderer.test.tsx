@@ -9,13 +9,15 @@ jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
     hasAssistantTextResponseStarted,
     parts,
     isTrailingWhileStreaming,
+    workDurationMs,
   }: {
     parts: unknown[];
     hasAssistantTextResponseStarted: boolean;
     isTrailingWhileStreaming?: boolean;
+    workDurationMs?: number | null;
   }) => (
     <div data-testid="thinking-steps-display">
-      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}`}
+      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}${workDurationMs ? `-worked-${workDurationMs}` : ''}`}
     </div>
   ),
 }));
@@ -51,9 +53,11 @@ const renderAssistantRenderer = (
   {
     isLastMessageStreaming = false,
     shouldHideThinkingSteps = false,
+    workDurationMs,
   }: {
     isLastMessageStreaming?: boolean;
     shouldHideThinkingSteps?: boolean;
+    workDurationMs?: number | null;
   } = {},
 ) => {
   return render(
@@ -62,6 +66,7 @@ const renderAssistantRenderer = (
         messageParts={messageParts}
         isLastMessageStreaming={isLastMessageStreaming}
         shouldHideThinkingSteps={shouldHideThinkingSteps}
+        workDurationMs={workDurationMs}
       />
     </ThemeProvider>,
   );
@@ -99,6 +104,44 @@ describe('AiChatAssistantMessageRenderer', () => {
     );
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'Final answer',
+    );
+  });
+
+  it('should give the work duration to the last group of thinking steps only', () => {
+    const messageParts = [
+      {
+        type: 'reasoning',
+        text: 'First reasoning',
+        state: 'done',
+      },
+      {
+        type: 'text',
+        text: 'Intermediate answer',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts, { workDurationMs: 83_000 });
+
+    const thinkingStepsDisplays = screen.getAllByTestId(
+      'thinking-steps-display',
+    );
+
+    expect(thinkingStepsDisplays[0]).toHaveTextContent(
+      /^thinking-1-answer-started$/,
+    );
+    expect(thinkingStepsDisplays[1]).toHaveTextContent(
+      'thinking-1-answer-started-worked-83000',
     );
   });
 

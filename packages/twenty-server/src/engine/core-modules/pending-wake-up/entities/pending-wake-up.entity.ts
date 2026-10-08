@@ -11,7 +11,6 @@ import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 
 import { CREATE_PENDING_WAKE_UP_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/create-pending-wake-up-table-upgrade-command-name.constant';
 import { ADD_PAYLOAD_TO_PENDING_WAKE_UP_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-payload-to-pending-wake-up-upgrade-command-name.constant';
-import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
@@ -29,7 +28,7 @@ export class PendingWakeUpEntity extends WorkspaceRelatedEntity {
   id: string;
 
   @Column({ type: 'varchar' })
-  ownerType: PendingWakeUpOwnerType;
+  ownerType: string;
 
   @Column({ type: 'uuid' })
   ownerId: string;
