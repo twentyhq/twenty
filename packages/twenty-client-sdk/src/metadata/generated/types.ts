@@ -779,6 +779,9 @@ export default {
             "id": [
                 482
             ],
+            "isUninstallBlockedByOtherWorkspaceInstallations": [
+                4
+            ],
             "logicFunctions": [
                 299
             ],
@@ -2458,6 +2461,9 @@ export default {
             ],
             "sentry": [
                 448
+            ],
+            "serverUrl": [
+                1
             ],
             "signInPrefilled": [
                 4
@@ -11371,7 +11377,7 @@ export default {
             "toolCall": [
                 287
             ],
-            "workspaceMemberId": [
+            "workspaceMemberIds": [
                 482
             ],
             "__typename": [

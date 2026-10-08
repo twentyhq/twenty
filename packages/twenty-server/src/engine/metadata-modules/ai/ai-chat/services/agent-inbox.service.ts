@@ -5,6 +5,7 @@ import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
@@ -16,6 +17,7 @@ import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/buil
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -25,6 +27,16 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+
+const findNewWorkspaceMemberIds = (
+  thread: AgentChatThreadWorkspaceEntity | null,
+  workspaceMemberIds: string[],
+) =>
+  [...new Set(workspaceMemberIds)].filter(
+    (workspaceMemberId) =>
+      workspaceMemberId !== thread?.workspaceMemberId &&
+      !thread?.writerWorkspaceMemberIds?.includes(workspaceMemberId),
+  );
 
 @Injectable()
 export class AgentInboxService {
@@ -36,6 +48,7 @@ export class AgentInboxService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
+    private readonly sharingService: AgentChatSharingService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -69,7 +82,6 @@ export class AgentInboxService {
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
       buildInboxMessageIds({
         senderKey: senderDetails.key,
-        workspaceMemberId: input.workspaceMemberId,
         threadKey: input.threadKey,
         idempotencyKey: input.idempotencyKey,
       });
@@ -82,7 +94,20 @@ export class AgentInboxService {
       return { threadId, toolCallId, isDismissed: true };
     }
 
+    // opened on every send, so members a later send lists join the
+    // conversation, even when the message it repeats was already written
+    const openThread = () =>
+      this.openThread({
+        workspaceId,
+        sender,
+        workspaceMemberIds: input.workspaceMemberIds,
+        threadKey: input.threadKey,
+        title: input.title,
+      });
+
     if (await this.messageExists({ workspaceId, id: messageId })) {
+      await openThread();
+
       return {
         threadId,
         toolCallId,
@@ -113,17 +138,7 @@ export class AgentInboxService {
           })
         : undefined;
 
-    const thread =
-      existingThread ??
-      (
-        await this.openThread({
-          workspaceId,
-          sender,
-          workspaceMemberId: input.workspaceMemberId,
-          threadKey: input.threadKey,
-          title: input.title,
-        })
-      ).thread;
+    const { thread } = await openThread();
 
     await this.ensureOpener({
       workspaceId,
@@ -174,21 +189,22 @@ export class AgentInboxService {
     return { threadId, toolCallId, isDismissed: false, awaitedToolOutput };
   }
 
-  // The thread key picks the sender's conversation with the member, so every
-  // write with the same key lands in one thread. A conversation with no
-  // member belongs to no inbox, and only the server reads it. One the member
-  // deleted is returned as it is, and the caller decides whether to write to it.
+  // The thread key picks the sender's conversation: the first member to
+  // receive it owns it, and every member listed then or later follows it. A
+  // conversation opened with no member belongs to no inbox, and only the
+  // server reads it. One a member deleted is returned as it is, and the caller
+  // decides whether to write to it.
   async openThread({
     workspaceId,
     sender,
-    workspaceMemberId,
+    workspaceMemberIds,
     threadKey,
     title,
     isArchivedOnCreate = false,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    workspaceMemberId: string | null;
+    workspaceMemberIds: string[];
     threadKey: string;
     title: string;
     isArchivedOnCreate?: boolean;
@@ -198,22 +214,65 @@ export class AgentInboxService {
   }> {
     const threadId = buildInboxThreadId({
       senderKey: getAgentInboxSenderDetails(sender).key,
-      workspaceMemberId,
       threadKey,
     });
     const existingThread = await this.findThread({ workspaceId, threadId });
 
-    if (isDefined(existingThread)) {
-      return { thread: existingThread, isCreated: false };
+    // checked before any write, so a member who cannot use chats fails the open
+    // before it creates the conversation or shares it with anyone
+    if (!isDefined(existingThread?.deletedAt)) {
+      await Promise.all(
+        findNewWorkspaceMemberIds(existingThread, workspaceMemberIds).map(
+          (workspaceMemberId) =>
+            this.sharingService.getAuthContext({
+              workspaceId,
+              workspaceMemberId,
+            }),
+        ),
+      );
     }
 
+    const openedThread = isDefined(existingThread)
+      ? { thread: existingThread, isCreated: false }
+      : await this.createThread({
+          workspaceId,
+          threadId,
+          ownerWorkspaceMemberId: workspaceMemberIds[0],
+          title,
+          isArchived: isArchivedOnCreate,
+        });
+
+    if (!isDefined(openedThread.thread.deletedAt)) {
+      await this.addParticipants({
+        workspaceId,
+        thread: openedThread.thread,
+        workspaceMemberIds,
+      });
+    }
+
+    return openedThread;
+  }
+
+  private async createThread({
+    workspaceId,
+    threadId,
+    ownerWorkspaceMemberId,
+    title,
+    isArchived,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    ownerWorkspaceMemberId: string | undefined;
+    title: string;
+    isArchived: boolean;
+  }): Promise<{ thread: AgentChatThreadWorkspaceEntity; isCreated: boolean }> {
     try {
       const thread = await this.threadService.createThread({
         workspaceId,
-        workspaceMemberId,
+        workspaceMemberId: ownerWorkspaceMemberId ?? null,
         id: threadId,
         title,
-        isArchived: isArchivedOnCreate,
+        isArchived,
       });
 
       return { thread, isCreated: true };
@@ -227,6 +286,44 @@ export class AgentInboxService {
       }
 
       return { thread: concurrentlyCreatedThread, isCreated: false };
+    }
+  }
+
+  // Shared by its owner, so a member who cannot have the conversation fails
+  // the open like an owner who cannot. A conversation with no owner has no
+  // one to share it, and stays out of every inbox.
+  private async addParticipants({
+    workspaceId,
+    thread,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    const newWorkspaceMemberIds = findNewWorkspaceMemberIds(
+      thread,
+      workspaceMemberIds,
+    );
+
+    if (newWorkspaceMemberIds.length === 0) {
+      return;
+    }
+
+    if (!isDefined(thread.workspaceMemberId)) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    const participantWorkspaceMemberIds =
+      await this.threadService.addParticipants({
+        workspaceId,
+        threadId: thread.id,
+        workspaceMemberId: thread.workspaceMemberId,
+        participantWorkspaceMemberIds: newWorkspaceMemberIds,
+      });
+
+    if (participantWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
+      throwAgentChatThreadNotFound();
     }
   }
 

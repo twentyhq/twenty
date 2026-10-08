@@ -37,7 +37,7 @@ const DirectionalLayoutExample = ({
           </div>
         </DirectionProvider>
         <Callout
-          variant="info"
+          status="info"
           title="Account details"
           description="Review the information before continuing."
         />

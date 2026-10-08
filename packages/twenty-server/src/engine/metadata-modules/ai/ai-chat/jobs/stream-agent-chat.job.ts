@@ -656,9 +656,16 @@ export class StreamAgentChatJob {
       usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
     }
 
+    if (part.type === 'start') {
+      return { startedAt: new Date().toISOString() };
+    }
+
     if (part.type === 'finish') {
+      const finishedAt = new Date().toISOString();
+
       return {
-        createdAt: new Date().toISOString(),
+        createdAt: finishedAt,
+        finishedAt,
         usage: {
           inputTokens: usageTotals.inputTokens,
           outputTokens: usageTotals.outputTokens,

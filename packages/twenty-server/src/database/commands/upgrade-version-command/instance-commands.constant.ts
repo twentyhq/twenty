@@ -235,6 +235,7 @@ import { AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceComm
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524805-add-upgrade-migration-workspace-id-created-at-index-concurrently';
 import { AddPayloadToPendingWakeUpFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791438611736-add-payload-to-pending-wake-up';
 import { MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791438611737-move-agent-run-suspensions-to-pending-wake-ups';
+import { RestoreAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791464994704-restore-agent-evaluation-inputs';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -472,4 +473,5 @@ export const INSTANCE_COMMANDS = [
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand,
   AddPayloadToPendingWakeUpFastInstanceCommand,
   MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand,
+  RestoreAgentEvaluationInputsFastInstanceCommand,
 ];

@@ -345,6 +345,7 @@ type Application {
   frontComponents: [FrontComponent!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
+  isUninstallBlockedByOtherWorkspaceInstallations: Boolean!
   logicFunctions: [LogicFunction!]!
   logoFileId: UUID
   logoUrl: String
@@ -1138,6 +1139,7 @@ type ClientConfig {
   publicFeatureFlags: [PublicFeatureFlag!]!
   publicFunctionDomain: String
   sentry: Sentry!
+  serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
 }
@@ -4242,7 +4244,7 @@ input SendInboxMessageInput {
   threadKey: String!
   title: String!
   toolCall: JSON
-  workspaceMemberId: UUID!
+  workspaceMemberIds: [UUID!]!
 }
 
 type SendInboxMessageResult {

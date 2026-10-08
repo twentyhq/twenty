@@ -1,48 +1,35 @@
-import { memo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
+import { memo, useRef, useState, type MouseEvent } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { TooltipBody } from '@ui/primitives/surfaces/Tooltip/internal/TooltipBody';
-import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 import { Text } from '@ui/primitives/typography/Text/Text';
-import { LinkifiedText } from './internal/LinkifiedText/LinkifiedText';
+import { type OverflowingTextWithTooltipProps } from './types/OverflowingTextWithTooltipProps';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 
 import styles from './OverflowingTextWithTooltip.module.scss';
 
-type OverflowingTextWithTooltipProps = {
-  size?: 'large' | 'small';
-  isTooltipMultiline?: boolean;
-  displayedMaxRows?: number;
-  tooltipDelay?: number;
-  tooltipPlace?: TooltipSide;
-  alwaysShowTooltip?: boolean;
-  isFocusable?: boolean;
-} & (
-  | {
-      text: string | null | undefined;
-      tooltipContent?: string;
-    }
-  | {
-      text: Exclude<ReactNode, string | null | undefined>;
-      tooltipContent: string;
-    }
-);
-
 export const OverflowingTextWithTooltip = memo(
   function OverflowingTextWithTooltip({
-    size = 'small',
     text,
     isTooltipMultiline,
-    displayedMaxRows,
+    truncate,
+    lineClamp,
     tooltipContent,
     tooltipDelay = 500,
     tooltipPlace = 'bottom',
     alwaysShowTooltip = false,
     isFocusable = false,
+    render,
+    ref,
+    className,
+    ...props
   }: OverflowingTextWithTooltipProps) {
     const textRef = useRef<HTMLDivElement>(null);
+    const mergedRef = useMergedRefs(textRef, ref);
 
     const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -71,11 +58,6 @@ export const OverflowingTextWithTooltip = memo(
       setIsTooltipOpen(isOverflowing || alwaysShowTooltip);
     };
 
-    const handleTextClick = () => {
-      textRef.current?.focus();
-      handleOpenChange(true);
-    };
-
     const handleTooltipClick = (event: MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -87,7 +69,7 @@ export const OverflowingTextWithTooltip = memo(
         ? text
         : null;
 
-    const isMultiline = isDefined(displayedMaxRows);
+    const isMultiline = isDefined(lineClamp);
 
     return (
       <Tooltip.Root
@@ -97,8 +79,7 @@ export const OverflowingTextWithTooltip = memo(
           const shouldKeepTooltipOpen =
             !open &&
             eventDetails.reason === 'trigger-hover' &&
-            isFocusable &&
-            document.activeElement === textRef.current;
+            textRef.current?.contains(document.activeElement);
 
           if (shouldKeepTooltipOpen) {
             eventDetails.cancel();
@@ -118,23 +99,27 @@ export const OverflowingTextWithTooltip = memo(
           render={
             <Text
               {...(isMultiline
-                ? { lineClamp: displayedMaxRows || 1 }
-                : { truncate: true })}
-              data-testid="tooltip"
+                ? { lineClamp }
+                : { truncate: truncate ?? true })}
               data-content-overflowing={isTitleOverflowing ? '' : undefined}
               className={clsx(
                 isMultiline
                   ? styles.overflowingMultilineText
                   : styles.overflowingText,
-                size === 'large' && styles.large,
+                className,
               )}
-              ref={textRef}
-              tabIndex={isFocusable ? 0 : undefined}
-              onPointerEnter={updateOverflowState}
-              onFocus={isFocusable ? () => handleOpenChange(true) : undefined}
-              onClick={isFocusable ? handleTextClick : undefined}
+              render={render}
+              ref={mergedRef}
+              {...mergeProps<'div'>(
+                {
+                  tabIndex: isFocusable ? 0 : undefined,
+                  onPointerEnter: updateOverflowState,
+                  onFocus: () => handleOpenChange(true),
+                },
+                props,
+              )}
             >
-              {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
+              {text}
             </Text>
           }
         />

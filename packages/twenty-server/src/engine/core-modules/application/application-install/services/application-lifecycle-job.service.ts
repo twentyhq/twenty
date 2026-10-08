@@ -75,10 +75,15 @@ export class ApplicationLifecycleJobService {
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
-    await this.applicationService.findOneApplicationWithRelationsOrThrow({
-      universalIdentifier,
-      workspaceId,
-    });
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        universalIdentifier,
+        workspaceId,
+      });
+
+    await this.applicationService.assertUninstallIsNotBlockedByOtherWorkspaceInstallationsOrThrow(
+      { application, workspaceId },
+    );
 
     return this.triggerLifecycleJob<TriggerUninstallApplicationJobData>({
       operation: 'uninstall',

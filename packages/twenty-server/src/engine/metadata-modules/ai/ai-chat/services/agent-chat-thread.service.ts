@@ -9,6 +9,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -80,6 +81,27 @@ export class AgentChatThreadService {
     });
 
     return thread;
+  }
+
+  // The client picks a new chat's id, so its first message creates the thread.
+  // An existing thread is left for the caller to check access to.
+  async createThreadIfMissing({
+    threadId,
+    ...args
+  }: AgentChatThreadAccessArgs): Promise<void> {
+    if (
+      await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
+    ) {
+      return;
+    }
+
+    try {
+      await this.createThread({ ...args, id: threadId });
+    } catch (error) {
+      if (!isUniqueViolationError(error)) {
+        throw error;
+      }
+    }
   }
 
   // owned threads are skipped so an upsert cannot reassign them

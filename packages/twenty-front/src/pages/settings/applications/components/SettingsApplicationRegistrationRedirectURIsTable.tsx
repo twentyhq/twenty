@@ -1,3 +1,4 @@
+import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -48,7 +49,10 @@ export const SettingsApplicationRegistrationRedirectURIsTable = ({
                     mobileGridAutoColumns="1fr 20px"
                   >
                     <TableCell color={themeCssVariables.font.color.primary}>
-                      <OverflowingTextWithTooltip text={redirectUri} />
+                      <OverflowingTextWithTooltip
+                        text={<LinkifiedText text={redirectUri} />}
+                        tooltipContent={redirectUri}
+                      />
                     </TableCell>
 
                     <TableCell align="right">

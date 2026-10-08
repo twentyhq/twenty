@@ -290,7 +290,7 @@ export const SettingsAdminNewAiProvider = () => {
             <Section.Header
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
-              adornment={
+              actions={
                 <OrganizationAdornment
                   tooltipContent={customAiProviderTooltipContent}
                 />

@@ -7,6 +7,10 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
@@ -15,6 +19,7 @@ const workspace = { id: WORKSPACE_ID } as never;
 
 const buildResolver = () => {
   const threadRepository = {
+    existsBy: jest.fn().mockResolvedValue(true),
     findOne: jest.fn().mockResolvedValue(null),
     update: jest.fn().mockResolvedValue({ affected: 0 }),
     delete: jest.fn(),
@@ -26,6 +31,7 @@ const buildResolver = () => {
     query: jest.fn().mockResolvedValue([]),
   };
   const sharing = {
+    createThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     getAuthContext: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
     getReadableThread: jest
       .fn()
@@ -162,6 +168,55 @@ describe('Shared conversation API boundaries', () => {
       workspaceId: WORKSPACE_ID,
     });
     expect(streaming.streamAgentChat).toHaveBeenCalled();
+  });
+
+  it('creates the thread of a new chat on its first message', async () => {
+    const { resolver, sharing, threadRepository, streaming } = buildResolver();
+    threadRepository.existsBy.mockResolvedValue(false);
+    await resolver.sendChatMessage(
+      THREAD_ID,
+      'Hello',
+      'message',
+      null,
+      undefined,
+      null,
+      null,
+      'member-workspace',
+      'owner',
+      workspace,
+    );
+    expect(sharing.createThread).toHaveBeenCalledWith({
+      id: THREAD_ID,
+      workspaceMemberId: 'owner',
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
+  });
+
+  it('does not let a new chat id take over a thread created concurrently by someone else', async () => {
+    const { resolver, sharing, threadRepository, streaming } = buildResolver();
+    threadRepository.existsBy.mockResolvedValue(false);
+    sharing.createThread.mockRejectedValue(
+      new TwentyOrmException(
+        'Duplicate',
+        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
+      ),
+    );
+    await expect(
+      resolver.sendChatMessage(
+        THREAD_ID,
+        'Hello',
+        'message',
+        null,
+        undefined,
+        null,
+        null,
+        'viewer-workspace',
+        VIEWER_ID,
+        workspace,
+      ),
+    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+    expect(streaming.streamAgentChat).not.toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {

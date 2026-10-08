@@ -25,11 +25,16 @@ it('labels the dialog and keeps the title level independent of its size', () => 
   render(
     <ThemeProvider colorScheme="light">
       <Dialog.Root open>
-        <Dialog.Popup initialFocus={false}>
-          <Dialog.Title level={3} size="sm">
-            Grant credits
-          </Dialog.Title>
-        </Dialog.Popup>
+        <Dialog.Portal>
+          <Dialog.Backdrop />
+          <Dialog.Viewport>
+            <Dialog.Popup initialFocus={false}>
+              <Dialog.Title level={3} size="sm">
+                Grant credits
+              </Dialog.Title>
+            </Dialog.Popup>
+          </Dialog.Viewport>
+        </Dialog.Portal>
       </Dialog.Root>
     </ThemeProvider>,
   );
