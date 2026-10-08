@@ -67,14 +67,28 @@ export class SecureHttpClientService {
         })
       : axios.create(boundedAxiosConfig);
 
+    const callerSignalByRequestSignal = new WeakMap<
+      AbortSignal,
+      AbortSignal | undefined
+    >();
+
     client.interceptors.request.use((requestConfig) => {
+      const currentSignal = requestConfig.signal as AbortSignal | undefined;
+      const callerSignal =
+        isDefined(currentSignal) &&
+        callerSignalByRequestSignal.has(currentSignal)
+          ? callerSignalByRequestSignal.get(currentSignal)
+          : currentSignal;
+
       const deadlineSignal = AbortSignal.timeout(
         requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
       );
-
-      requestConfig.signal = isDefined(requestConfig.signal)
-        ? AbortSignal.any([requestConfig.signal as AbortSignal, deadlineSignal])
+      const requestSignal = isDefined(callerSignal)
+        ? AbortSignal.any([callerSignal, deadlineSignal])
         : deadlineSignal;
+
+      callerSignalByRequestSignal.set(requestSignal, callerSignal);
+      requestConfig.signal = requestSignal;
 
       return requestConfig;
     });
@@ -86,7 +100,8 @@ export class SecureHttpClientService {
         retryCondition: (error) =>
           axiosRetry.isNetworkOrIdempotentRequestError(error) &&
           error.code !== 'ECONNABORTED' &&
-          error.code !== 'ETIMEDOUT',
+          error.code !== 'ETIMEDOUT' &&
+          error.code !== 'ERR_CANCELED',
       });
     }
 
