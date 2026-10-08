@@ -97,7 +97,10 @@ describe('validateUsageLimitAgainstKindRule', () => {
 
     it('accepts a zero quota that blocks the usage', () => {
       expect(() =>
-        validateUsageLimitAgainstKindRule({ ...validQuotaLimit, limitValue: 0 }),
+        validateUsageLimitAgainstKindRule({
+          ...validQuotaLimit,
+          limitValue: 0,
+        }),
       ).not.toThrow();
     });
 
