@@ -94,6 +94,8 @@ const buildValidationRuleViolationError = (fieldMetadataId: string) =>
     ],
   });
 let mockValidationRules: ValidationRule[] = [];
+const openRecordCreationFormSettingsInSidePanel = jest.fn();
+const mockHasPermissionFlag = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
   useObjectMetadataItemById: () => ({ objectMetadataItem: COMPANY_OBJECT }),
@@ -122,6 +124,19 @@ jest.mock(
 jest.mock('@/validation-rules/hooks/useValidationRules', () => ({
   useValidationRules: () => ({ validationRules: mockValidationRules }),
 }));
+
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
+  useHasPermissionFlag: () => mockHasPermissionFlag(),
+}));
+
+jest.mock(
+  '@/side-panel/hooks/useOpenRecordCreationFormSettingsInSidePanel',
+  () => ({
+    useOpenRecordCreationFormSettingsInSidePanel: () => ({
+      openRecordCreationFormSettingsInSidePanel,
+    }),
+  }),
+);
 
 jest.mock('@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement', () => ({
   useHotkeysOnFocusedElement: () => undefined,
@@ -243,6 +258,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     resetJotaiStore();
     mockValidationRules = [];
     settleRecordCreationDraft.mockResolvedValue({});
+    mockHasPermissionFlag.mockReturnValue(true);
     seedRecordFormPageLayout();
     jotaiStore.set(
       recordCreationFormRequestComponentState.atomFamily({
@@ -390,5 +406,27 @@ describe('SidePanelRecordCreationFormPage', () => {
       draftRecord: {},
     });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
+  });
+
+  it('opens the form configuration for members allowed to edit layouts', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+
+    expect(openRecordCreationFormSettingsInSidePanel).toHaveBeenCalledWith(
+      COMPANY_OBJECT,
+    );
+  });
+
+  it('hides the edit button from members without the layouts permission', () => {
+    mockHasPermissionFlag.mockReturnValue(false);
+
+    renderPage();
+
+    expect(
+      screen.queryByRole('button', { name: 'Edit' }),
+    ).not.toBeInTheDocument();
   });
 });

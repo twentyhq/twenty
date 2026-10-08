@@ -9,9 +9,9 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { RESUME_PENDING_WAKE_UP_JOB_NAME } from 'src/engine/core-modules/pending-wake-up/constants/resume-pending-wake-up-job-name.constant';
+import { type ResumePendingWakeUpJobData } from 'src/engine/core-modules/pending-wake-up/types/resume-pending-wake-up-job-data.type';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
-import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,7 +31,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly storage: AgentHistoryUpgradeStorageService,
-    @InjectMessageQueue(MessageQueue.aiQueue)
+    @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceIteratorService);
@@ -71,7 +71,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
 
     const isDryRun = options.dryRun ?? false;
 
-    const { closedThreadCount, suspensionsToContinue } = await this.storage.run(
+    const { closedThreadCount, wakeUpsToResolve } = await this.storage.run(
       workspaceId,
       async ({ manager, table }) => {
         const pendingCalls: { threadId: string }[] = await manager.query(
@@ -85,7 +85,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
         if (isDryRun) {
           return {
             closedThreadCount: pendingCalls.length,
-            suspensionsToContinue: [],
+            wakeUpsToResolve: [],
           };
         }
 
@@ -137,52 +137,49 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
         );
 
         // read from what is stored rather than from this run's closures, so a run whose
-        // continuation could not be queued last time is continued on the next one
-        const suspensions: { id: string; resumeCount: number }[] =
-          await manager.query(
-            `SELECT suspension.id, suspension."resumeCount"
-             FROM "core"."agentRunSuspension" suspension
-             WHERE suspension."workspaceId" = $1
-               AND suspension."runSpec" IS NOT NULL
-               AND EXISTS (
-                 SELECT 1
-                 FROM ${table('agentMessagePart')} part
-                 JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                 WHERE message."threadId" = suspension."threadId"
-                   AND part."toolName" = 'ask_questions'
-                   AND part."toolOutput" ->> 'message' = $2
-               )
-               AND NOT EXISTS (
-                 SELECT 1
-                 FROM ${table('agentMessagePart')} part
-                 JOIN ${table('agentMessage')} message ON message.id = part."messageId"
-                 WHERE message."threadId" = suspension."threadId"
-                   AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
-               )`,
-            [workspaceId, SKIPPED_MESSAGE],
-          );
+        // wake-up could not be resolved last time is continued on the next one
+        const wakeUps: { id: string }[] = await manager.query(
+          `SELECT wake_up.id
+           FROM "core"."pendingWakeUp" wake_up
+           WHERE wake_up."workspaceId" = $1
+             AND wake_up."ownerType" = 'AGENT_RUN'
+             AND wake_up."condition" ->> 'type' = 'ANSWER'
+             AND EXISTS (
+               SELECT 1
+               FROM ${table('agentMessagePart')} part
+               JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+               WHERE message."threadId" = wake_up."ownerId"
+                 AND part."toolName" = 'ask_questions'
+                 AND part."toolOutput" ->> 'message' = $2
+             )
+             AND NOT EXISTS (
+               SELECT 1
+               FROM ${table('agentMessagePart')} part
+               JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+               WHERE message."threadId" = wake_up."ownerId"
+                 AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+             )`,
+          [workspaceId, SKIPPED_MESSAGE],
+        );
 
         return {
           closedThreadCount: pendingCalls.length,
-          suspensionsToContinue: suspensions,
+          wakeUpsToResolve: wakeUps,
         };
       },
     );
 
-    // a duplicate finds the run moved on through its resume count, so continuing again is safe
-    for (const suspension of suspensionsToContinue) {
-      await this.messageQueueService.add<ContinueAgentRunJobData>(
-        CONTINUE_AGENT_RUN_JOB_NAME,
-        {
-          workspaceId,
-          suspensionId: suspension.id,
-          resumeCount: suspension.resumeCount,
-        },
+    // the closed questions count as the answer the run waits on. A duplicate finds the wake-up
+    // claimed, so resolving again is safe
+    for (const wakeUp of wakeUpsToResolve) {
+      await this.messageQueueService.add<ResumePendingWakeUpJobData>(
+        RESUME_PENDING_WAKE_UP_JOB_NAME,
+        { workspaceId, wakeUpId: wakeUp.id, answer: { result: {} } },
       );
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] Would close' : 'Closed'} pending ask_questions calls in ${closedThreadCount} thread(s) of workspace ${workspaceId}, continuing ${suspensionsToContinue.length} agent run(s)`,
+      `${isDryRun ? '[DRY RUN] Would close' : 'Closed'} pending ask_questions calls in ${closedThreadCount} thread(s) of workspace ${workspaceId}, continuing ${wakeUpsToResolve.length} agent run(s)`,
     );
   }
 
