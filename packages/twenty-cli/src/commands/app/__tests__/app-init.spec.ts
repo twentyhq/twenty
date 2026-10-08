@@ -97,8 +97,10 @@ describe('app init', () => {
         'package.json',
         'public',
         'src',
+        'yarn.lock',
       ]),
     );
+    expect(await readFile(join(appDirectory, 'yarn.lock'), 'utf8')).toBe('');
     expect(await readdir(appDirectory)).not.toContain('node_modules');
     expect(await readPackageJson(appDirectory)).toMatchObject({
       name: 'my-app',

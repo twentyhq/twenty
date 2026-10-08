@@ -76,6 +76,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     <>
       <Dropdown.Header>
         <Avatar
+          imageProps={{ alt: '' }}
           name={currentWorkspace?.displayName || ''}
           colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
           src={getAbsoluteImageUrl(

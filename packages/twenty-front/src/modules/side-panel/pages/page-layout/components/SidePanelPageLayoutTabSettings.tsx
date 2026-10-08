@@ -1,18 +1,14 @@
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
-import { isDefined } from 'twenty-shared/utils';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 
 export const SidePanelPageLayoutTabSettings = () => {
-  const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
-
-  if (!isDefined(pageLayoutId)) {
-    return null;
-  }
+  const { pageLayoutId, targetRecordIdentifier } =
+    usePageLayoutSidePanelTarget();
 
   return (
     <SidePanelPageLayoutTabSettingsContent
       pageLayoutId={pageLayoutId}
-      recordId={recordId}
+      recordId={targetRecordIdentifier.id}
     />
   );
 };

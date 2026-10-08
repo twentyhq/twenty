@@ -94,7 +94,7 @@ export const NativeNames: Story = {
       />
       <Text id="avatar-label">Open profile</Text>
       <Avatar
-        onClick={fn()}
+        render={<button type="button" onClick={fn()} />}
         aria-label="Fallback avatar"
         aria-labelledby="avatar-label"
       />
