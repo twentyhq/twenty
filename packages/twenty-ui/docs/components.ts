@@ -76,6 +76,16 @@ import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISUALLY_HIDDEN_PROP_DESCRIPTIONS } from './visuallyHiddenPropDescriptions';
 
+const CHECKBOX_PROP_DEFAULTS = {
+  size: 'sm',
+  variant: 'solid',
+  shape: 'square',
+  color: 'accent',
+  hoverable: 'true',
+};
+
+const SWITCH_PROP_DEFAULTS = { size: 'md' };
+
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'CountrySelect',
@@ -324,22 +334,8 @@ export const DOCUMENTED_COMPONENTS = [
     parts: ['Root', 'Indicator'],
     propDescriptions: CHECKBOX_PROP_DESCRIPTIONS,
     partPropDescriptions: { Root: CHECKBOX_PROP_DESCRIPTIONS },
-    propDefaults: {
-      size: 'sm',
-      variant: 'solid',
-      shape: 'square',
-      color: 'accent',
-      hoverable: 'true',
-    },
-    partPropDefaults: {
-      Root: {
-        size: 'sm',
-        variant: 'solid',
-        shape: 'square',
-        color: 'accent',
-        hoverable: 'true',
-      },
-    },
+    propDefaults: CHECKBOX_PROP_DEFAULTS,
+    partPropDefaults: { Root: CHECKBOX_PROP_DEFAULTS },
   },
   {
     name: 'Radio',
@@ -395,8 +391,8 @@ export const DOCUMENTED_COMPONENTS = [
     parts: ['Root', 'Thumb'],
     propDescriptions: { size: 'Visual size of the switch.' },
     partPropDescriptions: { Root: { size: 'Visual size of the switch.' } },
-    propDefaults: { size: 'md' },
-    partPropDefaults: { Root: { size: 'md' } },
+    propDefaults: SWITCH_PROP_DEFAULTS,
+    partPropDefaults: { Root: SWITCH_PROP_DEFAULTS },
   },
   {
     name: 'Breadcrumb',
