@@ -20,7 +20,6 @@ export const enqueueGranolaDeferredWebhookNoteOrThrow = async ({
     deferredWebhook,
   };
 
-  // Keyed per event: a completed job keeps its id for hours and would swallow a later event for the same note
   await enqueueGranolaJobOrThrow({
     logicFunctionUniversalIdentifier:
       GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,

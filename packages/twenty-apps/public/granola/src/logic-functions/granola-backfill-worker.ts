@@ -63,7 +63,6 @@ export const granolaBackfillWorkerHandler = async (
         logicFunctionUniversalIdentifier:
           GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
         payload: notePayload,
-        // Selection and run day let a later run retry a note whose job was skipped or failed for good, while overlapping imports still collapse
         jobId: getGranolaJobId({
           prefix: 'granola-note',
           identity: {
