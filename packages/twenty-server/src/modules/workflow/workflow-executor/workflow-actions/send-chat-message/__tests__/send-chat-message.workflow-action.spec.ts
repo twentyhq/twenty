@@ -99,6 +99,36 @@ describe('SendChatMessageWorkflowAction', () => {
     });
   });
 
+  it('waits on the answer to the call it posted', async () => {
+    sendMessage.mockResolvedValue({
+      status: 'AWAITING',
+      threadId: 'thread-id',
+      toolCallId: 'call-id',
+    });
+
+    const output = await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      text: 'Approve the update?',
+      toolCall: { toolName: 'update_one_company', arguments: { id: 'id' } },
+    });
+
+    expect(output).toEqual({
+      wait: { type: 'ANSWER', threadId: 'thread-id', toolCallId: 'call-id' },
+    });
+    expect(sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        awaitedToolCall: {
+          toolName: 'update_one_company',
+          arguments: { id: 'id' },
+          caller: {
+            type: 'WORKFLOW_STEP',
+            ref: { workflowRunId: WORKFLOW_RUN_ID, stepId: 'step-1' },
+          },
+        },
+      }),
+    );
+  });
+
   it('sends each iteration once, even when two iterations say the same thing', async () => {
     const input = {
       workspaceMemberId: WORKSPACE_MEMBER_ID,

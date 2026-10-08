@@ -22,7 +22,7 @@ export type AgentRunCallerHandler<
     input: AgentRunCallerInput<TCaller> & {
       threadId: string;
       outcome: AgentRunCallerOutcome;
-      // null for a call the caller posted itself, which no agent ran
+      // null when the run recorded none
       summary: AgentRunSummary | null;
     },
   ): Promise<void>;
