@@ -22,14 +22,12 @@ type SettingsCardProps = {
 
 const StyledCardWrapper = styled.div<{
   disabled?: boolean;
-  clickable?: boolean;
 }>`
   color: ${({ disabled }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.tertiary};
-  cursor: ${({ disabled, clickable }) =>
-    disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'default')};
   width: 100%;
 
   > div {
@@ -43,11 +41,31 @@ const StyledCardContentContainer = styled.div`
     flex-direction: column;
     gap: ${themeCssVariables.spacing[2]};
     padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
+    position: relative;
+  }
 
-    &:hover {
-      background-color: ${themeCssVariables.background.quaternary};
-      cursor: pointer;
-    }
+  a:hover & > div,
+  > div:has(> button:not(:disabled):hover) {
+    background-color: ${themeCssVariables.background.quaternary};
+    cursor: pointer;
+  }
+`;
+
+const StyledCardAction = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
   }
 `;
 
@@ -110,18 +128,18 @@ export const SettingsCard = ({
   const theme = useTheme();
 
   return (
-    <StyledCardWrapper
-      disabled={disabled}
-      clickable={!!onClick}
-      className={className}
-    >
-      <Card.Root
-        onClick={disabled ? undefined : onClick}
-        rounded={true}
-        fullWidth
-      >
+    <StyledCardWrapper disabled={disabled} className={className}>
+      <Card.Root rounded={true} fullWidth>
         <StyledCardContentContainer>
           <Card.Content>
+            {isDefined(onClick) && (
+              <StyledCardAction
+                type="button"
+                aria-label={title}
+                onClick={onClick}
+                disabled={disabled}
+              />
+            )}
             <StyledHeader>
               <StyledIconContainer disabled={disabled} iconColor={iconColor}>
                 {Icon}

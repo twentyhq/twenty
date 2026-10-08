@@ -28,7 +28,9 @@ const StyledTaskBody = styled.div`
   max-width: calc(80% - ${themeCssVariables.spacing[2]});
   overflow: hidden;
   padding-bottom: 1px;
+  position: relative;
   text-overflow: ellipsis;
+  z-index: 1;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -68,7 +70,9 @@ const StyledRightSideContainer = styled.div`
 
 const StyledActivityTargetsContainer = styled.div`
   overflow: clip;
+  position: relative;
   width: 100%;
+  z-index: 1;
 `;
 
 const StyledPlaceholder = styled.div`
@@ -85,6 +89,8 @@ const StyledLeftSideContainer = styled.div`
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
+  position: relative;
+  z-index: 1;
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
@@ -109,6 +115,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   return (
     <ActivityRow
+      label={task.title || t`Task title`}
       onClick={() => {
         openRecordInSidePanel({
           recordId: task.id,

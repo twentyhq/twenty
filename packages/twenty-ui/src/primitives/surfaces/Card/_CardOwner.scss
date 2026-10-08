@@ -1,0 +1,36 @@
+@use '../../../styles/abstracts/mixins' as *;
+
+@mixin card-owner {
+  box-sizing: border-box;
+  color: inherit;
+  display: block;
+  font-family: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+  text-decoration: none;
+
+  &:is(button, a[href], [role='button'], [role='link']) {
+    @include focus-ring;
+
+    cursor: pointer;
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+
+    &:not(:disabled, [aria-disabled='true'], [data-disabled]) {
+      @include hover-capable {
+        &:hover {
+          background-color: var(--t-background-transparent-light);
+        }
+      }
+    }
+
+    &:is(:disabled, [aria-disabled='true'], [data-disabled]) {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
