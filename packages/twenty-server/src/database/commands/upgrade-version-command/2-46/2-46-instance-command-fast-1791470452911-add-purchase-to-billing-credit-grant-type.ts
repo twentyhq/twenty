@@ -6,11 +6,13 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.46.0', 1791470452911)
 export class AddPurchaseToBillingCreditGrantTypeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const isBillingCreditGrantTablePresent = await queryRunner.query(
+    const billingCreditGrantTableRows = await queryRunner.query(
       `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
     );
+    const isBillingCreditGrantTablePresent =
+      billingCreditGrantTableRows.length > 0;
 
-    if (isBillingCreditGrantTablePresent.length === 0) {
+    if (!isBillingCreditGrantTablePresent) {
       return;
     }
 
