@@ -43,7 +43,14 @@ const personalSettingsStory = runFrontComponentStory({
   },
 });
 
-type PersonalSettingsHostProps = ComponentProps<typeof FrontComponentRenderer>;
+type PersonalSettingsHostProps = Pick<
+  ComponentProps<typeof FrontComponentRenderer>,
+  | 'componentUrl'
+  | 'applicationAccessToken'
+  | 'executionContext'
+  | 'onError'
+  | 'colorScheme'
+>;
 
 const PersonalSettingsHost = (props: PersonalSettingsHostProps) => {
   const [hasAccess, setHasAccess] = useState(true);
@@ -55,7 +62,11 @@ const PersonalSettingsHost = (props: PersonalSettingsHostProps) => {
         Remove personal settings access
       </button>
       <FrontComponentRenderer
-        {...props}
+        componentUrl={props.componentUrl}
+        applicationAccessToken={props.applicationAccessToken}
+        executionContext={props.executionContext}
+        onError={props.onError}
+        colorScheme={props.colorScheme}
         frontComponentHostCommunicationApi={{
           ...hostApiMocks,
           ...(hasAccess
@@ -81,7 +92,15 @@ export const ReadAndSave: Story = {
       connectedAccountId: 'account-one',
     },
   },
-  render: (args) => <PersonalSettingsHost {...args} />,
+  render: (args) => (
+    <PersonalSettingsHost
+      componentUrl={args.componentUrl}
+      applicationAccessToken={args.applicationAccessToken}
+      executionContext={args.executionContext}
+      onError={args.onError}
+      colorScheme={args.colorScheme}
+    />
+  ),
 };
 
 export const AccessRemoved: Story = {

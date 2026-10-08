@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { frontComponentHostCommunicationApi } from '../../globals/frontComponentHostCommunicationApi';
 import { getUserApplicationVariables } from '../getUserApplicationVariables';
 import { updateUserApplicationVariable } from '../updateUserApplicationVariable';
