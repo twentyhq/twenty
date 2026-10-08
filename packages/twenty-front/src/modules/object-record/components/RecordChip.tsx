@@ -1,4 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
@@ -7,8 +7,6 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,15 +49,7 @@ export const RecordChip = ({
     record,
   });
 
-  const label = isNonEmptyString(recordChipData.name)
-    ? recordChipData.name
-    : t`Untitled`;
-
-  const content = isNonEmptyString(recordChipData.name) ? (
-    recordChipData.name
-  ) : (
-    <UntitledChipLabel />
-  );
+  const { text: label, content } = getChipLabel(recordChipData.name);
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 

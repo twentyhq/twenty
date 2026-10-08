@@ -1,9 +1,8 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -34,7 +33,7 @@ export const ActorDisplay = ({
       }
       style={{ paddingInlineStart: 0 }}
     >
-      {isNonEmptyString(name) ? name : <UntitledChipLabel />}
+      {getChipLabel(name).content}
     </Chip>
   );
 };

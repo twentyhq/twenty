@@ -1,4 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
@@ -60,7 +60,7 @@ export const MentionRecordChip = ({
         />
       }
     >
-      {isNonEmptyString(label) ? label : <UntitledChipLabel />}
+      {getChipLabel(label).content}
     </LinkChip>
   );
 };

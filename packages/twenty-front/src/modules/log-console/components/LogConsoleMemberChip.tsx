@@ -1,5 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
@@ -27,7 +26,7 @@ export const LogConsoleMemberChip = (props: LogConsoleMemberChipProps) => {
       startElement={<LogConsoleMemberAvatar member={member} />}
       style={{ paddingInlineStart: 0 }}
     >
-      {isNonEmptyString(member.name) ? member.name : <UntitledChipLabel />}
+      {getChipLabel(member.name).content}
     </Chip>
   );
 };

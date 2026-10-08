@@ -1,5 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -75,11 +74,7 @@ export const ToolRecordsWidget = ({
               })}
               startElement={isDefined(Icon) ? <Icon size={14} /> : undefined}
             >
-              {isNonEmptyString(recordReference.displayName) ? (
-                recordReference.displayName
-              ) : (
-                <UntitledChipLabel />
-              )}
+              {getChipLabel(recordReference.displayName).content}
             </LinkChip>
           );
         })}

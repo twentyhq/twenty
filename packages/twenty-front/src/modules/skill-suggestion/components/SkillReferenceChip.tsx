@@ -1,5 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -31,7 +30,7 @@ export const SkillReferenceChip = ({
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }
     >
-      {isNonEmptyString(label) ? label : <UntitledChipLabel />}
+      {getChipLabel(label).content}
     </LinkChip>
   );
 };

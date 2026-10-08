@@ -1,4 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
@@ -9,7 +9,6 @@ import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -61,7 +60,7 @@ export const AgentChatFilePreview = ({
   const fileName =
     file instanceof File ? file.name : (file.filename ?? t`Unknown file`);
 
-  const displayName = isNonEmptyString(fileName) ? fileName : t`Untitled`;
+  const { text: displayName, content } = getChipLabel(fileName);
 
   const fileUrl = file instanceof File ? undefined : file.url;
   const fileId = file instanceof File ? undefined : file.fileId;
@@ -121,7 +120,7 @@ export const AgentChatFilePreview = ({
           {leftComponent}
           <OverflowingTextWithTooltip
             render={<span />}
-            text={isNonEmptyString(fileName) ? fileName : <UntitledChipLabel />}
+            text={content}
             tooltipContent={displayName}
             style={{ minWidth: 0 }}
           />

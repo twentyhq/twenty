@@ -1,5 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
@@ -42,7 +41,7 @@ export const FilesFieldMenuItem = ({
           }
           variant="ghost"
         >
-          {isNonEmptyString(value) ? value : <UntitledChipLabel />}
+          {getChipLabel(value).content}
         </Chip>
       )}
       showPrimaryIcon={false}

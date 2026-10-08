@@ -1,4 +1,4 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
@@ -89,11 +89,7 @@ export const SettingsAdminWorkspaceContent = ({
             />
           }
         >
-          {isNonEmptyString(activeWorkspace.name) ? (
-            activeWorkspace.name
-          ) : (
-            <UntitledChipLabel />
-          )}
+          {getChipLabel(activeWorkspace.name).content}
         </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')

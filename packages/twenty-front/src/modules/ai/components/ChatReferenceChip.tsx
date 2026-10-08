@@ -1,6 +1,5 @@
-import { UntitledChipLabel } from '@/ui/field/display/components/UntitledChipLabel';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -24,11 +23,7 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
   if (!isDefined(target.to) || !isNavigationEnabled) {
     return (
       <Chip variant="soft" startElement={target.leftComponent}>
-        {isNonEmptyString(reference.displayName) ? (
-          reference.displayName
-        ) : (
-          <UntitledChipLabel />
-        )}
+        {getChipLabel(reference.displayName).content}
       </Chip>
     );
   }
@@ -40,11 +35,7 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
       variant="soft"
       startElement={target.leftComponent}
     >
-      {isNonEmptyString(reference.displayName) ? (
-        reference.displayName
-      ) : (
-        <UntitledChipLabel />
-      )}
+      {getChipLabel(reference.displayName).content}
     </LinkChip>
   );
 };
