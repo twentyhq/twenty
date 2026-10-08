@@ -10,6 +10,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
@@ -84,7 +85,18 @@ export class GraphqlQueryFilterFieldParser {
     const objectPermissions =
       outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
 
-    if (objectPermissions?.canReadObjectRecords === false) {
+    // Filtering the queried object itself stays possible on records shared by
+    // name, while a filter through a relation still needs the object readable
+    if (
+      objectPermissions?.canReadObjectRecords === false &&
+      !(
+        this.depth === 0 &&
+        resolveObjectSharing({
+          flatObjectMetadata: this.flatObjectMetadata,
+          featureFlagsMap: outerQueryBuilder.featureFlagsMap,
+        }).operationTypesGrantedBeyondRole.includes('select')
+      )
+    ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
@@ -209,12 +221,9 @@ export class GraphqlQueryFilterFieldParser {
       this.depth + 1,
     );
 
-    // A join on a to-many relation would duplicate root rows, which the
-    // find-many runner rejects, so the related rows are matched through a
-    // correlated EXISTS instead.
+    // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
     if (isToManyRelation) {
-      // The EXISTS is correlated with the root alias, so a to-many filter
-      // reached through a joined to-one relation would match the wrong rows.
+      // The EXISTS is correlated with the root alias, so through a joined to-one it would match the wrong rows
       if (parentAlias !== outerQueryBuilder.alias) {
         throw new GraphqlQueryRunnerException(
           `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,

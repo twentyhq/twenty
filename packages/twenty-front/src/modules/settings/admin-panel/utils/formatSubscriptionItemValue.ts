@@ -1,7 +1,7 @@
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FormatNumberOptions } from '~/utils/format/formatNumber';
+import { type FormatNumberOptions } from '@/localization/utils/formatNumber';
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const EM_DASH = '—';
@@ -22,9 +22,7 @@ type FormatSubscriptionItemValueArgs = {
   ) => string;
 };
 
-// Only the symbol comes from Intl. The digits go through formatNumber like
-// every other number on the page, so an amount does not ignore the workspace
-// member's number format while the counts beside it honour it.
+// Only the symbol comes from Intl; digits use formatNumber to honour the member's number format.
 const getCurrencySymbol = (currency: string): string => {
   const normalizedCurrency = currency.toUpperCase();
 
@@ -50,9 +48,7 @@ export const formatSubscriptionItemValue = ({
   const parts: string[] = [];
 
   if (isDefined(item.quantity)) {
-    // Only a licensed base-product item sells seats. A metered item carries a
-    // Stripe bookkeeping quantity that bills nothing, so naming it seats states
-    // something untrue about what the workspace is paying for.
+    // Metered items carry a Stripe bookkeeping quantity that bills nothing, so only licensed base items are seats.
     parts.push(
       item.productKey === BillingProductKey.BASE_PRODUCT
         ? `${formatNumber(item.quantity)} ${plural(item.quantity, {

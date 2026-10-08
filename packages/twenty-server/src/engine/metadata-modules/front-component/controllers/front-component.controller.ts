@@ -25,7 +25,7 @@ import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-t
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import {
@@ -35,10 +35,23 @@ import {
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @Controller(`${ApiPath.Rest}/front-components`)
 @AllowSuspendedWorkspace()
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,
@@ -52,12 +65,13 @@ export class FrontComponentController {
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
   @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async getBuiltJs(
     @Res() res: Response,
     @ApplicationTargetParam('frontComponentId', {
       kind: 'applicationOwnedEntity',
       metadataName: 'frontComponent',
+      requireApplicationRegistrationOwnership: false,
     })
     frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

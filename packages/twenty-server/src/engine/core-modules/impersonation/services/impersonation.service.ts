@@ -10,7 +10,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -97,14 +97,13 @@ export class ImpersonationService {
     );
   }
 
-  // Hands the impersonator back the session parked when impersonation started.
-  // Nothing is minted on the strength of the impersonated user's cookie.
+  // Restores the parked session; never mints one from the impersonated user's cookie.
   async stopImpersonation({
     impersonationContext,
     workspaceId,
     request,
   }: {
-    impersonationContext: AuthContext['impersonationContext'];
+    impersonationContext: RawAuthContext['impersonationContext'];
     workspaceId: string;
     request: Request;
   }): Promise<{ canRestoreImpersonatorSession: boolean }> {
@@ -167,8 +166,7 @@ export class ImpersonationService {
     return { canRestoreImpersonatorSession };
   }
 
-  // The parked token is evidence of nothing on its own, so it is re-resolved
-  // and checked against the impersonator the impersonation session names.
+  // The parked token proves nothing alone, so it is re-checked against the impersonator.
   private async restoreImpersonatorSession(
     request: Request,
     impersonatorUserWorkspaceId: string,

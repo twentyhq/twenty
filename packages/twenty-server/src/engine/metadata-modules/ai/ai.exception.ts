@@ -14,12 +14,15 @@ export enum AiExceptionCode {
   RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
-  INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
+  INVALID_CHAT_THREAD_SNOOZE_TIME = 'INVALID_CHAT_THREAD_SNOOZE_TIME',
+  CHAT_THREAD_INBOX_STATE_UNAVAILABLE = 'CHAT_THREAD_INBOX_STATE_UNAVAILABLE',
+  CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
+  CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
-  QUESTION_NOT_PENDING = 'QUESTION_NOT_PENDING',
-  INVALID_QUESTION_ANSWER = 'INVALID_QUESTION_ANSWER',
+  INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
+  TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
+  TOOL_CALL_NOT_PENDING = 'TOOL_CALL_NOT_PENDING',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
-  USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED = 'RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED',
@@ -30,8 +33,8 @@ export enum AiExceptionCode {
   EVALUATION_MODEL_NOT_FOUND = 'EVALUATION_MODEL_NOT_FOUND',
   EVALUATION_QUESTION_UNSUPPORTED = 'EVALUATION_QUESTION_UNSUPPORTED',
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
-  WORKFLOW_RUN_THREAD_READ_ONLY = 'WORKFLOW_RUN_THREAD_READ_ONLY',
-  WORKFLOW_RUN_QUESTION_FORBIDDEN = 'WORKFLOW_RUN_QUESTION_FORBIDDEN',
+  TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
+  THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -54,18 +57,24 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Workspace not found.`;
     case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       return msg`This conversation is too long for the model. Start a new thread to continue.`;
-    case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
-      return msg`Chat thread title cannot be empty.`;
+    case AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME:
+      return msg`Snooze time must be in the future.`;
+    case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
+      return msg`Read, archive and snooze are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
+      return msg`This member can't reply in this chat, so it can't be assigned to them.`;
+    case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
+      return msg`Unassign yourself before unsubscribing from this chat.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
-    case AiExceptionCode.QUESTION_NOT_PENDING:
-      return msg`This question has already been answered.`;
-    case AiExceptionCode.INVALID_QUESTION_ANSWER:
-      return msg`Invalid answer for this question.`;
+    case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
+      return msg`Invalid answer for this request.`;
+    case AiExceptionCode.TOOL_CALL_NOT_FOUND:
+      return msg`This request for input could not be found.`;
+    case AiExceptionCode.TOOL_CALL_NOT_PENDING:
+      return msg`This request is no longer waiting for an answer.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
-    case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
-      return msg`User workspace not found.`;
     case AiExceptionCode.ROLE_NOT_FOUND:
       return msg`Role not found.`;
     case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
@@ -86,10 +95,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This model cannot answer one of the questions asked.`;
     case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       return msg`Invalid classification request.`;
-    case AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY:
-      return msg`This conversation belongs to a workflow run and can only be read.`;
-    case AiExceptionCode.WORKFLOW_RUN_QUESTION_FORBIDDEN:
-      return msg`You need the Workflows permission to answer a workflow's question.`;
+    case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+      return msg`You are not allowed to answer this request.`;
+    case AiExceptionCode.THREAD_AWAITING_ANSWER:
+      return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
     default:
       assertUnreachable(code);
   }

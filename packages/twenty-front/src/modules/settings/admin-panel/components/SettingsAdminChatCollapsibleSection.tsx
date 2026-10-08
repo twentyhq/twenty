@@ -40,21 +40,20 @@ export const SettingsAdminChatCollapsibleSection = ({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <StyledContainer>
-      <StyledToggleButton
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<StyledToggleButton />}>
         {label}
         {isExpanded ? (
           <IconChevronUp size={14} />
         ) : (
           <IconChevronDown size={14} />
         )}
-      </StyledToggleButton>
-      <Collapsible isExpanded={isExpanded}>{children}</Collapsible>
-    </StyledContainer>
+      </Collapsible.Trigger>
+      <Collapsible.Panel>{children}</Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

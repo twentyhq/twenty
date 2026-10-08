@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024; // 10Mb
+const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024;
 const REGISTRY_SEARCH_PAGE_SIZE = 250;
 const REGISTRY_SEARCH_MAX_RESULTS = 10_000;
 const REGISTRY_SEARCH_MAX_PAGES = Math.ceil(

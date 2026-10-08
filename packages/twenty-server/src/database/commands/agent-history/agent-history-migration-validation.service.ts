@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
@@ -14,10 +14,8 @@ type Storage = AgentHistoryMigrationState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationValidationService {
-  // agentChatThreadTarget rows point at the workspace-schema thread table. A
-  // rollback leaves that store in place, but the next forward migration clears
-  // it, cascading the links away with no way to rebuild them from core. Refuse
-  // instead of losing them silently.
+  // A rollback keeps the workspace thread store, but the next forward migration clears it and cascades these links away
+  // with no way to rebuild them from core, so refuse instead
   async assertNoThreadTargets({
     runner,
     workspaceId,
@@ -36,10 +34,7 @@ export class AgentHistoryMigrationValidationService {
       return;
     }
 
-    // A custom object leg is set to null when its record is destroyed, as on
-    // noteTarget, so such a row links nothing and there is no record left to
-    // detach it from. Every leg's column is target<Object>Id, whatever the
-    // object, which finds the legs without reading the metadata.
+    // A destroyed custom record nulls its leg, so only non-null legs count; every leg column is target<Object>Id, found without metadata
     const rows: { id: string }[] = await runner.query(
       `SELECT target.id FROM ${table} target
        WHERE target."deletedAt" IS NULL
@@ -64,7 +59,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const [{ collision }] = await runner.query(
         `SELECT EXISTS (SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })} source JOIN core.${escapeIdentifier(table.name)} target USING (id) WHERE target."workspaceId" <> $1) AS collision`,
         [workspaceId],
@@ -104,7 +99,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const coreColumns = await getAgentHistoryMigrationColumns({
         runner,
         table,
@@ -146,7 +141,7 @@ export class AgentHistoryMigrationValidationService {
     runner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    for (const table of AGENT_HISTORY_TABLES) {
+    for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
       const rows: { column_name: string }[] = await runner.query(
         'SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2',
         ['core', table.name],
@@ -256,7 +251,6 @@ export class AgentHistoryMigrationValidationService {
       ['agentMessage', 'threadId', 'agentChatThread'],
       ['agentMessage', 'turnId', 'agentTurn'],
       ['agentMessagePart', 'messageId', 'agentMessage'],
-      ['agentTurnEvaluation', 'turnId', 'agentTurn'],
     ]) {
       const [{ invalid }]: { invalid: boolean }[] = await runner.query(
         `SELECT EXISTS (

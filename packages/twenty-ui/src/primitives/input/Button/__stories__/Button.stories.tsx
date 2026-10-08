@@ -2,7 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { IconArrowRight, IconPlus } from '@ui/icon';
+import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
+import { Pill } from '@ui/primitives/data-display';
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -46,9 +48,28 @@ export const Disabled: Story = {
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
+export const LinkAction: Story = {
+  ...Keyboard,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { ...Keyboard.args, variant: 'link', children: 'Log out' },
+};
 export const Soon: Story = {
   ...Disabled,
-  args: { soon: true, soonLabel: 'Coming soon', onClick: fn() },
+  render: ({ children, ...args }) => (
+    <Button {...args}>
+      <Text
+        render={<span />}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--t-spacing-1)',
+        }}
+      >
+        {children}
+        <Pill label="Coming soon" />
+      </Text>
+    </Button>
+  ),
 };
 
 const LoadingExample = () => {
@@ -74,6 +95,7 @@ export const Loading: Story = {
     const button = canvas.getByRole('button', { name: 'Create record' });
     const width = button.getBoundingClientRect().width;
     await userEvent.click(button);
+    await expect(canvas.getByText('Create record')).not.toBeVisible();
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toBeDisabled();
     await expect(button.getBoundingClientRect().width).toBe(width);
@@ -83,13 +105,62 @@ export const Loading: Story = {
     await expect(button).toBeEnabled();
   },
 };
+export const LoadingAtStart: Story = {
+  ...Default,
+  args: {
+    children: 'Creating record',
+    startIcon: <IconPlus />,
+    endIcon: <IconArrowRight />,
+    loading: true,
+    loadingPosition: 'start',
+  },
+};
+export const LoadingAtStartInteraction: Story = {
+  ...LoadingAtStart,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Creating record' });
+    await expect(canvas.getByText('Creating record')).toBeVisible();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+    await expect(button.querySelector('.tabler-icon-plus')).toBeNull();
+    await expect(
+      button.querySelector('.tabler-icon-arrow-right'),
+    ).toBeVisible();
+  },
+};
+export const LoadingAtEnd: Story = {
+  ...Default,
+  args: {
+    children: 'Installing (42%)',
+    startIcon: <IconDownload />,
+    endIcon: <IconArrowRight />,
+    loading: true,
+    loadingPosition: 'end',
+  },
+};
+export const LoadingAtEndInteraction: Story = {
+  ...LoadingAtEnd,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Installing (42%)' });
+    await expect(canvas.getByText('Installing (42%)')).toBeVisible();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+    await expect(button.querySelector('.tabler-icon-download')).toBeVisible();
+    await expect(button.querySelector('.tabler-icon-arrow-right')).toBeNull();
+  },
+};
 export const NativeForm: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { onClick: fn() },
   render: (args) => (
     <form aria-label="Profile" onSubmit={(event) => event.preventDefault()}>
       <input aria-label="Name" defaultValue="Ada" />
-      <Button {...args}>Default button</Button>
+      <Button {...args} variant="link">
+        Default button
+      </Button>
       <Button type="reset">Reset</Button>
       <Button type="submit">Submit</Button>
     </form>
@@ -115,7 +186,9 @@ export const NativeForm: Story = {
 };
 export const LinkButton: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
+    variant: 'link',
     href: '#button-destination',
     target: '_blank',
     rel: 'noreferrer',
@@ -129,7 +202,12 @@ export const LinkButton: Story = {
 };
 export const DisabledLink: Story = {
   ...Default,
-  args: { href: '#disabled-destination', disabled: true, onClick: fn() },
+  args: {
+    variant: 'link',
+    href: '#disabled-destination',
+    disabled: true,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const link = within(canvasElement).getByRole('link');
     await expect(link).toHaveAttribute('aria-disabled', 'true');
@@ -151,7 +229,7 @@ export const Icons: Story = {
   args: {
     startIcon: <IconPlus />,
     endIcon: <IconArrowRight />,
-    hotkeys: ['⌘', '⏎'],
+    shortcut: ['Mod', 'Enter'],
   },
 };
 export const Truncation: Story = {
@@ -171,6 +249,7 @@ export const Truncation: Story = {
 const CATALOG_STATES: Record<string, Partial<ButtonProps>> = {
   default: {},
   small: { size: 'sm' },
+  shortcut: { shortcut: ['H'] },
   disabled: { disabled: true },
   loading: { loading: true },
 };
@@ -193,7 +272,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
         },
         {
           name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost'],
+          values: ['solid', 'outline', 'soft', 'ghost', 'link'],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
@@ -205,4 +284,181 @@ export const CatalogDark: CatalogStory<Story, typeof Button> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const NativeButtonWithHref: Story = {
+  ...Default,
+  args: {
+    children: 'Open records',
+    nativeButton: true,
+    href: '#native-button-destination',
+    render: <button data-custom-button />,
+    ref: fn(),
+    onClick: fn(),
+    onPointerDown: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Open records',
+    });
+
+    await expect(button.tagName).toBe('BUTTON');
+    await expect(button).toHaveAttribute('type', 'button');
+    await expect(button).toHaveAttribute('data-custom-button');
+    await expect(args.ref).toHaveBeenCalledWith(button);
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', button: 0, detail: 1 }),
+    );
+    await expect(args.onPointerDown).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'pointerdown', pointerType: 'mouse' }),
+    );
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(3);
+  },
+};
+
+export const CustomButton: Story = {
+  ...Default,
+  args: {
+    children: 'Open records',
+    nativeButton: false,
+    render: <div data-custom-control />,
+    ref: fn(),
+    onClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Open records',
+    });
+
+    await expect(button.tagName).toBe('DIV');
+    await expect(button).not.toHaveAttribute('type');
+    await expect(args.ref).toHaveBeenCalledWith(button);
+    button.focus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const NativeAnchorAttributes: Story = {
+  ...Default,
+  args: {
+    children: 'Open records',
+    href: '#records-download',
+    download: 'records.csv',
+    hrefLang: 'en',
+    media: 'screen',
+    ping: '/download-audit',
+    referrerPolicy: 'no-referrer',
+    target: '_blank',
+    rel: 'noreferrer',
+    ref: fn(),
+    onClick: fn((event) => event.preventDefault()),
+  },
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', {
+      name: 'Open records',
+    });
+
+    await expect(link.tagName).toBe('A');
+    await expect(link).toHaveAttribute('href', '#records-download');
+    await expect(link).toHaveAttribute('download', 'records.csv');
+    await expect(link).toHaveAttribute('hreflang', 'en');
+    await expect(link).toHaveAttribute('media', 'screen');
+    await expect(link).toHaveAttribute('ping', '/download-audit');
+    await expect(link).toHaveAttribute('referrerpolicy', 'no-referrer');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', 'noreferrer');
+    await expect(link).not.toHaveAttribute('type');
+    await expect(args.ref).toHaveBeenCalledWith(link);
+    await userEvent.click(link);
+    await expect(args.onClick).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', defaultPrevented: true }),
+    );
+  },
+};
+
+const renderedLinkClick = fn();
+
+export const ComposedNavigation: Story = {
+  ...Default,
+  args: {
+    children: 'Open records',
+    nativeButton: false,
+    role: 'link',
+    render: (
+      <a href="#composed-records" type="text/csv" onClick={renderedLinkClick}>
+        Open records
+      </a>
+    ),
+    ref: fn(),
+    onClick: fn((event) => event.preventDefault()),
+  },
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', {
+      name: 'Open records',
+    });
+
+    await expect(link.tagName).toBe('A');
+    await expect(link).toHaveAttribute('href', '#composed-records');
+    await expect(link).toHaveAttribute('type', 'text/csv');
+    await expect(args.ref).toHaveBeenCalledWith(link);
+    link.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledOnce();
+    await expect(renderedLinkClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const RenderCallback: Story = {
+  ...Default,
+  args: {
+    children: 'Open records',
+    nativeButton: false,
+    role: 'link',
+    href: '#callback-records',
+    disabled: true,
+    ref: fn(),
+    onClick: fn(),
+    render: (props, state) => (
+      <a {...props} data-render-disabled={state.disabled}>
+        {props.children}
+      </a>
+    ),
+  },
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', {
+      name: 'Open records',
+    });
+
+    await expect(link).toHaveAttribute('href', '#callback-records');
+    await expect(link).toHaveAttribute('data-render-disabled', 'true');
+    await expect(link).toHaveAttribute('aria-disabled', 'true');
+    await expect(args.ref).toHaveBeenCalledWith(link);
+    await userEvent.click(link);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const CustomButtonKeyboardCancellation: Story = {
+  ...CustomButton,
+  args: {
+    ...CustomButton.args,
+    onKeyDown: fn((event) => event.preventBaseUIHandler()),
+  },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Open records',
+    });
+
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onKeyDown).toHaveBeenCalledWith(
+      expect.objectContaining({ key: 'Enter' }),
+    );
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
 };

@@ -4,11 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/services/workspace-api-key-map-cache.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -32,7 +30,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     JwtModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
-    FeatureFlagModule,
     RoleTargetModule,
     TokenModule,
     PermissionsModule,
@@ -40,7 +37,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
   providers: [
     ApiKeyService,
     ApiKeyResolver,
-    ApiKeyRoleService,
     WorkspaceApiKeyMapCacheService,
     GenerateApiKeyCommand,
     provideWorkspaceScopedRepository(ApiKeyEntity),
@@ -48,11 +44,6 @@ import { ApiKeyController } from './controllers/api-key.controller';
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   controllers: [ApiKeyController],
-  exports: [
-    ApiKeyService,
-    ApiKeyRoleService,
-    TypeOrmModule,
-    GenerateApiKeyCommand,
-  ],
+  exports: [ApiKeyService, PermissionsModule, TypeOrmModule],
 })
 export class ApiKeyModule {}

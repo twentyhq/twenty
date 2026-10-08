@@ -8,6 +8,7 @@ export const FIND_UNINSTALL_APPLICATION_JOB_STATUS = gql`
       jobId
       state
       failedReason
+      progress
     }
   }
 `;

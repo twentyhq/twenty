@@ -19,7 +19,9 @@ let mockRecordResource: {
 };
 
 jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => mockParameters,
+  Navigate: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
 }));
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
@@ -55,7 +57,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
 
@@ -172,6 +174,19 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(
       screen.queryByTestId('core-object-show-page'),
     ).not.toBeInTheDocument();
+  });
+
+  it('sends a chat record to the chat page', () => {
+    mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
+    mockParameters = {
+      objectNameSingular: 'agentChatThread',
+      objectRecordId: 'chat-1',
+    };
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/chat/chat-1');
+    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
   it('keeps the existing main-page chrome and canonical renderer', () => {

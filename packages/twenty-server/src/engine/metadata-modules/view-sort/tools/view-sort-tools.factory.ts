@@ -3,10 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { ViewSortDirection } from 'twenty-shared/types';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const VIEW_SORT_DIRECTION_OPTIONS = Object.values(ViewSortDirection);
 
@@ -88,29 +86,21 @@ export class ViewSortToolsFactory {
           fieldMetadataId: string;
           direction: ViewSortDirection;
         }) => {
-          try {
-            const sort = await this.viewSortService.createOne({
-              createViewSortInput: {
-                viewId: parameters.viewId,
-                fieldMetadataId: parameters.fieldMetadataId,
-                direction: parameters.direction,
-              },
-              workspaceId,
-            });
+          const sort = await this.viewSortService.createOne({
+            createViewSortInput: {
+              viewId: parameters.viewId,
+              fieldMetadataId: parameters.fieldMetadataId,
+              direction: parameters.direction,
+            },
+            workspaceId,
+          });
 
-            return {
-              id: sort.id,
-              viewId: sort.viewId,
-              fieldMetadataId: sort.fieldMetadataId,
-              direction: sort.direction,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: sort.id,
+            viewId: sort.viewId,
+            fieldMetadataId: sort.fieldMetadataId,
+            direction: sort.direction,
+          };
         },
       },
       create_many_view_sorts: {
@@ -127,29 +117,21 @@ export class ViewSortToolsFactory {
           const results = [];
 
           for (const sortInput of parameters.sorts) {
-            try {
-              const sort = await this.viewSortService.createOne({
-                createViewSortInput: {
-                  viewId: sortInput.viewId,
-                  fieldMetadataId: sortInput.fieldMetadataId,
-                  direction: sortInput.direction,
-                },
-                workspaceId,
-              });
+            const sort = await this.viewSortService.createOne({
+              createViewSortInput: {
+                viewId: sortInput.viewId,
+                fieldMetadataId: sortInput.fieldMetadataId,
+                direction: sortInput.direction,
+              },
+              workspaceId,
+            });
 
-              results.push({
-                id: sort.id,
-                viewId: sort.viewId,
-                fieldMetadataId: sort.fieldMetadataId,
-                direction: sort.direction,
-              });
-            } catch (error) {
-              if (error instanceof WorkspaceMigrationBuilderException) {
-                throw new Error(formatValidationErrors(error));
-              }
-
-              throw error;
-            }
+            results.push({
+              id: sort.id,
+              viewId: sort.viewId,
+              fieldMetadataId: sort.fieldMetadataId,
+              direction: sort.direction,
+            });
           }
 
           return { created: results };
@@ -163,30 +145,22 @@ export class ViewSortToolsFactory {
           id: string;
           direction?: ViewSortDirection;
         }) => {
-          try {
-            const sort = await this.viewSortService.updateOne({
-              updateViewSortInput: {
-                id: parameters.id,
-                update: {
-                  direction: parameters.direction,
-                },
+          const sort = await this.viewSortService.updateOne({
+            updateViewSortInput: {
+              id: parameters.id,
+              update: {
+                direction: parameters.direction,
               },
-              workspaceId,
-            });
+            },
+            workspaceId,
+          });
 
-            return {
-              id: sort.id,
-              viewId: sort.viewId,
-              fieldMetadataId: sort.fieldMetadataId,
-              direction: sort.direction,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: sort.id,
+            viewId: sort.viewId,
+            fieldMetadataId: sort.fieldMetadataId,
+            direction: sort.direction,
+          };
         },
       },
       delete_view_sort: {
@@ -194,23 +168,15 @@ export class ViewSortToolsFactory {
           'Remove a sort from a view. Use get_view_sorts to find the sort ID.',
         inputSchema: DeleteViewSortInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const sort = await this.viewSortService.deleteOne({
-              deleteViewSortInput: { id: parameters.id },
-              workspaceId,
-            });
+          const sort = await this.viewSortService.deleteOne({
+            deleteViewSortInput: { id: parameters.id },
+            workspaceId,
+          });
 
-            return {
-              id: sort.id,
-              deleted: true,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: sort.id,
+            deleted: true,
+          };
         },
       },
     };

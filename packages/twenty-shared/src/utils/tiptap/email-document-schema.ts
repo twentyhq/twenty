@@ -53,7 +53,7 @@ const blockContentSchema = z.array(
 
 const paragraphNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
-  attrs: z.looseObject({}).optional(),
+  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
   content: z.array(inlineNodeSchema).optional(),
 });
 
@@ -61,6 +61,7 @@ const headingNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HEADING),
   attrs: z.looseObject({
     level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    style: styleAttributeSchema.nullable(),
   }),
   content: z.array(inlineNodeSchema).optional(),
 });

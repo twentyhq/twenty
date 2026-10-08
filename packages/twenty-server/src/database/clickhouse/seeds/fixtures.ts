@@ -139,11 +139,18 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
       unit: 'INVOCATION',
     },
     {
-      resourceType: 'WORKFLOW',
+      resourceType: 'LOGIC_FUNCTION',
       operationType: 'CODE_EXECUTION',
       baseCreditsMicro: 3000,
       baseQuantity: 1,
       unit: 'INVOCATION',
+    },
+    {
+      resourceType: 'LOGIC_FUNCTION',
+      operationType: 'CODE_EXECUTION',
+      baseCreditsMicro: 150,
+      baseQuantity: 1500,
+      unit: 'MILLISECOND',
     },
     {
       resourceType: 'AI',

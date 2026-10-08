@@ -21,7 +21,6 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
   shouldBypassPermissionChecks: boolean;
-  errorMessage?: string;
 };
 
 export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
@@ -30,7 +29,6 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   internalContext,
   authContext,
   shouldBypassPermissionChecks,
-  errorMessage = 'Record does not satisfy row-level security constraints of your current role',
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   if (shouldBypassPermissionChecks) {
     return;
@@ -56,7 +54,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
 
     if (!matchesRLS) {
       throw new TwentyOrmException(
-        errorMessage,
+        'Record does not satisfy row-level security constraints of your current role',
         TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
       );
     }

@@ -49,8 +49,7 @@ export class EntityAddCommand {
 
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      // Generated files embed identifiers derived from the application
-      // universal identifier, so scaffolding is blocked until it is defined.
+      // Generated files embed identifiers derived from the application universal identifier
       const applicationUniversalIdentifier =
         await getApplicationUniversalIdentifierOrThrow(
           CURRENT_EXECUTION_DIRECTORY,
@@ -213,6 +212,7 @@ export class EntityAddCommand {
 
         const file = getViewBaseFile({
           name,
+          objectUniversalIdentifier: entityData.objectUniversalIdentifier,
           applicationUniversalIdentifier,
         });
 
@@ -490,12 +490,7 @@ export class EntityAddCommand {
     );
   }
 
-  // Connection providers reference two serverVariables (`<NAME>_CLIENT_ID`
-  // and `<NAME>_CLIENT_SECRET`) that the dev needs to declare on
-  // `defineApplication.serverVariables`. Auto-append them so the dev
-  // doesn't have to remember the wiring after `twenty dev:add connection-provider`.
-  // The util is best-effort: it handles the common file shapes and falls
-  // back to a printed snippet for anything it can't safely modify.
+  // Best-effort: falls back to printing a snippet for file shapes it cannot safely modify
   private async registerConnectionProviderServerVariables(
     name: string,
   ): Promise<void> {

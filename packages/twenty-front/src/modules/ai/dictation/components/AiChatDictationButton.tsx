@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { IconMicrophone } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 
 import { useDictation } from '@/ai/dictation/hooks/useDictation';
 

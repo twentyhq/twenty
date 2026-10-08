@@ -1,9 +1,7 @@
 declare const classNames: {
   readonly wrapper: 'wrapper';
   readonly filterButton: 'filterButton';
-  readonly filterIcon: 'filterIcon';
-  readonly inputContainer: 'inputContainer';
-  readonly iconContainer: 'iconContainer';
-  readonly input: 'input';
+  readonly inputGroup: 'inputGroup';
+  readonly searchIcon: 'searchIcon';
 };
 export default classNames;

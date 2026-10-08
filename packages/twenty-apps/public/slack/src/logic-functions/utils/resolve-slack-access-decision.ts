@@ -3,33 +3,25 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { type SlackAccessDecision } from 'src/logic-functions/types/slack-access-decision.type';
-import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { resolveSlackIdentities } from 'src/logic-functions/utils/resolve-slack-identities';
 
 export const resolveSlackAccessDecision = async ({
-  accessMode,
   client,
   slackClient,
   slackConnectionId,
   identity,
   runAsWorkspaceMemberId,
 }: {
-  accessMode: SlackAccessMode;
   client: CoreApiClient;
   slackClient: WebClient | undefined;
   slackConnectionId: string | undefined;
   identity: SlackUserIdentity | undefined;
   runAsWorkspaceMemberId: string | undefined;
 }): Promise<SlackAccessDecision> => {
-  if (accessMode === SLACK_ACCESS_MODE.ANYONE) {
-    return { status: 'ALLOWED' };
-  }
-
   if (isNonEmptyString(runAsWorkspaceMemberId)) {
-    return { status: 'ALLOWED' };
+    return { status: 'ALLOWED', runAsWorkspaceMemberId };
   }
 
   if (!isDefined(slackClient) || !isDefined(identity)) {
@@ -53,12 +45,12 @@ export const resolveSlackAccessDecision = async ({
   }
 
   switch (resolution.outcome) {
-    case 'confirmedMember':
-      return { status: 'ALLOWED' };
-    case 'membershipNotConfirmed':
-      return { status: 'DENIED' };
     case 'membershipUnverifiable':
     case 'unidentified':
       return { status: 'UNVERIFIABLE' };
+    case 'confirmedMember':
+      return { status: 'DENIED', reason: 'REQUEST_NOT_ATTRIBUTABLE' };
+    case 'membershipNotConfirmed':
+      return { status: 'DENIED', reason: 'NOT_A_MEMBER' };
   }
 };

@@ -2,6 +2,7 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type LimitConsumption } from 'src/engine/core-modules/usage-limit/types/limit-consumption.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { selectAiChatUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/select-ai-chat-usage.util';
 
 const periodStart = new Date('2026-09-01T00:00:00Z');
@@ -18,7 +19,7 @@ const buildLimit = (
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1000,
   burstValue: null,
   isInstanceOverride: false,

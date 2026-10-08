@@ -3,7 +3,7 @@ import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecon
 import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { useId, type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

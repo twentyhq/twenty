@@ -1,31 +1,22 @@
-import { useState } from 'react';
-
-import {
-  AvatarGroup,
-  Callout,
-  ColorSchemePicker,
-  JsonTree,
-} from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { AvatarGroup, JsonTree } from 'twenty-ui/components/data-display';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { TextDirectionProvider } from 'twenty-ui/primitives/layout';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import 'twenty-ui/style.css';
+import { DirectionalResizeExample } from './directional-resize-example';
 
 const DirectionalLayoutExample = ({
   direction,
 }: {
   direction: 'ltr' | 'rtl';
 }) => {
-  const [colorScheme, setColorScheme] = useState<'Light' | 'Dark' | 'System'>(
-    'System',
-  );
-
   return (
-    <TextDirectionProvider direction={direction}>
+    <DirectionProvider direction={direction}>
       <div
         dir={direction}
         data-testid={`layout-${direction}`}
@@ -39,24 +30,33 @@ const DirectionalLayoutExample = ({
         }}
       >
         <Text>{direction.toUpperCase()}</Text>
+        <DirectionalResizeExample name={`Inherited ${direction} resize`} />
+        <DirectionProvider direction={direction === 'ltr' ? 'rtl' : 'ltr'}>
+          <div dir={direction === 'ltr' ? 'rtl' : 'ltr'}>
+            <DirectionalResizeExample name={`Nested ${direction} resize`} />
+          </div>
+        </DirectionProvider>
         <Callout
-          variant="info"
+          status="info"
           title="Account details"
           description="Review the information before continuing."
-        />
-        <ColorSchemePicker
-          value={colorScheme}
-          onChange={setColorScheme}
-          lightLabel="Light"
-          darkLabel="Dark"
-          systemLabel="System"
         />
         <ButtonGroup aria-label="Record actions">
           <Button>First action</Button>
           <Button>Last action</Button>
         </ButtonGroup>
-        <Button soon style={{ width: 240 }}>
-          Upcoming action
+        <Button disabled style={{ width: 240 }}>
+          <Text
+            render={<span />}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--t-spacing-1)',
+            }}
+          >
+            Upcoming action
+            <Pill label="Soon" />
+          </Text>
         </Button>
         {(['left', 'right'] as const).map((overlap) => (
           <div
@@ -69,7 +69,7 @@ const DirectionalLayoutExample = ({
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (
                 <Avatar key={name} name={name} size="lg" />
               ))}
-              overflowCount={2}
+              total={5}
             />
           </div>
         ))}
@@ -91,7 +91,7 @@ const DirectionalLayoutExample = ({
           shouldExpandNodeInitially={() => true}
         />
       </div>
-    </TextDirectionProvider>
+    </DirectionProvider>
   );
 };
 

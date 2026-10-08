@@ -2,9 +2,8 @@ import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPe
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
@@ -15,13 +14,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <Provider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: 'sender-test' }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </Provider>
+  <Provider store={jotaiStore}>{children}</Provider>
 );
 
 describe('Shared chat execution controls', () => {
@@ -50,10 +43,7 @@ describe('Shared chat execution controls', () => {
         canSoftDelete: false,
       });
       jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: 'sender-test',
-          familyKey: { threadId: 'thread' },
-        }),
+        agentChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
         [
           {
             id: 'message',

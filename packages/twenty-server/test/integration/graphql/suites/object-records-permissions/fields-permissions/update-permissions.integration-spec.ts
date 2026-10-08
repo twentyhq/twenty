@@ -235,38 +235,6 @@ describe('Field update permissions restrictions', () => {
     }
   });
 
-  //   it('1. updateMany with restricted field', async () => {
-  //     const graphqlOperation = updateManyOperationFactory({
-  //       objectMetadataSingularName: 'company',
-  //       objectMetadataPluralName: 'companies',
-  //       gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
-  //       data: { employees: 20 },
-  //     });
-
-  //   it('2. updateOne with restricted field', async () => {
-  //     const graphqlOperation = updateOneOperationFactory({
-  //       objectMetadataSingularName: 'company',
-  //       gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
-  //       recordId: companyId,
-  //       data: { employees: 20 },
-  //     });
-
-  //   it('1. updateMany with non-restricted field', async () => {
-  //     const graphqlOperation = updateManyOperationFactory({
-  //       objectMetadataSingularName: 'company',
-  //       objectMetadataPluralName: 'companies',
-  //       gqlFields: COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES,
-  //       data: { name: 'UpdatedCompany' },
-  //     });
-
-  //   it('2. updateOne with non-restricted field', async () => {
-  //     const graphqlOperation = updateOneOperationFactory({
-  //       objectMetadataSingularName: 'company',
-  //       gqlFields: COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES,
-  //       recordId: companyId,
-  //       data: { name: 'UpdatedCompany2' },
-  //     });
-
   describe('should allow employees field when creating if field is in RLS predicate', () => {
     beforeEach(async () => {
       await restrictUpdateAccessToCompanyEmployee(

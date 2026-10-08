@@ -171,8 +171,7 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
 
-    // The table decides create vs update: a stale map would send a persisted id
-    // down the create branch and into the primary key.
+    // read the table, not the cache: a stale map would send a persisted id to create and hit the primary key
     const persistedCoreVersionIds = new Set(
       (
         await this.coreWorkflowVersionRepository.find(workspaceId, {
@@ -212,6 +211,7 @@ export class WorkflowVersionCoreSyncService {
         id: string;
       } = {
         ...coreRow,
+        isSystemSideEffect: false,
         coreWorkflowId:
           coreRow.coreWorkflowId ??
           existingFlatWorkflowVersion?.coreWorkflowId ??
@@ -354,10 +354,7 @@ export class WorkflowVersionCoreSyncService {
       (_, index) => !isDefined(resolvedFlatVersions[index]),
     );
 
-    // The dual-write listener deletes the same ids when the mirror is soft
-    // deleted, so an id gone from both the cache and the table is an idempotent
-    // no-op. An id still in the table is a stale cache and must fail rather than
-    // leave an orphan that still reads and still broadcasts.
+    // gone from the table means the dual-write listener already deleted it; still there means a stale cache, so fail rather than orphan it
     if (missingCoreWorkflowVersionIds.length > 0) {
       const stillPersisted = await this.coreWorkflowVersionRepository.find(
         workspaceId,
@@ -553,9 +550,7 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
-    // The conflict target is the primary key alone, so without the workspaceId
-    // predicate a core row owned by another workspace would have its triggers
-    // and steps overwritten.
+    // the conflict target is the primary key alone, so the workspaceId predicate keeps another workspace's row from being overwritten
     const mirroredRows = await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''})
@@ -599,10 +594,7 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
-    // This writer stays on raw SQL because it runs inside a transaction its
-    // caller owns and relies on the locks taken above, so the flat entity maps
-    // have to be refreshed by hand or the next migration write diffs against a
-    // cache that no longer matches the table.
+    // raw SQL inside the caller's transaction bypasses the runner, so flat entity maps must be invalidated by hand
     transactionScope.afterCommit(async () => {
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
@@ -847,31 +839,6 @@ export class WorkflowVersionCoreSyncService {
     }, buildSystemAuthContext(workspaceId));
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
-  }
-
-  async deleteCoreVersionsByWorkflowIds(
-    workspaceId: string,
-    workflowIds: string[],
-  ): Promise<void> {
-    if (workflowIds.length === 0) {
-      return;
-    }
-
-    const deletedVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workflowId: In(workflowIds) },
-        select: { id: true, coreWorkflowId: true, status: true },
-      },
-    );
-
-    await this.deleteCoreVersionsThroughMigration({
-      workspaceId,
-      coreWorkflowVersionIds: deletedVersions.map(({ id }) => id),
-    });
-
-    await this.invalidateAutomatedTriggerMaps(workspaceId);
-    await this.evictCronTriggerCacheEntries(deletedVersions);
   }
 
   async deleteCoreVersionsByWorkspaceVersionIds(

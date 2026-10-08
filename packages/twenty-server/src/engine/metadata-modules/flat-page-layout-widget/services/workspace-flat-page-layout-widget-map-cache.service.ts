@@ -44,6 +44,9 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEn
       createIdToUniversalIdentifierMap(applications);
     const pageLayoutTabIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(pageLayoutTabs);
+    const pageLayoutTabUniversalIdentifierById = Object.fromEntries(
+      pageLayoutTabIdToUniversalIdentifierMap,
+    );
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataUniversalIdentifierById = Object.fromEntries(
@@ -66,6 +69,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEn
           pageLayoutTabIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataUniversalIdentifierById,
+          pageLayoutTabUniversalIdentifierById,
           frontComponentUniversalIdentifierById,
           viewUniversalIdentifierById,
         });

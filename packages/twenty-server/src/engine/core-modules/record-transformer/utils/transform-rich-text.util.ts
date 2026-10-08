@@ -7,26 +7,51 @@ import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
+import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-blocknote-blocks.util';
+
 // Reuse a single ServerBlockNoteEditor across all calls to avoid
 // the cost of dynamic import resolution + instance creation (~90ms) on every transform.
-let cachedServerBlockNoteEditor: ServerBlockNoteEditor | null = null;
+let serverBlockNoteEditorPromise: Promise<ServerBlockNoteEditor> | null = null;
 
 // SWC compiles import() to require() in CJS mode, which breaks ESM-only
 // transitive dependencies in @blocknote/core. Native import() resolves
 // the ESM bundle path where the full chain works.
 const nativeImport = new Function('specifier', 'return import(specifier)');
 
-const getServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
-  if (cachedServerBlockNoteEditor) {
-    return cachedServerBlockNoteEditor;
-  }
-
+const loadServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
   const module = await nativeImport('@blocknote/server-util');
-  const editor: ServerBlockNoteEditor = module.ServerBlockNoteEditor.create();
 
-  cachedServerBlockNoteEditor = editor;
+  return module.ServerBlockNoteEditor.create();
+};
 
-  return editor;
+const getServerBlockNoteEditor = (): Promise<ServerBlockNoteEditor> => {
+  serverBlockNoteEditorPromise ??= loadServerBlockNoteEditor().catch(
+    (error: unknown) => {
+      serverBlockNoteEditorPromise = null;
+      throw error;
+    },
+  );
+
+  return serverBlockNoteEditorPromise;
+};
+
+const convertMarkdownToBlocknote = (markdown: string): string =>
+  JSON.stringify(convertMarkdownToBlocknoteBlocks(markdown));
+
+// Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
+// Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
+const convertBlocknoteToMarkdown = async (
+  blocknote: string,
+): Promise<string> => {
+  const serverBlockNoteEditor = await getServerBlockNoteEditor();
+
+  try {
+    return await serverBlockNoteEditor.blocksToMarkdownLossy(
+      JSON.parse(blocknote),
+    );
+  } catch {
+    return blocknote;
+  }
 };
 
 export const transformRichTextValue = async (
@@ -37,8 +62,6 @@ export const transformRichTextValue = async (
     ? richTextValueSchema.parse(richTextValue)
     : richTextValue;
 
-  const serverBlockNoteEditor = await getServerBlockNoteEditor();
-
   const tipTapMarkdown = isDefined(parsedValue.blocknote)
     ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
     : undefined;
@@ -46,36 +69,20 @@ export const transformRichTextValue = async (
   if (isDefined(tipTapMarkdown)) {
     return {
       markdown: parsedValue.markdown || tipTapMarkdown,
-      blocknote: JSON.stringify(
-        await serverBlockNoteEditor.tryParseMarkdownToBlocks(tipTapMarkdown),
-      ),
+      blocknote: convertMarkdownToBlocknote(tipTapMarkdown),
     };
   }
 
-  // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
-  // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
-  let convertedMarkdown: string | null = null;
-
-  try {
-    convertedMarkdown = isDefined(parsedValue.blocknote)
-      ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-          JSON.parse(parsedValue.blocknote),
-        )
-      : null;
-  } catch {
-    convertedMarkdown = parsedValue.blocknote || null;
-  }
-
-  const convertedBlocknote = parsedValue.markdown
-    ? JSON.stringify(
-        await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-          parsedValue.markdown,
-        ),
-      )
-    : null;
-
   return {
-    markdown: parsedValue.markdown || convertedMarkdown,
-    blocknote: parsedValue.blocknote || convertedBlocknote,
+    markdown:
+      parsedValue.markdown ||
+      (isNonEmptyString(parsedValue.blocknote)
+        ? await convertBlocknoteToMarkdown(parsedValue.blocknote)
+        : null),
+    blocknote:
+      parsedValue.blocknote ||
+      (isNonEmptyString(parsedValue.markdown)
+        ? convertMarkdownToBlocknote(parsedValue.markdown)
+        : null),
   };
 };
