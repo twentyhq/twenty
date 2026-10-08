@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { prepareAppAddFile } from '@/app/add/prepare-app-add-file';
-import { writeAppAddFile } from '@/app/add/write-app-add-file';
+import { prepareAppAddFiles } from '@/app/add/prepare-app-add-files';
+import { writeAppAddFiles } from '@/app/add/write-app-add-files';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { readAppIdentity } from '@/app/read-app-identity';
 import { resolveAppProject } from '@/app/project/resolve-app-project';
@@ -30,31 +30,34 @@ export const runAppAddCommand: CommandRun = async (context) => {
     output.progress(formatToolingDiagnostic(diagnostic));
   }
 
-  const file = await prepareAppAddFile(context);
-  const cleanupPath = await writeAppAddFile({
+  const { entity, name, files } = await prepareAppAddFiles({
+    context,
+    applicationUniversalIdentifier: identity.application.universalIdentifier,
+  });
+  const cleanupPath = await writeAppAddFiles({
     appPath: project.path,
-    file,
+    files,
     signal,
   });
 
   if (isDefined(cleanupPath)) {
     output.warn({
       code: 'APP_ADD_CLEANUP_FAILED',
-      message: `Created ${file.path}, but could not remove temporary directory ${cleanupPath}.`,
+      message: `Created definitions, but could not remove temporary directory ${cleanupPath}.`,
     });
   }
 
   return {
     data: {
       app: project,
-      entity: file.entity,
-      name: file.name,
-      createdPaths: [file.path],
+      entity,
+      name,
+      createdPaths: files.map((file) => file.path),
       diagnostics: identity.diagnostics,
     },
     human: [
-      formatSuccessLine(`Created ${file.path}`),
-      ...(file.entity === 'object'
+      ...files.map((file) => formatSuccessLine(`Created ${file.path}`)),
+      ...(entity === 'object' && files.length === 1
         ? [
             'Add views, navigation and record-page layouts separately to expose the object in the UI.',
           ]

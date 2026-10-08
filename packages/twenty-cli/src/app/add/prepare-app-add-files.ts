@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import {
   FieldMetadataType,
@@ -8,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { convertToLabel } from '@/app/convert-to-label';
 import { APP_ADD_ENTITIES } from '@/app/add/constants/app-add-entities.constant';
+import { createObjectCompanionFiles } from '@/app/add/create-object-companion-files';
+import { type AppAddFile } from '@/app/add/types/app-add-file.type';
 import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/app/add/entity-logic-function-template';
@@ -15,6 +19,7 @@ import { getObjectBaseFile } from '@/app/add/entity-object-template';
 import { promptForAppAddValue } from '@/app/add/prompt-for-app-add-value';
 import { kebabCase } from '@/app/pull/kebab-case';
 import {
+  readBooleanOption,
   readStringArgument,
   readStringOption,
 } from '@/catalog/read-command-values';
@@ -31,7 +36,13 @@ const invalidInput = (message: string) =>
     hint: 'Run twenty app add --help for options and examples.',
   });
 
-export const prepareAppAddFile = async (context: CommandContext) => {
+export const prepareAppAddFiles = async ({
+  context,
+  applicationUniversalIdentifier,
+}: {
+  context: CommandContext;
+  applicationUniversalIdentifier: string;
+}) => {
   const { options, signal } = context;
   const interactive = isInteractionAllowed(context);
   const readValue = async ({
@@ -91,7 +102,13 @@ export const prepareAppAddFile = async (context: CommandContext) => {
     value: readStringArgument(context.arguments, 0),
     choices: APP_ADD_ENTITIES,
   });
-  const objectOptions = ['namePlural', 'labelPlural'];
+  const objectOptions = [
+    'namePlural',
+    'labelPlural',
+    'createView',
+    'createNavigationMenuItem',
+    'createPageLayout',
+  ];
   const fieldOptions = ['type', 'object', 'description'];
   const relationOptions = [
     'targetObject',
@@ -100,9 +117,7 @@ export const prepareAppAddFile = async (context: CommandContext) => {
     'onDelete',
   ];
   const rejectOptions = (names: string[]) => {
-    const supplied = names.filter((option) =>
-      isDefined(readStringOption(options, option)),
-    );
+    const supplied = names.filter((option) => isDefined(options[option]));
 
     if (supplied.length > 0) {
       throw invalidInput(
@@ -123,6 +138,7 @@ export const prepareAppAddFile = async (context: CommandContext) => {
   }
 
   let content: string;
+  let companionFiles: AppAddFile[] = [];
 
   switch (entity) {
     case 'object': {
@@ -146,9 +162,27 @@ export const prepareAppAddFile = async (context: CommandContext) => {
         defaultValue: convertToLabel(namePlural),
       });
 
+      const objectUniversalIdentifier = randomUUID();
+      const nameFieldUniversalIdentifier = randomUUID();
+
       content = getObjectBaseFile({
         name,
+        universalIdentifier: objectUniversalIdentifier,
+        nameFieldUniversalIdentifier,
         data: { nameSingular: name, namePlural, labelSingular, labelPlural },
+      });
+      companionFiles = createObjectCompanionFiles({
+        name: fileName,
+        labelSingular,
+        objectUniversalIdentifier,
+        nameFieldUniversalIdentifier,
+        applicationUniversalIdentifier,
+        createView: readBooleanOption(options, 'createView'),
+        createNavigationMenuItem: readBooleanOption(
+          options,
+          'createNavigationMenuItem',
+        ),
+        createPageLayout: readBooleanOption(options, 'createPageLayout'),
       });
       break;
     }
@@ -245,7 +279,12 @@ export const prepareAppAddFile = async (context: CommandContext) => {
   return {
     entity,
     name,
-    path: `src/${entity}s/${fileName}.${entity === 'front-component' ? 'tsx' : 'ts'}`,
-    content,
+    files: [
+      {
+        path: `src/${entity}s/${fileName}.${entity === 'front-component' ? 'tsx' : 'ts'}`,
+        content,
+      },
+      ...companionFiles,
+    ],
   };
 };

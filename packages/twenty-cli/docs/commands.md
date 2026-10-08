@@ -210,16 +210,28 @@ which the template's Vitest config sets.
 ```bash
 twenty app add
 twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
 twenty app add field --name amount --type NUMBER --object <object-universal-identifier> --json
 twenty app add logic-function --name send-invoice --no-input
 twenty app add front-component --name invoice-panel --no-input
 ```
 
-`app add` creates one standalone definition from the CLI's templates.
+`app add` creates definitions from the CLI's templates.
 It discovers the containing app, or accepts `--path <app-directory>`. No sign-in
 or workspace connection is needed. Use `object`, `field`, `logic-function` or
-`front-component`; other generators and optional object views, layouts and menu
-companions are not supported.
+`front-component`.
+
+Objects can also create optional UI definitions:
+
+- `--create-view`: a table view containing the object's name field.
+- `--create-navigation-menu-item`: a navigation item pointing to the object.
+- `--create-page-layout`: a record page layout with Fields and Timeline tabs,
+  plus the fields view required by its Fields widget.
+
+Combine these flags to select what to generate. Without them, only the object
+is created. These flags are valid only for objects and also work with `--no-input`
+and `--json`. View, navigation and layout files go under `src/views`,
+`src/navigation-menu-items` and `src/page-layouts`.
 
 Files are created under `src/objects`, `src/fields`, `src/logic-functions` and
 `src/front-components`, with kebab-case filenames and fresh universal UUIDs.
