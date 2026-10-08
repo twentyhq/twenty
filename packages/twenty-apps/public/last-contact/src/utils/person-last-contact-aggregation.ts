@@ -347,26 +347,19 @@ export const buildPersonAggregates = async (
   return aggByPersonId;
 };
 
-export const buildPersonUpdateData = (agg: PersonAgg): PersonUpdateData => ({
-  ...(agg.lastContactAt
-    ? {
-        lastContactAt: agg.lastContactAt,
-        lastContactById: agg.lastContactById ?? null,
-      }
-    : {}),
-  ...(agg.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
-  ...(agg.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
-  ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
-  ...(agg.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
-  ...(agg.item?.kind === 'email'
-    ? {
-        lastContactItemMessageId: agg.item.id,
-        lastContactItemCalendarEventId: null,
-      }
-    : agg.item?.kind === 'meeting'
-      ? {
-          lastContactItemCalendarEventId: agg.item.id,
-          lastContactItemMessageId: null,
-        }
-      : {}),
+// Every field is written, null when no remaining email or meeting supports it,
+// so a contact whose email was deleted or whose meeting was canceled does not
+// linger on the person, nor on the companies and opportunities that mirror it.
+export const buildPersonUpdateData = (
+  agg: PersonAgg | undefined,
+): PersonUpdateData => ({
+  lastContactAt: agg?.lastContactAt ?? null,
+  lastContactById: agg?.lastContactById ?? null,
+  lastOutboundAt: agg?.lastOutboundAt ?? null,
+  lastInboundAt: agg?.lastInboundAt ?? null,
+  lastEmailId: agg?.lastEmail?.id ?? null,
+  lastMeetingId: agg?.lastMeeting?.id ?? null,
+  lastContactItemMessageId: agg?.item?.kind === 'email' ? agg.item.id : null,
+  lastContactItemCalendarEventId:
+    agg?.item?.kind === 'meeting' ? agg.item.id : null,
 });
