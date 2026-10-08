@@ -409,26 +409,38 @@ export const SettingsApplicationDetails = () => {
           )}
           {hasPermissionSummaryError && (
             <InlineBanner
-              color="danger"
-              LeftIcon={IconAlertTriangle}
-              message={t`Could not load the permissions requested by version ${latestAvailableVersion ?? ''}.`}
-              button={{
-                title: t`Retry`,
-                onClick: () => void refetchPermissionSummary().catch(() => {}),
-              }}
-            />
+              status="error"
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
+              action={
+                <InlineBanner.Action
+                  onClick={() =>
+                    void refetchPermissionSummary().catch(() => {})
+                  }
+                >{t`Retry`}</InlineBanner.Action>
+              }
+            >{t`Could not load the permissions requested by version ${latestAvailableVersion ?? ''}.`}</InlineBanner>
           )}
           {requiresPermissionApproval && (
             <InlineBanner
-              color="blue"
-              LeftIcon={IconLock}
-              message={t`Version ${latestAvailableVersion ?? ''} asks for more permissions. Review them to upgrade.`}
-              button={{
-                title: t`Review`,
-                onClick: handleUpgrade,
-                disabled: isUpgradeDisabled,
-              }}
-            />
+              status="info"
+              icon={
+                <IconLock
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
+              action={
+                <InlineBanner.Action
+                  onClick={handleUpgrade}
+                  disabled={isUpgradeDisabled}
+                >{t`Review`}</InlineBanner.Action>
+              }
+            >{t`Version ${latestAvailableVersion ?? ''} asks for more permissions. Review them to upgrade.`}</InlineBanner>
           )}
           {isApplicationStopped && (
             <InlineBanner
