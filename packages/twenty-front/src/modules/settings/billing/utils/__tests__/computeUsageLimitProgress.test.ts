@@ -37,14 +37,16 @@ describe('computeUsageLimitProgress', () => {
     ).toBeNull();
   });
 
-  it('treats a zero limit as exhausted', () => {
-    expect(
-      computeUsageLimitProgress({ limitValue: 0, consumedValue: 0 }),
-    ).toEqual({
-      remainingValue: 0,
-      consumedPercentage: 100,
-      remainingPercentage: 0,
-    });
+  it('treats a zero limit as exhausted, even before consumption loads', () => {
+    for (const consumedValue of [0, null]) {
+      expect(
+        computeUsageLimitProgress({ limitValue: 0, consumedValue }),
+      ).toEqual({
+        remainingValue: 0,
+        consumedPercentage: 100,
+        remainingPercentage: 0,
+      });
+    }
   });
 
   it('reports nothing for a negative limit', () => {

@@ -1,9 +1,9 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
 import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
+import { hasUsageLimitValue } from '@/settings/billing/utils/hasUsageLimitValue';
 import { type CreateUsageLimitInput } from '~/generated-metadata/graphql';
 
 export const buildCreateUsageLimitInput = (
@@ -11,7 +11,7 @@ export const buildCreateUsageLimitInput = (
 ): CreateUsageLimitInput | null => {
   const scope = buildUsageQuotaScopeInput(values);
 
-  if (!isDefined(scope) || !isNonEmptyString(values.limitValue.trim())) {
+  if (!isDefined(scope) || !hasUsageLimitValue(values)) {
     return null;
   }
 

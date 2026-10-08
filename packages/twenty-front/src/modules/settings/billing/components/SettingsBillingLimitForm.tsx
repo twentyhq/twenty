@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -26,6 +25,7 @@ import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel'
 import { getUsageLimitAmountInput } from '@/settings/billing/utils/getUsageLimitAmountInput';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { hasUsageLimitValue } from '@/settings/billing/utils/hasUsageLimitValue';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -140,7 +140,7 @@ export const SettingsBillingLimitForm = ({
   };
 
   const consumedValue = scopeConsumption?.consumedValue ?? null;
-  const progress = isNonEmptyString(values.limitValue.trim())
+  const progress = hasUsageLimitValue(values)
     ? computeUsageLimitProgress({
         limitValue:
           Number(values.limitValue) * getUsageLimitInputScale(values.unit),
