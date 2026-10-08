@@ -150,13 +150,12 @@ export abstract class CommonBaseQueryRunnerService<
     );
 
     if (isRootOperation) {
-      this.recordApiComplexityUsage(
-        authContext,
+      this.recordApiComplexityUsage(authContext, () =>
         this.computeQueryComplexityV2(
           selectedFieldsResult,
           processedArgs,
           queryRunnerContext,
-        ) || 1,
+        ),
       );
     }
 
@@ -517,18 +516,18 @@ export abstract class CommonBaseQueryRunnerService<
 
   private recordApiComplexityUsage(
     authContext: WorkspaceAuthContext,
-    queryComplexity: number,
+    computeQueryComplexity: () => number,
   ) {
     const apiType = getApiType();
 
-    if (!isDefined(apiType)) {
+    if (!isDefined(apiType) || !this.usageRecorderService.isEnabled()) {
       return;
     }
 
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: queryComplexity,
+      quantity: computeQueryComplexity() || 1,
       unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
