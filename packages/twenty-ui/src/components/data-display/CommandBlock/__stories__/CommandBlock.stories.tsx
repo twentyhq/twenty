@@ -18,7 +18,15 @@ export default meta;
 
 type Story = StoryObj<typeof CommandBlock>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('code').textContent).toBe(
+      '> yarn add twenty-ui\n> yarn start',
+    );
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+  },
+};
 
 export const Documentation: Story = {
   args: {
