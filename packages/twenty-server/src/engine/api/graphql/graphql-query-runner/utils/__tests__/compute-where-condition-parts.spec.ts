@@ -49,4 +49,18 @@ describe('computeWhereConditionParts', () => {
       /^public\.unaccent_immutable\("jobTitle"::text\) ILIKE public\.unaccent_immutable\(:jobTitle[a-f0-9]+\)$/,
     );
   });
+
+  it('should parenthesize ilike condition when value is null-equivalent', () => {
+    const result = computeWhereConditionParts({
+      operator: 'ilike',
+      objectNameSingular: 'company',
+      key: 'name',
+      value: '',
+      fieldMetadataType: FieldMetadataType.TEXT,
+    });
+
+    expect(result.sql).toMatch(
+      /^\(public\.unaccent_immutable\("company"\."name"::text\) ILIKE public\.unaccent_immutable\(:name[a-f0-9]+\) OR "company"\."name" IS NULL\)$/,
+    );
+  });
 });

@@ -242,5 +242,53 @@ describe('isMatchingStringFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('matches Polish stroke characters (e.g. Łódź vs %lodz%)', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%lodz%' },
+          value: 'Łódź',
+        }),
+      ).toBe(true);
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%łódź%' },
+          value: 'lodz',
+        }),
+      ).toBe(true);
+    });
+
+    it('matches Scandinavian stroke and ligature characters', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%kobenhavn%' },
+          value: 'København',
+        }),
+      ).toBe(true);
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%aeroskobing%' },
+          value: 'Ærøskøbing',
+        }),
+      ).toBe(true);
+    });
+
+    it('matches German sharp s (ß to ss)', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%strasse%' },
+          value: 'Straße',
+        }),
+      ).toBe(true);
+    });
+
+    it('matches Vietnamese and Slavic stroke characters', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%da nang%' },
+          value: 'Đà Nẵng',
+        }),
+      ).toBe(true);
+    });
   });
 });

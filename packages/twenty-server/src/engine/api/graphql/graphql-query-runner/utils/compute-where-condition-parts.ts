@@ -158,7 +158,9 @@ export const computeWhereConditionParts = ({
       };
     case 'ilike':
       return {
-        sql: `public.unaccent_immutable(${fieldReference}::text) ILIKE public.unaccent_immutable(:${key}${paramSuffix})${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: hasNullEquivalentFieldValue
+          ? `(public.unaccent_immutable(${fieldReference}::text) ILIKE public.unaccent_immutable(:${key}${paramSuffix}) OR ${fieldReference} IS NULL)`
+          : `public.unaccent_immutable(${fieldReference}::text) ILIKE public.unaccent_immutable(:${key}${paramSuffix})`,
         params: { [`${key}${paramSuffix}`]: `${value}` },
       };
     case 'startsWith':

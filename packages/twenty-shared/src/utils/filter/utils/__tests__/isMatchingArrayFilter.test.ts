@@ -175,6 +175,29 @@ describe('isMatchingArrayFilter', () => {
         }),
       ).toBe(false);
     });
+
+    it('should match accented and special characters accent-insensitively', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%geosynthese%' },
+          value: ['other', 'Géosynthèse'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%lodz%' },
+          value: ['Warszawa', 'Łódź'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%łódź%' },
+          value: ['Lodz'],
+        }),
+      ).toBe(true);
+    });
   });
 
   describe('error handling', () => {
