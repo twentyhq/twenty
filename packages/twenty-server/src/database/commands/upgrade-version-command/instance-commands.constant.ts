@@ -230,6 +230,11 @@ import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/comman
 import { CreateAgentRunSuspensionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791301683545-create-agent-run-suspension-table';
 import { AddUserApplicationVariableValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791328043361-add-user-application-variable-value';
 import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791375726691-add-two-factor-authentication-recovery-code-index';
+import { DropAgentEvaluationInputsDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791401524803-drop-agent-evaluation-inputs';
+import { AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524804-add-two-factor-authentication-recovery-code-index-concurrently';
+import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524805-add-upgrade-migration-workspace-id-created-at-index-concurrently';
+import { AddPayloadToPendingWakeUpFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791438611736-add-payload-to-pending-wake-up';
+import { MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791438611737-move-agent-run-suspensions-to-pending-wake-ups';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -462,4 +467,9 @@ export const INSTANCE_COMMANDS = [
   CreateAgentRunSuspensionTableFastInstanceCommand,
   AddUserApplicationVariableValueFastInstanceCommand,
   AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand,
+  DropAgentEvaluationInputsDeferredFastInstanceCommand,
+  AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand,
+  AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand,
+  AddPayloadToPendingWakeUpFastInstanceCommand,
+  MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand,
 ];

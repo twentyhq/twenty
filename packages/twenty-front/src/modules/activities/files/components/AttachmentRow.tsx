@@ -24,6 +24,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -168,7 +169,7 @@ export const AttachmentRow = ({
       return;
     }
 
-    window.open(safeFileUrl, '_blank', 'noopener,noreferrer');
+    openUrlInNewTab(safeFileUrl);
   };
 
   const handleFileLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {

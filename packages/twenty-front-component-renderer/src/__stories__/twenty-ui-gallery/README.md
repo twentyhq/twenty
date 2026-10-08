@@ -6,6 +6,11 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
+The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
+Textarea auto-resize growth and shrinking remain known renderer failures. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. The growth failure also reproduces with main's unchanged Textarea. The fixture pins them with the existing known-failure helper; these assertions do not count as resize acceptance. Standalone Textarea browser checks pass.
+
+Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -164,3 +169,10 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```
+
+Section and CommandBlock composition is checked in the Typography and DataDisplay
+catalogs for React and Preact. The checks cover node titles/actions, heading
+levels, description line limits and optional focus, code semantics, native
+handlers, refs, and element/callback render composition. Description popup
+visibility and dismissal in the sandbox remain part of the existing portal and
+geometry acceptance work; standalone Section stories verify those behaviors.

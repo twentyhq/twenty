@@ -68,7 +68,9 @@ describe('ListItem clicks', () => {
 });
 
 describe('ListItem content', () => {
-  it('gives a text label a tooltip and leaves other content untouched', () => {
+  it('gives a truncated text label a tooltip and leaves other content untouched', async () => {
+    const user = userEvent.setup();
+
     render(
       <>
         <ListItem>Rename</ListItem>
@@ -78,10 +80,16 @@ describe('ListItem content', () => {
       </>,
     );
 
-    expect(screen.getByText('Rename')).toHaveAttribute(
-      'data-testid',
-      'tooltip',
-    );
+    const label = screen.getByText('Rename');
+
+    Object.defineProperties(label, {
+      clientWidth: { value: 40 },
+      scrollWidth: { value: 80 },
+    });
+
+    await user.hover(label);
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Rename');
     expect(screen.getByTestId('custom-label')).toBeInTheDocument();
   });
 });

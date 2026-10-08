@@ -1,6 +1,5 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -25,8 +24,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
 
-// A step waiting on a CALLBACK takes the outcome of what it handed its work to: the agent run the
-// engine continued, or the answer to a call the step posted itself
+// A step waiting on a CALLBACK takes the outcome of the agent run the engine continued
 @Injectable()
 export class WorkflowAgentRunCallerHandlerWorkspaceService
   implements AgentRunCallerHandler<WorkflowStepCaller>, OnModuleInit
@@ -49,21 +47,13 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
     workspaceId,
     caller,
   }: AgentRunCallerInput<WorkflowStepCaller>): Promise<AgentRunExecutionContext> {
-    return buildWorkflowAgentRunExecutionContext(
-      await this.workflowExecutionContextService.getExecutionContext({
-        workflowRunId: caller.ref.workflowRunId,
-        workspaceId,
-      }),
-    );
-  }
+    const runInfo = { workflowRunId: caller.ref.workflowRunId, workspaceId };
 
-  async resolveTurnAuthor({
-    workspaceId,
-    caller,
-  }: AgentRunCallerInput<WorkflowStepCaller>): Promise<ActorMetadata> {
-    return this.workflowAgentConversationService.findTurnCreatedBy({
-      workflowRunId: caller.ref.workflowRunId,
-      workspaceId,
+    return buildWorkflowAgentRunExecutionContext({
+      executionContext:
+        await this.workflowExecutionContextService.getExecutionContext(runInfo),
+      turnCreatedBy:
+        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
     });
   }
 
@@ -103,16 +93,10 @@ export class WorkflowAgentRunCallerHandlerWorkspaceService
       });
     }
 
-    // the member's answer already ran the call, so a Send Message step only reports it
     const actionOutput =
       outcome.status === 'FAILED'
         ? { error: outcome.error }
-        : {
-            result:
-              outcome.status === 'ANSWERED'
-                ? { threadId, ...outcome.answer }
-                : outcome.result,
-          };
+        : { result: outcome.result };
 
     // the step stays pending until the job claims it, so the run must not stay running without one
     try {

@@ -1,3 +1,6 @@
+import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
+import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -29,7 +32,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
-import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
+import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
@@ -46,6 +49,7 @@ import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
 import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
+import { TEXT_PROP_DESCRIPTIONS } from './textPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
@@ -180,7 +184,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/layout/Collapsible/Collapsible.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/collapsible',
-    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
+    partPropDescriptions: COLLAPSIBLE_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Panel: {
+        dimension: 'height',
+        containAnimation: 'true',
+        duration: 'normal',
+      },
+    },
   },
   {
     name: 'Separator',
@@ -278,12 +289,14 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Input/Input.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input',
+    propDescriptions: INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'InputGroup',
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+    propDescriptions: INPUT_GROUP_PROP_DESCRIPTIONS,
   },
   {
     name: 'NumberStepper',
@@ -297,6 +310,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Textarea/Textarea.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/textarea',
+    propDescriptions: TEXTAREA_PROP_DESCRIPTIONS,
   },
   {
     name: 'Checkbox',
@@ -477,6 +491,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/typography/Text/Text.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/text',
+    propDescriptions: TEXT_PROP_DESCRIPTIONS,
   },
   {
     name: 'Avatar',
@@ -650,10 +665,21 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Callout',
+    nativeProps: 'div',
     source: 'components/feedback/Callout/Callout.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+    parts: ['Action'],
+    partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
+    propDefaults: {
+      closeLabel: 'Close',
+      color: 'status palette',
+      fullWidth: 'false',
+      icon: 'decorative help icon',
+      status: 'info',
+      variant: 'soft',
+    },
   },
   {
     name: 'InlineBanner',

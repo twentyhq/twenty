@@ -45,6 +45,7 @@
     },
     "types": {
       "AvatarGroupProps": "components/data-display/AvatarGroup/types/AvatarGroupProps",
+      "CommandBlockProps": "components/data-display/CommandBlock/types/CommandBlockProps",
       "GetJsonNodeHighlighting": "components/data-display/JsonTree/types/GetJsonNodeHighlighting",
       "IconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonNodeHighlighting": "components/data-display/JsonTree/types/JsonNodeHighlighting",
@@ -66,7 +67,11 @@
       "useToast": "components/feedback/Toast/hooks/useToast"
     },
     "types": {
+      "CalloutActionProps": "components/feedback/Callout/types/CalloutActionProps",
+      "CalloutColor": "components/feedback/Callout/types/CalloutColor",
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
+      "CalloutState": "components/feedback/Callout/types/CalloutState",
+      "CalloutStatus": "components/feedback/Callout/types/CalloutStatus",
       "CalloutVariant": "components/feedback/Callout/types/CalloutVariant",
       "InlineBannerLayout": "components/feedback/InlineBanner/types/InlineBannerLayout",
       "InlineBannerProps": "components/feedback/InlineBanner/types/InlineBannerProps",
@@ -795,6 +800,13 @@
       "CheckboxShape": "primitives/input/Checkbox/types/CheckboxShape",
       "CheckboxSize": "primitives/input/Checkbox/types/CheckboxSize",
       "CheckboxVariant": "primitives/input/Checkbox/types/CheckboxVariant",
+      "FieldControlProps": "primitives/input/Field/types/FieldControlProps",
+      "FieldDescriptionProps": "primitives/input/Field/types/FieldDescriptionProps",
+      "FieldErrorProps": "primitives/input/Field/types/FieldErrorProps",
+      "FieldItemProps": "primitives/input/Field/types/FieldItemProps",
+      "FieldLabelProps": "primitives/input/Field/types/FieldLabelProps",
+      "FieldRootProps": "primitives/input/Field/types/FieldRootProps",
+      "FieldValidityProps": "primitives/input/Field/types/FieldValidityProps",
       "InputGroupProps": "primitives/input/InputGroup/types/InputGroupProps",
       "InputProps": "primitives/input/Input/types/InputProps",
       "InputSize": "primitives/input/types/InputSize",
@@ -834,8 +846,14 @@
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
-      "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
-      "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
+      "CollapsiblePanelProps": "primitives/layout/Collapsible/types/CollapsiblePanelProps",
+      "CollapsiblePanelState": "primitives/layout/Collapsible/types/CollapsiblePanelState",
+      "CollapsibleRootChangeEventDetails": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventDetails",
+      "CollapsibleRootChangeEventReason": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventReason",
+      "CollapsibleRootProps": "primitives/layout/Collapsible/types/CollapsibleRootProps",
+      "CollapsibleRootState": "primitives/layout/Collapsible/types/CollapsibleRootState",
+      "CollapsibleTriggerProps": "primitives/layout/Collapsible/types/CollapsibleTriggerProps",
+      "CollapsibleTriggerState": "primitives/layout/Collapsible/types/CollapsibleTriggerState",
       "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps",
       "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
       "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"
@@ -953,9 +971,11 @@
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
-      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps",
+      "TextProps": "primitives/typography/Text/types/TextProps"
     }
   },
   "styles": {

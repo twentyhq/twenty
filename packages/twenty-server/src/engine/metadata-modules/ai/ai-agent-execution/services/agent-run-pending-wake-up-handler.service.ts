@@ -1,39 +1,24 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
-import { type AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
-import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
-import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 
-// An AGENT_RUN wake-up is owned by a suspended run and keyed by the wait call it paused on
+// An AGENT_RUN wake-up is owned by the conversation of a suspended run, and its payload is the run
 @Injectable()
 export class AgentRunPendingWakeUpHandlerService
-  implements PendingWakeUpOwnerHandler<AgentRunSuspensionEntity>, OnModuleInit
+  implements PendingWakeUpOwnerHandler<AgentRunSuspension>, OnModuleInit
 {
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
-    private readonly conversationReaderService: AgentConversationReaderService,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
 
   onModuleInit(): void {
@@ -46,19 +31,11 @@ export class AgentRunPendingWakeUpHandlerService
 
   async getOwnerState({
     workspaceId,
-    ownerId: suspensionId,
+    payload,
   }: PendingWakeUpEntity): Promise<
-    PendingWakeUpOwnerState<AgentRunSuspensionEntity>
+    PendingWakeUpOwnerState<AgentRunSuspension>
   > {
-    const suspension = await this.agentRunSuspensionService.findOne({
-      workspaceId,
-      where: { id: suspensionId },
-    });
-
-    if (!isDefined(suspension)) {
-      return { status: 'GONE', owner: null };
-    }
-
+    const suspension = payload as AgentRunSuspension;
     const status = await this.callerHandlerRegistry
       .getHandlerOrThrow(suspension.caller.type)
       .getWaitingState({ workspaceId, caller: suspension.caller });
@@ -72,93 +49,37 @@ export class AgentRunPendingWakeUpHandlerService
     owner: { caller },
   }: {
     wakeUp: PendingWakeUpEntity;
-    owner: AgentRunSuspensionEntity;
+    owner: AgentRunSuspension;
   }) {
     return this.callerHandlerRegistry
       .getHandlerOrThrow(caller.type)
       .buildExecutionContext({ workspaceId, caller });
   }
 
+  // the run claims its wake-up once it holds its conversation, so the conversation waits until it goes on
   async resolve({
-    claimedWakeUp: { workspaceId, ownerKey: toolCallId },
+    wakeUp,
     outcome,
-    owner: suspension,
     isOwnerGone,
   }: {
-    claimedWakeUp: PendingWakeUpEntity;
+    wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
-    owner: AgentRunSuspensionEntity | null;
     isOwnerGone: boolean;
   }): Promise<void> {
-    if (!isDefined(suspension)) {
-      return;
-    }
-
     if (isOwnerGone) {
-      await this.agentRunSuspensionService.release({ workspaceId, suspension });
+      await this.agentRunSuspensionService.release({
+        workspaceId: wakeUp.workspaceId,
+        wakeUp,
+      });
 
       return;
     }
 
-    // the claimed wake-up is gone, so a run that cannot continue would wait forever
-    try {
-      await this.recordWaitOutcome({
-        workspaceId,
-        threadId: suspension.threadId,
-        toolCallId,
-        outcome,
-      });
-
-      await this.agentRunSuspensionService.scheduleContinuation({
-        workspaceId,
-        suspension,
-      });
-    } catch (error) {
-      await this.agentRunSuspensionService.settle({
-        workspaceId,
-        suspension,
-        outcome: {
-          status: 'FAILED',
-          error: `A waiting agent could not continue: ${error instanceof Error ? error.message : String(error)}`,
-        },
-      });
-
-      throw error;
-    }
-  }
-
-  // The wait call stays pending in the conversation until its wake-up resolves it, then carries the outcome
-  private async recordWaitOutcome({
-    workspaceId,
-    threadId,
-    toolCallId,
-    outcome,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    toolCallId: string;
-    outcome: PendingWakeUpOutcome;
-  }): Promise<void> {
-    const pendingPart = await this.conversationReaderService.findToolPart({
-      workspaceId,
-      threadId,
-      toolCallId,
+    await this.agentRunSuspensionService.scheduleContinuation({
+      workspaceId: wakeUp.workspaceId,
+      threadId: wakeUp.ownerId,
+      wakeUpId: wakeUp.id,
+      outcome,
     });
-
-    if (
-      !isDefined(pendingPart) ||
-      !isAwaitingPausingToolOutput(pendingPart.toolOutput)
-    ) {
-      throw new AiException(
-        'The waiting call could not be found in the conversation',
-        AiExceptionCode.TOOL_CALL_NOT_FOUND,
-      );
-    }
-
-    await this.messagePartRepository.update(
-      workspaceId,
-      { id: pendingPart.id },
-      { toolOutput: buildWaitOutcomeToolOutput(outcome) },
-    );
   }
 }
