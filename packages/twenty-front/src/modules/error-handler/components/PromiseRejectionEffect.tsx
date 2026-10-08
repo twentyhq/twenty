@@ -1,4 +1,3 @@
-import { isString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
@@ -44,7 +43,7 @@ export const PromiseRejectionEffect = () => {
       const isAbortError =
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError' ||
-        (isString(error?.message) &&
+        (error instanceof TypeError &&
           error.message.toLowerCase() === 'cancelled');
 
       const isViteStaleChunkLazyLoadingError =
