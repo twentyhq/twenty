@@ -3149,9 +3149,9 @@ type Mutation {
   syncMarketplaceCatalog: Boolean!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
-  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
-  triggerUpgradeApplicationJob(input: TriggerUpgradeApplicationJobInput!): TriggerUpgradeApplicationJobResult!
+  triggerInstallApplication(input: TriggerInstallApplicationInput!): TriggerInstallApplicationResult!
+  triggerUninstallApplication(input: TriggerUninstallApplicationInput!): TriggerUninstallApplicationResult!
+  triggerUpgradeApplication(input: TriggerUpgradeApplicationInput!): TriggerUpgradeApplicationResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
   updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
@@ -4467,28 +4467,28 @@ type TransientToken {
   transientToken: AuthToken!
 }
 
-input TriggerInstallApplicationJobInput {
+input TriggerInstallApplicationInput {
   universalIdentifier: String!
 }
 
-type TriggerInstallApplicationJobResult {
+type TriggerInstallApplicationResult {
   jobId: String!
 }
 
-input TriggerUninstallApplicationJobInput {
+input TriggerUninstallApplicationInput {
   universalIdentifier: String!
 }
 
-type TriggerUninstallApplicationJobResult {
+type TriggerUninstallApplicationResult {
   jobId: String!
 }
 
-input TriggerUpgradeApplicationJobInput {
+input TriggerUpgradeApplicationInput {
   targetVersion: String!
   universalIdentifier: String!
 }
 
-type TriggerUpgradeApplicationJobResult {
+type TriggerUpgradeApplicationResult {
   jobId: String!
 }
 

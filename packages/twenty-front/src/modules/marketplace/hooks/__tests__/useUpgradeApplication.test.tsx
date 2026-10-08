@@ -10,7 +10,7 @@ import {
   FindUpgradeApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerUpgradeApplicationJobDocument,
+  TriggerUpgradeApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -26,7 +26,7 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 const triggerUpgradeMock = {
   request: {
-    query: TriggerUpgradeApplicationJobDocument,
+    query: TriggerUpgradeApplicationDocument,
     variables: {
       input: {
         universalIdentifier: UNIVERSAL_IDENTIFIER,
@@ -35,7 +35,7 @@ const triggerUpgradeMock = {
     },
   },
   result: {
-    data: { triggerUpgradeApplicationJob: { jobId: JOB_ID } },
+    data: { triggerUpgradeApplication: { jobId: JOB_ID } },
   },
 };
 

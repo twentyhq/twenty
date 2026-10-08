@@ -15,31 +15,27 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const TRIGGER_INSTALL_APPLICATION_JOB = gql`
-  mutation TriggerInstallApplicationJob(
-    $input: TriggerInstallApplicationJobInput!
-  ) {
-    triggerInstallApplicationJob(input: $input) {
+const TRIGGER_INSTALL_APPLICATION = gql`
+  mutation TriggerInstallApplication($input: TriggerInstallApplicationInput!) {
+    triggerInstallApplication(input: $input) {
       jobId
     }
   }
 `;
 
-const TRIGGER_UNINSTALL_APPLICATION_JOB = gql`
-  mutation TriggerUninstallApplicationJob(
-    $input: TriggerUninstallApplicationJobInput!
+const TRIGGER_UNINSTALL_APPLICATION = gql`
+  mutation TriggerUninstallApplication(
+    $input: TriggerUninstallApplicationInput!
   ) {
-    triggerUninstallApplicationJob(input: $input) {
+    triggerUninstallApplication(input: $input) {
       jobId
     }
   }
 `;
 
-const TRIGGER_UPGRADE_APPLICATION_JOB = gql`
-  mutation TriggerUpgradeApplicationJob(
-    $input: TriggerUpgradeApplicationJobInput!
-  ) {
-    triggerUpgradeApplicationJob(input: $input) {
+const TRIGGER_UPGRADE_APPLICATION = gql`
+  mutation TriggerUpgradeApplication($input: TriggerUpgradeApplicationInput!) {
+    triggerUpgradeApplication(input: $input) {
       jobId
     }
   }
@@ -73,15 +69,15 @@ describe('Application lifecycle jobs', () => {
   let redisConnection: IORedis;
   let workspaceQueue: Queue;
 
-  const triggerUninstallApplicationJob = async () => {
+  const triggerUninstallApplication = async () => {
     const response = await makeMetadataApiRequest({
-      query: TRIGGER_UNINSTALL_APPLICATION_JOB,
+      query: TRIGGER_UNINSTALL_APPLICATION,
       variables: { input: { universalIdentifier: appId } },
     });
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.triggerUninstallApplicationJob.jobId as string;
+    return response.body.data.triggerUninstallApplication.jobId as string;
   };
 
   const findUninstallApplicationJobStatus = async () => {
@@ -95,9 +91,9 @@ describe('Application lifecycle jobs', () => {
     return response.body.data.findUninstallApplicationJobStatus;
   };
 
-  const triggerUpgradeApplicationJob = () =>
+  const triggerUpgradeApplication = () =>
     makeMetadataApiRequest({
-      query: TRIGGER_UPGRADE_APPLICATION_JOB,
+      query: TRIGGER_UPGRADE_APPLICATION,
       variables: {
         input: { universalIdentifier: appId, targetVersion: '1.0.0' },
       },
@@ -157,7 +153,7 @@ describe('Application lifecycle jobs', () => {
   });
 
   it('uninstalls an installed application through a queue job and reads the job back', async () => {
-    const jobId = await triggerUninstallApplicationJob();
+    const jobId = await triggerUninstallApplication();
 
     expect(getQueueJobIdPrefix(jobId)).toBe(
       `uninstall-application.${SEED_APPLE_WORKSPACE_ID}.${appId}`,
@@ -180,17 +176,17 @@ describe('Application lifecycle jobs', () => {
     await workspaceQueue.pause();
 
     try {
-      const jobId = await triggerUninstallApplicationJob();
+      const jobId = await triggerUninstallApplication();
 
       expect(await findUninstallApplicationJobStatus()).toMatchObject({
         jobId,
         state: JobStateEnum.PRIORITIZED,
       });
 
-      expect(await triggerUninstallApplicationJob()).toBe(jobId);
+      expect(await triggerUninstallApplication()).toBe(jobId);
 
       const installResponse = await makeMetadataApiRequest({
-        query: TRIGGER_INSTALL_APPLICATION_JOB,
+        query: TRIGGER_INSTALL_APPLICATION,
         variables: { input: { universalIdentifier: appId } },
       });
 
@@ -209,11 +205,11 @@ describe('Application lifecycle jobs', () => {
     await workspaceQueue.pause();
 
     try {
-      const upgradeResponse = await triggerUpgradeApplicationJob();
+      const upgradeResponse = await triggerUpgradeApplication();
 
       expect(upgradeResponse.body.errors).toBeUndefined();
 
-      const jobId = upgradeResponse.body.data.triggerUpgradeApplicationJob
+      const jobId = upgradeResponse.body.data.triggerUpgradeApplication
         .jobId as string;
 
       expect(getQueueJobIdPrefix(jobId)).toBe(
@@ -226,7 +222,7 @@ describe('Application lifecycle jobs', () => {
       });
 
       const uninstallResponse = await makeMetadataApiRequest({
-        query: TRIGGER_UNINSTALL_APPLICATION_JOB,
+        query: TRIGGER_UNINSTALL_APPLICATION,
         variables: { input: { universalIdentifier: appId } },
       });
 
@@ -247,9 +243,9 @@ describe('Application lifecycle jobs', () => {
     await workspaceQueue.pause();
 
     try {
-      await triggerUninstallApplicationJob();
+      await triggerUninstallApplication();
 
-      const upgradeResponse = await triggerUpgradeApplicationJob();
+      const upgradeResponse = await triggerUpgradeApplication();
 
       expect(upgradeResponse.body.errors).toHaveLength(1);
       expect(upgradeResponse.body.errors[0].message).toBe(
@@ -267,13 +263,13 @@ describe('Application lifecycle jobs', () => {
 
     try {
       const installResponse = await makeMetadataApiRequest({
-        query: TRIGGER_INSTALL_APPLICATION_JOB,
+        query: TRIGGER_INSTALL_APPLICATION,
         variables: { input: { universalIdentifier: appId } },
       });
 
       expect(installResponse.body.errors).toBeUndefined();
 
-      const upgradeResponse = await triggerUpgradeApplicationJob();
+      const upgradeResponse = await triggerUpgradeApplication();
 
       expect(upgradeResponse.body.errors).toHaveLength(1);
       expect(upgradeResponse.body.errors[0].message).toBe(
@@ -290,12 +286,12 @@ describe('Application lifecycle jobs', () => {
     await workspaceQueue.pause();
 
     try {
-      const upgradeResponse = await triggerUpgradeApplicationJob();
+      const upgradeResponse = await triggerUpgradeApplication();
 
       expect(upgradeResponse.body.errors).toBeUndefined();
 
       const installResponse = await makeMetadataApiRequest({
-        query: TRIGGER_INSTALL_APPLICATION_JOB,
+        query: TRIGGER_INSTALL_APPLICATION,
         variables: { input: { universalIdentifier: appId } },
       });
 

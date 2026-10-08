@@ -7896,30 +7896,30 @@ export default {
                     ]
                 }
             ],
-            "triggerInstallApplicationJob": [
+            "triggerInstallApplication": [
                 475,
                 {
                     "input": [
                         474,
-                        "TriggerInstallApplicationJobInput!"
+                        "TriggerInstallApplicationInput!"
                     ]
                 }
             ],
-            "triggerUninstallApplicationJob": [
+            "triggerUninstallApplication": [
                 477,
                 {
                     "input": [
                         476,
-                        "TriggerUninstallApplicationJobInput!"
+                        "TriggerUninstallApplicationInput!"
                     ]
                 }
             ],
-            "triggerUpgradeApplicationJob": [
+            "triggerUpgradeApplication": [
                 479,
                 {
                     "input": [
                         478,
-                        "TriggerUpgradeApplicationJobInput!"
+                        "TriggerUpgradeApplicationInput!"
                     ]
                 }
             ],
@@ -11892,7 +11892,7 @@ export default {
                 1
             ]
         },
-        "TriggerInstallApplicationJobInput": {
+        "TriggerInstallApplicationInput": {
             "universalIdentifier": [
                 1
             ],
@@ -11900,7 +11900,7 @@ export default {
                 1
             ]
         },
-        "TriggerInstallApplicationJobResult": {
+        "TriggerInstallApplicationResult": {
             "jobId": [
                 1
             ],
@@ -11908,7 +11908,7 @@ export default {
                 1
             ]
         },
-        "TriggerUninstallApplicationJobInput": {
+        "TriggerUninstallApplicationInput": {
             "universalIdentifier": [
                 1
             ],
@@ -11916,7 +11916,7 @@ export default {
                 1
             ]
         },
-        "TriggerUninstallApplicationJobResult": {
+        "TriggerUninstallApplicationResult": {
             "jobId": [
                 1
             ],
@@ -11924,7 +11924,7 @@ export default {
                 1
             ]
         },
-        "TriggerUpgradeApplicationJobInput": {
+        "TriggerUpgradeApplicationInput": {
             "targetVersion": [
                 1
             ],
@@ -11935,7 +11935,7 @@ export default {
                 1
             ]
         },
-        "TriggerUpgradeApplicationJobResult": {
+        "TriggerUpgradeApplicationResult": {
             "jobId": [
                 1
             ],

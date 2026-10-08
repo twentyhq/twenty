@@ -41,7 +41,7 @@ describe('ApplicationLifecycleJobService', () => {
   );
 
   const triggerUpgrade = () =>
-    service.triggerUpgradeApplicationJob({
+    service.triggerUpgradeApplication({
       universalIdentifier: UNIVERSAL_IDENTIFIER,
       targetVersion: '2.0.0',
       workspaceId: WORKSPACE_ID,
