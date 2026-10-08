@@ -9,6 +9,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
@@ -34,6 +35,7 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
 {
   constructor(
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -81,28 +83,49 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
   }
 
   async resolve({
-    claimedWakeUp,
+    wakeUp,
     outcome,
     owner: workflowRun,
     isOwnerGone,
   }: {
-    claimedWakeUp: PendingWakeUpEntity;
+    wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
     owner: WorkflowRunWorkspaceEntity | null;
     isOwnerGone: boolean;
   }): Promise<void> {
-    if (!isDefined(workflowRun) || isOwnerGone) {
+    const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
+
+    if (
+      !isDefined(
+        await this.pendingWakeUpService.claim({
+          workspaceId,
+          wakeUpId: wakeUp.id,
+        }),
+      ) ||
+      !isDefined(workflowRun) ||
+      isOwnerGone
+    ) {
       return;
     }
 
-    const {
-      workspaceId,
-      ownerId: workflowRunId,
-      ownerKey: stepId,
-    } = claimedWakeUp;
-
     // the claimed wait is gone, so a step that cannot resume would wait forever
     try {
+      // an answered call ends the step through the executor's usual path, so a failure is retried
+      // or continues on failure like any failed step
+      if (outcome.type === 'ANSWERED') {
+        await this.messageQueueService.add<RunWorkflowJobData>(
+          RUN_WORKFLOW_JOB_NAME,
+          {
+            workspaceId,
+            workflowRunId,
+            awaitedStepOutput: { stepId, actionOutput: outcome.answer },
+          },
+          buildRunWorkflowJobOptions(workflowRunId),
+        );
+
+        return;
+      }
+
       const hasCompletedStep =
         await this.workflowRunWorkspaceService.updateStepInfoIfPending({
           stepId,

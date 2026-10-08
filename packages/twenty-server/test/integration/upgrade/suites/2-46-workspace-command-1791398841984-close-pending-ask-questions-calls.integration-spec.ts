@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ClosePendingAskQuestionsCallsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791398841984-close-pending-ask-questions-calls.command';
+import { RESUME_PENDING_WAKE_UP_JOB_NAME } from 'src/engine/core-modules/pending-wake-up/constants/resume-pending-wake-up-job-name.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -53,7 +54,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     turnId: randomUUID(),
     messageId: randomUUID(),
   };
-  const suspensionId = randomUUID();
+  const wakeUpId = randomUUID();
   const seededThreads = [chatThread, suspendedThread, stillWaitingThread];
 
   const runCommand = () =>
@@ -136,15 +137,21 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
       [randomUUID(), stillWaitingThread.messageId, randomUUID()],
     );
     await global.testDataSource.query(
-      `INSERT INTO "core"."agentRunSuspension" (id, "workspaceId", "threadId", caller, "runSpec", "resumeCount")
-       VALUES ($1, $2, $3, $4::jsonb, '{}'::jsonb, 2)`,
+      `INSERT INTO "core"."pendingWakeUp" (id, "workspaceId", "ownerType", "ownerId", "ownerKey", condition, payload)
+       VALUES ($1, $2, 'AGENT_RUN', $3, 'RUN', $4::jsonb, $5::jsonb)`,
       [
-        suspensionId,
+        wakeUpId,
         SEED_APPLE_WORKSPACE_ID,
         suspendedThread.threadId,
+        JSON.stringify({ type: 'ANSWER', threadId: suspendedThread.threadId }),
         JSON.stringify({
-          type: 'WORKFLOW_STEP',
-          ref: { workflowRunId: randomUUID(), stepId: 'step' },
+          caller: {
+            type: 'WORKFLOW_STEP',
+            ref: { workflowRunId: randomUUID(), stepId: 'step' },
+          },
+          runSpec: {},
+          summary: null,
+          continuationCount: 2,
         }),
       ],
     );
@@ -154,8 +161,8 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     addJob.mockRestore();
 
     await global.testDataSource.query(
-      `DELETE FROM "core"."agentRunSuspension" WHERE id = $1`,
-      [suspensionId],
+      `DELETE FROM "core"."pendingWakeUp" WHERE id = $1`,
+      [wakeUpId],
     );
 
     for (const { threadId } of seededThreads) {
@@ -202,25 +209,25 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     });
   });
 
-  it('continues the agent run suspended on the closed call', async () => {
+  it('resolves the wake-up of the agent run suspended on the closed call', async () => {
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith('ContinueAgentRunJob', {
+    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      suspensionId,
-      resumeCount: 2,
+      wakeUpId,
+      answer: { result: {} },
     });
   });
 
-  it('queues the continuation again on a rerun, as long as the run has not moved on', async () => {
+  it('resolves the wake-up again on a rerun, as long as it was not claimed', async () => {
     addJob.mockClear();
 
     await runCommand();
 
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith('ContinueAgentRunJob', {
+    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      suspensionId,
-      resumeCount: 2,
+      wakeUpId,
+      answer: { result: {} },
     });
     expect(await readThread(chatThread)).toEqual({
       pendingQuestionMessageId: null,

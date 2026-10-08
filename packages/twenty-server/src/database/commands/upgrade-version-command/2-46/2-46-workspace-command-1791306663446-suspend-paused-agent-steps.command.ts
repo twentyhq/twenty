@@ -26,15 +26,14 @@ type PausedAgentStep = {
 
 // An agent step that paused on a question before 2.46 is PENDING with its conversation on
 // stepInfo.threadId, and was continued by running the step again. The engine now continues the
-// agent itself, so the step gets the suspension the engine continues it from, and its pending
-// calls the mark that hands their answer to it. A step whose question was
-// answered meanwhile has no call left to settle its suspension, which would then
-// block its conversation for good, so it gets none.
+// agent itself, so the step's conversation gets the ANSWER wake-up holding the run the engine
+// continues. A step whose question was answered meanwhile has no call left to resolve that
+// wake-up, which would then block its conversation for good, so it gets none.
 @RegisteredWorkspaceCommand('2.46.0', 1791306663446)
 @Command({
   name: 'upgrade:2-46:suspend-paused-agent-steps',
   description:
-    'Give agent steps paused on a question the suspension the engine continues them from',
+    'Give agent steps paused on a question the wake-up the engine continues them from',
 })
 export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -102,32 +101,23 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
           return pausedSteps.length;
         }
 
-        // an answer settled between the select and this update leaves its
-        // thread unmarked, and that thread gets no suspension
-        const [markedThreads]: [{ threadId: string }[], number] =
-          await manager.query(
-          `UPDATE ${table('agentMessagePart')} part
-           SET "toolOutput" = part."toolOutput" || '{"awaitedByCaller": true}'::jsonb
-           FROM ${table('agentMessage')} message
-           WHERE part."messageId" = message.id
-             AND message."threadId" = ANY($1::uuid[])
-             AND jsonb_typeof(part."toolOutput") = 'object'
-             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
-           RETURNING message."threadId" AS "threadId"`,
-          [pausedSteps.map(({ threadId }) => threadId)],
-        );
-        const markedThreadIds = new Set(
-          markedThreads.map(({ threadId }) => threadId),
-        );
-        const suspendedSteps = pausedSteps.filter(({ threadId }) =>
-          markedThreadIds.has(threadId),
-        );
+        let suspendedCount = 0;
 
-        for (const pausedStep of suspendedSteps) {
-          await manager.query(
-            `INSERT INTO "core"."agentRunSuspension" ("workspaceId", "threadId", "caller", "runSpec", "summary")
-             VALUES ($1, $2, $3, $4, $5)
-             ON CONFLICT ("threadId") DO NOTHING`,
+        // an answer settled between the select and this insert leaves nothing pending, and no wake-up
+        for (const pausedStep of pausedSteps) {
+          const inserted: { id: string }[] = await manager.query(
+            `INSERT INTO "core"."pendingWakeUp" ("workspaceId", "ownerType", "ownerId", "ownerKey", "condition", "payload")
+             SELECT $1::uuid, 'AGENT_RUN', $2::uuid, 'RUN', jsonb_build_object('type', 'ANSWER', 'threadId', $2::uuid::text),
+               jsonb_build_object('caller', $3::jsonb, 'runSpec', $4::jsonb, 'summary', $5::jsonb, 'continuationCount', 0)
+             WHERE EXISTS (
+               SELECT 1 FROM ${table('agentMessagePart')} part
+               JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+               WHERE message."threadId" = $2::uuid
+                 AND jsonb_typeof(part."toolOutput") = 'object'
+                 AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
+             )
+             ON CONFLICT ("ownerType", "ownerId", "ownerKey") DO NOTHING
+             RETURNING id`,
             [
               workspaceId,
               pausedStep.threadId,
@@ -144,14 +134,14 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
                   isApplicationBound: isDefined(pausedStep.applicationId),
                 }),
               ),
-              isDefined(pausedStep.summary)
-                ? JSON.stringify(pausedStep.summary)
-                : null,
+              JSON.stringify(pausedStep.summary),
             ],
           );
+
+          suspendedCount += inserted.length;
         }
 
-        return suspendedSteps.length;
+        return suspendedCount;
       },
     );
 
@@ -161,6 +151,6 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
   }
 
   async down(_args: RunOnWorkspaceArgs): Promise<void> {
-    // A step left with its suspension is still continued by the engine
+    // A step left with its wake-up is still continued by the engine
   }
 }

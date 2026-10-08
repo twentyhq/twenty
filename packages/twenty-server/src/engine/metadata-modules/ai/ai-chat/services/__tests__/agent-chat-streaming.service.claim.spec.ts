@@ -1,16 +1,11 @@
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
-
-const QUESTIONS = [
-  {
-    header: 'Plan',
-    question: 'Which plan?',
-    options: [{ label: 'Pro' }, { label: 'Team' }],
-  },
-];
 
 describe('AgentChatStreamingService claim & reap', () => {
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
@@ -35,12 +30,12 @@ describe('AgentChatStreamingService claim & reap', () => {
     claimAffected = 1,
     queuedMessages = [] as unknown[],
     heartbeatAlive = true,
-    pendingToolOutput = { result: { questions: QUESTIONS, status: 'pending' } },
+    isConversationAwaited = false,
   }: {
     thread?: typeof idleThread & {
       pendingQuestionMessageId?: string;
     };
-    pendingToolOutput?: Record<string, unknown>;
+    isConversationAwaited?: boolean;
     claimAffected?: number;
     queuedMessages?: unknown[];
     heartbeatAlive?: boolean;
@@ -93,14 +88,6 @@ describe('AgentChatStreamingService claim & reap', () => {
     const threadLifecycleService = {
       closePendingQuestion: jest.fn().mockResolvedValue(undefined),
     };
-    const messagePartRepository = {
-      find: jest.fn().mockResolvedValue([
-        {
-          id: 'part-id',
-          toolOutput: pendingToolOutput,
-        },
-      ]),
-    };
     const eventPublisherService = {
       publish: jest.fn().mockImplementation(({ event }) => {
         publishedEvents.push(event);
@@ -149,13 +136,21 @@ describe('AgentChatStreamingService claim & reap', () => {
           },
         }),
       } as never,
-      messagePartRepository as never,
       {
         findLatestTurn: jest.fn().mockResolvedValue(null),
         markRunning: jest.fn().mockResolvedValue(true),
       } as never,
       {
-        assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
+        assertConversationNotSuspended: isConversationAwaited
+          ? jest
+              .fn()
+              .mockRejectedValue(
+                new AiException(
+                  'awaited',
+                  AiExceptionCode.THREAD_AWAITING_ANSWER,
+                ),
+              )
+          : jest.fn().mockResolvedValue(undefined),
       } as never,
       { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
       threadLifecycleService as never,
@@ -171,7 +166,6 @@ describe('AgentChatStreamingService claim & reap', () => {
           thread: thread as never,
           ...overrides,
         }),
-      messagePartRepository,
       threadRepository,
       messageQueueService,
       agentChatService,
@@ -298,10 +292,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         messageQueueService,
       } = buildService({
         thread: waitingThread,
-        pendingToolOutput: {
-          result: { questions: QUESTIONS, status: 'pending' },
-          awaitedByCaller: true,
-        },
+        isConversationAwaited: true,
       });
 
       await expect(send()).rejects.toMatchObject({
