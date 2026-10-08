@@ -13,7 +13,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { SDK_LAYER_PREFIX_IN_ZIP } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import {
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
+  LAYER_BUILD_LOCK_MAX_RETRIES,
+  SDK_LAYER_PREFIX_IN_ZIP,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
@@ -36,9 +41,9 @@ type LayerAppContext = {
 };
 
 const LAYER_LOCK_OPTIONS = {
-  ttl: 120_000,
-  ms: 500,
-  maxRetries: 240,
+  ttl: BUILD_LOCK_TTL_MS,
+  ms: BUILD_LOCK_RETRY_MS,
+  maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
 };
 
 export class LambdaLayerManagerService {

@@ -23,6 +23,9 @@ import {
   CacheLockExceptionCode,
 } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import {
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
+  EXECUTOR_BUILD_LOCK_MAX_RETRIES,
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
@@ -103,9 +106,6 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const buildLockTtlMs = 120_000;
-    const buildLockRetryMs = 500;
-    const buildLockMaxRetries = 240;
     const lockKey = `lambda-build:${context.flatLogicFunction.id}`;
 
     try {
@@ -128,9 +128,9 @@ export class LambdaExecutorManagerService {
         },
         lockKey,
         {
-          ttl: buildLockTtlMs,
-          ms: buildLockRetryMs,
-          maxRetries: buildLockMaxRetries,
+          ttl: BUILD_LOCK_TTL_MS,
+          ms: BUILD_LOCK_RETRY_MS,
+          maxRetries: EXECUTOR_BUILD_LOCK_MAX_RETRIES,
         },
       );
     } catch (error) {
