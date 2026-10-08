@@ -150,9 +150,22 @@ jobs:
         if: always()
         env:
           AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
+          AGENT_EXECUTION_FILE: ${{ steps.drift-agent.outputs.execution_file }}
           STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
         run: |
           if [ "$AGENT_OUTCOME" != "success" ]; then
+            if [ -f "$AGENT_EXECUTION_FILE" ]; then
+              jq -r '
+                if type == "array" then . else [] end |
+                [ .[] | select(type == "object") |
+                  if .type == "result" and .is_error == true then .api_error_status
+                  elif .type == "system" and .subtype == "api_retry" then .error_status
+                  else empty end |
+                  select(type == "number") |
+                  select(. >= 400 and . <= 599 and . == floor)
+                ] | unique[] | "Drift agent HTTP error: \(.)"
+              ' "$AGENT_EXECUTION_FILE" 2>/dev/null || true
+            fi
             echo "::error::Docs drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
             exit 1
           fi
