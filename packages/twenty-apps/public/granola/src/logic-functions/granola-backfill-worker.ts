@@ -50,7 +50,9 @@ export const granolaBackfillWorkerHandler = async (
       coreApiClient: createApplicationCoreApiClient(),
       noteIds: page.notes.map((note) => note.id),
     });
-    const schedule = await reserveGranolaNoteImportSlotsOrThrow(noteIds.length);
+    const schedule = await reserveGranolaNoteImportSlotsOrThrow({
+      noteCount: noteIds.length,
+    });
     const updatedAtByNoteId = new Map(
       page.notes.map((note) => [note.id, note.updated_at]),
     );

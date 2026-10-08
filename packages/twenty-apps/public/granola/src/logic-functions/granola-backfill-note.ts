@@ -103,17 +103,17 @@ export const granolaBackfillNoteHandler = async (
         error instanceof GranolaUnavailableError &&
         (payload.retryAttempt ?? 0) < GRANOLA_UNAVAILABLE_RETRY_LIMIT
       ) {
-        const schedule = await reserveGranolaNoteImportSlotsOrThrow(1);
+        const schedule = await reserveGranolaNoteImportSlotsOrThrow({
+          noteCount: 1,
+          notBeforeDelayMilliseconds: error.retryAfterMilliseconds,
+        });
 
         await enqueueGranolaRetryOrThrow({
           logicFunctionUniversalIdentifier:
             GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
           prefix: 'granola-note',
           payload,
-          delayMs: Math.max(
-            error.retryAfterMilliseconds,
-            schedule.noteDelays[0],
-          ),
+          delayMs: schedule.noteDelays[0],
         });
 
         return { success: true, deferred: true };

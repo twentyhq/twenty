@@ -3,9 +3,13 @@ import { kv } from 'twenty-sdk/logic-function';
 import { GRANOLA_HISTORY_SCHEDULE_KEY } from 'src/constants/granola.constant';
 import { getGranolaNoteImportSchedule } from 'src/logic-functions/utils/get-granola-note-import-schedule.util';
 
-export const reserveGranolaNoteImportSlotsOrThrow = async (
-  noteCount: number,
-) => {
+export const reserveGranolaNoteImportSlotsOrThrow = async ({
+  noteCount,
+  notBeforeDelayMilliseconds,
+}: {
+  noteCount: number;
+  notBeforeDelayMilliseconds?: number;
+}) => {
   const saved = await kv.get<{ nextNoteAvailableAt: number }>(
     GRANOLA_HISTORY_SCHEDULE_KEY,
   );
@@ -13,6 +17,7 @@ export const reserveGranolaNoteImportSlotsOrThrow = async (
     now: Date.now(),
     nextAvailableAt: saved?.nextNoteAvailableAt,
     noteCount,
+    notBeforeDelayMilliseconds,
   });
 
   if (noteCount > 0) {

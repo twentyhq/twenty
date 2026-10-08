@@ -186,9 +186,24 @@ describe('granolaBackfillNoteHandler when Granola is rate limited', () => {
 
     await granolaBackfillNoteHandler(backfillPayload);
 
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
     expect(mocks.enqueueJobs.mock.calls[0][0].delayMs).toBeGreaterThanOrEqual(
       599_000,
     );
+  });
+
+  it('spaces retries that share a Retry-After instead of starting them together', async () => {
+    await granolaBackfillNoteHandler(backfillPayload);
+    await granolaBackfillNoteHandler({
+      ...backfillPayload,
+      noteId: 'not_other',
+    });
+
+    const [firstDelay, secondDelay] = mocks.enqueueJobs.mock.calls.map(
+      ([input]) => input.delayMs ?? 0,
+    );
+
+    expect(secondDelay - firstDelay).toBeGreaterThanOrEqual(3_000);
   });
 
   it('hands the failure back to the queue once the retry limit is reached', async () => {

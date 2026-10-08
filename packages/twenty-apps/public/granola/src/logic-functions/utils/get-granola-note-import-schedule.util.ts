@@ -4,12 +4,17 @@ export const getGranolaNoteImportSchedule = ({
   now,
   nextAvailableAt,
   noteCount,
+  notBeforeDelayMilliseconds = 0,
 }: {
   now: number;
   nextAvailableAt?: number;
   noteCount: number;
+  notBeforeDelayMilliseconds?: number;
 }) => {
-  const startsAt = Math.max(now, nextAvailableAt ?? now);
+  const startsAt = Math.max(
+    now + notBeforeDelayMilliseconds,
+    nextAvailableAt ?? now,
+  );
   const nextNoteAvailableAt =
     startsAt + noteCount * GRANOLA_HISTORY_IMPORT_INTERVAL_MILLISECONDS;
 

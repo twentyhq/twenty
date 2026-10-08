@@ -27,6 +27,7 @@ import { enqueueGranolaRetryOrThrow } from 'src/logic-functions/utils/enqueue-gr
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { isGranolaFolderSelectionPending } from 'src/logic-functions/utils/is-granola-folder-selection-pending.util';
 import { parseJsonOrUndefined } from 'src/logic-functions/utils/parse-json-or-undefined.util';
+import { reserveGranolaNoteImportSlotsOrThrow } from 'src/logic-functions/utils/reserve-granola-note-import-slots-or-throw.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
 import { verifyStandardWebhookSignature } from 'src/logic-functions/utils/verify-standard-webhook-signature.util';
 
@@ -110,13 +111,17 @@ export const granolaWebhookHandler = async ({
         noteId: parsed.data.note_id,
         deferredWebhook: { eventId: parsed.data.event_id, deferralCount: 0 },
       };
+      const schedule = await reserveGranolaNoteImportSlotsOrThrow({
+        noteCount: 1,
+        notBeforeDelayMilliseconds: error.retryAfterMilliseconds,
+      });
 
       await enqueueGranolaRetryOrThrow({
         logicFunctionUniversalIdentifier:
           GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
         prefix: 'granola-webhook-note',
         payload: notePayload,
-        delayMs: error.retryAfterMilliseconds,
+        delayMs: schedule.noteDelays[0],
       });
 
       return { deferred: true };
