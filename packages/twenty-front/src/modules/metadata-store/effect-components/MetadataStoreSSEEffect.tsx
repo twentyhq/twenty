@@ -1,5 +1,6 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
+import { useRemoveFieldMetadataItemFromDraft } from '@/metadata-store/hooks/useRemoveFieldMetadataItemFromDraft';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
@@ -13,6 +14,8 @@ export const MetadataStoreSSEEffect = () => {
     useUpdateMetadataStoreDraft();
   const { cleanMorphRelations } =
     useCleanMorphRelationsTargetingObjectMetadataId();
+  const { removeFieldMetadataItemFromDraft } =
+    useRemoveFieldMetadataItemFromDraft();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -48,11 +51,18 @@ export const MetadataStoreSSEEffect = () => {
           break;
         }
         case 'delete': {
-          removeFromDraft({
-            key: entityKey,
-            itemIds: [eventDetail.operation.deletedRecordId],
-            collectionHash,
-          });
+          if (entityKey === 'fieldMetadataItems') {
+            removeFieldMetadataItemFromDraft({
+              fieldMetadataId: eventDetail.operation.deletedRecordId,
+              collectionHash,
+            });
+          } else {
+            removeFromDraft({
+              key: entityKey,
+              itemIds: [eventDetail.operation.deletedRecordId],
+              collectionHash,
+            });
+          }
 
           if (entityKey === 'objectMetadataItems') {
             cleanMorphRelations(eventDetail.operation.deletedRecordId);
