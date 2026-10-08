@@ -200,7 +200,9 @@ describe('Popover root contracts', () => {
           handle={handle}
           onOpenChange={(open, details) => {
             onOpenChange(open, details);
-            if (details.reason === 'close-press') details.cancel();
+            if (details.reason === 'close-press') {
+              details.cancel();
+            }
           }}
         >
           {({ payload }) => (
