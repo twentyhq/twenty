@@ -20,6 +20,7 @@ import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/util
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/module-imports/containsSdkClientImportSpecifier';
@@ -35,6 +36,7 @@ type FrontComponentWorkerEffectProps = {
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
+  initialHostCommunicationApi: FrontComponentHostCommunicationApi;
   geometryTracker: GeometryTracker;
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -54,6 +56,7 @@ export const FrontComponentWorkerEffect = ({
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
+  initialHostCommunicationApi,
   geometryTracker,
   mediaSessionHost,
   setReceiver,
@@ -93,6 +96,7 @@ export const FrontComponentWorkerEffect = ({
       imageLoadingHost,
       geometryTracker,
       mediaSessionHost,
+      frontComponentHostCommunicationApi: initialHostCommunicationApi,
     });
 
     const handleSandboxMessage = createFrontComponentSandboxMessageHandler({
@@ -146,6 +150,13 @@ export const FrontComponentWorkerEffect = ({
         const storageSnapshots = isDefined(storageNamespace)
           ? buildFrontComponentStorageSnapshots(storageNamespace)
           : undefined;
+
+        // Custom modules can call the host as soon as they are evaluated.
+        await thread.imports.initializeHostCommunicationApi();
+
+        if (isCancelled) {
+          return;
+        }
 
         await thread.imports.render(
           createFocusAwareRemoteConnection({
@@ -201,6 +212,7 @@ export const FrontComponentWorkerEffect = ({
     applicationVariables,
     storageNamespace,
     initialExecutionContext,
+    initialHostCommunicationApi,
     geometryTracker,
     hostFocusController,
     mediaSessionHost,

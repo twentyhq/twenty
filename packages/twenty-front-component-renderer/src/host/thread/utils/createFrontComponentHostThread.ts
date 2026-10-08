@@ -5,6 +5,7 @@ import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/const
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type ImageLoadingHost } from '@/types/image/ImageLoadingHost';
@@ -18,6 +19,7 @@ type CreateFrontComponentHostThreadInput = {
   imageLoadingHost: ImageLoadingHost;
   geometryTracker: GeometryTracker;
   mediaSessionHost?: FrontComponentMediaSessionHost;
+  frontComponentHostCommunicationApi?: FrontComponentHostCommunicationApi;
 };
 
 const MEDIA_SESSION_UNAVAILABLE_FAILURE = {
@@ -60,6 +62,7 @@ export const createFrontComponentHostThread = ({
   imageLoadingHost,
   geometryTracker,
   mediaSessionHost,
+  frontComponentHostCommunicationApi,
 }: CreateFrontComponentHostThreadInput): FrontComponentThread => {
   const thread = new ThreadMessagePort<
     WorkerExports,
@@ -67,6 +70,13 @@ export const createFrontComponentHostThread = ({
   >(hostMessagePort, {
     exports: {
       ...FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP,
+      ...frontComponentHostCommunicationApi,
+      getUserApplicationVariables:
+        frontComponentHostCommunicationApi?.getUserApplicationVariables ??
+        FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.getUserApplicationVariables,
+      updateUserApplicationVariable:
+        frontComponentHostCommunicationApi?.updateUserApplicationVariable ??
+        FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.updateUserApplicationVariable,
       ...buildMediaSessionThreadExports(mediaSessionHost),
       hostFetch,
       loadImage: imageLoadingHost.loadImage,

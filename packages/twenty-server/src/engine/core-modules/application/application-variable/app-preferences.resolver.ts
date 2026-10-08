@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Query } from '@nestjs/graphql';
+import { Context, Query } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -9,8 +9,10 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { AppPreferencesService } from 'src/engine/core-modules/application/application-variable/app-preferences.service';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { AppPreferencesApplicationDTO } from 'src/engine/core-modules/application/application-variable/dtos/app-preferences-application.dto';
+import { AppPreferencesSettingsMenuItemDTO } from 'src/engine/core-modules/application/application-variable/dtos/app-preferences-settings-menu-item.dto';
 import { UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -77,6 +79,29 @@ export class AppPreferencesResolver {
       applicationUniversalIdentifier,
       workspaceId,
       userWorkspaceId,
+    });
+  }
+
+  @Query(() => [AppPreferencesSettingsMenuItemDTO])
+  @RequireFeatureFlag(FeatureFlagKey.IS_APP_PREFERENCES_ENABLED)
+  @UseGuards(ApplicationTargetGuard)
+  async myAppPreferencesSettingsMenuItems(
+    @ApplicationTargetArg(
+      'applicationUniversalIdentifier',
+      {
+        kind: 'applicationUniversalIdentifier',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    applicationUniversalIdentifier: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() { req: { locale } }: I18nContext,
+  ): Promise<AppPreferencesSettingsMenuItemDTO[]> {
+    return this.appPreferencesService.findMySettingsMenuItemsOrThrow({
+      applicationUniversalIdentifier,
+      workspaceId,
+      locale,
     });
   }
 }

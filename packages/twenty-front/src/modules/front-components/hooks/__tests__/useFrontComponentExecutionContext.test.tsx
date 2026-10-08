@@ -241,6 +241,74 @@ describe('useFrontComponentExecutionContext', () => {
     getDefaultStore().set(parentViewAtom, undefined);
   });
 
+  describe('personal application variables', () => {
+    it.each([undefined, 'another-application'])(
+      'rejects access without the owning personal settings host: %s',
+      async (applicationId) => {
+        const getUserApplicationVariables = jest.fn(async () => ({}));
+        const updateUserApplicationVariable = jest.fn(async () => {});
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+          userApplicationVariableAccess:
+            applicationId === undefined
+              ? undefined
+              : {
+                  applicationId,
+                  getUserApplicationVariables,
+                  updateUserApplicationVariable,
+                },
+        });
+
+        await expect(
+          result.current.frontComponentHostCommunicationApi.getUserApplicationVariables?.(),
+        ).rejects.toMatchObject({
+          code: 'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+        });
+        await expect(
+          result.current.frontComponentHostCommunicationApi.updateUserApplicationVariable?.(
+            { key: 'THEME', value: 'dark' },
+          ),
+        ).rejects.toMatchObject({
+          code: 'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+        });
+        expect(getUserApplicationVariables).not.toHaveBeenCalled();
+        expect(updateUserApplicationVariable).not.toHaveBeenCalled();
+      },
+    );
+
+    it('binds preference calls while keeping account context distinct from records', async () => {
+      const getUserApplicationVariables = jest.fn(async () => ({
+        THEME: 'dark',
+      }));
+      const updateUserApplicationVariable = jest.fn(async () => {});
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        connectedAccountId: 'account-one',
+        userApplicationVariableAccess: {
+          applicationId: APPLICATION_ID,
+          getUserApplicationVariables,
+          updateUserApplicationVariable,
+        },
+      });
+
+      expect(result.current.executionContext.connectedAccountId).toBe(
+        'account-one',
+      );
+      expect(result.current.executionContext.selectedRecordIds).toEqual([]);
+      expect(result.current.executionContext.recordId).toBeNull();
+      await expect(
+        result.current.frontComponentHostCommunicationApi.getUserApplicationVariables?.(),
+      ).resolves.toEqual({ THEME: 'dark' });
+      await result.current.frontComponentHostCommunicationApi.updateUserApplicationVariable?.(
+        { key: 'THEME', value: 'light' },
+      );
+      expect(updateUserApplicationVariable).toHaveBeenCalledWith({
+        key: 'THEME',
+        value: 'light',
+      });
+    });
+  });
+
   describe('executionContext', () => {
     it('should return frontComponentId, userId, recordId, and selectedRecordIds with single record', () => {
       const { result } = renderUseFrontComponentExecutionContext({

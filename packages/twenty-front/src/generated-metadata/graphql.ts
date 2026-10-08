@@ -359,6 +359,16 @@ export type AppPreferencesApplication = {
   universalIdentifier: Scalars['UUID']['output'];
 };
 
+export type AppPreferencesSettingsMenuItem = {
+  __typename?: 'AppPreferencesSettingsMenuItem';
+  frontComponentId: Scalars['UUID']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  position: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
+  universalIdentifier: Scalars['UUID']['output'];
+};
+
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -5386,6 +5396,7 @@ export type Query = {
   mostlyEmptyFieldMetadataIds: Array<Scalars['UUID']['output']>;
   myAppPreferencesApplicationVariables: Array<UserApplicationVariableValue>;
   myAppPreferencesApplications: Array<AppPreferencesApplication>;
+  myAppPreferencesSettingsMenuItems: Array<AppPreferencesSettingsMenuItem>;
   myCalendarChannels: Array<CalendarChannel>;
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
@@ -5826,6 +5837,11 @@ export type QueryMostlyEmptyFieldMetadataIdsArgs = {
 
 
 export type QueryMyAppPreferencesApplicationVariablesArgs = {
+  applicationUniversalIdentifier: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyAppPreferencesSettingsMenuItemsArgs = {
   applicationUniversalIdentifier: Scalars['UUID']['input'];
 };
 
@@ -9679,6 +9695,13 @@ export type MyAppPreferencesConnectedAccountsQueryVariables = Exact<{ [key: stri
 
 export type MyAppPreferencesConnectedAccountsQuery = { __typename?: 'Query', myConnectedAccounts: Array<{ __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string, name?: string | null, provider: string, applicationId?: string | null, connectionProviderId?: string | null, userWorkspaceId: string, visibility: string, scopes?: Array<string> | null, archivedAt?: string | null, authFailedAt?: string | null }> };
 
+export type MyAppPreferencesSettingsMenuItemsQueryVariables = Exact<{
+  applicationUniversalIdentifier: Scalars['UUID']['input'];
+}>;
+
+
+export type MyAppPreferencesSettingsMenuItemsQuery = { __typename?: 'Query', myAppPreferencesSettingsMenuItems: Array<{ __typename?: 'AppPreferencesSettingsMenuItem', id: string, universalIdentifier: string, title: string, icon?: string | null, position: number, frontComponentId: string }> };
+
 export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, galleryImagesUrls: Array<string>, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isVetted: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
 
 export type ClaimApplicationRegistrationOwnershipMutationVariables = Exact<{
@@ -10964,6 +10987,7 @@ export const UpdateMyUserApplicationVariableDocument = {"kind":"Document","defin
 export const MyAppPreferencesApplicationVariablesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyAppPreferencesApplicationVariables"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationUniversalIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myAppPreferencesApplicationVariables"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationUniversalIdentifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationUniversalIdentifier"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"options"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isDeprecated"}}]}}]}}]} as unknown as DocumentNode<MyAppPreferencesApplicationVariablesQuery, MyAppPreferencesApplicationVariablesQueryVariables>;
 export const MyAppPreferencesApplicationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyAppPreferencesApplications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myAppPreferencesApplications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"hasConnectionProviders"}}]}}]}}]} as unknown as DocumentNode<MyAppPreferencesApplicationsQuery, MyAppPreferencesApplicationsQueryVariables>;
 export const MyAppPreferencesConnectedAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyAppPreferencesConnectedAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myConnectedAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"connectionProviderId"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"scopes"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"authFailedAt"}}]}}]}}]} as unknown as DocumentNode<MyAppPreferencesConnectedAccountsQuery, MyAppPreferencesConnectedAccountsQueryVariables>;
+export const MyAppPreferencesSettingsMenuItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyAppPreferencesSettingsMenuItems"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationUniversalIdentifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myAppPreferencesSettingsMenuItems"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationUniversalIdentifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationUniversalIdentifier"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"frontComponentId"}}]}}]}}]} as unknown as DocumentNode<MyAppPreferencesSettingsMenuItemsQuery, MyAppPreferencesSettingsMenuItemsQueryVariables>;
 export const ClaimApplicationRegistrationOwnershipDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClaimApplicationRegistrationOwnership"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"claimApplicationRegistrationOwnership"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationRegistrationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<ClaimApplicationRegistrationOwnershipMutation, ClaimApplicationRegistrationOwnershipMutationVariables>;
 export const DeleteApplicationRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteApplicationRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteApplicationRegistration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteApplicationRegistrationMutation, DeleteApplicationRegistrationMutationVariables>;
 export const RotateApplicationRegistrationClientSecretDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RotateApplicationRegistrationClientSecret"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rotateApplicationRegistrationClientSecret"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clientSecret"}}]}}]}}]} as unknown as DocumentNode<RotateApplicationRegistrationClientSecretMutation, RotateApplicationRegistrationClientSecretMutationVariables>;

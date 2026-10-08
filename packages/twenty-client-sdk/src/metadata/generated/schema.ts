@@ -251,6 +251,16 @@ export interface AppPreferencesApplication {
     __typename: 'AppPreferencesApplication'
 }
 
+export interface AppPreferencesSettingsMenuItem {
+    frontComponentId: Scalars['UUID']
+    icon?: Scalars['String']
+    id: Scalars['UUID']
+    position: Scalars['Float']
+    title: Scalars['String']
+    universalIdentifier: Scalars['UUID']
+    __typename: 'AppPreferencesSettingsMenuItem'
+}
+
 export interface Application {
     agents: Agent[]
     applicationRegistration?: ApplicationRegistrationSummary
@@ -2798,6 +2808,7 @@ export interface Query {
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
     myAppPreferencesApplicationVariables: UserApplicationVariableValue[]
     myAppPreferencesApplications: AppPreferencesApplication[]
+    myAppPreferencesSettingsMenuItems: AppPreferencesSettingsMenuItem[]
     myCalendarChannels: CalendarChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
@@ -4132,6 +4143,17 @@ export interface AppPreferencesApplicationGenqlSelection{
     id?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AppPreferencesSettingsMenuItemGenqlSelection{
+    frontComponentId?: boolean | number
+    icon?: boolean | number
+    id?: boolean | number
+    position?: boolean | number
+    title?: boolean | number
     universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6985,6 +7007,7 @@ export interface QueryGenqlSelection{
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
     myAppPreferencesApplicationVariables?: (UserApplicationVariableValueGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['UUID']} })
     myAppPreferencesApplications?: AppPreferencesApplicationGenqlSelection
+    myAppPreferencesSettingsMenuItems?: (AppPreferencesSettingsMenuItemGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['UUID']} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -8541,6 +8564,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAppPreferencesApplication = (obj?: { __typename?: any } | null): obj is AppPreferencesApplication => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppPreferencesApplication"')
       return AppPreferencesApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AppPreferencesSettingsMenuItem_possibleTypes: string[] = ['AppPreferencesSettingsMenuItem']
+    export const isAppPreferencesSettingsMenuItem = (obj?: { __typename?: any } | null): obj is AppPreferencesSettingsMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAppPreferencesSettingsMenuItem"')
+      return AppPreferencesSettingsMenuItem_possibleTypes.includes(obj.__typename)
     }
     
 

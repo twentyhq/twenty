@@ -7,6 +7,7 @@ import { type FrontComponentToolCall } from './FrontComponentToolCall';
 export type FrontComponentExecutionContext = {
   frontComponentId: string;
   userId: string | null;
+  connectedAccountId?: string;
   /**
    * @deprecated Use `selectedRecordIds` instead. Derive single record as `selectedRecordIds.length === 1 ? selectedRecordIds[0] : null`.
    */

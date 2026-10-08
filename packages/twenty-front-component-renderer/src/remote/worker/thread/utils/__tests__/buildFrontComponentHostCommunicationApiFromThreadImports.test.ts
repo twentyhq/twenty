@@ -1,4 +1,5 @@
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '../buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '../handleCommandConfirmationModalResult';
 
@@ -17,6 +18,8 @@ const createHostThreadImportsStub = () =>
     storageSet: jest.fn(),
     storageDelete: jest.fn(),
     storageClear: jest.fn(),
+    getUserApplicationVariables: jest.fn(async () => ({ THEME: 'dark' })),
+    updateUserApplicationVariable: jest.fn(async () => {}),
     hostFetch: jest.fn(),
   }) as unknown as FrontComponentHostThreadExports;
 
@@ -37,6 +40,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
+      'getUserApplicationVariables',
       'navigate',
       'openCommandConfirmationModal',
       'openSidePanelPage',
@@ -46,6 +50,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'storageSet',
       'unmountFrontComponent',
       'updateProgress',
+      'updateUserApplicationVariable',
       'uploadFile',
     ]);
     expect(hostCommunicationApi.navigate).toBe(hostThreadImports.navigate);
@@ -78,6 +83,38 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.storageClear).toBe(
       hostThreadImports.storageClear,
     );
+  });
+
+  it('forwards personal settings calls and fails before a host grants access', async () => {
+    const hostThreadImports = createHostThreadImportsStub();
+    const hostCommunicationApi =
+      buildFrontComponentHostCommunicationApiFromThreadImports(
+        hostThreadImports,
+      );
+
+    await expect(
+      hostCommunicationApi.getUserApplicationVariables(),
+    ).resolves.toEqual({ THEME: 'dark' });
+    await hostCommunicationApi.updateUserApplicationVariable({
+      key: 'THEME',
+      value: 'light',
+    });
+    expect(
+      hostThreadImports.updateUserApplicationVariable,
+    ).toHaveBeenCalledWith({ key: 'THEME', value: 'light' });
+
+    await expect(
+      FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.getUserApplicationVariables(),
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+    });
+    await expect(
+      FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.updateUserApplicationVariable(
+        { key: 'THEME', value: 'light' },
+      ),
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+    });
   });
 
   it('should wrap openCommandConfirmationModal with the confirmation modal adapter', async () => {

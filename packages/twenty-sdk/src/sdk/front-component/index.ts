@@ -3,12 +3,14 @@ export type { TransProps } from './components/Trans';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
+export { getUserApplicationVariables } from './functions/getUserApplicationVariables';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { updateUserApplicationVariable } from './functions/updateUserApplicationVariable';
 export { uploadFile } from './functions/uploadFile';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
@@ -41,6 +43,7 @@ export type {
   CommandConfirmationModalResult,
   CopyToClipboardFunction,
   EnqueueSnackbarFunction,
+  GetUserApplicationVariablesFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
@@ -52,6 +55,7 @@ export type {
   StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
+  UpdateUserApplicationVariableFunction,
   UploadedFrontComponentFile,
   UploadFileFailureReason,
   UploadFileFunction,

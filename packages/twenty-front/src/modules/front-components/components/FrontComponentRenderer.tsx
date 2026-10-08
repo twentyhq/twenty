@@ -5,6 +5,7 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
+import { type FrontComponentUserApplicationVariableAccess } from '@/front-components/types/FrontComponentUserApplicationVariableAccess';
 import { FrontComponentMediaSessionRegistrationEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionRegistrationEffect';
 import { FrontComponentMediaPermissionModal } from '@/front-components/media-session/components/FrontComponentMediaPermissionModal';
 import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
@@ -29,6 +30,8 @@ import {
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
+  connectedAccountId?: string;
+  userApplicationVariableAccess?: FrontComponentUserApplicationVariableAccess;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -45,6 +48,8 @@ type ResolvedFrontComponent = NonNullable<
 
 type FrontComponentRendererContentProps = {
   frontComponent: ResolvedFrontComponent;
+  connectedAccountId?: string;
+  userApplicationVariableAccess?: FrontComponentUserApplicationVariableAccess;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -57,6 +62,8 @@ type FrontComponentRendererContentProps = {
 
 export const FrontComponentRenderer = ({
   frontComponentId,
+  connectedAccountId,
+  userApplicationVariableAccess,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -85,8 +92,10 @@ export const FrontComponentRenderer = ({
         unavailableFallback}
       {!loading && isDefined(frontComponent) && !isDefined(error) && (
         <FrontComponentRendererContent
-          key={frontComponent.id}
+          key={`${frontComponent.id}:${connectedAccountId ?? ''}`}
           frontComponent={frontComponent}
+          connectedAccountId={connectedAccountId}
+          userApplicationVariableAccess={userApplicationVariableAccess}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
           selectedRecordsFilter={selectedRecordsFilter}
@@ -103,6 +112,8 @@ export const FrontComponentRenderer = ({
 
 const FrontComponentRendererContent = ({
   frontComponent,
+  connectedAccountId,
+  userApplicationVariableAccess,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -131,6 +142,8 @@ const FrontComponentRendererContent = ({
   } = useFrontComponentExecutionContext({
     frontComponentId,
     applicationId,
+    connectedAccountId,
+    userApplicationVariableAccess,
     commandMenuItemId,
     selectedRecordIds,
     selectedRecordsFilter,

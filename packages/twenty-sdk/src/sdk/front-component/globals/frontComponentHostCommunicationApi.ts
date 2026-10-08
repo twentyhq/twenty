@@ -120,6 +120,15 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type GetUserApplicationVariablesFunction = () => Promise<
+  Record<string, string>
+>;
+
+export type UpdateUserApplicationVariableFunction = (params: {
+  key: string;
+  value: string;
+}) => Promise<void>;
+
 export type UploadedFrontComponentFile = {
   fileId: string;
   path: string;
@@ -178,6 +187,8 @@ export type FrontComponentHostCommunicationApiStore = {
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;
+  getUserApplicationVariables?: GetUserApplicationVariablesFunction;
+  updateUserApplicationVariable?: UpdateUserApplicationVariableFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

@@ -138,7 +138,7 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
   it.
 </Note>
 
-A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyUserApplicationVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`. In personal App preferences, use the [personal preference host APIs](#personal-preference-host-apis) to read and save the viewing member's values. `updateMyUserApplicationVariable` itself continues to require a member session and refuses application tokens. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -469,6 +469,16 @@ Available hooks:
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
+Personal settings can receive an optional `connectedAccountId` in the execution context:
+
+```tsx
+const connectedAccountId = useFrontComponentExecutionContext(
+  (context) => context.connectedAccountId,
+);
+```
+
+This identifies the connection selected by the host. It is separate from record selection and can be absent when the page has no usable connection or the member cannot select accounts. USER application variables remain scoped to the member and app; selecting an account does not create another set of personal values.
+
 ### Object metadata
 
 Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
@@ -567,7 +577,32 @@ Notes:
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
 - Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
-- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Your component cannot write it: `updateMyUserApplicationVariable` refuses application tokens and takes the member's own session only. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Use the personal preference host APIs below in App preferences. The underlying `updateMyUserApplicationVariable` mutation takes the member's own session and refuses application tokens. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### Personal preference host APIs
+
+A USER settings component hosted in personal App preferences can read fresh values and save a declared USER variable:
+
+```tsx
+import {
+  getUserApplicationVariables,
+  updateUserApplicationVariable,
+} from 'twenty-sdk/front-component';
+
+const readPersonalPreferences = async () => {
+  const values = await getUserApplicationVariables();
+  return values.REVENUE_METRIC;
+};
+
+const saveRevenueMetric = async (value: string) => {
+  await updateUserApplicationVariable({ key: 'REVENUE_METRIC', value });
+  return getUserApplicationVariables();
+};
+```
+
+The host binds both calls to the current member and the component's app. The component supplies only a key and value; it receives no member session token and cannot select another app or member. Reads return masked secrets. Keep a returned mask as a placeholder and pass plaintext only when the user explicitly replaces a secret. Standard preference fields and custom views use the same saved values.
+
+These APIs reject outside personal App preferences. They do not require the member or app to hold the `APPLICATIONS` settings permission, and they do not expose WORKSPACE variables. Handle rejected reads and saves in your component so the member can retry.
 
 ### System variables
 

@@ -7,7 +7,6 @@ import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-compo
 import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
 import { FrontComponentFocusTrackerEffect } from '@/host/effect-components/FrontComponentFocusTrackerEffect';
 import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
-import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
@@ -76,6 +75,9 @@ export const FrontComponentRenderer = ({
     createHostFocusController({ geometryTracker }),
   );
   const [initialExecutionContext] = useState(executionContext);
+  const [initialHostCommunicationApi] = useState(
+    () => frontComponentHostCommunicationApi,
+  );
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
@@ -92,6 +94,7 @@ export const FrontComponentRenderer = ({
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}
+          initialHostCommunicationApi={initialHostCommunicationApi}
           geometryTracker={geometryTracker}
           hostFocusController={hostFocusController}
           mediaSessionHost={mediaSessionHost}
@@ -114,9 +117,6 @@ export const FrontComponentRenderer = ({
               frontComponentHostCommunicationApi={
                 frontComponentHostCommunicationApi
               }
-            />
-            <FrontComponentInitializeHostCommunicationApiEffect
-              thread={thread}
             />
             <FrontComponentGeometryTrackerEffect
               thread={thread}

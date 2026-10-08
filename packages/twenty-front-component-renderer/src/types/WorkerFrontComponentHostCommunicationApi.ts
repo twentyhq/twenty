@@ -2,6 +2,7 @@ import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
+  type GetUserApplicationVariablesFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
@@ -11,6 +12,7 @@ import {
   type StorageSetFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
+  type UpdateUserApplicationVariableFunction,
   type UploadFileFunction,
 } from 'twenty-sdk/front-component';
 
@@ -28,4 +30,6 @@ export type WorkerFrontComponentHostCommunicationApi = {
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;
+  getUserApplicationVariables?: GetUserApplicationVariablesFunction;
+  updateUserApplicationVariable?: UpdateUserApplicationVariableFunction;
 };

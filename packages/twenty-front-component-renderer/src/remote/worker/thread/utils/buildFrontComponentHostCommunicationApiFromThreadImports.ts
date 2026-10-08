@@ -1,6 +1,7 @@
 import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/thread/utils/createOpenCommandConfirmationModalAdapter';
 import { type WorkerFrontComponentHostCommunicationApi } from '@/types/WorkerFrontComponentHostCommunicationApi';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 
 export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   hostThreadImports: FrontComponentHostThreadExports,
@@ -19,4 +20,10 @@ export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   storageSet: hostThreadImports.storageSet,
   storageDelete: hostThreadImports.storageDelete,
   storageClear: hostThreadImports.storageClear,
+  getUserApplicationVariables:
+    hostThreadImports.getUserApplicationVariables ??
+    FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.getUserApplicationVariables,
+  updateUserApplicationVariable:
+    hostThreadImports.updateUserApplicationVariable ??
+    FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP.updateUserApplicationVariable,
 });

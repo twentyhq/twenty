@@ -36,6 +36,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
+import { type FrontComponentUserApplicationVariableAccess } from '@/front-components/types/FrontComponentUserApplicationVariableAccess';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -121,6 +122,8 @@ const sanitizeUploadFileName = (fileName: string, mimeType: string): string => {
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
   applicationId,
+  connectedAccountId,
+  userApplicationVariableAccess,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -131,6 +134,8 @@ export const useFrontComponentExecutionContext = ({
 }: {
   frontComponentId: string;
   applicationId: string;
+  connectedAccountId?: string;
+  userApplicationVariableAccess?: FrontComponentUserApplicationVariableAccess;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -436,6 +441,7 @@ export const useFrontComponentExecutionContext = ({
 
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
+    ...(isDefined(connectedAccountId) ? { connectedAccountId } : {}),
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
@@ -602,6 +608,32 @@ export const useFrontComponentExecutionContext = ({
   const requestAccessTokenRefresh: FrontComponentHostCommunicationApi['requestAccessTokenRefresh'] =
     () => requestApplicationAccessTokenRefresh(applicationId);
 
+  const getUserApplicationVariables: FrontComponentHostCommunicationApi['getUserApplicationVariables'] =
+    async () => {
+      if (userApplicationVariableAccess?.applicationId !== applicationId) {
+        throw new CustomError(
+          'User application variables are only available in personal app settings',
+          'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+        );
+      }
+
+      return userApplicationVariableAccess.getUserApplicationVariables();
+    };
+
+  const updateUserApplicationVariable: FrontComponentHostCommunicationApi['updateUserApplicationVariable'] =
+    async (params) => {
+      if (userApplicationVariableAccess?.applicationId !== applicationId) {
+        throw new CustomError(
+          'User application variables are only available in personal app settings',
+          'FRONT_COMPONENT_USER_PREFERENCES_UNAVAILABLE',
+        );
+      }
+
+      return userApplicationVariableAccess.updateUserApplicationVariable(
+        params,
+      );
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -617,6 +649,8 @@ export const useFrontComponentExecutionContext = ({
       storageSet,
       storageDelete,
       storageClear,
+      getUserApplicationVariables,
+      updateUserApplicationVariable,
     };
 
   return {

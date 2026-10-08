@@ -320,6 +320,15 @@ type AppPreferencesApplication {
   universalIdentifier: UUID!
 }
 
+type AppPreferencesSettingsMenuItem {
+  frontComponentId: UUID!
+  icon: String
+  id: UUID!
+  position: Float!
+  title: String!
+  universalIdentifier: UUID!
+}
+
 type Application {
   agents: [Agent!]!
   applicationRegistration: ApplicationRegistrationSummary
@@ -3832,6 +3841,7 @@ type Query {
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   myAppPreferencesApplicationVariables(applicationUniversalIdentifier: UUID!): [UserApplicationVariableValue!]!
   myAppPreferencesApplications: [AppPreferencesApplication!]!
+  myAppPreferencesSettingsMenuItems(applicationUniversalIdentifier: UUID!): [AppPreferencesSettingsMenuItem!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
