@@ -11,6 +11,8 @@ import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
+import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
+import { OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-timeout-ms.constant';
 import { normalizeAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/normalize-allowed-internal-host.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -43,9 +45,19 @@ export class SecureHttpClientService {
     const allowedInternalHosts = this.getAllowedInternalHosts();
     const isSafeModeEnabled = this.isSafeModeEnabled(allowedInternalHosts);
 
+    const boundedAxiosConfig: CreateAxiosDefaults = {
+      ...axiosConfig,
+      maxContentLength:
+        axiosConfig.maxContentLength ??
+        OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
+      maxBodyLength:
+        axiosConfig.maxBodyLength ??
+        OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
+    };
+
     const client = isSafeModeEnabled
       ? axios.create({
-          ...axiosConfig,
+          ...boundedAxiosConfig,
           httpAgent: createSsrfSafeAgent('http', allowedInternalHosts),
           httpsAgent: createSsrfSafeAgent('https', allowedInternalHosts),
           maxRedirects: Math.min(
@@ -53,7 +65,15 @@ export class SecureHttpClientService {
             MAX_REDIRECTS,
           ),
         })
-      : axios.create(axiosConfig);
+      : axios.create(boundedAxiosConfig);
+
+    client.interceptors.request.use((requestConfig) => {
+      requestConfig.signal = AbortSignal.timeout(
+        requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
+      );
+
+      return requestConfig;
+    });
 
     if (isDefined(retries) && retries > 0) {
       axiosRetry(client, {
@@ -62,7 +82,8 @@ export class SecureHttpClientService {
         retryCondition: (error) =>
           axiosRetry.isNetworkOrIdempotentRequestError(error) &&
           error.code !== 'ECONNABORTED' &&
-          error.code !== 'ETIMEDOUT',
+          error.code !== 'ETIMEDOUT' &&
+          error.code !== 'ERR_CANCELED',
       });
     }
 

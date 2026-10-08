@@ -222,6 +222,7 @@ export const Truncation: Story = {
 const CATALOG_STATES: Record<string, Partial<ButtonProps>> = {
   default: {},
   small: { size: 'sm' },
+  shortcut: { shortcut: ['H'] },
   disabled: { disabled: true },
   loading: { loading: true },
 };
