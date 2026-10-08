@@ -275,26 +275,7 @@ Entries are matched on the hostname only, without wildcards: for an OIDC issuer 
 
 `OUTBOUND_HTTP_SAFE_MODE_ENABLED` is deprecated. While it is set to `false`, the protection stays fully off and `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` is ignored, so remove it when you migrate to the list.
 
-This list does not apply to AI file attachments, see [AI File Attachments](#ai-file-attachments).
-
-## AI File Attachments
-
-Images and PDFs attached in the AI chat, or passed to an AI agent, are sent to the model as links to your instance (`SERVER_URL/file/...`). Depending on the provider, either the AI provider fetches the link itself (for example OpenAI or Anthropic), or the Twenty worker downloads the file first and sends its content (for example custom OpenAI-compatible providers or Amazon Bedrock).
-
-For attachments to work, `SERVER_URL` must be public:
-
-- the AI provider must be able to reach it from the internet
-- it must resolve to a public IP address from the worker
-
-With a private `SERVER_URL`, text-only conversations keep working, but every conversation that contains an image or a PDF fails. Private here means `localhost` (the default in `.env.example`), an address in `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` or `100.64.0.0/10` (Tailscale), a `.local` hostname, or a domain that resolves to one of these. The worker then logs an error such as:
-
-```
-URL with IP address 192.168.1.10 is not allowed
-```
-
-`OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` does not lift this restriction: the download is done by the AI SDK, which refuses private addresses on its own.
-
-If your instance has to stay on a private network, remove your custom provider model and add it again with images and PDFs unchecked in **Supported input types** (**Settings → Admin Panel → AI → your provider → Add Model**). The model then receives the file name instead of its content, and the chat keeps working.
+This list does not cover AI file attachments: images and PDFs reach the model as links built from `SERVER_URL`, fetched either by the AI provider or by the AI SDK in the worker, which refuses private addresses. For attachments to work, `SERVER_URL` must be public; with a `localhost` or private `SERVER_URL`, AI chats and agents only work with text.
 
 ## Email Configuration
 
