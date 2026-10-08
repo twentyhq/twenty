@@ -18,14 +18,14 @@ import {
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { createStandardInputStub } from '@/__tests__/utils/create-standard-input-stub';
-import { promptForAppAddValue } from '@/app/add/prompt-for-app-add-value';
 import { readAppIdentity } from '@/app/read-app-identity';
 import { confirmInTerminal } from '@/input/confirm-in-terminal';
+import { promptInTerminal } from '@/input/prompt-in-terminal';
 import { CliError } from '@/output/cli-error';
 
 vi.mock('@/app/read-app-identity', () => ({ readAppIdentity: vi.fn() }));
-vi.mock('@/app/add/prompt-for-app-add-value', () => ({
-  promptForAppAddValue: vi.fn(),
+vi.mock('@/input/prompt-in-terminal', () => ({
+  promptInTerminal: vi.fn(),
 }));
 
 vi.mock('@/input/confirm-in-terminal', () => ({ confirmInTerminal: vi.fn() }));
@@ -61,7 +61,7 @@ describe('app add', () => {
       },
       diagnostics: [],
     });
-    vi.mocked(promptForAppAddValue).mockReset();
+    vi.mocked(promptInTerminal).mockReset();
     vi.mocked(confirmInTerminal).mockReset().mockResolvedValue(false);
   });
 
@@ -122,7 +122,7 @@ describe('app add', () => {
       expect(await readdir(join(appPath, 'src'), { recursive: true })).toEqual(
         expect.arrayContaining([path.slice(4)]),
       );
-      expect(vi.mocked(promptForAppAddValue)).not.toHaveBeenCalled();
+      expect(vi.mocked(promptInTerminal)).not.toHaveBeenCalled();
     },
   );
 
@@ -206,7 +206,7 @@ describe('app add', () => {
           );
         }
       }
-      expect(promptForAppAddValue).not.toHaveBeenCalled();
+      expect(promptInTerminal).not.toHaveBeenCalled();
     },
   );
 
@@ -364,7 +364,7 @@ describe('app add', () => {
 
       expect(result.exitCode, result.stdout).toBe(2);
       expect(result.envelope.error.code).toBe('USAGE');
-      expect(promptForAppAddValue).not.toHaveBeenCalled();
+      expect(promptInTerminal).not.toHaveBeenCalled();
       expect(await readdir(appPath)).toEqual(['package.json']);
     },
   );
@@ -431,7 +431,7 @@ describe('app add', () => {
     vi.spyOn(process, 'stdin', 'get').mockReturnValue(
       createStandardInputStub({ isTerminal: true }),
     );
-    vi.mocked(promptForAppAddValue)
+    vi.mocked(promptInTerminal)
       .mockResolvedValueOnce('logic-function')
       .mockResolvedValueOnce('send-invoice');
     const result = await run([]);
@@ -440,7 +440,7 @@ describe('app add', () => {
     expect(result.stdout).toContain(
       'Created src/logic-functions/send-invoice.ts',
     );
-    expect(promptForAppAddValue).toHaveBeenCalledTimes(2);
+    expect(promptInTerminal).toHaveBeenCalledTimes(2);
   });
 
   it.each([false, true])(
@@ -553,7 +553,7 @@ describe('app add', () => {
 
       expect(result.exitCode, result.stderr).toBe(0);
       expect(confirmInTerminal).not.toHaveBeenCalled();
-      expect(promptForAppAddValue).not.toHaveBeenCalled();
+      expect(promptInTerminal).not.toHaveBeenCalled();
       expect(await readdir(join(appPath, 'src'))).toEqual(['objects']);
     },
   );
@@ -586,7 +586,7 @@ describe('app add', () => {
     const result = await run(['object', '--no-input']);
 
     expect(result.exitCode).toBe(2);
-    expect(promptForAppAddValue).not.toHaveBeenCalled();
+    expect(promptInTerminal).not.toHaveBeenCalled();
     expect(await readdir(appPath)).toEqual(['package.json']);
   });
 
@@ -604,7 +604,7 @@ describe('app add', () => {
 
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain('No application definition found');
-    expect(promptForAppAddValue).not.toHaveBeenCalled();
+    expect(promptInTerminal).not.toHaveBeenCalled();
     expect(await readdir(appPath)).toEqual(['package.json']);
   });
 
@@ -613,7 +613,7 @@ describe('app add', () => {
     vi.spyOn(process, 'stdin', 'get').mockReturnValue(
       createStandardInputStub({ isTerminal: true }),
     );
-    vi.mocked(promptForAppAddValue).mockRejectedValue(
+    vi.mocked(promptInTerminal).mockRejectedValue(
       new CliError({ code: 'CANCELLED', message: 'Cancelled.', exitCode: 130 }),
     );
 

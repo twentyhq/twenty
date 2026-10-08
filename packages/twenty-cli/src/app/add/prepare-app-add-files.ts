@@ -16,7 +16,6 @@ import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/app/add/entity-logic-function-template';
 import { getObjectBaseFile } from '@/app/add/entity-object-template';
-import { promptForAppAddValue } from '@/app/add/prompt-for-app-add-value';
 import { kebabCase } from '@/app/pull/kebab-case';
 import {
   readBooleanOption,
@@ -25,6 +24,7 @@ import {
 } from '@/catalog/read-command-values';
 import { type CommandContext } from '@/catalog/types/command-context.type';
 import { confirmInTerminal } from '@/input/confirm-in-terminal';
+import { promptInTerminal } from '@/input/prompt-in-terminal';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
@@ -65,7 +65,7 @@ export const prepareAppAddFiles = async ({
       const choiceHint = choices ? ` (${choices.join(', ')})` : '';
       const defaultHint = isDefined(defaultValue) ? ` [${defaultValue}]` : '';
 
-      value = await promptForAppAddValue({
+      value = await promptInTerminal({
         question: `${label}${choiceHint}${defaultHint}: `,
         signal,
       });

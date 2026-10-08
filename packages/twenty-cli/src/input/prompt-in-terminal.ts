@@ -2,7 +2,7 @@ import { createInterface } from 'node:readline/promises';
 
 import { createCancelledError } from '@/output/create-cancelled-error';
 
-export const promptForAppAddValue = async ({
+export const promptInTerminal = async ({
   question,
   signal,
 }: {
