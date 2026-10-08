@@ -94,21 +94,18 @@ export const AgentChatThreadRecordOperationsEffect = () => {
               ? [operation.result.updateInput]
               : operation.result.updateInputs;
 
+          applyUpdates(updateInputs.map(toThreadUpdate));
+
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 
-          // A chat past the loaded pages comes whole, and sorts by its activity
-          for (const updateInput of updateInputs) {
-            const { recordId, updatedRecord } = updateInput;
-
-            if (
-              listedThreadIds.includes(recordId) ||
-              !isDefined(updatedRecord)
-            ) {
-              applyAgentChatThreadUpdate(toThreadUpdate(updateInput));
-            } else {
-              addAgentChatThread(updatedRecord as AgentChatThreadRecord);
-            }
+          if (
+            updateInputs.some(
+              ({ recordId }) => !listedThreadIds.includes(recordId),
+            )
+          ) {
+            void refreshAgentChatThreads();
           }
           return;
         }
@@ -144,6 +141,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
       addAgentChatThread,
       applyAgentChatThreadUpdate,
       refreshAgentChatOpenThreadsSummary,
+      refreshAgentChatThreads,
       reloadAgentChatThreads,
       store,
     ],
