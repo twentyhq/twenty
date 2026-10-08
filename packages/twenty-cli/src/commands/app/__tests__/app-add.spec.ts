@@ -10,6 +10,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -120,6 +121,150 @@ describe('app add', () => {
       expect(vi.mocked(promptForAppAddValue)).not.toHaveBeenCalled();
     },
   );
+
+  it.each([
+    [true, false, false],
+    [false, true, false],
+    [false, false, true],
+    [true, true, false],
+    [true, false, true],
+    [false, true, true],
+    [true, true, true],
+  ])(
+    'creates selected companions, view=%s navigation=%s layout=%s',
+    async (createView, createNavigation, createLayout) => {
+      const paths = [
+        'src/objects/invoice.ts',
+        ...(createView ? ['src/views/all-invoice.ts'] : []),
+        ...(createNavigation ? ['src/navigation-menu-items/invoice.ts'] : []),
+        ...(createLayout
+          ? [
+              'src/views/invoice-record-page-fields.ts',
+              'src/page-layouts/invoice-record-page-layout.ts',
+            ]
+          : []),
+      ];
+      const result = await runJson([
+        'object',
+        '--name',
+        'invoice',
+        '--name-plural',
+        'invoices',
+        ...(createView ? ['--create-view'] : []),
+        ...(createNavigation ? ['--create-navigation-menu-item'] : []),
+        ...(createLayout ? ['--create-page-layout'] : []),
+      ]);
+
+      expect(result.exitCode, result.stdout).toBe(0);
+      expect(result.envelope.data).toMatchObject({ createdPaths: paths });
+      const object = await readFile(join(appPath, paths[0]), 'utf8');
+      const objectIdentifier = object.match(
+        /universalIdentifier: '([^']+)'/,
+      )![1];
+      const nameFieldIdentifier = object.match(
+        /NAME_FIELD_UNIVERSAL_IDENTIFIER =\s*'([^']+)'/,
+      )![1];
+
+      for (const path of paths.slice(1)) {
+        const content = await readFile(join(appPath, path), 'utf8');
+        expect(content).toContain(objectIdentifier);
+        if (path.startsWith('src/views/'))
+          expect(content).toContain(nameFieldIdentifier);
+      }
+      if (createLayout) {
+        const fieldsView = await readFile(
+          join(appPath, 'src/views/invoice-record-page-fields.ts'),
+          'utf8',
+        );
+        const fieldsViewIdentifier = fieldsView.match(
+          /universalIdentifier: '([^']+)'/,
+        )![1];
+        const layout = await readFile(
+          join(appPath, 'src/page-layouts/invoice-record-page-layout.ts'),
+          'utf8',
+        );
+        expect(layout).toContain(
+          `viewUniversalIdentifier: '${fieldsViewIdentifier}'`,
+        );
+        expect(fieldsView).toContain("type: 'FIELDS_WIDGET'");
+        for (const name of [
+          'createdAt',
+          'updatedAt',
+          'createdBy',
+          'updatedBy',
+        ]) {
+          expect(fieldsView).toContain(
+            getFieldUniversalIdentifier({
+              applicationUniversalIdentifier: OBJECT_IDENTIFIER,
+              objectUniversalIdentifier: objectIdentifier,
+              name,
+            }),
+          );
+        }
+      }
+      expect(promptForAppAddValue).not.toHaveBeenCalled();
+    },
+  );
+
+  it('refuses a companion collision before creating the object or any other definition', async () => {
+    await mkdir(join(appPath, 'src/page-layouts'), { recursive: true });
+    const path = join(
+      appPath,
+      'src/page-layouts/invoice-record-page-layout.ts',
+    );
+    await writeFile(path, 'existing layout');
+    const result = await runJson([
+      'object',
+      '--name',
+      'invoice',
+      '--name-plural',
+      'invoices',
+      '--create-view',
+      '--create-page-layout',
+    ]);
+
+    expect(result.exitCode).toBe(6);
+    expect(await readFile(path, 'utf8')).toBe('existing layout');
+    expect(await readdir(join(appPath, 'src'), { recursive: true })).toEqual([
+      'page-layouts',
+      'page-layouts/invoice-record-page-layout.ts',
+    ]);
+  });
+
+  it('refuses a symlinked companion directory before creating the object', async () => {
+    const outside = join(root, 'outside');
+    await mkdir(outside);
+    await mkdir(join(appPath, 'src'));
+    await symlink(outside, join(appPath, 'src/views'));
+    const result = await runJson([
+      'object',
+      '--name',
+      'invoice',
+      '--name-plural',
+      'invoices',
+      '--create-view',
+    ]);
+
+    expect(result.exitCode).toBe(6);
+    expect(await readdir(outside)).toEqual([]);
+    expect(await readdir(join(appPath, 'src'))).toEqual(['views']);
+  });
+
+  it.each([
+    '--create-view',
+    '--create-navigation-menu-item',
+    '--create-page-layout',
+  ])('rejects %s for non-object definitions before writing', async (flag) => {
+    const result = await runJson([
+      'logic-function',
+      '--name',
+      'send-invoice',
+      flag,
+    ]);
+    expect(result.exitCode).toBe(2);
+    expect(result.envelope.error.message).toContain(flag);
+    expect(await readdir(appPath)).toEqual(['package.json']);
+  });
 
   it('uses the containing app from a nested folder and honors --path from outside it', async () => {
     const nestedPath = join(appPath, 'src', 'nested');
