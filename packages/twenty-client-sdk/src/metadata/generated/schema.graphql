@@ -35,6 +35,16 @@ type AgentChatEvent {
   threadId: String!
 }
 
+enum AgentChatInboxAction {
+  ARCHIVE
+  MOVE_TO_INBOX
+  READ
+  SNOOZE
+  SUBSCRIBE
+  UNREAD
+  UNSUBSCRIBE
+}
+
 type AgentChatOpenThreadsSummary {
   hasUnreadAssignedThread: Boolean!
   hasUnreadMentionThread: Boolean!
@@ -2941,7 +2951,6 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
-  archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
@@ -3086,9 +3095,6 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  markAgentChatThreadAsRead(threadId: UUID!): AgentChatThreadParticipant!
-  markAgentChatThreadAsUnread(threadId: UUID!): AgentChatThreadParticipant!
-  moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
@@ -3131,12 +3137,10 @@ type Mutation {
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  snoozeAgentChatThread(snoozedUntil: DateTime!, threadId: UUID!): AgentChatThreadParticipant!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
-  subscribeToAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   switchBillingPlan: BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
@@ -3146,7 +3150,7 @@ type Mutation {
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
   triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!

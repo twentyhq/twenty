@@ -129,7 +129,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
   const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [hasNavigatedHelper, setHasNavigatedHelper] = useState(false);
+  const [isHelperFocused, setIsHelperFocused] = useState(false);
 
   const getFieldNodeAttributes = (
     path: string,
@@ -153,7 +153,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
     setHighlightedIndex(0);
-    setHasNavigatedHelper(false);
+    setIsHelperFocused(false);
   };
 
   const initialContent: JSONContent = {
@@ -223,17 +223,6 @@ export const SettingsValidationRuleExpressionEditor = ({
     });
   };
 
-  const getIsWordBeingTyped = () => {
-    return (
-      isDefined(editor) &&
-      helperContext.replaceFromOffset <
-        getValidationRuleEditorText(
-          editor.state.doc,
-          editor.state.selection.from,
-        ).length
-    );
-  };
-
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
     const { items } = helperContext;
 
@@ -244,10 +233,14 @@ export const SettingsValidationRuleExpressionEditor = ({
 
       const step = event.key === 'ArrowDown' ? 1 : -1;
 
-      setHighlightedIndex(
-        (index) => (index + step + items.length) % items.length,
-      );
-      setHasNavigatedHelper(true);
+      if (isHelperFocused) {
+        setHighlightedIndex(
+          (index) => (index + step + items.length) % items.length,
+        );
+      } else {
+        setHighlightedIndex(step === 1 ? 0 : items.length - 1);
+        setIsHelperFocused(true);
+      }
 
       return true;
     }
@@ -258,10 +251,7 @@ export const SettingsValidationRuleExpressionEditor = ({
 
     const highlightedItem = items[highlightedIndex];
 
-    if (
-      isDefined(highlightedItem) &&
-      (hasNavigatedHelper || getIsWordBeingTyped())
-    ) {
+    if (isHelperFocused && isDefined(highlightedItem)) {
       insertHelperItem(highlightedItem);
     }
 
@@ -292,7 +282,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
         highlightedIndex={highlightedIndex}
-        isEnterHintVisible={hasNavigatedHelper || getIsWordBeingTyped()}
+        isFocused={isHelperFocused}
         editorFields={editorFields}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
