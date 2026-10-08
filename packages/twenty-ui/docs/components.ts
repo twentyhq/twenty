@@ -1,4 +1,5 @@
 import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
+import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
@@ -389,8 +390,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
     parts: ['Root', 'Thumb'],
-    propDescriptions: { size: 'Visual size of the switch.' },
-    partPropDescriptions: { Root: { size: 'Visual size of the switch.' } },
+    propDescriptions: SWITCH_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Root: SWITCH_PROP_DESCRIPTIONS },
     propDefaults: SWITCH_PROP_DEFAULTS,
     partPropDefaults: { Root: SWITCH_PROP_DEFAULTS },
   },
