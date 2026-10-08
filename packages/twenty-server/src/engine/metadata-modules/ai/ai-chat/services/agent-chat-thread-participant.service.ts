@@ -10,6 +10,7 @@ import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metad
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
 import { type AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
 import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -37,7 +38,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 
 // Runs in the participant write's transaction, after the participant row is
 // locked, in the order member activity takes the two locks
-type WriteThreadStep = (context: AgentHistoryStorageContext) => Promise<void>;
+type WriteThreadStep = (
+  context: AgentHistoryStorageContext & { threadId: string },
+) => Promise<void>;
 
 type BuildParticipantWriteQuery = (tables: {
   participantTable: string;
@@ -56,6 +59,59 @@ const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
      "isSubscribed" = participant."isSubscribed" OR EXCLUDED."snoozedUntil" IS NOT NULL,
      "updatedAt" = now()
    RETURNING *`;
+
+// The member's change for each action, written by the database so its
+// timestamps order against thread activity; applyAgentChatInboxAction makes
+// the same change for the copy apps show before the server answers
+const INBOX_ACTION_QUERIES: Record<
+  AgentChatInboxAction,
+  BuildParticipantWriteQuery
+> = {
+  // Read up to what the thread holds now, never past it, and never back
+  [AgentChatInboxAction.READ]: ({ participantTable, threadTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
+     SELECT thread.id, $2, thread."lastActivityAt" FROM ${threadTable} thread WHERE thread.id = $1
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
+       "updatedAt" = now()
+     RETURNING *`,
+  [AgentChatInboxAction.UNREAD]: ({ participantTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
+     VALUES ($1, $2, NULL)
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "lastReadAt" = NULL,
+       "updatedAt" = now()
+     RETURNING *`,
+  [AgentChatInboxAction.ARCHIVE]: buildArchiveQuery,
+  [AgentChatInboxAction.SNOOZE]: buildArchiveQuery,
+  [AgentChatInboxAction.MOVE_TO_INBOX]: ({ participantTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+     VALUES ($1, $2)
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "archivedAt" = NULL,
+       "snoozedUntil" = NULL,
+       "isSubscribed" = true,
+       "updatedAt" = now()
+     RETURNING *`,
+  [AgentChatInboxAction.SUBSCRIBE]: ({ participantTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+     VALUES ($1, $2)
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "isSubscribed" = true,
+       "updatedAt" = now()
+     RETURNING *`,
+  // Files the chat under done and keeps it there whatever happens in it,
+  // until the member is mentioned or writes in it again
+  [AgentChatInboxAction.UNSUBSCRIBE]: ({ participantTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "isSubscribed", "archivedAt")
+     VALUES ($1, $2, false, clock_timestamp())
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "isSubscribed" = false,
+       "archivedAt" = EXCLUDED."archivedAt",
+       "snoozedUntil" = NULL,
+       "updatedAt" = now()
+     RETURNING *`,
+};
 
 const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   openThreadCount: 0,
@@ -83,45 +139,81 @@ export class AgentChatThreadParticipantService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async markAsRead(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    // Read up to what the thread holds now, never past it, and never back
-    return this.upsertOne(
-      args,
-      ({ participantTable, threadTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-         SELECT thread.id, $2, thread."lastActivityAt" FROM ${threadTable} thread WHERE thread.id = $1
-         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
-           "updatedAt" = now()
-         RETURNING *`,
-    );
-  }
+  async updateInboxState({
+    threadIds,
+    action,
+    snoozedUntil,
+    workspaceId,
+    workspaceMemberId,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+    action: AgentChatInboxAction;
+    snoozedUntil: Date | null;
+  }): Promise<AgentChatThreadParticipantDTO[]> {
+    const isSnooze = action === AgentChatInboxAction.SNOOZE;
+    const snoozeEnd = isSnooze ? snoozedUntil : null;
 
-  async markAsUnread(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.upsertOne(
-      args,
-      ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
-         VALUES ($1, $2, NULL)
-         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "lastReadAt" = NULL,
-           "updatedAt" = now()
-         RETURNING *`,
+    // Sorted so two writes of the same member lock their rows in one order
+    const uniqueThreadIds = [...new Set(threadIds)].sort();
+    const memberArgs = { workspaceId, workspaceMemberId };
+
+    await this.assertCanWriteInboxState({
+      ...memberArgs,
+      threadIds: uniqueThreadIds,
+    });
+
+    // Queued before the write, so no saved snooze lacks its end; the end of
+    // a snooze that was never saved finds nothing to end
+    if (isDefined(snoozeEnd)) {
+      for (const threadId of uniqueThreadIds) {
+        await this.scheduleSnoozeEnd({
+          ...memberArgs,
+          threadId,
+          snoozedUntil: snoozeEnd.toISOString(),
+          delay: Math.max(snoozeEnd.getTime() - Date.now(), 0),
+        });
+      }
+    }
+
+    // The assignee is checked under the thread's lock, which an assignment
+    // takes too, so the member cannot be assigned while unsubscribing
+    const assertIsNotAssignee: WriteThreadStep = async ({
+      manager,
+      table,
+      threadId,
+    }) => {
+      const [thread] = await manager.query<{ assigneeId: string | null }[]>(
+        `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+        [threadId],
+      );
+
+      if (thread?.assigneeId === workspaceMemberId) {
+        throw new AiException(
+          'The assignee of a chat cannot unsubscribe from it',
+          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
+        );
+      }
+    };
+
+    return this.write(
+      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
+      INBOX_ACTION_QUERIES[action],
+      action === AgentChatInboxAction.ARCHIVE || isSnooze ? [snoozeEnd] : [],
+      action === AgentChatInboxAction.UNSUBSCRIBE
+        ? assertIsNotAssignee
+        : undefined,
     );
   }
 
   // A mention brings the chat back unread for the mentioned member, who the
   // caller has already checked can reply in it, and follows it again for a
   // member who had unsubscribed
-  async markAsMentioned(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantRow | null> {
-    return this.writeOne(
-      args,
+  async markAsMentioned({
+    threadId,
+    ...args
+  }: AgentChatThreadAccessArgs): Promise<void> {
+    await this.write(
+      { ...args, threadIds: [threadId] },
       ({ participantTable }) =>
         `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastMentionedAt")
          VALUES ($1, $2, clock_timestamp())
@@ -143,13 +235,14 @@ export class AgentChatThreadParticipantService {
   async markAsAssigned({
     isSelfAssigned,
     writeAssignment,
+    threadId,
     ...args
   }: AgentChatThreadAccessArgs & {
     isSelfAssigned: boolean;
     writeAssignment: WriteThreadStep;
-  }): Promise<AgentChatThreadParticipantRow | null> {
-    return this.writeOne(
-      args,
+  }): Promise<void> {
+    await this.write(
+      { ...args, threadIds: [threadId] },
       ({ participantTable, threadTable }) =>
         `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
          SELECT thread.id, $2, CASE WHEN $3::boolean THEN thread."lastActivityAt" END
@@ -164,90 +257,6 @@ export class AgentChatThreadParticipantService {
       [isSelfAssigned],
       writeAssignment,
     );
-  }
-
-  async subscribe(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.upsertOne(
-      args,
-      ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
-         VALUES ($1, $2)
-         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "isSubscribed" = true,
-           "updatedAt" = now()
-         RETURNING *`,
-    );
-  }
-
-  // Files the chat under done and keeps it there whatever happens in it,
-  // until the member is mentioned or writes in it again
-  // The assignee is checked under the thread's lock, which an assignment
-  // takes too, so the member cannot be assigned while unsubscribing
-  async unsubscribe(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    const assertIsNotAssignee: WriteThreadStep = async ({ manager, table }) => {
-      const [thread] = await manager.query<{ assigneeId: string | null }[]>(
-        `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
-        [args.threadId],
-      );
-
-      if (thread?.assigneeId === args.workspaceMemberId) {
-        throw new AiException(
-          'The assignee of a chat cannot unsubscribe from it',
-          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
-        );
-      }
-    };
-
-    return this.upsertOne(
-      args,
-      ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "isSubscribed", "archivedAt")
-         VALUES ($1, $2, false, clock_timestamp())
-         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "isSubscribed" = false,
-           "archivedAt" = EXCLUDED."archivedAt",
-           "snoozedUntil" = NULL,
-           "updatedAt" = now()
-         RETURNING *`,
-      [],
-      assertIsNotAssignee,
-    );
-  }
-
-  archive(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.setArchive(args, null);
-  }
-
-  async snooze({
-    snoozedUntil,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    snoozedUntil: Date;
-  }): Promise<AgentChatThreadParticipantDTO> {
-    if (snoozedUntil.getTime() <= Date.now()) {
-      throw new AiException(
-        'Snooze time must be in the future',
-        AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
-      );
-    }
-
-    await this.assertCanWriteInboxState(args);
-
-    // Queued before the write, so no saved snooze lacks its end; the end of
-    // a snooze that was never saved finds nothing to end
-    await this.scheduleSnoozeEnd({
-      ...args,
-      snoozedUntil: snoozedUntil.toISOString(),
-      delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
-    });
-
-    return this.setArchive(args, snoozedUntil);
   }
 
   // A snooze ends by moving the chat back to the inbox. The snooze stays
@@ -286,8 +295,12 @@ export class AgentChatThreadParticipantService {
     }
 
     // A snooze the member replaced or cleared since has nothing to end
-    await this.writeOne(
-      args,
+    await this.write(
+      {
+        workspaceId: args.workspaceId,
+        workspaceMemberId: args.workspaceMemberId,
+        threadIds: [args.threadId],
+      },
       ({ participantTable }) =>
         `UPDATE ${participantTable}
          SET "archivedAt" = NULL, "updatedAt" = now()
@@ -295,23 +308,6 @@ export class AgentChatThreadParticipantService {
            AND "snoozedUntil" = $3 AND "archivedAt" IS NOT NULL
          RETURNING *`,
       [snoozedUntil],
-    );
-  }
-
-  async moveToInbox(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.upsertOne(
-      args,
-      ({ participantTable }) =>
-        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
-         VALUES ($1, $2)
-         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-           "archivedAt" = NULL,
-           "snoozedUntil" = NULL,
-           "isSubscribed" = true,
-           "updatedAt" = now()
-         RETURNING *`,
     );
   }
 
@@ -568,36 +564,20 @@ export class AgentChatThreadParticipantService {
     return remainingDelay;
   }
 
-  private setArchive(
-    args: AgentChatThreadAccessArgs,
-    snoozedUntil: Date | null,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return this.upsertOne(args, buildArchiveQuery, [snoozedUntil]);
-  }
-
-  private async upsertOne(
-    args: AgentChatThreadAccessArgs,
-    buildQuery: BuildParticipantWriteQuery,
-    extraParameters: unknown[] = [],
-    writeThread?: WriteThreadStep,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    await this.assertCanWriteInboxState(args);
-
-    return this.writeOneOrThrow(args, buildQuery, extraParameters, writeThread);
-  }
-
   private async assertCanWriteInboxState({
     workspaceId,
     workspaceMemberId,
-    threadId,
-  }: AgentChatThreadAccessArgs): Promise<void> {
-    const [readableThreadId] = await this.sharingService.findReadableThreadIds({
+    threadIds,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+  }): Promise<void> {
+    const readableThreadIds = await this.sharingService.findReadableThreadIds({
       workspaceId,
       workspaceMemberId,
-      threadIds: [threadId],
+      threadIds,
     });
 
-    if (!isDefined(readableThreadId)) {
+    if (readableThreadIds.length !== threadIds.length) {
       throwAgentChatThreadNotFound();
     }
 
@@ -609,48 +589,30 @@ export class AgentChatThreadParticipantService {
     }
   }
 
-  private async writeOneOrThrow(
-    args: AgentChatThreadAccessArgs,
-    buildQuery: BuildParticipantWriteQuery,
-    extraParameters: unknown[],
-    writeThread?: WriteThreadStep,
-  ): Promise<AgentChatThreadParticipantDTO> {
-    return (
-      (await this.writeOne(args, buildQuery, extraParameters, writeThread)) ??
-      throwAgentChatThreadNotFound()
-    );
-  }
-
-  // The row is locked while it is read and written, so the change sent is
-  // the one this write made
-  private async writeOne(
-    { workspaceId, workspaceMemberId, threadId }: AgentChatThreadAccessArgs,
+  // Each row is locked while it is read and written, so the change sent is
+  // the one this write made; one transaction writes all of them or none
+  private async write(
+    {
+      workspaceId,
+      workspaceMemberId,
+      threadIds,
+      isEveryRowRequired = false,
+    }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+      threadIds: string[];
+      isEveryRowRequired?: boolean;
+    },
     buildQuery: BuildParticipantWriteQuery,
     extraParameters: unknown[] = [],
     writeThread?: WriteThreadStep,
-  ): Promise<AgentChatThreadParticipantRow | null> {
-    const parameters = [
-      threadId,
-      workspaceMemberId,
-      ...extraParameters,
-      await this.sharingService.findParticipantObjectMetadataId(workspaceId),
-    ];
+  ): Promise<AgentChatThreadParticipantRow[]> {
+    const objectMetadataId =
+      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
 
-    const { before, after } = await this.threadRepository.query(
+    const writes = await this.threadRepository.query(
       workspaceId,
       async ({ manager, table }) => {
-        const before = await this.findOne({
-          manager,
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-          lock: true,
-        });
-
-        await writeThread?.({ manager, table });
-
-        const [after] = await manager.query<AgentChatThreadParticipantRow[]>(
-          `WITH written_participant AS (
+        const parameterCount = extraParameters.length + 3;
+        const query = `WITH written_participant AS (
              ${buildQuery({
                participantTable:
                  getAgentChatThreadParticipantTable(workspaceId),
@@ -660,24 +622,51 @@ export class AgentChatThreadParticipantService {
              ${buildAgentChatThreadParticipantOwnerShareInsert({
                workspaceId,
                participantSource: 'written_participant',
-               objectMetadataIdParameter: `$${parameters.length}`,
+               objectMetadataIdParameter: `$${parameterCount}`,
              })}
            )
-           SELECT ${PARTICIPANT_COLUMNS} FROM written_participant`,
-          parameters,
-        );
+           SELECT ${PARTICIPANT_COLUMNS} FROM written_participant`;
+        const writes: {
+          before: AgentChatThreadParticipantRow | null;
+          after: AgentChatThreadParticipantRow;
+        }[] = [];
 
-        return { before, after };
+        for (const threadId of threadIds) {
+          const before = await this.findOne({
+            manager,
+            workspaceId,
+            workspaceMemberId,
+            threadId,
+            lock: true,
+          });
+
+          await writeThread?.({ manager, table, threadId });
+
+          const [after] = await manager.query<AgentChatThreadParticipantRow[]>(
+            query,
+            [threadId, workspaceMemberId, ...extraParameters, objectMetadataId],
+          );
+
+          if (isDefined(after)) {
+            writes.push({ before, after });
+          } else if (isEveryRowRequired) {
+            throwAgentChatThreadNotFound();
+          }
+        }
+
+        return writes;
       },
     );
 
-    await this.recordEventService.emit({
-      workspaceId,
-      objectName: 'agentChatThreadParticipant',
-      before,
-      after,
-    });
+    for (const { before, after } of writes) {
+      await this.recordEventService.emit({
+        workspaceId,
+        objectName: 'agentChatThreadParticipant',
+        before,
+        after,
+      });
+    }
 
-    return after ?? null;
+    return writes.map(({ after }) => after);
   }
 }

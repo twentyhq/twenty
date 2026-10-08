@@ -30,13 +30,11 @@ export const NavigationMenuItemFolderLayout = ({
     <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
       {header}
       <StyledFolderExpandableWrapper>
-        <Collapsible
-          isExpanded={isExpandedForAnimation}
-          dimension="height"
-          containAnimation
-        >
-          {children}
-        </Collapsible>
+        <Collapsible.Root open={isExpandedForAnimation}>
+          <Collapsible.Panel dimension="height" containAnimation>
+            {children}
+          </Collapsible.Panel>
+        </Collapsible.Root>
       </StyledFolderExpandableWrapper>
     </NavigationDrawerItemsCollapsableContainer>
   );

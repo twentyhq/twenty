@@ -49,13 +49,13 @@ export const CollapsibleNavigationDrawerSection = ({
     <NavigationDrawerSection>
       {isNavigationDrawerExpanded &&
         (wrapTitle ? wrapTitle(titleNode) : titleNode)}
-      <Collapsible
-        isExpanded={!isNavigationDrawerExpanded || isNavigationSectionOpen}
-        dimension="height"
-        containAnimation
+      <Collapsible.Root
+        open={!isNavigationDrawerExpanded || isNavigationSectionOpen}
       >
-        <StyledItems>{children}</StyledItems>
-      </Collapsible>
+        <Collapsible.Panel dimension="height" containAnimation>
+          <StyledItems>{children}</StyledItems>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerSection>
   );
 };

@@ -24,8 +24,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 type WorkflowStepCaller = Extract<AgentRunCaller, { type: 'WORKFLOW_STEP' }>;
 
-// A step waiting on a CALLBACK takes the outcome of what it handed its work to: the agent run the
-// engine continued, or the answer to a call the step posted itself
+// A step waiting on a CALLBACK takes the outcome of the agent run the engine continued
 @Injectable()
 export class WorkflowAgentRunCallerHandlerWorkspaceService
   implements AgentRunCallerHandler<WorkflowStepCaller>, OnModuleInit

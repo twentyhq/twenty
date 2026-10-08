@@ -78,39 +78,24 @@ export class DeleteOrphanedWorkflowRunsCommand extends ProvisionedWorkspaceComma
       return;
     }
 
-    const [{ hasChatHistory }]: [{ hasChatHistory: boolean }] =
-      await dataSource.query(
-        `SELECT to_regclass($1) IS NOT NULL AS "hasChatHistory"`,
-        [`${escapeIdentifier(schemaName)}."agentMessagePart"`],
-      );
-
-    // suspend-paused-agent-steps runs first and may have suspended an agent
-    // step of these runs. Its suspension would block the conversation for
-    // good, and its pending calls would keep waiting on a caller that is
-    // gone, so an answer goes back to being a chat reply
-    const unmarkAwaitedCallsSql = hasChatHistory
-      ? `, unmarked AS (
-           UPDATE ${escapeIdentifier(schemaName)}."agentMessagePart" part
-           SET "toolOutput" = part."toolOutput" - 'awaitedByCaller'
-           FROM ${escapeIdentifier(schemaName)}."agentMessage" message, released
-           WHERE part."messageId" = message.id
-             AND message."threadId" = released."threadId"
-             AND jsonb_typeof(part."toolOutput") = 'object'
-             AND part."toolOutput" -> 'result' ->> 'status' = 'pending'
-         )`
-      : '';
-
+    // suspend-paused-agent-steps runs first and may have given an agent step of these runs a wake-up.
+    // It would block the step's conversation for good, so it goes with its run, as do the runs' own waits
     const deletedRuns: { id: string }[] = await dataSource.query(
       `WITH deleted AS (
          DELETE FROM ${workflowRunTable} run WHERE ${ORPHANED_WORKFLOW_RUN_CONDITION} RETURNING run.id
        ), released AS (
-         DELETE FROM "core"."agentRunSuspension" suspension
+         DELETE FROM "core"."pendingWakeUp" wake_up
          USING deleted
-         WHERE suspension."workspaceId" = $1
-           AND suspension.caller ->> 'type' = 'WORKFLOW_STEP'
-           AND suspension.caller -> 'ref' ->> 'workflowRunId' = deleted.id::text
-         RETURNING suspension."threadId"
-       )${unmarkAwaitedCallsSql} SELECT id FROM deleted`,
+         WHERE wake_up."workspaceId" = $1
+           AND (
+             (wake_up."ownerType" = 'WORKFLOW_STEP' AND wake_up."ownerId" = deleted.id)
+             OR (
+               wake_up."ownerType" = 'AGENT_RUN'
+               AND wake_up.payload -> 'caller' ->> 'type' = 'WORKFLOW_STEP'
+               AND wake_up.payload -> 'caller' -> 'ref' ->> 'workflowRunId' = deleted.id::text
+             )
+           )
+       ) SELECT id FROM deleted`,
       [workspaceId],
     );
 

@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconChevronRight, IconPlus, useIcons } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -12,11 +13,10 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
 import { VALIDATION_RULE_DEFAULT_ICON } from '@/validation-rules/constants/ValidationRuleDefaultIcon';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
 
-const VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 80px';
+const VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 28px';
 
 const StyledContent = styled.div`
   display: flex;
@@ -41,17 +41,16 @@ const StyledName = styled.span`
   white-space: nowrap;
 `;
 
-const StyledExpression = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 const StyledEmpty = styled.div`
-  color: ${themeCssVariables.font.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[3]};
-  text-align: center;
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -86,12 +85,12 @@ export const SettingsObjectValidationRulesSection = ({
             gridTemplateColumns={VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS}
           >
             <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader>{t`Condition`}</TableHeader>
-            <TableHeader align="right">{t`Status`}</TableHeader>
+            <TableHeader>{t`Status`}</TableHeader>
+            <TableHeader />
           </TableRow>
           <TableBody>
             {validationRules.length === 0 ? (
-              <StyledEmpty>{t`No rules yet.`}</StyledEmpty>
+              <StyledEmpty>{t`No rules yet`}</StyledEmpty>
             ) : (
               validationRules.map((validationRule) => {
                 const RuleIcon = getIcon(
@@ -119,15 +118,23 @@ export const SettingsObjectValidationRulesSection = ({
                         <StyledName>{validationRule.name}</StyledName>
                       </StyledNameCell>
                     </TableCell>
-                    <TableCell minWidth="0" overflow="hidden">
-                      <StyledExpression>
-                        <SettingsValidationRuleExpressionText
-                          expression={validationRule.expression}
-                        />
-                      </StyledExpression>
+                    <TableCell>
+                      {validationRule.isActive ? (
+                        <Status color="green">{t`Active`}</Status>
+                      ) : (
+                        <Status color="gray">{t`Inactive`}</Status>
+                      )}
                     </TableCell>
-                    <TableCell align="right">
-                      {validationRule.isActive ? t`Active` : t`Inactive`}
+                    <TableCell
+                      align="center"
+                      padding={`0 ${themeCssVariables.spacing[1]} 0 0`}
+                    >
+                      <StyledIconChevronRightContainer>
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      </StyledIconChevronRightContainer>
                     </TableCell>
                   </TableRow>
                 );

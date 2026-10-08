@@ -39,19 +39,22 @@ export const AdvancedSettingsWrapper = ({
 
   return (
     <StyledContainer>
-      <Collapsible
-        isExpanded={isAdvancedModeEnabled}
-        dimension={animationDimension}
-        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-        containAnimation={false}
-      >
-        <AdvancedSettingsContentWrapperWithDot
-          hideDot={hideDot}
-          dotPosition={dotPosition}
+      <Collapsible.Root open={isAdvancedModeEnabled}>
+        <Collapsible.Panel
+          dimension={animationDimension}
+          style={{
+            transitionDuration: `${ADVANCED_SETTINGS_ANIMATION_DURATION.size}s, ${ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}s`,
+          }}
+          containAnimation={false}
         >
-          <StyledContent>{children}</StyledContent>
-        </AdvancedSettingsContentWrapperWithDot>
-      </Collapsible>
+          <AdvancedSettingsContentWrapperWithDot
+            hideDot={hideDot}
+            dotPosition={dotPosition}
+          >
+            <StyledContent>{children}</StyledContent>
+          </AdvancedSettingsContentWrapperWithDot>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </StyledContainer>
   );
 };
