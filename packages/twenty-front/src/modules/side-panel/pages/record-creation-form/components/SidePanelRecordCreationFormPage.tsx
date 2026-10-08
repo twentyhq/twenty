@@ -22,7 +22,7 @@ import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
-import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
+import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/getValidationRuleViolationsFromError';
@@ -127,9 +127,10 @@ const SidePanelRecordCreationForm = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationRuleViolations, setValidationRuleViolations] = useState<
-    DraftValidationRuleViolation[]
-  >([]);
+  const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
+    useState<ValidationRuleViolation[]>([]);
+  const [serverValidationRuleViolations, setServerValidationRuleViolations] =
+    useState<ValidationRuleViolation[]>([]);
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -164,6 +165,11 @@ const SidePanelRecordCreationForm = ({
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
 
+  const validationRuleViolations = [
+    ...draftValidationRuleViolations,
+    ...serverValidationRuleViolations,
+  ];
+
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
       validationRules,
@@ -182,8 +188,8 @@ const SidePanelRecordCreationForm = ({
       [gqlFieldName]: value,
     }));
 
-    if (validationRuleViolations.length > 0) {
-      setValidationRuleViolations(
+    if (draftValidationRuleViolations.length > 0) {
+      setDraftValidationRuleViolations(
         computeViolations({ ...draftRecord, [gqlFieldName]: value }),
       );
     }
@@ -215,10 +221,12 @@ const SidePanelRecordCreationForm = ({
       return;
     }
 
+    setServerValidationRuleViolations([]);
+
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
 
-      setValidationRuleViolations(draftViolations);
+      setDraftValidationRuleViolations(draftViolations);
 
       revealHiddenFieldsIfTargeted(
         draftViolations.map((violation) => violation.fieldMetadataId),
@@ -246,7 +254,7 @@ const SidePanelRecordCreationForm = ({
 
       const serverViolations = getValidationRuleViolationsFromError(error);
 
-      setValidationRuleViolations(serverViolations);
+      setServerValidationRuleViolations(serverViolations);
 
       if (serverViolations.length === 0) {
         enqueueToast(getToastOptionsFromError({ error }));

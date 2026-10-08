@@ -1,13 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
+import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const getValidationRuleViolationsFromError = (
   error: unknown,
-): DraftValidationRuleViolation[] => {
+): ValidationRuleViolation[] => {
   if (!isGraphqlErrorOfType(error, 'VALIDATION_RULE_VIOLATION')) {
     return [];
   }

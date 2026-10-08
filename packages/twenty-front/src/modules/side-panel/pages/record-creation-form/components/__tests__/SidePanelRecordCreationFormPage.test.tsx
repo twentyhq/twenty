@@ -403,6 +403,27 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
+  it('keeps a message from the server while the user edits, until the next create', async () => {
+    const user = userEvent.setup();
+
+    settleRecordCreationDraft.mockResolvedValueOnce({
+      error: buildValidationRuleViolationError(NAME_FIELD.id),
+    });
+
+    renderPage();
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+    await user.type(screen.getByLabelText('Domain'), 'apple.com');
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'A company needs a nickname',
+    );
+
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('shows a server error that is not a validation rule violation as a toast', async () => {
     const user = userEvent.setup();
 
