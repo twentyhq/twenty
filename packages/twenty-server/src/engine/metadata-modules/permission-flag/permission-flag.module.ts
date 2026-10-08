@@ -8,6 +8,5 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 @Module({
   imports: [WorkspaceManyOrAllFlatEntityMapsCacheModule, PermissionsModule],
   providers: [PermissionFlagService, PermissionFlagResolver],
-  exports: [PermissionFlagService],
 })
 export class PermissionFlagModule {}

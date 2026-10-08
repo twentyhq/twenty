@@ -100,26 +100,28 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
         </StyledAccordionHeaderButtonDisabled>
       )}
       {hasWorkspaces && (
-        <Collapsible isExpanded={isExpanded} dimension="height">
-          <StyledAccordionContent>
-            <StyledWorkspaceList>
-              {workspaces.map((workspace) => (
-                <StyledWorkspaceListItem key={workspace.id}>
-                  <StyledWorkspaceLink
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceDetail,
-                      { workspaceId: workspace.id },
-                    )}
-                  >
-                    {workspace.name ?? t`Unknown workspace`}
-                    {' - '}
-                    {workspace.id}
-                  </StyledWorkspaceLink>
-                </StyledWorkspaceListItem>
-              ))}
-            </StyledWorkspaceList>
-          </StyledAccordionContent>
-        </Collapsible>
+        <Collapsible.Root open={isExpanded}>
+          <Collapsible.Panel dimension="height">
+            <StyledAccordionContent>
+              <StyledWorkspaceList>
+                {workspaces.map((workspace) => (
+                  <StyledWorkspaceListItem key={workspace.id}>
+                    <StyledWorkspaceLink
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
+                    >
+                      {workspace.name ?? t`Unknown workspace`}
+                      {' - '}
+                      {workspace.id}
+                    </StyledWorkspaceLink>
+                  </StyledWorkspaceListItem>
+                ))}
+              </StyledWorkspaceList>
+            </StyledAccordionContent>
+          </Collapsible.Panel>
+        </Collapsible.Root>
       )}
     </Card.Root>
   );

@@ -26,10 +26,6 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
     WorkflowRunStepLogWorkspaceService,
     DeleteWorkflowRunsCommand,
   ],
-  exports: [
-    WorkflowRunWorkspaceService,
-    WorkflowRunStepLogWorkspaceService,
-    DeleteWorkflowRunsCommand,
-  ],
+  exports: [WorkflowRunWorkspaceService, WorkflowRunStepLogWorkspaceService],
 })
 export class WorkflowRunModule {}

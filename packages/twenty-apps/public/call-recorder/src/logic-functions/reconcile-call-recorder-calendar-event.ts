@@ -18,7 +18,7 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { fetchWithTransientRetry } from 'src/logic-functions/utils/fetch-with-transient-retry.util';
+import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
 
@@ -55,7 +55,7 @@ const handler = async (
     return { skipped: true, reason: 'no relevant calendar event change' };
   }
 
-  const client = new CoreApiClient({ fetch: fetchWithTransientRetry });
+  const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
   const calendarEventIds = await resolveCalendarEventIdsToReconcile({
     client,
     changedCalendarEventIds: reconciliationPayload.calendarEventIds,

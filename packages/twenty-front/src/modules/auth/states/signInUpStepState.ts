@@ -9,6 +9,7 @@ export enum SignInUpStep {
   SsoIdentityProviderSelection = 'SSOIdentityProviderSelection',
   TwoFactorAuthenticationVerification = 'TwoFactorAuthenticationVerification',
   TwoFactorAuthenticationProvision = 'TwoFactorAuthenticationProvision',
+  TwoFactorAuthenticationRecovery = 'TwoFactorAuthenticationRecovery',
 }
 
 export const signInUpStepState = createAtomState<SignInUpStep>({

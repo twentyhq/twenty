@@ -1,6 +1,5 @@
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
 
 // a count no segment reported stays out
 const sumCounts = <TCounts extends Record<string, number | undefined>>(

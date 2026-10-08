@@ -89,7 +89,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,
     FlatLogicFunctionValidatorService,
-    FlatFieldMetadataTypeValidatorService,
     FlatRoleValidatorService,
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,

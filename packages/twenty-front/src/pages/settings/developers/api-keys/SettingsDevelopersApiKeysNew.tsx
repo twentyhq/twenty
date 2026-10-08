@@ -23,7 +23,7 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
 import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsDevelopersApiKeysNew = () => {

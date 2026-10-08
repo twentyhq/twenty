@@ -19,7 +19,7 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   onEscapeKeyDown:
     'Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open.',
   onInteractOutside:
-    'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.',
+    'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open.',
   multiple:
     'Allows selecting several options. Options then keep the popup open and show a checkbox by default.',
   defaultPage:
@@ -27,6 +27,10 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
+  actions:
+    'Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.',
+  actionsVisibility:
+    'Whether trailing actions appear on hover or remain visible. Defaults to `hover`.',
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
   className: 'CSS class applied to the row.',

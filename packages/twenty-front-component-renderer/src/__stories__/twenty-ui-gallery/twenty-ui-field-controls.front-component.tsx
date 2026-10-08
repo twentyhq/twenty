@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Field, Input, InputGroup, Textarea } from 'twenty-ui/primitives/input';
+import {
+  Field,
+  Input,
+  InputGroup,
+  Radio,
+  RadioGroup,
+  Textarea,
+} from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
@@ -11,6 +18,25 @@ const FieldControls = () => {
 
   return (
     <TwentyUiGalleryCard title="Field and text controls">
+      <Field.Root name="notifications">
+        <Field.Label>Notifications</Field.Label>
+        <RadioGroup defaultValue="important">
+          <Field.Item>
+            <Field.Label>Important updates</Field.Label>
+            <Radio value="important" />
+            <Field.Description>Only urgent messages</Field.Description>
+          </Field.Item>
+          <Field.Item>
+            <Field.Label>All updates</Field.Label>
+            <Radio value="all" />
+            <Field.Description>Every record change</Field.Description>
+          </Field.Item>
+          <Field.Item disabled>
+            <Field.Label>Daily digest</Field.Label>
+            <Radio value="digest" />
+          </Field.Item>
+        </RadioGroup>
+      </Field.Root>
       <Field.Root>
         <Field.Label>Email</Field.Label>
         <InputGroup startElement="@" endElement=".com">

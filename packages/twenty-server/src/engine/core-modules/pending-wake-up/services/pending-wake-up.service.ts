@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
+import { Raw } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -10,11 +11,17 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RESUME_PENDING_WAKE_UP_JOB_NAME } from 'src/engine/core-modules/pending-wake-up/constants/resume-pending-wake-up-job-name.constant';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
-import { type PendingWakeUpOwner } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner.type';
 import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
 import { type ResumePendingWakeUpJobData } from 'src/engine/core-modules/pending-wake-up/types/resume-pending-wake-up-job-data.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+// key tells apart the wake-ups one owner holds at once, like the steps of a workflow run
+type PendingWakeUpOwner = {
+  type: PendingWakeUpOwnerType;
+  id: string;
+  key: string;
+};
 
 type ScheduledWakeUp = Pick<
   PendingWakeUpEntity,
@@ -35,15 +42,17 @@ export class PendingWakeUpService {
     workspaceId,
     owner,
     condition,
+    payload = null,
   }: {
     workspaceId: string;
     owner: PendingWakeUpOwner;
     condition: PendingWakeUpCondition;
+    payload?: object | null;
   }): Promise<void> {
     const resumeAt =
       condition.type === 'TIME'
         ? new Date(condition.resumeAt)
-        : isDefined(condition.expiresAt)
+        : condition.type === 'EVENT' && isDefined(condition.expiresAt)
           ? new Date(condition.expiresAt)
           : null;
 
@@ -59,6 +68,7 @@ export class PendingWakeUpService {
         ownerId: owner.id,
         ownerKey: owner.key,
         condition,
+        payload,
         eventName: condition.type === 'EVENT' ? condition.eventName : null,
         resumeAt,
       },
@@ -83,15 +93,18 @@ export class PendingWakeUpService {
   async scheduleResolution({
     wakeUp,
     event,
+    answer,
     attempt,
     recordReadAttempt,
     delayMs = 0,
+    deduplicationId,
   }: Pick<
     ResumePendingWakeUpJobData,
-    'event' | 'attempt' | 'recordReadAttempt'
+    'event' | 'answer' | 'attempt' | 'recordReadAttempt'
   > & {
     wakeUp: ScheduledWakeUp;
     delayMs?: number;
+    deduplicationId?: string;
   }): Promise<void> {
     await this.messageQueueService.add<ResumePendingWakeUpJobData>(
       RESUME_PENDING_WAKE_UP_JOB_NAME,
@@ -99,24 +112,18 @@ export class PendingWakeUpService {
         workspaceId: wakeUp.workspaceId,
         wakeUpId: wakeUp.id,
         event,
+        answer,
         attempt,
         recordReadAttempt,
       },
       {
-        ...this.buildResumeJobOptions(wakeUp),
+        ...this.pendingWakeUpOwnerHandlerRegistryService
+          .getHandlerOrThrow(wakeUp.ownerType)
+          .buildResumeJobOptions(wakeUp.ownerId),
         delay: Math.max(delayMs, 0),
-      },
-    );
-  }
-
-  // A wake-up stays overdue until its job claims it, so each sweep would queue it again
-  async scheduleOverdueResolution(wakeUp: ScheduledWakeUp): Promise<void> {
-    await this.messageQueueService.add<ResumePendingWakeUpJobData>(
-      RESUME_PENDING_WAKE_UP_JOB_NAME,
-      { workspaceId: wakeUp.workspaceId, wakeUpId: wakeUp.id },
-      {
-        ...this.buildResumeJobOptions(wakeUp),
-        deduplication: { id: `overdue-pending-wake-up-${wakeUp.id}` },
+        ...(isDefined(deduplicationId)
+          ? { deduplication: { id: deduplicationId } }
+          : {}),
       },
     );
   }
@@ -160,38 +167,42 @@ export class PendingWakeUpService {
     });
   }
 
+  // the wake-up an answer to the call goes to: one waiting on that call, or one waiting on all the conversation's calls
+  async findAnswerWakeUp({
+    workspaceId,
+    threadId,
+    toolCallId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    toolCallId: string;
+  }): Promise<PendingWakeUpEntity | null> {
+    return this.pendingWakeUpRepository.findOne(workspaceId, {
+      where: {
+        condition: Raw(
+          (alias) =>
+            `${alias} @> :condition::jsonb AND COALESCE(${alias} ->> 'toolCallId', :toolCallId) = :toolCallId`,
+          {
+            condition: JSON.stringify({ type: 'ANSWER', threadId }),
+            toolCallId,
+          },
+        ),
+      },
+    });
+  }
+
+  // without a key, every wake-up the owner holds
   async cancel({
     workspaceId,
-    owner,
+    owner: { type, id, key },
   }: {
     workspaceId: string;
-    owner: PendingWakeUpOwner;
-  }): Promise<void> {
-    await this.pendingWakeUpRepository.delete(workspaceId, {
-      ownerType: owner.type,
-      ownerId: owner.id,
-      ownerKey: owner.key,
+    owner: Omit<PendingWakeUpOwner, 'key'> & { key?: string };
+  }): Promise<PendingWakeUpEntity[]> {
+    return this.pendingWakeUpRepository.deleteAndReturn(workspaceId, {
+      ownerType: type,
+      ownerId: id,
+      ...(isDefined(key) ? { ownerKey: key } : {}),
     });
-  }
-
-  async cancelAllForOwner({
-    workspaceId,
-    ownerType,
-    ownerId,
-  }: {
-    workspaceId: string;
-    ownerType: PendingWakeUpOwnerType;
-    ownerId: string;
-  }): Promise<void> {
-    await this.pendingWakeUpRepository.delete(workspaceId, {
-      ownerType,
-      ownerId,
-    });
-  }
-
-  private buildResumeJobOptions({ ownerType, ownerId }: ScheduledWakeUp) {
-    return this.pendingWakeUpOwnerHandlerRegistryService
-      .getHandlerOrThrow(ownerType)
-      .buildResumeJobOptions(ownerId);
   }
 }

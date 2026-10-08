@@ -68,7 +68,7 @@
     "types": {
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
       "CalloutVariant": "components/feedback/Callout/types/CalloutVariant",
-      "InlineBannerButtonProps": "components/feedback/InlineBanner/types/InlineBannerButtonProps",
+      "InlineBannerLayout": "components/feedback/InlineBanner/types/InlineBannerLayout",
       "InlineBannerProps": "components/feedback/InlineBanner/types/InlineBannerProps",
       "ToasterProps": "components/feedback/Toaster/types/ToasterProps",
       "ToastNotification": "components/feedback/Toast/types/ToastNotification",
@@ -116,6 +116,7 @@
       "Section": "components/layout/Section/Section"
     },
     "types": {
+      "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"
@@ -207,6 +208,7 @@
       "IconBadge2k": "icon/components/TablerIcons",
       "IconBaselineDensitySmall": "icon/components/TablerIcons",
       "IconBell": "icon/components/TablerIcons",
+      "IconBellOff": "icon/components/TablerIcons",
       "IconBlockquote": "icon/components/TablerIcons",
       "IconBold": "icon/components/TablerIcons",
       "IconBolt": "icon/components/TablerIcons",
@@ -630,6 +632,7 @@
       "IconUser": "icon/components/TablerIcons",
       "IconUserCircle": "icon/components/TablerIcons",
       "IconUserCog": "icon/components/TablerIcons",
+      "IconUserOff": "icon/components/TablerIcons",
       "IconUserPin": "icon/components/TablerIcons",
       "IconUserPlus": "icon/components/TablerIcons",
       "IconUsers": "icon/components/TablerIcons",
@@ -737,14 +740,21 @@
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
       "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
-      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
+      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing",
+      "Skeleton": "primitives/feedback/Skeleton/Skeleton",
+      "SKELETON_HEIGHT_SIZES": "primitives/feedback/Skeleton/constants/SKELETON_HEIGHT_SIZES"
     },
     "types": {
-      "BannerColor": "primitives/feedback/Banner/Banner",
-      "BannerVariant": "primitives/feedback/Banner/Banner",
+      "BannerActionProps": "primitives/feedback/Banner/types/BannerActionProps",
+      "BannerColor": "primitives/feedback/Banner/types/BannerColor",
+      "BannerProps": "primitives/feedback/Banner/types/BannerProps",
+      "BannerState": "primitives/feedback/Banner/types/BannerState",
+      "BannerStatus": "primitives/feedback/Banner/types/BannerStatus",
+      "BannerVariant": "primitives/feedback/Banner/types/BannerVariant",
       "LoaderProps": "primitives/feedback/Loader/types/LoaderProps",
       "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
-      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
+      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps",
+      "SkeletonProps": "primitives/feedback/Skeleton/types/SkeletonProps"
     }
   },
   "primitives/input": {
@@ -776,6 +786,7 @@
       "AutocompleteRootProps": "primitives/input/Autocomplete/types/AutocompleteRootProps",
       "ButtonColor": "primitives/input/Button/types/ButtonColor",
       "ButtonGroupProps": "primitives/input/ButtonGroup/types/ButtonGroupProps",
+      "ButtonLoadingPosition": "primitives/input/Button/types/ButtonLoadingPosition",
       "ButtonProps": "primitives/input/Button/types/ButtonProps",
       "ButtonSize": "primitives/input/Button/types/ButtonSize",
       "ButtonVariant": "primitives/input/Button/types/ButtonVariant",
@@ -784,6 +795,13 @@
       "CheckboxShape": "primitives/input/Checkbox/types/CheckboxShape",
       "CheckboxSize": "primitives/input/Checkbox/types/CheckboxSize",
       "CheckboxVariant": "primitives/input/Checkbox/types/CheckboxVariant",
+      "FieldControlProps": "primitives/input/Field/types/FieldControlProps",
+      "FieldDescriptionProps": "primitives/input/Field/types/FieldDescriptionProps",
+      "FieldErrorProps": "primitives/input/Field/types/FieldErrorProps",
+      "FieldItemProps": "primitives/input/Field/types/FieldItemProps",
+      "FieldLabelProps": "primitives/input/Field/types/FieldLabelProps",
+      "FieldRootProps": "primitives/input/Field/types/FieldRootProps",
+      "FieldValidityProps": "primitives/input/Field/types/FieldValidityProps",
       "InputGroupProps": "primitives/input/InputGroup/types/InputGroupProps",
       "InputProps": "primitives/input/Input/types/InputProps",
       "InputSize": "primitives/input/types/InputSize",
@@ -823,8 +841,14 @@
     },
     "types": {
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
-      "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
-      "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
+      "CollapsiblePanelProps": "primitives/layout/Collapsible/types/CollapsiblePanelProps",
+      "CollapsiblePanelState": "primitives/layout/Collapsible/types/CollapsiblePanelState",
+      "CollapsibleRootChangeEventDetails": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventDetails",
+      "CollapsibleRootChangeEventReason": "primitives/layout/Collapsible/types/CollapsibleRootChangeEventReason",
+      "CollapsibleRootProps": "primitives/layout/Collapsible/types/CollapsibleRootProps",
+      "CollapsibleRootState": "primitives/layout/Collapsible/types/CollapsibleRootState",
+      "CollapsibleTriggerProps": "primitives/layout/Collapsible/types/CollapsibleTriggerProps",
+      "CollapsibleTriggerState": "primitives/layout/Collapsible/types/CollapsibleTriggerState",
       "DirectionProviderProps": "primitives/layout/DirectionProvider/types/DirectionProviderProps",
       "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
       "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"
@@ -907,13 +931,28 @@
       "PopoverTitleProps": "primitives/surfaces/Popover/types/PopoverTitleProps",
       "PopoverTriggerProps": "primitives/surfaces/Popover/types/PopoverTriggerProps",
       "TooltipAlign": "primitives/surfaces/Tooltip/types/TooltipAlign",
-      "TooltipContentProps": "primitives/surfaces/Tooltip/types/TooltipContentProps",
+      "TooltipArrowProps": "primitives/surfaces/Tooltip/types/TooltipArrowProps",
+      "TooltipArrowState": "primitives/surfaces/Tooltip/types/TooltipArrowState",
+      "TooltipHandle": "primitives/surfaces/Tooltip/types/TooltipHandle",
       "TooltipPopupProps": "primitives/surfaces/Tooltip/types/TooltipPopupProps",
+      "TooltipPopupState": "primitives/surfaces/Tooltip/types/TooltipPopupState",
+      "TooltipPortalProps": "primitives/surfaces/Tooltip/types/TooltipPortalProps",
+      "TooltipPortalState": "primitives/surfaces/Tooltip/types/TooltipPortalState",
+      "TooltipPositionerProps": "primitives/surfaces/Tooltip/types/TooltipPositionerProps",
+      "TooltipPositionerState": "primitives/surfaces/Tooltip/types/TooltipPositionerState",
       "TooltipProps": "primitives/surfaces/Tooltip/types/TooltipProps",
       "TooltipProviderProps": "primitives/surfaces/Tooltip/types/TooltipProviderProps",
+      "TooltipProviderState": "primitives/surfaces/Tooltip/types/TooltipProviderState",
+      "TooltipRootActions": "primitives/surfaces/Tooltip/types/TooltipRootActions",
+      "TooltipRootChangeEventDetails": "primitives/surfaces/Tooltip/types/TooltipRootChangeEventDetails",
+      "TooltipRootChangeEventReason": "primitives/surfaces/Tooltip/types/TooltipRootChangeEventReason",
       "TooltipRootProps": "primitives/surfaces/Tooltip/types/TooltipRootProps",
+      "TooltipRootState": "primitives/surfaces/Tooltip/types/TooltipRootState",
       "TooltipSide": "primitives/surfaces/Tooltip/types/TooltipSide",
-      "TooltipTriggerProps": "primitives/surfaces/Tooltip/types/TooltipTriggerProps"
+      "TooltipTriggerProps": "primitives/surfaces/Tooltip/types/TooltipTriggerProps",
+      "TooltipTriggerState": "primitives/surfaces/Tooltip/types/TooltipTriggerState",
+      "TooltipViewportProps": "primitives/surfaces/Tooltip/types/TooltipViewportProps",
+      "TooltipViewportState": "primitives/surfaces/Tooltip/types/TooltipViewportState"
     }
   },
   "primitives/typography": {
@@ -927,9 +966,11 @@
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
-      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps",
+      "TextProps": "primitives/typography/Text/types/TextProps"
     }
   },
   "styles": {

@@ -11,8 +11,8 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="children" type="string" required>
-  Required nonempty text label that also names the optional progress ring.
+<ParamField body="children" type="ReactNode" required>
+  Label content whose accessible text also names the optional progress ring.
 </ParamField>
 
 <ParamField body="className" type="string">
@@ -35,8 +35,8 @@
   Replaces the row root element while preserving its contents.
 </ParamField>
 
-<ParamField body="startIcon" type="IconComponent">
-  Decorative icon before the label, rendered at 14px.
+<ParamField body="startIcon" type="ReactNode">
+  Decorative node content before the label. The caller controls icon geometry.
 </ParamField>
 
 <ParamField body="style" type="CSSProperties">

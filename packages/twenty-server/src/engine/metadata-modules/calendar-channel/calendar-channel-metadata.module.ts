@@ -12,6 +12,5 @@ import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/conn
     ConnectedAccountMetadataModule,
   ],
   providers: [CalendarChannelMetadataService, CalendarChannelResolver],
-  exports: [CalendarChannelMetadataService],
 })
 export class CalendarChannelMetadataModule {}

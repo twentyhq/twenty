@@ -1,11 +1,11 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { type AgentTrigger } from 'twenty-shared/application';
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { buildCreatedByFromAgent } from 'src/engine/core-modules/actor/utils/build-created-by-from-agent.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
@@ -32,7 +32,6 @@ type AgentTriggerCaller = Extract<AgentRunCaller, { type: 'AGENT_TRIGGER' }>;
 type TriggeredRun = {
   agent: AgentEntity;
   trigger: AgentTrigger;
-  createdBy: ActorMetadata;
   executionContext: AgentRunExecutionContext;
 };
 
@@ -42,8 +41,6 @@ type TriggeredRun = {
 export class AgentTriggerRunnerService
   implements AgentRunCallerHandler<AgentTriggerCaller>, OnModuleInit
 {
-  readonly callerType = 'AGENT_TRIGGER';
-
   private readonly logger = new Logger(AgentTriggerRunnerService.name);
 
   constructor(
@@ -55,7 +52,7 @@ export class AgentTriggerRunnerService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('AGENT_TRIGGER', this);
   }
 
   async run({
@@ -70,7 +67,7 @@ export class AgentTriggerRunnerService
       return;
     }
 
-    const { agent, trigger, createdBy, executionContext } = triggeredRun;
+    const { agent, trigger, executionContext } = triggeredRun;
 
     await this.agentRunnerService.run({
       workspaceId,
@@ -91,7 +88,6 @@ export class AgentTriggerRunnerService
         // nobody is there to answer, so the run can wait but not ask
         capabilities: {
           canAskHumans: false,
-          canProposeToolCalls: false,
         },
         toolLoadingStrategy: 'lazy',
       },
@@ -105,7 +101,6 @@ export class AgentTriggerRunnerService
         senderApplicationId: agent.applicationId,
       },
       executionContext,
-      resolveCreatedBy: async () => createdBy,
     });
   }
 
@@ -113,12 +108,6 @@ export class AgentTriggerRunnerService
     input: AgentRunCallerInput<AgentTriggerCaller>,
   ): Promise<AgentRunExecutionContext> {
     return (await this.findTriggeredRunOrThrow(input)).executionContext;
-  }
-
-  async resolveTurnAuthor(
-    input: AgentRunCallerInput<AgentTriggerCaller>,
-  ): Promise<ActorMetadata> {
-    return (await this.findTriggeredRunOrThrow(input)).createdBy;
   }
 
   async getWaitingState(
@@ -179,12 +168,13 @@ export class AgentTriggerRunnerService
     return {
       agent,
       trigger,
-      createdBy,
       executionContext: {
         authContext: { ...authContext, actingAgent },
         actorContext: createdBy,
+        turnCreatedBy: createdBy,
         userWorkspaceId: null,
         rolePermissionConfig: buildAgentRolePermissionConfig({ agentRoleId }),
+        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };
   }

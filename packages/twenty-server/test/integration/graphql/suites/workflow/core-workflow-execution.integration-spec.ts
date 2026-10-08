@@ -22,6 +22,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { type DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/delete-workflow-runs-deferred-action-handler.workspace-service';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -30,6 +31,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -1585,10 +1587,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(
         await global.testDataSource.query(
-          `SELECT "ownerType", "ownerKey" FROM core."pendingWakeUp" WHERE "ownerId" = (SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1)`,
+          `SELECT "ownerType", condition->>'type' AS "conditionType" FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
           [threadId],
         ),
-      ).toEqual([{ ownerType: 'AGENT_RUN', ownerKey: 'wait-1' }]);
+      ).toEqual([{ ownerType: 'AGENT_RUN', conditionType: 'TIME' }]);
 
       const run = await waitForRun(runId, 'COMPLETED');
 
@@ -1603,7 +1605,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ).toContain('The wait is over.');
       expect(
         await global.testDataSource.query(
-          `SELECT id FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+          `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
           [threadId],
         ),
       ).toEqual([]);
@@ -1615,11 +1617,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       // the shape a step paused by 2.45 left behind
       await global.testDataSource.query(
-        `DELETE FROM core."agentRunSuspension" WHERE "threadId" = $1`,
+        `DELETE FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
         [threadId],
-      );
-      await global.testDataSource.query(
-        `UPDATE "${schema}"."agentMessagePart" SET "toolOutput" = "toolOutput" - 'awaitedByCaller' WHERE "toolCallId" = 'ask-1'`,
       );
       await global.testDataSource.query(
         `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text], (state->'stepInfos'->$2::text) - 'wait' || jsonb_build_object('threadId', $3::text)) WHERE id = $1`,
@@ -1775,8 +1774,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(continueJobData).toMatchObject({
         workspaceId,
-        suspensionId: expect.any(String),
-        resumeCount: 0,
+        threadId,
+        wakeUpId: expect.any(String),
+        outcome: { type: 'ANSWERED' },
       });
 
       // The decision a parallel branch finishing in that window takes.
@@ -1930,7 +1930,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('relinks restored runs before retrying their captured snapshots', async () => {
+  it('restores and relinks runs soft-deleted by a trash from before run cleanup, before retrying their captured snapshots', async () => {
     const failedStep: WorkflowAction = {
       ...emptyStep(),
       type: WorkflowActionType.DELAY,
@@ -1948,16 +1948,41 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     await waitForRun(runId, 'FAILED');
 
-    const deleteResponse = await workflowGraphqlRequest(
-      'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
-      { id: fixture.workflowId },
-    );
+    const runCleanupSpy = jest
+      .spyOn(
+        getAppProviderByClassName<DeleteWorkflowRunsDeferredActionHandlerWorkspaceService>(
+          'DeleteWorkflowRunsDeferredActionHandlerWorkspaceService',
+        ),
+        'execute',
+      )
+      .mockResolvedValue(undefined);
 
-    expect(deleteResponse.body.errors).toBeUndefined();
+    try {
+      const deleteResponse = await workflowGraphqlRequest(
+        'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
+        { id: fixture.workflowId },
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+
+      await expectEventually(() => {
+        expect(runCleanupSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            payload: { coreWorkflowId: originalCoreWorkflowId },
+          }),
+        );
+      });
+    } finally {
+      runCleanupSpy.mockRestore();
+    }
 
     await global.testDataSource.query(
       'DELETE FROM core.workflow WHERE id = $1',
       [originalCoreWorkflowId],
+    );
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun" SET "deletedAt" = NOW() WHERE id = $1`,
+      [runId],
     );
 
     const restoreResponse = await workflowGraphqlRequest(
@@ -1977,6 +2002,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const restoredRun = await getRun(runId);
 
     expect(restoredMapping.coreWorkflowId).not.toBe(originalCoreWorkflowId);
+    expect(restoredRun.deletedAt).toBeNull();
     expect(restoredRun.coreWorkflowId).toBe(restoredMapping.coreWorkflowId);
     expect(restoredRun.coreWorkflowVersionId).toBe(
       restoredMapping.coreWorkflowVersionId,

@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
@@ -21,6 +22,8 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // devices, and snoozes the server ends
 export const AgentChatThreadParticipantOperationsEffect = () => {
   const store = useStore();
+  const { refreshAgentChatOpenThreadsSummary } =
+    useRefreshAgentChatOpenThreadsSummary();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -72,6 +75,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             ? mergeAgentChatThreadParticipants(loadedParticipants, participants)
             : loadedParticipants,
         );
+        refreshAgentChatOpenThreadsSummary();
       };
 
       switch (operation.type) {
@@ -122,7 +126,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
         }
       }
     },
-    [store],
+    [refreshAgentChatOpenThreadsSummary, store],
   );
 
   useListenToObjectRecordOperationBrowserEvent({

@@ -8,9 +8,5 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/
     FlatFieldMetadataValidatorService,
     FlatFieldMetadataTypeValidatorService,
   ],
-  exports: [
-    FlatFieldMetadataValidatorService,
-    FlatFieldMetadataTypeValidatorService,
-  ],
 })
 export class FlatFieldMetadataModule {}

@@ -10,13 +10,13 @@ import {
   IconCoins,
   IconHistory,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledSection = styled.div`
   display: flex;
@@ -35,11 +35,11 @@ const StyledSectionTitle = styled.span`
 
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatUsage = useAtomComponentFamilyStateValue(
-    agentChatUsageComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
+    threadId: currentAiChatThread,
+  });
   if (!isDefined(agentChatUsage)) {
     return null;
   }
@@ -54,25 +54,25 @@ export const AiChatContextUsageDetails = () => {
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
             <MetricRow
-              startIcon={IconArrowUp}
+              startIcon={<IconArrowUp size={theme.icon.size.sm} />}
               value={formatAiChatTokens(lastMessage.inputTokens)}
             >
               {t`Input tokens`}
             </MetricRow>
             <MetricRow
-              startIcon={IconHistory}
+              startIcon={<IconHistory size={theme.icon.size.sm} />}
               value={formatAiChatTokens(lastMessage.cachedInputTokens)}
             >
               {t`Cached input`}
             </MetricRow>
             <MetricRow
-              startIcon={IconArrowDown}
+              startIcon={<IconArrowDown size={theme.icon.size.sm} />}
               value={formatAiChatTokens(lastMessage.outputTokens)}
             >
               {t`Output tokens`}
             </MetricRow>
             <MetricRow
-              startIcon={IconCoins}
+              startIcon={<IconCoins size={theme.icon.size.sm} />}
               value={formatNumber(
                 lastMessage.inputCredits + lastMessage.outputCredits,
                 { decimals: 3 },
@@ -87,25 +87,25 @@ export const AiChatContextUsageDetails = () => {
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow
-          startIcon={IconArrowUp}
+          startIcon={<IconArrowUp size={theme.icon.size.sm} />}
           value={formatAiChatTokens(agentChatUsage.inputTokens)}
         >
           {t`Input tokens`}
         </MetricRow>
         <MetricRow
-          startIcon={IconHistory}
+          startIcon={<IconHistory size={theme.icon.size.sm} />}
           value={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
         >
           {t`Cached input`}
         </MetricRow>
         <MetricRow
-          startIcon={IconArrowDown}
+          startIcon={<IconArrowDown size={theme.icon.size.sm} />}
           value={formatAiChatTokens(agentChatUsage.outputTokens)}
         >
           {t`Output tokens`}
         </MetricRow>
         <MetricRow
-          startIcon={IconCoins}
+          startIcon={<IconCoins size={theme.icon.size.sm} />}
           value={formatNumber(
             agentChatUsage.inputCredits + agentChatUsage.outputCredits,
             { decimals: 3 },

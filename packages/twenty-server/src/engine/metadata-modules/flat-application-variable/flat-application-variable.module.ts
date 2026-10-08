@@ -4,6 +4,5 @@ import { WorkspaceFlatApplicationVariableMapCacheService } from 'src/engine/meta
 
 @Module({
   providers: [WorkspaceFlatApplicationVariableMapCacheService],
-  exports: [WorkspaceFlatApplicationVariableMapCacheService],
 })
 export class FlatApplicationVariableModule {}

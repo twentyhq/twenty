@@ -21,6 +21,7 @@ import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/uti
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -61,8 +62,6 @@ type AgentApiRunCaller = Extract<AgentRunCaller, { type: 'AGENT_API_RUN' }>;
 export class AgentRunService
   implements AgentRunCallerHandler<AgentApiRunCaller>, OnModuleInit
 {
-  readonly callerType = 'AGENT_API_RUN';
-
   private readonly logger = new Logger(AgentRunService.name);
 
   constructor(
@@ -75,7 +74,7 @@ export class AgentRunService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('AGENT_API_RUN', this);
   }
 
   async run({
@@ -106,8 +105,21 @@ export class AgentRunService
 
     const thread = input.thread ?? null;
 
-    if (isDefined(thread)) {
-      this.assertCanContinueConversation({ callerApplication, messages });
+    if (isDefined(thread) && !isDefined(callerApplication)) {
+      throw new AiException(
+        'Continuing a conversation requires an application access token',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      isDefined(thread) &&
+      messages.some((message) => message.role !== 'user')
+    ) {
+      throw new AiException(
+        'A conversation already holds its replies, so only user messages can be sent to it',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
     }
 
     const agent = await this.agentRepository.findOne(workspace.id, {
@@ -186,33 +198,30 @@ export class AgentRunService
           // the call returns before anyone could answer, so the run can wait but not ask
           capabilities: {
             canAskHumans: false,
-            canProposeToolCalls: false,
           },
           toolLoadingStrategy: 'lazy',
         },
         agent,
         prompt: {
           messages,
-          senderUserWorkspaceId: this.resolveRunSender({
-            runAsContext,
-            callerApplication,
-            requestUserWorkspaceId,
-          }),
+          // a member calling without runAs still sent the input, while an app's call has no member behind it
+          senderUserWorkspaceId:
+            runAsContext?.authContext.userWorkspaceId ??
+            (isDefined(callerApplication) ? null : requestUserWorkspaceId),
           senderApplicationId: callerApplication?.id ?? null,
         },
         executionContext: await this.buildExecutionContext({
           workspaceId: workspace.id,
           caller,
         }),
-        resolveCreatedBy: async () => caller.ref.createdBy,
       });
 
       return {
+        threadId,
+        status: outcome.status,
         result: outcome.status === 'COMPLETED' ? outcome.result : null,
         error: outcome.status === 'FAILED' ? outcome.error : null,
         success: outcome.status !== 'FAILED',
-        isWaiting: outcome.status === 'SUSPENDED',
-        threadId,
       };
     } catch (error) {
       if (
@@ -229,11 +238,11 @@ export class AgentRunService
       );
 
       return {
+        threadId,
+        status: 'FAILED',
         result: null,
         error: 'Agent execution failed.',
         success: false,
-        isWaiting: false,
-        threadId,
       };
     }
   }
@@ -271,6 +280,7 @@ export class AgentRunService
     return {
       authContext: runAsContext?.authContext ?? agentContext.authContext,
       actorContext: runAsContext?.actorContext,
+      turnCreatedBy: ref.createdBy,
       userWorkspaceId:
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
@@ -284,13 +294,8 @@ export class AgentRunService
             userWorkspaceId: runAsContext.authContext.userWorkspaceId,
           }
         : { type: 'application', applicationId: agentContext.application.id },
+      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
-  }
-
-  async resolveTurnAuthor({
-    caller,
-  }: AgentRunCallerInput<AgentApiRunCaller>): Promise<ActorMetadata> {
-    return caller.ref.createdBy;
   }
 
   async getWaitingState({
@@ -330,27 +335,6 @@ export class AgentRunService
     }
   }
 
-  // a member calling without runAs still sent the input, while an app's call has no member behind it
-  private resolveRunSender({
-    runAsContext,
-    callerApplication,
-    requestUserWorkspaceId,
-  }: {
-    runAsContext?: RunAsWorkspaceMemberContext;
-    callerApplication?: FlatApplication;
-    requestUserWorkspaceId: string | null;
-  }): string | null {
-    if (isDefined(runAsContext)) {
-      return runAsContext.authContext.userWorkspaceId;
-    }
-
-    if (isDefined(callerApplication)) {
-      return null;
-    }
-
-    return requestUserWorkspaceId;
-  }
-
   private buildRunCreator({
     callerApplication,
     application,
@@ -367,28 +351,6 @@ export class AgentRunService
     return isDefined(requestAuthContext)
       ? buildActorMetadataFromAuthContext(requestAuthContext)
       : buildCreatedByFromApplication({ application });
-  }
-
-  private assertCanContinueConversation({
-    callerApplication,
-    messages,
-  }: {
-    callerApplication?: FlatApplication;
-    messages: RunAgentMessage[];
-  }): void {
-    if (!isDefined(callerApplication)) {
-      throw new AiException(
-        'Continuing a conversation requires an application access token',
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
-
-    if (messages.some((message) => message.role !== 'user')) {
-      throw new AiException(
-        'A conversation already holds its replies, so only user messages can be sent to it',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
   }
 
   private async resolveRunAsContext({

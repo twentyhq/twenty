@@ -52,7 +52,7 @@ changed server workflows against a disposable workspace when appropriate.
 | `src/doctor` | Read-only setup and connection diagnostics |
 | `src/app` | Project tooling and application lifecycle, see its [module map](src/app/README.md) |
 | `src/input`, `src/output` | Input parsing, human/JSON/NDJSON output and error contracts |
-| `app-template-overlay` | CLI-based test harness applied over the shared app template |
+| `app-template` | App source, configuration and CLI-based integration-test harness copied by `app init` |
 
 Command definitions are the source for help and `twenty commands`. Keep handlers
 lazy so discovery does not load compiler or app code. Put a workflow's rules in
@@ -85,7 +85,7 @@ Changes must preserve these contracts:
 ## Packaging
 
 Vite builds the CLI, its worker and lazy chunks into `dist`. It also copies the
-`create-twenty-app` template and the CLI test-harness overlay there. Chokidar,
+CLI-owned `app-template` there. Chokidar,
 esbuild, tinyglobby and the CLI's TypeScript parser are runtime dependencies;
 other imported libraries are bundled. The parser is separate from the app's
 compiler used for typechecking.
@@ -94,19 +94,61 @@ The archive includes the command reference, contributor guide and application
 module READMEs so their relative links also work outside a repository checkout.
 It does not include the CLI's TypeScript implementation or tests.
 
-For packaging changes, build and inspect the archive before release:
+For packaging changes, run the build and installation checks:
 
 ```bash
-yarn workspace twenty pack --dry-run
+yarn nx run twenty-cli:test:package
 ```
 
-Check both executable entry points, lazy chunks and templates in the packed
-package. Smoke-test help and app initialization from an extracted archive with
-its declared dependencies. This checks packaging without publishing anything.
+This runs the binary declared in the workspace's `package.json` directly, packs
+the CLI, and installs the archive with only its production dependencies in a
+temporary directory outside the monorepo. It checks help, offline doctor, app initialization including the
+integration-test harness, and a compiler diagnostic from the installed worker. npm
+registry access is required for installation; the commands do not contact a
+Twenty workspace. Temporary files are removed afterward, and nothing is
+published. CI runs the same target for CLI and dependency changes.
+
+## Releases
+
+The CLI has its own release line. A `cli/vX.Y.Z` tag publishes the `twenty`
+package at that version, which must match `package.json`.
+
+`app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
+`twenty-sdk` version of the commit the CLI was built from. `main` moves
+to the next, unpublished SDK version right after each SDK release, so a CLI
+release must be built from the commit of an SDK release:
+
+1. Merge the CLI version bump before that SDK release is tagged.
+2. Once the `sdk/vA.B.C` packages are on npm, tag the same commit `cli/vX.Y.Z`.
+
+`yarn npm publish` first runs `scripts/check-publish.mjs`, which needs a fresh
+build and npm registry access. It fails when the executable, worker, lazy chunks
+or templates are missing, when `dist` was built for another version, when one of
+its CLI runs fails or times out, or when `app init` would pin versions that are
+not on npm. An unreachable registry is reported separately from a missing
+version. The check does not read tags: it confirms that the pinned versions are
+published, and tagging the SDK release commit remains a release step.
+
+`prepublish` then runs `scripts/generate-template-lock.mjs`. It resolves the app
+template's dependencies with the repository's Yarn against the public registry,
+under a 3-day minimum release age that exempts the pinned Twenty packages, and
+writes `dist/app-template/yarn.lock`. Apps created with `app init` then install
+exact, integrity-checked versions, including for people who enforce a minimum
+release age. The lockfile keeps the template's placeholder name, and the first
+`yarn install` renames that root entry.
+
+The tests of both scripts run with `twenty-cli:test:package`. To run the scripts
+before tagging:
+
+```bash
+yarn nx build twenty-cli
+node packages/twenty-cli/scripts/check-publish.mjs
+node packages/twenty-cli/scripts/generate-template-lock.mjs
+```
 
 ## App integration tests
 
-`app-template-overlay` supplies the integration-test setup for CLI-created apps.
+`app-template/src/__tests__` supplies the integration-test setup for CLI-created apps.
 It deploys the app before tests and uninstalls it afterward by invoking the
 installed CLI with `--json`. Apps invoke the executable rather than import the
 CLI as a library or add it as a dependency. See the

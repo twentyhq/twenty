@@ -45,6 +45,5 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationOAuthResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
-  exports: [OAuthService],
 })
 export class ApplicationOAuthModule {}

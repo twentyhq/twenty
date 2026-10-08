@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, IsNull } from 'typeorm';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -9,8 +12,10 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -20,6 +25,8 @@ import {
 
 @Injectable()
 export class AgentChatThreadService {
+  private readonly logger = new Logger(AgentChatThreadService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -46,6 +53,93 @@ export class AgentChatThreadService {
     });
 
     return savedThread;
+  }
+
+  // owned threads are skipped so an upsert cannot reassign them
+  async assignCreatedThreadsToCreator({
+    authContext,
+    threadIds,
+  }: {
+    authContext: WorkspaceAuthContext;
+    threadIds: string[];
+  }): Promise<void> {
+    if (!isUserAuthContext(authContext) || !isNonEmptyArray(threadIds)) {
+      return;
+    }
+
+    const workspaceId = authContext.workspace.id;
+    const { workspaceMemberId } = authContext;
+    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
+
+    const threadsBefore = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds), ...unassignedThreadCriteria },
+    });
+
+    if (!isNonEmptyArray(threadsBefore)) {
+      return;
+    }
+
+    const { generatedMaps: assignedThreads } =
+      await this.threadRepository.update(
+        workspaceId,
+        {
+          id: In(threadsBefore.map(({ id }) => id)),
+          ...unassignedThreadCriteria,
+        },
+        {
+          workspaceMemberId,
+          userWorkspaceId: authContext.userWorkspaceId,
+        },
+      );
+
+    if (!isNonEmptyArray(assignedThreads)) {
+      return;
+    }
+
+    const assignedThreadIds = assignedThreads.map(({ id }) => id);
+    const participantObjectMetadataId =
+      await this.sharingService.findParticipantObjectMetadataId(workspaceId);
+
+    const setUpThreads = await this.threadRepository.query(
+      workspaceId,
+      (context) =>
+        this.sharingService.setUpCreatedThreadsInboxState({
+          ...context,
+          workspaceId,
+          workspaceMemberId,
+          threadIds: assignedThreadIds,
+          participantObjectMetadataId,
+        }),
+    );
+
+    // Sent first, so a new thread never shows as unread to its creator
+    for (const { id: threadId } of setUpThreads) {
+      await this.participantService.emitParticipantCreated({
+        workspaceId,
+        workspaceMemberId,
+        threadId,
+      });
+    }
+
+    const threadsAfter = await this.threadRepository.find(workspaceId, {
+      where: { id: In(assignedThreadIds) },
+    });
+
+    for (const threadAfter of threadsAfter) {
+      const threadBefore = threadsBefore.find(
+        ({ id }) => id === threadAfter.id,
+      );
+
+      if (!isDefined(threadBefore)) {
+        continue;
+      }
+
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+        threadAfter,
+      });
+    }
   }
 
   async findWritableThread(args: AgentChatThreadAccessArgs) {
@@ -156,6 +250,115 @@ export class AgentChatThreadService {
     });
 
     return participantMemberIds;
+  }
+
+  // An assignee who could not reply is given edit access, as Front lets an
+  // assignment reach a conversation the assignee could not see. A former
+  // assignee keeps following the chat.
+  async assign({
+    assigneeWorkspaceMemberId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    assigneeWorkspaceMemberId: string | null;
+  }): Promise<void> {
+    if (!(await this.sharingService.hasInboxState(args.workspaceId))) {
+      throw new AiException(
+        'Chat assignees are not available until this workspace finishes upgrading',
+        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
+      );
+    }
+
+    const thread = await this.getWritableThread(args);
+
+    if (
+      isDefined(assigneeWorkspaceMemberId) &&
+      assigneeWorkspaceMemberId !== args.workspaceMemberId
+    ) {
+      const [assigneeWhoCanReply] =
+        await this.sharingService.shareThreadWithMembers({
+          ...args,
+          memberIds: [assigneeWorkspaceMemberId],
+        });
+
+      if (!isDefined(assigneeWhoCanReply)) {
+        throw new AiException(
+          'The assignee cannot reply in the chat',
+          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY,
+        );
+      }
+    }
+
+    const writeAssignment = async ({
+      manager,
+      table,
+    }: AgentHistoryStorageContext): Promise<void> => {
+      const assignedThreadIds = await manager.query<{ id: string }[]>(
+        `WITH assigned_thread AS (
+           UPDATE ${table('agentChatThread')}
+           SET "assigneeId" = $2::uuid,
+             "updatedAt" = now(),
+             "writerWorkspaceMemberIds" = CASE
+               WHEN $2::uuid IS NULL
+                 OR $2::uuid = "workspaceMemberId"
+                 OR $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
+               THEN "writerWorkspaceMemberIds"
+               ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
+             END
+           WHERE id = $1
+           RETURNING id
+         )
+         SELECT id FROM assigned_thread`,
+        [args.threadId, assigneeWorkspaceMemberId],
+      );
+
+      if (assignedThreadIds.length !== 1) {
+        throwAgentChatThreadNotFound();
+      }
+    };
+
+    if (isDefined(assigneeWorkspaceMemberId)) {
+      await this.participantService.markAsAssigned({
+        workspaceId: args.workspaceId,
+        threadId: args.threadId,
+        workspaceMemberId: assigneeWorkspaceMemberId,
+        isSelfAssigned: assigneeWorkspaceMemberId === args.workspaceMemberId,
+        writeAssignment,
+      });
+    } else {
+      await this.threadRepository.query(args.workspaceId, writeAssignment);
+    }
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
+  }
+
+  // The message is already sent, so a mention that cannot be applied leaves the
+  // member out rather than failing the send
+  async addMentionedParticipants({
+    mentionedWorkspaceMemberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    mentionedWorkspaceMemberIds: string[];
+  }): Promise<string[]> {
+    if (mentionedWorkspaceMemberIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await this.addParticipants({
+        ...args,
+        participantWorkspaceMemberIds: mentionedWorkspaceMemberIds,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Could not add the members mentioned in chat ${args.threadId} of workspace ${args.workspaceId}`,
+        error,
+      );
+
+      return [];
+    }
   }
 
   // Activity no member wrote, such as an agent turn or an application's

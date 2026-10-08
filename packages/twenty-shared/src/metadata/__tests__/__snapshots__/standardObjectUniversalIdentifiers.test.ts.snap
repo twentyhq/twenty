@@ -10,6 +10,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "archivedAt": {
         "universalIdentifier": "b42eaf6f-240f-41ef-af61-51d5ac9cde7d",
       },
+      "assignee": {
+        "universalIdentifier": "e77858ef-4b01-4a32-b921-8b88b1fd3020",
+      },
       "attachments": {
         "universalIdentifier": "2a0e0b57-e55b-5432-9ec1-04a43f4cd8b8",
       },
@@ -90,6 +93,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "assigneeIndex": {
+        "universalIdentifier": "a65524f8-c999-448b-b9f4-c9ecce15fd13",
+      },
       "ownerIndex": {
         "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
       },
@@ -112,6 +118,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "id": {
         "universalIdentifier": "13ba446f-db00-5635-888e-c2b11299e34b",
+      },
+      "isSubscribed": {
+        "universalIdentifier": "146b1d5e-6603-4493-944b-c3bd2817569b",
+      },
+      "lastMentionedAt": {
+        "universalIdentifier": "52a54602-633f-496a-966a-9a70437fa887",
       },
       "lastReadAt": {
         "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
@@ -4139,6 +4151,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "agentMessages": {
         "universalIdentifier": "211b2717-450a-4f5f-808f-39695c819319",
+      },
+      "assignedAgentChatThreads": {
+        "universalIdentifier": "a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c",
       },
       "assignedTasks": {
         "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",

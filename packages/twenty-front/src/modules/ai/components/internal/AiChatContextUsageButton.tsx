@@ -11,7 +11,7 @@ import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
@@ -19,15 +19,15 @@ import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledTrigger = styled.button`
   align-items: center;
@@ -57,6 +57,7 @@ const StyledFooter = styled.div`
 
 export const AiChatContextUsageButton = () => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -77,10 +78,9 @@ export const AiChatContextUsageButton = () => {
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const agentChatUsage = useAtomComponentFamilyStateValue(
-    agentChatUsageComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
+    threadId: currentAiChatThread,
+  });
 
   const tiers = useAiModelTiers();
 
@@ -192,7 +192,7 @@ export const AiChatContextUsageButton = () => {
             {...getFloatingProps()}
           >
             <MetricRow
-              startIcon={IconWindow}
+              startIcon={<IconWindow size={theme.icon.size.sm} />}
               progress={percentage}
               value={
                 contextWindow > 0
@@ -210,7 +210,7 @@ export const AiChatContextUsageButton = () => {
             </MetricRow>
             {!isWorkspaceSetupChat && (
               <MetricRow
-                startIcon={IconGauge}
+                startIcon={<IconGauge size={theme.icon.size.sm} />}
                 progress={
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }
