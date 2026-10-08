@@ -1,6 +1,10 @@
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { MetadataStoreSSEEffect } from '@/metadata-store/effect-components/MetadataStoreSSEEffect';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
+import {
+  metadataStoreState,
+  type MetadataEntityKey,
+} from '@/metadata-store/states/metadataStoreState';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,6 +20,15 @@ const ACTIVITY_JUNCTIONS = [
   { objectNameSingular: 'note', junctionFieldName: 'noteTargets' },
   { objectNameSingular: 'task', junctionFieldName: 'taskTargets' },
 ];
+
+const OBJECT_METADATA_ENTITY_KEYS: MetadataEntityKey[] = [
+  'objectMetadataItems',
+  'fieldMetadataItems',
+  'indexMetadataItems',
+];
+
+const HASH_BEFORE_DELETION = 'hash-before-deletion';
+const HASH_AFTER_DELETION = 'hash-after-deletion';
 
 const findObjectMetadataItemOrThrow = (
   objectMetadataItems: EnrichedObjectMetadataItem[],
@@ -102,6 +115,15 @@ const renderMetadataStoreSSEEffect = () => {
     getObjectMetadataItemsWithPersonJunctionTargets(),
   );
 
+  // The minimal metadata load leaves the server hash as draft hash on entries it did not refetch
+  for (const key of OBJECT_METADATA_ENTITY_KEYS) {
+    store.set(metadataStoreState.atomFamily(key), (prev) => ({
+      ...prev,
+      currentCollectionHash: HASH_BEFORE_DELETION,
+      draftCollectionHash: HASH_BEFORE_DELETION,
+    }));
+  }
+
   render(
     <JotaiProvider store={store}>
       <MetadataStoreSSEEffect />
@@ -110,6 +132,13 @@ const renderMetadataStoreSSEEffect = () => {
 
   return store;
 };
+
+const dispatchFieldMetadataDeletion = (deletedFieldMetadataId: string) =>
+  dispatchMetadataOperationBrowserEvent({
+    metadataName: 'fieldMetadata',
+    operation: { type: 'delete', deletedRecordId: deletedFieldMetadataId },
+    updatedCollectionHash: HASH_AFTER_DELETION,
+  });
 
 // Same order the server broadcasts an object deletion: the object first, then every field row it owned
 const dispatchObjectDeletionEvents = ({
@@ -137,33 +166,63 @@ const dispatchObjectDeletionEvents = ({
     dispatchMetadataOperationBrowserEvent({
       metadataName: 'objectMetadata',
       operation: { type: 'delete', deletedRecordId: deletedObjectMetadataId },
+      updatedCollectionHash: HASH_AFTER_DELETION,
     });
 
     for (const deletedFieldMetadataId of deletedFieldMetadataIds) {
-      dispatchMetadataOperationBrowserEvent({
-        metadataName: 'fieldMetadata',
-        operation: { type: 'delete', deletedRecordId: deletedFieldMetadataId },
-      });
+      dispatchFieldMetadataDeletion(deletedFieldMetadataId);
     }
   });
 };
+
+const getCompanyTextFieldIdsOrThrow = (
+  store: ReturnType<typeof createStore>,
+) => {
+  const companyTextFieldIds = findObjectMetadataItemOrThrow(
+    store.get(objectMetadataItemsWithFieldsSelector.atom),
+    'company',
+  )
+    .fields.filter(({ type }) => type === FieldMetadataType.TEXT)
+    .map(({ id }) => id);
+
+  if (companyTextFieldIds.length < 2) {
+    throw new Error('Missing text fields on company in mocks');
+  }
+
+  return companyTextFieldIds;
+};
+
+const isFieldMetadataInStore = (
+  store: ReturnType<typeof createStore>,
+  fieldMetadataId: string,
+) =>
+  (
+    store.get(metadataStoreState.atomFamily('fieldMetadataItems'))
+      .current as FlatFieldMetadataItem[]
+  ).some(({ id }) => id === fieldMetadataId);
+
+const getCollectionHashes = (store: ReturnType<typeof createStore>) =>
+  OBJECT_METADATA_ENTITY_KEYS.map(
+    (key) =>
+      store.get(metadataStoreState.atomFamily(key)).currentCollectionHash,
+  );
 
 describe('MetadataStoreSSEEffect', () => {
   it.each([
     { junctionObjectNameSingular: 'noteTarget' },
     { junctionObjectNameSingular: 'taskTarget' },
   ])(
-    'keeps note and task junctions resolvable when the object owning the $junctionObjectNameSingular morph representative is deleted',
+    'refetches objects instead of patching them when the object owning the $junctionObjectNameSingular morph representative is deleted',
     ({ junctionObjectNameSingular }) => {
       const store = renderMetadataStoreSSEEffect();
-      const objectMetadataItemsBeforeDeletion = store.get(
-        objectMetadataItemsWithFieldsSelector.atom,
+      const metadataLoadedVersionBeforeDeletion = store.get(
+        metadataLoadedVersionState.atom,
       );
       const representativeMorphField = getMorphFieldOrThrow(
-        objectMetadataItemsBeforeDeletion,
+        store.get(objectMetadataItemsWithFieldsSelector.atom),
         junctionObjectNameSingular,
       );
-      // The server collapses the morph group into the field carrying this custom object's row id
+      // The server collapses the morph group into the field carrying this object's row id
       const deletedObjectMetadataId =
         representativeMorphField.morphRelations?.find(
           ({ sourceFieldMetadata }) =>
@@ -202,21 +261,60 @@ describe('MetadataStoreSSEEffect', () => {
         });
       }
 
-      const remainingMorphField = getMorphFieldOrThrow(
-        objectMetadataItems,
-        junctionObjectNameSingular,
-      );
-
-      expect(remainingMorphField.id).not.toBe(representativeMorphField.id);
-      expect(
-        remainingMorphField.morphRelations?.map(
-          ({ targetObjectMetadata }) => targetObjectMetadata.id,
-        ),
-      ).toEqual(
-        representativeMorphField.morphRelations
-          ?.map(({ targetObjectMetadata }) => targetObjectMetadata.id)
-          .filter((id) => id !== deletedObjectMetadataId),
+      expect(getCollectionHashes(store)).toEqual([
+        undefined,
+        undefined,
+        undefined,
+      ]);
+      expect(store.get(metadataLoadedVersionState.atom)).toBeGreaterThan(
+        metadataLoadedVersionBeforeDeletion,
       );
     },
   );
+
+  it('patches the store when a field outside any morph group is deleted', () => {
+    const store = renderMetadataStoreSSEEffect();
+    const metadataLoadedVersionBeforeDeletion = store.get(
+      metadataLoadedVersionState.atom,
+    );
+    const [deletedFieldMetadataId] = getCompanyTextFieldIdsOrThrow(store);
+
+    act(() => {
+      dispatchFieldMetadataDeletion(deletedFieldMetadataId);
+    });
+
+    expect(isFieldMetadataInStore(store, deletedFieldMetadataId)).toBe(false);
+    expect(getCollectionHashes(store)).toEqual([
+      HASH_BEFORE_DELETION,
+      HASH_AFTER_DELETION,
+      HASH_BEFORE_DELETION,
+    ]);
+    expect(store.get(metadataLoadedVersionState.atom)).toBe(
+      metadataLoadedVersionBeforeDeletion,
+    );
+  });
+
+  it('keeps waiting for the refetch when field deletions follow a morph row deletion', () => {
+    const store = renderMetadataStoreSSEEffect();
+    const morphRowId = getMorphFieldOrThrow(
+      store.get(objectMetadataItemsWithFieldsSelector.atom),
+      'noteTarget',
+    ).id;
+    const [firstFieldMetadataId, secondFieldMetadataId] =
+      getCompanyTextFieldIdsOrThrow(store);
+
+    act(() => {
+      dispatchFieldMetadataDeletion(morphRowId);
+      dispatchFieldMetadataDeletion(firstFieldMetadataId);
+      dispatchFieldMetadataDeletion(secondFieldMetadataId);
+    });
+
+    expect(isFieldMetadataInStore(store, firstFieldMetadataId)).toBe(false);
+    expect(isFieldMetadataInStore(store, secondFieldMetadataId)).toBe(false);
+    expect(getCollectionHashes(store)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+    ]);
+  });
 });
