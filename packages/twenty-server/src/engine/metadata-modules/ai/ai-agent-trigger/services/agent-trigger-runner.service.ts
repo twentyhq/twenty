@@ -1,7 +1,6 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { type AgentTrigger } from 'twenty-shared/application';
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -33,7 +32,6 @@ type AgentTriggerCaller = Extract<AgentRunCaller, { type: 'AGENT_TRIGGER' }>;
 type TriggeredRun = {
   agent: AgentEntity;
   trigger: AgentTrigger;
-  createdBy: ActorMetadata;
   executionContext: AgentRunExecutionContext;
 };
 
@@ -69,7 +67,7 @@ export class AgentTriggerRunnerService
       return;
     }
 
-    const { agent, trigger, createdBy, executionContext } = triggeredRun;
+    const { agent, trigger, executionContext } = triggeredRun;
 
     await this.agentRunnerService.run({
       workspaceId,
@@ -90,7 +88,6 @@ export class AgentTriggerRunnerService
         // nobody is there to answer, so the run can wait but not ask
         capabilities: {
           canAskHumans: false,
-          canProposeToolCalls: false,
         },
         toolLoadingStrategy: 'lazy',
       },
@@ -104,7 +101,6 @@ export class AgentTriggerRunnerService
         senderApplicationId: agent.applicationId,
       },
       executionContext,
-      resolveCreatedBy: async () => createdBy,
     });
   }
 
@@ -112,12 +108,6 @@ export class AgentTriggerRunnerService
     input: AgentRunCallerInput<AgentTriggerCaller>,
   ): Promise<AgentRunExecutionContext> {
     return (await this.findTriggeredRunOrThrow(input)).executionContext;
-  }
-
-  async resolveTurnAuthor(
-    input: AgentRunCallerInput<AgentTriggerCaller>,
-  ): Promise<ActorMetadata> {
-    return (await this.findTriggeredRunOrThrow(input)).createdBy;
   }
 
   async getWaitingState(
@@ -178,10 +168,10 @@ export class AgentTriggerRunnerService
     return {
       agent,
       trigger,
-      createdBy,
       executionContext: {
         authContext: { ...authContext, actingAgent },
         actorContext: createdBy,
+        turnCreatedBy: createdBy,
         userWorkspaceId: null,
         rolePermissionConfig: buildAgentRolePermissionConfig({ agentRoleId }),
         usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,

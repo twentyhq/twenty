@@ -62,6 +62,7 @@ export class SystemPromptBuilderService {
       workspaceInstructions,
       userContext,
       userWorkspaceId,
+      workspaceId,
       canAttachConversationToRecords,
     }).map((section) => ({
       ...section,

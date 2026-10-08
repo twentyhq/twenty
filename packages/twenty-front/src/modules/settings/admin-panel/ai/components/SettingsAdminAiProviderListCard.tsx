@@ -9,7 +9,7 @@ import { IconPlug } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
-import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
+import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 

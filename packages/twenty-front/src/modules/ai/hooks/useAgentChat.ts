@@ -32,7 +32,9 @@ import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesS
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { getAgentChatThreadAtoms } from '@/ai/utils/getAgentChatThreadAtoms';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -157,8 +159,10 @@ export const useAgentChat = (
       status: 'sent',
     };
 
-    const { messagesAtom, errorAtom, isAwaitingFirstChunkAtom } =
-      getAgentChatThreadAtoms(threadId);
+    const messagesAtom = agentChatMessagesFamilyState.atomFamily({ threadId });
+    const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
+    const isAwaitingFirstChunkAtom =
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
     const removeOptimisticUserMessage = () => {
       store.set(messagesAtom, (messages) =>
         messages.filter((message) => message.id !== messageId),
@@ -298,7 +302,7 @@ export const useAgentChat = (
     }
 
     store.set(
-      getAgentChatThreadAtoms(threadId).isAwaitingFirstChunkAtom,
+      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
       false,
     );
 
