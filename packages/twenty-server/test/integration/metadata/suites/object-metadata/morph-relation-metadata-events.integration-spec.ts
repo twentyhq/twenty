@@ -1,17 +1,18 @@
+import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 import { type WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
-const OBJECT_NAME_PREFIX = 'morphEventMirrorTest';
-const MAX_ATTEMPTS = 20;
+const OBJECT_NAME_PREFIX = 'morphEventMirror';
 
 type MirroredMorphField = {
   id: string;
@@ -71,13 +72,50 @@ const fetchMorphFields = async (): Promise<MirroredMorphField[]> => {
   );
 };
 
+const fetchOwnerMorphRelations = async (
+  objectMetadataId: string,
+): Promise<{
+  morphRelations: {
+    sourceFieldMetadata: { id: string };
+    targetObjectMetadata: { id: string };
+  }[];
+}> => {
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
+    input: { filter: { id: { eq: objectMetadataId } }, paging: { first: 1 } },
+    gqlFields: `
+      id
+      fieldsList {
+        type
+        morphRelations {
+          sourceFieldMetadata { id }
+          targetObjectMetadata { id }
+        }
+      }
+    `,
+  });
+
+  const morphField = (objects[0]?.fieldsList ?? []).find(
+    ({ type }) => type === FieldMetadataType.MORPH_RELATION,
+  ) as
+    | {
+        morphRelations: {
+          sourceFieldMetadata: { id: string };
+          targetObjectMetadata: { id: string };
+        }[];
+      }
+    | undefined;
+
+  return { morphRelations: morphField?.morphRelations ?? [] };
+};
+
 const sortById = (fields: MirroredMorphField[]) =>
   [...fields].sort((a, b) => a.id.localeCompare(b.id));
 
 describe('Morph relation metadata events', () => {
   let broadcaster: WorkspaceEventBroadcaster;
   let emitter: MetadataEventEmitter;
-  let objectMetadataId: string | undefined;
+  const createdObjectMetadataIds = new Set<string>();
 
   beforeAll(() => {
     broadcaster = getAppProviderByClassName('WorkspaceEventBroadcaster');
@@ -88,7 +126,8 @@ describe('Morph relation metadata events', () => {
     jest.restoreAllMocks();
   });
 
-  const createTargetObject = async (nameSingular: string) => {
+  const createObject = async (suffix: string): Promise<string> => {
+    const nameSingular = `${OBJECT_NAME_PREFIX}${suffix}`;
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -101,10 +140,12 @@ describe('Morph relation metadata events', () => {
       },
     });
 
-    objectMetadataId = data.createOneObject.id;
+    createdObjectMetadataIds.add(data.createOneObject.id);
+
+    return data.createOneObject.id;
   };
 
-  const deleteTargetObject = async (idToDelete: string) => {
+  const deleteObject = async (idToDelete: string) => {
     await updateOneObjectMetadata({
       expectToFail: false,
       input: { idToUpdate: idToDelete, updatePayload: { isActive: false } },
@@ -114,12 +155,12 @@ describe('Morph relation metadata events', () => {
       input: { idToDelete },
     });
 
-    objectMetadataId = undefined;
+    createdObjectMetadataIds.delete(idToDelete);
   };
 
   afterAll(async () => {
-    if (isDefined(objectMetadataId)) {
-      await deleteTargetObject(objectMetadataId);
+    for (const objectMetadataId of [...createdObjectMetadataIds]) {
+      await deleteObject(objectMetadataId);
     }
 
     await emitter.drain();
@@ -166,77 +207,120 @@ describe('Morph relation metadata events', () => {
     }
   };
 
-  const isMorphFieldUpsert = ({ type, properties }: WorkspaceBroadcastEvent) =>
-    type !== 'deleted' &&
-    (properties.after as { type?: string } | undefined)?.type ===
-      FieldMetadataType.MORPH_RELATION;
+  const expectMirrorToEqualFieldsList = async (
+    mirror: Map<string, MirroredMorphField>,
+  ) => {
+    const morphFields = await fetchMorphFields();
 
-  // Row ids are random, so target objects are created until one of their
-  // morph rows becomes a group representative and the handover is exercised
-  it('keeps a client mirror of morph fields equal to objects.fieldsList while target objects come and go', async () => {
-    const mirror = new Map(
-      (await fetchMorphFields()).map((field) => [field.id, field]),
+    expect(sortById([...mirror.values()])).toEqual(sortById(morphFields));
+
+    return morphFields;
+  };
+
+  const fetchMirror = async () =>
+    new Map((await fetchMorphFields()).map((field) => [field.id, field]));
+
+  it('keeps a client mirror of morph fields equal to objects.fieldsList while a target object comes and goes', async () => {
+    const mirror = await fetchMirror();
+    let objectMetadataId = '';
+
+    const creationEvents = await captureFieldMetadataBroadcasts(async () => {
+      objectMetadataId = await createObject('Target');
+    });
+
+    expect(
+      creationEvents.filter(
+        ({ type, properties }) =>
+          type !== 'deleted' &&
+          (properties.after as { type?: string } | undefined)?.type ===
+            FieldMetadataType.MORPH_RELATION &&
+          (properties.after as { name: string }).name.endsWith(
+            capitalize(`${OBJECT_NAME_PREFIX}Target`),
+          ),
+      ),
+    ).toEqual([]);
+
+    applyToMirror(mirror, creationEvents);
+
+    const fieldsAfterCreation = await expectMirrorToEqualFieldsList(mirror);
+
+    expect(
+      fieldsAfterCreation.some(({ targetObjectMetadataIds }) =>
+        targetObjectMetadataIds.includes(objectMetadataId),
+      ),
+    ).toBe(true);
+
+    applyToMirror(
+      mirror,
+      await captureFieldMetadataBroadcasts(() =>
+        deleteObject(objectMetadataId),
+      ),
     );
-    let hasHandedOverMorphField = false;
 
-    for (
-      let attempt = 0;
-      attempt < MAX_ATTEMPTS && !hasHandedOverMorphField;
-      attempt++
-    ) {
-      const nameSingular = `${OBJECT_NAME_PREFIX}${attempt}`;
+    const fieldsAfterDeletion = await expectMirrorToEqualFieldsList(mirror);
 
-      const creationEvents = await captureFieldMetadataBroadcasts(() =>
-        createTargetObject(nameSingular),
-      );
+    expect(
+      fieldsAfterDeletion.some(({ targetObjectMetadataIds }) =>
+        targetObjectMetadataIds.includes(objectMetadataId),
+      ),
+    ).toBe(false);
+  });
 
-      expect(
-        creationEvents.filter(
-          (event) =>
-            isMorphFieldUpsert(event) &&
-            (event.properties.after as { name: string }).name.endsWith(
-              capitalize(nameSingular),
-            ),
-        ),
-      ).toEqual([]);
+  it('hands a morph field over to another row when the target object of its representative is deleted', async () => {
+    const ownerObjectMetadataId = await createObject('Owner');
+    const firstTargetObjectMetadataId = await createObject('FirstTarget');
+    const secondTargetObjectMetadataId = await createObject('SecondTarget');
 
-      hasHandedOverMorphField = creationEvents.some(
-        (event) => isMorphFieldUpsert(event) && event.type === 'created',
-      );
+    await createMorphRelationBetweenObjects({
+      objectMetadataId: ownerObjectMetadataId,
+      firstTargetObjectMetadataId,
+      secondTargetObjectMetadataId,
+      type: FieldMetadataType.MORPH_RELATION,
+      relationType: RelationType.MANY_TO_ONE,
+      name: 'subject',
+      label: 'Subject',
+    });
+    await emitter.drain();
 
-      applyToMirror(mirror, creationEvents);
+    const mirror = await fetchMirror();
+    const ownerMorphField = [...mirror.values()].find(
+      ({ objectMetadataId }) => objectMetadataId === ownerObjectMetadataId,
+    );
 
-      const createdObjectMetadataId = objectMetadataId as string;
-      const fieldsAfterCreation = await fetchMorphFields();
+    expect(ownerMorphField?.targetObjectMetadataIds).toHaveLength(2);
 
-      expect(
-        fieldsAfterCreation.some(({ targetObjectMetadataIds }) =>
-          targetObjectMetadataIds.includes(createdObjectMetadataId),
-        ),
-      ).toBe(true);
-      expect(sortById([...mirror.values()])).toEqual(
-        sortById(fieldsAfterCreation),
-      );
+    // fieldsList exposes the representative row id, and each row targets one
+    // object, so deleting the object the representative row targets always
+    // forces a handover to the other row
+    const { morphRelations } = await fetchOwnerMorphRelations(
+      ownerObjectMetadataId,
+    );
+    const representativeTargetObjectMetadataId = morphRelations.find(
+      ({ sourceFieldMetadata }) =>
+        sourceFieldMetadata.id === ownerMorphField?.id,
+    )?.targetObjectMetadata.id as string;
 
-      applyToMirror(
-        mirror,
-        await captureFieldMetadataBroadcasts(() =>
-          deleteTargetObject(createdObjectMetadataId),
-        ),
-      );
+    const deletionEvents = await captureFieldMetadataBroadcasts(() =>
+      deleteObject(representativeTargetObjectMetadataId),
+    );
 
-      const fieldsAfterDeletion = await fetchMorphFields();
+    expect(
+      deletionEvents.some(
+        ({ type, properties }) =>
+          type === 'created' &&
+          (properties.after as { objectMetadataId?: string } | undefined)
+            ?.objectMetadataId === ownerObjectMetadataId,
+      ),
+    ).toBe(true);
 
-      expect(
-        fieldsAfterDeletion.some(({ targetObjectMetadataIds }) =>
-          targetObjectMetadataIds.includes(createdObjectMetadataId),
-        ),
-      ).toBe(false);
-      expect(sortById([...mirror.values()])).toEqual(
-        sortById(fieldsAfterDeletion),
-      );
-    }
+    applyToMirror(mirror, deletionEvents);
 
-    expect(hasHandedOverMorphField).toBe(true);
-  }, 120000);
+    const fieldsAfterDeletion = await expectMirrorToEqualFieldsList(mirror);
+    const handedOverMorphField = fieldsAfterDeletion.find(
+      ({ objectMetadataId }) => objectMetadataId === ownerObjectMetadataId,
+    );
+
+    expect(handedOverMorphField?.id).not.toBe(ownerMorphField?.id);
+    expect(handedOverMorphField?.targetObjectMetadataIds).toHaveLength(1);
+  });
 });

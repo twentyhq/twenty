@@ -4,7 +4,10 @@ import {
 } from 'src/engine/subscriptions/metadata-event/__mocks__/get-morph-relation-group-flat-entity-maps.mock';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
-import { collapseMorphRelationFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/collapse-morph-relation-field-metadata-events.util';
+import {
+  collapseMorphRelationFieldMetadataEvents as collapseMorphRelationFieldMetadataEventsWithResolver,
+  type ResolveFieldMetadataIsActive,
+} from 'src/engine/subscriptions/metadata-event/utils/collapse-morph-relation-field-metadata-events.util';
 import {
   type MetadataEvent,
   type UpdateMetadataEvent,
@@ -19,6 +22,19 @@ const LATE_ROCKET_ROW_ID = 'morph-row-9';
 const PERSON_ROW = { id: PERSON_ROW_ID, targetNameSingular: 'person' };
 const COMPANY_ROW = { id: COMPANY_ROW_ID, targetNameSingular: 'company' };
 const ROCKET_ROW = { id: ROCKET_ROW_ID, targetNameSingular: 'rocket' };
+
+const RAW_IS_ACTIVE: ResolveFieldMetadataIsActive = ({ isActive }) => isActive;
+
+const collapseMorphRelationFieldMetadataEvents = (
+  args: Omit<
+    Parameters<typeof collapseMorphRelationFieldMetadataEventsWithResolver>[0],
+    'resolveIsActive'
+  >,
+) =>
+  collapseMorphRelationFieldMetadataEventsWithResolver({
+    ...args,
+    resolveIsActive: RAW_IS_ACTIVE,
+  });
 
 type ScalarFlatFieldMetadata = ScalarFlatEntity<
   MetadataEntity<'fieldMetadata'>
@@ -99,6 +115,8 @@ describe('collapseMorphRelationFieldMetadataEvents', () => {
 
     expect(summarize(events)).toEqual([
       { type: 'updated', recordId: PERSON_ROW_ID, name: 'target' },
+      { type: 'deleted', recordId: COMPANY_ROW_ID, name: 'target' },
+      { type: 'deleted', recordId: LATE_ROCKET_ROW_ID, name: 'target' },
     ]);
     expect(events[0].properties).toMatchObject({ updatedFields: [] });
   });
@@ -120,6 +138,7 @@ describe('collapseMorphRelationFieldMetadataEvents', () => {
     expect(summarize(events)).toEqual([
       { type: 'created', recordId: ROCKET_ROW_ID, name: 'target' },
       { type: 'deleted', recordId: PERSON_ROW_ID, name: 'target' },
+      { type: 'deleted', recordId: COMPANY_ROW_ID, name: 'target' },
     ]);
   });
 
@@ -144,6 +163,7 @@ describe('collapseMorphRelationFieldMetadataEvents', () => {
     expect(summarize(events)).toEqual([
       { type: 'created', recordId: PERSON_ROW_ID, name: 'target' },
       { type: 'deleted', recordId: ROCKET_ROW_ID, name: 'targetRocket' },
+      { type: 'deleted', recordId: COMPANY_ROW_ID, name: 'target' },
     ]);
   });
 
@@ -210,10 +230,13 @@ describe('collapseMorphRelationFieldMetadataEvents', () => {
 
     expect(summarize(events)).toEqual([
       { type: 'updated', recordId: PERSON_ROW_ID, name: 'target' },
+      { type: 'deleted', recordId: COMPANY_ROW_ID, name: 'target' },
     ]);
     expect(events[0].properties).toMatchObject({
       updatedFields: ['label'],
       diff: { label: { before: 'Target', after: 'Subject' } },
+      before: { name: 'target', label: 'Target' },
+      after: { name: 'target', label: 'Subject' },
     });
   });
 
@@ -243,6 +266,82 @@ describe('collapseMorphRelationFieldMetadataEvents', () => {
       { type: 'deleted', recordId: PERSON_ROW_ID, name: 'target' },
     ]);
   });
+
+  it('should pick the representative on the effective isActive', () => {
+    const before = getMorphRelationGroupFlatEntityMapsMock([
+      PERSON_ROW,
+      COMPANY_ROW,
+    ]);
+    const after = getMorphRelationGroupFlatEntityMapsMock([
+      {
+        ...PERSON_ROW,
+        overrides: { 'custom-application': { isActive: false } },
+      },
+      COMPANY_ROW,
+    ]);
+
+    const events = collapseMorphRelationFieldMetadataEventsWithResolver({
+      events: [
+        buildUpdatedEvent({
+          before: before.getScalarFlatFieldMetadata(PERSON_ROW_ID),
+          after: after.getScalarFlatFieldMetadata(PERSON_ROW_ID),
+          updatedFields: ['overrides'],
+        }),
+      ],
+      ...after,
+      resolveIsActive: ({ isActive, overrides }) =>
+        overrides?.['custom-application']?.isActive ?? isActive,
+    });
+
+    expect(summarize(events)).toEqual([
+      { type: 'created', recordId: COMPANY_ROW_ID, name: 'target' },
+      { type: 'deleted', recordId: PERSON_ROW_ID, name: 'target' },
+    ]);
+  });
+
+  it.each([
+    ['in order', [0, 1]],
+    ['out of order', [1, 0]],
+  ])(
+    'should converge when batches are published %s after later migrations reached the cache',
+    (_, publicationOrder) => {
+      const heldRow = { id: 'morph-row-5', targetNameSingular: 'person' };
+      const firstCreatedRow = {
+        id: 'morph-row-3',
+        targetNameSingular: 'company',
+      };
+      const secondCreatedRow = {
+        id: 'morph-row-1',
+        targetNameSingular: 'rocket',
+      };
+      const cache = getMorphRelationGroupFlatEntityMapsMock([
+        heldRow,
+        firstCreatedRow,
+        secondCreatedRow,
+      ]);
+
+      const batches = [firstCreatedRow, secondCreatedRow].map(({ id }) =>
+        collapseMorphRelationFieldMetadataEvents({
+          events: [buildCreatedEvent(cache.getScalarFlatFieldMetadata(id))],
+          ...cache,
+        }),
+      );
+
+      const clientFieldIds = new Set([heldRow.id]);
+
+      for (const batchIndex of publicationOrder) {
+        for (const event of batches[batchIndex]) {
+          if (event.type === 'deleted') {
+            clientFieldIds.delete(event.recordId);
+          } else {
+            clientFieldIds.add(event.recordId);
+          }
+        }
+      }
+
+      expect([...clientFieldIds]).toEqual([secondCreatedRow.id]);
+    },
+  );
 
   it('should leave non-morph field events untouched', () => {
     const after = getMorphRelationGroupFlatEntityMapsMock([PERSON_ROW]);

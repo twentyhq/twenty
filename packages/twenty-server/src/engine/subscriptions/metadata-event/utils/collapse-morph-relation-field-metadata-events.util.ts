@@ -1,4 +1,3 @@
-import isEqual from 'lodash.isequal';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -30,10 +29,22 @@ type ScalarFlatFieldMetadata = ScalarFlatEntity<
 type MorphRelationFlatFieldMetadata =
   FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 
+export type ResolveFieldMetadataIsActive = (
+  fieldMetadata: Pick<
+    ScalarFlatFieldMetadata,
+    'isActive' | 'overrides' | 'applicationId'
+  >,
+) => boolean;
+
 type MorphGroupMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
+
+// The runner asserts its partial diffs the same way: the diff type maps every
+// compared property, so a diff with no changed property cannot be expressed
+const EMPTY_FIELD_METADATA_DIFF =
+  {} as UpdateMetadataEvent<'fieldMetadata'>['properties']['diff'];
 
 const getEventRecord = (event: FieldMetadataEvent): ScalarFlatFieldMetadata =>
   event.type === 'deleted' ? event.properties.before : event.properties.after;
@@ -53,6 +64,9 @@ const getMorphGroup = (event: FieldMetadataEvent): MorphGroup | undefined => {
 
 const getMorphGroupKey = ({ objectMetadataId, morphId }: MorphGroup) =>
   `${objectMetadataId}:${morphId}`;
+
+export const isMorphRelationFieldMetadataEvent = (event: FieldMetadataEvent) =>
+  isDefined(getMorphGroup(event));
 
 const findMorphGroupFlatFieldMetadatas = ({
   objectMetadataId,
@@ -96,6 +110,28 @@ const toCollapsedScalarFlatFieldMetadata = ({
     }),
   });
 
+// objects.fieldsList picks the representative on effective values, where an
+// override can deactivate a row whose raw isActive is still true
+const pickRepresentativeId = ({
+  fieldMetadatas,
+  resolveIsActive,
+}: {
+  fieldMetadatas: Pick<
+    ScalarFlatFieldMetadata,
+    'id' | 'isActive' | 'isSystem' | 'overrides' | 'applicationId'
+  >[];
+  resolveIsActive: ResolveFieldMetadataIsActive;
+}): string | undefined =>
+  isNonEmptyArray(fieldMetadatas)
+    ? pickMorphGroupSurvivorOrThrow(
+        fieldMetadatas.map((fieldMetadata) => ({
+          id: fieldMetadata.id,
+          isActive: resolveIsActive(fieldMetadata),
+          isSystem: fieldMetadata.isSystem,
+        })),
+      ).id
+    : undefined;
+
 const buildRepresentativeEvent = ({
   representative,
   previousRepresentativeId,
@@ -126,36 +162,39 @@ const buildRepresentativeEvent = ({
       event.type === 'updated' && event.recordId === representative.id,
   );
 
-  const before = isDefined(representativeUpdateEvent)
-    ? toCollapsedScalarFlatFieldMetadata({
-        morphRelationFlatFieldMetadata: {
-          ...representative,
-          ...representativeUpdateEvent.properties.before,
-        } as MorphRelationFlatFieldMetadata,
-        flatObjectMetadataMaps,
-      })
-    : after;
+  if (!isDefined(representativeUpdateEvent)) {
+    return {
+      type: 'updated',
+      metadataName: 'fieldMetadata',
+      recordId: representative.id,
+      properties: {
+        updatedFields: [],
+        diff: EMPTY_FIELD_METADATA_DIFF,
+        before: after,
+        after,
+      },
+    };
+  }
 
-  const updatedFields = (
-    Object.keys(after) as (keyof ScalarFlatFieldMetadata)[]
-  ).filter((property) => !isEqual(before[property], after[property]));
+  const { before } = representativeUpdateEvent.properties;
 
   return {
-    type: 'updated',
-    metadataName: 'fieldMetadata',
-    recordId: representative.id,
+    ...representativeUpdateEvent,
     properties: {
-      updatedFields,
-      diff: Object.fromEntries(
-        updatedFields.map((property) => [
-          property,
-          { before: before[property], after: after[property] },
-        ]),
-      ),
-      before,
+      ...representativeUpdateEvent.properties,
+      before: {
+        ...before,
+        name: renameMorphRelationFlatFieldMetadataToMorphName({
+          morphRelationFlatFieldMetadata: {
+            ...representative,
+            name: before.name,
+          },
+          flatObjectMetadataMaps,
+        }).name,
+      },
       after,
     },
-  } as UpdateMetadataEvent<'fieldMetadata'>;
+  };
 };
 
 const collapseMorphGroupEvents = ({
@@ -163,7 +202,8 @@ const collapseMorphGroupEvents = ({
   morphGroupEvents,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
-}: MorphGroupMaps & {
+  resolveIsActive,
+}: CollapseMorphRelationFieldMetadataEventsArgs & {
   morphGroup: MorphGroup;
   morphGroupEvents: FieldMetadataEvent[];
 }): FieldMetadataEvent[] => {
@@ -173,11 +213,22 @@ const collapseMorphGroupEvents = ({
     flatObjectMetadataMaps,
   });
 
-  // The cache already holds the post-migration group, so the batch events are
-  // rewound on top of it to find the representative clients currently hold
-  const previousMorphFieldById = new Map<
+  const representativeId = pickRepresentativeId({
+    fieldMetadatas: currentMorphFlatFieldMetadatas,
+    resolveIsActive,
+  });
+  const representative = currentMorphFlatFieldMetadatas.find(
+    (flatFieldMetadata) => flatFieldMetadata.id === representativeId,
+  );
+
+  // Only decides between created and updated for the representative, so a
+  // rewind that is off because the cache moved on stays harmless
+  const previousMorphFieldMetadataById = new Map<
     string,
-    Pick<ScalarFlatFieldMetadata, 'id' | 'isActive' | 'isSystem'>
+    Pick<
+      ScalarFlatFieldMetadata,
+      'id' | 'isActive' | 'isSystem' | 'overrides' | 'applicationId'
+    >
   >(
     currentMorphFlatFieldMetadatas.map((flatFieldMetadata) => [
       flatFieldMetadata.id,
@@ -187,26 +238,23 @@ const collapseMorphGroupEvents = ({
 
   for (const event of morphGroupEvents) {
     if (event.type === 'created') {
-      previousMorphFieldById.delete(event.recordId);
+      previousMorphFieldMetadataById.delete(event.recordId);
     } else {
-      previousMorphFieldById.set(event.recordId, event.properties.before);
+      previousMorphFieldMetadataById.set(
+        event.recordId,
+        event.properties.before,
+      );
     }
   }
-
-  const previousMorphFields = [...previousMorphFieldById.values()];
-  const previousRepresentativeId = isNonEmptyArray(previousMorphFields)
-    ? pickMorphGroupSurvivorOrThrow(previousMorphFields).id
-    : undefined;
-
-  const representative = isNonEmptyArray(currentMorphFlatFieldMetadatas)
-    ? pickMorphGroupSurvivorOrThrow(currentMorphFlatFieldMetadatas)
-    : undefined;
 
   const representativeEvents: FieldMetadataEvent[] = isDefined(representative)
     ? [
         buildRepresentativeEvent({
           representative,
-          previousRepresentativeId,
+          previousRepresentativeId: pickRepresentativeId({
+            fieldMetadatas: [...previousMorphFieldMetadataById.values()],
+            resolveIsActive,
+          }),
           morphGroupEvents,
           flatObjectMetadataMaps,
         }),
@@ -217,39 +265,29 @@ const collapseMorphGroupEvents = ({
     (event) => event.type === 'deleted',
   );
 
-  const replacedRepresentative =
-    previousRepresentativeId !== representative?.id
-      ? currentMorphFlatFieldMetadatas.find(
-          (flatFieldMetadata) =>
-            flatFieldMetadata.id === previousRepresentativeId,
-        )
-      : undefined;
+  // The cache can already hold later migrations when this batch is published,
+  // so the id clients hold cannot be known: every other row id is deleted
+  const siblingRowEvents: FieldMetadataEvent[] = currentMorphFlatFieldMetadatas
+    .filter((flatFieldMetadata) => flatFieldMetadata.id !== representativeId)
+    .map((flatFieldMetadata) => ({
+      type: 'deleted',
+      metadataName: 'fieldMetadata',
+      recordId: flatFieldMetadata.id,
+      properties: {
+        before: toCollapsedScalarFlatFieldMetadata({
+          morphRelationFlatFieldMetadata: flatFieldMetadata,
+          flatObjectMetadataMaps,
+        }),
+      },
+    }));
 
-  const replacedRepresentativeEvents: FieldMetadataEvent[] = isDefined(
-    replacedRepresentative,
-  )
-    ? [
-        {
-          type: 'deleted',
-          metadataName: 'fieldMetadata',
-          recordId: replacedRepresentative.id,
-          properties: {
-            before: toCollapsedScalarFlatFieldMetadata({
-              morphRelationFlatFieldMetadata: replacedRepresentative,
-              flatObjectMetadataMaps,
-            }),
-          },
-        },
-      ]
-    : [];
+  // Deletes come after the representative so clients never go through a state
+  // where the morph field is missing
+  return [...representativeEvents, ...deletedRowEvents, ...siblingRowEvents];
+};
 
-  // Deletes come after the new representative so clients never go through a
-  // state where the morph field is missing
-  return [
-    ...representativeEvents,
-    ...deletedRowEvents,
-    ...replacedRepresentativeEvents,
-  ];
+type CollapseMorphRelationFieldMetadataEventsArgs = MorphGroupMaps & {
+  resolveIsActive: ResolveFieldMetadataIsActive;
 };
 
 // Clients mirror the objects.fieldsList shape, where each morph group is
@@ -257,9 +295,8 @@ const collapseMorphGroupEvents = ({
 // that shape instead of leaking sibling rows or dropping the whole field
 export const collapseMorphRelationFieldMetadataEvents = ({
   events,
-  flatFieldMetadataMaps,
-  flatObjectMetadataMaps,
-}: MorphGroupMaps & {
+  ...collapseArgs
+}: CollapseMorphRelationFieldMetadataEventsArgs & {
   events: FieldMetadataEvent[];
 }): FieldMetadataEvent[] => {
   const morphGroupEventsByKey = new Map<string, FieldMetadataEvent[]>();
@@ -298,15 +335,10 @@ export const collapseMorphRelationFieldMetadataEvents = ({
       return [];
     }
 
-    try {
-      return collapseMorphGroupEvents({
-        morphGroup,
-        morphGroupEvents,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-    } catch {
-      return morphGroupEvents;
-    }
+    return collapseMorphGroupEvents({
+      ...collapseArgs,
+      morphGroup,
+      morphGroupEvents,
+    });
   });
 };

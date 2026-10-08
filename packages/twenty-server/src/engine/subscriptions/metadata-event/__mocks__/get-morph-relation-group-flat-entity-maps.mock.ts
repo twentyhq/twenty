@@ -24,6 +24,7 @@ type MorphRowMock = {
   targetNameSingular: string;
   isActive?: boolean;
   label?: string;
+  overrides?: FlatFieldMetadata['overrides'];
 };
 
 const toFlatEntityMaps = <
@@ -57,7 +58,13 @@ export const getMorphRelationGroupFlatEntityMapsMock = (
 
   flatFieldMetadatas.push(noteFlatFieldMetadata);
 
-  for (const { id, targetNameSingular, isActive = true, label } of morphRows) {
+  for (const {
+    id,
+    targetNameSingular,
+    isActive = true,
+    label,
+    overrides = null,
+  } of morphRows) {
     const targetObjectMetadataId = `${targetNameSingular}-object-id`;
     const inverseFieldMetadataId = `${targetNameSingular}-note-targets-field-id`;
     const capitalizedTargetName = capitalize(targetNameSingular);
@@ -73,6 +80,7 @@ export const getMorphRelationGroupFlatEntityMapsMock = (
         name: `target${capitalizedTargetName}`,
         label: label ?? 'Target',
         isActive,
+        overrides,
         morphId: NOTE_TARGET_MORPH_ID,
         relationTargetObjectMetadataId: targetObjectMetadataId,
         relationTargetFieldMetadataId: inverseFieldMetadataId,

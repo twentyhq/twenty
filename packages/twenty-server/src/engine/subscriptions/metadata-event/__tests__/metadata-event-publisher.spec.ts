@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { getMorphRelationGroupFlatEntityMapsMock } from 'src/engine/subscriptions/metadata-event/__mocks__/get-morph-relation-group-flat-entity-maps.mock';
@@ -14,9 +15,15 @@ describe('MetadataEventPublisher', () => {
   let publisher: MetadataEventPublisher;
   const broadcast = jest.fn();
   const getOrRecomputeManyOrAllFlatEntityMaps = jest.fn();
+  const getApplicationAuthorIdentifiers = jest.fn();
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    getApplicationAuthorIdentifiers.mockResolvedValue({
+      standardApplicationId: 'standard-application-id',
+      workspaceCustomApplicationUniversalIdentifier: 'custom-application',
+      universalIdentifierByApplicationId: {},
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -28,6 +35,10 @@ describe('MetadataEventPublisher', () => {
         },
         { provide: NavigationMenuItemRecordIdentifierService, useValue: {} },
         { provide: I18nService, useValue: {} },
+        {
+          provide: ApplicationTranslationCatalogService,
+          useValue: { getApplicationAuthorIdentifiers },
+        },
       ],
     }).compile();
 
@@ -172,20 +183,16 @@ describe('MetadataEventPublisher', () => {
     expect(event.recipientUserWorkspaceIds).toBeUndefined();
   });
 
-  it('hands a morph field over to its new representative when the representative row is deleted', async () => {
-    const personRow = { id: 'morph-row-2', targetNameSingular: 'person' };
-    const companyRow = { id: 'morph-row-3', targetNameSingular: 'company' };
-    const before = getMorphRelationGroupFlatEntityMapsMock([
-      { id: 'morph-row-1', targetNameSingular: 'rocket' },
-      personRow,
-      companyRow,
-    ]);
-    const after = getMorphRelationGroupFlatEntityMapsMock([
-      personRow,
-      companyRow,
-    ]);
+  const personRow = { id: 'morph-row-2', targetNameSingular: 'person' };
+  const companyRow = { id: 'morph-row-3', targetNameSingular: 'company' };
+  const rocketRow = { id: 'morph-row-1', targetNameSingular: 'rocket' };
 
-    getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(after);
+  const publishRocketRowDeletion = async () => {
+    const before = getMorphRelationGroupFlatEntityMapsMock([
+      rocketRow,
+      personRow,
+      companyRow,
+    ]);
 
     await publisher.publish({
       name: 'metadata.fieldMetadata.deleted',
@@ -196,30 +203,83 @@ describe('MetadataEventPublisher', () => {
         {
           metadataName: 'fieldMetadata',
           type: 'deleted',
-          recordId: 'morph-row-1',
+          recordId: rocketRow.id,
           properties: {
-            before: before.getScalarFlatFieldMetadata('morph-row-1'),
+            before: before.getScalarFlatFieldMetadata(rocketRow.id),
           },
         },
       ],
     });
 
-    const [handedOverEvent, deletedEvent] = broadcast.mock.calls[0][0].events;
+    return broadcast.mock.calls[0][0].events as {
+      type: string;
+      recordId: string;
+      properties: {
+        after?: {
+          name: string;
+          morphRelations: { targetObjectMetadata: { nameSingular: string } }[];
+        };
+      };
+    }[];
+  };
+
+  it('hands a morph field over to its new representative when the representative row is deleted', async () => {
+    getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
+      getMorphRelationGroupFlatEntityMapsMock([personRow, companyRow]),
+    );
+
+    const [handedOverEvent, ...deletedEvents] =
+      await publishRocketRowDeletion();
 
     expect(handedOverEvent).toMatchObject({
       type: 'created',
-      recordId: 'morph-row-2',
-      properties: { after: { id: 'morph-row-2', name: 'target' } },
+      recordId: personRow.id,
+      properties: { after: { name: 'target' } },
     });
     expect(
-      handedOverEvent.properties.after.morphRelations.map(
-        (morphRelation: { targetObjectMetadata: { nameSingular: string } }) =>
-          morphRelation.targetObjectMetadata.nameSingular,
+      handedOverEvent.properties.after?.morphRelations.map(
+        (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
       ),
     ).toEqual(['person', 'company']);
-    expect(deletedEvent).toMatchObject({
-      type: 'deleted',
-      recordId: 'morph-row-1',
+    expect(deletedEvents.map(({ type, recordId }) => [type, recordId])).toEqual(
+      [
+        ['deleted', rocketRow.id],
+        ['deleted', companyRow.id],
+      ],
+    );
+  });
+
+  it('skips a row deactivated through overrides when picking the representative', async () => {
+    getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
+      getMorphRelationGroupFlatEntityMapsMock([
+        {
+          ...personRow,
+          overrides: { 'custom-application': { isActive: false } },
+        },
+        companyRow,
+      ]),
+    );
+
+    const [handedOverEvent] = await publishRocketRowDeletion();
+
+    expect(handedOverEvent).toMatchObject({
+      type: 'created',
+      recordId: companyRow.id,
     });
+  });
+
+  it('falls back to raw rows when morph events cannot be collapsed', async () => {
+    getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
+      getMorphRelationGroupFlatEntityMapsMock([personRow, companyRow]),
+    );
+    getApplicationAuthorIdentifiers.mockRejectedValue(
+      new Error('application lookup failed'),
+    );
+
+    const events = await publishRocketRowDeletion();
+
+    expect(events.map(({ type, recordId }) => [type, recordId])).toEqual([
+      ['deleted', rocketRow.id],
+    ]);
   });
 });

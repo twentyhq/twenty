@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { collapseMorphRelationFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/collapse-morph-relation-field-metadata-events.util';
+import {
+  collapseMorphRelationFieldMetadataEvents,
+  isMorphRelationFieldMetadataEvent,
+  type ResolveFieldMetadataIsActive,
+} from 'src/engine/subscriptions/metadata-event/utils/collapse-morph-relation-field-metadata-events.util';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
@@ -34,10 +40,13 @@ const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
 
 @Injectable()
 export class MetadataEventPublisher {
+  private readonly logger = new Logger(MetadataEventPublisher.name);
+
   constructor(
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -182,11 +191,31 @@ export class MetadataEventPublisher {
         },
       );
 
-    const collapsedEvents = collapseMorphRelationFieldMetadataEvents({
-      events: metadataEventBatch.events as MetadataEvent<'fieldMetadata'>[],
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    }) as MetadataEvent[];
+    const fieldMetadataEvents =
+      metadataEventBatch.events as MetadataEvent<'fieldMetadata'>[];
+    let collapsedEvents: MetadataEvent[] = metadataEventBatch.events;
+
+    // Falling back to raw rows keeps every other field change flowing; only
+    // morph fields then behave as before collapsing existed
+    try {
+      collapsedEvents = fieldMetadataEvents.some(
+        isMorphRelationFieldMetadataEvent,
+      )
+        ? (collapseMorphRelationFieldMetadataEvents({
+            events: fieldMetadataEvents,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+            resolveIsActive: await this.buildFieldMetadataIsActiveResolver(
+              metadataEventBatch.workspaceId,
+            ),
+          }) as MetadataEvent[])
+        : metadataEventBatch.events;
+    } catch (error) {
+      this.logger.error(
+        `Failed to collapse morph relation events for workspace ${metadataEventBatch.workspaceId}, sending raw rows`,
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
 
     const enrichedEvents = collapsedEvents.map((event) => {
       const enrichedProperties = { ...event.properties };
@@ -209,6 +238,33 @@ export class MetadataEventPublisher {
     });
 
     return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private async buildFieldMetadataIsActiveResolver(
+    workspaceId: string,
+  ): Promise<ResolveFieldMetadataIsActive> {
+    const {
+      workspaceCustomApplicationUniversalIdentifier,
+      universalIdentifierByApplicationId,
+    } =
+      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        { workspaceId },
+      );
+
+    return ({ isActive, overrides, applicationId }) => {
+      const overriddenIsActive = readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
+        overrides,
+        path: ['isActive'],
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            universalIdentifierByApplicationId[applicationId],
+        },
+      });
+
+      return isBoolean(overriddenIsActive) ? overriddenIsActive : isActive;
+    };
   }
 
   private async enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
