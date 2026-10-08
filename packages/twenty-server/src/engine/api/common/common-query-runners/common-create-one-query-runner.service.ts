@@ -118,7 +118,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     } = queryRunnerContext;
 
     return computeMaxFieldCountPerRecord({
-      select: selectedFieldsResult.select,
+      selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

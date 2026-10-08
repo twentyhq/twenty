@@ -223,7 +223,7 @@ export abstract class CommonBaseQueryRunnerService<
     } = queryRunnerContext;
 
     return computeMaxFieldCountPerRecord({
-      select: selectedFieldsResult.select,
+      selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

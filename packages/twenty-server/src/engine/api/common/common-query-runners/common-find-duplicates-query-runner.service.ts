@@ -290,7 +290,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       inputRecordCount *
       QUERY_MAX_RECORDS *
       computeMaxFieldCountPerRecord({
-        select: selectedFieldsResult.select,
+        selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

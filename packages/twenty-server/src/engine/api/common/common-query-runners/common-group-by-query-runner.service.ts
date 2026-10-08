@@ -494,7 +494,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const recordFieldCount = args.includeRecords
       ? RECORDS_PER_GROUP_LIMIT *
         computeMaxFieldCountPerRecord({
-          select: selectedFieldsResult.select,
+          selectedFieldsResult,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,

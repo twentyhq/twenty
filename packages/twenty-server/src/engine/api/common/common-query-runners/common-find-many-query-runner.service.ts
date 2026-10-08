@@ -391,7 +391,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return (
       (args.first ?? args.last ?? QUERY_MAX_RECORDS) *
       computeMaxFieldCountPerRecord({
-        select: selectedFieldsResult.select,
+        selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

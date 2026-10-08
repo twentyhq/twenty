@@ -57,10 +57,11 @@ const flatFieldMetadataMaps = buildFlatEntityMaps([peopleField, companyField]);
 const computeFor = (
   flatObjectMetadata: FlatObjectMetadata,
   select: CommonSelectedFields,
+  relations: CommonSelectedFields,
   recordLimitPerOneToManyRelation = 60,
 ) =>
   computeMaxFieldCountPerRecord({
-    select,
+    selectedFieldsResult: { select, relations },
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -69,37 +70,58 @@ const computeFor = (
 
 describe('computeMaxFieldCountPerRecord', () => {
   it('should count each selected field of the record', () => {
-    expect(computeFor(company, { id: true, name: true })).toBe(2);
+    expect(computeFor(company, { id: true, name: true }, {})).toBe(2);
   });
 
   it('should count nothing when no field is selected', () => {
-    expect(computeFor(company, {})).toBe(0);
+    expect(computeFor(company, {}, {})).toBe(0);
   });
 
   it('should add the fields of a to-one relation once', () => {
     expect(
-      computeFor(person, { id: true, company: { id: true, name: true } }),
+      computeFor(
+        person,
+        { id: true, company: { id: true, name: true } },
+        { company: {} },
+      ),
     ).toBe(3);
   });
 
   it('should multiply the fields of a one-to-many relation by its limit', () => {
-    expect(computeFor(company, { id: true, people: { id: true } })).toBe(61);
+    expect(
+      computeFor(company, { id: true, people: { id: true } }, { people: {} }),
+    ).toBe(61);
   });
 
   it('should multiply fields nested under a one-to-many relation by its limit', () => {
     expect(
-      computeFor(company, {
-        id: true,
-        people: { id: true, company: { id: true, name: true } },
-      }),
+      computeFor(
+        company,
+        { id: true, people: { id: true, company: { id: true, name: true } } },
+        { people: { company: {} } },
+      ),
     ).toBe(181);
   });
 
   it('should use the given one-to-many limit', () => {
-    expect(computeFor(company, { id: true, people: { id: true } }, 5)).toBe(6);
+    expect(
+      computeFor(
+        company,
+        { id: true, people: { id: true } },
+        { people: {} },
+        5,
+      ),
+    ).toBe(6);
   });
 
   it('should count no one-to-many record when the limit is zero', () => {
-    expect(computeFor(company, { id: true, people: { id: true } }, 0)).toBe(1);
+    expect(
+      computeFor(
+        company,
+        { id: true, people: { id: true } },
+        { people: {} },
+        0,
+      ),
+    ).toBe(1);
   });
 });
